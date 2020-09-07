@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mybatis.mapper.PaymentOrderDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.example.mybatis.entity.PaymentOrder">
+        <result column="id" property="id" />
+        <result column="merchant_id" property="merchantId" />
+        <result column="company_s_name" property="companySName" />
+        <result column="real_money" property="realMoney" />
+        <result column="platform_service_provider" property="platformServiceProvider" />
+        <result column="company_contract" property="companyContract" />
+        <result column="payment_inventory" property="paymentInventory" />
+        <result column="turnkey_project_payment" property="turnkeyProjectPayment" />
+        <result column="subpackage_payment" property="subpackagePayment" />
+        <result column="task_id" property="taskId" />
+        <result column="acceptance_certificate" property="acceptanceCertificate" />
+        <result column="composite_tax" property="compositeTax" />
+        <result column="merchant_tax" property="merchantTax" />
+        <result column="recevice_tax" property="receviceTax" />
+        <result column="payment_order_status" property="paymentOrderStatus" />
+        <result column="payment_date" property="paymentDate" />
+        <result column="create_date" property="createDate" />
+        <result column="update_date" property="updateDate" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, merchant_id, company_s_name, real_money, platform_service_provider, company_contract, payment_inventory, turnkey_project_payment, subpackage_payment, task_id, acceptance_certificate, composite_tax, merchant_tax, recevice_tax, payment_order_status, payment_date, create_date, update_date
+    </sql>
+
+</mapper>

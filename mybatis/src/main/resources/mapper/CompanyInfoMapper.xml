@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mybatis.mapper.CompanyInfoDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.example.mybatis.entity.CompanyInfo">
+        <id column="id" property="id" />
+        <result column="company_s_name" property="companySName" />
+        <result column="company_logo" property="companyLogo" />
+        <result column="company_size" property="companySize" />
+        <result column="company_provice" property="companyProvice" />
+        <result column="company_city" property="companyCity" />
+        <result column="company_man" property="companyMan" />
+        <result column="company_man_id_card" property="companyManIdCard" />
+        <result column="business_license" property="businessLicense" />
+        <result column="company_desc" property="companyDesc" />
+        <result column="company_name" property="companyName" />
+        <result column="company_address" property="companyAddress" />
+        <result column="company_create_date" property="companyCreateDate" />
+        <result column="tax_id" property="taxId" />
+        <result column="bank_name" property="bankName" />
+        <result column="bank_code" property="bankCode" />
+        <result column="telephones" property="telephones" />
+        <result column="link_man" property="linkMan" />
+        <result column="link_mobile" property="linkMobile" />
+        <result column="company_status" property="companyStatus" />
+        <result column="create_date" property="createDate" />
+        <result column="update_date" property="updateDate" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, company_s_name, company_logo, company_size, company_provice, company_city, company_man, company_man_id_card, business_license, company_desc, company_name, company_address, company_create_date, tax_id, bank_name, bank_code, telephones, link_man, link_mobile, company_status, create_date, update_date
+    </sql>
+
+</mapper>

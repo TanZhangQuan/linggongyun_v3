@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mybatis.mapper.TaskDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.example.mybatis.entity.Task">
+        <id column="id" property="id" />
+        <result column="merchant_id" property="merchantId" />
+        <result column="invoice_id" property="invoiceId" />
+        <result column="task_name" property="taskName" />
+        <result column="release_data" property="releaseData" />
+        <result column="task_desc" property="taskDesc" />
+        <result column="industry_type" property="industryType" />
+        <result column="task_cost_min" property="taskCostMin" />
+        <result column="task_cost_max" property="taskCostMax" />
+        <result column="task_skill" property="taskSkill" />
+        <result column="task_begin_time" property="taskBeginTime" />
+        <result column="task_end_time" property="taskEndTime" />
+        <result column="upper_limit" property="upperLimit" />
+        <result column="cooperate_mode" property="cooperateMode" />
+        <result column="task_mode" property="taskMode" />
+        <result column="create_date" property="createDate" />
+        <result column="update_date" property="updateDate" />
+        <result column="state" property="state" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, merchant_id, invoice_id, task_name, release_data, task_desc, industry_type, task_cost_min, task_cost_max, task_skill, task_begin_time, task_end_time, upper_limit, cooperate_mode, task_mode, create_date, update_date, state
+    </sql>
+
+</mapper>

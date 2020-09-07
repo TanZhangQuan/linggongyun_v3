@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mybatis.mapper.MerchantDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.example.mybatis.entity.Merchant">
+        <id column="id" property="id" />
+        <result column="company_id" property="companyId" />
+        <result column="role_id" property="roleId" />
+        <result column="user_name" property="userName" />
+        <result column="pay_pwd" property="payPwd" />
+        <result column="real_name" property="realName" />
+        <result column="pass_word" property="passWord" />
+        <result column="sales_man_id" property="salesManId" />
+        <result column="agent_id" property="agentId" />
+        <result column="login_mobile" property="loginMobile" />
+        <result column="status" property="status" />
+        <result column="create_date" property="createDate" />
+        <result column="update_date" property="updateDate" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, company_id, role_id, user_name, pay_pwd, real_name, pass_word, sales_man_id, agent_id, login_mobile, status, create_date, update_date
+    </sql>
+
+</mapper>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mybatis.mapper.WorkerDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.example.mybatis.entity.Worker">
+        <id column="id" property="id" />
+        <result column="merchant_id" property="merchantId" />
+        <result column="worker_name" property="workerName" />
+        <result column="account_name" property="accountName" />
+        <result column="worker_sex" property="workerSex" />
+        <result column="mobile_code" property="mobileCode" />
+        <result column="idcard_code" property="idcardCode" />
+        <result column="bank_code" property="bankCode" />
+        <result column="attestation" property="attestation" />
+        <result column="idcardFront" property="idcardFront" />
+        <result column="idcardBack" property="idcardBack" />
+        <result column="attestation_video" property="attestationVideo" />
+        <result column="user_name" property="userName" />
+        <result column="user_pwd" property="userPwd" />
+        <result column="skill" property="skill" />
+        <result column="agreementSign" property="agreementSign" />
+        <result column="agreementUrl" property="agreementUrl" />
+        <result column="head_portraits" property="headPortraits" />
+        <result column="picture" property="picture" />
+        <result column="create_date" property="createDate" />
+        <result column="update_date" property="updateDate" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, merchant_id, worker_name, account_name, worker_sex, mobile_code, idcard_code, bank_code, attestation, idcardFront, idcardBack, attestation_video, user_name, user_pwd, skill, agreementSign, agreementUrl, head_portraits, picture, create_date, update_date
+    </sql>
+
+</mapper>
