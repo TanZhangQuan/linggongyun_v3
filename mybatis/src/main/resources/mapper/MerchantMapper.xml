@@ -24,4 +24,8 @@
         id, company_id, role_id, user_name, pay_pwd, real_name, pass_word, sales_man_id, agent_id, login_mobile, status, create_date, update_date
     </sql>
 
+
+    <select id="findByID" resultMap="BaseResultMap">
+        select * from tb_merchant where id=#{id}
+    </select>
 </mapper>

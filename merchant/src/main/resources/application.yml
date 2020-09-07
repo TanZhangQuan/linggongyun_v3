@@ -2,7 +2,7 @@ server:
   port: 8081
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/linggongyun_v3?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=GMT%2B8
+    url: jdbc:mysql://192.168.3.50:3306/linggongyun_v3?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=GMT%2B8
     username: root
     password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -12,15 +12,15 @@ spring:
     max-wait: 100000
     timeBetweenEvictionRunsMillis: 60000
     minEvictableIdleTimeMillis: 300000
-    #  ÊÇ·ñ»º´æpreparedStatement£¬Ò²¾ÍÊÇPSCache¡£PSCache¶ÔÖ§³ÖÓÎ±êµÄÊı¾İ¿âĞÔÄÜÌáÉı¾Ş´ó£¬±ÈÈçËµoracle¡£ÔÚmysqlÏÂ½¨Òé¹Ø±Õ¡£
+    #  ï¿½Ç·ñ»º´ï¿½preparedStatementï¿½ï¿½Ò²ï¿½ï¿½ï¿½ï¿½PSCacheï¿½ï¿½PSCacheï¿½ï¿½Ö§ï¿½ï¿½ï¿½Î±ï¿½ï¿½ï¿½ï¿½ï¿½İ¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ş´ó£¬±ï¿½ï¿½ï¿½Ëµoracleï¿½ï¿½ï¿½ï¿½mysqlï¿½Â½ï¿½ï¿½ï¿½Ø±Õ¡ï¿½
     pool-prepared-statements: true
-    # ÒªÆôÓÃPSCache£¬±ØĞëÅäÖÃ´óÓÚ0£¬µ±´óÓÚ0Ê±£¬poolPreparedStatements×Ô¶¯´¥·¢ĞŞ¸ÄÎªtrue¡£ÔÚDruidÖĞ£¬²»»á´æÔÚOracleÏÂPSCacheÕ¼ÓÃÄÚ´æ¹ı¶àµÄÎÊÌâ£¬¿ÉÒÔ°ÑÕâ¸öÊıÖµÅäÖÃ´óÒ»Ğ©£¬±ÈÈçËµ100
+    # Òªï¿½ï¿½ï¿½ï¿½PSCacheï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã´ï¿½ï¿½ï¿½0ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½0Ê±ï¿½ï¿½poolPreparedStatementsï¿½Ô¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ş¸ï¿½Îªtrueï¿½ï¿½ï¿½ï¿½Druidï¿½Ğ£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Oracleï¿½ï¿½PSCacheÕ¼ï¿½ï¿½ï¿½Ú´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½â£¬ï¿½ï¿½ï¿½Ô°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½Ã´ï¿½Ò»Ğ©ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ëµ100
     max-open-prepared-statements: 100
     validation-query: select 1 from dual
     validation-query-timeout: 100000
-    # ÉêÇëÁ¬½ÓÊ±Ö´ĞĞvalidationQuery¼ì²âÁ¬½ÓÊÇ·ñÓĞĞ§£¬×öÁËÕâ¸öÅäÖÃ»á½µµÍĞÔÄÜ¡£ ½¨Òéfalse
+    # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±Ö´ï¿½ï¿½validationQueryï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½Ğ§ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»á½µï¿½ï¿½ï¿½ï¿½ï¿½Ü¡ï¿½ ï¿½ï¿½ï¿½ï¿½false
     test-on-borrow: false
-    # ¹é»¹Á¬½ÓÊ±Ö´ĞĞvalidationQuery¼ì²âÁ¬½ÓÊÇ·ñÓĞĞ§£¬×öÁËÕâ¸öÅäÖÃ»á½µµÍĞÔÄÜ £¬½¨Òéfalse
+    # ï¿½é»¹ï¿½ï¿½ï¿½ï¿½Ê±Ö´ï¿½ï¿½validationQueryï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½Ğ§ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»á½µï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½false
     test-on-return: false
     test-while-idle: true
     max-pool-prepared-statement-per-connection-size: 20
@@ -35,11 +35,11 @@ mybatis-plus:
   type-aliases-package: classpath*:com.example.mybatis.entity
 
   global-config:
-    # Âß¼­É¾³ıÅäÖÃ
+    # ï¿½ß¼ï¿½É¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     db-config:
-      # É¾³ıÇ°
+      # É¾ï¿½ï¿½Ç°
       logic-not-delete-value: 1
-      # É¾³ıºó
+      # É¾ï¿½ï¿½ï¿½ï¿½
       logic-delete-value: 0
 
 PWD_KEY: esdafw

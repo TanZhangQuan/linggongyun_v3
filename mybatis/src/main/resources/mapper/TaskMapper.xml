@@ -4,29 +4,73 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.example.mybatis.entity.Task">
-        <id column="id" property="id" />
-        <result column="merchant_id" property="merchantId" />
-        <result column="invoice_id" property="invoiceId" />
-        <result column="task_name" property="taskName" />
-        <result column="release_data" property="releaseData" />
-        <result column="task_desc" property="taskDesc" />
-        <result column="industry_type" property="industryType" />
-        <result column="task_cost_min" property="taskCostMin" />
-        <result column="task_cost_max" property="taskCostMax" />
-        <result column="task_skill" property="taskSkill" />
-        <result column="task_begin_time" property="taskBeginTime" />
-        <result column="task_end_time" property="taskEndTime" />
-        <result column="upper_limit" property="upperLimit" />
-        <result column="cooperate_mode" property="cooperateMode" />
-        <result column="task_mode" property="taskMode" />
-        <result column="create_date" property="createDate" />
-        <result column="update_date" property="updateDate" />
-        <result column="state" property="state" />
+        <id column="id" property="id"/>
+        <result column="merchant_id" property="merchantId"/>
+        <result column="invoice_id" property="invoiceId"/>
+        <result column="task_code" property="taskCode"/>
+        <result column="task_name" property="taskName"/>
+        <result column="release_data" property="releaseData"/>
+        <result column="deadline_data" property="deadlineData"/>
+        <result column="task_desc" property="taskDesc"/>
+        <result column="industry_type" property="industryType"/>
+        <result column="task_cost_min" property="taskCostMin"/>
+        <result column="task_cost_max" property="taskCostMax"/>
+        <result column="task_skill" property="taskSkill"/>
+        <result column="release_time" property="releaseTime"/>
+        <result column="deadline_time" property="deadlineTime"/>
+        <result column="upper_limit" property="upperLimit"/>
+        <result column="cooperate_mode" property="cooperateMode"/>
+        <result column="task_mode" property="taskMode"/>
+        <result column="create_date" property="createDate"/>
+        <result column="update_date" property="updateDate"/>
+        <result column="state" property="state"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id, merchant_id, invoice_id, task_name, release_data, task_desc, industry_type, task_cost_min, task_cost_max, task_skill, task_begin_time, task_end_time, upper_limit, cooperate_mode, task_mode, create_date, update_date, state
     </sql>
+
+
+    <sql id="task_list">
+       select task_code,task_name,release_date,industry_type,release_time,cooperate_mode,task_mode,state from tb_task
+    </sql>
+
+    <sql id="query">
+        WHERE 1=1
+        <if test="merchantId != null and merchantId != ''">
+            AND merchant_id = #{merchantId}
+        </if>
+        <if test="taskCode != null and taskCode != ''">
+            AND task_code LIKE CONCAT ('%',#{taskCode},'%')
+        </if>
+        <if test="taskName != null and taskName != ''">
+            AND task_name LIKE CONCAT ('%',#{taskName},'%')
+        </if>
+        <if test="cooperateMode != null and cooperateMode != ''">
+            AND cooperate_mode=#{cooperateMode}
+        </if>
+        <if test="releaseDate != null and releaseDate != ''">
+            AND release_date >= #{releaseDate}
+        </if>
+        <if test="deadlineDate != null and deadlineDate != ''">
+            AND deadline_date <![CDATA[<=]]> #{deadlineDate}
+        </if>
+        LIMIT #{start},#{pageSize}
+    </sql>
+
+    <select id="count" resultType="int">
+        select count(1) from tb_task
+        <include refid="query"/>
+    </select>
+
+    <select id="selectList" resultMap="BaseResultMap">
+        <include refid="task_list"/>
+        <include refid="query"/>
+    </select>
+
+    <delete id="delete">
+        DELETE FROM tb_task WHERE id=#{id}
+    </delete>
 
 </mapper>

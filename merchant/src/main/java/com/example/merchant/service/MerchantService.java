@@ -14,4 +14,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface MerchantService extends IService<Merchant> {
 
+    Merchant findByID(String id);
 }

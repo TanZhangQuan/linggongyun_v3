@@ -6,6 +6,8 @@ import com.example.merchant.service.MerchantService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
+
 /**
  * <p>
  * 商户信息
@@ -18,4 +20,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> implements MerchantService {
 
+    @Resource
+    private MerchantDao merchantDao;
+
+    @Override
+    public Merchant findByID(String id) {
+        return merchantDao.findByID(id);
+    }
 }
