@@ -1,11 +1,12 @@
 package com.example.mybatis.entity;
 
-import java.math.BigDecimal;
-import com.baomidou.mybatisplus.annotation.TableName;
-import java.time.LocalDateTime;
-import java.io.Serializable;
+import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 /**
  * <p>
@@ -14,7 +15,7 @@ import lombok.EqualsAndHashCode;
  * </p>
  *
  * @author hzp
- * @since 2020-09-07
+ * @since 2020-09-08
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -26,6 +27,7 @@ public class PaymentOrder implements Serializable {
     /**
      * 支付订单ID
      */
+    @TableId(value = "id", type = IdType.UUID)
     private String id;
 
     /**
@@ -64,7 +66,7 @@ public class PaymentOrder implements Serializable {
     private String turnkeyProjectPayment;
 
     /**
-     * 总包支付回单（存储位置）
+     * 分包支付回单（存储位置）
      */
     private String subpackagePayment;
 
@@ -106,11 +108,13 @@ public class PaymentOrder implements Serializable {
     /**
      * 支付订单的创建时间
      */
+    @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createDate;
 
     /**
      * 支付订单的修改时间
      */
+    @TableField(fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime updateDate;
 
 

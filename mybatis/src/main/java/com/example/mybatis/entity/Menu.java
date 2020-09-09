@@ -1,12 +1,11 @@
 package com.example.mybatis.entity;
 
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.annotation.IdType;
-import java.time.LocalDateTime;
-import com.baomidou.mybatisplus.annotation.TableId;
-import java.io.Serializable;
+import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import java.io.Serializable;
+import java.time.LocalDateTime;
 
 /**
  * <p>
@@ -39,15 +38,13 @@ public class Menu implements Serializable {
      */
     private String menuParent;
 
-    /**
-     * 创建时间
-     */
+    @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createDate;
 
     /**
-     * 修改时间
+     * 用户修改时间
      */
+    @TableField(fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime updateDate;
-
 
 }

@@ -1,7 +1,8 @@
 package com.example.merchant.service;
 
-import com.example.mybatis.entity.PaymentOrder;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.example.common.ReturnJson;
+import com.example.mybatis.entity.PaymentOrder;
 
 /**
  * <p>
@@ -13,5 +14,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @since 2020-09-07
  */
 public interface PaymentOrderService extends IService<PaymentOrder> {
-
+    ReturnJson getDay(String merchantId);
+    ReturnJson getWeek(String merchantId);
+    ReturnJson getMonth(String merchantId);
+    ReturnJson getYear(String merchantId);
 }

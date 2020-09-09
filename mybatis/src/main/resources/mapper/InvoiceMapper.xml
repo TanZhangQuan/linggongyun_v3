@@ -5,13 +5,16 @@
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.example.mybatis.entity.Invoice">
         <id column="id" property="id" />
+        <result column="merchants_id" property="merchantId" />
         <result column="merchants_name" property="merchantsName" />
+        <result column="invoice_money" property="invoiceMoney" />
         <result column="pay_code" property="payCode" />
         <result column="pay_detailed_account" property="payDetailedAccount" />
         <result column="gc_pay_receipt" property="gcPayReceipt" />
         <result column="c_payment_receipt" property="cPaymentReceipt" />
         <result column="gc_invoice" property="gcInvoice" />
         <result column="c_invoice" property="cInvoice" />
+        <result column="package_status" property="packageStatus" />
         <result column="state" property="state" />
         <result column="create_date" property="createDate" />
         <result column="update_date" property="updateDate" />
@@ -19,7 +22,22 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, merchants_name, pay_code, pay_detailed_account, gc_pay_receipt, c_payment_receipt, gc_invoice, c_invoice, state, create_date, update_date
+        id,merchants_id, merchants_name, invoice_money,pay_code, invoice_money,pay_detailed_account, gc_pay_receipt, c_payment_receipt, gc_invoice, c_invoice, package_status,state, create_date, update_date
     </sql>
+
+
+    <resultMap id="resultTotal" type="com.example.mybatis.po.InvoicePO">
+        <result column="package_status" property="packageStatus" />
+        <result column="total_money" property="totalMoney" />
+        <result column="count" property="count" />
+    </resultMap>
+    <!-- 查询商户的发票数量与总金额 -->
+    <select id="selectTotal" resultMap="resultTotal" parameterType="list">
+        select package_status ,SUM(invoice_money) 'total_money' , COUNT(*) 'count' FROM tb_invoice
+        WHERE merchant_id = #{merchantId}
+        GROUP BY package_status
+    </select>
+
+
 
 </mapper>
