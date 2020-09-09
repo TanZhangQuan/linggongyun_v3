@@ -21,10 +21,7 @@ public class CodeGenerator {
     private static final String author = "hzp";
     private static final String packageName = "com.example";
     private static final String moduleName = "merchant";
-    private static final String[] tableName = {"tb_agent", "tb_menu", "tb_merchant","tb_company_info","tb_industry",
-            "tb_invoice", "tb_merchant_role","tb_merchant_role_menu",
-            "tb_payment_inventory", "tb_payment_order", "tb_task", "tb_tax",
-            "tb_sales_man","tb_worker","tb_worker_task","tb_address"};
+    private static final String[] tableName = {"tb_payment_order","tb_payment_order_subpackage","tb_payment_order_many"};
     private static final String tablePrefix = "tb";
 
     public static void main(String[] args) {
@@ -60,7 +57,7 @@ public class CodeGenerator {
         gc.setServiceName("%sService");
         gc.setIdType(IdType.UUID);
         // 是否覆盖文件，默认false不覆盖
-        gc.setFileOverride(true);
+        gc.setFileOverride(false);
         // XML ResultMap
         gc.setBaseResultMap(true);
         // XML columList

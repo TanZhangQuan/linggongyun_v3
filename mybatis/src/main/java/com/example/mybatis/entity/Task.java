@@ -1,14 +1,13 @@
 package com.example.mybatis.entity;
 
-import java.math.BigDecimal;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.annotation.IdType;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import com.baomidou.mybatisplus.annotation.TableId;
-import java.io.Serializable;
+import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 /**
  * <p>
@@ -102,15 +101,16 @@ public class Task implements Serializable {
     private String taskMode;
 
     /**
-     * 创建时间
+     * 修改时间
      */
+    @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createDate;
 
     /**
      * 修改时间
      */
+    @TableField(fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime updateDate;
-
     /**
      * 任务状态
      */
