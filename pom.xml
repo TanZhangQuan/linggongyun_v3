@@ -27,7 +27,14 @@
         <freemarker.version>2.3.30</freemarker.version>
         <lombok.version>1.16.18</lombok.version>
         <generator.version>3.3.2</generator.version>
-        <spring.maven.version>2.3.3.RELEASE</spring.maven.version>
+        <fastjson.version>1.2.47</fastjson.version>
+        <commons.lang3.version>3.9</commons.lang3.version>
+        <commons.codec.version>1.11</commons.codec.version>
+        <springfox.swagger2.version>2.9.2</springfox.swagger2.version>
+        <springfox.swagger.ui.version>2.9.2</springfox.swagger.ui.version>
+        <jwt.version>0.6.0</jwt.version>
+        <gson.version>2.8.6</gson.version>
+        <validation.api.version>2.0.1.Final</validation.api.version>
     </properties>
 
     <dependencies>
@@ -64,7 +71,7 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <!-- mybatis-plus依赖 -->
+                <!-- mybatis-plus依赖 -->
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-boot-starter</artifactId>
@@ -98,6 +105,7 @@
             <artifactId>junit-platform-launcher</artifactId>
             <scope>test</scope>
         </dependency>
+<<<<<<< HEAD
         <!--   swagger2依赖-->
         <dependency>
             <groupId>io.springfox</groupId>
@@ -111,7 +119,59 @@
             <version>2.9.2</version>
         </dependency>
 
+=======
+>>>>>>> e313d3f739bfa1db8fe37f7b824cc242965cb147
     </dependencies>
+    <dependencyManagement>
+        <dependencies>
+
+            <!--数据json化 -->
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>fastjson</artifactId>
+                <version>${fastjson.version}</version>
+            </dependency>
+            <!--util -->
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${commons.lang3.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>commons-codec</groupId>
+                <artifactId>commons-codec</artifactId>
+                <version>${commons.codec.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-swagger2</artifactId>
+                <version>${springfox.swagger2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-swagger-ui</artifactId>
+                <version>${springfox.swagger.ui.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt</artifactId>
+                <version>${jwt.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.google.code.gson</groupId>
+                <artifactId>gson</artifactId>
+                <version>${gson.version}</version>
+            </dependency>
+            <!--dto依赖-->
+            <dependency>
+                <groupId>javax.validation</groupId>
+                <artifactId>validation-api</artifactId>
+                <version>${validation.api.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <!--    <build>-->
     <!--        <plugins>-->

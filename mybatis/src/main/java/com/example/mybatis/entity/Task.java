@@ -1,10 +1,14 @@
 package com.example.mybatis.entity;
 
+import com.baomidou.mybatisplus.annotation.*;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
+import java.io.Serializable;
 import java.math.BigDecimal;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.annotation.IdType;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+<<<<<<< HEAD
 import com.baomidou.mybatisplus.annotation.TableId;
 import java.io.Serializable;
 import java.util.List;
@@ -15,6 +19,8 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+=======
+>>>>>>> e313d3f739bfa1db8fe37f7b824cc242965cb147
 
 /**
  * <p>
@@ -138,17 +144,24 @@ public class Task implements Serializable {
     private String taskMode;
 
     /**
-     * 创建时间
+     * 修改时间
      */
+<<<<<<< HEAD
     @ApiModelProperty("创建时间")
+=======
+    @TableField(fill = FieldFill.INSERT)
+>>>>>>> e313d3f739bfa1db8fe37f7b824cc242965cb147
     private LocalDateTime createDate;
 
     /**
      * 修改时间
      */
+<<<<<<< HEAD
     @ApiModelProperty("修改时间")
+=======
+    @TableField(fill = FieldFill.INSERT_UPDATE)
+>>>>>>> e313d3f739bfa1db8fe37f7b824cc242965cb147
     private LocalDateTime updateDate;
-
     /**
      * 任务状态:0发布中,1已接单,2交付中,3已完毕,4已关闭
      */

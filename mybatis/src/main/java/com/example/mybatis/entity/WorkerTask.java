@@ -1,5 +1,6 @@
 package com.example.mybatis.entity;
 
+<<<<<<< HEAD
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 
@@ -11,8 +12,14 @@ import java.io.Serializable;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+=======
+import com.baomidou.mybatisplus.annotation.*;
+>>>>>>> e313d3f739bfa1db8fe37f7b824cc242965cb147
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import java.io.Serializable;
+import java.time.LocalDateTime;
 
 /**
  * <p>
@@ -43,10 +50,15 @@ public class WorkerTask implements Serializable {
     private Integer taskStatus;
 
     /**
-     * 接取任务时间
+     * 修改时间
      */
+    @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createDate;
 
+    /**
+     * 修改时间
+     */
+    @TableField(fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime updateDate;
 
     /**
