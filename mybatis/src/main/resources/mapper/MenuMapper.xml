@@ -4,11 +4,11 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.example.mybatis.entity.Menu">
-        <id column="id" property="id" />
-        <result column="menu_name" property="menuName" />
-        <result column="menu_parent" property="menuParent" />
-        <result column="create_date" property="createDate" />
-        <result column="update_date" property="updateDate" />
+        <id column="id" property="id"/>
+        <result column="menu_name" property="menuName"/>
+        <result column="menu_parent" property="menuParent"/>
+        <result column="create_date" property="createDate"/>
+        <result column="update_date" property="updateDate"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
@@ -16,4 +16,21 @@
         id, menu_name, menu_parent, create_date, update_date
     </sql>
 
+    <resultMap id="MenuList" type="com.example.mybatis.vo.MenuListVo">
+        <id column="id" property="id"/>
+        <result column="menu_name" property="menuName"/>
+        <result column="menu_zhname" property="menuZhname"/>
+        <collection property="list" ofType="com.example.mybatis.entity.Menu">
+            <id column="ids" property="id"/>
+            <result column="name" property="menuName"/>
+            <result column="zhname" property="menuZhname"/>
+        </collection>
+    </resultMap>
+
+    <select id="getMenuList" resultMap="MenuList">
+        SELECT me.id,me.menu_name,me.menu_zhname,mes.id as ids,mes.menu_name as name,mes.menu_zhname as zhname
+        FROM tb_menu me LEFT JOIN tb_menu mes ON me.id=mes.menu_parent
+        WHERE me.menu_parent is NULL
+        order by me.id ASC
+    </select>
 </mapper>

@@ -1,7 +1,10 @@
 package com.example.mybatis.mapper;
 
+import com.example.mybatis.dto.WorkerTaskDto;
 import com.example.mybatis.entity.WorkerTask;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,4 +16,12 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface WorkerTaskDao extends BaseMapper<WorkerTask> {
 
+    //派单给指定的创客
+    int addWorkerTask(WorkerTask workerTask);
+
+    //剔除创客
+    int eliminateWorker(String workerId);
+
+    //修改验收金额
+    int updateCheckMoney(Double money,String id);
 }

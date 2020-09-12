@@ -25,4 +25,21 @@
         id, company_id,company_name, role_id, user_name, pay_pwd, real_name, pass_word, sales_man_id, agent_id, login_mobile, status, create_date, update_date
     </sql>
 
+
+    <select id="findByID" resultMap="BaseResultMap">
+        select * from tb_merchant where id=#{id}
+    </select>
+
+    <resultMap id="IdAndName" type="com.example.mybatis.vo.MerchantListVo">
+        <id column="id" property="id" />
+        <result column="company_name" property="companyName" />
+    </resultMap>
+
+    <select id="getIdAndName" resultMap="IdAndName">
+        select id,company_name from tb_merchant
+    </select>
+
+    <select id="getNameById" resultType="java.lang.String">
+        SELECT company_name FROM tb_merchant WHERE id=#{id}
+    </select>
 </mapper>

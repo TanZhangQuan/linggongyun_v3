@@ -1,5 +1,8 @@
 package com.example.merchant.service.impl;
 
+<<<<<<< HEAD
+import com.example.common.util.ReturnJson;
+=======
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.common.JsonUtils;
@@ -7,6 +10,7 @@ import com.example.common.MD5;
 import com.example.common.ReturnJson;
 import com.example.common.sms.SenSMS;
 import com.example.merchant.service.MerchantService;
+>>>>>>> e313d3f739bfa1db8fe37f7b824cc242965cb147
 import com.example.mybatis.entity.Merchant;
 import com.example.mybatis.entity.MerchantRole;
 import com.example.mybatis.mapper.MerchantDao;
@@ -17,16 +21,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+<<<<<<< HEAD
+import javax.annotation.Resource;
+import java.util.List;
+=======
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import java.util.Map;
+>>>>>>> e313d3f739bfa1db8fe37f7b824cc242965cb147
 
 /**
  * <p>
  * 商户信息
- 服务实现类
+ * 服务实现类
  * </p>
  *
  * @author hzp
@@ -175,4 +184,26 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
     }
 
 
+    @Resource
+    private MerchantDao merchantDao;
+
+    @Override
+    public Merchant findByID(String id) {
+        return merchantDao.findByID(id);
+    }
+
+    @Override
+    public ReturnJson getIdAndName() {
+        ReturnJson returnJson = new ReturnJson("查询失败", 300);
+        List<Merchant> list = merchantDao.getIdAndName();
+        if (list != null && list.size() > 0) {
+            returnJson = new ReturnJson("查询成功", list, 200);
+        }
+        return returnJson;
+    }
+
+    @Override
+    public String getNameById(String id) {
+        return merchantDao.getNameById(id);
+    }
 }

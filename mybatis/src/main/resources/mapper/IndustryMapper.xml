@@ -4,17 +4,25 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.example.mybatis.entity.Industry">
-        <id column="
-id" property="
-id" />
-        <result column="industry_type" property="industryType" />
-        <result column="one_level" property="oneLevel" />
+        <id column="id" property="id"/>
+        <result column="industry_type" property="industryType"/>
+        <result column="one_level" property="oneLevel"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        
-id, industry_type, one_level
+        id, industry_type, one_level
     </sql>
+
+    <select id="getlist" resultMap="BaseResultMap">
+        SELECT * FROM tb_industry 
+        WHERE 1=1
+        <if test="oneLevel == null">
+           and one_level is NULL
+        </if>
+        <if test="oneLevel != null and oneLevel != ''">
+           and one_level = #{oneLevel}
+        </if>
+    </select>
 
 </mapper>
