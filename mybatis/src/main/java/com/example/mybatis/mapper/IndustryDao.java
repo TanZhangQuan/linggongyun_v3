@@ -1,6 +1,5 @@
 package com.example.mybatis.mapper;
 
-import com.example.common.util.PageData;
 import com.example.mybatis.entity.Industry;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
@@ -16,5 +15,5 @@ import java.util.List;
  */
 public interface IndustryDao extends BaseMapper<Industry> {
 
-    List<Industry> getlist(PageData pageData);
+    List<Industry> getlist(String oneLevel);
 }

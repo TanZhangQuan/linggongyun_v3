@@ -30,9 +30,14 @@ public class Menu implements Serializable {
     private String id;
 
     /**
-     * 菜单的名称
+     * 菜单的英文名称
      */
     private String menuName;
+
+    /**
+     * 菜单的中文名称
+     */
+    private String menuZhname;
 
     /**
      * 菜单的父菜单

@@ -1,6 +1,6 @@
 package com.example.merchant.service;
 
-import com.example.common.util.PageData;
+import com.example.common.util.ReturnJson;
 import com.example.mybatis.entity.Industry;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -16,5 +16,5 @@ import java.util.List;
  */
 public interface IndustryService extends IService<Industry> {
 
-    List<Industry> getlist(PageData pageData);
+    ReturnJson getlist(String oneLevel);
 }

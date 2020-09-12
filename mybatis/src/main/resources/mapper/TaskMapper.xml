@@ -36,6 +36,7 @@
        select task_code,task_name,release_date,industry_type,release_time,cooperate_mode,task_mode,state from tb_task
     </sql>
 
+    <!--查询参数-->
     <sql id="query">
         WHERE 1=1
         <if test="merchantId != null and merchantId != ''">
@@ -56,21 +57,89 @@
         <if test="deadlineDate != null and deadlineDate != ''">
             AND deadline_date <![CDATA[<=]]> #{deadlineDate}
         </if>
-        LIMIT #{start},#{pageSize}
     </sql>
 
+    <!--查询总条数/* LIMIT #{currPage},#{pageSize}*/-->
     <select id="count" resultType="int">
         select count(1) from tb_task
         <include refid="query"/>
     </select>
 
+    <!--查询所有的任务列表-->
     <select id="selectList" resultMap="BaseResultMap">
         <include refid="task_list"/>
         <include refid="query"/>
     </select>
 
+    <!--删除任务信息-->
     <delete id="delete">
         DELETE FROM tb_task WHERE id=#{id}
     </delete>
 
+
+    <!--添加任务详情-->
+    <insert id="addTask" parameterType="com.example.mybatis.dto.TaskDto">
+        INSERT INTO tb_task (id,merchant_id,invoice_id,task_name,task_code,
+        release_date,deadline_date,task_desc,industry_type,task_cost_min,
+        task_cost_max,task_skill,release_time,deadline_time,upper_limit,cooperate_mode,task_mode,state)
+        VALUES (#{id},#{merchantId},#{invoiceId},#{taskName},#{taskCode}
+        ,#{releaseDate},#{deadlineDate},#{taskDesc},#{industryType},#{taskCostMin},
+        #{taskCostMax},#{taskSkill},#{releaseTime},#{deadlineTime},#{upperLimit},#{cooperateMode},#{taskMode},#{state})
+    </insert>
+
+    <!--根据任务id查询任务详情-->
+    <select id="setTaskById" resultMap="BaseResultMap">
+        SELECT task_code,task_name,task_desc,industry_type,task_cost_min,task_cost_max,task_skill,release_date,deadline_date,upper_limit,cooperate_mode,task_mode,state,create_date
+        FROM tb_task where id=#{id}
+    </select>
+
+    <select id="getTaskCode" resultType="java.lang.String">
+        select task_code from tb_task
+        where create_date in
+        (select MAX(create_date) from tb_task)
+    </select>
+
+    <update id="closeTask">
+        UPDATE tb_task SET state=1
+        WHERE id=#{taskId}
+    </update>
+
+    <update id="openTask">
+        UPDATE tb_task SET state=1
+        WHERE id=#{taskId}
+    </update>
+
+
+
+
+    <resultMap id="PlatformTaskList" type="com.example.mybatis.vo.PlatformTaskListVo">
+        <id column="id" property="id"/>
+        <result column="task_code" property="taskCode"/>
+        <result column="merchant_name" property="merchantName"/>
+        <result column="task_name" property="taskName"/>
+        <result column="release_data" property="releaseData"/>
+        <result column="industry_type" property="industryType"/>
+        <result column="task_skill" property="taskSkill"/>
+        <result column="release_time" property="releaseTime"/>
+        <result column="cooperate_mode" property="cooperateMode"/>
+        <result column="task_mode" property="taskMode"/>
+    </resultMap>
+
+    <select id="getPlatformTaskList" resultMap="PlatformTaskList">
+        SELECT task_code,
+        (SELECT company_name FROM tb_merchant WHERE id=merchant_id) as merchant_name,
+        task_name,release_date,industry_type,release_time,cooperate_mode,task_mode,state
+        FROM tb_task
+        <include refid="query"/>
+    </select>
+
+    <insert id="addPlatformTask" parameterType="com.example.mybatis.dto.TaskDto">
+
+        INSERT INTO tb_task (id,merchant_id,invoice_id,task_name,task_code,
+        release_date,deadline_date,task_desc,industry_type,task_cost_min,
+        task_cost_max,task_skill,release_time,deadline_time,upper_limit,cooperate_mode,task_mode,state)
+        VALUES (#{id},#{merchantId},#{invoiceId},#{taskName},#{taskCode}
+        ,#{releaseDate},#{deadlineDate},#{taskDesc},#{industryType},#{taskCostMin},
+        #{taskCostMax},#{taskSkill},#{releaseTime},#{deadlineTime},#{upperLimit},#{cooperateMode},#{taskMode},#{state})
+    </insert>
 </mapper>

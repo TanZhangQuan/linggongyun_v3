@@ -7,7 +7,10 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import com.baomidou.mybatisplus.annotation.TableId;
 import java.io.Serializable;
+import java.util.List;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -33,7 +36,8 @@ public class Task implements Serializable {
      * 任务id
      */
     @ApiModelProperty("任务id")
-    @TableId(value = "id", type = IdType.UUID)
+    @TableId(value = "id", type = IdType.ASSIGN_ID)
+    @JsonSerialize(using = ToStringSerializer.class)
     private String id;
 
     /**
@@ -82,8 +86,8 @@ public class Task implements Serializable {
     /**
      * 行业id
      */
-    @ApiModelProperty("行业id")
-    private Integer industryType;
+    @ApiModelProperty("行业类型")
+    private String industryType;
 
     /**
      * 最小费用
@@ -146,10 +150,11 @@ public class Task implements Serializable {
     private LocalDateTime updateDate;
 
     /**
-     * 任务状态
+     * 任务状态:0发布中,1已接单,2交付中,3已完毕,4已关闭
      */
     @ApiModelProperty("任务状态")
     private String state;
+
 
 
 }

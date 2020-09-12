@@ -17,4 +17,16 @@
         id, worker_id, task_id, task_status, create_date, update_date
     </sql>
 
+    <insert id="addWorkerTask" parameterType="com.example.mybatis.entity.WorkerTask">
+        INSERT INTO tb_worker_task (id,worker_id,task_id,get_type,arrange_person,create_date) VALUES (#{id},#{workerId},#{taskId},#{getType},#{arrangePerson},now())
+    </insert>
+
+    <update id="eliminateWorker">
+        UPDATE tb_worker_task SET task_status='1' WHERE worker_id=#{workerId}
+    </update>
+
+    <update id="updateCheckMoney">
+        UPDATE tb_worker_task SET check_money=#{money}
+        WHERE id=#{id}
+    </update>
 </mapper>

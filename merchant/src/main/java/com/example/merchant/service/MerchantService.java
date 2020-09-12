@@ -1,7 +1,10 @@
 package com.example.merchant.service;
 
+import com.example.common.util.ReturnJson;
 import com.example.mybatis.entity.Merchant;
 import com.baomidou.mybatisplus.extension.service.IService;
+
+import java.util.List;
 
 /**
  * <p>
@@ -15,4 +18,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
 public interface MerchantService extends IService<Merchant> {
 
     Merchant findByID(String id);
+
+    ReturnJson getIdAndName();
+
+    String getNameById(String id);
 }

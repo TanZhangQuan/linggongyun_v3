@@ -27,9 +27,42 @@
         <result column="update_date" property="updateDate" />
     </resultMap>
 
+
+    <resultMap id="WorkerPo" type="com.example.mybatis.po.WorkerPo">
+        <id column="id" property="wId" />
+        <result column="worker_name" property="workerName" />
+        <result column="mobile_code" property="mobileCode" />
+        <result column="idcard_code" property="idcardCode" />
+        <result column="attestation" property="attestation" />
+        <result column="agreementUrl" property="agreementUrl" />
+        <result column="create_date" property="createDate" />
+    </resultMap>
+
+    <resultMap id="WorkerPos" type="com.example.mybatis.po.WorkerPo">
+        <id column="id" property="wId" />
+        <result column="worker_name" property="workerName" />
+        <result column="mobile_code" property="mobileCode" />
+        <result column="idcard_code" property="idcardCode" />
+        <result column="attestation" property="attestation" />
+        <result column="agreementUrl" property="agreementUrl" />
+        <result column="create_date" property="createDate" />
+    </resultMap>
+
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id, merchant_id, worker_name, account_name, worker_sex, mobile_code, idcard_code, bank_code, attestation, idcardFront, idcardBack, attestation_video, user_name, user_pwd, skill, agreementSign, agreementUrl, head_portraits, picture, create_date, update_date
     </sql>
+
+
+    <select id="getWorkerByTaskId" resultMap="WorkerPo">
+        SELECT w.id,w.worker_name,w.mobile_code,w.idcard_code,w.attestation,w.agreementUrl,wt.create_date FROM tb_worker_task as wt,tb_worker as w
+        WHERE wt.worker_id=w.id AND wt.task_id=#{taskId}
+    </select>
+
+    <select id="getCheckByTaskId" resultMap="WorkerPos">
+        SELECT w.id,w.worker_name,w.mobile_code,w.idcard_code,w.attestation,w.agreementUrl,wt.achievement_date,wt.achievement_desc,wt.achievement_files
+        FROM tb_worker_task as wt,tb_worker as w
+        WHERE wt.worker_id=w.id AND wt.task_id=#{taskId}
+    </select>
 
 </mapper>

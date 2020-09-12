@@ -1,11 +1,13 @@
 package com.example.merchant.service;
 
-import com.example.common.util.PageData;
+import com.example.common.util.ReturnJson;
+import com.example.mybatis.dto.TaskDto;
+import com.example.mybatis.dto.TaskListDto;
 import com.example.mybatis.entity.Task;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.apache.ibatis.session.RowBounds;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * <p>
@@ -17,9 +19,25 @@ import java.util.Map;
  */
 public interface TaskService extends IService<Task> {
 
-    List<Task> selectList(PageData pageData);
 
-    int count(PageData pageData);
+    int count(TaskListDto taskListDto);
 
-    int delete (PageData pageData);
+    ReturnJson selectList(TaskListDto taskListDto, RowBounds rowBounds);
+
+    ReturnJson delete (Integer state,String id);
+
+    ReturnJson saveTask(TaskDto taskDto);
+
+    ReturnJson setTaskById(String id);
+
+    String getTaskCode();
+
+    ReturnJson close(Integer state,String taskId);
+
+    ReturnJson openTask(Integer state,String taskId);
+
+    ReturnJson getPlatformTaskList(TaskListDto taskListDto);
+
+    ReturnJson savePlatformTask(TaskDto taskDto);
+
 }
