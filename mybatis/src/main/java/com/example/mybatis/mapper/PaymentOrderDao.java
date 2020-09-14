@@ -2,6 +2,7 @@ package com.example.mybatis.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.example.mybatis.entity.PaymentOrder;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -22,4 +23,6 @@ public interface PaymentOrderDao extends BaseMapper<PaymentOrder> {
     List<PaymentOrder> selectWeek(String merchantId);
     List<PaymentOrder> selectMonth(String merchantId);
     List<PaymentOrder> selectYear(String merchantId);
+    List<PaymentOrder> selectMany(@Param("merchantId")String mercahntId, @Param("id") String id, @Param("taxId") String taxId, @Param("beginDate") String beginDate, @Param("endDate") String endDate,@Param("page") Integer page, @Param("pageSize")Integer pageSize);
+    Integer selectManyCount(@Param("merchantId")String mercahntId, @Param("id") String id, @Param("taxId") String taxId, @Param("beginDate") String beginDate, @Param("endDate") String endDate);
 }

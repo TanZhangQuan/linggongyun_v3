@@ -1,12 +1,13 @@
 package com.example.merchant.exception;
 
-import com.example.common.ReturnJson;
+import com.example.common.util.ReturnJson;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.validation.ConstraintViolationException;
+import java.io.IOException;
 
 /**
  * 自定义的公共异常处理器
@@ -49,6 +50,12 @@ public class BaseExceptionHandler {
     @ExceptionHandler(CommonException.class)
     public ReturnJson exceptionHandler(CommonException e) {
         return ReturnJson.error(Integer.valueOf(e.getResponseCode()),e.getResponseMsg());
+    }
+
+    @ResponseBody
+    @ExceptionHandler(IOException.class)
+    public ReturnJson exceptionHandler(IOException e){
+        return ReturnJson.error("文件上传失败！");
     }
 
     //处理非以上异常问题

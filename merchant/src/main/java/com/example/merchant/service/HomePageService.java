@@ -1,6 +1,6 @@
 package com.example.merchant.service;
 
-import com.example.common.ReturnJson;
+import com.example.common.util.ReturnJson;
 
 public interface HomePageService {
     ReturnJson getHomePageInof(String merchantId);

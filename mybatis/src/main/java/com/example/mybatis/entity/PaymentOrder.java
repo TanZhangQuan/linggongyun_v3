@@ -27,7 +27,7 @@ public class PaymentOrder implements Serializable {
     /**
      * 支付订单ID
      */
-    @TableId(value = "id", type = IdType.UUID)
+    @TableId(value = "id", type = IdType.ASSIGN_ID)
     private String id;
 
     /**
@@ -44,6 +44,11 @@ public class PaymentOrder implements Serializable {
      * 支付金额
      */
     private BigDecimal realMoney;
+
+    /**
+     * 平台服务商ID
+     */
+    private String taxId;
 
     /**
      * 平台服务商
@@ -79,6 +84,11 @@ public class PaymentOrder implements Serializable {
      * 支付验收单（存储位置）
      */
     private String acceptanceCertificate;
+
+    /**
+     * 0商户承担，1创客承担，2商户创客共同承担
+     */
+    private Integer taxStatus;
 
     /**
      * 综合税率(综合税率=商户承担的税率+创客承担的税率)

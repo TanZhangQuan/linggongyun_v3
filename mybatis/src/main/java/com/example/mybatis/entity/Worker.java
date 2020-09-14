@@ -1,18 +1,8 @@
 package com.example.mybatis.entity;
 
-<<<<<<< HEAD
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.annotation.IdType;
-import java.time.LocalDateTime;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableField;
-import java.io.Serializable;
-
+import com.baomidou.mybatisplus.annotation.*;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
-=======
-import com.baomidou.mybatisplus.annotation.*;
->>>>>>> e313d3f739bfa1db8fe37f7b824cc242965cb147
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

@@ -10,6 +10,7 @@
         <result column="worker_name" property="workerName" />
         <result column="mobile_code" property="mobileCode" />
         <result column="id_card_code" property="idCardCode" />
+        <result column="bank_name" property="bankName" />
         <result column="bank_code" property="bankCode" />
         <result column="real_money" property="realMoney" />
         <result column="service_money" property="serviceMoney" />
@@ -22,7 +23,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, payment_order_id, worker_id, worker_name, mobile_code, id_card_code, bank_code, real_money, service_money, composite_tax, merchant_payment_money, attestation, create_date, update_date
+        id, payment_order_id, worker_id, worker_name, mobile_code, id_card_code, bank_name, bank_code, real_money, service_money, composite_tax, merchant_payment_money, attestation, create_date, update_date
     </sql>
 
 </mapper>

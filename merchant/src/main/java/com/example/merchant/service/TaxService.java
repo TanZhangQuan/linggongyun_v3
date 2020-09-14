@@ -1,5 +1,6 @@
 package com.example.merchant.service;
 
+import com.example.common.util.ReturnJson;
 import com.example.mybatis.entity.Tax;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -12,5 +13,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @since 2020-09-07
  */
 public interface TaxService extends IService<Tax> {
-
+    ReturnJson getTaxAll(String merchantId);
 }

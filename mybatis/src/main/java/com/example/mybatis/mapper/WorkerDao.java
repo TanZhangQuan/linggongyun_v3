@@ -6,6 +6,9 @@ import com.example.mybatis.po.WorkerPo;
 import org.apache.ibatis.session.RowBounds;
 
 import java.util.List;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * <p>
@@ -31,4 +34,5 @@ public interface WorkerDao extends BaseMapper<Worker> {
      */
     List<WorkerPo> getCheckByTaskId(String taskId,RowBounds rowBounds);
 
+    List<Worker> selectByIdAndAccountNameAndMobile(@Param("merchantId") String merchantId, @Param("id") String id, @Param("accountName")String accountName, @Param("mobileCode") String mobileCode);
 }

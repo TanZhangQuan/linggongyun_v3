@@ -27,7 +27,7 @@ public class PaymentOrderSubpackage implements Serializable {
     /**
      * 支付订单ID
      */
-    @TableId(value = "id", type = IdType.UUID)
+    @TableId(value = "id", type = IdType.ASSIGN_ID)
     private String id;
 
     /**
@@ -50,6 +50,10 @@ public class PaymentOrderSubpackage implements Serializable {
      */
     private BigDecimal realMoney;
 
+    /**
+     * 平台服务商ID
+     */
+    private String taxId;
     /**
      * 平台服务商
      */

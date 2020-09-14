@@ -27,7 +27,7 @@ public class PaymentInventory implements Serializable {
     /**
      * 支付清单ID
      */
-    @TableId(value = "id", type = IdType.UUID)
+    @TableId(value = "id", type = IdType.ASSIGN_ID)
     private String id;
 
     /**
@@ -56,6 +56,10 @@ public class PaymentInventory implements Serializable {
     private String idCardCode;
 
     /**
+     * 银行名称
+     */
+    private String bankName;
+    /**
      * 创客的银行账号
      */
     private String bankCode;
@@ -68,7 +72,7 @@ public class PaymentInventory implements Serializable {
     /**
      * 服务费
      */
-    private Integer serviceMoney;
+    private BigDecimal serviceMoney;
 
     /**
      * 综合税率

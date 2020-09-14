@@ -25,7 +25,7 @@ public class SalesMan implements Serializable {
     /**
      * 业务员ID
      */
-    @TableId(value = "id", type = IdType.UUID)
+    @TableId(value = "id", type = IdType.ASSIGN_ID)
     private String id;
 
     /**
