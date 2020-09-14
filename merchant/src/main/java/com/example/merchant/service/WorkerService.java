@@ -1,14 +1,8 @@
 package com.example.merchant.service;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.common.util.ReturnJson;
 import com.example.mybatis.entity.Worker;
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.example.common.ReturnJson;
-import com.example.mybatis.entity.Worker;
-
-import java.util.List;
-import com.example.mybatis.po.WorkerPo;
-import org.apache.ibatis.session.RowBounds;
 
 import java.util.List;
 
@@ -25,8 +19,6 @@ public interface WorkerService extends IService<Worker> {
     ReturnJson getByIdAndAccountNameAndMobile(String merchantId, String id, String accountName, String mobileCode);
     ReturnJson getWorkerInfo(String id);
     ReturnJson saveWorker(List<Worker> workers,String merchantId);
-
     ReturnJson getWorkerByTaskId(String taskId, Integer offset);
-
     ReturnJson getCheckByTaskId(String taskId, Integer offset);
 }

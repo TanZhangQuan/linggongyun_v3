@@ -12,17 +12,6 @@ spring:
     max-wait: 100000
     timeBetweenEvictionRunsMillis: 60000
     minEvictableIdleTimeMillis: 300000
-<<<<<<< HEAD
-    #  �Ƿ񻺴�preparedStatement��Ҳ����PSCache��PSCache��֧���α�����ݿ����������޴󣬱���˵oracle����mysql�½���رա�
-    pool-prepared-statements: true
-    # Ҫ����PSCache���������ô���0��������0ʱ��poolPreparedStatements�Զ������޸�Ϊtrue����Druid�У��������Oracle��PSCacheռ���ڴ��������⣬���԰������ֵ���ô�һЩ������˵100
-    max-open-prepared-statements: 100
-    validation-query: select 1 from dual
-    validation-query-timeout: 100000
-    # ��������ʱִ��validationQuery��������Ƿ���Ч������������ûή�����ܡ� ����false
-    test-on-borrow: false
-    # �黹����ʱִ��validationQuery��������Ƿ���Ч������������ûή������ ������false
-=======
     #  是否缓存preparedStatement，也就是PSCache。PSCache对支持游标的数据库性能提升巨大，比如说oracle。在mysql下建议关闭。
     pool-prepared-statements: true
     # 要启用PSCache，必须配置大于0，当大于0时，poolPreparedStatements自动触发修改为true。在Druid中，不会存在Oracle下PSCache占用内存过多的问题，可以把这个数值配置大一些，比如说100
@@ -32,7 +21,6 @@ spring:
     # 申请连接时执行validationQuery检测连接是否有效，做了这个配置会降低性能。 建议false
     test-on-borrow: false
     # 归还连接时执行validationQuery检测连接是否有效，做了这个配置会降低性能 ，建议false
->>>>>>> e313d3f739bfa1db8fe37f7b824cc242965cb147
     test-on-return: false
     test-while-idle: true
     max-pool-prepared-statement-per-connection-size: 20
@@ -54,19 +42,11 @@ mybatis-plus:
   type-aliases-package: classpath*:com.example.mybatis.entity
 
   global-config:
-<<<<<<< HEAD
-    # �߼�ɾ������
-    db-config:
-      # ɾ��ǰ
-      logic-not-delete-value: 1
-      # ɾ����
-=======
     # 逻辑删除配置
     db-config:
       # 删除前
       logic-not-delete-value: 1
       # 删除后
->>>>>>> e313d3f739bfa1db8fe37f7b824cc242965cb147
       logic-delete-value: 0
 
 #

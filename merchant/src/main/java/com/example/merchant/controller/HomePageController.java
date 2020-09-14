@@ -1,6 +1,6 @@
 package com.example.merchant.controller;
 
-import com.example.common.ReturnJson;
+import com.example.common.util.ReturnJson;
 import com.example.merchant.service.HomePageService;
 import com.example.merchant.service.PaymentOrderManyService;
 import com.example.merchant.service.PaymentOrderService;

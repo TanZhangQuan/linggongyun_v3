@@ -1,10 +1,10 @@
 package com.example.merchant.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.example.common.ExcelResponseUtils;
-import com.example.common.MD5;
-import com.example.common.ReturnJson;
-import com.example.common.UuidUtil;
+import com.example.common.util.ExcelResponseUtils;
+import com.example.common.util.MD5;
+import com.example.common.util.ReturnJson;
+import com.example.common.util.UuidUtil;
 import com.example.merchant.service.FileOperationService;
 import com.example.mybatis.entity.PaymentInventory;
 import com.example.mybatis.entity.Worker;

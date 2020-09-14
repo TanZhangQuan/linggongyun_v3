@@ -1,6 +1,6 @@
 package com.example.merchant.exception;
 
-import com.example.common.ReturnJson;
+import com.example.common.util.ReturnJson;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;

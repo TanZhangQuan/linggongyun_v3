@@ -1,6 +1,6 @@
 package com.example.merchant.service;
 
-import com.example.common.ReturnJson;
+import com.example.common.util.ReturnJson;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 

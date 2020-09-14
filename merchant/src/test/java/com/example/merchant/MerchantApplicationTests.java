@@ -2,8 +2,8 @@ package com.example.merchant;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.example.common.ReturnJson;
 import com.example.common.sms.SenSMS;
+import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.PaymentOrderDto;
 import com.example.merchant.service.InvoiceService;
 import com.example.merchant.service.PaymentOrderService;

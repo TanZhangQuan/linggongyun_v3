@@ -1,6 +1,6 @@
 package com.example.common.sms;
 
-import com.example.common.Tools;
+import com.example.common.util.Tools;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 

@@ -1,7 +1,7 @@
 package com.example.merchant.controller;
 
 
-import com.example.common.ReturnJson;
+import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.PaymentOrderDto;
 import com.example.merchant.service.PaymentOrderService;
 import com.example.mybatis.entity.PaymentInventory;

@@ -1,7 +1,7 @@
 package com.example.merchant.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.example.common.ReturnJson;
+import com.example.common.util.ReturnJson;
 import com.example.merchant.ov.HomePageOV;
 import com.example.merchant.service.HomePageService;
 import com.example.mybatis.entity.MerchantWorker;

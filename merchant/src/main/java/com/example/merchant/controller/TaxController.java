@@ -1,7 +1,7 @@
 package com.example.merchant.controller;
 
 
-import com.example.common.ReturnJson;
+import com.example.common.util.ReturnJson;
 import com.example.merchant.service.TaxService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;

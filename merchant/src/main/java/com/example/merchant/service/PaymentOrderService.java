@@ -1,7 +1,7 @@
 package com.example.merchant.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.example.common.ReturnJson;
+import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.PaymentOrderDto;
 import com.example.mybatis.entity.PaymentInventory;
 import com.example.mybatis.entity.PaymentOrder;

@@ -1,10 +1,10 @@
-package com.example.common;
-
-import java.util.List;
+package com.example.common.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.util.List;
 
 /**
  * JSON转换工具类

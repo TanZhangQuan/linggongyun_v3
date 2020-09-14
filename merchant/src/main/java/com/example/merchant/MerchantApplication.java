@@ -10,7 +10,6 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 @SpringBootApplication
 @MapperScan(value = {"com.example.mybatis.mapper"})
-@EnableSwagger2
 public class MerchantApplication {
 
 	public static void main(String[] args) {

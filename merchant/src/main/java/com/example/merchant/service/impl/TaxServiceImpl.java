@@ -2,7 +2,7 @@ package com.example.merchant.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.example.common.ReturnJson;
+import com.example.common.util.ReturnJson;
 import com.example.merchant.service.TaxService;
 import com.example.mybatis.entity.MerchantTax;
 import com.example.mybatis.entity.Tax;

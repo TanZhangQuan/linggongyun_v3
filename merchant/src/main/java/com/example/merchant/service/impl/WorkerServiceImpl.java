@@ -3,29 +3,23 @@ package com.example.merchant.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.example.common.ReturnJson;
+import com.example.common.util.ReturnJson;
 import com.example.merchant.service.MerchantWorkerService;
 import com.example.merchant.service.TaskService;
 import com.example.merchant.service.WorkerService;
 import com.example.merchant.service.WorkerTaskService;
 import com.example.mybatis.entity.MerchantWorker;
-import com.example.common.util.ReturnJson;
 import com.example.mybatis.entity.Worker;
 import com.example.mybatis.entity.WorkerTask;
 import com.example.mybatis.mapper.MerchantWorkerDao;
 import com.example.mybatis.mapper.WorkerDao;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import com.example.merchant.service.WorkerService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.mybatis.po.WorkerPo;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.RowBounds;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.Resource;
 import java.util.List;
 
 /**
