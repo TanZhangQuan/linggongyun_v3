@@ -1,7 +1,12 @@
 package com.example.merchant.service;
 
+import com.example.common.util.ReturnJson;
+import com.example.mybatis.dto.WorkerTaskDto;
 import com.example.mybatis.entity.WorkerTask;
 import com.baomidou.mybatisplus.extension.service.IService;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -12,5 +17,27 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @since 2020-09-07
  */
 public interface WorkerTaskService extends IService<WorkerTask> {
+
+    /**
+     * 派单给指定创客
+     * @param map
+     * @return
+     */
+    ReturnJson seavWorkerTask(Map map);
+
+    /**
+     * 剔除用户,判断任务是否为发布中或已接单
+     * @param workerId
+     * @return
+     */
+    ReturnJson eliminateWorker(Integer state,String workerId);
+
+    /**
+     * 修改验收金额
+     * @param money
+     * @return
+     */
+    ReturnJson updateCheckMoney(Double money,String id);
+
 
 }

@@ -1,5 +1,6 @@
 package com.example.merchant.service;
 
+import com.example.common.util.ReturnJson;
 import com.example.mybatis.entity.Menu;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -13,4 +14,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface MenuService extends IService<Menu> {
 
+    ReturnJson getMenuList();
 }

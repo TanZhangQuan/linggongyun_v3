@@ -2,6 +2,10 @@ package com.example.mybatis.mapper;
 
 import com.example.mybatis.entity.Worker;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.example.mybatis.po.WorkerPo;
+import org.apache.ibatis.session.RowBounds;
+
+import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -15,5 +19,20 @@ import java.util.List;
  * @since 2020-09-07
  */
 public interface WorkerDao extends BaseMapper<Worker> {
+
+    /**
+     * 已接单创客明细
+     * @return
+     */
+    List<WorkerPo> getWorkerByTaskId(String taskId,RowBounds rowBounds);
+
+    /**
+     * 验收已接单创客明细
+     * @param taskId
+     * @param rowBounds
+     * @return
+     */
+    List<WorkerPo> getCheckByTaskId(String taskId,RowBounds rowBounds);
+
     List<Worker> selectByIdAndAccountNameAndMobile(@Param("merchantId") String merchantId, @Param("id") String id, @Param("accountName")String accountName, @Param("mobileCode") String mobileCode);
 }
