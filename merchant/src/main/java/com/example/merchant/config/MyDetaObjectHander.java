@@ -7,11 +7,10 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Component
 @Slf4j
-@ComponentScan(value = {"com.example.redis.dao", "com.example.common.*"})
+@ComponentScan(value = {"com.example.redis.dao", "com.example.common.*","com.example.mybatis.*"})
 public class MyDetaObjectHander implements MetaObjectHandler {
     @Override
     public void insertFill(MetaObject metaObject) {
@@ -24,8 +23,7 @@ public class MyDetaObjectHander implements MetaObjectHandler {
     @Override
     public void updateFill(MetaObject metaObject) {
         log.info("come to update fill .......");
-
-        this.setFieldValByName("updateDate",new Date(),metaObject);
+        this.setFieldValByName("updateDate",LocalDateTime.now(),metaObject);
 
     }
 }

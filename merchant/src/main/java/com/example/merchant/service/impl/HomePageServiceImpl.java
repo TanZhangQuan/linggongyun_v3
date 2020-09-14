@@ -4,11 +4,8 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.example.common.ReturnJson;
 import com.example.merchant.ov.HomePageOV;
 import com.example.merchant.service.HomePageService;
-import com.example.mybatis.entity.Worker;
-import com.example.mybatis.mapper.InvoiceDao;
-import com.example.mybatis.mapper.PaymentOrderDao;
-import com.example.mybatis.mapper.PaymentOrderManyDao;
-import com.example.mybatis.mapper.WorkerDao;
+import com.example.mybatis.entity.MerchantWorker;
+import com.example.mybatis.mapper.*;
 import com.example.mybatis.po.InvoicePO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,6 +28,9 @@ public class HomePageServiceImpl implements HomePageService {
 
     @Autowired
     private WorkerDao workerDao;
+
+    @Autowired
+    private MerchantWorkerDao merchantWorkerDao;
 
     /**
      * 获取首页基本信息
@@ -71,8 +71,7 @@ public class HomePageServiceImpl implements HomePageService {
                 homePageOV.setInvoiceManyMoney(invoicePO.getTotalMoney());
             }
         }
-
-        Integer workeCount = workerDao.selectCount(new QueryWrapper<Worker>().eq("merchant_id", merchantId));
+        Integer workeCount = merchantWorkerDao.selectCount(new QueryWrapper<MerchantWorker>().eq("merchant_id", merchantId));
         homePageOV.setWorkerTotal(workeCount);
         return ReturnJson.success(homePageOV);
     }

@@ -6,6 +6,7 @@
     <resultMap id="BaseResultMap" type="com.example.mybatis.entity.PaymentOrderSubpackage">
         <id column="id" property="id" />
         <result column="merchant_id" property="merchantId" />
+        <result column="tax_id" property="taxId" />
         <result column="payment_order_id" property="paymentOrderId" />
         <result column="company_s_name" property="companySName" />
         <result column="real_money" property="realMoney" />
@@ -26,7 +27,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, merchant_id, payment_order_id, company_s_name, real_money, platform_service_provider, company_contract, payment_inventory, subpackage_payment, task_id, acceptance_certificate, composite_tax, merchant_tax, recevice_tax, payment_order_status, payment_date, create_date, update_date
+        id, merchant_id, payment_order_id, company_s_name, real_money, tax_id, platform_service_provider, company_contract, payment_inventory, subpackage_payment, task_id, acceptance_certificate, composite_tax, merchant_tax, recevice_tax, payment_order_status, payment_date, create_date, update_date
     </sql>
 
 </mapper>

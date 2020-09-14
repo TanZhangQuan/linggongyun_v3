@@ -25,7 +25,7 @@ public class Menu implements Serializable {
     /**
      * 菜单ID
      */
-    @TableId(value = "id", type = IdType.UUID)
+    @TableId(value = "id", type = IdType.ASSIGN_ID)
     private String id;
 
     /**

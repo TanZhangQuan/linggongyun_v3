@@ -27,7 +27,7 @@ public class Task implements Serializable {
     /**
      * 任务id
      */
-    @TableId(value = "id", type = IdType.UUID)
+    @TableId(value = "id", type = IdType.ASSIGN_ID)
     private String id;
 
     /**
@@ -48,7 +48,7 @@ public class Task implements Serializable {
     /**
      * 发布时间
      */
-    private LocalDateTime releaseData;
+    private LocalDateTime releaseDate;
 
     /**
      * 任务说明
@@ -58,7 +58,7 @@ public class Task implements Serializable {
     /**
      * 行业id
      */
-    private Integer industryType;
+    private String industryType;
 
     /**
      * 最小费用
@@ -78,12 +78,12 @@ public class Task implements Serializable {
     /**
      * 任务开始时间
      */
-    private LocalTime taskBeginTime;
+    private LocalTime releaseTime;
 
     /**
      * 任务结束时间
      */
-    private LocalTime taskEndTime;
+    private LocalTime deadlineTime;
 
     /**
      * 任务上线人数

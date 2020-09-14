@@ -25,6 +25,8 @@ public class ReturnJson<T> {
 	private Integer itemsCount = 0;
 	@ApiModelProperty(notes = "返回每页显示条数", value = "每页显示条数")
 	private Integer pageSize = 10;
+	@ApiModelProperty(notes = "返回总页数", value = "返回总页数")
+	private Integer pageCount;
 	private T obj;
 
 	public Integer getItemsCount() {
@@ -61,6 +63,14 @@ public class ReturnJson<T> {
 
 	public int getCode() {
 		return code;
+	}
+
+	public Integer getPageCount() {
+		return pageCount;
+	}
+
+	public void setPageCount(Integer pageCount) {
+		this.pageCount = pageCount;
 	}
 
 	public void setCode(int code) {
@@ -191,6 +201,7 @@ public class ReturnJson<T> {
 		ReturnJson returnJson = new ReturnJson();
 		returnJson.setObj(obj);
 		returnJson.setCode(code);
+		returnJson.setState("error");
 		returnJson.setMessage(message);
 		return returnJson;
 	}
@@ -199,6 +210,7 @@ public class ReturnJson<T> {
 		ReturnJson returnJson = new ReturnJson();
 		returnJson.setObj(obj);
 		returnJson.setCode(300);
+		returnJson.setState("error");
 		returnJson.setMessage(message);
 		return returnJson;
 	}
@@ -207,6 +219,7 @@ public class ReturnJson<T> {
 		ReturnJson returnJson = new ReturnJson();
 		returnJson.setObj(obj);
 		returnJson.setCode(200);
+		returnJson.setState("success");
 		returnJson.setMessage(message);
 		return returnJson;
 	}
@@ -214,6 +227,7 @@ public class ReturnJson<T> {
 	public static ReturnJson success(String message){
 		ReturnJson returnJson = new ReturnJson();
 		returnJson.setCode(200);
+		returnJson.setState("success");
 		returnJson.setMessage(message);
 		return returnJson;
 	}
@@ -221,7 +235,27 @@ public class ReturnJson<T> {
 	public static ReturnJson success(Object obj){
 		ReturnJson returnJson = new ReturnJson();
 		returnJson.setCode(200);
+		returnJson.setState("success");
 		returnJson.setObj(obj);
+		return returnJson;
+	}
+
+	public static ReturnJson success(Object obj,List list){
+		ReturnJson returnJson = new ReturnJson();
+		returnJson.setCode(200);
+		returnJson.setState("success");
+		returnJson.setObj(obj);
+		returnJson.setData(list);
+		return returnJson;
+	}
+
+	public static ReturnJson success(String msg ,Object obj,List list){
+		ReturnJson returnJson = new ReturnJson();
+		returnJson.setCode(200);
+		returnJson.setState("success");
+		returnJson.setObj(obj);
+		returnJson.setData(list);
+		returnJson.setMessage(msg);
 		return returnJson;
 	}
 

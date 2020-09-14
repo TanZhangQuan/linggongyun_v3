@@ -18,11 +18,13 @@
         <result column="company_address" property="companyAddress" />
         <result column="company_create_date" property="companyCreateDate" />
         <result column="tax_id" property="taxId" />
+        <result column="tax_identification" property="taxIdentification" />
         <result column="bank_name" property="bankName" />
         <result column="bank_code" property="bankCode" />
         <result column="telephones" property="telephones" />
         <result column="link_man" property="linkMan" />
         <result column="link_mobile" property="linkMobile" />
+        <result column="credit_code" property="creditCode" />
         <result column="company_status" property="companyStatus" />
         <result column="create_date" property="createDate" />
         <result column="update_date" property="updateDate" />

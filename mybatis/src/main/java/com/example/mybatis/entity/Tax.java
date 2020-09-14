@@ -26,7 +26,7 @@ public class Tax implements Serializable {
     /**
      * 税源地公司id
      */
-    @TableId(value = "id", type = IdType.UUID)
+    @TableId(value = "id", type = IdType.ASSIGN_ID)
     private String id;
 
     /**

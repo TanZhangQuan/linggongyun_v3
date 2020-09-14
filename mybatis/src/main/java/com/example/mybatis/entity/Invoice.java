@@ -26,7 +26,7 @@ public class Invoice implements Serializable {
     /**
      * id
      */
-    @TableId(value = "id", type = IdType.UUID)
+    @TableId(value = "id", type = IdType.ASSIGN_ID)
     private String id;
 
 

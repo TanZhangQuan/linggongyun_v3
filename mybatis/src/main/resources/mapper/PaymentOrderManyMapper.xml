@@ -8,12 +8,14 @@
         <result column="merchant_id" property="merchantId" />
         <result column="company_s_name" property="companySName" />
         <result column="real_money" property="realMoney" />
+        <result column="tax_id" property="taxId" />
         <result column="platform_service_provider" property="platformServiceProvider" />
         <result column="company_contract" property="companyContract" />
         <result column="payment_inventory" property="paymentInventory" />
         <result column="many_payment" property="manyPayment" />
         <result column="task_id" property="taskId" />
         <result column="acceptance_certificate" property="acceptanceCertificate" />
+        <result column="tax_status" property="taxStatus" />
         <result column="composite_tax" property="compositeTax" />
         <result column="merchant_tax" property="merchantTax" />
         <result column="recevice_tax" property="receviceTax" />
@@ -25,44 +27,88 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, merchant_id, company_s_name, real_money, platform_service_provider, company_contract, payment_inventory, many_payment, task_id, acceptance_certificate, composite_tax, merchant_tax, recevice_tax, payment_order_status, payment_date, create_date, update_date
+        id, merchant_id, company_s_name, real_money, tax_id, platform_service_provider, company_contract, payment_inventory, many_payment, task_id, acceptance_certificate, composite_tax, merchant_tax, recevice_tax, payment_order_status, payment_date, create_date, update_date
     </sql>
 
     <!--查询众包30天总支付-->
     <select id="selectBy30Day" parameterType="java.lang.String" resultType="Double" >
         select SUM(real_money) 'total_money' from tb_payment_order_many where
         date_sub(curdate(), INTERVAL 30 DAY) &lt;= date(`payment_date`)
-        and payment_order_status = 1 and merchant_id = #{merchantId}
+        and payment_order_status = 2 and merchant_id = #{merchantId}
     </select>
 
     <!--查询众包总支付-->
     <select id="selectTotal" parameterType="java.lang.String" resultType="Double" >
         select SUM(real_money) 'total_money' from tb_payment_order_many where
-        payment_order_status = 1 and merchant_id = #{merchantId}
+        payment_order_status = 2 and merchant_id = #{merchantId}
     </select>
 
     <!--查询今天已支付的订单-->
     <select id="selectDay" parameterType="list" resultMap="BaseResultMap">
         select * from tb_payment_order_many where to_days(payment_date) = to_days(now())
-        and payment_order_status = 1 and merchant_id = #{merchantId}
+        and payment_order_status = 2 and merchant_id = #{merchantId}
     </select>
 
     <!--查询本周已支付的订单-->
     <select id="selectWeek" parameterType="list" resultMap="BaseResultMap">
       SELECT * FROM tb_payment_order_many WHERE YEARWEEK(date_format(payment_date,'%Y-%m-%d')) = YEARWEEK(now())
-      and payment_order_status = 1 and merchant_id = #{merchantId}
+      and payment_order_status = 2 and merchant_id = #{merchantId}
     </select>
 
     <!--查询本月已支付的订单-->
     <select id="selectMonth" parameterType="list" resultMap="BaseResultMap">
         SELECT * FROM tb_payment_order_many WHERE DATE_FORMAT( payment_date, '%Y%m' ) = DATE_FORMAT( CURDATE( ) , '%Y%m' )
-        and payment_order_status = 1 and merchant_id = #{merchantId}
+        and payment_order_status = 2 and merchant_id = #{merchantId}
     </select>
 
     <!--查询今年已支付的订单-->
     <select id="selectYear" parameterType="list" resultMap="BaseResultMap">
          select * from `tb_payment_order_many` where YEAR(payment_date)=YEAR(NOW())
-         and payment_order_status = 1 and merchant_id = #{merchantId}
+         and payment_order_status = 2 and merchant_id = #{merchantId}
     </select>
+
+    <!--多条件查询-->
+    <select id="selectMany" resultMap="BaseResultMap" parameterType="list">
+        select
+        id,company_s_name, platform_service_provider, company_contract, payment_inventory, many_payment, task_id, acceptance_certificate,payment_order_status, create_date
+        from tb_payment_order_many
+        <where>
+            merchant_id = #{merchantId}
+            <if test="id != null and id!=''">
+                and id = #{id}
+            </if>
+            <if test="taxId != null and taxId!=''">
+                and tax_id = #{taxId}
+            </if>
+            <if test="beginDate != null and beginDate!=''">
+                and date(create_date) &gt;= #{beginDate}
+            </if>
+            <if test="endDate != null and endDate!=''">
+                and date(create_date) &lt;= #{endDate}
+            </if>
+        </where>
+        LIMIT #{page},#{pageSize}
+    </select>
+
+    <!--总记录数-->
+    <select id="selectManyCount" parameterType="int" resultType="int" >
+        select COUNT(1) from tb_payment_order_many
+        <where>
+            merchant_id = #{merchantId}
+            <if test="id != null and id!=''">
+                and id = #{id}
+            </if>
+            <if test="taxId != null and taxId!=''">
+                and tax_id = #{taxId}
+            </if>
+            <if test="beginDate != null and beginDate!=''">
+                and date(create_date) &gt;= #{beginDate}
+            </if>
+            <if test="endDate != null and endDate!=''">
+                and date(create_date) &lt;= #{endDate}
+            </if>
+        </where>
+    </select>
+
 
 </mapper>

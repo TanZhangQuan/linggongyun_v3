@@ -31,5 +31,24 @@
     <sql id="Base_Column_List">
         id, merchant_id, worker_name, account_name, worker_sex, mobile_code, idcard_code, bank_code, attestation, idcardFront, idcardBack, attestation_video, user_name, user_pwd, skill, agreementSign, agreementUrl, head_portraits, picture, create_date, update_date
     </sql>
+    
+    <select id="selectByIdAndAccountNameAndMobile" resultMap="BaseResultMap" parameterType="list">
+        select
+        a.id,  account_name, mobile_code, idcard_code, bank_code, attestation,  agreementSign ,a.create_date
+        from tb_worker a join tb_merchant_worker b on a.id = b.worker_id
+        <where>
+            b.merchant_id = #{merchantId}
+            <if test="id != null and id != ''">
+                and a.id = #{id}
+            </if>
+            <if test="accountName != null and accountName != ''">
+                and account_name = #{accountName}
+            </if>
+            <if test="mobileCode != null and mobileCode != ''">
+                and mobile_code = #{mobileCode}
+            </if>
+        </where>
+        limit 0,10
+    </select>
 
 </mapper>

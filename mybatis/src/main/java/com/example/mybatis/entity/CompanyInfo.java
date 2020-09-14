@@ -23,7 +23,7 @@ public class CompanyInfo implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @TableId(value = "id", type = IdType.UUID)
+    @TableId(value = "id", type = IdType.ASSIGN_ID)
     private String id;
 
     /**
@@ -92,6 +92,11 @@ public class CompanyInfo implements Serializable {
     private String taxId;
 
     /**
+     * 纳税识别号
+     */
+    private String taxIdentification;
+
+    /**
      * 开户行(银行名称)
      */
     private String bankName;
@@ -115,6 +120,11 @@ public class CompanyInfo implements Serializable {
      * 公司联系电话
      */
     private String linkMobile;
+
+    /**
+     * 社会统一信用代码
+     */
+    private String creditCode;
 
     /**
      * 公司状态

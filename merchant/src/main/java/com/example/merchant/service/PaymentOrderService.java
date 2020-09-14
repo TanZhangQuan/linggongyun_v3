@@ -2,7 +2,11 @@ package com.example.merchant.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.common.ReturnJson;
+import com.example.merchant.dto.PaymentOrderDto;
+import com.example.mybatis.entity.PaymentInventory;
 import com.example.mybatis.entity.PaymentOrder;
+
+import java.util.List;
 
 /**
  * <p>
@@ -18,4 +22,8 @@ public interface PaymentOrderService extends IService<PaymentOrder> {
     ReturnJson getWeek(String merchantId);
     ReturnJson getMonth(String merchantId);
     ReturnJson getYear(String merchantId);
+    ReturnJson getPaymentOrder(PaymentOrderDto paymentOrderDto);
+    ReturnJson getPaymentOrderInfo(String id);
+    ReturnJson saveOrUpdataPaymentOrder(PaymentOrder paymentOrder, List<PaymentInventory> paymentInventories);
+    ReturnJson  offlinePayment( String paymentOrderId,  String turnkeyProjectPayment);
 }

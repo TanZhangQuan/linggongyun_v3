@@ -26,6 +26,13 @@ spring:
     max-pool-prepared-statement-per-connection-size: 20
     filters: stat,wall
 
+  servlet:
+    multipart:
+      # 单个文件的最大值
+      max-file-size: 10MB
+      # 上传文件总的最大值
+      max-request-size: 100MB
+
 mybatis-plus:
   configuration:
     map-underscore-to-camel-case: true
@@ -80,3 +87,7 @@ redis:
       max-idea: 8 # 连接池中的最大空闲连接数
       min-idea: 0 # 连接池中的最小空闲连接
   timeout: 3000ms # 连接超时时间（毫秒）
+
+PathImage_KEY: "G:\\upload\\image\\"
+
+PathExcel_KEY: "G:\\upload\\excel\\"
