@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @since 2020-09-09
  */
 @RestController
-@RequestMapping("/merchant/merchantWorker")
+@RequestMapping("/paas/merchantWorker")
 public class MerchantWorkerController {
 
 }

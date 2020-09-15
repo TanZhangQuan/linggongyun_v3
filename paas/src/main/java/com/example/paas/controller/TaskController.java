@@ -26,7 +26,7 @@ import javax.annotation.Resource;
  */
 @Api(value = "任务相关操作接口", tags = {"任务相关操作接口"})
 @RestController
-@RequestMapping("/merchant/task")
+@RequestMapping("/paas/task")
 public class TaskController {
 
     private static Logger logger = LoggerFactory.getLogger(TaskController.class);

@@ -32,7 +32,7 @@ import javax.validation.constraints.NotNull;
  */
 @Api(value = "商户相关操作接口", tags = {"商户相关操作接口"})
 @RestController
-@RequestMapping("/merchant/merchant")
+@RequestMapping("/paas/merchant")
 @Validated
 public class MerchantController {
     @Autowired

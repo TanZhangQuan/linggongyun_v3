@@ -24,7 +24,7 @@ import javax.annotation.Resource;
  */
 @Api(value = "行业相关操作接口", tags = {"行业相关操作接口"})
 @RestController
-@RequestMapping("/merchant/industry")
+@RequestMapping("/paas/industry")
 public class IndustryController {
     private static Logger logger = LoggerFactory.getLogger(TaskController.class);
 

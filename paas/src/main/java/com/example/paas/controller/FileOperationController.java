@@ -16,7 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 
 @RestController
-@RequestMapping("/merchant/file")
+@RequestMapping("/paas/file")
 @Api(value = "文件操作", tags = "文件上传下载的操作")
 @Validated
 public class FileOperationController {

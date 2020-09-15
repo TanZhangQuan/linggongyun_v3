@@ -30,6 +30,11 @@ public class Agent implements Serializable {
     private String id;
 
     /**
+     * 对应的管理人员
+     */
+    private String managersId;
+
+    /**
      * 所属业务员
      */
     private String salesManId;

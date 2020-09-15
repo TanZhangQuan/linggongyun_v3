@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @since 2020-09-07
  */
 @RestController
-@RequestMapping("/merchant/merchant-role-menu")
+@RequestMapping("/paas/merchant-role-menu")
 public class MerchantRoleMenuController {
 
 }
