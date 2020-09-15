@@ -1,5 +1,6 @@
 package com.example.merchant.service;
 
+import com.example.common.util.ReturnJson;
 import com.example.mybatis.entity.Address;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -12,5 +13,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @since 2020-09-07
  */
 public interface AddressService extends IService<Address> {
-
+    ReturnJson getAddressAll(String merchantId);
+    ReturnJson addOrUpdataAddress(Address address);
+    ReturnJson updataAddressStatus(String addressId, Integer status);
+    ReturnJson removeAddressById(String addressId);
 }

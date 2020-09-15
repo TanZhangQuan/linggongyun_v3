@@ -7,10 +7,9 @@ import com.example.common.util.JsonUtils;
 import com.example.common.util.MD5;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.service.MerchantService;
-import com.example.mybatis.entity.Merchant;
-import com.example.mybatis.entity.MerchantRole;
-import com.example.mybatis.mapper.MerchantDao;
-import com.example.mybatis.mapper.MerchantRoleDao;
+import com.example.mybatis.entity.*;
+import com.example.mybatis.mapper.*;
+import com.example.mybatis.po.TaxPO;
 import com.example.redis.dao.RedisDao;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +20,8 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -46,6 +47,21 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
 
     @Autowired
     private SenSMS senSMS;
+
+    @Autowired
+    private CompanyInfoDao companyInfoDao;
+
+    @Autowired
+    private MerchantTaxDao merchantTaxDao;
+
+    @Autowired
+    private TaxDao taxDao;
+
+    @Autowired
+    private LinkmanDao linkmanDao;
+
+    @Autowired
+    private AddressDao addressDao;
 
     @Value("${TOKEN}")
     private String TOKEN;
@@ -161,6 +177,53 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
             redisDao.setExpire(merchant.getId(),60*60*24*7);
         }
         return rj;
+    }
+
+    /**
+     * 获取商户信息
+     * @param merchantId
+     * @return
+     */
+    @Override
+    public ReturnJson merchantInfo(String merchantId) {
+        Merchant merchant = merchantDao.selectById(merchantId);
+        CompanyInfo companyInfo = companyInfoDao.selectById(merchant.getCompanyId());
+        List<TaxPO> taxPOS = taxDao.selectByMerchantId(merchantId);
+        List<Linkman> linkmanList = linkmanDao.selectList(new QueryWrapper<Linkman>().eq("merchant_id", merchantId).orderByAsc("is_not"));
+        List<Address> addressList = addressDao.selectList(new QueryWrapper<Address>().eq("owner_id", merchantId).orderByAsc("is_not"));
+        List<Map<String,Object>> list = new ArrayList<>();
+        Map<String,Object> map = new HashMap<>();
+        map.put("merchant",merchant);
+        map.put("companyInfo",companyInfo);
+        map.put("taxPOS",taxPOS);
+        map.put("linkmanList",linkmanList);
+        map.put("addressList",addressList);
+        list.add(map);
+        return ReturnJson.success(list);
+    }
+
+    /**
+     * 修改密码或忘记密码
+     * @param loginMobile
+     * @param checkCode
+     * @param newPassWord
+     * @return
+     */
+    @Override
+    public ReturnJson updataPassWord(String loginMobile, String checkCode, String newPassWord) {
+        String redisCode = redisDao.get(loginMobile);
+        if (redisCode.equals(checkCode)) {
+            Merchant merchant = new Merchant();
+            merchant.setPassWord(PWD_KEY+MD5.md5(newPassWord));
+            boolean flag = this.update(merchant, new QueryWrapper<Merchant>().eq("login_mobile", loginMobile));
+            if (flag) {
+                redisDao.remove(loginMobile);
+                return ReturnJson.success("密码修改成功！");
+            } else {
+                return ReturnJson.success("密码修改失败！");
+            }
+        }
+        return ReturnJson.error("你的验证码有误！");
     }
 
 

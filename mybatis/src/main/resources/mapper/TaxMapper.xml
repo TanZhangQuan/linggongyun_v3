@@ -20,9 +20,33 @@
         <result column="update_date" property="updateDate" />
     </resultMap>
 
+    <resultMap id="TaxPOResultMap" type="com.example.mybatis.po.TaxPO">
+        <id column="id" property="id" />
+        <result column="tax_name" property="taxName" />
+        <result column="tax_price" property="taxPrice" />
+        <result column="tax_company" property="taxCompany" />
+        <result column="payee" property="payee" />
+        <result column="bank_name" property="bankName" />
+        <result column="bank_code" property="bankCode" />
+        <result column="tax_status" property="taxStatus" />
+        <result column="package_status" property="packageStatus" />
+        <result column="support_category" property="supportCategory" />
+        <result column="social_code" property="socialCode" />
+        <result column="rate_info" property="rateInfo" />
+        <result column="contract" property="contract" />
+        <result column="create_date" property="createDate" />
+        <result column="update_date" property="updateDate" />
+    </resultMap>
+
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, tax_name, tax_price, tax_company, bank_name, bank_code, tax_status, total_tackage, part_package, support_category, social_code, rate_info, create_date, update_date
+        id, tax_name, tax_price, tax_company, bank_name, bank_code, tax_status, package_status, support_category, social_code, rate_info, create_date, update_date
     </sql>
+
+    <select id="selectByMerchantId" parameterType="list" resultMap="TaxPOResultMap">
+        select tax_name,  tax_price, b.contract, package_status, payee, bank_name, bank_code
+        from tb_tax a join tb_merchant_tax b on a.id = b.tax_id
+        where a.tax_status = 1 and b.merchant_id = #{merchantId}
+    </select>
 
 </mapper>

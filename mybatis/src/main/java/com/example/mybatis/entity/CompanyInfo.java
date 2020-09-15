@@ -91,10 +91,6 @@ public class CompanyInfo implements Serializable {
      */
     private String taxId;
 
-    /**
-     * 纳税识别号
-     */
-    private String taxIdentification;
 
     /**
      * 开户行(银行名称)
@@ -120,6 +116,11 @@ public class CompanyInfo implements Serializable {
      * 公司联系电话
      */
     private String linkMobile;
+
+    /**
+     * 加盟合同
+     */
+    private String contract;
 
     /**
      * 社会统一信用代码

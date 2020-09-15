@@ -18,12 +18,12 @@
         <result column="company_address" property="companyAddress" />
         <result column="company_create_date" property="companyCreateDate" />
         <result column="tax_id" property="taxId" />
-        <result column="tax_identification" property="taxIdentification" />
         <result column="bank_name" property="bankName" />
         <result column="bank_code" property="bankCode" />
         <result column="telephones" property="telephones" />
         <result column="link_man" property="linkMan" />
         <result column="link_mobile" property="linkMobile" />
+        <result column="contract" property="contract" />
         <result column="credit_code" property="creditCode" />
         <result column="company_status" property="companyStatus" />
         <result column="create_date" property="createDate" />
@@ -32,7 +32,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, company_s_name, company_logo, company_size, company_provice, company_city, company_man, company_man_id_card, business_license, company_desc, company_name, company_address, company_create_date, tax_id, bank_name, bank_code, telephones, link_man, link_mobile, company_status, create_date, update_date
+        id, company_s_name, company_logo, company_size, company_provice, company_city, company_man, company_man_id_card, business_license, company_desc, company_name, company_address, company_create_date, tax_id, bank_name, bank_code, telephones, link_man, link_mobile, contract, credit_code, company_status, create_date, update_date
     </sql>
 
 </mapper>

@@ -43,7 +43,7 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
         for (MerchantTax merchantTax : merchantTaxes ) {
             ids.add(merchantTax.getTaxId());
         }
-        List<Tax> taxes = taxDao.selectList(new QueryWrapper<Tax>().in("id", ids).eq("tax_status", 0));
+        List<Tax> taxes = taxDao.selectList(new QueryWrapper<Tax>().in("id", ids).eq("tax_status", 1));
         return ReturnJson.success(taxes);
     }
 }
