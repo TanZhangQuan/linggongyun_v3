@@ -19,6 +19,7 @@
         <module>common</module>
         <module>merchant</module>
         <module>redis</module>
+        <module>paas</module>
     </modules>
 
     <properties>
