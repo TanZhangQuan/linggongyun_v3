@@ -272,6 +272,14 @@ public class ReturnJson<T> {
 		return returnJson;
 	}
 
+	public static ReturnJson success(List list){
+		ReturnJson returnJson = new ReturnJson();
+		returnJson.setCode(200);
+		returnJson.setState("success");
+		returnJson.setData(list);
+		return returnJson;
+	}
+
 	public static ReturnJson error(String message){
 		return new ReturnJson(message,300);
 	}

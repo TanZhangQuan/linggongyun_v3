@@ -1,6 +1,7 @@
 package com.example.mybatis.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -26,18 +27,27 @@ public class Tax implements Serializable {
     /**
      * 税源地公司id
      */
+
     @TableId(value = "id", type = IdType.ASSIGN_ID)
     private String id;
 
     /**
      * 税源地公司id
      */
+    @ApiModelProperty("平台服务商名称")
     private String taxName;
 
     /**
      * 服务费率
      */
+    @ApiModelProperty("综合税费率")
     private BigDecimal taxPrice;
+
+    /**
+     * 收款方户名
+     */
+    @ApiModelProperty("收款方户名")
+    private String payee;
 
     /**
      * 税源地公司的主公司
@@ -47,11 +57,13 @@ public class Tax implements Serializable {
     /**
      * 银行名称
      */
+    @ApiModelProperty("银行名称")
     private String bankName;
 
     /**
      * 银行账号
      */
+    @ApiModelProperty("银行账号")
     private String bankCode;
 
     /**
@@ -60,14 +72,10 @@ public class Tax implements Serializable {
     private Integer taxStatus;
 
     /**
-     * 总包
+     * 0总包，1众包
      */
-    private BigDecimal totalTackage;
-
-    /**
-     * 众包
-     */
-    private BigDecimal partPackage;
+    @ApiModelProperty("0总包服务商，1众包服务商")
+    private Integer packageStatus;
 
     /**
      * 支持的类目 逗号分隔 全量更新
@@ -77,6 +85,7 @@ public class Tax implements Serializable {
     /**
      * 统一社会信用代码
      */
+    @ApiModelProperty("统一社会信用代码（纳税识别号）")
     private String socialCode;
 
     /**

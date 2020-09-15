@@ -9,16 +9,16 @@ import java.time.LocalDateTime;
 
 /**
  * <p>
- * 地址表
+ * 联系人表
  * </p>
  *
  * @author hzp
- * @since 2020-09-07
+ * @since 2020-09-14
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-@TableName("tb_address")
-public class Address implements Serializable {
+@TableName("tb_linkman")
+public class Linkman implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -44,19 +44,24 @@ public class Address implements Serializable {
     private String linkMobile;
 
     /**
-     * 详细地址
+     * 职位
      */
-    private String addressName;
+    private String post;
 
     /**
-     * 0为启用，1为停用
+     * 邮箱
      */
-    private Integer status;
+    private String email;
 
     /**
      * 是否默认：0为默认，1为不默认
      */
     private Integer isNot;
+
+    /**
+     * 0为启用，1为停用
+     */
+    private Integer status;
 
     /**
      * 用户创建时间

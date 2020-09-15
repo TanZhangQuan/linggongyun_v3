@@ -6,7 +6,6 @@ import com.example.mybatis.entity.Merchant;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotBlank;
 
 /**
  * <p>
@@ -27,5 +26,7 @@ public interface MerchantService extends IService<Merchant> {
     ReturnJson merchantLogin(String username, String password, HttpServletResponse response);
     String getId(HttpServletRequest request);
     ReturnJson senSMS(String mobileCode);
-    ReturnJson loginMobile(@NotBlank(message = "手机号不能为空") String loginMobile, @NotBlank(message = "验证码不能为空") String checkCode, HttpServletResponse resource);
+    ReturnJson loginMobile(String loginMobile, String checkCode, HttpServletResponse resource);
+    ReturnJson merchantInfo(String merchantId);
+    ReturnJson updataPassWord(String loginMobile, String checkCode, String newPassWord);
 }

@@ -73,6 +73,12 @@ serverPort: "8883"
 
 TOKEN: token
 
+secret: "yixi"
+
+expire: "7"
+
+header: "linggongyun_v3"
+
 
 
 redis:

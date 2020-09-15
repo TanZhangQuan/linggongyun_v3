@@ -1,7 +1,10 @@
 package com.example.mybatis.mapper;
 
-import com.example.mybatis.entity.Tax;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.example.mybatis.entity.Tax;
+import com.example.mybatis.po.TaxPO;
+
+import java.util.List;
 
 /**
  * <p>
@@ -12,5 +15,5 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @since 2020-09-07
  */
 public interface TaxDao extends BaseMapper<Tax> {
-
+    List<TaxPO> selectByMerchantId(String merchantId);
 }
