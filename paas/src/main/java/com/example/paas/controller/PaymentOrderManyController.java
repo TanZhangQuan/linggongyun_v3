@@ -27,7 +27,7 @@ import java.util.List;
  * @since 2020-09-07
  */
 @RestController
-@RequestMapping("/merchant/paymentOrderMany")
+@RequestMapping("/paas/paymentOrderMany")
 @Api(value = "众包支付管理", tags = "众包支付管理")
 public class PaymentOrderManyController {
 

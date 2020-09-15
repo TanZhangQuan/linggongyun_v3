@@ -23,7 +23,7 @@ import javax.annotation.Resource;
  */
 @Api(value = "权限相关操作接口", tags = {"权限相关操作接口"})
 @RestController
-@RequestMapping("/merchant/menu")
+@RequestMapping("/paas/menu")
 public class MenuController {
     private static Logger logger = LoggerFactory.getLogger(TaskController.class);
 

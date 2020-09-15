@@ -61,6 +61,12 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
     private LinkmanDao linkmanDao;
 
     @Autowired
+    private AgentDao agentDao;
+
+    @Autowired
+    private SalesManDao salesManDao;
+
+    @Autowired
     private AddressDao addressDao;
 
     @Value("${TOKEN}")
@@ -71,6 +77,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
 
     /**
      * 根据用户名和密码进行登录
+     *
      * @param username 用户名
      * @param password 密码
      * @param response
@@ -79,9 +86,9 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
     @Override
     public ReturnJson merchantLogin(String username, String password, HttpServletResponse response) {
         ReturnJson returnJson = new ReturnJson();
-        String encryptPWD = PWD_KEY+ MD5.md5(password);
+        String encryptPWD = PWD_KEY + MD5.md5(password);
         QueryWrapper<Merchant> merchantQueryWrapper = new QueryWrapper<>();
-        merchantQueryWrapper.eq("user_name",username).eq("pass_word",encryptPWD);
+        merchantQueryWrapper.eq("user_name", username).eq("pass_word", encryptPWD);
         Merchant me = merchantDao.selectOne(merchantQueryWrapper);
         if (me == null) {
             returnJson.setCode(300);
@@ -91,25 +98,26 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         }
         returnJson.setCode(200);
         returnJson.setObj(me);
-        Cookie cookie = new Cookie("token",me.getId());
-        cookie.setMaxAge(60*60*24*7);
+        Cookie cookie = new Cookie("token", me.getId());
+        cookie.setMaxAge(60 * 60 * 24 * 7);
         response.addCookie(cookie);
         redisDao.set(me.getId(), JsonUtils.objectToJson(me));
-        redisDao.setExpire(me.getId(),60*60*24*7);
+        redisDao.setExpire(me.getId(), 60 * 60 * 24 * 7);
         return returnJson;
     }
 
     /**
      * 根据TOKEN获取登录用户的ID
+     *
      * @param request
      * @return
      */
     @Override
-    public String getId(HttpServletRequest request){
+    public String getId(HttpServletRequest request) {
         String id = "";
         Cookie[] cookies = request.getCookies();
-        for (Cookie cookie : cookies){
-            if (cookie.getName().equals(TOKEN)){
+        for (Cookie cookie : cookies) {
+            if (cookie.getName().equals(TOKEN)) {
                 id = cookie.getValue();
             }
         }
@@ -118,6 +126,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
 
     /**
      * 发送验证码码
+     *
      * @param mobileCode
      * @return
      */
@@ -125,7 +134,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
     public ReturnJson senSMS(String mobileCode) {
         ReturnJson rj = new ReturnJson();
         Merchant merchant = this.getOne(new QueryWrapper<Merchant>().eq("login_mobile", mobileCode));
-        if (merchant == null || merchant.equals(null)){
+        if (merchant == null || merchant.equals(null)) {
             rj.setCode(401);
             rj.setMessage("你还未注册，请先去注册！");
             return rj;
@@ -134,8 +143,8 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         if ("000000".equals(result.get("statusCode"))) {
             rj.setCode(200);
             rj.setMessage("验证码发送成功");
-            redisDao.set(mobileCode,String.valueOf(result.get("checkCode")));
-            redisDao.setExpire(mobileCode,5*60);
+            redisDao.set(mobileCode, String.valueOf(result.get("checkCode")));
+            redisDao.setExpire(mobileCode, 5 * 60);
         } else if ("160040".equals(result.get("statusCode"))) {
             rj.setCode(300);
             rj.setMessage(String.valueOf(result.get("statusMsg")));
@@ -148,8 +157,9 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
 
     /**
      * 根据手机号和验证码进行登录
+     *
      * @param loginMobile 手机号码
-     * @param checkCode 验证码
+     * @param checkCode   验证码
      * @param resource
      * @return
      */
@@ -157,10 +167,10 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
     public ReturnJson loginMobile(@NotBlank(message = "手机号不能为空") String loginMobile, @NotBlank(message = "验证码不能为空") String checkCode, HttpServletResponse resource) {
         ReturnJson rj = new ReturnJson();
         String redisCheckCode = redisDao.get(loginMobile);
-        if (StringUtils.isBlank(redisCheckCode)){
+        if (StringUtils.isBlank(redisCheckCode)) {
             rj.setCode(300);
             rj.setMessage("验证码已过期，请重新获取！");
-        } else if (!checkCode.equals(redisCheckCode)){
+        } else if (!checkCode.equals(redisCheckCode)) {
             rj.setCode(300);
             rj.setMessage("输入的验证码有误！");
         } else {
@@ -170,17 +180,18 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
             merchant.setPassWord("");
             merchant.setPayPwd("");
             rj.setObj(merchant);
-            Cookie cookie = new Cookie("token",merchant.getId());
-            cookie.setMaxAge(60*60*24*7);
+            Cookie cookie = new Cookie("token", merchant.getId());
+            cookie.setMaxAge(60 * 60 * 24 * 7);
             resource.addCookie(cookie);
             redisDao.set(merchant.getId(), JsonUtils.objectToJson(merchant));
-            redisDao.setExpire(merchant.getId(),60*60*24*7);
+            redisDao.setExpire(merchant.getId(), 60 * 60 * 24 * 7);
         }
         return rj;
     }
 
     /**
      * 获取商户信息
+     *
      * @param merchantId
      * @return
      */
@@ -191,19 +202,27 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         List<TaxPO> taxPOS = taxDao.selectByMerchantId(merchantId);
         List<Linkman> linkmanList = linkmanDao.selectList(new QueryWrapper<Linkman>().eq("merchant_id", merchantId).orderByAsc("is_not"));
         List<Address> addressList = addressDao.selectList(new QueryWrapper<Address>().eq("owner_id", merchantId).orderByAsc("is_not"));
-        List<Map<String,Object>> list = new ArrayList<>();
-        Map<String,Object> map = new HashMap<>();
-        map.put("merchant",merchant);
-        map.put("companyInfo",companyInfo);
-        map.put("taxPOS",taxPOS);
-        map.put("linkmanList",linkmanList);
-        map.put("addressList",addressList);
+        SalesMan salesMan = salesManDao.selectById(merchant.getSalesManId());
+        Address address = null;
+        if (merchant.getAgentId() != null || "".equals(merchant.getAgentId())) {
+            address = addressDao.selectById(merchant.getAgentId());
+        }
+        List<Map<String, Object>> list = new ArrayList<>();
+        Map<String, Object> map = new HashMap<>();
+        map.put("salesMan",salesMan);
+        map.put("address",address);
+        map.put("merchant", merchant);
+        map.put("companyInfo", companyInfo);
+        map.put("taxPOS", taxPOS);
+        map.put("linkmanList", linkmanList);
+        map.put("addressList", addressList);
         list.add(map);
         return ReturnJson.success(list);
     }
 
     /**
      * 修改密码或忘记密码
+     *
      * @param loginMobile
      * @param checkCode
      * @param newPassWord
@@ -214,7 +233,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         String redisCode = redisDao.get(loginMobile);
         if (redisCode.equals(checkCode)) {
             Merchant merchant = new Merchant();
-            merchant.setPassWord(PWD_KEY+MD5.md5(newPassWord));
+            merchant.setPassWord(PWD_KEY + MD5.md5(newPassWord));
             boolean flag = this.update(merchant, new QueryWrapper<Merchant>().eq("login_mobile", loginMobile));
             if (flag) {
                 redisDao.remove(loginMobile);
@@ -229,12 +248,13 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
 
     /**
      * 根据merchantId获取权限信息
+     *
      * @param merchantId
      * @return
      */
-    private MerchantRole getMerchantRole(String merchantId){
+    private MerchantRole getMerchantRole(String merchantId) {
         QueryWrapper<MerchantRole> merchantRoleQueryWrapper = new QueryWrapper<MerchantRole>();
-        merchantRoleQueryWrapper.eq("merchant_id",merchantId);
+        merchantRoleQueryWrapper.eq("merchant_id", merchantId);
         return merchantRoleDao.selectOne(merchantRoleQueryWrapper);
     }
 

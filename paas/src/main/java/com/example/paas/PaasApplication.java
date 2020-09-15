@@ -13,7 +13,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 public class PaasApplication {
 
 	public static void main(String[] args) {
-		log.info("平台管理中心启动中。。。。。。。。。");
+		log.info("平台管理中心正在启动。。。。。。。。。");
 		SpringApplication.run(PaasApplication.class, args);
 		log.info("平台管理中心启动完成。。。。。。。。");
 	}

@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @since 2020-09-07
  */
 @RestController
-@RequestMapping("/merchant/worker-task")
+@RequestMapping("/paas/worker-task")
 public class WorkerTaskController {
 
 }

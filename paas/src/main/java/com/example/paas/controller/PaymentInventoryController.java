@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @since 2020-09-07
  */
 @RestController
-@RequestMapping("/merchant/payment-inventory")
+@RequestMapping("/paas/payment-inventory")
 public class PaymentInventoryController {
 
 }

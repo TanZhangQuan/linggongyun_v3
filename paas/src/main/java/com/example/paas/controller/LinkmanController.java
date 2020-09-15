@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @since 2020-09-14
  */
 @RestController
-@RequestMapping("/merchant/linkman")
+@RequestMapping("/paas/linkman")
 public class LinkmanController {
 
 }

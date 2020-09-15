@@ -8,6 +8,7 @@
         <result column="sales_man_name" property="salesManName" />
         <result column="mobile_code" property="mobileCode" />
         <result column="sales_man_desc" property="salesManDesc" />
+        <result column="managers_id" property="managersId" />
         <result column="sales_man_real_name" property="salesManRealName" />
         <result column="sales_man_user_name" property="salesManUserName" />
         <result column="sales_man_pwd" property="salesManPwd" />
@@ -18,7 +19,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, sales_man_name, mobile_code, sales_man_desc, sales_man_real_name, sales_man_user_name, sales_man_pwd, sales_man_status, create_date, update_date
+        id, managers_id, sales_man_name, mobile_code, sales_man_desc, sales_man_real_name, sales_man_user_name, sales_man_pwd, sales_man_status, create_date, update_date
     </sql>
 
 </mapper>

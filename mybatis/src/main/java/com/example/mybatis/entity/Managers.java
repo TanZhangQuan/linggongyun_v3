@@ -9,65 +9,80 @@ import java.time.LocalDateTime;
 
 /**
  * <p>
- * 业务员信息
+ * 管理员表
  * </p>
  *
  * @author hzp
- * @since 2020-09-07
+ * @since 2020-09-15
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-@TableName("tb_sales_man")
-public class SalesMan implements Serializable {
+@TableName("tb_managers")
+public class Managers implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    /**
-     * 业务员ID
-     */
     @TableId(value = "id", type = IdType.ASSIGN_ID)
     private String id;
 
     /**
-     * 对应的管理人员
+     * 角色ID
      */
-    private String managersId;
+    private String roleId;
 
     /**
-     * 业务员名称
+     * 登录用户名
      */
-    private String salesManName;
+    private String userName;
 
     /**
-     * 业务员手机号
+     * 部门
+     */
+    private String userDept;
+
+    /**
+     * 岗位
+     */
+    private String userPost;
+
+    /**
+     * 手机号
      */
     private String mobileCode;
 
     /**
-     * 业务员简介
+     * 登录密码
      */
-    private String salesManDesc;
+    private String passWord;
 
     /**
-     * 业务员真实姓名
+     * 用户的相关说明
      */
-    private String salesManRealName;
+    private String userDesc;
 
     /**
-     * 业务员登录账号
+     * 平台名称
      */
-    private String salesManUserName;
+    private String paasName;
 
     /**
-     * 业务员登录密码
+     * 0平台普通用户，1渠道商，2业务员，3管理员，4超级管理员
      */
-    private String salesManPwd;
+    private Integer userSign;
 
     /**
-     * 业务员状态
+     * 0正常，1停用
      */
-    private Integer salesManStatus;
+    private Integer status;
 
+    /**
+     * 头像
+     */
+    private String userHead;
+
+    /**
+     * 创建时间
+     */
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createDate;
 
@@ -76,4 +91,6 @@ public class SalesMan implements Serializable {
      */
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime updateDate;
+
+
 }

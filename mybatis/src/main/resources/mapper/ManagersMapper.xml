@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mybatis.mapper.ManagersDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.example.mybatis.entity.Managers">
+        <id column="id" property="id" />
+        <result column="role_id" property="roleId" />
+        <result column="user_name" property="userName" />
+        <result column="user_dept" property="userDept" />
+        <result column="user_post" property="userPost" />
+        <result column="mobile_code" property="mobileCode" />
+        <result column="pass_word" property="passWord" />
+        <result column="user_desc" property="userDesc" />
+        <result column="paas_name" property="paasName" />
+        <result column="user_sign" property="userSign" />
+        <result column="status" property="status" />
+        <result column="user_head" property="userHead" />
+        <result column="create_date" property="createDate" />
+        <result column="update_date" property="updateDate" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, role_id, user_name, user_dept, user_post, mobile_code, pass_word, user_desc, paas_name, user_sign, status, user_head, create_date, update_date
+    </sql>
+
+</mapper>

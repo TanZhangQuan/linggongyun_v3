@@ -25,7 +25,7 @@ import javax.validation.constraints.NotBlank;
  * @since 2020-09-07
  */
 @RestController
-@RequestMapping("/merchant/tax")
+@RequestMapping("/paas/tax")
 @Validated
 @Api(value = "平台服务商", tags = "平台服务商")
 public class TaxController {

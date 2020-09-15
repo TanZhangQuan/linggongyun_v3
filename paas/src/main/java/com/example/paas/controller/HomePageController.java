@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.constraints.NotBlank;
 
 @RestController
-@RequestMapping("/merchant/homePage")
+@RequestMapping("/paas/homePage")
 @Validated
 @Api(value = "首页内容的展示", tags = "首页内容的展示")
 public class HomePageController {

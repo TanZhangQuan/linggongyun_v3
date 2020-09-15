@@ -27,7 +27,7 @@ import java.util.List;
  */
 @Api(value = "创客相关操作接口", tags = {"创客相关操作接口"})
 @RestController
-@RequestMapping("/merchant/worker")
+@RequestMapping("/paas/worker")
 @Validated
 public class WorkerController {
 

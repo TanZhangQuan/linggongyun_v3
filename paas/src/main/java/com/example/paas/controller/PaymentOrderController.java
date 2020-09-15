@@ -29,7 +29,7 @@ import java.util.List;
  * @since 2020-09-07
  */
 @RestController
-@RequestMapping("/merchant/paymentOrder")
+@RequestMapping("/paas/paymentOrder")
 @Api(value = "总包+分包支付管理", tags = "总包+分包支付管理")
 @Validated
 public class PaymentOrderController {

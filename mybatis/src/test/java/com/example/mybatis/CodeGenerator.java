@@ -21,7 +21,7 @@ public class CodeGenerator {
     private static final String author = "hzp";
     private static final String packageName = "com.example";
     private static final String moduleName = "merchant";
-    private static final String[] tableName = {"tb_linkman"};
+    private static final String[] tableName = {"tb_managers"};
     private static final String tablePrefix = "tb";
 
     public static void main(String[] args) {
@@ -55,7 +55,7 @@ public class CodeGenerator {
         gc.setEntityName("");
         gc.setMapperName("%sDao");
         gc.setServiceName("%sService");
-        gc.setIdType(IdType.UUID);
+        gc.setIdType(IdType.ASSIGN_ID);
         // 是否覆盖文件，默认false不覆盖
         gc.setFileOverride(false);
         // XML ResultMap
