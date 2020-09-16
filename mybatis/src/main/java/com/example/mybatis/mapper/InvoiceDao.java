@@ -16,4 +16,5 @@ import java.util.List;
  */
 public interface InvoiceDao extends BaseMapper<Invoice> {
     List<InvoicePO> selectTotal(String merchantId);
+    List<InvoicePO> selectTotalpaas(List<String> merchantId);
 }

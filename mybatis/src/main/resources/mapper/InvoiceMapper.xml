@@ -38,6 +38,15 @@
         GROUP BY package_status
     </select>
 
+    <select id="selectTotalpaas" resultMap="resultTotal" parameterType="list">
+        select package_status ,SUM(invoice_money) 'total_money' , COUNT(*) 'count' FROM tb_invoice
+        WHERE merchant_id in
+        <foreach collection="list" index="index" item="merchantIds" open="(" separator="," close=")">
+            #{merchantIds}
+        </foreach>
+        GROUP BY package_status
+    </select>
+
 
 
 </mapper>

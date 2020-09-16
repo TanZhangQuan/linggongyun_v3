@@ -36,7 +36,7 @@ public class MySwaggerConfiguration {
             return new Docket(DocumentationType.SWAGGER_2)
                     .apiInfo(apiInfo())
                     .select()
-                    .apis(RequestHandlerSelectors.basePackage("com.example.merchant.controller"))
+                    .apis(RequestHandlerSelectors.basePackage("com.example.paas.controller"))
                     .paths(PathSelectors.any())
                     .build()
                     .globalOperationParameters(pars);//************把消息头添加
@@ -44,7 +44,7 @@ public class MySwaggerConfiguration {
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("springboot利用swagger构建api文档")
+                .title("平台端零工云")
                 .description("简单优雅的restfun风格，http://blog.csdn.net/saytime")
                 .termsOfServiceUrl("http://blog.csdn.net/saytime")
                 .version("1.0")

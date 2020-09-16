@@ -1,6 +1,7 @@
 package com.example.paas.controller;
 
 import com.example.common.util.ReturnJson;
+import com.example.paas.interceptor.LoginRequired;
 import com.example.paas.service.HomePageService;
 import com.example.paas.service.PaymentOrderManyService;
 import com.example.paas.service.PaymentOrderService;
@@ -34,14 +35,15 @@ public class HomePageController {
 
     /**
      * 获取首页的基本信息
-      * @param merchantId
+      * @param managersId
      * @return
      */
-    @PostMapping("/merchant/homePageInfo")
+    @PostMapping("/homePageInfo")
+    @LoginRequired
     @ApiOperation(value = "获取首页基本信息", notes = "获取首页基本信息", httpMethod = "POST")
-    @ApiImplicitParams(value={@ApiImplicitParam(name="merchantId",value = "用户ID",required = true)})
-    public ReturnJson myWorker(@NotBlank(message = "用户不能为空") @RequestParam(required = false) String merchantId){
-        return homePageService.getHomePageInof(merchantId);
+    @ApiImplicitParams(value={@ApiImplicitParam(name = "token", value = "登录令牌", dataType = "string", paramType = "header"),@ApiImplicitParam(name="managersId",value = "用户ID",required = true)})
+    public ReturnJson myWorker(@NotBlank(message = "用户不能为空") @RequestParam(required = false) String managersId){
+        return homePageService.getHomePageInof(managersId);
     }
 
     /**

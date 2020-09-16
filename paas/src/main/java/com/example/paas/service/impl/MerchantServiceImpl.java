@@ -6,10 +6,10 @@ import com.example.common.sms.SenSMS;
 import com.example.common.util.JsonUtils;
 import com.example.common.util.MD5;
 import com.example.common.util.ReturnJson;
-import com.example.paas.service.MerchantService;
 import com.example.mybatis.entity.*;
 import com.example.mybatis.mapper.*;
 import com.example.mybatis.po.TaxPO;
+import com.example.paas.service.MerchantService;
 import com.example.redis.dao.RedisDao;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotBlank;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -125,7 +124,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
     public ReturnJson senSMS(String mobileCode) {
         ReturnJson rj = new ReturnJson();
         Merchant merchant = this.getOne(new QueryWrapper<Merchant>().eq("login_mobile", mobileCode));
-        if (merchant == null || merchant.equals(null)){
+        if (merchant == null){
             rj.setCode(401);
             rj.setMessage("你还未注册，请先去注册！");
             return rj;
@@ -154,7 +153,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
      * @return
      */
     @Override
-    public ReturnJson loginMobile(@NotBlank(message = "手机号不能为空") String loginMobile, @NotBlank(message = "验证码不能为空") String checkCode, HttpServletResponse resource) {
+    public ReturnJson loginMobile(String loginMobile,String checkCode, HttpServletResponse resource) {
         ReturnJson rj = new ReturnJson();
         String redisCheckCode = redisDao.get(loginMobile);
         if (StringUtils.isBlank(redisCheckCode)){
