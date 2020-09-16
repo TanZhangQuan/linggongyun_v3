@@ -27,8 +27,7 @@ public class Industry implements Serializable {
      * 行业id
      */
     @TableId(value = "id", type = IdType.ASSIGN_ID)
-    private Integer 
-id;
+    private Integer id;
 
     /**
      * 行业类型

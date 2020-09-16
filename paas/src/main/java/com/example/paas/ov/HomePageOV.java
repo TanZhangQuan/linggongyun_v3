@@ -64,7 +64,22 @@ public class HomePageOV {
     @ApiModelProperty(notes = "所拥有的创客数量", value = "所拥有的创客数量")
     private Integer workerTotal;
 
+    /**
+     * 所拥有的商户数量
+     */
+    @ApiModelProperty(notes = "所拥有的商户数量", value = "所拥有的商户数量")
+    private Integer merchantTotal;
 
+    /**
+     * 所拥有的代理商数量
+     */
+//    @ApiModelProperty(notes = "所拥有的代理商数量", value = "所拥有的代理商数量")
+//    private Integer agentTotal;
 
+    /**
+     * 所拥有的业务员数量
+     */
+//    @ApiModelProperty(notes = "所拥有的业务员数量", value = "所拥有的业务员数量")
+//    private Integer salesManTotal;
 
 }

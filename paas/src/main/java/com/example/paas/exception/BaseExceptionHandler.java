@@ -49,7 +49,7 @@ public class BaseExceptionHandler {
     @ResponseBody
     @ExceptionHandler(CommonException.class)
     public ReturnJson exceptionHandler(CommonException e) {
-        return ReturnJson.error(Integer.valueOf(e.getResponseCode()),e.getResponseMsg());
+        return ReturnJson.error(e.getResponseCode(),e.getResponseMsg());
     }
 
     @ResponseBody

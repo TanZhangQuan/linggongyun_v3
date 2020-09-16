@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 
 @Component
 @Slf4j
-@ComponentScan(value = {"com.example.redis.dao", "com.example.common.*","com.example.mybatis.*"})
+@ComponentScan(value = {"com.example.redis.dao.*", "com.example.common.*","com.example.mybatis.*","com.example.paas.*"})
 public class MyDetaObjectHander implements MetaObjectHandler {
     @Override
     public void insertFill(MetaObject metaObject) {

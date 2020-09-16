@@ -66,7 +66,7 @@ public class Managers implements Serializable {
     private String paasName;
 
     /**
-     * 0平台普通用户，1渠道商，2业务员，3管理员，4超级管理员
+     * 0平台普通用户，1渠道商，2业务员，3服务商，4管理员
      */
     private Integer userSign;
 

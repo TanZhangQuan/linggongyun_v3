@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.example.mybatis.entity.PaymentOrderMany;
 import org.apache.ibatis.annotations.Param;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -26,4 +27,12 @@ public interface PaymentOrderManyDao extends BaseMapper<PaymentOrderMany> {
 
     List<PaymentOrderMany> selectMany(@Param("merchantId")String mercahntId, @Param("id") String id, @Param("taxId") String taxId, @Param("beginDate") String beginDate, @Param("endDate") String endDate, @Param("page") Integer page, @Param("pageSize")Integer pageSize);
     Integer selectManyCount(@Param("merchantId")String mercahntId, @Param("id") String id, @Param("taxId") String taxId, @Param("beginDate") String beginDate, @Param("endDate") String endDate);
+
+    BigDecimal selectBy30Daypaas(List<String> merchantId);
+    BigDecimal selectTotalpaas(List<String> merchantId);
+
+    List<PaymentOrderMany> selectDaypaas(List<String> merchantId);
+    List<PaymentOrderMany> selectWeekpaas(List<String> merchantId);
+    List<PaymentOrderMany> selectMonthpaas(List<String> merchantId);
+    List<PaymentOrderMany> selectYearpaas(List<String> merchantId);
 }
