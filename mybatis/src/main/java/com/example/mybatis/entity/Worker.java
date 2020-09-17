@@ -32,14 +32,14 @@ public class Worker implements Serializable {
     private String id;
 
     /**
-     * 商户创建的创客（为空表示没有与商户所关联）
-     */
-    private String merchantId;
-
-    /**
      * 创客姓名
      */
     private String workerName;
+
+    /**
+     * 创客注册状态
+     */
+    private Integer workerStatus;
 
     /**
      * 真实姓名

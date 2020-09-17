@@ -239,8 +239,7 @@ class MerchantApplicationTests {
 //		int insert = paymentOrderManyDao.insert(paymentOrderMany);
 
 
-		PaymentOrder paymentOrder = this.paymentOrderDao.selectById("1303227817155014657");
-		paymentOrder.setId(null);
+		PaymentOrder paymentOrder = this.paymentOrderDao.selectById("1306504510233780225");
 		paymentOrder.setCompositeTax(BigDecimal.valueOf(7.5));
 		paymentOrder.setMerchantTax(BigDecimal.valueOf(4.5));
 		paymentOrder.setReceviceTax(BigDecimal.valueOf(3));

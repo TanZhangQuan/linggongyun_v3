@@ -27,6 +27,9 @@ public interface PaymentOrderDao extends BaseMapper<PaymentOrder> {
     List<PaymentOrder> selectMany(@Param("merchantId")String mercahntId, @Param("id") String id, @Param("taxId") String taxId, @Param("beginDate") String beginDate, @Param("endDate") String endDate,@Param("page") Integer page, @Param("pageSize")Integer pageSize);
     Integer selectManyCount(@Param("merchantId")String mercahntId, @Param("id") String id, @Param("taxId") String taxId, @Param("beginDate") String beginDate, @Param("endDate") String endDate);
 
+    List<PaymentOrder> selectManyPaas(@Param("merchantIds")List<String> mercahntIds, @Param("merchantName")String merchantName, @Param("id") String id, @Param("taxId") String taxId, @Param("beginDate") String beginDate, @Param("endDate") String endDate,@Param("page") Integer page, @Param("pageSize")Integer pageSize);
+    Integer selectManyCountPaas(@Param("merchantIds")List<String> mercahntIds, @Param("merchantName")String merchantName, @Param("id") String id, @Param("taxId") String taxId, @Param("beginDate") String beginDate, @Param("endDate") String endDate);
+
 
     BigDecimal selectBy30Daypaas(List<String> merchantId);
     BigDecimal selectTotalpaas(List<String> merchantId);

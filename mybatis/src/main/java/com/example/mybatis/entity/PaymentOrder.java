@@ -41,9 +41,14 @@ public class PaymentOrder implements Serializable {
     private String companySName;
 
     /**
-     * 支付金额
+     * 商家支付的金额
      */
     private BigDecimal realMoney;
+
+    /**
+     * 付给创客的金额
+     */
+    private BigDecimal workerMoney;
 
     /**
      * 平台服务商ID

@@ -4,10 +4,12 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.example.mybatis.entity.PaymentOrder">
-        <result column="id" property="id"/>
+        <id column="id" property="id"/>
+        <result column="payment_order_id" property="paymentOrderId"/>
         <result column="merchant_id" property="merchantId"/>
         <result column="company_s_name" property="companySName"/>
         <result column="real_money" property="realMoney"/>
+        <result column="worker_money" property="workerMoney"/>
         <result column="tax_id" property="taxId"/>
         <result column="platform_service_provider" property="platformServiceProvider"/>
         <result column="company_contract" property="companyContract"/>
@@ -28,7 +30,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, merchant_id, company_s_name, real_money, tax_id, platform_service_provider, company_contract, payment_inventory, turnkey_project_payment, subpackage_payment, task_id, acceptance_certificate, tax_status, composite_tax, merchant_tax, recevice_tax, package_status,payment_order_status, payment_date, create_date, update_date
+        id, payment_order_id, merchant_id, company_s_name, real_money, tax_id, platform_service_provider, company_contract, payment_inventory, turnkey_project_payment, subpackage_payment, task_id, acceptance_certificate, tax_status, composite_tax, merchant_tax, recevice_tax, package_status,payment_order_status, payment_date, create_date, update_date
     </sql>
 
     <!--    查询最近30天-->
@@ -166,6 +168,63 @@
         <foreach collection="list" index="index" item="merchantIds" open="(" separator="," close=")">
             #{merchantIds}
         </foreach>
+    </select>
+
+
+    <!--多条件查询-->
+    <select id="selectManyPaas" resultMap="BaseResultMap" parameterType="list">
+        select
+        id,company_s_name, tax_id, platform_service_provider, company_contract, payment_inventory,
+        turnkey_project_payment, subpackage_payment, task_id, acceptance_certificate,payment_order_status, create_date
+        from tb_payment_order
+        <where>
+            merchant_id in
+            <foreach collection="merchantIds" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+            <if test="merchantName != null and merchantName!=''">
+                and company_name = #{merchantName}
+            </if>
+            <if test="id != null and id!=''">
+                and id = #{id}
+            </if>
+            <if test="taxId != null and taxId!=''">
+                and tax_id = #{taxId}
+            </if>
+            <if test="beginDate != null and beginDate!=''">
+                and date(create_date) &gt;= #{beginDate}
+            </if>
+            <if test="endDate != null and endDate!=''">
+                and date(create_date) &lt;= #{endDate}
+            </if>
+        </where>
+        LIMIT #{page},#{pageSize}
+    </select>
+
+    <!--总记录数-->
+    <select id="selectManyCountPaas" parameterType="int" resultType="int">
+        select COUNT(1) from tb_payment_order
+        <where>
+            merchant_id in
+            <foreach collection="merchantIds" index="index" item="merchantIds" open="(" separator="," close=")">
+                #{merchantIds}
+            </foreach>
+            <if test="merchantName != null and merchantName!=''">
+                and company_name = #{merchantName}
+            </if>
+            <if test="id != null and id!=''">
+                and id = #{id}
+            </if>
+            <if test="taxId != null and taxId!=''">
+                and tax_id = #{taxId}
+            </if>
+            <if test="beginDate != null and beginDate!=''">
+                and date(create_date) &gt;= #{beginDate}
+            </if>
+            <if test="endDate != null and endDate!=''">
+                and date(create_date) &lt;= #{endDate}
+            </if>
+        </where>
     </select>
 
 

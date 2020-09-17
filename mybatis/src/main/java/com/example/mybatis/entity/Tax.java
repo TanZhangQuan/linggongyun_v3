@@ -32,7 +32,11 @@ public class Tax implements Serializable {
     private String id;
 
     /**
-     * 税源地公司id
+     * 管理人员ID
+     */
+    private String managersId;
+
+    /**
      */
     @ApiModelProperty("平台服务商名称")
     private String taxName;

@@ -5,7 +5,7 @@
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.example.mybatis.entity.Worker">
         <id column="id" property="id" />
-        <result column="merchant_id" property="merchantId" />
+        <result column="worker_status" property="workerStatus" />
         <result column="worker_name" property="workerName" />
         <result column="account_name" property="accountName" />
         <result column="worker_sex" property="workerSex" />
@@ -50,7 +50,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, merchant_id, worker_name, account_name, worker_sex, mobile_code, idcard_code, bank_code, attestation, idcardFront, idcardBack, attestation_video, user_name, user_pwd, skill, agreementSign, agreementUrl, head_portraits, picture, create_date, update_date
+        id, worker_status, worker_name, account_name, worker_sex, mobile_code, idcard_code, bank_code, attestation, idcardFront, idcardBack, attestation_video, user_name, user_pwd, skill, agreementSign, agreementUrl, head_portraits, picture, create_date, update_date
     </sql>
     
     <select id="selectByIdAndAccountNameAndMobile" resultMap="BaseResultMap" parameterType="list">

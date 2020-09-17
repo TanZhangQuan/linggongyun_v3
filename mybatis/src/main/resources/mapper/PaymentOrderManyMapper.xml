@@ -167,6 +167,55 @@
         </foreach>
     </select>
 
+    <!--多条件查询-->
+    <select id="selectManyPaas" resultMap="BaseResultMap" parameterType="list">
+        select
+        id,company_s_name, platform_service_provider, company_contract, payment_inventory, many_payment, task_id, acceptance_certificate,payment_order_status, create_date
+        from tb_payment_order_many
+        <where>
+            merchant_id in
+            <foreach collection="merchantIds" index="index" item="merchantIds" open="(" separator="," close=")">
+                #{merchantIds}
+            </foreach>
+            <if test="merchantName != null and merchantName!=''">
+                and company_name = #{merchantName}
+            </if>
+            <if test="taxId != null and taxId!=''">
+                and tax_id = #{taxId}
+            </if>
+            <if test="beginDate != null and beginDate!=''">
+                and date(create_date) &gt;= #{beginDate}
+            </if>
+            <if test="endDate != null and endDate!=''">
+                and date(create_date) &lt;= #{endDate}
+            </if>
+        </where>
+        LIMIT #{page},#{pageSize}
+    </select>
+
+    <!--总记录数-->
+    <select id="selectManyCountPaas" parameterType="int" resultType="int" >
+        select COUNT(1) from tb_payment_order_many
+        <where>
+            merchant_id in
+            <foreach collection="merchantIds" index="index" item="merchantIds" open="(" separator="," close=")">
+                #{merchantIds}
+            </foreach>
+            <if test="merchantName != null and merchantName!=''">
+                and company_name = #{merchantName}
+            </if>
+            <if test="taxId != null and taxId!=''">
+                and tax_id = #{taxId}
+            </if>
+            <if test="beginDate != null and beginDate!=''">
+                and date(create_date) &gt;= #{beginDate}
+            </if>
+            <if test="endDate != null and endDate!=''">
+                and date(create_date) &lt;= #{endDate}
+            </if>
+        </where>
+    </select>
+
 
 
 </mapper>
