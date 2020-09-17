@@ -7,19 +7,19 @@ import com.example.common.util.JsonUtils;
 import com.example.common.util.MD5;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.service.MerchantService;
+import com.example.merchant.util.JwtUtils;
 import com.example.mybatis.entity.*;
 import com.example.mybatis.mapper.*;
 import com.example.mybatis.po.TaxPO;
 import com.example.redis.dao.RedisDao;
+import io.jsonwebtoken.Claims;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotBlank;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -69,6 +69,9 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
     @Autowired
     private AddressDao addressDao;
 
+    @Autowired
+    private JwtUtils jwtUtils;
+
     @Value("${TOKEN}")
     private String TOKEN;
 
@@ -85,25 +88,19 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
      */
     @Override
     public ReturnJson merchantLogin(String username, String password, HttpServletResponse response) {
-        ReturnJson returnJson = new ReturnJson();
         String encryptPWD = PWD_KEY + MD5.md5(password);
         QueryWrapper<Merchant> merchantQueryWrapper = new QueryWrapper<>();
         merchantQueryWrapper.eq("user_name", username).eq("pass_word", encryptPWD);
         Merchant me = merchantDao.selectOne(merchantQueryWrapper);
         if (me == null) {
-            returnJson.setCode(300);
-            returnJson.setMessage("用户名或密码错误");
-            returnJson.setState("error");
-            return returnJson;
+            return ReturnJson.error("账号或密码有误！");
         }
-        returnJson.setCode(200);
-        returnJson.setObj(me);
-        Cookie cookie = new Cookie("token", me.getId());
-        cookie.setMaxAge(60 * 60 * 24 * 7);
-        response.addCookie(cookie);
+        String token = jwtUtils.generateToken(me.getId());
+        response.setHeader(TOKEN, token);
         redisDao.set(me.getId(), JsonUtils.objectToJson(me));
         redisDao.setExpire(me.getId(), 60 * 60 * 24 * 7);
-        return returnJson;
+        me.setPassWord("");
+        return ReturnJson.success(me);
     }
 
     /**
@@ -114,14 +111,9 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
      */
     @Override
     public String getId(HttpServletRequest request) {
-        String id = "";
-        Cookie[] cookies = request.getCookies();
-        for (Cookie cookie : cookies) {
-            if (cookie.getName().equals(TOKEN)) {
-                id = cookie.getValue();
-            }
-        }
-        return id;
+        String token = request.getHeader(TOKEN);
+        Claims claim = jwtUtils.getClaimByToken(token);
+        return claim.getSubject();
     }
 
     /**
@@ -164,29 +156,23 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
      * @return
      */
     @Override
-    public ReturnJson loginMobile(@NotBlank(message = "手机号不能为空") String loginMobile, @NotBlank(message = "验证码不能为空") String checkCode, HttpServletResponse resource) {
-        ReturnJson rj = new ReturnJson();
+    public ReturnJson loginMobile(String loginMobile,String checkCode, HttpServletResponse resource) {
         String redisCheckCode = redisDao.get(loginMobile);
         if (StringUtils.isBlank(redisCheckCode)) {
-            rj.setCode(300);
-            rj.setMessage("验证码已过期，请重新获取！");
+            return ReturnJson.error("验证码已过期，请重新获取！");
         } else if (!checkCode.equals(redisCheckCode)) {
-            rj.setCode(300);
-            rj.setMessage("输入的验证码有误！");
+            return ReturnJson.error("输入的验证码有误");
         } else {
-            rj.setCode(200);
             redisDao.remove(loginMobile);
             Merchant merchant = this.getOne(new QueryWrapper<Merchant>().eq("login_mobile", loginMobile));
             merchant.setPassWord("");
             merchant.setPayPwd("");
-            rj.setObj(merchant);
-            Cookie cookie = new Cookie("token", merchant.getId());
-            cookie.setMaxAge(60 * 60 * 24 * 7);
-            resource.addCookie(cookie);
+            String token = jwtUtils.generateToken(merchant.getId());
+            resource.setHeader(TOKEN,token);
             redisDao.set(merchant.getId(), JsonUtils.objectToJson(merchant));
             redisDao.setExpire(merchant.getId(), 60 * 60 * 24 * 7);
+            return ReturnJson.success(merchant);
         }
-        return rj;
     }
 
     /**
@@ -209,8 +195,8 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         }
         List<Map<String, Object>> list = new ArrayList<>();
         Map<String, Object> map = new HashMap<>();
-        map.put("salesMan",salesMan);
-        map.put("address",address);
+        map.put("salesMan", salesMan);
+        map.put("address", address);
         map.put("merchant", merchant);
         map.put("companyInfo", companyInfo);
         map.put("taxPOS", taxPOS);

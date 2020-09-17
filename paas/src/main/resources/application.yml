@@ -96,6 +96,14 @@ redis:
       min-idea: 0 # 连接池中的最小空闲连接
   timeout: 3000ms # 连接超时时间（毫秒）
 
-PathImage_KEY: "G:\\upload\\image\\"
+#本地图片存储路径
+PathImage_KEY: "G:/upload/image/"
 
-PathExcel_KEY: "G:\\upload\\excel\\"
+#本地excel存储路径
+PathExcel_KEY: "G:/upload/excel/"
+
+#图片的访问路径
+fileStaticAccesspathImage: "/static/image/"
+
+#excel的访问路径
+fileStaticAccesspathExcel: "/static/excel/"

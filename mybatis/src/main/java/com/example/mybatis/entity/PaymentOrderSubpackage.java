@@ -36,16 +36,6 @@ public class PaymentOrderSubpackage implements Serializable {
     private String merchantId;
 
     /**
-     * 总包ID
-     */
-    private String paymentOrderId;
-
-    /**
-     * 商户的公司简称
-     */
-    private String companySName;
-
-    /**
      * 支付金额
      */
     private BigDecimal realMoney;
@@ -54,20 +44,11 @@ public class PaymentOrderSubpackage implements Serializable {
      * 平台服务商ID
      */
     private String taxId;
-    /**
-     * 平台服务商
-     */
-    private String platformServiceProvider;
 
     /**
-     * 项目合同（存储位置）
+     * 支付清单Id
      */
-    private String companyContract;
-
-    /**
-     * 支付清单（存储位置）
-     */
-    private String paymentInventory;
+    private String paymentInventoryId;
 
     /**
      * 分包支付回单（存储位置）
@@ -79,25 +60,6 @@ public class PaymentOrderSubpackage implements Serializable {
      */
     private String taskId;
 
-    /**
-     * 支付验收单（存储位置）
-     */
-    private String acceptanceCertificate;
-
-    /**
-     * 综合税率(综合税率=商户承担的税率+创客承担的税率)
-     */
-    private BigDecimal compositeTax;
-
-    /**
-     * 商户承担的税率
-     */
-    private BigDecimal merchantTax;
-
-    /**
-     * 创客承担的税率
-     */
-    private BigDecimal receviceTax;
 
     /**
      * 支付订单的状态

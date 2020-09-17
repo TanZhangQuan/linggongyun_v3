@@ -1,6 +1,7 @@
 package com.example.paas.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.example.common.util.ReturnJson;
 import com.example.mybatis.entity.PaymentOrderSubpackage;
 
 /**
@@ -13,5 +14,5 @@ import com.example.mybatis.entity.PaymentOrderSubpackage;
  * @since 2020-09-08
  */
 public interface PaymentOrderSubpackageService extends IService<PaymentOrderSubpackage> {
-
+    ReturnJson subpackagePay(String paymentOrderId, String subpackagePayment);
 }

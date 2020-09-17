@@ -1,15 +1,15 @@
-package com.example.paas.config;
+package com.example.merchant.config;
 
-import com.example.paas.interceptor.PaasLoginJWTInterceptor;
+import com.example.merchant.interceptor.PaasLoginJWTInterceptor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 @Configuration
-public class InterceptorConfig extends WebMvcConfigurationSupport {
+public class InterceptorConfig extends WebMvcConfigurerAdapter {
     @Value("${PathImage_KEY}")
     private String PathImage_KEY;
 
@@ -21,7 +21,6 @@ public class InterceptorConfig extends WebMvcConfigurationSupport {
 
     @Value("${fileStaticAccesspathExcel}")
     private String fileStaticAccesspathExcel;
-
     @Bean
     public PaasLoginJWTInterceptor paasLoginJWTInterceptor() {
         return new PaasLoginJWTInterceptor();

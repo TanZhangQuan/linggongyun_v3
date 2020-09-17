@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 @RestController
@@ -32,15 +33,15 @@ public class FileOperationController {
 
     @PostMapping("/uploadInvoice")
     @ApiOperation(value = "上传支付清单", notes = "上传支付清单", httpMethod = "POST")
-    public ReturnJson uploadInvoice(@ApiParam(value = "上传支付清单",required = true) @RequestParam("uploadInvoice") MultipartFile uploadInvoice) throws IOException{
-        return fileOperationService.uploadInvoice(uploadInvoice);
+    public ReturnJson uploadInvoice(@ApiParam(value = "上传支付清单",required = true) @RequestParam("uploadInvoice") MultipartFile uploadInvoice, HttpServletRequest request) throws IOException{
+        return fileOperationService.uploadInvoice(uploadInvoice, request);
     }
 
 
     @PostMapping("/uploadJpgOrPdf")
     @ApiOperation(value = "上传JPG或PDF", notes = "上传JPG或PDF", httpMethod = "POST")
-    public ReturnJson uploadJpgOrPdf(@ApiParam(value = "上传文件",required = true) @RequestParam("uploadJpgOrPdf") MultipartFile uploadJpgOrPdf) throws IOException {
-        return fileOperationService.uploadJpgOrPdf(uploadJpgOrPdf);
+    public ReturnJson uploadJpgOrPdf(@ApiParam(value = "上传文件",required = true) @RequestParam("uploadJpgOrPdf") MultipartFile uploadJpgOrPdf, HttpServletRequest request) throws IOException {
+        return fileOperationService.uploadJpgOrPdf(uploadJpgOrPdf,request);
     }
 
 

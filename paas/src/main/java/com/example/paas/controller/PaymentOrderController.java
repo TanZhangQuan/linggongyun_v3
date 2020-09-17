@@ -2,10 +2,12 @@ package com.example.paas.controller;
 
 
 import com.example.common.util.ReturnJson;
-import com.example.paas.dto.PaymentOrderDto;
-import com.example.paas.service.PaymentOrderService;
 import com.example.mybatis.entity.PaymentInventory;
 import com.example.mybatis.entity.PaymentOrder;
+import com.example.paas.dto.PaymentOrderDto;
+import com.example.paas.interceptor.LoginRequired;
+import com.example.paas.service.PaymentOrderService;
+import com.example.paas.service.PaymentOrderSubpackageService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -30,14 +32,18 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/paas/paymentOrder")
-@Api(value = "总包+分包支付管理", tags = "总包+分包支付管理")
+@Api(value = "平台端总包+分包支付管理", tags = "平台端总包+分包支付管理")
 @Validated
 public class PaymentOrderController {
 
     @Autowired
     private PaymentOrderService paymentOrderService;
 
+    @Autowired
+    private PaymentOrderSubpackageService paymentOrderSubpackageService;
+
     @PostMapping("/getPaymentOrderAll")
+    @LoginRequired
     @ApiOperation(value = "查询总包+分包支付订单", notes = "查询总包+分包支付订单", httpMethod = "POST")
     @ApiImplicitParams(value={@ApiImplicitParam(name="paymentOrderDto",value = "查询条件",required = true, dataType = "PaymentOrderDto")})
     public ReturnJson getPaymentOrderAll(@Valid @RequestBody PaymentOrderDto paymentOrderDto){
@@ -45,10 +51,20 @@ public class PaymentOrderController {
     }
 
     @GetMapping("/getPaymentOrderInfo")
+    @LoginRequired
     @ApiOperation(value = "查询总包+分包支付订单详情", notes = "查询总包+分包支付订单详情", httpMethod = "GET")
     @ApiImplicitParams(value={@ApiImplicitParam(name="id",value = "总包+分包支付订单ID",required = true)})
     public ReturnJson getPaymentOrderInfo(@NotBlank(message = "支付订单ID不能为空") @RequestParam(required = false) String id){
         return paymentOrderService.getPaymentOrderInfo(id);
+    }
+
+
+    @PostMapping("/findMerchant")
+    @LoginRequired
+    @ApiOperation(value = "查询商户", notes = "查询商户", httpMethod = "POST")
+    @ApiImplicitParams(value={@ApiImplicitParam(name="managersId",value = "管理人员ID",required = true)})
+    public ReturnJson findMerchant(@NotBlank(message = "支付订单不能为空！") @RequestParam String managersId){
+        return paymentOrderService.findMerchant(managersId);
     }
 
     @PostMapping("/saveOrUpdata")
@@ -61,11 +77,28 @@ public class PaymentOrderController {
 
 
     @PostMapping("/offlinePayment")
-    @ApiOperation(value = "线下支付", notes = "线下支付", httpMethod = "POST")
+    @LoginRequired
+    @ApiOperation(value = "总包线下支付", notes = "总包线下支付", httpMethod = "POST")
     @ApiImplicitParams(value={@ApiImplicitParam(name="paymentOrderId",value = "支付订单ID",required = true),
             @ApiImplicitParam(name="turnkeyProjectPayment",value = "支付回单存储地址",required = true)})
     public ReturnJson offlinePayment(@NotBlank @RequestParam(required = false) String paymentOrderId, @NotBlank @RequestParam(required = false) String turnkeyProjectPayment){
         return paymentOrderService.offlinePayment(paymentOrderId, turnkeyProjectPayment);
+    }
+
+    @PostMapping("subpackagePayment")
+    @LoginRequired
+    @ApiOperation(value = "分包线下支付", notes = "分包线下支付", httpMethod = "POST")
+    @ApiImplicitParams(value={@ApiImplicitParam(name="paymentOrderId",value = "总包支付订单ID",required = true),
+            @ApiImplicitParam(name="subpackagePayment",value = "分包支付回单存储地址",required = true)})
+    public ReturnJson subpackagePay(String paymentOrderId, String subpackagePayment){
+        return paymentOrderSubpackageService.subpackagePay(paymentOrderId, subpackagePayment);
+    }
+    @PostMapping("/confirmReceipt")
+    @ApiOperation(value = "确认收款", notes = "确认收款", httpMethod = "POST")
+    @LoginRequired
+    @ApiImplicitParams(value={@ApiImplicitParam(name="paymentOrderId",value = "支付订单ID",required = true)})
+    public ReturnJson confirmReceipt(@NotBlank(message = "支付订单不能为空！") @RequestParam String paymentOrderId){
+        return paymentOrderService.confirmReceipt(paymentOrderId);
     }
 
 }

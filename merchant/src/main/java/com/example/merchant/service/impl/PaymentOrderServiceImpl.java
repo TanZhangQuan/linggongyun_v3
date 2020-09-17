@@ -152,11 +152,22 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
      */
     @Override
     public ReturnJson saveOrUpdataPaymentOrder(PaymentOrder paymentOrder, List<PaymentInventory> paymentInventories) {
+        String id = paymentOrder.getId();
+        if (id != null && paymentOrder.getPaymentOrderStatus() == 0) {
+            List<PaymentInventory> paymentInventoryList = paymentInventoryDao.selectList(new QueryWrapper<PaymentInventory>().eq("payment_order_id", id));
+            List<String> ids = new ArrayList<>();
+            for (PaymentInventory paymentInventory : paymentInventoryList) {
+                ids.add(paymentInventory.getId());
+            }
+            paymentOrderSubpackageDao.delete(new QueryWrapper<PaymentOrderSubpackage>().in("payment_inventory_id",ids));
+            paymentInventoryDao.delete(new QueryWrapper<PaymentInventory>().eq("payment_order_id",id));
+            this.removeById(id);
+        }
         BigDecimal receviceTax = paymentOrder.getReceviceTax().divide(BigDecimal.valueOf(100));
         BigDecimal merchantTax = paymentOrder.getMerchantTax().divide(BigDecimal.valueOf(100));
         BigDecimal compositeTax = paymentOrder.getCompositeTax().divide(BigDecimal.valueOf(100));
         BigDecimal countMoney = new BigDecimal("0");
-
+        BigDecimal countWorkerMoney = new BigDecimal("0");
         if (!compositeTax.equals(receviceTax.add(merchantTax))){
             return ReturnJson.error("综合税率应该等于商户+创客的税率");
         }
@@ -177,16 +188,28 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
                 paymentInventory.setServiceMoney(realMoney.multiply(compositeTax));
             }
             countMoney = countMoney.add(paymentInventory.getMerchantPaymentMoney());
+            countWorkerMoney = countWorkerMoney.add(paymentInventory.getRealMoney());
         }
         paymentOrder.setRealMoney(countMoney);
+        paymentOrder.setWorkerMoney(countWorkerMoney);
+        //生成总包支付订单
         boolean b = this.saveOrUpdate(paymentOrder);
         if (!b){
             return ReturnJson.error("订单创建失败！");
         }
         for (PaymentInventory paymentInventory : paymentInventories) {
             paymentInventory.setPaymentOrderId(paymentOrder.getId());
+            //生成支付明细
+            paymentInventoryService.saveOrUpdate(paymentInventory);
+            //生成分包订单
+            PaymentOrderSubpackage paymentOrderSubpackage = new PaymentOrderSubpackage();
+            paymentOrderSubpackage.setMerchantId(paymentOrder.getMerchantId());
+            paymentOrderSubpackage.setPaymentInventoryId(paymentInventory.getId());
+            paymentOrderSubpackage.setRealMoney(paymentInventory.getRealMoney());
+            paymentOrderSubpackage.setTaskId(paymentOrder.getTaskId());
+            paymentOrderSubpackage.setTaxId(paymentOrder.getTaxId());
+            paymentOrderSubpackageDao.insert(paymentOrderSubpackage);
         }
-        paymentInventoryService.saveOrUpdateBatch(paymentInventories);
         return ReturnJson.success("支付订单创建成功！");
     }
 

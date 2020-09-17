@@ -5,6 +5,7 @@
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.example.mybatis.entity.Tax">
         <id column="id" property="id" />
+        <result column="managers_id" property="managersId" />
         <result column="tax_name" property="taxName" />
         <result column="tax_price" property="taxPrice" />
         <result column="tax_company" property="taxCompany" />
