@@ -3,12 +3,17 @@ package com.example.paas.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.common.util.ReturnJson;
-import com.example.mybatis.entity.*;
-import com.example.mybatis.mapper.*;
+import com.example.mybatis.entity.PaymentInventory;
+import com.example.mybatis.entity.PaymentOrderMany;
+import com.example.mybatis.entity.Tax;
+import com.example.mybatis.mapper.ManagersDao;
+import com.example.mybatis.mapper.PaymentInventoryDao;
+import com.example.mybatis.mapper.PaymentOrderManyDao;
+import com.example.mybatis.mapper.TaxDao;
 import com.example.paas.dto.PaymentOrderDto;
-import com.example.paas.service.MerchantService;
 import com.example.paas.service.PaymentInventoryService;
 import com.example.paas.service.PaymentOrderManyService;
+import com.example.paas.util.AcquireMerchantID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +26,7 @@ import java.util.Map;
 /**
  * <p>
  * 众包支付单操作
- 服务实现类
+ * 服务实现类
  * </p>
  *
  * @author hzp
@@ -35,16 +40,6 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
 
     @Autowired
     private PaymentInventoryDao paymentInventoryDao;
-
-    @Autowired
-    private MerchantTaxDao merchantTaxDao;
-
-    @Autowired
-    private MerchantDao merchantDao;
-
-    @Autowired
-    private MerchantService merchantService;
-
     @Autowired
     private TaxDao taxDao;
 
@@ -54,48 +49,59 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
     @Autowired
     private ManagersDao managersDao;
 
+    @Autowired
+    private AcquireMerchantID acquireMerchantID;
+
     /**
      * 众包今天的支付金额
+     *
      * @param merchantId
      * @return
      */
     @Override
     public ReturnJson getDay(String merchantId) {
-        List<PaymentOrderMany> list = paymentOrderManyDao.selectDay(merchantId);
+        List<String> merchantIds = acquireMerchantID.getMerchantIds(merchantId);
+        List<PaymentOrderMany> list = paymentOrderManyDao.selectDaypaas(merchantIds);
         return ReturnJson.success(list);
     }
 
     /**
      * 众包本周的支付金额
+     *
      * @param merchantId
      * @return
      */
     @Override
     public ReturnJson getWeek(String merchantId) {
-        List<PaymentOrderMany> list = paymentOrderManyDao.selectWeek(merchantId);
+        List<String> merchantIds = acquireMerchantID.getMerchantIds(merchantId);
+        List<PaymentOrderMany> list = paymentOrderManyDao.selectWeekpaas(merchantIds);
         return ReturnJson.success(list);
     }
 
 
     /**
      * 众包本月的支付金额
+     *
      * @param merchantId
      * @return
      */
     @Override
     public ReturnJson getMonth(String merchantId) {
-        List<PaymentOrderMany> list = paymentOrderManyDao.selectMonth(merchantId);
+        List<String> merchantIds = acquireMerchantID.getMerchantIds(merchantId);
+        List<PaymentOrderMany> list = paymentOrderManyDao.selectMonthpaas(merchantIds);
         return ReturnJson.success(list);
     }
 
     /**
      * 众包今年的支付金额
+     *
      * @param merchantId
      * @return
      */
     @Override
     public ReturnJson getYear(String merchantId) {
-        List<PaymentOrderMany> list = paymentOrderManyDao.selectYear(merchantId);
+        List<String> merchantIds = acquireMerchantID.getMerchantIds(merchantId);
+        List<PaymentOrderMany> list = paymentOrderManyDao.selectYearpaas(merchantIds);
         return ReturnJson.success(list);
     }
 
@@ -110,19 +116,20 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
 
     /**
      * 查询众包的支付订单
+     *
      * @param paymentOrderDto
      * @return
      */
     @Override
     public ReturnJson getPaymentOrderMany(PaymentOrderDto paymentOrderDto) {
-        Managers managers = managersDao.selectById(paymentOrderDto.getManagersId());
-        List<String> merchantIds = this.getMerchantIds(managers);
+        List<String> merchantIds = acquireMerchantID.getMerchantIds(paymentOrderDto.getManagersId());
         paymentOrderDto.setMerchantIds(merchantIds);
         return this.getPaymentOrderData(paymentOrderDto);
     }
 
     /**
      * 众包支付订单详情
+     *
      * @param id
      * @return
      */
@@ -133,14 +140,15 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
         Tax tax = taxDao.selectById(paymentOrderMany.getTaxId());
         List<Map<String, Object>> list = new ArrayList<>();
         Map<String, Object> map = new HashMap<>();
-        map.put("paymentInventories",paymentInventories);
-        map.put("tax",tax);
+        map.put("paymentInventories", paymentInventories);
+        map.put("tax", tax);
         list.add(map);
-        return ReturnJson.success(paymentOrderMany,list);
+        return ReturnJson.success(paymentOrderMany, list);
     }
 
     /**
      * 创建或修改众包订单
+     *
      * @param paymentOrderMany
      * @param paymentInventories
      * @return
@@ -155,7 +163,7 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
             for (PaymentInventory paymentInventory : paymentInventoryList) {
                 ids.add(paymentInventory.getId());
             }
-            paymentInventoryDao.delete(new QueryWrapper<PaymentInventory>().eq("payment_order_id",id));
+            paymentInventoryDao.delete(new QueryWrapper<PaymentInventory>().eq("payment_order_id", id));
             this.removeById(id);
         }
 
@@ -165,7 +173,7 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
         BigDecimal countMoney = new BigDecimal("0");
 
 
-        if (!compositeTax.equals(receviceTax.add(merchantTax))){
+        if (!compositeTax.equals(receviceTax.add(merchantTax))) {
             return ReturnJson.error("综合税率应该等于商户+创客的税率");
         }
         for (PaymentInventory paymentInventory : paymentInventories) {
@@ -173,10 +181,10 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
             paymentInventory.setCompositeTax(paymentOrderMany.getCompositeTax());
             Integer taxStatus = paymentOrderMany.getTaxStatus();
             BigDecimal realMoney = paymentInventory.getRealMoney();
-            if (taxStatus == 0){
+            if (taxStatus == 0) {
                 paymentInventory.setMerchantPaymentMoney(realMoney.multiply(merchantTax.add(BigDecimal.valueOf(1))));
                 paymentInventory.setServiceMoney(realMoney.multiply(compositeTax));
-            } else if (taxStatus == 1){
+            } else if (taxStatus == 1) {
                 paymentInventory.setMerchantPaymentMoney(realMoney);
                 paymentInventory.setServiceMoney(realMoney.multiply(receviceTax));
                 paymentInventory.setRealMoney(realMoney.subtract(realMoney.multiply(compositeTax)));
@@ -189,47 +197,15 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
         }
         paymentOrderMany.setRealMoney(countMoney);
         boolean b = this.saveOrUpdate(paymentOrderMany);
-        if (!b){
+        if (!b) {
             return ReturnJson.error("订单创建失败！");
         }
         for (PaymentInventory paymentInventory : paymentInventories) {
             paymentInventory.setPaymentOrderId(paymentOrderMany.getId());
-            try {
-                paymentInventoryService.saveOrUpdate(paymentInventory);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            paymentInventory.setPackageStatus(1);
+            paymentInventoryService.saveOrUpdate(paymentInventory);
         }
         return ReturnJson.success("支付订单创建成功！");
-    }
-
-
-    private List<String> getMerchantIds(Managers managers) {
-        List<String> merchantIds = new ArrayList<>();
-        Integer userSign = managers.getUserSign();
-        if (userSign == 1) {//管理人员为代理商
-            List<Merchant> merchants = merchantDao.selectList(new QueryWrapper<Merchant>().eq("agent_id", managers.getId()));
-            for (Merchant merchant : merchants) {
-                merchantIds.add(merchant.getId());
-            }
-        } else if (userSign == 2) {//管理人员为业务员
-            List<Merchant> merchants = merchantDao.selectList(new QueryWrapper<Merchant>().eq("sales_man_id", managers.getId()));
-            for (Merchant merchant : merchants) {
-                merchantIds.add(merchant.getId());
-            }
-        } else if (userSign == 3) {//管理人员为服务商
-            Tax tax = taxDao.selectOne(new QueryWrapper<Tax>().eq("managers_id", managers.getId()));
-            List<MerchantTax> merchantTaxes = merchantTaxDao.selectList(new QueryWrapper<MerchantTax>().eq("tax_id", tax.getId()));
-            for (MerchantTax merchantTax : merchantTaxes) {
-                merchantIds.add(merchantTax.getId());
-            }
-        } else {
-            List<Merchant> merchants = merchantService.list();
-            for (Merchant merchant : merchants) {
-                merchantIds.add(merchant.getId());
-            }
-        }
-        return merchantIds;
     }
 
     private ReturnJson getPaymentOrderData(PaymentOrderDto paymentOrderDto) {

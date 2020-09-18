@@ -9,6 +9,7 @@ import com.example.paas.dto.PaymentOrderDto;
 import com.example.paas.service.MerchantService;
 import com.example.paas.service.PaymentInventoryService;
 import com.example.paas.service.PaymentOrderService;
+import com.example.paas.util.AcquireMerchantID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -58,6 +59,10 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
     @Autowired
     private MerchantTaxDao merchantTaxDao;
 
+    @Autowired
+    private AcquireMerchantID acquireMerchantID;
+
+
     /**
      * 获取今天的支付总额
      *
@@ -66,7 +71,8 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
      */
     @Override
     public ReturnJson getDay(String merchantId) {
-        List<PaymentOrder> list = paymentOrderDao.selectDay(merchantId);
+        List<String> merchantIds = acquireMerchantID.getMerchantIds(merchantId);
+        List<PaymentOrder> list = paymentOrderDao.selectDaypaas(merchantIds);
         return ReturnJson.success(list);
     }
 
@@ -78,7 +84,8 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
      */
     @Override
     public ReturnJson getWeek(String merchantId) {
-        List<PaymentOrder> list = paymentOrderDao.selectWeek(merchantId);
+        List<String> merchantIds = acquireMerchantID.getMerchantIds(merchantId);
+        List<PaymentOrder> list = paymentOrderDao.selectWeekpaas(merchantIds);
         return ReturnJson.success(list);
     }
 
@@ -90,7 +97,8 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
      */
     @Override
     public ReturnJson getMonth(String merchantId) {
-        List<PaymentOrder> list = paymentOrderDao.selectMonth(merchantId);
+        List<String> merchantIds = acquireMerchantID.getMerchantIds(merchantId);
+        List<PaymentOrder> list = paymentOrderDao.selectMonthpaas(merchantIds);
         return ReturnJson.success(list);
     }
 
@@ -102,7 +110,8 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
      */
     @Override
     public ReturnJson getYear(String merchantId) {
-        List<PaymentOrder> list = paymentOrderDao.selectYear(merchantId);
+        List<String> merchantIds = acquireMerchantID.getMerchantIds(merchantId);
+        List<PaymentOrder> list = paymentOrderDao.selectYearpaas(merchantIds);
         return ReturnJson.success(list);
     }
 
@@ -114,8 +123,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
      */
     @Override
     public ReturnJson getPaymentOrder(PaymentOrderDto paymentOrderDto) {
-        Managers managers = managersDao.selectById(paymentOrderDto.getManagersId());
-        List<String> merchantIds = this.getMerchantIds(managers);
+        List<String> merchantIds = acquireMerchantID.getMerchantIds(paymentOrderDto.getManagersId());
         paymentOrderDto.setMerchantIds(merchantIds);
         return this.getPaymentOrderData(paymentOrderDto);
     }
@@ -197,6 +205,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
         }
         for (PaymentInventory paymentInventory : paymentInventories) {
             paymentInventory.setPaymentOrderId(paymentOrder.getId());
+            paymentInventory.setPackageStatus(0);
             //生成支付明细
             paymentInventoryService.saveOrUpdate(paymentInventory);
             //生成分包订单
@@ -300,34 +309,6 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
         returnJson.setData(list);
         returnJson.setCode(200);
         return returnJson;
-    }
-
-    private List<String> getMerchantIds(Managers managers) {
-        List<String> merchantIds = new ArrayList<>();
-        Integer userSign = managers.getUserSign();
-        if (userSign == 1) {//管理人员为代理商
-            List<Merchant> merchants = merchantDao.selectList(new QueryWrapper<Merchant>().eq("agent_id", managers.getId()));
-            for (Merchant merchant : merchants) {
-                merchantIds.add(merchant.getId());
-            }
-        } else if (userSign == 2) {//管理人员为业务员
-            List<Merchant> merchants = merchantDao.selectList(new QueryWrapper<Merchant>().eq("sales_man_id", managers.getId()));
-            for (Merchant merchant : merchants) {
-                merchantIds.add(merchant.getId());
-            }
-        } else if (userSign == 3) {//管理人员为服务商
-            Tax tax = taxDao.selectOne(new QueryWrapper<Tax>().eq("managers_id", managers.getId()));
-            List<MerchantTax> merchantTaxes = merchantTaxDao.selectList(new QueryWrapper<MerchantTax>().eq("tax_id", tax.getId()));
-            for (MerchantTax merchantTax : merchantTaxes) {
-                merchantIds.add(merchantTax.getId());
-            }
-        } else {
-            List<Merchant> merchants = merchantService.list();
-            for (Merchant merchant : merchants) {
-                merchantIds.add(merchant.getId());
-            }
-        }
-        return merchantIds;
     }
 
 }
