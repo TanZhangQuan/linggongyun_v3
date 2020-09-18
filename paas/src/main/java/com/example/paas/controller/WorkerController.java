@@ -35,27 +35,52 @@ public class WorkerController {
     private WorkerService workerService;
 
     @PostMapping("/getWorkerAll")
-    @ApiOperation(value = "获取商户的所以创客", notes = "获取商户的所以创客", httpMethod = "POST")
-    @ApiImplicitParams(value={@ApiImplicitParam(name="merchantId",value = "用户ID",required = true),
+    @ApiOperation(value = "获取所以已认证的创客", notes = "获取所以已认证的创客", httpMethod = "POST")
+    @ApiImplicitParams(value={@ApiImplicitParam(name="managersId",value = "管理人员ID",required = true),
             @ApiImplicitParam(name="page",value = "页数",required = true),
             @ApiImplicitParam(name="pageSize",value = "每页的条数",required = true)
     })
-    public ReturnJson getWorkerAll(@NotBlank(message = "用户ID不能为空")  @RequestParam(required = false) String merchantId,
+    public ReturnJson getWorkerAll(@NotBlank(message = "用户ID不能为空")  @RequestParam(required = false) String managersId,
                                    @RequestParam(defaultValue = "1")  Integer page,
                                    @RequestParam(defaultValue = "10")  Integer pageSize){
-        return workerService.getWorkerAll(merchantId, page, pageSize);
+        return workerService.getWorkerAll(managersId, page, pageSize);
     }
 
+    @PostMapping("/getWorkerAllNot")
+    @ApiOperation(value = "获取所以未认证的创客", notes = "获取所以未认证的创客", httpMethod = "POST")
+    @ApiImplicitParams(value={@ApiImplicitParam(name="managersId",value = "管理人员ID",required = true),
+            @ApiImplicitParam(name="page",value = "页数",required = true),
+            @ApiImplicitParam(name="pageSize",value = "每页的条数",required = true)
+    })
+    public ReturnJson getWorkerAllNot(@NotBlank(message = "用户ID不能为空")  @RequestParam(required = false) String managersId,
+                                   @RequestParam(defaultValue = "1")  Integer page,
+                                   @RequestParam(defaultValue = "10")  Integer pageSize){
+        return workerService.getWorkerAllNot(managersId, page, pageSize);
+    }
+
+
     @PostMapping("/getWorkerMany")
-    @ApiOperation(value = "按条件查询创客", notes = "按条件查询创客", httpMethod = "POST")
-    @ApiImplicitParams(value={@ApiImplicitParam(name="merchantId",value = "用户ID",required = true),
+    @ApiOperation(value = "按条件查询已认证的创客", notes = "按条件查询已认证的创客", httpMethod = "POST")
+    @ApiImplicitParams(value={@ApiImplicitParam(name="managersId",value = "管理人员ID",required = true),
             @ApiImplicitParam(name="id",value = "创客ID",required = false),
             @ApiImplicitParam(name="accountName",value = "创客的真实姓名",required = false),
             @ApiImplicitParam(name="mobileCode",value = "创客的手机号",required = false)
     })
-    public ReturnJson getWorkerMany(@NotBlank(message = "用户ID不能为空") @RequestParam(required = false) String merchantId,@RequestParam(required = false) String id,
+    public ReturnJson getWorkerMany(@NotBlank(message = "管理人员ID不能为空") @RequestParam(required = false) String managersId,@RequestParam(required = false) String id,
                                     @RequestParam(required = false) String accountName, @RequestParam(required = false) String mobileCode){
-        return workerService.getByIdAndAccountNameAndMobile(merchantId, id, accountName, mobileCode);
+        return workerService.getByIdAndAccountNameAndMobile(managersId, id, accountName, mobileCode);
+    }
+
+    @PostMapping("/getWorkerManyNot")
+    @ApiOperation(value = "按条件查询未认证的创客", notes = "按条件查询已认证的创客", httpMethod = "POST")
+    @ApiImplicitParams(value={@ApiImplicitParam(name="managersId",value = "管理人员ID",required = true),
+            @ApiImplicitParam(name="id",value = "创客ID",required = false),
+            @ApiImplicitParam(name="accountName",value = "创客的真实姓名",required = false),
+            @ApiImplicitParam(name="mobileCode",value = "创客的手机号",required = false)
+    })
+    public ReturnJson getWorkerManyNot(@NotBlank(message = "管理人员ID不能为空") @RequestParam(required = false) String managersId,@RequestParam(required = false) String id,
+                                    @RequestParam(required = false) String accountName, @RequestParam(required = false) String mobileCode){
+        return workerService.getByIdAndAccountNameAndMobileNot(managersId, id, accountName, mobileCode);
     }
 
     @PostMapping("/getWorkerInfo")
@@ -65,13 +90,30 @@ public class WorkerController {
         return workerService.getWorkerInfo(id);
     }
 
+    @PostMapping("/getWorkerPaymentList")
+    @ApiOperation(value = "查询创客的收入列表", notes = "查询创客的收入列表", httpMethod = "POST")
+    @ApiImplicitParams(value={@ApiImplicitParam(name="id",value = "创客ID",required = true)})
+    public ReturnJson getWorkerPaymentList(@NotBlank(message = "创客ID不能为空") @RequestParam(required = false)  String id,
+                                           @RequestParam(defaultValue = "1")  Integer page,
+                                           @RequestParam(defaultValue = "10")  Integer pageSize){
+        return workerService.getWorkerPaymentList(id, page, pageSize);
+    }
+
     @PostMapping("/saveWorker")
     @ApiOperation(value = "导入创客", notes = "导入创客", httpMethod = "POST")
     @ApiImplicitParams(value={@ApiImplicitParam(name="workers",value = "需要导入的创客集合",required = true, allowMultiple = true ,dataType = "Worker"),
-            @ApiImplicitParam(name="merchantId",value = "商户ID",required = true)})
-    public ReturnJson saveWorker(@NotEmpty(message = "集合不能为空") @RequestBody List<Worker> workers, @NotBlank(message = "用户ID不能为空") @RequestParam(required = false) String merchantId){
-        return workerService.saveWorker(workers, merchantId);
+            @ApiImplicitParam(name="managersId",value = "管理人员ID",required = true)})
+    public ReturnJson saveWorker(@NotEmpty(message = "集合不能为空") @RequestBody List<Worker> workers, @NotBlank(message = "用户ID不能为空") @RequestParam(required = false) String managersId){
+        return workerService.saveWorker(workers, managersId);
     }
+
+    @PostMapping("/updetaWorker")
+    @ApiOperation(value = "编辑创客", notes = "编辑创客", httpMethod = "POST")
+    @ApiImplicitParams(value={@ApiImplicitParam(name="worker",value = "编辑后的创客",required = true,dataType = "Worker")})
+    public ReturnJson updataWorker(@RequestBody Worker worker){
+        return workerService.updateWorker(worker);
+    }
+
     private static Logger logger = LoggerFactory.getLogger(TaskController.class);
 
 

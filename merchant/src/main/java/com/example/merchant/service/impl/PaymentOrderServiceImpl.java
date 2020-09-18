@@ -200,6 +200,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
         for (PaymentInventory paymentInventory : paymentInventories) {
             paymentInventory.setPaymentOrderId(paymentOrder.getId());
             //生成支付明细
+            paymentInventory.setPackageStatus(0);
             paymentInventoryService.saveOrUpdate(paymentInventory);
             //生成分包订单
             PaymentOrderSubpackage paymentOrderSubpackage = new PaymentOrderSubpackage();

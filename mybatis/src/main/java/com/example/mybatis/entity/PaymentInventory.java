@@ -103,6 +103,11 @@ public class PaymentInventory implements Serializable {
     @ApiModelProperty("实名认证状态(0未认证，1已认证)")
     private Integer attestation;
 
+    /**
+     * 合作类型0总包，1众包
+     */
+    private Integer packageStatus;
+
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createDate;
 

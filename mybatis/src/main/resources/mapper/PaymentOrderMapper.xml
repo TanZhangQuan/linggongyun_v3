@@ -115,11 +115,17 @@
     </select>
 
 
+
+
+
+
+    <!--平台端查询...............-->
+
     <!--    查询最近30天-->
     <select id="selectBy30Daypaas" parameterType="list" resultType="decimal">
         select SUM(real_money) 'total_money' from tb_payment_order where
         date_sub(curdate(), INTERVAL 30 DAY) &lt;= date(`payment_date`)
-        and payment_order_status = 2 and merchant_id in
+        and payment_order_status &gt;= 2 and merchant_id in
         <foreach collection="list" index="index" item="merchantIds" open="(" separator="," close=")">
             #{merchantIds}
         </foreach>
@@ -128,7 +134,7 @@
     <!--查询总支付-->
     <select id="selectTotalpaas" parameterType="list" resultType="decimal">
         select SUM(real_money) 'total_money' from tb_payment_order where
-        payment_order_status = 2 and merchant_id in
+        payment_order_status &gt;= 2 and merchant_id in
         <foreach collection="list" index="index" item="merchantIds" open="(" separator="," close=")">
             #{merchantIds}
         </foreach>
@@ -137,7 +143,7 @@
     <!--查询今天已支付订单-->
     <select id="selectDaypaas" parameterType="list" resultMap="BaseResultMap">
         select * from tb_payment_order where to_days(payment_date) = to_days(now())
-        and payment_order_status = 2 and merchant_id in
+        and payment_order_status &gt;= 2 and merchant_id in
         <foreach collection="list" index="index" item="merchantIds" open="(" separator="," close=")">
             #{merchantIds}
         </foreach>
@@ -146,7 +152,7 @@
     <!--查询本周已支付的订单-->
     <select id="selectWeekpaas" parameterType="list" resultMap="BaseResultMap">
       SELECT * FROM tb_payment_order WHERE YEARWEEK(date_format(payment_date,'%Y-%m-%d')) = YEARWEEK(now())
-      and payment_order_status = 2 and merchant_id in
+      and payment_order_status &gt;= 2 and merchant_id in
         <foreach collection="list" index="index" item="merchantIds" open="(" separator="," close=")">
             #{merchantIds}
         </foreach>
@@ -155,7 +161,7 @@
     <!--查询本月已支付的订单-->
     <select id="selectMonthpaas" parameterType="list" resultMap="BaseResultMap">
         SELECT * FROM tb_payment_order WHERE DATE_FORMAT( payment_date, '%Y%m' ) = DATE_FORMAT( CURDATE( ) , '%Y%m' )
-        and payment_order_status = 2 and merchant_id in
+        and payment_order_status &gt;= 2 and merchant_id in
         <foreach collection="list" index="index" item="merchantIds" open="(" separator="," close=")">
             #{merchantIds}
         </foreach>
@@ -164,7 +170,7 @@
     <!--查询今年已支付的订单-->
     <select id="selectYearpaas" parameterType="list" resultMap="BaseResultMap">
          select * from `tb_payment_order` where YEAR(payment_date)=YEAR(NOW())
-         and payment_order_status = 2 and merchant_id in
+         and payment_order_status &gt;= 2 and merchant_id in
         <foreach collection="list" index="index" item="merchantIds" open="(" separator="," close=")">
             #{merchantIds}
         </foreach>

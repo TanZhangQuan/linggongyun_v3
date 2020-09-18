@@ -1,12 +1,13 @@
 package com.example.mybatis.mapper;
 
-import com.example.mybatis.entity.Worker;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.example.mybatis.entity.Worker;
+import com.example.mybatis.po.WorekerPaymentListPo;
 import com.example.mybatis.po.WorkerPo;
-import org.apache.ibatis.session.RowBounds;
-
-import java.util.List;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.session.RowBounds;
 
 import java.util.List;
 
@@ -35,4 +36,9 @@ public interface WorkerDao extends BaseMapper<Worker> {
     List<WorkerPo> getCheckByTaskId(String taskId,RowBounds rowBounds);
 
     List<Worker> selectByIdAndAccountNameAndMobile(@Param("merchantId") String merchantId, @Param("id") String id, @Param("accountName")String accountName, @Param("mobileCode") String mobileCode);
+    List<Worker> selectByIdAndAccountNameAndMobilePaas(@Param("merchantIds") List<String> merchantIds, @Param("id") String id, @Param("accountName")String accountName, @Param("mobileCode") String mobileCode);
+    List<Worker> selectByIdAndAccountNameAndMobilePaasNot(@Param("merchantIds") List<String> merchantIds, @Param("id") String id, @Param("accountName")String accountName, @Param("mobileCode") String mobileCode);
+    IPage<Worker> selectWorkerAllNot(Page page, @Param("merchantIds")List<String> merchantIds);
+    IPage<Worker> selectWorkerAll(Page page, @Param("merchantIds")List<String> merchantIds);
+    IPage<WorekerPaymentListPo> workerPaymentList(Page page, @Param("workerId")String workerId);
 }

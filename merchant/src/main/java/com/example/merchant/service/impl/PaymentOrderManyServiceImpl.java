@@ -194,6 +194,7 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
         }
         for (PaymentInventory paymentInventory : paymentInventories) {
             paymentInventory.setPaymentOrderId(paymentOrderMany.getId());
+            paymentInventory.setPackageStatus(1);
         }
         paymentInventoryService.saveOrUpdateBatch(paymentInventories);
         return ReturnJson.success("支付订单创建成功！");

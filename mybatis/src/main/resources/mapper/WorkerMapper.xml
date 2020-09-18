@@ -4,58 +4,58 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.example.mybatis.entity.Worker">
-        <id column="id" property="id" />
-        <result column="worker_status" property="workerStatus" />
-        <result column="worker_name" property="workerName" />
-        <result column="account_name" property="accountName" />
-        <result column="worker_sex" property="workerSex" />
-        <result column="mobile_code" property="mobileCode" />
-        <result column="idcard_code" property="idcardCode" />
-        <result column="bank_code" property="bankCode" />
-        <result column="attestation" property="attestation" />
-        <result column="idcardFront" property="idcardFront" />
-        <result column="idcardBack" property="idcardBack" />
-        <result column="attestation_video" property="attestationVideo" />
-        <result column="user_name" property="userName" />
-        <result column="user_pwd" property="userPwd" />
-        <result column="skill" property="skill" />
-        <result column="agreementSign" property="agreementSign" />
-        <result column="agreementUrl" property="agreementUrl" />
-        <result column="head_portraits" property="headPortraits" />
-        <result column="picture" property="picture" />
-        <result column="create_date" property="createDate" />
-        <result column="update_date" property="updateDate" />
+        <id column="id" property="id"/>
+        <result column="worker_status" property="workerStatus"/>
+        <result column="worker_name" property="workerName"/>
+        <result column="account_name" property="accountName"/>
+        <result column="worker_sex" property="workerSex"/>
+        <result column="mobile_code" property="mobileCode"/>
+        <result column="idcard_code" property="idcardCode"/>
+        <result column="bank_code" property="bankCode"/>
+        <result column="attestation" property="attestation"/>
+        <result column="idcardFront" property="idcardFront"/>
+        <result column="idcardBack" property="idcardBack"/>
+        <result column="attestation_video" property="attestationVideo"/>
+        <result column="user_name" property="userName"/>
+        <result column="user_pwd" property="userPwd"/>
+        <result column="skill" property="skill"/>
+        <result column="agreementSign" property="agreementSign"/>
+        <result column="agreementUrl" property="agreementUrl"/>
+        <result column="head_portraits" property="headPortraits"/>
+        <result column="picture" property="picture"/>
+        <result column="create_date" property="createDate"/>
+        <result column="update_date" property="updateDate"/>
     </resultMap>
 
 
     <resultMap id="WorkerPo" type="com.example.mybatis.po.WorkerPo">
-        <id column="id" property="wId" />
-        <result column="worker_name" property="workerName" />
-        <result column="mobile_code" property="mobileCode" />
-        <result column="idcard_code" property="idcardCode" />
-        <result column="attestation" property="attestation" />
-        <result column="agreementUrl" property="agreementUrl" />
-        <result column="create_date" property="createDate" />
+        <id column="id" property="wId"/>
+        <result column="worker_name" property="workerName"/>
+        <result column="mobile_code" property="mobileCode"/>
+        <result column="idcard_code" property="idcardCode"/>
+        <result column="attestation" property="attestation"/>
+        <result column="agreementUrl" property="agreementUrl"/>
+        <result column="create_date" property="createDate"/>
     </resultMap>
 
     <resultMap id="WorkerPos" type="com.example.mybatis.po.WorkerPo">
-        <id column="id" property="wId" />
-        <result column="worker_name" property="workerName" />
-        <result column="mobile_code" property="mobileCode" />
-        <result column="idcard_code" property="idcardCode" />
-        <result column="attestation" property="attestation" />
-        <result column="agreementUrl" property="agreementUrl" />
-        <result column="create_date" property="createDate" />
+        <id column="id" property="wId"/>
+        <result column="worker_name" property="workerName"/>
+        <result column="mobile_code" property="mobileCode"/>
+        <result column="idcard_code" property="idcardCode"/>
+        <result column="attestation" property="attestation"/>
+        <result column="agreementUrl" property="agreementUrl"/>
+        <result column="create_date" property="createDate"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id, worker_status, worker_name, account_name, worker_sex, mobile_code, idcard_code, bank_code, attestation, idcardFront, idcardBack, attestation_video, user_name, user_pwd, skill, agreementSign, agreementUrl, head_portraits, picture, create_date, update_date
     </sql>
-    
+
     <select id="selectByIdAndAccountNameAndMobile" resultMap="BaseResultMap" parameterType="list">
         select
-        a.id,  account_name, mobile_code, idcard_code, bank_code, attestation,  agreementSign ,a.create_date
+        a.id, account_name, mobile_code, idcard_code, bank_code, attestation, agreementSign ,a.create_date
         from tb_worker a join tb_merchant_worker b on a.id = b.worker_id
         <where>
             b.merchant_id = #{merchantId}
@@ -72,6 +72,82 @@
         limit 0,10
     </select>
 
+    <select id="selectByIdAndAccountNameAndMobilePaas" resultMap="BaseResultMap" parameterType="list">
+        select
+        a.id, account_name, mobile_code, idcard_code, bank_code, attestation, agreementSign ,a.create_date
+        from tb_worker a join tb_merchant_worker b on a.id = b.worker_id
+        <where>
+            b.merchant_id in
+            <foreach collection="merchantIds" index="index" item="merchantIds" open="(" separator="," close=")">
+                #{merchantIds}
+            </foreach>
+            and attestation = 1
+            and agreementSign = 1
+            <if test="id != null and id != ''">
+                and a.id = #{id}
+            </if>
+            <if test="accountName != null and accountName != ''">
+                and account_name = #{accountName}
+            </if>
+            <if test="mobileCode != null and mobileCode != ''">
+                and mobile_code = #{mobileCode}
+            </if>
+        </where>
+        limit 0,10
+    </select>
+
+    <select id="selectByIdAndAccountNameAndMobilePaasNot" resultMap="BaseResultMap" parameterType="list">
+        select
+        a.id, account_name, mobile_code, idcard_code, bank_code, attestation, agreementSign ,a.create_date
+        from tb_worker a join tb_merchant_worker b on a.id = b.worker_id
+        <where>
+            b.merchant_id in
+            <foreach collection="merchantIds" index="index" item="merchantIds" open="(" separator="," close=")">
+                #{merchantIds}
+            </foreach>
+            <if test="id != null and id != ''">
+                and a.id = #{id}
+            </if>
+            <if test="accountName != null and accountName != ''">
+                and account_name = #{accountName}
+            </if>
+            <if test="mobileCode != null and mobileCode != ''">
+                and mobile_code = #{mobileCode}
+            </if>
+            and (attestation = 0
+            or agreementSign = 0)
+        </where>
+        limit 0,10
+    </select>
+
+    <select id="selectWorkerAll" resultMap="BaseResultMap" parameterType="list">
+        select
+        a.id, account_name, mobile_code, idcard_code, bank_code, attestation, agreementSign ,a.create_date
+        from tb_worker a join tb_merchant_worker b on a.id = b.worker_id
+        <where>
+            b.merchant_id in
+            <foreach collection="merchantIds" index="index" item="merchantIds" open="(" separator="," close=")">
+                #{merchantIds}
+            </foreach>
+            and attestation = 1
+            and agreementSign = 1
+        </where>
+    </select>
+
+    <select id="selectWorkerAllNot" resultMap="BaseResultMap" parameterType="list">
+        select
+        a.id, account_name, mobile_code, idcard_code, bank_code, attestation, agreementSign ,a.create_date
+        from tb_worker a join tb_merchant_worker b on a.id = b.worker_id
+        <where>
+            b.merchant_id in
+            <foreach collection="merchantIds" index="index" item="merchantIds" open="(" separator="," close=")">
+                #{merchantIds}
+            </foreach>
+            and (attestation = 0
+            or agreementSign = 0)
+        </where>
+    </select>
+
 
     <select id="getWorkerByTaskId" resultMap="WorkerPo">
         SELECT w.id,w.worker_name,w.mobile_code,w.idcard_code,w.attestation,w.agreementUrl,wt.create_date FROM tb_worker_task as wt,tb_worker as w
@@ -82,6 +158,31 @@
         SELECT w.id,w.worker_name,w.mobile_code,w.idcard_code,w.attestation,w.agreementUrl,wt.achievement_date,wt.achievement_desc,wt.achievement_files
         FROM tb_worker_task as wt,tb_worker as w
         WHERE wt.worker_id=w.id AND wt.task_id=#{taskId}
+    </select>
+
+    <resultMap id="worekerPaymentListPo" type="com.example.mybatis.po.WorekerPaymentListPo">
+        <result column="payment_order_id" property="paymentOrderId"/>
+        <result column="tax_name" property="taxName"/>
+        <result column="merchant_name" property="merchantName"/>
+        <result column="worker_name" property="workerName"/>
+        <result column="package_status" property="paymentStatus"/>
+        <result column="real_money" property="realMoney"/>
+        <result column="payment_date" property="paymentDate"/>
+        <result column="invoice_status" property="invoiceStatus"/>
+    </resultMap>
+
+
+    <select id="workerPaymentList" parameterType="list" resultMap="worekerPaymentListPo">
+        select a.payment_order_id,
+        (case when c.platform_service_provider is null then d.platform_service_provider else c.platform_service_provider end)as tax_name,
+        (case when c.company_s_name is null then d.company_s_name else c.company_s_name end)as merchant_name,
+        a.worker_name, a.package_status, a.real_money,
+        (case when c.payment_date is null then d.payment_date else c.payment_date end)as payment_date,
+        (case when b.id is null then 0 else 1 end)as invoice_status from tb_payment_inventory a
+        left join tb_invoice_payment_inventory b on a.id = b.payment_inventory_id
+        left join tb_payment_order c on a.payment_order_id = c.id
+        left join tb_payment_order_many d on a.payment_order_id = d.id
+        where a.worker_id = #{workerId}
     </select>
 
 </mapper>
