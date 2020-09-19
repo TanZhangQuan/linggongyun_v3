@@ -37,8 +37,9 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
      * @return
      */
     @Override
-    public ReturnJson getTaxAll(String merchantId) {
-        List<MerchantTax> merchantTaxes = merchantTaxDao.selectList(new QueryWrapper<MerchantTax>().eq("merchant_id", merchantId));
+    public ReturnJson getTaxAll(String merchantId, Integer packageStatus) {
+        List<MerchantTax> merchantTaxes = merchantTaxDao.selectList(new QueryWrapper<MerchantTax>()
+                .eq("merchant_id", merchantId).eq("package_status",packageStatus));
         List<String> ids = new LinkedList<>();
         for (MerchantTax merchantTax : merchantTaxes ) {
             ids.add(merchantTax.getTaxId());

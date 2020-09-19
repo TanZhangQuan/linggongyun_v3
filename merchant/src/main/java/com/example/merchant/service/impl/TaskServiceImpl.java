@@ -51,7 +51,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
         Merchant merchant = merchantService.findByID(currentUserId);
         if (merchant != null) {
             rowBounds = new RowBounds(rowBounds.getOffset() * rowBounds.getLimit(), rowBounds.getLimit());
-            List<Task> taskList = taskDao.selectList(taskListDto, rowBounds);
+            List<Task> taskList = taskDao.selectLists(taskListDto, rowBounds);
             if (taskList!=null){
                 returnJson = new ReturnJson("查询成功", taskList, 200);
             }

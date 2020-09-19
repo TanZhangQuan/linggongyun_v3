@@ -1,6 +1,7 @@
 package com.example.merchant.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.common.util.ReturnJson;
@@ -13,7 +14,9 @@ import com.example.mybatis.entity.Worker;
 import com.example.mybatis.entity.WorkerTask;
 import com.example.mybatis.mapper.MerchantWorkerDao;
 import com.example.mybatis.mapper.WorkerDao;
+import com.example.mybatis.po.WorekerPaymentListPo;
 import com.example.mybatis.po.WorkerPo;
+import com.example.merchant.util.AcquireMerchantID;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -175,4 +178,136 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
         }
         return returnJson;
     }
+
+    @Autowired
+    private AcquireMerchantID acquireMerchantID;
+
+    /**
+     * 分页查询管理人员下的所以创客
+     * @param managersId
+     * @param page
+     * @param pageSize
+     * @return
+     */
+    @Override
+    public ReturnJson getWorkerAllPaas(String managersId, Integer page, Integer pageSize) {
+        List<String> merchantIds = acquireMerchantID.getMerchantIds(managersId);
+        merchantIds.add(managersId);
+        Page<Worker> workerPage = new Page<>(page,pageSize);
+        IPage<Worker> workerIPage = workerDao.selectWorkerAll(workerPage, merchantIds);
+        ReturnJson returnJson = new ReturnJson();
+        returnJson.setCode(200);
+        returnJson.setState("success");
+        returnJson.setFinished(true);
+        returnJson.setPageSize(pageSize);
+        returnJson.setItemsCount((int) workerIPage.getTotal());
+        returnJson.setPageCount((int)workerIPage.getPages());
+        returnJson.setData(workerIPage.getRecords());
+        return returnJson;
+    }
+
+    @Override
+    public ReturnJson getWorkerAllNotPaas(String managersId, Integer page, Integer pageSize) {
+        List<String> merchantIds = acquireMerchantID.getMerchantIds(managersId);
+        merchantIds.add(managersId);
+        Page<Worker> workerPage = new Page<>(page,pageSize);
+        IPage<Worker> workerIPage = workerDao.selectWorkerAllNot(workerPage, merchantIds);
+        ReturnJson returnJson = new ReturnJson();
+        returnJson.setCode(200);
+        returnJson.setState("success");
+        returnJson.setFinished(true);
+        returnJson.setPageSize(pageSize);
+        returnJson.setItemsCount((int) workerIPage.getTotal());
+        returnJson.setPageCount((int)workerIPage.getPages());
+        returnJson.setData(workerIPage.getRecords());
+        return returnJson;
+    }
+
+    /**
+     * 按编号、姓名、手机号，查询该管理人员下已认证的创客
+     * @param managersId
+     * @param id
+     * @param accountName
+     * @param mobileCode
+     * @return
+     */
+    @Override
+    public ReturnJson getByIdAndAccountNameAndMobilePaas(String managersId, String id, String accountName, String mobileCode) {
+        List<String> merchantIds = acquireMerchantID.getMerchantIds(managersId);
+        merchantIds.add(managersId);
+        List<Worker> workers = workerDao.selectByIdAndAccountNameAndMobilePaas(merchantIds, id, accountName, mobileCode);
+        return ReturnJson.success(workers);
+    }
+
+    @Override
+    public ReturnJson getByIdAndAccountNameAndMobileNotPaas(String managersId, String id, String accountName, String mobileCode) {
+        List<String> merchantIds = acquireMerchantID.getMerchantIds(managersId);
+        merchantIds.add(managersId);
+        List<Worker> workers = workerDao.selectByIdAndAccountNameAndMobilePaasNot(merchantIds, id, accountName, mobileCode);
+        return ReturnJson.success(workers);
+    }
+
+    /**
+     * 查询创客的基本信息
+     * @param id
+     * @return
+     */
+    @Override
+    public ReturnJson getWorkerInfoPaas(String id) {
+        Worker worker = workerDao.selectById(id);
+        List<WorkerTask> workerTasks = workerTaskService.list(new QueryWrapper<WorkerTask>().eq("worker_id", worker.getId()));
+        List ids = new ArrayList();
+        for (WorkerTask workerTask : workerTasks) {
+            ids.add(workerTask.getTaskId());
+        }
+        List list = taskService.listByIds(ids);
+        ReturnJson returnJson = new ReturnJson();
+        returnJson.setObj(worker);
+        returnJson.setData(list);
+        returnJson.setCode(200);
+        returnJson.setState("success");
+        return returnJson;
+    }
+
+
+
+
+
+
+    /**
+     * 查询创客的收入列表
+     * @param id
+     * @param page
+     * @param pageSize
+     * @return
+     */
+    @Override
+    public ReturnJson getWorkerPaymentListPaas(String id, Integer page, Integer pageSize) {
+        Page<WorekerPaymentListPo> worekerPaymentListPoPage = new Page<>(page,pageSize);
+        IPage<WorekerPaymentListPo> worekerPaymentListPoIPage = workerDao.workerPaymentList(worekerPaymentListPoPage, id);
+        ReturnJson returnJson = new ReturnJson();
+        returnJson.setCode(200);
+        returnJson.setState("success");
+        returnJson.setFinished(true);
+        returnJson.setPageSize(pageSize);
+        returnJson.setItemsCount((int) worekerPaymentListPoIPage.getTotal());
+        returnJson.setPageCount((int)worekerPaymentListPoIPage.getPages());
+        returnJson.setData(worekerPaymentListPoIPage.getRecords());
+        return returnJson;
+    }
+
+    /**
+     * 编辑创客
+     * @param worker
+     * @return
+     */
+    @Override
+    public ReturnJson updateWorkerPaas(Worker worker) {
+        boolean flag = this.updateById(worker);
+        if (flag) {
+            return ReturnJson.success("编辑成功！");
+        }
+        return ReturnJson.error("编辑失败！");
+    }
 }
+

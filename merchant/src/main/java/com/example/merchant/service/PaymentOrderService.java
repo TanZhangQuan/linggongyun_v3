@@ -25,5 +25,16 @@ public interface PaymentOrderService extends IService<PaymentOrder> {
     ReturnJson getPaymentOrder(PaymentOrderDto paymentOrderDto);
     ReturnJson getPaymentOrderInfo(String id);
     ReturnJson saveOrUpdataPaymentOrder(PaymentOrder paymentOrder, List<PaymentInventory> paymentInventories);
-    ReturnJson  offlinePayment( String paymentOrderId,  String turnkeyProjectPayment);
+    ReturnJson offlinePayment( String paymentOrderId,  String turnkeyProjectPayment);
+
+    ReturnJson getDayPaas(String merchantId);
+    ReturnJson getWeekPaas(String merchantId);
+    ReturnJson getMonthPaas(String merchantId);
+    ReturnJson getYearPaas(String merchantId);
+    ReturnJson getPaymentOrderPaas(PaymentOrderDto paymentOrderDto);
+    ReturnJson getPaymentOrderInfoPaas(String id);
+    ReturnJson saveOrUpdataPaymentOrderPaas(PaymentOrder paymentOrder, List<PaymentInventory> paymentInventories);
+    ReturnJson  offlinePaymentPaas( String paymentOrderId,  String turnkeyProjectPayment);
+    ReturnJson confirmReceiptPaas(String paymentOrderId);
+    ReturnJson findMerchantPaas(String managersId);
 }

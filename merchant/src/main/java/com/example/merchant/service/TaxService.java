@@ -13,5 +13,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @since 2020-09-07
  */
 public interface TaxService extends IService<Tax> {
-    ReturnJson getTaxAll(String merchantId);
+    ReturnJson getTaxAll(String merchantId, Integer packageStatus);
 }

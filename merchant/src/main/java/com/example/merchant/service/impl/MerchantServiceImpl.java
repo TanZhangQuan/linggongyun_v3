@@ -1,15 +1,21 @@
 package com.example.merchant.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.common.sms.SenSMS;
 import com.example.common.util.JsonUtils;
 import com.example.common.util.MD5;
 import com.example.common.util.ReturnJson;
+import com.example.common.util.VerificationCheck;
 import com.example.merchant.service.MerchantService;
+import com.example.merchant.service.TaskService;
+import com.example.merchant.util.AcquireMerchantID;
 import com.example.merchant.util.JwtUtils;
 import com.example.mybatis.entity.*;
 import com.example.mybatis.mapper.*;
+import com.example.mybatis.po.MerchantInfoPo;
 import com.example.mybatis.po.TaxPO;
 import com.example.redis.dao.RedisDao;
 import io.jsonwebtoken.Claims;
@@ -46,37 +52,42 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
     private RedisDao redisDao;
 
     @Autowired
-    private SenSMS senSMS;
-
-    @Autowired
     private CompanyInfoDao companyInfoDao;
 
     @Autowired
-    private MerchantTaxDao merchantTaxDao;
-
-    @Autowired
     private TaxDao taxDao;
-
     @Autowired
     private LinkmanDao linkmanDao;
-
-    @Autowired
-    private AgentDao agentDao;
-
-    @Autowired
-    private SalesManDao salesManDao;
 
     @Autowired
     private AddressDao addressDao;
 
     @Autowired
+    private TaskService taskService;
+
+    @Autowired
+    private PaymentOrderDao paymentOrderDao;
+
+    @Autowired
+    private PaymentOrderManyDao paymentOrderManyDao;
+
+    @Autowired
+    private AcquireMerchantID acquireMerchantID;
+
+    @Autowired
     private JwtUtils jwtUtils;
 
-    @Value("${TOKEN}")
-    private String TOKEN;
+    @Autowired
+    private SenSMS senSMS;
+
+    @Autowired
+    private SalesManDao salesManDao;
 
     @Value("${PWD_KEY}")
     String PWD_KEY;
+    @Value("${TOKEN}")
+
+    private String TOKEN;
 
     /**
      * 根据用户名和密码进行登录
@@ -90,7 +101,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
     public ReturnJson merchantLogin(String username, String password, HttpServletResponse response) {
         String encryptPWD = PWD_KEY + MD5.md5(password);
         QueryWrapper<Merchant> merchantQueryWrapper = new QueryWrapper<>();
-        merchantQueryWrapper.eq("user_name", username).eq("pass_word", encryptPWD);
+        merchantQueryWrapper.eq("user_name", username).eq("pass_word", encryptPWD).eq("audit_status",1);
         Merchant me = merchantDao.selectOne(merchantQueryWrapper);
         if (me == null) {
             return ReturnJson.error("账号或密码有误！");
@@ -164,7 +175,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
             return ReturnJson.error("输入的验证码有误");
         } else {
             redisDao.remove(loginMobile);
-            Merchant merchant = this.getOne(new QueryWrapper<Merchant>().eq("login_mobile", loginMobile));
+            Merchant merchant = this.getOne(new QueryWrapper<Merchant>().eq("login_mobile", loginMobile).eq("audit_status",1));
             merchant.setPassWord("");
             merchant.setPayPwd("");
             String token = jwtUtils.generateToken(merchant.getId());
@@ -263,4 +274,73 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
     public String getNameById(String id) {
         return merchantDao.getNameById(id);
     }
+
+
+
+    /**
+     * 获取的商户
+     * @param managersId
+     * @param merchantId
+     * @param merchantName
+     * @param linkMobile
+     * @param auditStatus
+     * @return
+     */
+    @Override
+    public ReturnJson getMerchantList(String managersId, String merchantId, String merchantName, String linkMobile, Integer auditStatus ,Integer page,Integer pageSize) {
+        List<String> merchantIds = acquireMerchantID.getMerchantIds(managersId);
+        Page<MerchantInfoPo> merchantPage = new Page<>(page,pageSize);
+        IPage<MerchantInfoPo> merchantInfoPoIPage = merchantDao.selectMerchantInfoPo(merchantPage, merchantIds, merchantId, merchantName, linkMobile, auditStatus);
+        ReturnJson returnJson = new ReturnJson();
+        returnJson.setCode(200);
+        returnJson.setState("success");
+        returnJson.setFinished(true);
+        returnJson.setPageSize(pageSize);
+        returnJson.setItemsCount((int) merchantInfoPoIPage.getTotal());
+        returnJson.setPageCount((int)merchantInfoPoIPage.getPages());
+        returnJson.setData(merchantInfoPoIPage.getRecords());
+        return returnJson;
+    }
+
+    /**
+     * 删除商户
+     * @param merchantId
+     * @return
+     */
+    @Override
+    public ReturnJson removeMerchant(String merchantId) {
+        Merchant merchant = merchantDao.selectById(merchantId);
+        if (merchant.getAuditStatus() == 0) {
+            merchantDao.deleteById(merchantId);
+            return ReturnJson.success("删除成功！");
+        }
+        List<Task> tasks = taskService.list(new QueryWrapper<Task>().eq("merchant_id",merchantId));
+        List<PaymentOrder> paymentOrders = paymentOrderDao.selectList(new QueryWrapper<PaymentOrder>().eq("merchant_id", merchantId));
+        List<PaymentOrderMany> paymentOrderManies = paymentOrderManyDao.selectList(new QueryWrapper<PaymentOrderMany>().eq("merchant_id", merchantId));
+        if (VerificationCheck.listIsNull(tasks) && VerificationCheck.listIsNull(paymentOrders) && VerificationCheck.listIsNull(paymentOrderManies) ) {
+            merchantDao.deleteById(merchantId);
+            return ReturnJson.success("删除成功！");
+        }
+        return ReturnJson.success("该商户做过业务，只能停用该用户！");
+    }
+
+
+    /**
+     * 审核商户
+     * @param merchantId
+     * @return
+     */
+    @Override
+    public ReturnJson auditMerchant(String merchantId) {
+        Merchant merchant = new Merchant();
+        merchant.setAuditStatus(1);
+        merchant.setId(merchantId);
+        int i = merchantDao.updateById(merchant);
+        if (i == 1) {
+            return ReturnJson.success("审核成功！");
+        }
+        return ReturnJson.error("审核失败！");
+    }
+
+
 }

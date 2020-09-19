@@ -2,6 +2,8 @@ package com.example.common.util;
 
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 
+import java.util.List;
+
 
 public abstract class VerificationCheck {
 
@@ -30,5 +32,13 @@ public abstract class VerificationCheck {
 	}
 	public static boolean isMobile(String mobile){
 		return mobile.matches(Const.REGEX_MOBILE);
+	}
+
+//	判断集合是否为空，为空返回true
+	public static boolean listIsNull(List list){
+		if (list == null && list.size() == 0){
+			return true;
+		}
+		return false;
 	}
 }

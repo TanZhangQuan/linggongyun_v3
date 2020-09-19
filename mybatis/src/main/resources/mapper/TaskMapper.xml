@@ -66,7 +66,7 @@
     </select>
 
     <!--查询所有的任务列表-->
-    <select id="selectList" resultMap="BaseResultMap">
+    <select id="selectLists" resultMap="BaseResultMap">
         <include refid="task_list"/>
         <include refid="query"/>
     </select>
