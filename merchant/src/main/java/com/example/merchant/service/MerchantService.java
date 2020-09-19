@@ -19,9 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 public interface MerchantService extends IService<Merchant> {
 
     Merchant findByID(String id);
-
     ReturnJson getIdAndName();
-
     String getNameById(String id);
     ReturnJson merchantLogin(String username, String password, HttpServletResponse response);
     String getId(HttpServletRequest request);
@@ -29,4 +27,9 @@ public interface MerchantService extends IService<Merchant> {
     ReturnJson loginMobile(String loginMobile, String checkCode, HttpServletResponse resource);
     ReturnJson merchantInfo(String merchantId);
     ReturnJson updataPassWord(String loginMobile, String checkCode, String newPassWord);
+
+    ReturnJson getMerchantList(String managersId, String merchantId, String merchantName, String linkMobile, Integer auditStatus, Integer page,Integer pageSize);
+
+    ReturnJson removeMerchant(String merchantId);
+    ReturnJson auditMerchant(String merchantId);
 }

@@ -27,4 +27,13 @@ public interface PaymentOrderManyService extends IService<PaymentOrderMany> {
     ReturnJson getPaymentOrderManyInfo(String id);
     ReturnJson saveOrUpdataPaymentOrderMany(PaymentOrderMany paymentOrderMany, List<PaymentInventory> paymentInventories);
     ReturnJson offlinePayment(String id, String manyPayment);
+
+    ReturnJson getDayPaas(String merchantId);
+    ReturnJson getWeekPaas(String merchantId);
+    ReturnJson getMonthPaas(String merchantId);
+    ReturnJson getYearPaas(String merchantId);
+    ReturnJson confirmPaymentManyPaas(String id);
+    ReturnJson getPaymentOrderManyPaas(PaymentOrderDto paymentOrderDto);
+    ReturnJson getPaymentOrderManyInfoPaas(String id);
+    ReturnJson saveOrUpdataPaymentOrderManyPaas(PaymentOrderMany paymentOrderMany, List<PaymentInventory> paymentInventories);
 }

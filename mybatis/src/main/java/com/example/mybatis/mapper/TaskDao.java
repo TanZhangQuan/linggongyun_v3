@@ -1,9 +1,10 @@
 package com.example.mybatis.mapper;
 
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.example.mybatis.dto.TaskDto;
 import com.example.mybatis.dto.TaskListDto;
 import com.example.mybatis.entity.Task;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.session.RowBounds;
 
 import java.util.List;
@@ -20,7 +21,7 @@ public interface TaskDao extends BaseMapper<Task> {
 
     int count(TaskListDto taskListDto);
 
-    List<Task> selectList(TaskListDto taskListDto, RowBounds rowBounds);
+    List<Task> selectLists(TaskListDto taskListDto, RowBounds rowBounds);
 
     //更具任务id删除任务
     int delete(String id);

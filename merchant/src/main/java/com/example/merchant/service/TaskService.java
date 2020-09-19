@@ -1,13 +1,11 @@
 package com.example.merchant.service;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.common.util.ReturnJson;
 import com.example.mybatis.dto.TaskDto;
 import com.example.mybatis.dto.TaskListDto;
 import com.example.mybatis.entity.Task;
-import com.baomidou.mybatisplus.extension.service.IService;
 import org.apache.ibatis.session.RowBounds;
-
-import java.util.List;
 
 /**
  * <p>
@@ -39,5 +37,6 @@ public interface TaskService extends IService<Task> {
     ReturnJson getPlatformTaskList(TaskListDto taskListDto);
 
     ReturnJson savePlatformTask(TaskDto taskDto);
+
 
 }

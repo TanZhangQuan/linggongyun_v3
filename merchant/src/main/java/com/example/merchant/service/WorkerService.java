@@ -21,4 +21,13 @@ public interface WorkerService extends IService<Worker> {
     ReturnJson saveWorker(List<Worker> workers,String merchantId);
     ReturnJson getWorkerByTaskId(String taskId, Integer offset);
     ReturnJson getCheckByTaskId(String taskId, Integer offset);
+
+    ReturnJson getWorkerAllPaas(String managersId, Integer page, Integer pageSize);
+    ReturnJson getWorkerAllNotPaas(String managersId, Integer page, Integer pageSize);
+    ReturnJson getByIdAndAccountNameAndMobilePaas(String managersId, String id, String accountName, String mobileCode);
+    ReturnJson getByIdAndAccountNameAndMobileNotPaas(String managersId, String id, String accountName, String mobileCode);
+    ReturnJson getWorkerInfoPaas(String id);
+    ReturnJson getWorkerPaymentListPaas(String id, Integer page, Integer pageSize);
+    ReturnJson updateWorkerPaas(Worker worker);
+
 }

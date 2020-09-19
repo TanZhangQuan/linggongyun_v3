@@ -15,6 +15,7 @@
         <result column="sales_man_id" property="salesManId" />
         <result column="agent_id" property="agentId" />
         <result column="login_mobile" property="loginMobile" />
+        <result column="audit_status" property="auditStatus" />
         <result column="status" property="status" />
         <result column="create_date" property="createDate" />
         <result column="update_date" property="updateDate" />
@@ -42,4 +43,49 @@
     <select id="getNameById" resultType="java.lang.String">
         SELECT company_name FROM tb_merchant WHERE id=#{id}
     </select>
+
+
+
+
+
+    <!--平台端-->
+
+    <resultMap id="MerchantInfoPo" type="com.example.mybatis.po.MerchantInfoPo">
+        <id column="id" property="merchantId" />
+        <result column="company_name" property="merchantName" />
+        <result column="link_name" property="linkName" />
+        <result column="link_mobile" property="linkMobile" />
+        <result column="structure" property="structure" />
+        <result column="contract" property="contract" />
+        <result column="status" property="status" />
+        <result column="create_date" property="createDate" />
+    </resultMap>
+
+    <!--查询商户-->
+    <select id="selectMerchantInfoPo" resultMap="MerchantInfoPo" parameterType="list">
+        SELECT a.id , a.company_name, b.link_name, b.link_mobile,
+        (case when a.agent_id is null then '业务员' else '业务员/代理商' end) structure,
+        c.contract, a.`status`, a.create_date
+        from tb_merchant a
+        LEFT JOIN tb_linkman b on a.id = b.merchant_id
+        LEFT JOIN tb_company_info c on a.company_id = c.id
+        <where>
+            a.id in
+            <foreach collection="merchantIds" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+            and a.audit_status = #{auditStatus}
+            and b.is_not = 0
+            <if test="merchantId != null and merchantId != ''">
+                and a.id = #{merchantid}
+            </if>
+            <if test="merchantName != null and merchantName != ''">
+                and a.company_name = #{merchantName}
+            </if>
+            <if test="linkMobile != null and linkMobile != ''">
+                and b.link_mobile = #{linkMobile}
+            </if>
+        </where>
+    </select>
+
 </mapper>

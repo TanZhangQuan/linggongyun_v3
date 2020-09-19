@@ -5,9 +5,28 @@ import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Data
 public class PaymentOrderDto {
+
+    /**
+     * 管理人员ID
+     */
+    @NotBlank(message = "管理人员ID不能为空")
+    @ApiModelProperty("管理人员ID")
+    private String managersId;
+
+    /**
+     * 商户名称
+     */
+    private String merchantName;
+
+    /**
+     * 商户ID集合
+     */
+    private List<String> merchantIds;
+
     @NotBlank(message = "商户ID不能为空")
     private String merchantId;
 

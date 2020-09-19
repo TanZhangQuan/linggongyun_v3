@@ -80,6 +80,11 @@ public class Merchant implements Serializable {
     private String loginMobile;
 
     /**
+     * 审核状态
+     */
+    private Integer auditStatus;
+
+    /**
      * 商户状态
      */
     private Integer status;
