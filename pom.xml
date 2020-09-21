@@ -19,6 +19,7 @@
         <module>common</module>
         <module>merchant</module>
         <module>redis</module>
+        <module>dao</module>
     </modules>
 
     <properties>
