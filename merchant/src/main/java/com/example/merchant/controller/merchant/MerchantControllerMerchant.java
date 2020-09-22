@@ -30,7 +30,7 @@ import javax.validation.constraints.NotNull;
  * @author hzp
  * @since 2020-09-07
  */
-@Api(value = "商户相关操作接口", tags = {"商户相关操作接口"})
+@Api(value = "商户端商户相关操作接口", tags = {"商户端商户相关操作接口"})
 @RestController
 @RequestMapping("/merchant/merchant")
 @Validated

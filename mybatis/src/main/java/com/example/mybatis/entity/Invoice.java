@@ -10,11 +10,11 @@ import java.time.LocalDateTime;
 
 /**
  * <p>
- * 发票相关
+ * 总包发票
  * </p>
  *
  * @author hzp
- * @since 2020-09-07
+ * @since 2020-09-21
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -29,67 +29,106 @@ public class Invoice implements Serializable {
     @TableId(value = "id", type = IdType.ASSIGN_ID)
     private String id;
 
-
     /**
-     * 商户ID
+     * 申请开票id
      */
-    private String merchantId;
+    private String applicationId;
 
     /**
-     * 商户名称
+     * 发票编号，FP+0000
      */
-    private String merchantsName;
+    private String invoiceCode;
 
     /**
-     * 支付编号
+     * 开票时间
      */
-    private String payCode;
+    private LocalDateTime invoicePrintDate;
 
     /**
-     * 支付金额
+     * 发票数字
+     */
+    private String invoiceNumber;
+
+    /**
+     * 发票代码
+     */
+    @TableField("invoice_codeNo")
+    private String invoiceCodeno;
+
+    /**
+     * 开票人(销售方)
+     */
+    private String invoicePrintPerson;
+
+    /**
+     * 申请开票人(购买方)
+     */
+    private String applicationInvoicePerson;
+
+    /**
+     * 发票张数
+     */
+    private Integer invoiceNumbers;
+
+    /**
+     * 发票金额
      */
     private BigDecimal invoiceMoney;
 
     /**
-     * 支付清单
+     * 开票类目
      */
-    private String payDetailedAccount;
+    private String invoiceCatalogId;
 
     /**
-     * 总包支付回单
+     * 发票地址
      */
-    private String gcPayReceipt;
+    private String invoiceUrl;
 
     /**
-     * 众包支付回单
+     * 税票地址
      */
-    private String cPaymentReceipt;
+    private String taxReceiptUrl;
 
     /**
-     * 总包发票
+     * 快递单号
      */
-    private String gcInvoice;
+    private String expressSheetNo;
 
     /**
-     * 众包发票
+     * 快递公司
      */
-    private String cInvoice;
+    private String expressCompanyName;
 
     /**
-     * 0总包+分包，1众包
+     * 快递更新时间
      */
-    private Integer packageStatus;
+    private LocalDateTime expressUpdateDatetime;
 
     /**
-     * 状态
+     * 快递更新人员
      */
-    private Integer state;
+    private String expressUpdatePerson;
 
+    /**
+     * 快递更新人员电话
+     */
+    private String expressUpdatePersonTel;
+
+    /**
+     * 开票说明
+     */
+    private String invoiceDesc;
+
+
+    /**
+     * 创建时间
+     */
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createDate;
 
     /**
-     * 用户修改时间
+     * 修改时间
      */
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime updateDate;

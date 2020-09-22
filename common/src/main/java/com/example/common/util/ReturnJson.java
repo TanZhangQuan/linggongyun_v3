@@ -1,5 +1,6 @@
 package com.example.common.util;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -112,7 +113,6 @@ public class ReturnJson<T> {
 		this.code = code;
 		RichInfo sm = new RichInfo();
 		List<RichInfo> lsm = new ArrayList<RichInfo>();
-		sm.setContent(msg);
 		lsm.add(sm);
 		this.data = (Collection<T>) lsm;
 		this.finished = false;
@@ -283,4 +283,16 @@ public class ReturnJson<T> {
 	public static ReturnJson error(String message){
 		return new ReturnJson(message,300);
 	}
+	
+	public static ReturnJson success(IPage iPage){
+		ReturnJson returnJson = new ReturnJson();
+		returnJson.setCode(200);
+		returnJson.setState("success");
+		returnJson.setFinished(true);
+		returnJson.setPageSize((int)iPage.getSize());
+		returnJson.setItemsCount((int) iPage.getTotal());
+		returnJson.setPageCount((int)iPage.getPages());
+		returnJson.setData(iPage.getRecords());
+		return returnJson;
+	} 
 }

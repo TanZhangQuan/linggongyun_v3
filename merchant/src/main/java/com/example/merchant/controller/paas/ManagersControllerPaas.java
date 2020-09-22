@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 
 @RestController("/paas/managers")
-@Api(value = "管理人员相关操作接口", tags = {"管理人员相关操作接口"})
+@Api(value = "平台端管理人员登录接口", tags = {"平台端管理人员登录接口"})
 public class ManagersControllerPaas {
 
 

@@ -27,7 +27,7 @@ import javax.validation.constraints.NotBlank;
 @RestController
 @RequestMapping("/merchant/tax")
 @Validated
-@Api(value = "平台服务商", tags = "平台服务商")
+@Api(value = "商户端平台服务商", tags = "商户端平台服务商")
 public class TaxControllerMerchant {
 
     @Autowired

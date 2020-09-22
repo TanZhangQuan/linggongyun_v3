@@ -28,8 +28,13 @@ public interface MerchantService extends IService<Merchant> {
     ReturnJson merchantInfo(String merchantId);
     ReturnJson updataPassWord(String loginMobile, String checkCode, String newPassWord);
 
-    ReturnJson getMerchantList(String managersId, String merchantId, String merchantName, String linkMobile, Integer auditStatus, Integer page,Integer pageSize);
+    /*---------平台端----------*/
 
+    ReturnJson getMerchantList(String managersId, String merchantId, String merchantName, String linkMobile, Integer auditStatus, Integer page,Integer pageSize);
     ReturnJson removeMerchant(String merchantId);
     ReturnJson auditMerchant(String merchantId);
+    ReturnJson merchantInfoPaas(String merchantId);
+    ReturnJson getMerchantPaymentList(String merchantId, Integer page, Integer pageSize);
+    ReturnJson getMerchantPaymentInfo(String paymentOrderId, Integer packgeStatus);
+    ReturnJson getMerchantPaymentInventory(String paymentOrderId, Integer page, Integer pageSize);
 }

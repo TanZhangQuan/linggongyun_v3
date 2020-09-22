@@ -61,6 +61,16 @@
         <result column="create_date" property="createDate" />
     </resultMap>
 
+    <resultMap id="MerchantPaymentList" type="com.example.mybatis.po.MerchantPaymentListPO">
+        <id column="payment_order_id" property="paymentOrderId" />
+        <result column="merchant_name" property="merchantName" />
+        <result column="tax_name" property="taxName" />
+        <result column="package_status" property="packageStatus" />
+        <result column="real_money" property="realMoney" />
+        <result column="is_invoice" property="isInvoice" />
+        <result column="payment_sate" property="paymentDate" />
+    </resultMap>
+
     <!--查询商户-->
     <select id="selectMerchantInfoPo" resultMap="MerchantInfoPo" parameterType="list">
         SELECT a.id , a.company_name, b.link_name, b.link_mobile,
@@ -77,15 +87,22 @@
             and a.audit_status = #{auditStatus}
             and b.is_not = 0
             <if test="merchantId != null and merchantId != ''">
-                and a.id = #{merchantid}
+                and a.id like  CONCAT('%',#{merchantId},'%')
             </if>
             <if test="merchantName != null and merchantName != ''">
-                and a.company_name = #{merchantName}
+                and a.company_name like  CONCAT('%',#{merchantName},'%')
             </if>
             <if test="linkMobile != null and linkMobile != ''">
-                and b.link_mobile = #{linkMobile}
+                and b.link_mobile like  CONCAT('%',#{linkMobile},'%')
             </if>
         </where>
+    </select>
+
+    <!--商户支付列表-->
+    <select id="selectMerchantPaymentList" parameterType="list" resultMap="MerchantPaymentList">
+        select * from tb_merchant_payment_list
+        where merchant_id = #{merchantId}
+        ORDER BY payment_date desc
     </select>
 
 </mapper>
