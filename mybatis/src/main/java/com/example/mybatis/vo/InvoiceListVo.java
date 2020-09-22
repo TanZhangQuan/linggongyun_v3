@@ -29,11 +29,11 @@ public class InvoiceListVo {
     /**
      * 创客到手实际金额
      */
-    private String realMoney;
+    private BigDecimal realMoney;
     /**
      * 任务金额
      */
-    private String taskMoney;
+    private BigDecimal taskMoney;
     /**
      * 服务商id
      */
@@ -51,5 +51,11 @@ public class InvoiceListVo {
     /**
      * 纳税率
      */
-    private long taxRate;
+    private BigDecimal taxRate;
+
+    /**
+     * 个人服务费
+     */
+    private BigDecimal personalServiceFee;
+
 }

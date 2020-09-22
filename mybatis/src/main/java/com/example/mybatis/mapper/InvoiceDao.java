@@ -27,7 +27,7 @@ public interface InvoiceDao extends BaseMapper<Invoice> {
 
     List<InvoiceVo> getInvoiceList(TobeinvoicedDto tobeinvoicedDto, RowBounds rowBounds);
 
-
+    List<InvoiceListVo> getInvoiceListQuery(List<String> InvoiceIds);
 
     /**
      * 根据发票id查询发票信息

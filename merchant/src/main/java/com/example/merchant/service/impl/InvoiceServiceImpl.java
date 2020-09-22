@@ -1,5 +1,6 @@
 package com.example.merchant.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.common.util.DateUtil;
 import com.example.common.util.ReturnJson;
@@ -9,15 +10,19 @@ import com.example.merchant.service.InvoiceService;
 import com.example.mybatis.dto.AddInvoiceDto;
 import com.example.mybatis.dto.TobeinvoicedDto;
 import com.example.mybatis.entity.Invoice;
+import com.example.mybatis.entity.InvoiceLadderPrice;
 import com.example.mybatis.mapper.InvoiceDao;
+import com.example.mybatis.mapper.InvoiceLadderPriceDao;
 import com.example.mybatis.vo.*;
 import org.apache.ibatis.session.RowBounds;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -35,6 +40,8 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
     private InvoiceDao invoiceDao;
     @Resource
     private InvoiceApplicationService invoiceApplicationService;
+    @Autowired
+    private InvoiceLadderPriceDao invoiceLadderPriceDao;
 
 
     @Override
@@ -184,6 +191,34 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
         List<ToSubcontractInvoiceVo> list = invoiceDao.getListSubQuery(tobeinvoicedDto, rowBounds);
         if (list != null) {
             returnJson = new ReturnJson("查询成功", list, 200);
+        }
+        return returnJson;
+    }
+
+    @Override
+    public ReturnJson getInvoiceListQuery(String invoiceId,String companySNames,String platformServiceProviders) {
+        ReturnJson returnJson = new ReturnJson("操作失败", 300);
+        String[] companySName = companySNames.split(",");
+        for (int i = 0; i < companySName.length; i++) {
+            if (!(companySName[0]).equals(companySName[i])) {
+                return new ReturnJson("商户必须为同一个", 300);
+            }
+        }
+        String[] platformServiceProvider = platformServiceProviders.split(",");
+        for (int i = 0; i < platformServiceProvider.length; i++) {
+            if (!(platformServiceProvider[0]).equals(platformServiceProvider[i])) {
+                return new ReturnJson("服务商必须为同一个", 300);
+            }
+        }
+        String[] id = invoiceId.split(",");
+        List<String> list = new ArrayList<>();
+        for (int i = 0; i < id.length; i++) {
+            list.add(id[i]);
+        }
+        List<InvoiceListVo> voList = invoiceDao.getInvoiceListQuery(list);
+        for (InvoiceListVo vo: voList){
+            List<InvoiceLadderPrice> invoiceLadderPrice = invoiceLadderPriceDao.selectList(new QueryWrapper<InvoiceLadderPrice>().eq("tax_id",vo.getTaxId()));
+            
         }
         return returnJson;
     }

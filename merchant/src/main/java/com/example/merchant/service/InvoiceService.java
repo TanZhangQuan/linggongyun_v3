@@ -6,6 +6,8 @@ import com.example.mybatis.dto.TobeinvoicedDto;
 import com.example.mybatis.entity.Invoice;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.List;
+
 /**
  * <p>
  * 发票相关 服务类
@@ -40,4 +42,6 @@ public interface InvoiceService extends IService<Invoice> {
     ReturnJson updateInvoiceById(AddInvoiceDto addInvoiceDto);
 
     ReturnJson getListSubQuery(TobeinvoicedDto tobeinvoicedDto);
+
+    ReturnJson getInvoiceListQuery(String invoiceId,String companySNames,String platformServiceProviders);
 }
