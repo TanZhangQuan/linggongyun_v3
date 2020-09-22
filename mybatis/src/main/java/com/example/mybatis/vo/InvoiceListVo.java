@@ -41,7 +41,7 @@ public class InvoiceListVo {
     /**
      * 创客承担税率
      */
-    private String receviceTax;
+    private BigDecimal receviceTax;
 
     /**
      * 纳税金额

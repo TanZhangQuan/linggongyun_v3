@@ -25,7 +25,7 @@ public class InvoiceLadderPrice implements Serializable ,Comparable<InvoiceLadde
     private static final long serialVersionUID = 1L;
 
     @TableId(value = "id", type = IdType.ASSIGN_ID)
-    private Integer id;
+    private long id;
 
     /**
      * 服务商ID
