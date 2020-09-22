@@ -28,4 +28,6 @@ public interface CrowdSourcingInvoiceDao extends BaseMapper<CrowdSourcingInvoice
 
     //众包发票id
     InvoiceInformationVo getInvoiceById(String csiId);
+
+    InvoicePO selectCrowdInvoiceMoneyPaasTax(String taxId);
 }

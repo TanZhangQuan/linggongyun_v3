@@ -36,7 +36,7 @@ public abstract class VerificationCheck {
 
 //	判断集合是否为空，为空返回true
 	public static boolean listIsNull(List list){
-		if (list == null && list.size() == 0){
+		if (list == null || list.size() == 0){
 			return true;
 		}
 		return false;

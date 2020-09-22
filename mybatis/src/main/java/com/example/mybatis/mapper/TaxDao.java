@@ -1,9 +1,14 @@
 package com.example.mybatis.mapper;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.mybatis.entity.Tax;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.example.mybatis.po.MerchantPaymentListPO;
+import com.example.mybatis.po.TaxListPO;
 import com.example.mybatis.po.TaxPO;
 import com.example.mybatis.vo.SellerVo;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -21,4 +26,7 @@ public interface TaxDao extends BaseMapper<Tax> {
     SellerVo getSellerById(String id);
 
     List<TaxPO> selectByMerchantId(String merchantId);
+
+    IPage<TaxListPO> selectTaxList(Page page, @Param("taxName") String taxName, @Param("startDate") String startDate, @Param("endDate") String endDate);
+    IPage<MerchantPaymentListPO> selectTaxPaymentList(Page page, @Param("paymentOrderIds") List<String> paymentOrderIds);
 }

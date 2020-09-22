@@ -6,6 +6,7 @@
     <resultMap id="BaseResultMap" type="com.example.mybatis.entity.InvoiceLadderPrice">
         <id column="id" property="id" />
         <result column="tax_id" property="taxId" />
+        <result column="tax_package_id" property="taxPackageId" />
         <result column="start_money" property="startMoney" />
         <result column="end_money" property="endMoney" />
         <result column="packaeg_status" property="packaegStatus" />
@@ -15,7 +16,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, tax_id, start_money, end_money, packaeg_status, status, rate
+        id, tax_id,tax_package_id, start_money, end_money, packaeg_status, status, rate
     </sql>
 
 </mapper>

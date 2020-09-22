@@ -106,4 +106,12 @@
         WHERE csi.id=#{csiId}
     </select>
 
+    <!--查询服务商众包的发票数量和发票金额-->
+    <select id="selectCrowdInvoiceMoneyPaasTax" parameterType="string" resultMap="InvoiceMoney">
+        select COUNT(1) 'count', SUM(d.invoice_money) 'total_money' from tb_payment_order_many b
+        join tb_crowd_sourcing_application c on b.id = c.payment_order_many_id
+        join tb_crowd_sourcing_invoice d on c.id = d.application_id
+        where b.tax_id = #{taxId}
+    </select>
+
 </mapper>
