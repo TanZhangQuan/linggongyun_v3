@@ -110,8 +110,79 @@
         </where>
     </select>
 
+    <resultMap id="ListCSIByID" type="com.example.mybatis.vo.CrowdSourcingInvoiceVo">
+        <result column="company_s_name" property="companySName"/>
+        <result column="platform_service_provider" property="platformServiceProvider"/>
+        <result column="id" property="id"/>
+        <result column="payment_inventory" property="paymentInventory"/>
+        <result column="many_payment" property="manyPayment"/>
+        <result column="application_date" property="applicationDate"/>
+        <result column="is_application" property="isApplication"/>
+    </resultMap>
+
+    <select id="getListCSIByID" resultMap="ListCSIByID">
+        SELECT pom.company_s_name,pom.platform_service_provider,
+        pom.id,pom.payment_inventory,pom.many_payment,csi.application_date,pom.is_application
+        FROM tb_payment_order_many as pom
+        LEFT JOIN tb_crowd_sourcing_application as csi ON csi.payment_order_many_id=pom.id
+        WHERE pom.payment_order_status=3
+        <if test="merchantId != null and merchantId != ''">
+            AND pom.merchant_id=#{merchantId}
+        </if>
+        <if test="platformServiceProvider != null and platformServiceProvider != ''">
+            AND pom.platform_service_provider=#{platformServiceProvider}
+        </if>
+        <if test="applicationDateOne != null and applicationDateOne != ''">
+            AND csi.invapp.application_date>={applicationDate}
+        </if>
+        <if test="applicationDateTwo != null and applicationDateTwo != ''">
+            AND csi.invapp.application_date <![CDATA[<=]]> {applicationDate}
+        </if>
+    </select>
+
+    <resultMap id="PayOrderManyById" type="com.example.mybatis.vo.PaymentOrderManyVo">
+        <result column="id" property="id"/>
+        <result column="company_s_name" property="companySName"/>
+        <result column="platform_service_provider" property="platformServiceProvider"/>
+        <result column="acceptance_certificate" property="acceptanceCertificate"/>
+        <result column="payment_order_status" property="paymentOrderStatus"/>
+        <result column="payment_inventory" property="paymentInventory"/>
+        <result column="payment_date" property="paymentDate"/>
+        <result column="subpackage_payment" property="subpackagePayment"/>
+        <result column="real_money" property="realMoney"/>
+        <association property="taskVo" javaType="com.example.mybatis.vo.TaskVo">
+            <result column="task_code" property="taskCode"/>
+            <result column="task_name" property="taskName"/>
+            <result column="release_date" property="releaseDate"/>
+            <result column="deadline_date" property="deadlineDate"/>
+            <result column="industry_type" property="industryType"/>
+        </association>
+    </resultMap>
+
+    <select id="getPayOrderManyById" resultMap="PayOrderManyById">
+        SELECT pom.id,pom.company_s_name,pom.platform_service_provider,pom.payment_inventory,
+        pom.acceptance_certificate,pom.many_payment,pom.payment_order_status,pom.payment_date,pom.real_money,
+        t.task_code,t.task_name,t.release_date,t.deadline_date,t.industry_type
+        FROM tb_payment_order_many as pom
+        LEFT JOIN tb_task as t ON pom.task_id=t.id
+        WHERE pom.id=#{id}
+    </select>
+
+    <resultMap id="InvoiceDetailsByPayId" type="com.example.mybatis.vo.InvoiceDetailsVo">
+        <result column="worker_id" property="workerId"/>
+        <result column="worker_name" property="workerName"/>
+        <result column="mobile_code" property="mobileCode"/>
+        <result column="id_card_code" property="idCardCode"/>
+        <result column="bank_code" property="bankCode"/>
+        <result column="real_money" property="realMoney"/>
+    </resultMap>
 
 
+    <select id="getInvoiceDetailsByPayId" resultMap="InvoiceDetailsByPayId">
+        SELECT  worker_id,worker_name,mobile_code,id_card_code,bank_code,real_money
+        FROM tb_payment_inventory
+        WHERE payment_order_id=#{id}
+    </select>
 
 
 

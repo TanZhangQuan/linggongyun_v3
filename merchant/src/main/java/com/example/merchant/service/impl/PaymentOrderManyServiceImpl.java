@@ -7,6 +7,7 @@ import com.example.merchant.dto.PaymentOrderDto;
 import com.example.merchant.service.PaymentInventoryService;
 import com.example.merchant.service.PaymentOrderManyService;
 import com.example.merchant.util.AcquireMerchantID;
+import com.example.mybatis.dto.TobeinvoicedDto;
 import com.example.mybatis.entity.PaymentInventory;
 import com.example.mybatis.entity.PaymentOrderMany;
 import com.example.mybatis.entity.Tax;
@@ -14,6 +15,10 @@ import com.example.mybatis.mapper.MerchantTaxDao;
 import com.example.mybatis.mapper.PaymentInventoryDao;
 import com.example.mybatis.mapper.PaymentOrderManyDao;
 import com.example.mybatis.mapper.TaxDao;
+import com.example.mybatis.vo.CrowdSourcingInvoiceVo;
+import com.example.mybatis.vo.InvoiceDetailsVo;
+import com.example.mybatis.vo.PaymentOrderManyVo;
+import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -97,6 +102,54 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
     public ReturnJson getYear(String merchantId) {
         List<PaymentOrderMany> list = paymentOrderManyDao.selectYear(merchantId);
         return ReturnJson.success(list);
+    }
+
+    /**
+     * 根据商户id查众包待开票数据
+     * @param tobeinvoicedDto
+     * @return
+     */
+    @Override
+    public ReturnJson getListCSIByID(TobeinvoicedDto tobeinvoicedDto) {
+        ReturnJson returnJson = new ReturnJson("查询失败", 300);
+        RowBounds rowBounds=new RowBounds((tobeinvoicedDto.getPageNo()-1)*3,3);
+        List<CrowdSourcingInvoiceVo> list = paymentOrderManyDao.getListCSIByID(tobeinvoicedDto,rowBounds);
+        if (list != null && list.size() > 0) {
+            returnJson = new ReturnJson("查询成功", list, 200);
+        }
+        return returnJson;
+    }
+
+    /**
+     * 根据支付id查询众包支付信息
+     * @param id
+     * @return
+     */
+    @Override
+    public ReturnJson getPayOrderManyById(String id) {
+        ReturnJson returnJson = new ReturnJson("查询失败", 300);
+        PaymentOrderManyVo paymentOrderManyVo = paymentOrderManyDao.getPayOrderManyById(id);
+        if (paymentOrderManyVo != null) {
+            returnJson = new ReturnJson("查询成功", paymentOrderManyVo, 200);
+        }
+        return returnJson;
+    }
+
+    /**
+     * 根据支付id查找发票信息详情
+     * @param id
+     * @param pageNo
+     * @return
+     */
+    @Override
+    public ReturnJson getInvoiceDetailsByPayId(String id,Integer pageNo) {
+        ReturnJson returnJson = new ReturnJson("查询失败", 300);
+        RowBounds rowBounds=new RowBounds((pageNo-1)*3,3);
+        List<InvoiceDetailsVo> list=paymentOrderManyDao.getInvoiceDetailsByPayId(id,rowBounds);
+        if (list != null && list.size() > 0) {
+            returnJson = new ReturnJson("查询成功", list, 200);
+        }
+        return returnJson;
     }
 
     /**

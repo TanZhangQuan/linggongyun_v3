@@ -9,12 +9,12 @@
         <result column="invoice_code" property="invoiceCode" />
         <result column="invoice_print_date" property="invoicePrintDate" />
         <result column="invoice_number" property="invoiceNumber" />
-        <result column="invoice_codeNo" property="invoiceCodeno" />
+        <result column="invoice_codeNo" property="invoiceCodeNo" />
         <result column="invoice_print_person" property="invoicePrintPerson" />
         <result column="application_invoice_person" property="applicationInvoicePerson" />
         <result column="invoice_numbers" property="invoiceNumbers" />
         <result column="invoice_money" property="invoiceMoney" />
-        <result column="invoice_catalog_id" property="invoiceCatalogId" />
+        <result column="invoice_catalog_id" property="invoiceCatalog" />
         <result column="invoice_url" property="invoiceUrl" />
         <result column="tax_receipt_url" property="taxReceiptUrl" />
         <result column="express_sheet_no" property="expressSheetNo" />
@@ -27,15 +27,103 @@
         <result column="update_date" property="updateDate" />
     </resultMap>
 
+    <resultMap id="InvoiceVo" type="com.example.mybatis.vo.InvoiceVo">
+        <id column="id" property="id"/>
+        <result column="application_id" property="applicationId"/>
+        <result column="invoice_code" property="invoiceCode"/>
+        <result column="company_s_name" property="companySName"/>
+        <result column="platform_service_provider" property="platformServiceProvider"/>
+        <result column="application_desc" property="applicationDesc"/>
+        <result column="application_state" property="applicationState"/>
+        <result column="invoice_print_date" property="invoicePrintDate"/>
+        <result column="invoice_url" property="invoiceUrl"/>
+        <result column="tax_receipt_url" property="taxReceiptUrl"/>
+        <result column="is_invoice" property="isInvoice"/>
+        <collection property="list" ofType="com.example.mybatis.vo.OrderSubpackageVo">
+            <result column="id" property="id"/>
+            <result column="payment_inventory" property="paymentInventory"/>
+            <result column="subpackage_payment" property="subpackagePayment"/>
+        </collection>
+    </resultMap>
+
+    <resultMap id="InvInfo" type="com.example.mybatis.vo.InvoiceInformationVo">
+        <result column="invoice_catalog_type" property="invoiceCatalogType"/>
+        <result column="application_desc" property="applicationDesc"/>
+        <result column="application_address" property="applicationAddress"/>
+        <result column="invoice_url" property="invoiceUrl"/>
+        <result column="tax_receipt_url" property="taxReceiptUrl"/>
+        <result column="express_company_name" property="expressCompanyName"/>
+        <result column="express_sheet_no" property="expressSheetNo"/>
+    </resultMap>
+
+    <resultMap id="PlaInvInfo" type="com.example.mybatis.vo.PlaInvoiceInfoVo">
+        <result column="invoice_catalog_type" property="invoiceCatalogType"/>
+        <result column="application_desc" property="applicationDesc"/>
+        <result column="application_address" property="applicationAddress"/>
+    </resultMap>
+
+    <resultMap id="SubList" type="com.example.mybatis.vo.ToSubcontractInvoiceVo">
+        <id column="id" property="id"/>
+        <result column="company_s_name" property="companySName"/>
+        <result column="platform_service_provider" property="platformServiceProvider"/>
+        <result column="invoice_url" property="invoiceUrl"/>
+        <result column="tax_receipt_url" property="taxReceiptUrl"/>
+        <result column="is_subpackage" property="isSubpackage"/>
+        <result column="payment_date" property="paymentDate"/>
+        <collection property="list" ofType="com.example.mybatis.vo.OrderSubpackageVo">
+            <result column="id" property="id"/>
+            <result column="payment_inventory" property="paymentInventory"/>
+            <result column="subpackage_payment" property="subpackagePayment"/>
+        </collection>
+    </resultMap>
+
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id, application_id, invoice_code, invoice_print_date, invoice_number, invoice_codeNo, invoice_print_person, application_invoice_person, invoice_numbers, invoice_money, invoice_catalog_id, invoice_url, tax_receipt_url, express_sheet_no, express_company_name, express_update_datetime, express_update_person, express_update_person_tel, invoice_desc, create_date, update_date
     </sql>
 
 
+    <!--商户端查询条件-->
+    <sql id="que">
+        <if test="merchantId != null and merchantId != ''">
+            AND po.company_s_name=#{companySName}
+        </if>
+        <if test="platformServiceProvider != null and platformServiceProvider != ''">
+            AND po.platform_service_provider=#{platformServiceProvider}
+        </if>
+        <if test="applicationDateOne != null and applicationDateOne != ''">
+            AND ia.invapp.application_date>={applicationDate}
+        </if>
+        <if test="applicationDateTwo != null and applicationDateTwo != ''">
+            AND ia.invapp.application_date <![CDATA[<=]]> {applicationDate}
+        </if>
+    </sql>
+
+    <!--平台端通用查询-->
+    <sql id="que2">
+        <if test="companySName != null and companySName != ''">
+            AND po.company_s_name like CONCAT('%',#{companySName},'%')
+        </if>
+        <if test="platformServiceProvider != null and platformServiceProvider != ''">
+            AND po.platform_service_provider=#{platformServiceProvider}
+        </if>
+        <if test="applicationDateOne != null and applicationDateOne != ''">
+            AND invapp.invapp.application_date>={applicationDate}
+        </if>
+        <if test="applicationDateTwo != null and applicationDateTwo != ''">
+            AND invapp.invapp.application_date <![CDATA[<=]]> {applicationDate}
+        </if>
+    </sql>
+
     <resultMap id="InvoiceMoney" type="com.example.mybatis.po.InvoicePO">
         <result column="count" property="count" />
         <result column="total_money" property="totalMoney" />
+    </resultMap>
+
+    <resultMap id="resultTotal" type="com.example.mybatis.po.InvoicePO">
+        <result column="package_status" property="packageStatus"/>
+        <result column="total_money" property="totalMoney"/>
+        <result column="count" property="count"/>
     </resultMap>
 
     <!--查询总包的发票数量和发票金额-->
@@ -60,6 +148,133 @@
         <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
             #{item}
         </foreach>
+    </select>
+
+    <select id="selectTotalpaas" resultMap="resultTotal" parameterType="list">
+        select package_status ,SUM(invoice_money) 'total_money' , COUNT(*) 'count' FROM tb_invoice
+        WHERE merchant_id in
+        <foreach collection="list" index="index" item="merchantIds" open="(" separator="," close=")">
+            #{merchantIds}
+        </foreach>
+        GROUP BY package_status
+    </select>
+
+
+    <resultMap id="TobeInvoiced" type="com.example.mybatis.vo.TobeinvoicedVo">
+        <id column="invoice_application_id" property="invoiceApplicationId"/>
+        <result column="company_s_name" property="companySName"/>
+        <result column="platform_service_provider" property="platformServiceProvider"/>
+        <result column="application_desc" property="applicationDesc"/>
+        <result column="is_invoice" property="isInvoice"/>
+        <result column="application_date" property="applicationDate"/>
+        <collection property="list" ofType="com.example.mybatis.vo.OrderSubpackageVo">
+            <result column="id" property="id"/>
+            <result column="payment_inventory" property="paymentInventory"/>
+            <result column="subpackage_payment" property="subpackagePayment"/>
+        </collection>
+    </resultMap>
+    <select id="selectTobeinvoiced" resultMap="TobeInvoiced">
+        SELECT
+        i.application_id,
+        po.company_s_name,
+        po.platform_service_provider,
+        invapp.application_desc,
+        po.is_invoice,
+        invapp.application_date,
+        po.id,
+        po.payment_inventory,
+        po.subpackage_payment
+        FROM tb_payment_order AS po
+        LEFT JOIN tb_application_payment AS app ON app.payment_order_id = po.id
+        LEFT JOIN tb_invoice_application as invapp ON invapp.id=app.invoice_application_id
+        WHERE po.payment_order_status = 3
+        <include refid="que"/>
+    </select>
+
+    <select id="getInvoiceList" resultMap="InvoiceVo">
+        SELECT
+        i.id,
+        i.application_id,
+        i.invoice_code,
+        po.company_s_name,
+        po.platform_service_provider,
+        invapp.application_desc,
+        invapp.application_state,
+        i.invoice_print_date,
+        i.invoice_url,
+        i.tax_receipt_url,
+        po.is_invoice,
+        po.id,
+        po.payment_inventory,
+        po.turnkey_project_payment
+        FROM tb_payment_order AS po
+        LEFT JOIN tb_application_payment AS app ON app.payment_order_id = po.id
+        LEFT JOIN tb_invoice_application as invapp ON invapp.id=app.invoice_application_id
+        LEFT JOIN tb_invoice as i ON i.application_id=invapp.id
+        WHERE po.payment_order_status = 3 and invapp.application_state=3
+        <include refid="que"/>
+    </select>
+
+    <select id="getInvInfoById" resultMap="InvInfo">
+        SELECT invapp.invoice_catalog_type,invapp.application_desc,invapp.application_address,i.invoice_url,i.tax_receipt_url,i.express_company_name,i.express_sheet_no
+        FROM tb_invoice as i
+        INNER JOIN tb_invoice_application as invapp ON i.application_id=invapp.id
+        WHERE i.id=#{invId}
+    </select>
+
+
+    <select id="getPlaInvoiceList" resultMap="InvoiceVo">
+        SELECT
+        app.invoice_application_id,
+        po.company_s_name,
+        po.platform_service_provider,
+        invapp.application_desc,
+        invapp.application_state,
+        invapp.application_date,
+        po.is_invoice,
+        po.id,
+        po.payment_inventory,
+        po.subpackage_payment
+        FROM tb_payment_order AS po
+        LEFT JOIN tb_application_payment AS app ON app.payment_order_id = po.id
+        LEFT JOIN tb_invoice_application as invapp ON invapp.id=app.invoice_application_id
+        WHERE invapp.application_state = 1 or invapp.application_state is null AND po.payment_order_status = 3
+        <include refid="que2"/>
+    </select>
+
+
+    <select id="getPlaInvoiceInfo" resultMap="PlaInvInfo">
+        SELECT invoice_catalog_type,application_desc,application_address
+        FROM tb_invoice_application
+        WHERE id=#{applicationId}
+    </select>
+
+    <select id="getInvoiceCode" resultType="java.lang.String">
+        select invoice_code from tb_invoice
+        where create_date in
+        (select MAX(create_date) from tb_invoice)
+    </select>
+
+
+    <select id="getListInvoicequery" resultMap="InvoiceVo">
+        SELECT i.id,i.application_id,i.invoice_code,po.company_s_name,po.platform_service_provider,po.is_invoice,ia.application_desc,i.invoice_url,
+        i.tax_receipt_url,ia.application_state,i.invoice_print_date,po.id,po.payment_inventory,po.turnkey_project_payment
+        FROM tb_invoice as i
+        INNER JOIN tb_invoice_application as ia ON i.application_id=ia.id
+        INNER JOIN tb_application_payment as ap ON ia.id = ap.invoice_application_id
+        INNER JOIN tb_payment_order as po ON ap.payment_order_id=po.id
+        WHERE ia.application_state=3
+        <include refid="que2"/>
+    </select>
+
+    <select id="getListSubQuery" resultMap="SubList">
+        SELECT i.id,po.company_s_name,po.platform_service_provider,i.invoice_url,i.tax_receipt_url,po.is_subpackage,po.payment_date,po.id,po.payment_inventory,po.turnkey_project_payment
+        FROM tb_invoice as i
+        INNER JOIN tb_invoice_application as ia ON i.application_id=ia.id
+        INNER JOIN tb_application_payment as ap ON ap.invoice_application_id=ia.id
+        INNER JOIN tb_payment_order as po ON po.id=ap.payment_order_id
+        WHERE ia.application_state = 3 AND po.is_subpackage=0
+        <include refid="que2"/>
     </select>
 
 

@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mybatis.mapper.SubpackageDao">
+
+
+    <resultMap id="summaryList" type="com.example.mybatis.vo.SubpackageVo">
+        <id column="id" property="id"/>
+        <result column="company_s_name" property="companySName"/>
+        <result column="platform_service_provider" property="platformServiceProvider"/>
+        <result column="maker_tax_url" property="makerTaxUrl"/>
+        <result column="maker_invoice_url" property="makerInvoiceUrl"/>
+        <result column="is_subpackage" property="isSubpackage"/>
+        <result column="invoice_date" property="invoiceDate"/>
+        <collection property="list" ofType="com.example.mybatis.vo.OrderSubpackageVo">
+            <id column="pid" property="id"/>
+            <result column="payment_inventory" property="paymentInventory"/>
+            <result column="turnkey_project_payment" property="turnkeyProjectPayment"/>
+        </collection>
+    </resultMap>
+
+    <resultMap id="summary" type="com.example.mybatis.vo.SubpackageVo">
+        <id column="id" property="id"/>
+        <result column="company_s_name" property="companySName"/>
+        <result column="platform_service_provider" property="platformServiceProvider"/>
+        <result column="maker_tax_url" property="makerTaxUrl"/>
+        <result column="maker_invoice_url" property="makerInvoiceUrl"/>
+        <result column="total_amount" property="totalAmount"/>
+        <result column="payment_date" property="paymentDate"/>
+        <result column="payment_order_status" property="paymentOrderStatus"/>
+        <result column="invoice_date" property="invoiceDate"/>
+        <collection property="list" ofType="com.example.mybatis.vo.OrderSubpackageVo">
+            <id column="pid" property="id"/>
+            <result column="payment_inventory" property="paymentInventory"/>
+            <result column="turnkey_project_payment" property="turnkeyProjectPayment"/>
+            <result column="acceptance_certificate" property="acceptanceCertificate"/>
+            <result column="subpackage_payment" property="subpackagePayment"/>
+        </collection>
+        <collection property="taskVoList" ofType="com.example.mybatis.vo.TaskVo">
+            <result column="task_code" property="taskCode"/>
+            <result column="task_name" property="taskName"/>
+            <result column="release_date" property="releaseDate"/>
+            <result column="deadline_date" property="deadlineDate"/>
+            <result column="industry_type" property="industryType"/>
+        </collection>
+    </resultMap>
+
+    <resultMap id="SubpackageInfo" type="com.example.mybatis.vo.SubpackageInfoVo">
+        <result column="invoice_category" property="invoiceCategory"/>
+        <result column="maker_invoice_desc" property="makerInvoiceDesc"/>
+        <result column="maker_invoice_url" property="makerInvoiceUrl"/>
+        <result column="maker_tax_url" property="makerTaxUrl"/>
+    </resultMap>
+
+    <resultMap id="InvoiceDetailsByPayId" type="com.example.mybatis.vo.InvoiceDetailsVo">
+        <result column="worker_id" property="workerId"/>
+        <result column="worker_name" property="workerName"/>
+        <result column="mobile_code" property="mobileCode"/>
+        <result column="id_card_code" property="idCardCode"/>
+        <result column="bank_code" property="bankCode"/>
+        <result column="real_money" property="realMoney"/>
+    </resultMap>
+
+    <!--通用查询-->
+    <sql id="que">
+        <if test="merchantId != null and merchantId != ''">
+            AND po.merchant_id=#{merchantId}
+        </if>
+        <if test="platformServiceProvider != null and platformServiceProvider != ''">
+            AND po.platform_service_provider=#{platformServiceProvider}
+        </if>
+        <if test="applicationDateOne != null and applicationDateOne != ''">
+            AND ia.invapp.application_date>={applicationDate}
+        </if>
+        <if test="applicationDateTwo != null and applicationDateTwo != ''">
+            AND ia.invapp.application_date <![CDATA[<=]]> {applicationDate}
+        </if>
+    </sql>
+
+    <select id="getSummaryList" resultMap="summaryList">
+        SELECT mti.id,po.company_s_name,po.platform_service_provider,mti.maker_invoice_url,mti.maker_tax_url,
+        po.is_subpackage,mti.invoice_date,po.id as pid,po.payment_inventory,po.turnkey_project_payment
+        FROM tb_maker_total_invoice as mti
+        INNER JOIN tb_application_payment as ap ON ap.payment_order_id
+        INNER JOIN tb_invoice_application as ia ON ia.id= ap.invoice_application_id
+        INNER JOIN tb_payment_order as po ON po.id=ap.payment_order_id
+        INNER JOIN tb_invoice as i ON ia.id=i.application_id
+        WHERE po.is_subpackage=1
+        <include refid="que"/>
+    </select>
+
+
+    <select id="getSummary" resultMap="summary">
+        SELECT mti.id,po.company_s_name,po.platform_service_provider,mti.maker_tax_url,mti.maker_invoice_url,mti.total_amount,po.payment_date,
+        po.payment_order_status,mti.invoice_date,po.id as pid,po.payment_inventory,po.turnkey_project_payment,po.acceptance_certificate,
+        po.subpackage_payment,t.task_code,t.task_name,t.release_date,t.deadline_date,t.industry_type
+        FROM tb_maker_total_invoice as mti
+        INNER JOIN tb_application_payment as ap ON ap.payment_order_id
+        INNER JOIN tb_invoice_application as ia ON ia.id= ap.invoice_application_id
+        INNER JOIN tb_payment_order as po ON po.id=ap.payment_order_id
+        INNER JOIN tb_invoice as i ON ia.id=i.application_id
+        LEFT JOIN tb_task as t ON t.id=po.id
+        WHERE po.is_subpackage=1 and mti.id=#{invoiceId}
+    </select>
+
+    <select id="getSubpackageInfoById" resultMap="SubpackageInfo">
+        SELECT invoice_category,maker_invoice_desc,maker_invoice_url,maker_tax_url
+        FROM tb_maker_total_invoice
+        WHERE id=#{invoiceId}
+    </select>
+    <select id="getListById" resultMap="InvoiceDetailsByPayId">
+        SELECT pi.worker_id,pi.worker_name,pi.mobile_code,pi.id_card_code,pi.bank_code,pi.real_money
+        FROM tb_maker_total_invoice as mti
+        INNER JOIN tb_invoice_application as ia ON ia.id=mti.invoice_application_id
+        INNER JOIN tb_application_payment as ap ON ap.invoice_application_id=ia.id
+        INNER JOIN tb_payment_order as po ON po.id=ap.payment_order_id
+        INNER JOIN tb_payment_inventory as pi ON pi.payment_order_id=po.id
+        WHERE mti.id=#{invoiceId}
+    </select>
+
+</mapper>

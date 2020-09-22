@@ -21,6 +21,15 @@
         <result column="update_date" property="updateDate" />
     </resultMap>
 
+    <resultMap id="BuyerById" type="com.example.mybatis.vo.BuyerVo">
+        <result column="company_name" property="companyName"/>
+        <result column="credit_code" property="creditCode"/>
+        <result column="company_address" property="companyAddress"/>
+        <result column="telephones" property="telephones"/>
+        <result column="bank_name" property="bankName"/>
+        <result column="bank_code" property="bankCode"/>
+    </resultMap>
+
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id, company_id,company_name, role_id, user_name, pay_pwd, real_name, pass_word, sales_man_id, agent_id, login_mobile, status, create_date, update_date
@@ -44,7 +53,12 @@
         SELECT company_name FROM tb_merchant WHERE id=#{id}
     </select>
 
-
+    <select id="getBuyerById" resultMap="BuyerById">
+        SELECT m.company_name,ci.credit_code,ci.company_address,ci.telephones,ci.bank_name,ci.bank_code
+        FROM tb_merchant as m
+        LEFT JOIN tb_company_info as ci ON m.company_id=ci.id
+        WHERE m.id=#{id}
+    </select>
 
 
 
@@ -104,5 +118,6 @@
         where merchant_id = #{merchantId}
         ORDER BY payment_date desc
     </select>
+
 
 </mapper>

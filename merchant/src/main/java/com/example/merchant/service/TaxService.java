@@ -26,4 +26,6 @@ public interface TaxService extends IService<Tax> {
 
     ReturnJson saveTax(TaxDto taxDto);
 
+    ReturnJson getSellerById(String id);
+
 }

@@ -3,6 +3,7 @@ package com.example.merchant.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.PaymentOrderDto;
+import com.example.mybatis.dto.TobeinvoicedDto;
 import com.example.mybatis.entity.PaymentInventory;
 import com.example.mybatis.entity.PaymentOrderMany;
 
@@ -22,6 +23,14 @@ public interface PaymentOrderManyService extends IService<PaymentOrderMany> {
     ReturnJson getWeek(String merchantId);
     ReturnJson getMonth(String merchantId);
     ReturnJson getYear(String merchantId);
+
+    //根据商户id查众包待开票数据
+    ReturnJson getListCSIByID(TobeinvoicedDto tobeinvoicedDto);
+
+    //根据支付id查询众包支付信息
+    ReturnJson getPayOrderManyById(String id);
+
+    ReturnJson getInvoiceDetailsByPayId(String id,Integer pageNo);
 
     ReturnJson getPaymentOrderMany(PaymentOrderDto paymentOrderDto);
     ReturnJson getPaymentOrderManyInfo(String id);

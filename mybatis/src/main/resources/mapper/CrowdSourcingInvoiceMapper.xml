@@ -4,26 +4,51 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.example.mybatis.entity.CrowdSourcingInvoice">
-        <id column="id" property="id" />
-        <result column="application_id" property="applicationId" />
-        <result column="invoice_code" property="invoiceCode" />
-        <result column="invoice_print_date" property="invoicePrintDate" />
-        <result column="invoice_number" property="invoiceNumber" />
-        <result column="invoice_codeNo" property="invoiceCodeno" />
-        <result column="invoice_print_person" property="invoicePrintPerson" />
-        <result column="invoice_money" property="invoiceMoney" />
-        <result column="invoice_catalog_id" property="invoiceCatalogId" />
-        <result column="invoice_url" property="invoiceUrl" />
-        <result column="tax_receipt_url" property="taxReceiptUrl" />
-        <result column="express_sheet_no" property="expressSheetNo" />
-        <result column="express_company_name" property="expressCompanyName" />
-        <result column="express_update_datetime" property="expressUpdateDatetime" />
-        <result column="express_update_person" property="expressUpdatePerson" />
-        <result column="express_update_person_tel" property="expressUpdatePersonTel" />
-        <result column="invoice_desc" property="invoiceDesc" />
-        <result column="create_date" property="createDate" />
-        <result column="update_date" property="updateDate" />
+        <id column="id" property="id"/>
+        <result column="application_id" property="applicationId"/>
+        <result column="invoice_code" property="invoiceCode"/>
+        <result column="invoice_print_date" property="invoicePrintDate"/>
+        <result column="invoice_number" property="invoiceNumber"/>
+        <result column="invoice_codeNo" property="invoiceCodeno"/>
+        <result column="invoice_print_person" property="invoicePrintPerson"/>
+        <result column="invoice_money" property="invoiceMoney"/>
+        <result column="invoice_catalog_id" property="invoiceCatalogId"/>
+        <result column="invoice_url" property="invoiceUrl"/>
+        <result column="tax_receipt_url" property="taxReceiptUrl"/>
+        <result column="express_sheet_no" property="expressSheetNo"/>
+        <result column="express_company_name" property="expressCompanyName"/>
+        <result column="express_update_datetime" property="expressUpdateDatetime"/>
+        <result column="express_update_person" property="expressUpdatePerson"/>
+        <result column="express_update_person_tel" property="expressUpdatePersonTel"/>
+        <result column="invoice_desc" property="invoiceDesc"/>
+        <result column="create_date" property="createDate"/>
+        <result column="update_date" property="updateDate"/>
     </resultMap>
+
+    <resultMap id="InvInfo" type="com.example.mybatis.vo.InvoiceInformationVo">
+        <result column="billing_category" property="invoiceCatalogType"/>
+        <result column="application_desc" property="applicationDesc"/>
+        <result column="application_address" property="applicationAddress"/>
+        <result column="invoice_url" property="invoiceUrl"/>
+        <result column="tax_receipt_url" property="taxReceiptUrl"/>
+        <result column="express_company_name" property="expressCompanyName"/>
+        <result column="express_sheet_no" property="expressSheetNo"/>
+    </resultMap>
+    <!--查询条件-->
+    <sql id="que">
+        <if test="merchantId != null and merchantId != ''">
+            AND pom.merchant_id=#{merchantId}
+        </if>
+        <if test="platformServiceProvider != null and platformServiceProvider != ''">
+            AND pom.platform_service_provider=#{platformServiceProvider}
+        </if>
+        <if test="applicationDateOne != null and applicationDateOne != ''">
+            AND csp.invapp.application_date>={applicationDate}
+        </if>
+        <if test="applicationDateTwo != null and applicationDateTwo != ''">
+            AND csp.invapp.application_date <![CDATA[<=]]> {applicationDate}
+        </if>
+    </sql>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
@@ -32,8 +57,8 @@
 
 
     <resultMap id="InvoiceMoney" type="com.example.mybatis.po.InvoicePO">
-        <result column="count" property="count" />
-        <result column="total_money" property="totalMoney" />
+        <result column="count" property="count"/>
+        <result column="total_money" property="totalMoney"/>
     </resultMap>
 
     <!--查询总包的发票数量和发票金额-->
@@ -45,13 +70,40 @@
     </select>
 
     <select id="selectCrowdInvoiceMoneyPaas" parameterType="string" resultMap="InvoiceMoney">
-        select COUNT(1) 'count', SUM(d.invoice_money) 'total_money' from tb_merchant a RIGHT JOIN tb_payment_order_many b on a.id = b.merchant_id
+        select COUNT(1) 'count', SUM(d.invoice_money) 'total_money' from tb_merchant a RIGHT JOIN tb_payment_order_many
+        b on a.id = b.merchant_id
         join tb_crowd_sourcing_application c on b.id = c.payment_order_many_id
         join tb_crowd_sourcing_invoice d on c.id = d.application_id
         where a.id in
         <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
             #{item}
         </foreach>
+    </select>
+
+
+    <insert id="addCrowdSourcingInvoice" parameterType="com.example.mybatis.entity.ApplicationCrowdSourcing">
+        INSERT INTO tb_crowd_sourcing_application (id,payment_order_many_id,invoice_catalog_Type,application_address_id,application_date,application_state,application_desc)
+        VALUES (#{id}, #{paymentOrderManyId}, #{invoiceCatalogType},#{applicationAddressId},now(), 1, #{applicationDesc});
+    </insert>
+
+
+    <select id="getCrowdSourcingInfo" resultType="com.example.mybatis.vo.CrowdSourcingInfoVo">
+        SELECT csi.id,pom.merchant_id,csi.invoice_code,pom.company_s_name,pom.platform_service_provider,pom.id as
+        pom_id,pom.payment_inventory,
+        pom.many_payment,pom.is_application,csi.invoice_url,csi.tax_receipt_url,csp.application_state,csi.invoice_print_date
+        FROM tb_crowd_sourcing_invoice as csi
+        INNER JOIN tb_crowd_sourcing_application as csp on csi.application_id=csp.id
+        INNER JOIN tb_payment_order_many as pom ON csp.payment_order_many_id=pom.id
+        WHERE csp.application_state=3 AND pom.payment_order_status=3
+        <include refid="que"/>
+    </select>
+
+    <select id="getInvoiceById" resultMap="InvInfo">
+        SELECT  csp.invoice_catalog_type,csp.application_desc,csp.application_address_id,csi.invoice_url,csi.tax_receipt_url,csi.express_company_name,csi.express_sheet_no
+        FROM tb_crowd_sourcing_invoice as csi
+        LEFT JOIN tb_invoice_catalog as ci ON csi.invoice_catalog_id=ci.id
+        LEFT JOIN tb_crowd_sourcing_application as csp ON csi.application_id=csp.id
+        WHERE csi.id=#{csiId}
     </select>
 
 </mapper>

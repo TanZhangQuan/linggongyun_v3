@@ -7,6 +7,7 @@ import com.example.merchant.dto.TaxDto;
 import com.example.merchant.service.TaxService;
 import com.example.mybatis.entity.*;
 import com.example.mybatis.mapper.*;
+import com.example.mybatis.vo.SellerVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -116,4 +117,20 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
 
         return null;
     }
+
+    /**
+     * 销售方信息
+     * @param id
+     * @return
+     */
+    @Override
+    public ReturnJson getSellerById(String id) {
+        ReturnJson returnJson = new ReturnJson("查询失败", 300);
+        SellerVo sellerVo = taxDao.getSellerById(id);
+        if (sellerVo != null) {
+            returnJson = new ReturnJson("查询成功", sellerVo, 200);
+        }
+        return returnJson;
+    }
+
 }
