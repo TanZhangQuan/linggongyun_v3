@@ -24,20 +24,15 @@ public class TaxPackage implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 税源地公司id
+     * id
      */
     @TableId(value = "id", type = IdType.ASSIGN_ID)
     private String id;
 
     /**
-     * 对应的管理人员
+     * 对应的服务商
      */
     private String taxId;
-
-    /**
-     * 税源地公司名称
-     */
-    private String taxName;
 
     /**
      * 税号

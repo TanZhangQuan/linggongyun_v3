@@ -295,6 +295,21 @@
         </where>
     </select>
 
+    <!--    查询最近30天-->
+    <select id="selectBy30DayPaasTax" parameterType="list" resultType="decimal">
+        select SUM(real_money) 'total_money' from tb_payment_order where
+        date_sub(curdate(), INTERVAL 30 DAY) &lt;= date(`payment_date`)
+        and payment_order_status &gt;= 2
+        and tax_id = #{taxId}
+    </select>
+
+    <!--查询总支付-->
+    <select id="selectTotalPaasTax" parameterType="list" resultType="decimal">
+        select SUM(real_money) 'total_money' from tb_payment_order where
+        payment_order_status &gt;= 2
+        and tax_id = #{taxId}
+    </select>
+
 
 
 </mapper>

@@ -29,6 +29,8 @@ public interface InvoiceDao extends BaseMapper<Invoice> {
 
     List<InvoiceListVo> getInvoiceListQuery(List<String> InvoiceIds);
 
+    InvoicePO selectInvoiceMoneyPaasTax(String taxId);
+
     /**
      * 根据发票id查询发票信息
      * @return

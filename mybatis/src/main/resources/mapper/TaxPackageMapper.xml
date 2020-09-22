@@ -6,7 +6,6 @@
     <resultMap id="BaseResultMap" type="com.example.mybatis.entity.TaxPackage">
         <id column="id" property="id" />
         <result column="tax_id" property="taxId" />
-        <result column="tax_name" property="taxName" />
         <result column="invoice_taxno" property="invoiceTaxno" />
         <result column="tax_price" property="taxPrice" />
         <result column="tax_min_price" property="taxMinPrice" />
@@ -22,7 +21,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, tax_id, tax_name, invoice_taxno, tax_price, tax_min_price, tax_max_price, payee, bank_name, bank_code, package_status, support_category, create_date, update_date
+        id, tax_id, invoice_taxno, tax_price, tax_min_price, tax_max_price, payee, bank_name, bank_code, package_status, support_category, create_date, update_date
     </sql>
 
 

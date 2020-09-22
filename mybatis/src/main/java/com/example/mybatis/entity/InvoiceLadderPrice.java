@@ -25,12 +25,17 @@ public class InvoiceLadderPrice implements Serializable ,Comparable<InvoiceLadde
     private static final long serialVersionUID = 1L;
 
     @TableId(value = "id", type = IdType.ASSIGN_ID)
-    private long id;
+    private String id;
 
     /**
      * 服务商ID
      */
     private String taxId;
+
+    /**
+     * 对于的合作类型ID
+     */
+    private String taxPackageId;
 
     /**
      * 开始的金额
@@ -60,6 +65,6 @@ public class InvoiceLadderPrice implements Serializable ,Comparable<InvoiceLadde
 
     @Override
     public int compareTo(InvoiceLadderPrice o) {
-            return this.startMoney.compareTo(o.getStartMoney());
+        return this.startMoney.compareTo(o.getStartMoney());
     }
 }

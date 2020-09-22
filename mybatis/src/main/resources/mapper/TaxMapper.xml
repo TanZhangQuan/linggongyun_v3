@@ -38,4 +38,69 @@
     </select>
 
 
+    <resultMap id="TaxListPO" type="com.example.mybatis.po.TaxListPO">
+        <result column="tax_name" property="taxName" />
+        <result column="id" property="taxId" />
+        <result column="total_status" property="totalStatus" />
+        <result column="many_status" property="manyStatus" />
+        <result column="tax_status" property="taxStatus" />
+        <result column="create_date" property="createDate" />
+    </resultMap>
+    <!--查询服务商列表-->
+    <select id="selectTaxList" resultMap="TaxListPO" parameterType="list">
+        select f.id,f.tax_name,e.total_status,e.many_status,f.tax_status,f.create_date from tb_tax f LEFT JOIN
+        ((select (case when a.tax_id is null then b.tax_id else a.tax_id end) 'tax_id',
+        (case when a.id is null then 1 else 0 end) 'total_status',(case when b.id is null then 1 else 0 end) 'many_status' from
+        (select * from tb_tax_package
+        where package_status = 0) a
+        left  join
+        (select * from tb_tax_package
+        where package_status = 1) b
+        on a.tax_id = b.tax_id
+        )
+        union
+        (select (case when c.tax_id is null then d.tax_id else c.tax_id end) 'tax_id' ,
+        (case when c.id is null then 1 else 0 end) 'total_status',(case when d.id is null then 1 else 0 end) 'many_status' from
+        (select * from tb_tax_package
+        where package_status = 0) c
+        right  join
+        (select * from tb_tax_package
+        where package_status = 1) d
+        on c.tax_id = d.tax_id
+        ))e
+        on f.id = e.tax_id
+        <where>
+            <if test="taxName != null and taxName != '' ">
+                and tax_name like CONCAT('%',#{taxName},'%')
+            </if>
+            <if test="startDate != null and startDate != ''">
+                and date(create_date) &gt;= #{startDate}
+            </if>
+            <if test="endDate != null and endDate != ''">
+                and date(create_date) &lt;= #{endDate}
+            </if>
+        </where>
+    </select>
+
+    <resultMap id="MerchantPaymentList" type="com.example.mybatis.po.MerchantPaymentListPO">
+        <id column="payment_order_id" property="paymentOrderId" />
+        <result column="merchant_name" property="merchantName" />
+        <result column="tax_name" property="taxName" />
+        <result column="package_status" property="packageStatus" />
+        <result column="real_money" property="realMoney" />
+        <result column="is_invoice" property="isInvoice" />
+        <result column="payment_sate" property="paymentDate" />
+    </resultMap>
+
+    <!--服务商的交易流水-->
+    <select id="selectTaxPaymentList" parameterType="list" resultMap="MerchantPaymentList">
+        select * from tb_merchant_payment_list
+        where payment_order_id in
+        <foreach collection="paymentOrderIds" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        ORDER BY payment_date desc
+    </select>
+
+
 </mapper>

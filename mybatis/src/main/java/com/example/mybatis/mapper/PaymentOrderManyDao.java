@@ -49,6 +49,9 @@ public interface PaymentOrderManyDao extends BaseMapper<PaymentOrderMany> {
     BigDecimal selectBy30Daypaas(List<String> merchantId);
     BigDecimal selectTotalpaas(List<String> merchantId);
 
+    BigDecimal selectBy30DayPaasTax(String taxId);
+    BigDecimal selectTotalPaasTax(String taxId);
+
     List<PaymentOrderMany> selectDaypaas(List<String> merchantId);
     List<PaymentOrderMany> selectWeekpaas(List<String> merchantId);
     List<PaymentOrderMany> selectMonthpaas(List<String> merchantId);
