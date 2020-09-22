@@ -1,4 +1,4 @@
-package com.example.merchant.controller.paas;
+package com.example.merchant.controller.platform;
 
 import com.example.common.util.ReturnJson;
 import com.example.merchant.service.ManagersService;
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 
-@RestController("/paas/managers")
+@RestController("/platform/managers")
 @Api(value = "平台端管理人员登录接口", tags = {"平台端管理人员登录接口"})
 public class ManagersControllerPaas {
 

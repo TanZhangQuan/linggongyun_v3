@@ -1,4 +1,4 @@
-package com.example.merchant.controller.paas;
+package com.example.merchant.controller.platform;
 
 
 import com.example.common.util.ReturnJson;
@@ -25,7 +25,7 @@ import javax.validation.constraints.NotBlank;
  * @since 2020-09-07
  */
 @RestController
-@RequestMapping("/paas/tax")
+@RequestMapping("/platform/tax")
 @Validated
 @Api(value = "平台端服务商管理", tags = "平台端服务商管理")
 public class TaxControllerPaas {

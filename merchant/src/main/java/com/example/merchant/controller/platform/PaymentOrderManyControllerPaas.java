@@ -1,4 +1,4 @@
-package com.example.merchant.controller.paas;
+package com.example.merchant.controller.platform;
 
 import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.PaymentOrderDto;
@@ -29,7 +29,7 @@ import java.util.List;
  * @since 2020-09-07
  */
 @RestController
-@RequestMapping("/paas/paymentOrderMany")
+@RequestMapping("/platform/paymentOrderMany")
 @Api(value = "平台端众包支付管理", tags = "平台端众包支付管理")
 public class PaymentOrderManyControllerPaas {
 

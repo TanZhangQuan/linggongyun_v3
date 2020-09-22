@@ -1,4 +1,4 @@
-package com.example.merchant.controller.paas;
+package com.example.merchant.controller.platform;
 
 import com.example.common.util.ReturnJson;
 import com.example.merchant.service.HomePageService;
@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.constraints.NotBlank;
 
 @RestController
-@RequestMapping("/paas/homePage")
+@RequestMapping("/platform/homePage")
 @Validated
 @Api(value = "平台端首页内容的展示", tags = "平台端首页内容的展示")
 public class HomePageControllerPaas {

@@ -1,4 +1,4 @@
-package com.example.merchant.controller.paas;
+package com.example.merchant.controller.platform;
 
 
 import com.example.common.util.ReturnJson;
@@ -31,7 +31,7 @@ import java.util.List;
  * @since 2020-09-07
  */
 @RestController
-@RequestMapping("/paas/paymentOrder")
+@RequestMapping("/platform/paymentOrder")
 @Api(value = "平台端总包+分包支付管理", tags = "平台端总包+分包支付管理")
 @Validated
 public class PaymentOrderControllerPaas {

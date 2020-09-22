@@ -1,4 +1,4 @@
-package com.example.merchant.controller.paas;
+package com.example.merchant.controller.platform;
 
 
 import com.example.common.util.ReturnJson;
@@ -23,7 +23,7 @@ import javax.annotation.Resource;
  */
 @Api(value = "平台端行业相关操作接口", tags = {"平台端行业相关操作接口"})
 @RestController
-@RequestMapping("/paas/industry")
+@RequestMapping("/platform/industry")
 public class IndustryControllerPaas {
     private static Logger logger = LoggerFactory.getLogger(TaskControllerPaas.class);
 

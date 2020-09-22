@@ -1,4 +1,4 @@
-package com.example.merchant.controller.paas;
+package com.example.merchant.controller.platform;
 
 import com.example.common.util.ReturnJson;
 import com.example.merchant.service.FileOperationService;
@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 @RestController
-@RequestMapping("/paas/file")
+@RequestMapping("/platform/file")
 @Api(value = "平台端文件操作", tags = "平台端文件上传下载的操作")
 @Validated
 public class FileOperationControllerPaas {

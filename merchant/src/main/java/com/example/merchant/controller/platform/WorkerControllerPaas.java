@@ -1,4 +1,4 @@
-package com.example.merchant.controller.paas;
+package com.example.merchant.controller.platform;
 
 
 import com.example.common.util.ReturnJson;
@@ -27,7 +27,7 @@ import java.util.List;
  */
 @Api(value = "平台端创客相关操作接口", tags = {"平台端创客相关操作接口"})
 @RestController
-@RequestMapping("/paas/worker")
+@RequestMapping("/platform/worker")
 @Validated
 public class WorkerControllerPaas {
 

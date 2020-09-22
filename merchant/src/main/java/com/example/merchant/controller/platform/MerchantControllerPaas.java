@@ -1,4 +1,4 @@
-package com.example.merchant.controller.paas;
+package com.example.merchant.controller.platform;
 
 
 import com.example.common.util.ReturnJson;
@@ -31,7 +31,7 @@ import javax.validation.constraints.NotNull;
  */
 @Api(value = "平台端商户相关操作接口", tags = {"平台端商户相关操作接口"})
 @RestController
-@RequestMapping("/paas/merchant")
+@RequestMapping("/platform/merchant")
 @Validated
 public class MerchantControllerPaas {
     @Autowired
