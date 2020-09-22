@@ -94,6 +94,16 @@ public class InvoiceControllerPass {
         return returnJson;
     }
 
-
+    @ApiOperation("分包开票，开票清单明细信息")
+    @PostMapping("/invoiceListQuery")
+    public ReturnJson invoiceListQuery(String invoiceId,String companySNames,String platformServiceProviders){
+        ReturnJson returnJson=new ReturnJson("查询失败",300);
+        try{
+            returnJson=invoiceService.getInvoiceListQuery(invoiceId, companySNames, platformServiceProviders);
+        }catch (Exception err){
+            logger.error("出现异常错误",err);
+        }
+        return returnJson;
+    }
 
 }
