@@ -22,7 +22,7 @@ import javax.annotation.Resource;
  * @author hzp
  * @since 2020-09-07
  */
-@Api(value = "权限相关操作接口", tags = {"权限相关操作接口"})
+@Api(value = "商户端权限相关操作接口", tags = {"商户端权限相关操作接口"})
 @RestController
 @RequestMapping("/merchant/menu")
 public class MenuControllerMerchant {

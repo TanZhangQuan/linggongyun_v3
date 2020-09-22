@@ -27,7 +27,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/merchant/paymentOrder")
-@Api(value = "总包+分包支付管理", tags = "总包+分包支付管理")
+@Api(value = "商户端总包+分包支付管理", tags = "商户端总包+分包支付管理")
 @Validated
 public class PaymentOrderControllerMerchant {
 

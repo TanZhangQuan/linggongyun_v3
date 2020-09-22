@@ -17,8 +17,8 @@ import java.util.List;
  * @since 2020-09-07
  */
 public interface PaymentOrderDao extends BaseMapper<PaymentOrder> {
-    Double selectBy30Day(String merchantId);
-    Double selectTotal(String merchantId);
+    BigDecimal selectBy30Day(String merchantId);
+    BigDecimal selectTotal(String merchantId);
 
     List<PaymentOrder> selectDay(String merchantId);
     List<PaymentOrder> selectWeek(String merchantId);

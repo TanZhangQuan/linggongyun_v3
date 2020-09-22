@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.merchant.mapper.TaxPackageDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.example.mybatis.entity.TaxPackage">
+        <id column="id" property="id" />
+        <result column="tax_id" property="taxId" />
+        <result column="tax_name" property="taxName" />
+        <result column="invoice_taxno" property="invoiceTaxno" />
+        <result column="tax_price" property="taxPrice" />
+        <result column="tax_min_price" property="taxMinPrice" />
+        <result column="tax_max_price" property="taxMaxPrice" />
+        <result column="payee" property="payee" />
+        <result column="bank_name" property="bankName" />
+        <result column="bank_code" property="bankCode" />
+        <result column="package_status" property="packageStatus" />
+        <result column="support_category" property="supportCategory" />
+        <result column="create_date" property="createDate" />
+        <result column="update_date" property="updateDate" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, tax_id, tax_name, invoice_taxno, tax_price, tax_min_price, tax_max_price, payee, bank_name, bank_code, package_status, support_category, create_date, update_date
+    </sql>
+
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="TaxPOResultMap" type="com.example.mybatis.entity.TaxPackage">
+        <id column="id" property="id" />
+        <result column="tax_id" property="taxId" />
+        <result column="tax_name" property="taxName" />
+        <result column="invoice_taxno" property="invoiceTaxno" />
+        <result column="tax_price" property="taxPrice" />
+        <result column="tax_min_price" property="taxMinPrice" />
+        <result column="tax_max_price" property="taxMaxPrice" />
+        <result column="payee" property="payee" />
+        <result column="bank_name" property="bankName" />
+        <result column="bank_code" property="bankCode" />
+        <result column="package_status" property="packageStatus" />
+        <result column="support_category" property="supportCategory" />
+        <result column="contract" property="contract" />
+        <result column="create_date" property="createDate" />
+        <result column="update_date" property="updateDate" />
+    </resultMap>
+
+
+    <select id="selectByMerchantId" parameterType="list" resultMap="TaxPOResultMap">
+        select tax_s_name,  tax_price, b.contract, package_status, payee, bank_name, bank_code
+        from tb_tax_package a join tb_merchant_tax b on a.id = b.tax_id
+        join tb_tax c on a.tax_id = c.id
+        where c.tax_status = 1 and b.merchant_id = #{merchantId}
+    </select>
+
+</mapper>

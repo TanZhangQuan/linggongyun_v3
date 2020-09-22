@@ -100,8 +100,32 @@ public class MerchantControllerPaas {
     @ApiOperation(value = "获取商户信息", notes = "获取商户信息", httpMethod = "POST")
     @ApiImplicitParams(value={@ApiImplicitParam(name="merchantId",value = "商户ID",required = true)})
     public ReturnJson merchantInfo(@NotBlank(message = "商户ID不能为空！") @RequestParam String merchantId){
-        return merchantService.merchantInfo(merchantId);
+        return merchantService.merchantInfoPaas(merchantId);
     }
+
+
+    @PostMapping("/getMerchantPaymentList")
+    @ApiOperation(value = "获取商户的支付列表", notes = "获取商户的支付列表", httpMethod = "POST")
+    @ApiImplicitParams(value={@ApiImplicitParam(name="merchantId",value = "商户ID",required = true),@ApiImplicitParam(name="page",value = "当前页数",required = true),@ApiImplicitParam(name="pageSize",value = "每页的条数",required = true)})
+    public ReturnJson getMerchantPaymentList(@NotBlank(message = "商户ID不能为空！") @RequestParam String merchantId,@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer pageSize){
+        return merchantService.getMerchantPaymentList(merchantId,page,pageSize);
+    }
+
+
+    @PostMapping("/getMerchantPaymentInfo")
+    @ApiOperation(value = "获取商户的支付详情", notes = "获取商户的支付详情", httpMethod = "POST")
+    @ApiImplicitParams(value={@ApiImplicitParam(name="paymentOrderId",value = "支付订单ID",required = true),@ApiImplicitParam(name="packgeStatus",value = "合作类型0总包，1众包",required = true)})
+    public ReturnJson getMerchantPaymentInfo(@NotBlank(message = "支付订单ID不能为空") @RequestParam String paymentOrderId, @RequestParam Integer packgeStatus){
+        return merchantService.getMerchantPaymentInfo(paymentOrderId,packgeStatus);
+    }
+
+    @PostMapping("/getMerchantPaymentInventory")
+    @ApiOperation(value = "获取商户的支付清单列表", notes = "获取商户的支付清单列表", httpMethod = "POST")
+    @ApiImplicitParams(value={@ApiImplicitParam(name="paymentOrderId",value = "支付订单ID",required = true),@ApiImplicitParam(name="page",value = "当前页数",required = true),@ApiImplicitParam(name="pageSize",value = "每页的条数",required = true)})
+    public ReturnJson getMerchantPaymentInventory(@NotBlank(message = "商户ID不能为空！") @RequestParam String paymentOrderId,@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer pageSize){
+        return merchantService.getMerchantPaymentInventory(paymentOrderId,page,pageSize);
+    }
+
 
     @PostMapping("/addOrUpdataLinkman")
     @ApiOperation(value = "添加或修改联系人", notes = "添加或修改联系人", httpMethod = "POST")
@@ -124,12 +148,15 @@ public class MerchantControllerPaas {
         return linkmanService.removeLinkmenById(linkmanId);
     }
 
+
     @GetMapping("/getLinkmanAll")
     @ApiOperation(value = "查询商户的联系人", notes = "查询商户的联系人", httpMethod = "GET")
     @ApiImplicitParams(value={@ApiImplicitParam(name="merchantId",value = "商户ID",required = true)})
     public ReturnJson getLinkmanAll(@NotBlank(message = "商户ID不能为空！") @RequestParam String merchantId){
         return linkmanService.getLinkmanAll(merchantId);
     }
+
+
 
     @GetMapping("/getAddressAll")
     @ApiOperation(value = "查询商户的快递地址信息", notes = "查询商户的快递地址信息", httpMethod = "GET")

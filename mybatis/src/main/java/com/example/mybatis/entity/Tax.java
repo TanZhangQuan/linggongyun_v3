@@ -1,21 +1,20 @@
 package com.example.mybatis.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
  * <p>
- * 合作园区信息
+ * 服务商公司信息
+
  * </p>
  *
  * @author hzp
- * @since 2020-09-07
+ * @since 2020-09-21
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -24,78 +23,58 @@ public class Tax implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    /**
-     * 税源地公司id
-     */
-
     @TableId(value = "id", type = IdType.ASSIGN_ID)
     private String id;
 
     /**
-     * 管理人员ID
+     * 公司的简称
      */
-    private String managersId;
+    private String taxSName;
 
     /**
+     * 公司的法定人
      */
-    @ApiModelProperty("平台服务商名称")
+    private String taxMan;
+
+    /**
+     * 公司的营业执照
+     */
+    private String businessLicense;
+
+    /**
+     * 公司全称
+     */
     private String taxName;
 
     /**
-     * 服务费率
+     * 公司的详细地址
      */
-    @ApiModelProperty("综合税费率")
-    private BigDecimal taxPrice;
+    private String taxAddress;
 
     /**
-     * 收款方户名
+     * 公司的成立时间
      */
-    @ApiModelProperty("收款方户名")
-    private String payee;
+    private LocalDateTime taxCreateDate;
 
     /**
-     * 税源地公司的主公司
+     * 公司联系人
      */
-    private String taxCompany;
+    private String linkMan;
 
     /**
-     * 银行名称
+     * 公司联系电话
      */
-    @ApiModelProperty("银行名称")
-    private String bankName;
+    private String linkMobile;
 
     /**
-     * 银行账号
+     * 统一的社会信用代码
      */
-    @ApiModelProperty("银行账号")
-    private String bankCode;
+    private String creditCode;
 
     /**
-     * 状态 1 启用 0  停用
+     * 公司状态0正常，1停用
      */
     private Integer taxStatus;
-
-    /**
-     * 0总包，1众包
-     */
-    @ApiModelProperty("0总包服务商，1众包服务商")
-    private Integer packageStatus;
-
-    /**
-     * 支持的类目 逗号分隔 全量更新
-     */
-    private String supportCategory;
-
-    /**
-     * 统一社会信用代码
-     */
-    @ApiModelProperty("统一社会信用代码（纳税识别号）")
-    private String socialCode;
-
-    /**
-     * 服务费率信息
-     */
-    private String rateInfo;
 
     /**
      * 修改时间

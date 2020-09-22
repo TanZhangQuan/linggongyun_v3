@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mybatis.mapper.InvoiceLadderPriceDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.example.mybatis.entity.InvoiceLadderPrice">
+        <id column="id" property="id" />
+        <result column="tax_id" property="taxId" />
+        <result column="start_money" property="startMoney" />
+        <result column="end_money" property="endMoney" />
+        <result column="packaeg_status" property="packaegStatus" />
+        <result column="status" property="status" />
+        <result column="rate" property="rate" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, tax_id, start_money, end_money, packaeg_status, status, rate
+    </sql>
+
+</mapper>

@@ -13,9 +13,9 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 public class MerchantApplication {
 
 	public static void main(String[] args) {
-		log.info("商户服务启动");
+		log.info("服务正在启动");
 		SpringApplication.run(MerchantApplication.class, args);
-		log.info("商户服务结束");
+		log.info("服务启动完成");
 	}
 
 }

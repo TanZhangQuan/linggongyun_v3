@@ -18,7 +18,7 @@ import java.io.IOException;
 
 @RestController
 @RequestMapping("/merchant/file")
-@Api(value = "文件操作", tags = "文件上传下载的操作")
+@Api(value = "商户端文件操作", tags = "商户端文件上传下载的操作")
 @Validated
 public class FileOperationControllerMerchant {
 

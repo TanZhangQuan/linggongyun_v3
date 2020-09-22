@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.mybatis.entity.Merchant;
 import com.example.mybatis.po.MerchantInfoPo;
+import com.example.mybatis.po.MerchantPaymentListPO;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -26,6 +27,11 @@ public interface MerchantDao extends BaseMapper<Merchant> {
 
     String getNameById(String id);
 
+
+    /*----------平台端-------------*/
+
     IPage<MerchantInfoPo> selectMerchantInfoPo(Page page, @Param("merchantIds") List<String> merchantIds, @Param("merchantId") String merchantId,
                                                @Param("merchantName") String merchantName, @Param("linkMobile") String linkMobile,@Param("auditStatus")Integer auditStatus);
+
+    IPage<MerchantPaymentListPO> selectMerchantPaymentList(Page page, @Param("merchantId") String merchantId);
 }

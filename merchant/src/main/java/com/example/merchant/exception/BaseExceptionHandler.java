@@ -1,6 +1,7 @@
 package com.example.merchant.exception;
 
 import com.example.common.util.ReturnJson;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -15,6 +16,7 @@ import java.io.IOException;
  * 2.对异常统一处理
  */
 @ControllerAdvice
+@Slf4j
 public class BaseExceptionHandler {
 
 //    //处理shiro没有登陆时抛出的异常UnauthorizedException
@@ -59,10 +61,11 @@ public class BaseExceptionHandler {
     }
 
     //处理非以上异常问题
-//    @ResponseBody
-//    @ExceptionHandler(value = Exception.class)
-//    public ReturnJson exceptionHandler() {
-//        return ReturnJson.error("服务内部错误");
-//    }
+    @ResponseBody
+    @ExceptionHandler(value = Exception.class)
+    public ReturnJson exceptionHandler(Exception e) {
+        log.error(e.toString());
+        return ReturnJson.error("服务内部错误");
+    }
 
 }

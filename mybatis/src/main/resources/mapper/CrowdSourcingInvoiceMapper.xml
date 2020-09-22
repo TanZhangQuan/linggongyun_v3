@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mybatis.mapper.CrowdSourcingInvoiceDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.example.mybatis.entity.CrowdSourcingInvoice">
+        <id column="id" property="id" />
+        <result column="application_id" property="applicationId" />
+        <result column="invoice_code" property="invoiceCode" />
+        <result column="invoice_print_date" property="invoicePrintDate" />
+        <result column="invoice_number" property="invoiceNumber" />
+        <result column="invoice_codeNo" property="invoiceCodeno" />
+        <result column="invoice_print_person" property="invoicePrintPerson" />
+        <result column="invoice_money" property="invoiceMoney" />
+        <result column="invoice_catalog_id" property="invoiceCatalogId" />
+        <result column="invoice_url" property="invoiceUrl" />
+        <result column="tax_receipt_url" property="taxReceiptUrl" />
+        <result column="express_sheet_no" property="expressSheetNo" />
+        <result column="express_company_name" property="expressCompanyName" />
+        <result column="express_update_datetime" property="expressUpdateDatetime" />
+        <result column="express_update_person" property="expressUpdatePerson" />
+        <result column="express_update_person_tel" property="expressUpdatePersonTel" />
+        <result column="invoice_desc" property="invoiceDesc" />
+        <result column="create_date" property="createDate" />
+        <result column="update_date" property="updateDate" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, application_id, invoice_code, invoice_print_date, invoice_number, invoice_codeNo, invoice_print_person, invoice_money, invoice_catalog_id, invoice_url, tax_receipt_url, express_sheet_no, express_company_name, express_update_datetime, express_update_person, express_update_person_tel, invoice_desc, create_date, update_date
+    </sql>
+
+
+    <resultMap id="InvoiceMoney" type="com.example.mybatis.po.InvoicePO">
+        <result column="count" property="count" />
+        <result column="total_money" property="totalMoney" />
+    </resultMap>
+
+    <!--查询总包的发票数量和发票金额-->
+    <select id="selectCrowdInvoiceMoney" parameterType="string" resultMap="InvoiceMoney">
+        select COUNT(1) 'count', SUM(d.invoice_money) 'total_money' from tb_merchant a RIGHT JOIN tb_payment_order_many b on a.id = b.merchant_id
+        join tb_crowd_sourcing_application c on b.id = c.payment_order_many_id
+        join tb_crowd_sourcing_invoice d on c.id = d.application_id
+        where a.id = #{merchant_id}
+    </select>
+
+    <select id="selectCrowdInvoiceMoneyPaas" parameterType="string" resultMap="InvoiceMoney">
+        select COUNT(1) 'count', SUM(d.invoice_money) 'total_money' from tb_merchant a RIGHT JOIN tb_payment_order_many b on a.id = b.merchant_id
+        join tb_crowd_sourcing_application c on b.id = c.payment_order_many_id
+        join tb_crowd_sourcing_invoice d on c.id = d.application_id
+        where a.id in
+        <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+</mapper>

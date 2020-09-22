@@ -23,7 +23,7 @@ import javax.annotation.Resource;
  * @author hzp
  * @since 2020-09-07
  */
-@Api(value = "行业相关操作接口", tags = {"行业相关操作接口"})
+@Api(value = "商户端行业相关操作接口", tags = {"商户端行业相关操作接口"})
 @RestController
 @RequestMapping("/merchant/industry")
 public class IndustryControllerMerchant {
