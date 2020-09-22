@@ -1,9 +1,9 @@
 package com.example.merchant.service.impl;
 
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.example.merchant.service.InvoiceService;
 import com.example.mybatis.entity.Invoice;
 import com.example.mybatis.mapper.InvoiceDao;
-import com.example.merchant.service.InvoiceService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
 /**

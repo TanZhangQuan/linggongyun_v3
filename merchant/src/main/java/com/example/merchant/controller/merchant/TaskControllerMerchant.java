@@ -22,7 +22,7 @@ import javax.annotation.Resource;
  * @author hzp
  * @since 2020-09-07
  */
-@Api(value = "任务相关操作接口", tags = {"任务相关操作接口"})
+@Api(value = "商户端任务相关操作接口", tags = {"商户端任务相关操作接口"})
 @RestController
 @RequestMapping("/merchant/task")
 public class TaskControllerMerchant {

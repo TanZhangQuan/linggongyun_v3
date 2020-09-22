@@ -9,13 +9,16 @@ import com.example.common.util.JsonUtils;
 import com.example.common.util.MD5;
 import com.example.common.util.ReturnJson;
 import com.example.common.util.VerificationCheck;
+import com.example.merchant.service.HomePageService;
 import com.example.merchant.service.MerchantService;
 import com.example.merchant.service.TaskService;
 import com.example.merchant.util.AcquireMerchantID;
 import com.example.merchant.util.JwtUtils;
+import com.example.merchant.vo.HomePageVO;
 import com.example.mybatis.entity.*;
 import com.example.mybatis.mapper.*;
 import com.example.mybatis.po.MerchantInfoPo;
+import com.example.mybatis.po.MerchantPaymentListPO;
 import com.example.mybatis.po.TaxPO;
 import com.example.redis.dao.RedisDao;
 import io.jsonwebtoken.Claims;
@@ -26,10 +29,7 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * <p>
@@ -56,6 +56,10 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
 
     @Autowired
     private TaxDao taxDao;
+
+    @Autowired
+    private MerchantTaxDao merchantTaxDao;
+
     @Autowired
     private LinkmanDao linkmanDao;
 
@@ -82,6 +86,12 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
 
     @Autowired
     private SalesManDao salesManDao;
+
+    @Autowired
+    private HomePageService homePageService;
+
+    @Autowired
+    private PaymentInventoryDao paymentInventoryDao;
 
     @Value("${PWD_KEY}")
     String PWD_KEY;
@@ -188,7 +198,6 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
 
     /**
      * 获取商户信息
-     *
      * @param merchantId
      * @return
      */
@@ -340,6 +349,70 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
             return ReturnJson.success("审核成功！");
         }
         return ReturnJson.error("审核失败！");
+    }
+
+    /**
+     * 获取商户的支付流水
+     * @param merchantId
+     * @return
+     */
+    @Override
+    public ReturnJson merchantInfoPaas(String merchantId) {
+        ReturnJson returnJson = homePageService.getHomePageInof(merchantId);
+        HomePageVO homePageVO =(HomePageVO) returnJson.getObj();
+        Integer taxTotal = merchantTaxDao.selectCount(new QueryWrapper<MerchantTax>().eq("merchant_id", merchantId));
+        homePageVO.setTaxTotal(taxTotal);
+        ReturnJson merchantPaymentList = this.getMerchantPaymentList(merchantId, 1, 10);
+        List data = (List) merchantPaymentList.getData();
+        returnJson.setData(data);
+        return returnJson;
+    }
+
+    /**
+     * 获取商户的支付列表
+     * @param merchantId
+     * @param page
+     * @param pageSize
+     * @return
+     */
+    @Override
+    public ReturnJson getMerchantPaymentList(String merchantId, Integer page, Integer pageSize) {
+        Page<MerchantPaymentListPO> paymentListPage = new Page(page,pageSize);
+        IPage<MerchantPaymentListPO> merchantPaymentListIPage = merchantDao.selectMerchantPaymentList(paymentListPage, merchantId);
+        return ReturnJson.success(merchantPaymentListIPage);
+    }
+
+    /**
+     * 获取支付详情
+     * @param paymentOrderId
+     * @param packgeStatus
+     * @return
+     */
+    @Override
+    public ReturnJson getMerchantPaymentInfo(String paymentOrderId, Integer packgeStatus) {
+        ReturnJson returnJson = this.getMerchantPaymentInventory(paymentOrderId, 1, 10);
+        if (packgeStatus == 0) {
+            PaymentOrder paymentOrder = paymentOrderDao.selectById(paymentOrderId);
+            returnJson.setObj(paymentOrder);
+        } else {
+            PaymentOrderMany paymentOrderMany = paymentOrderManyDao.selectById(paymentOrderId);
+            returnJson.setObj(paymentOrderMany);
+        }
+        return returnJson;
+    }
+
+    /**
+     * 获取支付清单
+     * @param paymentOrderId
+     * @param page
+     * @param pageSize
+     * @return
+     */
+    @Override
+    public ReturnJson getMerchantPaymentInventory(String paymentOrderId, Integer page, Integer pageSize) {
+        Page<PaymentInventory> paymentInventoryPage = new Page<>(page,pageSize);
+        Page<PaymentInventory> paymentInventoryPages = paymentInventoryDao.selectPage(paymentInventoryPage, new QueryWrapper<PaymentInventory>().eq("payment_order_id", paymentOrderId));
+        return ReturnJson.success(paymentInventoryPages);
     }
 
 

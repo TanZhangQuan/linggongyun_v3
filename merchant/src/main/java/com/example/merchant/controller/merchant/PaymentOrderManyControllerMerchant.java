@@ -25,7 +25,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/merchant/paymentOrderMany")
-@Api(value = "众包支付管理", tags = "众包支付管理")
+@Api(value = "商户端众包支付管理", tags = "商户端众包支付管理")
 public class PaymentOrderManyControllerMerchant {
 
     @Autowired

@@ -1,4 +1,4 @@
-package com.example.merchant.vo.paas;
+package com.example.merchant.vo;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

@@ -14,7 +14,7 @@ import javax.validation.constraints.NotBlank;
 @RestController
 @RequestMapping("/merchant/homePage")
 @Validated
-@Api(value = "首页内容的展示", tags = "首页内容的展示")
+@Api(value = "商户端首页内容的展示", tags = "商户端首页内容的展示")
 public class HomePageControllerMerchant {
 
     @Autowired

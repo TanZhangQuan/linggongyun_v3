@@ -4,8 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.service.HomePageService;
 import com.example.merchant.util.AcquireMerchantID;
-import com.example.merchant.vo.merchant.HomePageOV;
-import com.example.merchant.vo.paas.HomePageVO;
+import com.example.merchant.vo.HomePageVO;
 import com.example.mybatis.entity.Agent;
 import com.example.mybatis.entity.Managers;
 import com.example.mybatis.entity.MerchantWorker;
@@ -56,48 +55,42 @@ public class HomePageServiceImpl implements HomePageService {
     @Autowired
     private TaxDao taxDao;
 
+    @Autowired
+    private CrowdSourcingInvoiceDao crowdSourcingInvoiceDao;
+
     /**
      * 获取首页基本信息
+     *
      * @param merchantId
      * @return
      */
     @Override
     public ReturnJson getHomePageInof(String merchantId) {
-        HomePageOV homePageOV = new HomePageOV();
-        Double payment30TotalMoney = paymentOrderDao.selectBy30Day(merchantId);
-        if (payment30TotalMoney != null){
-            homePageOV.setPayment30TotalMoney(BigDecimal.valueOf(payment30TotalMoney));
-        }
+        HomePageVO homePageVO = new HomePageVO();
+        BigDecimal payment30TotalMoney = paymentOrderDao.selectBy30Day(merchantId);
+        homePageVO.setPayment30TotalMoney(payment30TotalMoney);
 
-        Double paymentTotalMoney = paymentOrderDao.selectTotal(merchantId);
-        if (paymentTotalMoney != null){
-            homePageOV.setPaymentTotalMoney(BigDecimal.valueOf(paymentTotalMoney));
-        }
+        BigDecimal paymentTotalMoney = paymentOrderDao.selectTotal(merchantId);
+        homePageVO.setPaymentTotalMoney(paymentTotalMoney);
 
-        Double payment30ManyMoney = paymentOrderManyDao.selectBy30Day(merchantId);
-        if (payment30ManyMoney != null){
-            homePageOV.setPayment30ManyMoney(BigDecimal.valueOf(payment30ManyMoney));
-        }
+        BigDecimal payment30ManyMoney = paymentOrderManyDao.selectBy30Day(merchantId);
+        homePageVO.setPayment30ManyMoney(payment30ManyMoney);
 
-        Double paymentManyMoney = paymentOrderManyDao.selectTotal(merchantId);
-        if (paymentManyMoney != null){
-            homePageOV.setPaymentManyMoney(BigDecimal.valueOf(paymentManyMoney));
-        }
+        BigDecimal paymentManyMoney = paymentOrderManyDao.selectTotal(merchantId);
+        homePageVO.setPaymentManyMoney(paymentManyMoney);
 
 
-        List<InvoicePO> invoicePOS = invoiceDao.selectTotal(merchantId);
-        for (InvoicePO invoicePO : invoicePOS) {
-            if (invoicePO.getPackageStatus() == 0) {
-                homePageOV.setInvoiceTotalCount(invoicePO.getCount());
-                homePageOV.setInvoiceTotalMoney(invoicePO.getTotalMoney());
-            } else {
-                homePageOV.setInvoiceManyCount(invoicePO.getCount());
-                homePageOV.setInvoiceManyMoney(invoicePO.getTotalMoney());
-            }
-        }
+        InvoicePO invoicePO = invoiceDao.selectInvoiceMoney(merchantId);
+        homePageVO.setInvoiceTotalCount(invoicePO.getCount());
+        homePageVO.setInvoiceTotalMoney(invoicePO.getTotalMoney());
+
+        InvoicePO invoicePOCrow = crowdSourcingInvoiceDao.selectCrowdInvoiceMoney(merchantId);
+        homePageVO.setInvoiceManyCount(invoicePOCrow.getCount());
+        homePageVO.setInvoiceManyMoney(invoicePOCrow.getTotalMoney());
+
         Integer workeCount = merchantWorkerDao.selectCount(new QueryWrapper<MerchantWorker>().eq("merchant_id", merchantId));
-        homePageOV.setWorkerTotal(workeCount);
-        return ReturnJson.success(homePageOV);
+        homePageVO.setWorkerTotal(workeCount);
+        return ReturnJson.success(homePageVO);
     }
 
     @Override
@@ -146,6 +139,7 @@ public class HomePageServiceImpl implements HomePageService {
             return ReturnJson.success(homePageVO);
         }
     }
+
     private HomePageVO getHomePageOV(List<String> ids) {
         HomePageVO homePageVO = new HomePageVO();
         BigDecimal pay30Total = paymentOrderDao.selectBy30Daypaas(ids);
@@ -153,6 +147,14 @@ public class HomePageServiceImpl implements HomePageService {
 
         BigDecimal payTotal = paymentOrderDao.selectTotalpaas(ids);
         BigDecimal payMany = paymentOrderManyDao.selectTotalpaas(ids);
+
+        InvoicePO invoicePO = invoiceDao.selectInvoiceMoneyPaas(ids);
+        homePageVO.setInvoiceTotalCount(invoicePO.getCount());
+        homePageVO.setInvoiceTotalMoney(invoicePO.getTotalMoney());
+
+        InvoicePO invoicePOCrow = crowdSourcingInvoiceDao.selectCrowdInvoiceMoneyPaas(ids);
+        homePageVO.setInvoiceManyCount(invoicePOCrow.getCount());
+        homePageVO.setInvoiceManyMoney(invoicePOCrow.getTotalMoney());
 
         homePageVO.setPayment30TotalMoney(pay30Total);
         homePageVO.setPayment30ManyMoney(pay30Many);

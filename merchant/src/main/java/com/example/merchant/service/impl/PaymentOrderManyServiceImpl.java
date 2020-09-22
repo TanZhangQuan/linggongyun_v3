@@ -6,6 +6,7 @@ import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.PaymentOrderDto;
 import com.example.merchant.service.PaymentInventoryService;
 import com.example.merchant.service.PaymentOrderManyService;
+import com.example.merchant.util.AcquireMerchantID;
 import com.example.mybatis.entity.PaymentInventory;
 import com.example.mybatis.entity.PaymentOrderMany;
 import com.example.mybatis.entity.Tax;
@@ -13,7 +14,6 @@ import com.example.mybatis.mapper.MerchantTaxDao;
 import com.example.mybatis.mapper.PaymentInventoryDao;
 import com.example.mybatis.mapper.PaymentOrderManyDao;
 import com.example.mybatis.mapper.TaxDao;
-import com.example.merchant.util.AcquireMerchantID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
