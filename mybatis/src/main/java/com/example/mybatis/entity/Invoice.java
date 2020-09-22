@@ -52,8 +52,7 @@ public class Invoice implements Serializable {
     /**
      * 发票代码
      */
-    @TableField("invoice_codeNo")
-    private String invoiceCodeno;
+    private String invoiceCodeNo;
 
     /**
      * 开票人(销售方)
@@ -78,7 +77,7 @@ public class Invoice implements Serializable {
     /**
      * 开票类目
      */
-    private String invoiceCatalogId;
+    private String InvoiceCatalog;
 
     /**
      * 发票地址

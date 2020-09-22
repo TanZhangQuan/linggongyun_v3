@@ -5,7 +5,6 @@
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.example.mybatis.entity.PaymentOrder">
         <id column="id" property="id"/>
-        <result column="payment_order_id" property="paymentOrderId"/>
         <result column="merchant_id" property="merchantId"/>
         <result column="company_s_name" property="companySName"/>
         <result column="real_money" property="realMoney"/>
@@ -27,6 +26,25 @@
         <result column="create_date" property="createDate"/>
         <result column="update_date" property="updateDate"/>
     </resultMap>
+
+    <resultMap id="PaymentOrderById" type="com.example.mybatis.vo.PaymentOrderVo">
+        <result column="id" property="id"/>
+        <result column="company_s_name" property="companySName"/>
+        <result column="platform_service_provider" property="platformServiceProvider"/>
+        <result column="acceptance_certificate" property="acceptanceCertificate"/>
+        <result column="payment_order_status" property="paymentOrderStatus"/>
+        <result column="payment_inventory" property="paymentInventory"/>
+        <result column="payment_date" property="paymentDate"/>
+        <result column="subpackage_payment" property="subpackagePayment"/>
+        <association property="taskVo" javaType="com.example.mybatis.vo.TaskVo">
+            <result column="task_code" property="taskCode"/>
+            <result column="task_name" property="taskName"/>
+            <result column="release_date" property="releaseDate"/>
+            <result column="deadline_date" property="deadlineDate"/>
+            <result column="industry_type" property="industryType"/>
+        </association>
+    </resultMap>
+
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
@@ -233,5 +251,29 @@
         </where>
     </select>
 
+    <select id="getPaymentOrderById" resultMap="PaymentOrderById">
+        SELECT
+        po.id,po.company_s_name,po.platform_service_provider,
+        po.acceptance_certificate,po.payment_order_status,
+        po.payment_inventory,po.payment_date,po.subpackage_payment,
+        t.task_code,t.task_name,t.release_date,t.deadline_date,t.industry_type
+        FROM tb_payment_order AS po
+        LEFT JOIN tb_task as t ON po.task_id=t.id
+        WHERE po.id=#{id}
+    </select>
+
+    <resultMap id="BillingInfo" type="com.example.mybatis.vo.BillingInfoVo">
+        <result column="id" property="id"/>
+        <result column="company_s_name" property="companySName"/>
+        <result column="platform_service_provider" property="platformServiceProvider"/>
+        <result column="real_money" property="realMoney"/>
+        <result column="payment_date" property="paymentDate"/>
+    </resultMap>
+
+    <select id="getBillingInfo" resultMap="BillingInfo">
+        SELECT id,company_s_name,platform_service_provider,real_money,payment_date
+        from tb_payment_order
+        WHERE id=#{id}
+    </select>
 
 </mapper>

@@ -20,6 +20,7 @@ import com.example.mybatis.mapper.*;
 import com.example.mybatis.po.MerchantInfoPo;
 import com.example.mybatis.po.MerchantPaymentListPO;
 import com.example.mybatis.po.TaxPO;
+import com.example.mybatis.vo.BuyerVo;
 import com.example.redis.dao.RedisDao;
 import io.jsonwebtoken.Claims;
 import org.apache.commons.lang3.StringUtils;
@@ -251,6 +252,20 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         return ReturnJson.error("你的验证码有误！");
     }
 
+    /**
+     * 购买方信息
+     * @param id
+     * @return
+     */
+    @Override
+    public ReturnJson getBuyerById(String id) {
+        ReturnJson returnJson = new ReturnJson("查询失败", 300);
+        BuyerVo buyerVo = merchantDao.getBuyerById(id);
+        if (buyerVo != null) {
+            returnJson = new ReturnJson("查询成功", buyerVo, 200);
+        }
+        return returnJson;
+    }
 
     /**
      * 根据merchantId获取权限信息

@@ -24,4 +24,18 @@
         id, tax_s_name, tax_man, business_license, tax_name, tax_address, tax_create_date, link_man, link_mobile, credit_code, tax_status, create_date, update_date
     </sql>
 
+    <resultMap id="SellerById" type="com.example.mybatis.vo.SellerVo">
+        <result column="tax_name" property="taxName" />
+        <result column="tax_address" property="taxAddress" />
+        <result column="phone" property="phone" />
+        <result column="bank_name" property="bankName" />
+        <result column="bank_code" property="bankCode" />
+    </resultMap>
+
+    <select id="getSellerById" resultMap="SellerById">
+        SELECT tax_name,invoice_taxno,tax_address,phone,bank_name,bank_code
+        FROM tb_tax WHERE id=#{id}
+    </select>
+
+
 </mapper>

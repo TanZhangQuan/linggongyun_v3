@@ -112,25 +112,25 @@ class MerchantApplicationTests {
 
 	@Test
 	void TestInvoice(){
-		Invoice invoice = new Invoice();
-		invoice.setMerchantId("3666abe4ec7691d8c83d5b7b4d257bc9");
-		invoice.setPackageStatus(0);
-		invoice.setInvoiceMoney(BigDecimal.valueOf(2888.22));
-
-		Invoice invoice1 = new Invoice();
-		invoice1.setMerchantId("3666abe4ec7691d8c83d5b7b4d257bc9");
-		invoice1.setPackageStatus(0);
-		invoice1.setInvoiceMoney(BigDecimal.valueOf(2888.22));
-
-		Invoice invoice2 = new Invoice();
-		invoice2.setMerchantId("3666abe4ec7691d8c83d5b7b4d257bc9");
-		invoice2.setPackageStatus(1);
-		invoice2.setInvoiceMoney(BigDecimal.valueOf(2888.22));
+//		Invoice invoice = new Invoice();
+//		invoice.setMerchantId("3666abe4ec7691d8c83d5b7b4d257bc9");
+//		invoice.setPackageStatus(0);
+//		invoice.setInvoiceMoney(BigDecimal.valueOf(2888.22));
+//
+//		Invoice invoice1 = new Invoice();
+//		invoice1.setMerchantId("3666abe4ec7691d8c83d5b7b4d257bc9");
+//		invoice1.setPackageStatus(0);
+//		invoice1.setInvoiceMoney(BigDecimal.valueOf(2888.22));
+//
+//		Invoice invoice2 = new Invoice();
+//		invoice2.setMerchantId("3666abe4ec7691d8c83d5b7b4d257bc9");
+//		invoice2.setPackageStatus(1);
+//		invoice2.setInvoiceMoney(BigDecimal.valueOf(2888.22));
 
 		List<Invoice> invoices = new ArrayList<>();
-		invoices.add(invoice);
-		invoices.add(invoice1);
-		invoices.add(invoice2);
+//		invoices.add(invoice);
+//		invoices.add(invoice1);
+//		invoices.add(invoice2);
 		invoiceService.saveBatch(invoices);
 
 	}

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mybatis.mapper.InvoiceApplicationDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.example.mybatis.entity.InvoiceCatalog">
+        <id column="id" property="id"/>
+        <result column="service_type" property="serviceType"/>
+        <result column="service_content" property="serviceContent"/>
+        <result column="billing_category" property="billingCategory"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id,service_type,service_content,billing_category
+    </sql>
+
+    <insert id="addInvApplication" parameterType="com.example.mybatis.dto.InvoiceApplicationDto">
+        INSERT INTO tb_invoice_application(id,application_date,application_person,invoice_total_amount,
+        invoice_catalog_type,application_desc,application_address,application_state)
+        VALUES (#{id},now(),#{applicationPerson},#{invoiceTotalAmount},#{invoiceCatalogType},#{applicationDesc},#{applicationAddress},1);
+    </insert>
+
+    <insert id="addApplicationPay" parameterType="com.example.mybatis.dto.ApplicationPaymentDto">
+        INSERT INTO tb_application_payment
+        (id,invoice_application_id,payment_order_id)
+        VALUES (#{id},#{invoiceApplicationId},#{paymentOrderId});
+    </insert>
+</mapper>

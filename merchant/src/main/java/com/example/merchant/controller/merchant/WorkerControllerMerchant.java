@@ -87,7 +87,7 @@ public class WorkerControllerMerchant {
         try {
             returnJson = workerService.getWorkerByTaskId(taskId, offset);
         } catch (Exception e) {
-            returnJson = new ReturnJson(e.toString(), 300);
+            logger.error("出现异常错误", e);
         }
         return returnJson;
     }
@@ -99,7 +99,7 @@ public class WorkerControllerMerchant {
         try {
             returnJson = workerService.getCheckByTaskId(taskId, offset);
         } catch (Exception e) {
-            returnJson = new ReturnJson(e.toString(), 300);
+            logger.error("出现异常错误", e);
         }
         return returnJson;
     }

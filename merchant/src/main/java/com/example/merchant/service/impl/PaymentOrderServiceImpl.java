@@ -10,6 +10,8 @@ import com.example.merchant.service.PaymentOrderService;
 import com.example.merchant.util.AcquireMerchantID;
 import com.example.mybatis.entity.*;
 import com.example.mybatis.mapper.*;
+import com.example.mybatis.vo.BillingInfoVo;
+import com.example.mybatis.vo.PaymentOrderVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -241,6 +243,42 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
         }
         return ReturnJson.error("支付失败，请重试！");
     }
+
+    /**
+     * 总包支付信息
+     * @param id
+     * @return
+     */
+    @Override
+    public ReturnJson getPaymentOrderById(String id) {
+        ReturnJson returnJson = new ReturnJson("查询失败", 300);
+        List<PaymentOrderVo> paymentOrderVoList = new ArrayList<>();
+        String[] ids = id.split(",");
+        for (int i = 0; i < ids.length; i++) {
+            PaymentOrderVo paymentOrder = paymentOrderDao.getPaymentOrderById(ids[i]);
+            if (paymentOrder != null) {
+                paymentOrderVoList.add(paymentOrder);
+                returnJson = new ReturnJson("查询成功", paymentOrder, 200);
+            }
+        }
+        return returnJson;
+    }
+
+    /**
+     * 开票信息，支付
+     * @param id
+     * @return
+     */
+    @Override
+    public ReturnJson getBillingInfo(String id) {
+        ReturnJson returnJson = new ReturnJson("查询失败", 300);
+        BillingInfoVo billingInfo = paymentOrderDao.getBillingInfo(id);
+        if (billingInfo != null) {
+            returnJson = new ReturnJson("查询成功", billingInfo, 200);
+        }
+        return returnJson;
+    }
+
 
     @Autowired
     private AcquireMerchantID acquireMerchantID;

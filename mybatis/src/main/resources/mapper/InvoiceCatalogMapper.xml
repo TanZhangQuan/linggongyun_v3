@@ -15,4 +15,12 @@
         id, service_type, service_content, billing_category
     </sql>
 
+
+    <select id="getListInv" resultMap="BaseResultMap">
+        SELECT c.id,c.service_type,c.service_content,c.billing_category
+        FROM tb_invoice_catalog as c
+        LEFT JOIN tb_merchant_catalog as mc ON mc.catalog_id=c.id
+        WHERE mc.merchant_id=#{id}
+    </select>
+
 </mapper>

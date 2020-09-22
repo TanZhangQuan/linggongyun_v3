@@ -26,6 +26,8 @@ public interface PaymentOrderService extends IService<PaymentOrder> {
     ReturnJson getPaymentOrderInfo(String id);
     ReturnJson saveOrUpdataPaymentOrder(PaymentOrder paymentOrder, List<PaymentInventory> paymentInventories);
     ReturnJson offlinePayment( String paymentOrderId,  String turnkeyProjectPayment);
+    ReturnJson getPaymentOrderById(String id);
+    ReturnJson getBillingInfo(String id);
 
     ReturnJson getDayPaas(String merchantId);
     ReturnJson getWeekPaas(String merchantId);
@@ -34,7 +36,7 @@ public interface PaymentOrderService extends IService<PaymentOrder> {
     ReturnJson getPaymentOrderPaas(PaymentOrderDto paymentOrderDto);
     ReturnJson getPaymentOrderInfoPaas(String id);
     ReturnJson saveOrUpdataPaymentOrderPaas(PaymentOrder paymentOrder, List<PaymentInventory> paymentInventories);
-    ReturnJson  offlinePaymentPaas( String paymentOrderId,  String turnkeyProjectPayment);
+    ReturnJson offlinePaymentPaas( String paymentOrderId,  String turnkeyProjectPayment);
     ReturnJson confirmReceiptPaas(String paymentOrderId);
     ReturnJson findMerchantPaas(String managersId);
 }

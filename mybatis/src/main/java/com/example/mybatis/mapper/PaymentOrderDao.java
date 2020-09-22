@@ -2,6 +2,8 @@ package com.example.mybatis.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.example.mybatis.entity.PaymentOrder;
+import com.example.mybatis.vo.BillingInfoVo;
+import com.example.mybatis.vo.PaymentOrderVo;
 import org.apache.ibatis.annotations.Param;
 
 import java.math.BigDecimal;
@@ -38,4 +40,8 @@ public interface PaymentOrderDao extends BaseMapper<PaymentOrder> {
     List<PaymentOrder> selectWeekpaas(List<String> merchantId);
     List<PaymentOrder> selectMonthpaas(List<String> merchantId);
     List<PaymentOrder> selectYearpaas(List<String> merchantId);
+
+    PaymentOrderVo getPaymentOrderById(String id);
+
+    BillingInfoVo getBillingInfo(String id);
 }
