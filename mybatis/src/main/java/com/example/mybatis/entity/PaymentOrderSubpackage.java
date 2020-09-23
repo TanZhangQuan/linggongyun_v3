@@ -31,9 +31,9 @@ public class PaymentOrderSubpackage implements Serializable {
     private String id;
 
     /**
-     * 商户ID
+     * 商户的公司ID
      */
-    private String merchantId;
+    private String companyId;
 
     /**
      * 支付金额

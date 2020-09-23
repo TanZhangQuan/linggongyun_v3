@@ -5,18 +5,19 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.common.util.ReturnJson;
-import com.example.merchant.service.MerchantWorkerService;
+import com.example.merchant.service.CompanyWorkerService;
 import com.example.merchant.service.TaskService;
 import com.example.merchant.service.WorkerService;
 import com.example.merchant.service.WorkerTaskService;
-import com.example.mybatis.entity.MerchantWorker;
+import com.example.mybatis.entity.CompanyWorker;
+import com.example.mybatis.entity.Merchant;
 import com.example.mybatis.entity.Worker;
 import com.example.mybatis.entity.WorkerTask;
-import com.example.mybatis.mapper.MerchantWorkerDao;
+import com.example.mybatis.mapper.MerchantDao;
 import com.example.mybatis.mapper.WorkerDao;
 import com.example.mybatis.po.WorekerPaymentListPo;
 import com.example.mybatis.po.WorkerPo;
-import com.example.merchant.util.AcquireMerchantID;
+import com.example.merchant.util.AcquireID;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,10 +47,12 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
     private WorkerTaskService workerTaskService;
 
     @Autowired
-    private MerchantWorkerService merchantWorkerService;
+    private CompanyWorkerService companyWorkerService;
 
     @Autowired
-    private MerchantWorkerDao merchantWorkerDao;
+    private MerchantDao merchantDao;
+
+
 
     /**
      * 分页查询商户下的所以创客
@@ -61,15 +64,16 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
     @Override
     public ReturnJson getWorkerAll(String merchantId, Integer page, Integer pageSize) {
         ReturnJson returnJson = new ReturnJson();
-        Page<MerchantWorker> pageData = new Page<>(page,pageSize);
-        QueryWrapper<MerchantWorker> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("merchant_id",merchantId);
-        Page<MerchantWorker> merchantWorkerPage = merchantWorkerDao.selectPage(pageData, queryWrapper);
-        List<MerchantWorker> records = merchantWorkerPage.getRecords();
+        Merchant merchant = merchantDao.selectById(merchantId);
+        Page<CompanyWorker> pageData = new Page<>(page,pageSize);
+        QueryWrapper<CompanyWorker> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("company_id",merchant.getCompanyId());
+        Page<CompanyWorker> merchantWorkerPage = companyWorkerService.page(pageData, queryWrapper);
+        List<CompanyWorker> records = merchantWorkerPage.getRecords();
         if (records != null && records.size() != 0){
             List<String> ids = new ArrayList<>();
-            for (MerchantWorker merchantWorker : records){
-                ids.add(merchantWorker.getWorkerId());
+            for (CompanyWorker companyWorker : records){
+                ids.add(companyWorker.getWorkerId());
             }
             List<Worker> workers = workerDao.selectBatchIds(ids);
             returnJson.setData(workers);
@@ -128,27 +132,28 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
      */
     @Override
     public ReturnJson saveWorker(List<Worker> workers, String merchantId) {
-        List<MerchantWorker> merchantWorkers = new ArrayList<>();
+        List<CompanyWorker> companyWorkers = new ArrayList<>();
+        Merchant merchant = merchantDao.selectById(merchantId);
         List<String> mobileCodes = new ArrayList<>();
         for (Worker worker : workers){
             mobileCodes.add(worker.getMobileCode());
             if (StringUtils.isBlank(worker.getId())){
                 this.saveOrUpdate(worker);
             } else {
-                MerchantWorker merchantWorker = new MerchantWorker();
-                merchantWorker.setMerchantId(merchantId);
-                merchantWorker.setWorkerId(worker.getId());
-                merchantWorkers.add(merchantWorker);
+                CompanyWorker companyWorker = new CompanyWorker();
+                companyWorker.setCompanyId(merchant.getCompanyId());
+                companyWorker.setWorkerId(worker.getId());
+                companyWorkers.add(companyWorker);
             }
         }
         List<Worker> newworkers = workerDao.selectList(new QueryWrapper<Worker>().in("mobile_code",mobileCodes));
         for (Worker worker : newworkers) {
-            MerchantWorker merchantWorker = new MerchantWorker();
-            merchantWorker.setMerchantId(merchantId);
-            merchantWorker.setWorkerId(worker.getId());
-            merchantWorkers.add(merchantWorker);
+            CompanyWorker companyWorker = new CompanyWorker();
+            companyWorker.setCompanyId(merchant.getCompanyId());
+            companyWorker.setWorkerId(worker.getId());
+            companyWorkers.add(companyWorker);
         }
-        boolean b = merchantWorkerService.saveBatch(merchantWorkers);
+        boolean b = companyWorkerService.saveBatch(companyWorkers);
         if (b){
             return ReturnJson.success("导入成功！");
         }
@@ -180,7 +185,7 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
     }
 
     @Autowired
-    private AcquireMerchantID acquireMerchantID;
+    private AcquireID acquireID;
 
     /**
      * 分页查询管理人员下的所以创客
@@ -191,7 +196,7 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
      */
     @Override
     public ReturnJson getWorkerAllPaas(String managersId, Integer page, Integer pageSize) {
-        List<String> merchantIds = acquireMerchantID.getMerchantIds(managersId);
+        List<String> merchantIds = acquireID.getMerchantIds(managersId);
         merchantIds.add(managersId);
         Page<Worker> workerPage = new Page<>(page,pageSize);
         IPage<Worker> workerIPage = workerDao.selectWorkerAll(workerPage, merchantIds);
@@ -208,7 +213,7 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
 
     @Override
     public ReturnJson getWorkerAllNotPaas(String managersId, Integer page, Integer pageSize) {
-        List<String> merchantIds = acquireMerchantID.getMerchantIds(managersId);
+        List<String> merchantIds = acquireID.getMerchantIds(managersId);
         merchantIds.add(managersId);
         Page<Worker> workerPage = new Page<>(page,pageSize);
         IPage<Worker> workerIPage = workerDao.selectWorkerAllNot(workerPage, merchantIds);
@@ -233,7 +238,7 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
      */
     @Override
     public ReturnJson getByIdAndAccountNameAndMobilePaas(String managersId, String id, String accountName, String mobileCode) {
-        List<String> merchantIds = acquireMerchantID.getMerchantIds(managersId);
+        List<String> merchantIds = acquireID.getMerchantIds(managersId);
         merchantIds.add(managersId);
         List<Worker> workers = workerDao.selectByIdAndAccountNameAndMobilePaas(merchantIds, id, accountName, mobileCode);
         return ReturnJson.success(workers);
@@ -241,7 +246,7 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
 
     @Override
     public ReturnJson getByIdAndAccountNameAndMobileNotPaas(String managersId, String id, String accountName, String mobileCode) {
-        List<String> merchantIds = acquireMerchantID.getMerchantIds(managersId);
+        List<String> merchantIds = acquireID.getMerchantIds(managersId);
         merchantIds.add(managersId);
         List<Worker> workers = workerDao.selectByIdAndAccountNameAndMobilePaasNot(merchantIds, id, accountName, mobileCode);
         return ReturnJson.success(workers);

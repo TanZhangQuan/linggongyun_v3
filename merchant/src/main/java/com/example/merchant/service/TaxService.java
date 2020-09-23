@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.TaxDto;
 import com.example.merchant.dto.TaxListDto;
+import com.example.merchant.exception.CommonException;
 import com.example.mybatis.entity.Industry;
 import com.example.mybatis.entity.InvoiceCatalog;
 import com.example.mybatis.entity.Tax;
@@ -22,7 +23,7 @@ public interface TaxService extends IService<Tax> {
     ReturnJson getCatalogAll();
 
     ReturnJson saveCatalog(InvoiceCatalog invoiceCatalog);
-    ReturnJson saveTax(TaxDto taxDto);
+    ReturnJson saveTax(TaxDto taxDto)throws CommonException;
 
     ReturnJson getTaxList(TaxListDto taxListDto);
 

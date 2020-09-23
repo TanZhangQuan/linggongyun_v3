@@ -72,7 +72,7 @@ public class PaymentOrderControllerPaas {
     @ApiImplicitParams(value={@ApiImplicitParam(name="paymentOrder",value = "新建或修改的支付订单",required = true, dataType = "PaymentOrder"),
             @ApiImplicitParam(name="paymentInventories",value = "支付清单",required = true, allowMultiple = true, dataType = "PaymentInventory")})
     public ReturnJson saveOrUpdataPaymentOrder(@NotEmpty(message = "订单内容不能为空") @RequestBody PaymentOrder paymentOrder, @NotEmpty(message = "支付清单不能为空") @RequestBody List<PaymentInventory> paymentInventories){
-        return paymentOrderService.saveOrUpdataPaymentOrderPaas(paymentOrder, paymentInventories);
+        return paymentOrderService.saveOrUpdataPaymentOrder(paymentOrder, paymentInventories);
     }
 
 

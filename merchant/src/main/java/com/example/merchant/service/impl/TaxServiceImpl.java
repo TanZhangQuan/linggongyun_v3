@@ -8,6 +8,7 @@ import com.example.common.util.ReturnJson;
 import com.example.common.util.VerificationCheck;
 import com.example.merchant.dto.TaxDto;
 import com.example.merchant.dto.TaxListDto;
+import com.example.merchant.exception.CommonException;
 import com.example.merchant.service.InvoiceLadderPriceService;
 import com.example.merchant.service.TaxService;
 import com.example.merchant.vo.HomePageVO;
@@ -42,7 +43,7 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
     private TaxDao taxDao;
 
     @Autowired
-    private MerchantTaxDao merchantTaxDao;
+    private CompanyTaxDao companyTaxDao;
 
     @Autowired
     private InvoiceCatalogDao invoiceCatalogDao;
@@ -65,6 +66,9 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
     @Autowired
     private CrowdSourcingInvoiceDao crowdSourcingInvoiceDao;
 
+    @Autowired
+    private MerchantDao merchantDao;
+
 
     /**
      * 查询商户可用使用的平台服务商
@@ -73,11 +77,12 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
      */
     @Override
     public ReturnJson getTaxAll(String merchantId, Integer packageStatus) {
-        List<MerchantTax> merchantTaxes = merchantTaxDao.selectList(new QueryWrapper<MerchantTax>()
-                .eq("merchant_id", merchantId).eq("package_status",packageStatus));
+        Merchant merchant = merchantDao.selectById(merchantId);
+        List<CompanyTax> companyTaxes = companyTaxDao.selectList(new QueryWrapper<CompanyTax>()
+                .eq("company_id", merchant.getCompanyId()).eq("package_status",packageStatus));
         List<String> ids = new LinkedList<>();
-        for (MerchantTax merchantTax : merchantTaxes ) {
-            ids.add(merchantTax.getTaxId());
+        for (CompanyTax companyTax : companyTaxes ) {
+            ids.add(companyTax.getTaxId());
         }
         List<Tax> taxes = taxDao.selectList(new QueryWrapper<Tax>().in("id", ids).eq("tax_status", 1));
         return ReturnJson.success(taxes);
@@ -114,7 +119,7 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ReturnJson saveTax(TaxDto taxDto) {
+    public ReturnJson saveTax(TaxDto taxDto) throws CommonException{
         if (taxDto.getId() != null){
             invoiceLadderPriceService.remove(new QueryWrapper<InvoiceLadderPrice>().eq("tax_id",taxDto.getId()));
             taxPackageDao.delete(new QueryWrapper<TaxPackage>().eq("tax_id",taxDto.getId()));
@@ -137,12 +142,12 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
                     if (i != totalLadders.size()-1){
                         InvoiceLadderPrice invoiceLadderPrice = totalLadders.get(i);
                         if (invoiceLadderPrice.getEndMoney().compareTo(invoiceLadderPrice.getStartMoney()) < 0){
-                            return ReturnJson.success("结束金额应该大于起始金额！");
+                            throw new CommonException(300,"结束金额应该大于起始金额");
                         }
                         InvoiceLadderPrice invoiceLadderPriceNext = totalLadders.get(i+1);
                         invoiceLadderPriceNext.getStartMoney().compareTo(invoiceLadderPrice.getEndMoney());
                         if (invoiceLadderPriceNext.getStartMoney().compareTo(invoiceLadderPrice.getEndMoney()) < 0 ){
-                            return ReturnJson.error("上梯度结束金额应小于下梯度起始金额");
+                            throw new CommonException(300,"上梯度结束金额应小于下梯度起始金额");
                         }
                     }
                     totalLadders.get(i).setTaxId(tax.getId());
@@ -166,12 +171,12 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
                     if (i != manyLadders.size()-1){
                         InvoiceLadderPrice invoiceLadderPrice = manyLadders.get(i);
                         if (invoiceLadderPrice.getEndMoney().compareTo(invoiceLadderPrice.getStartMoney()) < 0){
-                            return ReturnJson.success("结束金额应该大于起始金额！");
+                            throw new CommonException(300,"结束金额应该大于起始金额");
                         }
                         InvoiceLadderPrice invoiceLadderPriceNext = manyLadders.get(i+1);
                         invoiceLadderPriceNext.getStartMoney().compareTo(invoiceLadderPrice.getEndMoney());
                         if (invoiceLadderPriceNext.getStartMoney().compareTo(invoiceLadderPrice.getEndMoney()) < 0 ){
-                            return ReturnJson.error("上梯度结束金额应小于下梯度起始金额");
+                            throw new CommonException(300,"上梯度结束金额应小于下梯度起始金额");
                         }
                     }
                     manyLadders.get(i).setTaxId(tax.getId());

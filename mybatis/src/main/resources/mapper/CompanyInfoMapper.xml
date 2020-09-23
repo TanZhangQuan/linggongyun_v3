@@ -17,6 +17,7 @@
         <result column="company_name" property="companyName" />
         <result column="company_address" property="companyAddress" />
         <result column="company_create_date" property="companyCreateDate" />
+        <result column="registered_capital" property="registeredCapital" />
         <result column="tax_id" property="taxId" />
         <result column="bank_name" property="bankName" />
         <result column="bank_code" property="bankCode" />

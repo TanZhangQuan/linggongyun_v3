@@ -1,7 +1,7 @@
 package com.example.mybatis.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.example.mybatis.entity.MerchantTax;
+import com.example.mybatis.entity.CompanyTax;
 
 /**
  * <p>
@@ -9,8 +9,8 @@ import com.example.mybatis.entity.MerchantTax;
  * </p>
  *
  * @author hzp
- * @since 2020-09-10
+ * @since 2020-09-23
  */
-public interface MerchantTaxDao extends BaseMapper<MerchantTax> {
+public interface CompanyTaxDao extends BaseMapper<CompanyTax> {
 
 }

@@ -1,7 +1,7 @@
 package com.example.merchant.service;
 
+import com.example.merchant.entity.CompanyWorker;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.example.mybatis.entity.MerchantTax;
 
 /**
  * <p>
@@ -9,8 +9,8 @@ import com.example.mybatis.entity.MerchantTax;
  * </p>
  *
  * @author hzp
- * @since 2020-09-10
+ * @since 2020-09-23
  */
-public interface MerchantTaxService extends IService<MerchantTax> {
+public interface CompanyWorkerService extends IService<CompanyWorker> {
 
 }

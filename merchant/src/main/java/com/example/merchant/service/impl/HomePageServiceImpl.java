@@ -3,11 +3,12 @@ package com.example.merchant.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.service.HomePageService;
-import com.example.merchant.util.AcquireMerchantID;
+import com.example.merchant.util.AcquireID;
 import com.example.merchant.vo.HomePageVO;
 import com.example.mybatis.entity.Agent;
+import com.example.mybatis.entity.CompanyWorker;
 import com.example.mybatis.entity.Managers;
-import com.example.mybatis.entity.MerchantWorker;
+import com.example.mybatis.entity.Merchant;
 import com.example.mybatis.mapper.*;
 import com.example.mybatis.po.InvoicePO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +36,7 @@ public class HomePageServiceImpl implements HomePageService {
     private WorkerDao workerDao;
 
     @Autowired
-    private MerchantWorkerDao merchantWorkerDao;
+    private CompanyWorkerDao companyWorkerDao;
 
     @Autowired
     private MerchantDao merchantDao;
@@ -44,7 +45,7 @@ public class HomePageServiceImpl implements HomePageService {
     private ManagersDao managersDao;
 
     @Autowired
-    private AcquireMerchantID acquireMerchantID;
+    private AcquireID acquireID;
 
     @Autowired
     private AgentDao agentDao;
@@ -66,6 +67,7 @@ public class HomePageServiceImpl implements HomePageService {
      */
     @Override
     public ReturnJson getHomePageInof(String merchantId) {
+        Merchant merchant = merchantDao.selectById(merchantId);
         HomePageVO homePageVO = new HomePageVO();
         BigDecimal payment30TotalMoney = paymentOrderDao.selectBy30Day(merchantId);
         homePageVO.setPayment30TotalMoney(payment30TotalMoney);
@@ -88,7 +90,7 @@ public class HomePageServiceImpl implements HomePageService {
         homePageVO.setInvoiceManyCount(invoicePOCrow.getCount());
         homePageVO.setInvoiceManyMoney(invoicePOCrow.getTotalMoney());
 
-        Integer workeCount = merchantWorkerDao.selectCount(new QueryWrapper<MerchantWorker>().eq("merchant_id", merchantId));
+        Integer workeCount = companyWorkerDao.selectCount(new QueryWrapper<CompanyWorker>().eq("company_id", merchant.getCompanyId()));
         homePageVO.setWorkerTotal(workeCount);
         return ReturnJson.success(homePageVO);
     }
@@ -96,10 +98,10 @@ public class HomePageServiceImpl implements HomePageService {
     @Override
     public ReturnJson getHomePageInofpaas(String managersId) {
         Managers managers = managersDao.selectById(managersId);
-        List<String> merchantIds = acquireMerchantID.getMerchantIds(managersId);
+        List<String> merchantIds = acquireID.getMerchantIds(managersId);
         HomePageVO homePageVO = this.getHomePageOV(merchantIds);
         if (managers.getUserSign() == 1) { //当为代理商时可以查看代理商的所有商户及商户所拥有的创客
-            Integer workerTotal = merchantWorkerDao.selectCount(new QueryWrapper<MerchantWorker>().in("merchant_id", merchantIds));
+            Integer workerTotal = companyWorkerDao.selectCount(new QueryWrapper<CompanyWorker>().in("company_id", merchantIds));
             //除去可能重复的商户ID
             Set merchantIdsSet = new HashSet();
             merchantIdsSet.addAll(merchantIds);
@@ -108,7 +110,7 @@ public class HomePageServiceImpl implements HomePageService {
             return ReturnJson.success(homePageVO);
         } else if (managers.getUserSign() == 2) { //当为业务员时以查看所拥有的代理商及代理商下的所以商户及商户所拥有的创客
             Integer agentTotal = agentDao.selectCount(new QueryWrapper<Agent>().eq("managers", managersId));
-            Integer workerTotal = merchantWorkerDao.selectCount(new QueryWrapper<MerchantWorker>().in("merchant_id", merchantIds));
+            Integer workerTotal = companyWorkerDao.selectCount(new QueryWrapper<CompanyWorker>().in("company_id", merchantIds));
             //除去可能重复的商户ID
             Set merchantIdsSet = new HashSet();
             merchantIdsSet.addAll(merchantIds);
@@ -117,7 +119,7 @@ public class HomePageServiceImpl implements HomePageService {
             homePageVO.setAgentTotal(agentTotal);
             return ReturnJson.success(homePageVO);
         } else if (managers.getUserSign() == 3) { //当为服务商时查看
-            Integer workerTotal = merchantWorkerDao.selectCount(new QueryWrapper<MerchantWorker>().in("merchant_id", merchantIds));
+            Integer workerTotal = companyWorkerDao.selectCount(new QueryWrapper<CompanyWorker>().in("company_id", merchantIds));
             //除去可能重复的商户ID
             Set merchantIdsSet = new HashSet();
             merchantIdsSet.addAll(merchantIds);
