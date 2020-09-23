@@ -69,7 +69,7 @@ public class CodeGenerator {
     private static DataSourceConfig getDataSourceConfig() {
         // 数据源配置
         DataSourceConfig dsc = new DataSourceConfig();
-        dsc.setUrl("jdbc:mysql://localhost:3306/linggongyun_v3?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&useSSL=false");
+        dsc.setUrl("jdbc:mysql://192.168.3.54:3306/linggongyun_v3?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&useSSL=false");
         // dsc.setSchemaName("public");
 //        String driverName = "com.mysql.jdbc.Driver";
         String driverName = "com.mysql.cj.jdbc.Driver";

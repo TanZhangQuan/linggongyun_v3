@@ -20,10 +20,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -195,9 +200,19 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
         return returnJson;
     }
 
+    /**
+     * 汇总开票详情数据
+     * @param invoiceId
+     * @param companySNames
+     * @param platformServiceProviders
+     * @return
+     */
     @Override
     public ReturnJson getInvoiceListQuery(String invoiceId,String companySNames,String platformServiceProviders) {
         ReturnJson returnJson = new ReturnJson("操作失败", 300);
+        DecimalFormat df = new DecimalFormat("0.00");
+        Map<String,Object> map=new HashMap();
+        BigDecimal totalTaxPrice=new BigDecimal("0.00");
         String[] companySName = companySNames.split(",");
         for (int i = 0; i < companySName.length; i++) {
             if (!(companySName[0]).equals(companySName[i])) {
@@ -216,9 +231,22 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
             list.add(id[i]);
         }
         List<InvoiceListVo> voList = invoiceDao.getInvoiceListQuery(list);
-        for (InvoiceListVo vo: voList){
-            List<InvoiceLadderPrice> invoiceLadderPrice = invoiceLadderPriceDao.selectList(new QueryWrapper<InvoiceLadderPrice>().eq("tax_id",vo.getTaxId()));
-            
+        for (InvoiceListVo vo : voList) {
+            totalTaxPrice = totalTaxPrice.add(vo.getTaskMoney());
+            List<InvoiceLadderPrice> invoiceLadderPrice = invoiceLadderPriceDao.selectList(new QueryWrapper<InvoiceLadderPrice>().eq("tax_id", vo.getTaxId()));
+            if (invoiceLadderPrice != null) {
+                for (InvoiceLadderPrice price : invoiceLadderPrice) {
+                    if ((vo.getTaskMoney().compareTo(price.getStartMoney()) > -1) && (vo.getTaskMoney().compareTo(price.getEndMoney()) == -1)) {
+                        vo.setTaxRate(price.getRate());//纳税率
+                        BigDecimal bigDecimal = vo.getTaxRate().multiply(vo.getTaskMoney());
+                        vo.setPersonalServiceFee(bigDecimal.setScale(2, RoundingMode.HALF_UP));//个人服务费
+                        vo.setTaxAmount((vo.getTaskMoney().subtract(vo.getPersonalServiceFee())).divide((vo.getTaxRate().add(new BigDecimal("1.00"))).multiply(vo.getTaxRate()), 2, BigDecimal.ROUND_HALF_UP));//纳税金额
+                    }
+                }
+            }
+            map.put("voList",voList);
+            map.put("税价合计",totalTaxPrice);
+            returnJson = new ReturnJson("操作成功", map, 200);
         }
         return returnJson;
     }
