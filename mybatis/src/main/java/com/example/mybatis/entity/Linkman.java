@@ -29,9 +29,9 @@ public class Linkman implements Serializable {
     private String id;
 
     /**
-     * 商户ID
+     * 公司ID
      */
-    private String merchantId;
+    private String companyId;
 
     /**
      * 联系人

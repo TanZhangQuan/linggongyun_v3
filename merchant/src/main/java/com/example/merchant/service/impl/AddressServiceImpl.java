@@ -30,7 +30,7 @@ public class AddressServiceImpl extends ServiceImpl<AddressDao, Address> impleme
     @Override
     public ReturnJson addOrUpdataAddress(Address address) {
         if (address.getIsNot() == 0) {
-            Address addressOne = this.getOne(new QueryWrapper<Address>().eq("merchant_id", address.getMerchantId()).eq("is_not", 0));
+            Address addressOne = this.getOne(new QueryWrapper<Address>().eq("company_id", address.getCompanyId()).eq("is_not", 0));
             if (addressOne != null) {
                 addressOne.setIsNot(1);
                 this.saveOrUpdate(addressOne);

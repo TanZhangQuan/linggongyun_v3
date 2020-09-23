@@ -2,6 +2,8 @@ package com.example.merchant.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.common.util.ReturnJson;
+import com.example.merchant.dto.CompanyDto;
+import com.example.merchant.exception.CommonException;
 import com.example.mybatis.entity.Merchant;
 
 import javax.servlet.http.HttpServletRequest;
@@ -38,4 +40,6 @@ public interface MerchantService extends IService<Merchant> {
     ReturnJson getMerchantPaymentList(String merchantId, Integer page, Integer pageSize);
     ReturnJson getMerchantPaymentInfo(String paymentOrderId, Integer packgeStatus);
     ReturnJson getMerchantPaymentInventory(String paymentOrderId, Integer page, Integer pageSize);
+
+    ReturnJson addMerchant(CompanyDto companyDto) throws CommonException;
 }

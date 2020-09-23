@@ -68,7 +68,7 @@ public class PaymentOrderManyControllerPaas {
     @ApiImplicitParams(value={@ApiImplicitParam(name="paymentOrderMany",value = "支付订单",required = true, dataType = "PaymentOrderMany"),
             @ApiImplicitParam(name="paymentInventories",value = "支付订单清单",required = true, allowMultiple = true, dataType = "PaymentInventory")})
     public ReturnJson saveOrUpdataPaymentOrderMany(@NotEmpty(message = "订单内容不能为空") @RequestBody PaymentOrderMany paymentOrderMany, @NotEmpty(message = "支付清单不能为空") @RequestBody List<PaymentInventory> paymentInventories){
-        return paymentOrderManyService.saveOrUpdataPaymentOrderManyPaas(paymentOrderMany, paymentInventories);
+        return paymentOrderManyService.saveOrUpdataPaymentOrderMany(paymentOrderMany, paymentInventories);
     }
 
     @PostMapping("/confirmPayment")

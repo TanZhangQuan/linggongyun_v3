@@ -44,5 +44,4 @@ public interface PaymentOrderManyService extends IService<PaymentOrderMany> {
     ReturnJson confirmPaymentManyPaas(String id);
     ReturnJson getPaymentOrderManyPaas(PaymentOrderDto paymentOrderDto);
     ReturnJson getPaymentOrderManyInfoPaas(String id);
-    ReturnJson saveOrUpdataPaymentOrderManyPaas(PaymentOrderMany paymentOrderMany, List<PaymentInventory> paymentInventories);
 }

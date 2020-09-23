@@ -2,6 +2,8 @@ package com.example.merchant.controller.platform;
 
 
 import com.example.common.util.ReturnJson;
+import com.example.merchant.dto.CompanyDto;
+import com.example.merchant.exception.CommonException;
 import com.example.merchant.service.AddressService;
 import com.example.merchant.service.LinkmanService;
 import com.example.merchant.service.MerchantService;
@@ -17,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
@@ -101,6 +104,13 @@ public class MerchantControllerPaas {
     @ApiImplicitParams(value={@ApiImplicitParam(name="merchantId",value = "商户ID",required = true)})
     public ReturnJson merchantInfo(@NotBlank(message = "商户ID不能为空！") @RequestParam String merchantId){
         return merchantService.merchantInfoPaas(merchantId);
+    }
+
+    @PostMapping("/addMerchant")
+    @ApiOperation(value = "添加商户", notes = "添加商户", httpMethod = "POST")
+    @ApiImplicitParams(value={@ApiImplicitParam(name="companyDto",value = "商户ID",required = true,dataType = "CompanyDto")})
+    public ReturnJson addMerchant(@Valid @RequestBody CompanyDto companyDto) throws CommonException {
+        return merchantService.addMerchant(companyDto);
     }
 
 

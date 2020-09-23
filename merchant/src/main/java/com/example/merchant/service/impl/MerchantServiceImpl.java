@@ -9,10 +9,14 @@ import com.example.common.util.JsonUtils;
 import com.example.common.util.MD5;
 import com.example.common.util.ReturnJson;
 import com.example.common.util.VerificationCheck;
+import com.example.merchant.dto.CompanyDto;
+import com.example.merchant.dto.CompanyTaxDto;
+import com.example.merchant.exception.CommonException;
+import com.example.merchant.service.CompanyLadderServiceService;
 import com.example.merchant.service.HomePageService;
 import com.example.merchant.service.MerchantService;
 import com.example.merchant.service.TaskService;
-import com.example.merchant.util.AcquireMerchantID;
+import com.example.merchant.util.AcquireID;
 import com.example.merchant.util.JwtUtils;
 import com.example.merchant.vo.HomePageVO;
 import com.example.mybatis.entity.*;
@@ -24,13 +28,19 @@ import com.example.mybatis.vo.BuyerVo;
 import com.example.redis.dao.RedisDao;
 import io.jsonwebtoken.Claims;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.*;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -59,7 +69,10 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
     private TaxDao taxDao;
 
     @Autowired
-    private MerchantTaxDao merchantTaxDao;
+    private CompanyTaxDao companyTaxDao;
+
+    @Autowired
+    private CompanyInvoiceInfoDao companyInvoiceInfoDao;
 
     @Autowired
     private LinkmanDao linkmanDao;
@@ -77,7 +90,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
     private PaymentOrderManyDao paymentOrderManyDao;
 
     @Autowired
-    private AcquireMerchantID acquireMerchantID;
+    private AcquireID acquireID;
 
     @Autowired
     private JwtUtils jwtUtils;
@@ -90,6 +103,9 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
 
     @Autowired
     private HomePageService homePageService;
+
+    @Autowired
+    private CompanyLadderServiceService companyLadderServiceService;
 
     @Autowired
     private PaymentInventoryDao paymentInventoryDao;
@@ -209,15 +225,8 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         List<TaxPO> taxPOS = taxDao.selectByMerchantId(merchantId);
         List<Linkman> linkmanList = linkmanDao.selectList(new QueryWrapper<Linkman>().eq("merchant_id", merchantId).orderByAsc("is_not"));
         List<Address> addressList = addressDao.selectList(new QueryWrapper<Address>().eq("owner_id", merchantId).orderByAsc("is_not"));
-        SalesMan salesMan = salesManDao.selectById(merchant.getSalesManId());
-        Address address = null;
-        if (merchant.getAgentId() != null || "".equals(merchant.getAgentId())) {
-            address = addressDao.selectById(merchant.getAgentId());
-        }
         List<Map<String, Object>> list = new ArrayList<>();
         Map<String, Object> map = new HashMap<>();
-        map.put("salesMan", salesMan);
-        map.put("address", address);
         map.put("merchant", merchant);
         map.put("companyInfo", companyInfo);
         map.put("taxPOS", taxPOS);
@@ -312,7 +321,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
      */
     @Override
     public ReturnJson getMerchantList(String managersId, String merchantId, String merchantName, String linkMobile, Integer auditStatus ,Integer page,Integer pageSize) {
-        List<String> merchantIds = acquireMerchantID.getMerchantIds(managersId);
+        List<String> merchantIds = acquireID.getMerchantIds(managersId);
         Page<MerchantInfoPo> merchantPage = new Page<>(page,pageSize);
         IPage<MerchantInfoPo> merchantInfoPoIPage = merchantDao.selectMerchantInfoPo(merchantPage, merchantIds, merchantId, merchantName, linkMobile, auditStatus);
         ReturnJson returnJson = new ReturnJson();
@@ -375,7 +384,8 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
     public ReturnJson merchantInfoPaas(String merchantId) {
         ReturnJson returnJson = homePageService.getHomePageInof(merchantId);
         HomePageVO homePageVO =(HomePageVO) returnJson.getObj();
-        Integer taxTotal = merchantTaxDao.selectCount(new QueryWrapper<MerchantTax>().eq("merchant_id", merchantId));
+        Merchant merchant = merchantDao.selectById(merchantId);
+        Integer taxTotal = companyTaxDao.selectCount(new QueryWrapper<CompanyTax>().eq("company_id", merchant.getCompanyId()));
         homePageVO.setTaxTotal(taxTotal);
         ReturnJson merchantPaymentList = this.getMerchantPaymentList(merchantId, 1, 10);
         List data = (List) merchantPaymentList.getData();
@@ -428,6 +438,66 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         Page<PaymentInventory> paymentInventoryPage = new Page<>(page,pageSize);
         Page<PaymentInventory> paymentInventoryPages = paymentInventoryDao.selectPage(paymentInventoryPage, new QueryWrapper<PaymentInventory>().eq("payment_order_id", paymentOrderId));
         return ReturnJson.success(paymentInventoryPages);
+    }
+
+    /**
+     * 添加商户
+     * @param companyDto
+     * @return
+     * @throws CommonException
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public ReturnJson addMerchant(CompanyDto companyDto) throws CommonException{
+        CompanyInfo companyInfo = new CompanyInfo();
+        BeanUtils.copyProperties(companyDto,companyInfo);
+
+        CompanyInvoiceInfo companyInvoiceInfo = new CompanyInvoiceInfo();
+        BeanUtils.copyProperties(companyDto.getCompanyInvoiceInfo(),companyInvoiceInfo);
+
+        companyInfo.setBankName(companyInvoiceInfo.getBankName());
+        companyInfo.setBankCode(companyInvoiceInfo.getBankCode());
+        companyInfo.setTelephones(companyInvoiceInfo.getMobile());
+        companyInfo.setCompanyAddress(companyInvoiceInfo.getCompanyAddress());
+
+        companyInfoDao.insert(companyInfo);
+        companyInvoiceInfo.setCompanyId(companyInfo.getId());
+        companyInvoiceInfoDao.insert(companyInvoiceInfo);
+        List<CompanyTaxDto> companyTaxDtos = companyDto.getCompanyTaxDtos();
+        for (CompanyTaxDto companyTaxDto : companyTaxDtos) {
+            CompanyTax companyTax = new CompanyTax();
+            BeanUtils.copyProperties(companyTaxDto,companyTax);
+            companyTax.setCompanyId(companyInfo.getId());
+            companyTaxDao.insert(companyTax);
+            List<CompanyLadderService> companyLadderServices = companyTaxDto.getCompanyLadderServices();
+            if (companyLadderServices != null) {
+                for (int i = 0; i < companyLadderServices.size(); i++) {
+                    if (i != companyLadderServices.size() - 1) {
+                        BigDecimal endMoney = companyLadderServices.get(i).getEndMoney();
+                        if (endMoney.compareTo(companyLadderServices.get(i).getEndMoney()) < 1) {
+                            throw new CommonException(300,"结束金额应该大于起始金额");
+                        }
+                        BigDecimal startMoney = companyLadderServices.get(i + 1).getStartMoney();
+                        if (startMoney.compareTo(endMoney) < 1) {
+                            throw new CommonException(300,"上梯度结束金额应小于下梯度起始金额");
+                        }
+                    }
+                    companyLadderServices.get(i).setCompanyTaxId(companyTax.getId());
+                }
+                companyLadderServiceService.saveBatch(companyLadderServices);
+            }
+        }
+        Linkman linkman = new Linkman();
+        BeanUtils.copyProperties(companyDto.getLinkman(),linkman);
+        linkman.setCompanyId(companyInfo.getId());
+        linkmanDao.insert(linkman);
+
+        Address address = new Address();
+        BeanUtils.copyProperties(companyDto.getAddress(),address);
+        address.setCompanyId(companyInfo.getId());
+        addressDao.insert(address);
+
+        return ReturnJson.success("添加商户成功！");
     }
 
 

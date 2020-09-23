@@ -4,6 +4,7 @@ package com.example.merchant.controller.platform;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.TaxDto;
 import com.example.merchant.dto.TaxListDto;
+import com.example.merchant.exception.CommonException;
 import com.example.merchant.service.TaxService;
 import com.example.mybatis.entity.Industry;
 import com.example.mybatis.entity.InvoiceCatalog;
@@ -58,7 +59,7 @@ public class TaxControllerPaas {
     @PostMapping("/saveTax")
     @ApiOperation(value = "添加或修改平台服务商", notes = "添加或修改平台服务商", httpMethod = "POST")
     @ApiImplicitParams(value={@ApiImplicitParam(name="taxDto",value = "平台服务商的信息",required = true,dataType = "TaxDto")})
-    public ReturnJson saveTax(@RequestBody TaxDto taxDto){
+    public ReturnJson saveTax(@RequestBody TaxDto taxDto)throws CommonException {
         return taxService.saveTax(taxDto);
     }
 

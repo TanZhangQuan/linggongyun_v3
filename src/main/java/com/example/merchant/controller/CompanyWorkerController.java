@@ -7,14 +7,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * <p>
- * 服务商发票税率梯度价 前端控制器
+ *  前端控制器
  * </p>
  *
  * @author hzp
- * @since 2020-09-21
+ * @since 2020-09-23
  */
 @RestController
-@RequestMapping("/merchant/invoice-ladder-price")
-public class InvoiceLadderPriceController {
+@RequestMapping("/merchant/company-worker")
+public class CompanyWorkerController {
 
 }

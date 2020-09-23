@@ -4,6 +4,7 @@ import com.example.common.util.ReturnJson;
 import com.example.merchant.service.HomePageService;
 import com.example.merchant.service.PaymentOrderManyService;
 import com.example.merchant.service.PaymentOrderService;
+import com.example.merchant.util.AcquireID;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -25,6 +26,8 @@ public class HomePageControllerMerchant {
 
     @Autowired
     private PaymentOrderManyService paymentOrderManyService;
+
+
 
     /**
      * 获取首页的基本信息
