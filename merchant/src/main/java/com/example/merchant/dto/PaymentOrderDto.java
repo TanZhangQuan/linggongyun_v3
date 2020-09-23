@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Data
-@ApiModel(description = "添加服务商")
+@ApiModel(description = "查询订单参数")
 public class PaymentOrderDto {
 
     /**

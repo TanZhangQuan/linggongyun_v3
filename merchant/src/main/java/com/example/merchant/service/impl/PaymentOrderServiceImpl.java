@@ -65,6 +65,10 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
     @Autowired
     private CompanyLadderServiceDao companyLadderServiceDao;
 
+    @Autowired
+    private AcquireID acquireID;
+
+
     /**
      * 获取今天的支付总额
      * @param merchantId
@@ -116,7 +120,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
      */
     @Override
     public ReturnJson getPaymentOrder(PaymentOrderDto paymentOrderDto) {
-        String merchantId = paymentOrderDto.getMerchantId();
+        String merchantId = acquireID.getCompanyId(paymentOrderDto.getMerchantId());
         String paymentOrderId = paymentOrderDto.getPaymentOrderId();
         String taxId = paymentOrderDto.getTaxId();
         Integer pageSize = paymentOrderDto.getPageSize();
@@ -305,11 +309,6 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
         }
         return returnJson;
     }
-
-
-    @Autowired
-    private AcquireID acquireID;
-
 
     /**
      * 获取今天的支付总额

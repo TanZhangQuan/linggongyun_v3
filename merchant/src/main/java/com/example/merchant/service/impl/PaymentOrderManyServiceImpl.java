@@ -157,7 +157,7 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
      */
     @Override
     public ReturnJson getPaymentOrderMany(PaymentOrderDto paymentOrderDto) {
-        String merchantId = paymentOrderDto.getMerchantId();
+        String merchantId = acquireID.getCompanyId(paymentOrderDto.getMerchantId());
         String paymentOrderId = paymentOrderDto.getPaymentOrderId();
         String taxId = paymentOrderDto.getTaxId();
         Integer pageSize = paymentOrderDto.getPageSize();
