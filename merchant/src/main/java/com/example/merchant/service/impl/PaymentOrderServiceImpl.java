@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.PaymentOrderDto;
+import com.example.merchant.exception.CommonException;
 import com.example.merchant.service.MerchantService;
 import com.example.merchant.service.PaymentInventoryService;
 import com.example.merchant.service.PaymentOrderService;
@@ -317,7 +318,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
      * @return
      */
     @Override
-    public ReturnJson getDayPaas(String merchantId) {
+    public ReturnJson getDayPaas(String merchantId) throws CommonException {
         List<String> merchantIds = acquireID.getMerchantIds(merchantId);
         List<PaymentOrder> list = paymentOrderDao.selectDaypaas(merchantIds);
         return ReturnJson.success(list);
@@ -330,7 +331,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
      * @return
      */
     @Override
-    public ReturnJson getWeekPaas(String merchantId) {
+    public ReturnJson getWeekPaas(String merchantId) throws CommonException{
         List<String> merchantIds = acquireID.getMerchantIds(merchantId);
         List<PaymentOrder> list = paymentOrderDao.selectWeekpaas(merchantIds);
         return ReturnJson.success(list);
@@ -343,7 +344,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
      * @return
      */
     @Override
-    public ReturnJson getMonthPaas(String merchantId) {
+    public ReturnJson getMonthPaas(String merchantId) throws CommonException{
         List<String> merchantIds = acquireID.getMerchantIds(merchantId);
         List<PaymentOrder> list = paymentOrderDao.selectMonthpaas(merchantIds);
         return ReturnJson.success(list);
@@ -356,7 +357,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
      * @return
      */
     @Override
-    public ReturnJson getYearPaas(String merchantId) {
+    public ReturnJson getYearPaas(String merchantId) throws CommonException{
         List<String> merchantIds = acquireID.getMerchantIds(merchantId);
         List<PaymentOrder> list = paymentOrderDao.selectYearpaas(merchantIds);
         return ReturnJson.success(list);
@@ -369,7 +370,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
      * @return
      */
     @Override
-    public ReturnJson getPaymentOrderPaas(PaymentOrderDto paymentOrderDto) {
+    public ReturnJson getPaymentOrderPaas(PaymentOrderDto paymentOrderDto) throws CommonException{
         List<String> merchantIds = acquireID.getMerchantIds(paymentOrderDto.getManagersId());
         paymentOrderDto.setMerchantIds(merchantIds);
         return this.getPaymentOrderData(paymentOrderDto);

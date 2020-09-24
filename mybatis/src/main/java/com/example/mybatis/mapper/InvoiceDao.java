@@ -20,10 +20,8 @@ import java.util.List;
 public interface InvoiceDao extends BaseMapper<Invoice> {
     InvoicePO selectInvoiceMoney(String merchantId);
     InvoicePO selectInvoiceMoneyPaas(List<String> merchantId);
-    List<InvoicePO> selectTotal(String merchantId);
 
     List<TobeinvoicedVo> selectTobeinvoiced(TobeinvoicedDto tobeinvoicedDto, RowBounds rowBounds);
-    List<InvoicePO> selectTotalpaas(List<String> merchantId);
 
     List<InvoiceVo> getInvoiceList(TobeinvoicedDto tobeinvoicedDto, RowBounds rowBounds);
 

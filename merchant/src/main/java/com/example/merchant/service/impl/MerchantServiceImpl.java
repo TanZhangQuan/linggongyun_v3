@@ -97,10 +97,6 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
 
     @Autowired
     private SenSMS senSMS;
-
-    @Autowired
-    private SalesManDao salesManDao;
-
     @Autowired
     private HomePageService homePageService;
 
@@ -320,7 +316,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
      * @return
      */
     @Override
-    public ReturnJson getMerchantList(String managersId, String merchantId, String merchantName, String linkMobile, Integer auditStatus ,Integer page,Integer pageSize) {
+    public ReturnJson getMerchantList(String managersId, String merchantId, String merchantName, String linkMobile, Integer auditStatus ,Integer page,Integer pageSize) throws CommonException{
         List<String> merchantIds = acquireID.getMerchantIds(managersId);
         Page<MerchantInfoPo> merchantPage = new Page<>(page,pageSize);
         IPage<MerchantInfoPo> merchantInfoPoIPage = merchantDao.selectMerchantInfoPo(merchantPage, merchantIds, merchantId, merchantName, linkMobile, auditStatus);
@@ -343,18 +339,20 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
     @Override
     public ReturnJson removeMerchant(String merchantId) {
         Merchant merchant = merchantDao.selectById(merchantId);
-        if (merchant.getAuditStatus() == 0) {
-            merchantDao.deleteById(merchantId);
+        String companyId = acquireID.getCompanyId(merchantId);
+        CompanyInfo companyInfo = companyInfoDao.selectById(companyId);
+        if (companyInfo.getAuditStatus() == 0) {
+            companyInfoDao.deleteById(companyId);
             return ReturnJson.success("删除成功！");
         }
-        List<Task> tasks = taskService.list(new QueryWrapper<Task>().eq("merchant_id",merchantId));
-        List<PaymentOrder> paymentOrders = paymentOrderDao.selectList(new QueryWrapper<PaymentOrder>().eq("merchant_id", merchantId));
-        List<PaymentOrderMany> paymentOrderManies = paymentOrderManyDao.selectList(new QueryWrapper<PaymentOrderMany>().eq("merchant_id", merchantId));
+        List<Task> tasks = taskService.list(new QueryWrapper<Task>().eq("company_id",companyId));
+        List<PaymentOrder> paymentOrders = paymentOrderDao.selectList(new QueryWrapper<PaymentOrder>().eq("company_id", companyId));
+        List<PaymentOrderMany> paymentOrderManies = paymentOrderManyDao.selectList(new QueryWrapper<PaymentOrderMany>().eq("company_id", companyId));
         if (VerificationCheck.listIsNull(tasks) && VerificationCheck.listIsNull(paymentOrders) && VerificationCheck.listIsNull(paymentOrderManies) ) {
-            merchantDao.deleteById(merchantId);
+            companyInfoDao.deleteById(companyId);
             return ReturnJson.success("删除成功！");
         }
-        return ReturnJson.success("该商户做过业务，只能停用该用户！");
+        return ReturnJson.error("该商户做过业务，只能停用该用户！");
     }
 
 
@@ -365,10 +363,11 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
      */
     @Override
     public ReturnJson auditMerchant(String merchantId) {
-        Merchant merchant = new Merchant();
-        merchant.setAuditStatus(1);
-        merchant.setId(merchantId);
-        int i = merchantDao.updateById(merchant);
+        String companyId = acquireID.getCompanyId(merchantId);
+        CompanyInfo companyInfo = new CompanyInfo();
+        companyInfo.setAuditStatus(1);
+        companyInfo.setId(companyId);
+        int i = companyInfoDao.updateById(companyInfo);
         if (i == 1) {
             return ReturnJson.success("审核成功！");
         }
