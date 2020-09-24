@@ -5,7 +5,7 @@ import lombok.Data;
 import java.math.BigDecimal;
 
 /**
- * 开票清单明细信息
+ * 分包开票清单明细信息
  */
 @Data
 public class InvoiceListVo {

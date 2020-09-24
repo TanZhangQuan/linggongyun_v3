@@ -22,10 +22,10 @@ public class TobeinvoicedDto {
     private String platformServiceProvider;
 
     @ApiModelProperty(value = "创建时间1")
-    private LocalDateTime applicationDateOne;
+    private String applicationDateOne;
 
     @ApiModelProperty(value = "创建时间2")
-    private LocalDateTime applicationDateTwo;
+    private String applicationDateTwo;
 
     @NotNull(message = "当前页不能为空")
     @ApiModelProperty(value = "当前页")

@@ -1,10 +1,7 @@
 package com.example.merchant.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.example.common.util.ExcelResponseUtils;
-import com.example.common.util.MD5;
-import com.example.common.util.ReturnJson;
-import com.example.common.util.UuidUtil;
+import com.example.common.util.*;
 import com.example.merchant.service.FileOperationService;
 import com.example.merchant.service.WorkerService;
 import com.example.mybatis.entity.MakerInvoice;
@@ -22,6 +19,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -207,6 +206,7 @@ public class FileOperationServiceImpl implements FileOperationService {
      */
     @Override
     public ReturnJson uploadInvoiceOrTaxReceipt(String state, MultipartFile uploadTaxReceipt, String paymentInventoryId, HttpServletRequest request) throws IOException {
+        DateTimeFormatter dfd = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");//时间转换
         if (uploadTaxReceipt.getSize() == 0) {
             return ReturnJson.error("上传文件不能为空！");
         }
@@ -227,10 +227,12 @@ public class FileOperationServiceImpl implements FileOperationService {
             MakerInvoice makerInvoice = new MakerInvoice();
             if (state.equals("0")) {
                 makerInvoice.setMakerVoiceUrl(fileName);
+                makerInvoice.setUpdateTime(LocalDateTime.parse(DateUtil.getTime(), dfd));
                 makerInvoiceDao.update(makerInvoice,new QueryWrapper<MakerInvoice>().eq("payment_inventory_id",paymentInventoryId));
                 return ReturnJson.success("发票上传成功", accessPath);
             } else {
                 makerInvoice.setMakerTaxUrl(fileName);
+                makerInvoice.setUpdateTime(LocalDateTime.parse(DateUtil.getTime(), dfd));
                 makerInvoiceDao.update(makerInvoice,new QueryWrapper<MakerInvoice>().eq("payment_inventory_id",paymentInventoryId));
                 return ReturnJson.success("税票上传成功", accessPath);
             }

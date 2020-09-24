@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.common.util.DateUtil;
 import com.example.common.util.ReturnJson;
+import com.example.merchant.dto.MakerInvoiceDto;
 import com.example.merchant.service.MakerInvoiceService;
 import com.example.mybatis.entity.InvoiceLadderPrice;
 import com.example.mybatis.entity.MakerInvoice;
@@ -69,18 +70,40 @@ public class MakerInvoiceServiceImpl extends ServiceImpl<MakerInvoiceDao, MakerI
 
     /**
      * 创建或修改发票
-     * @param makerInvoice
+     * @param makerInvoiceDto
      * @return
      */
     @Override
-    public ReturnJson saveOrUpdateMakerInvoice(MakerInvoice makerInvoice) {
+    public ReturnJson saveMakerInvoice(MakerInvoiceDto makerInvoiceDto) {
         ReturnJson returnJson = new ReturnJson("操作失败", 300);
+        MakerInvoice makerInvoice = new MakerInvoice();
         DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        if (makerInvoice.getMakerVoiceGetDateTime()==null){
+        makerInvoice.setId(makerInvoiceDto.getId());
+        makerInvoice.setPaymentInventoryId(makerInvoiceDto.getPaymentInventoryId());
+        makerInvoice.setInvoiceTypeNo(makerInvoiceDto.getInvoiceTypeNo());
+        makerInvoice.setInvoiceSerialNo(makerInvoiceDto.getInvoiceSerialNo());
+        if (makerInvoiceDto.getMakerVoiceGetDateTime() == null) {
             //开发票时间为空则给系统当前时间
             makerInvoice.setMakerVoiceGetDateTime(LocalDateTime.parse(DateUtil.getTime(), df));
         }
-
+        makerInvoice.setInvoiceCategory(makerInvoiceDto.getInvoiceCategory());
+        makerInvoice.setTotalAmount(makerInvoiceDto.getTotalAmount());
+        makerInvoice.setTaxAmount(makerInvoiceDto.getTaxAmount());
+        makerInvoice.setIvoicePerson(makerInvoiceDto.getIvoicePerson());
+        makerInvoice.setSaleCompany(makerInvoiceDto.getSaleCompany());
+        makerInvoice.setHelpMakeOrganationName(makerInvoiceDto.getHelpMakeOrganationName());
+        makerInvoice.setHelpMakeCompany(makerInvoiceDto.getHelpMakeCompany());
+        makerInvoice.setHelpMakeTaxNo(makerInvoice.getHelpMakeTaxNo());
+        if (makerInvoiceDto.getMakerVoiceUrl() != null) {
+            makerInvoice.setMakerVoiceUrl(makerInvoiceDto.getMakerVoiceUrl());
+            makerInvoice.setMakerVoiceUploadDateTime(LocalDateTime.parse(DateUtil.getTime(), df));
+            makerInvoice.setCreateTime(LocalDateTime.parse(DateUtil.getTime(), df));
+        }
+        makerInvoice.setMakerTaxUrl(makerInvoiceDto.getMakerTaxUrl());
+        int num = makerInvoiceDao.insert(makerInvoice);
+        if (num > 0) {
+            returnJson = new ReturnJson("操作成功", 200);
+        }
         return returnJson;
     }
 }

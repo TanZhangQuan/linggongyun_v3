@@ -30,7 +30,7 @@ public class CrowdSourcingInfoVo {
     private String invoiceUrl;
     //税票URL
     private String taxReceiptUrl;
-    //申请开票状态0.未申请；1.申请中；2.已拒绝；3.已开票，4未开票'
+    //申请开票状态0.未申请；1.申请中；2.已拒绝；3.已开票，4未开票
     private Integer applicationState;
     //开票时间
     private String invoicePrintDate;

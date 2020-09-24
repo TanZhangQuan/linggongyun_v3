@@ -2,6 +2,7 @@ package com.example.merchant.controller.platform;
 
 
 import com.example.common.util.ReturnJson;
+import com.example.merchant.dto.MakerInvoiceDto;
 import com.example.merchant.dto.MakerTotalInvoiceDto;
 import com.example.merchant.service.InvoiceService;
 import com.example.merchant.service.MakerInvoiceService;
@@ -137,5 +138,18 @@ public class InvoiceControllerPass {
         }
         return returnJson;
     }
+
+    @ApiOperation("门征单开,开票如果未开票先上传发票进这里开一张发票")
+    @PostMapping("/saveMakerInvoice")
+    public ReturnJson saveMakerInvoice(MakerInvoiceDto makerInvoiceDto){
+        ReturnJson returnJson=new ReturnJson("操作失败",300);
+        try{
+            returnJson=makerInvoiceService.saveMakerInvoice(makerInvoiceDto);
+        }catch (Exception err){
+            logger.error("出现异常错误",err);
+        }
+        return returnJson;
+    }
+
 
 }

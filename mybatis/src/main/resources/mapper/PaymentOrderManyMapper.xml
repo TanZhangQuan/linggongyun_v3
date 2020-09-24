@@ -148,7 +148,6 @@
         <result column="payment_order_status" property="paymentOrderStatus"/>
         <result column="payment_inventory" property="paymentInventory"/>
         <result column="payment_date" property="paymentDate"/>
-        <result column="subpackage_payment" property="subpackagePayment"/>
         <result column="real_money" property="realMoney"/>
         <association property="taskVo" javaType="com.example.mybatis.vo.TaskVo">
             <result column="task_code" property="taskCode"/>

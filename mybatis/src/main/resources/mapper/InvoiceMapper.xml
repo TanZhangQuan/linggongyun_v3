@@ -104,10 +104,10 @@
             AND po.platform_service_provider=#{platformServiceProvider}
         </if>
         <if test="applicationDateOne != null and applicationDateOne != ''">
-            AND ia.invapp.application_date>={applicationDate}
+            AND ia.invapp.application_date>=#{applicationDateOne}
         </if>
         <if test="applicationDateTwo != null and applicationDateTwo != ''">
-            AND ia.invapp.application_date <![CDATA[<=]]> {applicationDate}
+            AND ia.invapp.application_date <![CDATA[<=]]> #{applicationDateTwo}
         </if>
     </sql>
 
@@ -120,10 +120,10 @@
             AND po.platform_service_provider=#{platformServiceProvider}
         </if>
         <if test="applicationDateOne != null and applicationDateOne != ''">
-            AND invapp.invapp.application_date>={applicationDate}
+            AND invapp.invapp.application_date>=#{applicationDateOne}
         </if>
         <if test="applicationDateTwo != null and applicationDateTwo != ''">
-            AND invapp.invapp.application_date <![CDATA[<=]]> {applicationDate}
+            AND invapp.invapp.application_date <![CDATA[<=]]> #{applicationDateTwo}
         </if>
     </sql>
 
@@ -199,6 +199,7 @@
         FROM tb_payment_order AS po
         LEFT JOIN tb_application_payment AS app ON app.payment_order_id = po.id
         LEFT JOIN tb_invoice_application as invapp ON invapp.id=app.invoice_application_id
+        LEFT JOIN tb_invoice as i ON i.application_id=invapp.id
         WHERE po.payment_order_status = 3
         <include refid="que"/>
     </select>

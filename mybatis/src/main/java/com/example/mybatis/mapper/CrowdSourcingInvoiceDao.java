@@ -5,8 +5,7 @@ import com.example.mybatis.entity.ApplicationCrowdSourcing;
 import com.example.mybatis.entity.CrowdSourcingInvoice;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.example.mybatis.po.InvoicePO;
-import com.example.mybatis.vo.CrowdSourcingInfoVo;
-import com.example.mybatis.vo.InvoiceInformationVo;
+import com.example.mybatis.vo.*;
 import org.apache.ibatis.session.RowBounds;
 
 import java.util.List;
@@ -30,4 +29,16 @@ public interface CrowdSourcingInvoiceDao extends BaseMapper<CrowdSourcingInvoice
     InvoiceInformationVo getInvoiceById(String csiId);
 
     InvoicePO selectCrowdInvoiceMoneyPaasTax(String taxId);
+
+    //购买方id
+    BuyerVo getBuyer(String id);
+
+    /** ----平台端---- **/
+    List<CrowdSourcingInvoiceVo> getCrowdSourcingInvoicePass(TobeinvoicedDto tobeinvoicedDto, RowBounds rowBounds);
+
+    PaymentOrderManyVo getPaymentOrderManyPass(String payId);
+
+    List<InvoiceDetailsVo> getPaymentInventoryPass(String payId);
+
+    String getCrowdInvoiceCode();
 }

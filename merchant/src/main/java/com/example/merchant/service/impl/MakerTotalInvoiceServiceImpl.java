@@ -67,6 +67,7 @@ public class MakerTotalInvoiceServiceImpl extends ServiceImpl<MakerTotalInvoiceD
                     PaymentOrder paymentOrder = new PaymentOrder();
                     paymentOrder.setId(makerTotalInvoiceDto.getInvoiceId());
                     paymentOrder.setIsSubpackage(1);
+                    paymentOrder.setUpdateDate(LocalDateTime.parse(DateUtil.getTime(), dfd));
                     paymentOrderDao.updateById(paymentOrder);
                 }
                 String[] invoiceId = makerTotalInvoiceDto.getInvoiceId().split(",");

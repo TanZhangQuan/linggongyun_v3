@@ -193,6 +193,11 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
         return returnJson;
     }
 
+    /**
+     * 分包开票待开票
+     * @param tobeinvoicedDto
+     * @return
+     */
     @Override
     public ReturnJson getListSubQuery(TobeinvoicedDto tobeinvoicedDto) {
         ReturnJson returnJson = new ReturnJson("操作失败", 300);

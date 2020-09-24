@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mybatis.mapper.CrowdSourcingApplicationDao">
+    <resultMap id="BaseResultMap" type="com.example.mybatis.entity.CrowdSourcingApplication">
+        <id column="id" jdbcType="VARCHAR" property="id"/>
+        <result column="payment_order_many_id" jdbcType="VARCHAR" property="paymentOrderManyId"/>
+        <result column="invoice_catalog_type" jdbcType="VARCHAR" property="invoiceCatalogType"/>
+        <result column="application_address_id" jdbcType="VARCHAR" property="applicationAddressId"/>
+        <result column="application_date" jdbcType="TIMESTAMP" property="applicationDate"/>
+        <result column="application_state" jdbcType="INTEGER" property="applicationState"/>
+        <result column="application_desc" jdbcType="VARCHAR" property="applicationDesc"/>
+        <result column="audit_desc" jdbcType="VARCHAR" property="auditDesc"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, payment_order_many_id, invoice_catalog_type, application_address_id, application_date, 
+    application_state, application_desc, audit_desc
+  </sql>
+
+</mapper>
