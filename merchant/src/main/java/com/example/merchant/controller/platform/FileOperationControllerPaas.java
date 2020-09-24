@@ -44,5 +44,11 @@ public class FileOperationControllerPaas {
         return fileOperationService.uploadJpgOrPdf(uploadJpgOrPdf, request);
     }
 
-
+    @PostMapping("/uploadTaxReceipt")
+    @ApiOperation(value = "税票or发票门征单开", notes = "税票or发票门征单开", httpMethod = "POST")
+    public ReturnJson uploadInvoiceOrTaxReceipt(@ApiParam(value = "判断税票or发票,0为发票,1为税票",required = true) @RequestParam("state") String state,
+                                                @ApiParam(value = "文件",required = true) @RequestParam("uploadTaxReceipt") MultipartFile uploadTaxReceipt,
+                                                @ApiParam(value = "支付明细id",required = true) @RequestParam("paymentInventoryId")String paymentInventoryId ,HttpServletRequest request) throws IOException {
+        return fileOperationService.uploadInvoiceOrTaxReceipt(state, uploadTaxReceipt, paymentInventoryId, request);
+    }
 }
