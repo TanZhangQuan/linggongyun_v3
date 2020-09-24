@@ -3,6 +3,7 @@ package com.example.merchant.controller.platform;
 
 import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.PaymentOrderDto;
+import com.example.merchant.exception.CommonException;
 import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.PaymentOrderService;
 import com.example.merchant.service.PaymentOrderSubpackageService;
@@ -46,7 +47,7 @@ public class PaymentOrderControllerPaas {
     @LoginRequired
     @ApiOperation(value = "查询总包+分包支付订单", notes = "查询总包+分包支付订单", httpMethod = "POST")
     @ApiImplicitParams(value={@ApiImplicitParam(name="paymentOrderDto",value = "查询条件",required = true, dataType = "PaymentOrderDto")})
-    public ReturnJson getPaymentOrderAll(@Valid @RequestBody PaymentOrderDto paymentOrderDto){
+    public ReturnJson getPaymentOrderAll(@Valid @RequestBody PaymentOrderDto paymentOrderDto)throws CommonException {
         return paymentOrderService.getPaymentOrderPaas(paymentOrderDto);
     }
 
@@ -72,7 +73,7 @@ public class PaymentOrderControllerPaas {
     @ApiImplicitParams(value={@ApiImplicitParam(name="paymentOrder",value = "新建或修改的支付订单",required = true, dataType = "PaymentOrder"),
             @ApiImplicitParam(name="paymentInventories",value = "支付清单",required = true, allowMultiple = true, dataType = "PaymentInventory")})
     public ReturnJson saveOrUpdataPaymentOrder(@NotEmpty(message = "订单内容不能为空") @RequestBody PaymentOrder paymentOrder, @NotEmpty(message = "支付清单不能为空") @RequestBody List<PaymentInventory> paymentInventories){
-        return paymentOrderService.saveOrUpdataPaymentOrderPaas(paymentOrder, paymentInventories);
+        return paymentOrderService.saveOrUpdataPaymentOrder(paymentOrder, paymentInventories);
     }
 
 

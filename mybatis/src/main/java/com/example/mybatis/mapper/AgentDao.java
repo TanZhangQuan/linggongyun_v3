@@ -1,7 +1,10 @@
 package com.example.mybatis.mapper;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.mybatis.entity.Agent;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.example.mybatis.po.AgentListPO;
 
 /**
  * <p>
@@ -13,5 +16,5 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @since 2020-09-07
  */
 public interface AgentDao extends BaseMapper<Agent> {
-
+    IPage<AgentListPO>selectAgentList(Page page);
 }

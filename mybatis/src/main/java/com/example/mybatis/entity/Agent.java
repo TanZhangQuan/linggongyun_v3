@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 /**
  * <p>
  * 代理商信息
-
+ *
  * </p>
  *
  * @author hzp
@@ -60,29 +60,14 @@ public class Agent implements Serializable {
     private String contractFile;
 
     /**
-     * 公司名称
+     * 代理商名称名称
      */
-    private String companyName;
+    private String agentName;
 
     /**
      * 0可以用1禁用
      */
     private Integer agentStatus;
-
-    /**
-     * 代理商登录账号
-     */
-    private String agentUserName;
-
-    /**
-     * 代理商登录密码
-     */
-    private String agentPwd;
-
-    /**
-     * 代理商编码
-     */
-    private String agentCode;
 
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createDate;

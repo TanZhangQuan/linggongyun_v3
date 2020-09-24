@@ -30,6 +30,11 @@ public class Merchant implements Serializable {
     private String id;
 
     /**
+     * 主账号的ID(当为主账号是为0)
+     */
+    private String parentId;
+
+    /**
      * 公司ID（用来关联公司获取所属公司的信息）
      */
     private String companyId;
@@ -65,24 +70,9 @@ public class Merchant implements Serializable {
     private String passWord;
 
     /**
-     * 业务员ID(必填)
-     */
-    private String salesManId;
-
-    /**
-     * 代理商ID(可以为空)
-     */
-    private String agentId;
-
-    /**
      * 登录时用的手机号码
      */
     private String loginMobile;
-
-    /**
-     * 审核状态
-     */
-    private Integer auditStatus;
 
     /**
      * 商户状态

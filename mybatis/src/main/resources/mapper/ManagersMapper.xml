@@ -6,6 +6,7 @@
     <resultMap id="BaseResultMap" type="com.example.mybatis.entity.Managers">
         <id column="id" property="id" />
         <result column="role_id" property="roleId" />
+        <result column="real_name" property="realName" />
         <result column="user_name" property="userName" />
         <result column="user_dept" property="userDept" />
         <result column="user_post" property="userPost" />
@@ -22,7 +23,32 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, role_id, user_name, user_dept, user_post, mobile_code, pass_word, user_desc, paas_name, user_sign, status, user_head, create_date, update_date
+        id, role_id, real_name,user_name, user_dept, user_post, mobile_code, pass_word, user_desc, paas_name, user_sign, status, user_head, create_date, update_date
     </sql>
+
+    <resultMap id="SalesManPaymentList" type="com.example.mybatis.po.SalesManPaymentListPO">
+        <id column="payment_order_id" property="paymentOrderId" />
+        <result column="merchant_name" property="merchantName" />
+        <result column="tax_name" property="taxName" />
+        <result column="agent_name" property="agentName" />
+        <result column="package_status" property="packageStatus" />
+        <result column="real_money" property="realMoney" />
+        <result column="is_invoice" property="isInvoice" />
+        <result column="payment_date" property="paymentDate" />
+    </resultMap>
+
+    <select id="selectSalesManPaymentList" parameterType="list" resultMap="SalesManPaymentList">
+        select a.*,(case when b.agent_id is null then null else (select real_name from tb_managers
+        where id = b.agent_id) end) 'agent_name' from tb_merchant_payment_list a
+        LEFT JOIN tb_company_info b on a.company_id = b.id
+        where 1 != 1
+        <if test="companyIds != null and companyIds.size() > 0">
+            or company_id in
+            <foreach collection="companyIds" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        order by a.payment_date
+    </select>
 
 </mapper>

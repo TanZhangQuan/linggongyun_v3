@@ -2,6 +2,7 @@ package com.example.merchant.controller.platform;
 
 
 import com.example.common.util.ReturnJson;
+import com.example.merchant.exception.CommonException;
 import com.example.merchant.service.WorkerService;
 import com.example.merchant.service.WorkerTaskService;
 import com.example.mybatis.entity.Worker;
@@ -36,86 +37,85 @@ public class WorkerControllerPaas {
 
     @PostMapping("/getWorkerAll")
     @ApiOperation(value = "获取所以已认证的创客", notes = "获取所以已认证的创客", httpMethod = "POST")
-    @ApiImplicitParams(value={@ApiImplicitParam(name="managersId",value = "管理人员ID",required = true),
-            @ApiImplicitParam(name="page",value = "页数",required = true),
-            @ApiImplicitParam(name="pageSize",value = "每页的条数",required = true)
+    @ApiImplicitParams(value = {@ApiImplicitParam(name = "managersId", value = "管理人员ID", required = true),
+            @ApiImplicitParam(name = "page", value = "页数", required = true),
+            @ApiImplicitParam(name = "pageSize", value = "每页的条数", required = true)
     })
-    public ReturnJson getWorkerAll(@NotBlank(message = "用户ID不能为空")  @RequestParam(required = false) String managersId,
-                                   @RequestParam(defaultValue = "1")  Integer page,
-                                   @RequestParam(defaultValue = "10")  Integer pageSize){
+    public ReturnJson getWorkerAll(@NotBlank(message = "用户ID不能为空") @RequestParam(required = false) String managersId,
+                                   @RequestParam(defaultValue = "1") Integer page,
+                                   @RequestParam(defaultValue = "10") Integer pageSize) throws CommonException {
         return workerService.getWorkerAllPaas(managersId, page, pageSize);
     }
 
     @PostMapping("/getWorkerAllNot")
     @ApiOperation(value = "获取所以未认证的创客", notes = "获取所以未认证的创客", httpMethod = "POST")
-    @ApiImplicitParams(value={@ApiImplicitParam(name="managersId",value = "管理人员ID",required = true),
-            @ApiImplicitParam(name="page",value = "页数",required = true),
-            @ApiImplicitParam(name="pageSize",value = "每页的条数",required = true)
+    @ApiImplicitParams(value = {@ApiImplicitParam(name = "managersId", value = "管理人员ID", required = true),
+            @ApiImplicitParam(name = "page", value = "页数", required = true),
+            @ApiImplicitParam(name = "pageSize", value = "每页的条数", required = true)
     })
-    public ReturnJson getWorkerAllNot(@NotBlank(message = "用户ID不能为空")  @RequestParam(required = false) String managersId,
-                                   @RequestParam(defaultValue = "1")  Integer page,
-                                   @RequestParam(defaultValue = "10")  Integer pageSize){
+    public ReturnJson getWorkerAllNot(@NotBlank(message = "用户ID不能为空") @RequestParam(required = false) String managersId,
+                                      @RequestParam(defaultValue = "1") Integer page,
+                                      @RequestParam(defaultValue = "10") Integer pageSize) throws CommonException {
         return workerService.getWorkerAllNotPaas(managersId, page, pageSize);
     }
 
 
     @PostMapping("/getWorkerMany")
     @ApiOperation(value = "按条件查询已认证的创客", notes = "按条件查询已认证的创客", httpMethod = "POST")
-    @ApiImplicitParams(value={@ApiImplicitParam(name="managersId",value = "管理人员ID",required = true),
-            @ApiImplicitParam(name="id",value = "创客ID",required = false),
-            @ApiImplicitParam(name="accountName",value = "创客的真实姓名",required = false),
-            @ApiImplicitParam(name="mobileCode",value = "创客的手机号",required = false)
+    @ApiImplicitParams(value = {@ApiImplicitParam(name = "managersId", value = "管理人员ID", required = true),
+            @ApiImplicitParam(name = "id", value = "创客ID", required = false),
+            @ApiImplicitParam(name = "accountName", value = "创客的真实姓名", required = false),
+            @ApiImplicitParam(name = "mobileCode", value = "创客的手机号", required = false)
     })
-    public ReturnJson getWorkerMany(@NotBlank(message = "管理人员ID不能为空") @RequestParam(required = false) String managersId,@RequestParam(required = false) String id,
-                                    @RequestParam(required = false) String accountName, @RequestParam(required = false) String mobileCode){
+    public ReturnJson getWorkerMany(@NotBlank(message = "管理人员ID不能为空") @RequestParam(required = false) String managersId, @RequestParam(required = false) String id,
+                                    @RequestParam(required = false) String accountName, @RequestParam(required = false) String mobileCode) throws CommonException {
         return workerService.getByIdAndAccountNameAndMobilePaas(managersId, id, accountName, mobileCode);
     }
 
     @PostMapping("/getWorkerManyNot")
     @ApiOperation(value = "按条件查询未认证的创客", notes = "按条件查询已认证的创客", httpMethod = "POST")
-    @ApiImplicitParams(value={@ApiImplicitParam(name="managersId",value = "管理人员ID",required = true),
-            @ApiImplicitParam(name="id",value = "创客ID",required = false),
-            @ApiImplicitParam(name="accountName",value = "创客的真实姓名",required = false),
-            @ApiImplicitParam(name="mobileCode",value = "创客的手机号",required = false)
+    @ApiImplicitParams(value = {@ApiImplicitParam(name = "managersId", value = "管理人员ID", required = true),
+            @ApiImplicitParam(name = "id", value = "创客ID", required = false),
+            @ApiImplicitParam(name = "accountName", value = "创客的真实姓名", required = false),
+            @ApiImplicitParam(name = "mobileCode", value = "创客的手机号", required = false)
     })
-    public ReturnJson getWorkerManyNot(@NotBlank(message = "管理人员ID不能为空") @RequestParam(required = false) String managersId,@RequestParam(required = false) String id,
-                                    @RequestParam(required = false) String accountName, @RequestParam(required = false) String mobileCode){
+    public ReturnJson getWorkerManyNot(@NotBlank(message = "管理人员ID不能为空") @RequestParam(required = false) String managersId, @RequestParam(required = false) String id,
+                                       @RequestParam(required = false) String accountName, @RequestParam(required = false) String mobileCode) throws CommonException {
         return workerService.getByIdAndAccountNameAndMobileNotPaas(managersId, id, accountName, mobileCode);
     }
 
     @PostMapping("/getWorkerInfo")
     @ApiOperation(value = "查询创客详情", notes = "查询创客详情", httpMethod = "POST")
-    @ApiImplicitParams(value={@ApiImplicitParam(name="id",value = "创客ID",required = true)})
-    public ReturnJson getWorkerInfo(@NotBlank(message = "创客ID不能为空") @RequestParam(required = false)  String id){
+    @ApiImplicitParams(value = {@ApiImplicitParam(name = "id", value = "创客ID", required = true)})
+    public ReturnJson getWorkerInfo(@NotBlank(message = "创客ID不能为空") @RequestParam(required = false) String id) {
         return workerService.getWorkerInfo(id);
     }
 
     @PostMapping("/getWorkerPaymentList")
     @ApiOperation(value = "查询创客的收入列表", notes = "查询创客的收入列表", httpMethod = "POST")
-    @ApiImplicitParams(value={@ApiImplicitParam(name="id",value = "创客ID",required = true)})
-    public ReturnJson getWorkerPaymentList(@NotBlank(message = "创客ID不能为空") @RequestParam(required = false)  String id,
-                                           @RequestParam(defaultValue = "1")  Integer page,
-                                           @RequestParam(defaultValue = "10")  Integer pageSize){
+    @ApiImplicitParams(value = {@ApiImplicitParam(name = "id", value = "创客ID", required = true)})
+    public ReturnJson getWorkerPaymentList(@NotBlank(message = "创客ID不能为空") @RequestParam(required = false) String id,
+                                           @RequestParam(defaultValue = "1") Integer page,
+                                           @RequestParam(defaultValue = "10") Integer pageSize) {
         return workerService.getWorkerPaymentListPaas(id, page, pageSize);
     }
 
     @PostMapping("/saveWorker")
     @ApiOperation(value = "导入创客", notes = "导入创客", httpMethod = "POST")
-    @ApiImplicitParams(value={@ApiImplicitParam(name="workers",value = "需要导入的创客集合",required = true, allowMultiple = true ,dataType = "Worker"),
-            @ApiImplicitParam(name="managersId",value = "管理人员ID",required = true)})
-    public ReturnJson saveWorker(@NotEmpty(message = "集合不能为空") @RequestBody List<Worker> workers, @NotBlank(message = "用户ID不能为空") @RequestParam(required = false) String managersId){
+    @ApiImplicitParams(value = {@ApiImplicitParam(name = "workers", value = "需要导入的创客集合", required = true, allowMultiple = true, dataType = "Worker"),
+            @ApiImplicitParam(name = "managersId", value = "管理人员ID", required = true)})
+    public ReturnJson saveWorker(@NotEmpty(message = "集合不能为空") @RequestBody List<Worker> workers, @NotBlank(message = "用户ID不能为空") @RequestParam(required = false) String managersId) {
         return workerService.saveWorker(workers, managersId);
     }
 
     @PostMapping("/updetaWorker")
     @ApiOperation(value = "编辑创客", notes = "编辑创客", httpMethod = "POST")
-    @ApiImplicitParams(value={@ApiImplicitParam(name="worker",value = "编辑后的创客",required = true,dataType = "Worker")})
-    public ReturnJson updataWorker(@RequestBody Worker worker){
+    @ApiImplicitParams(value = {@ApiImplicitParam(name = "worker", value = "编辑后的创客", required = true, dataType = "Worker")})
+    public ReturnJson updataWorker(@RequestBody Worker worker) {
         return workerService.updateWorkerPaas(worker);
     }
 
     private static Logger logger = LoggerFactory.getLogger(TaskControllerPaas.class);
-
 
 
     @Resource

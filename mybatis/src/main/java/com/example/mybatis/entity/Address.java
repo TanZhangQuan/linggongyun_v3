@@ -31,7 +31,7 @@ public class Address implements Serializable {
     /**
      * 商户ID
      */
-    private String merchantId;
+    private String companyId;
 
     /**
      * 联系人

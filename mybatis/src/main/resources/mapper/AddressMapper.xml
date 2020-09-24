@@ -5,7 +5,7 @@
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.example.mybatis.entity.Address">
         <id column="id" property="id" />
-        <id column="merchant_id" property="merchantId" />
+        <id column="company_id" property="companyId" />
         <result column="link_name" property="linkName" />
         <result column="link_mobile" property="linkMobile" />
         <result column="address_name" property="addressName" />
@@ -17,7 +17,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, merchant_id, link_name, link_mobile, address_name, is_not, create_date, update_date
+        id, company_id, link_name, link_mobile, address_name, is_not, create_date, update_date
     </sql>
 
 </mapper>

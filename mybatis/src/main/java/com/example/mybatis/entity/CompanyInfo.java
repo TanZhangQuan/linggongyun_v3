@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
@@ -25,6 +26,15 @@ public class CompanyInfo implements Serializable {
 
     @TableId(value = "id", type = IdType.ASSIGN_ID)
     private String id;
+    /**
+     * 业务员ID(必填)
+     */
+    private String salesManId;
+
+    /**
+     * 代理商ID(可以为空)
+     */
+    private String agentId;
 
     /**
      * 公司的简称
@@ -82,15 +92,14 @@ public class CompanyInfo implements Serializable {
     private String companyAddress;
 
     /**
+     * 公司的注册资本
+     */
+    private BigDecimal registeredCapital;
+
+    /**
      * 公司的成立时间
      */
     private LocalDateTime companyCreateDate;
-
-    /**
-     * 税源地ID(用来获取税源地信息)
-     */
-    private String taxId;
-
 
     /**
      * 开户行(银行名称)
@@ -126,6 +135,11 @@ public class CompanyInfo implements Serializable {
      * 社会统一信用代码
      */
     private String creditCode;
+
+    /**
+     * 审核状态0未审核，1已审核
+     */
+    private Integer auditStatus;
 
     /**
      * 公司状态

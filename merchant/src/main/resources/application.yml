@@ -50,7 +50,7 @@ mybatis-plus:
       logic-delete-value: 0
 
 #
-PWD_KEY: esdafw
+PWD_KEY: "esdafw"
 
 #初始化主帐号
 AccountSid: "8a216da873b27ace0173b30bff5d0079"

@@ -2,6 +2,7 @@ package com.example.merchant.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.common.util.ReturnJson;
+import com.example.merchant.exception.CommonException;
 import com.example.mybatis.entity.Worker;
 
 import java.util.List;
@@ -16,18 +17,29 @@ import java.util.List;
  */
 public interface WorkerService extends IService<Worker> {
     ReturnJson getWorkerAll(String merchantId, Integer page, Integer pageSize);
+
     ReturnJson getByIdAndAccountNameAndMobile(String merchantId, String id, String accountName, String mobileCode);
+
     ReturnJson getWorkerInfo(String id);
-    ReturnJson saveWorker(List<Worker> workers,String merchantId);
+
+    ReturnJson saveWorker(List<Worker> workers, String merchantId);
+
     ReturnJson getWorkerByTaskId(String taskId, Integer offset);
+
     ReturnJson getCheckByTaskId(String taskId, Integer offset);
 
-    ReturnJson getWorkerAllPaas(String managersId, Integer page, Integer pageSize);
-    ReturnJson getWorkerAllNotPaas(String managersId, Integer page, Integer pageSize);
-    ReturnJson getByIdAndAccountNameAndMobilePaas(String managersId, String id, String accountName, String mobileCode);
-    ReturnJson getByIdAndAccountNameAndMobileNotPaas(String managersId, String id, String accountName, String mobileCode);
+    ReturnJson getWorkerAllPaas(String managersId, Integer page, Integer pageSize) throws CommonException;
+
+    ReturnJson getWorkerAllNotPaas(String managersId, Integer page, Integer pageSize)throws CommonException;
+
+    ReturnJson getByIdAndAccountNameAndMobilePaas(String managersId, String id, String accountName, String mobileCode) throws CommonException;
+
+    ReturnJson getByIdAndAccountNameAndMobileNotPaas(String managersId, String id, String accountName, String mobileCode) throws CommonException;
+
     ReturnJson getWorkerInfoPaas(String id);
+
     ReturnJson getWorkerPaymentListPaas(String id, Integer page, Integer pageSize);
+
     ReturnJson updateWorkerPaas(Worker worker);
 
 }

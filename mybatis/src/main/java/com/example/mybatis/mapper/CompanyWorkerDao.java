@@ -1,7 +1,7 @@
 package com.example.mybatis.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.example.mybatis.entity.MerchantWorker;
+import com.example.mybatis.entity.CompanyWorker;
 
 /**
  * <p>
@@ -9,8 +9,8 @@ import com.example.mybatis.entity.MerchantWorker;
  * </p>
  *
  * @author hzp
- * @since 2020-09-09
+ * @since 2020-09-23
  */
-public interface MerchantWorkerDao extends BaseMapper<MerchantWorker> {
+public interface CompanyWorkerDao extends BaseMapper<CompanyWorker> {
 
 }
