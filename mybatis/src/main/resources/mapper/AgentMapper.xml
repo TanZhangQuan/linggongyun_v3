@@ -4,25 +4,53 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.example.mybatis.entity.Agent">
-        <id column="id" property="id" />
-        <result column="managers_id" property="managersId" />
-        <result column="sales_man_id" property="salesManId" />
-        <result column="company_address" property="companyAddress" />
-        <result column="link_man" property="linkMan" />
-        <result column="link_mobile" property="linkMobile" />
-        <result column="contract_file" property="contractFile" />
-        <result column="company_name" property="companyName" />
-        <result column="agent_status" property="agentStatus" />
-        <result column="agent_user_name" property="agentUserName" />
-        <result column="agent_pwd" property="agentPwd" />
-        <result column="agent_code" property="agentCode" />
-        <result column="create_date" property="createDate" />
-        <result column="update_date" property="updateDate" />
+        <id column="id" property="id"/>
+        <result column="managers_id" property="managersId"/>
+        <result column="sales_man_id" property="salesManId"/>
+        <result column="company_address" property="companyAddress"/>
+        <result column="link_man" property="linkMan"/>
+        <result column="link_mobile" property="linkMobile"/>
+        <result column="contract_file" property="contractFile"/>
+        <result column="agent_name" property="agentName"/>
+        <result column="agent_status" property="agentStatus"/>
+        <result column="create_date" property="createDate"/>
+        <result column="update_date" property="updateDate"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id, managers_id, sales_man_id, company_address, link_man, link_mobile, contract_file, company_name, agent_status, agent_user_name, agent_pwd, agent_code, create_date, update_date
     </sql>
+
+    <resultMap id="AgentListPO" type="com.example.mybatis.po.AgentListPO">
+        <id column="id" property="agentId"/>
+        <result column="agent_name" property="agentName"/>
+        <result column="user_name" property="userName"/>
+        <result column="link_man" property="linkMan"/>
+        <result column="link_mobile" property="linkMobile"/>
+        <result column="contract_file" property="contractFile"/>
+        <result column="sales_man_name" property="salesManName"/>
+        <result column="status" property="status"/>
+        <result column="create_date" property="createDate"/>
+    </resultMap>
+
+    <!--查询代理商列表-->
+    <select id="selectAgentList" resultMap="AgentListPO" parameterType="list">
+        SELECT
+        a.id,
+        b.agent_name,
+        a.user_name,
+        b.link_man,
+        b.link_mobile,
+        b.contract_file,
+        c.real_name as 'sales_man_name',
+        a.status,
+        a.create_date
+        FROM tb_managers a
+        JOIN tb_agent b
+        ON a.id = b.managers_id
+        JOIN tb_managers c
+        ON b.sales_man_id = c.id
+    </select>
 
 </mapper>

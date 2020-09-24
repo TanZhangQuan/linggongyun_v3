@@ -14,7 +14,6 @@
         <result column="pass_word" property="passWord" />
         <result column="parent_id" property="parentId" />
         <result column="login_mobile" property="loginMobile" />
-        <result column="audit_status" property="auditStatus" />
         <result column="status" property="status" />
         <result column="create_date" property="createDate" />
         <result column="update_date" property="updateDate" />
@@ -88,10 +87,9 @@
     <select id="selectMerchantInfoPo" resultMap="MerchantInfoPo" parameterType="list">
         SELECT a.id , a.company_name, b.link_name, b.link_mobile,
         (case when a.agent_id is null then '业务员' else '业务员/代理商' end) structure,
-        c.contract, a.`status`, a.create_date
-        from tb_merchant a
-        LEFT JOIN tb_linkman b on a.id = b.merchant_id
-        LEFT JOIN tb_company_info c on a.company_id = c.id
+        a.contract, a.company_status, a.create_date
+        from tb_company_info a
+        LEFT JOIN tb_linkman b on a.id = b.company_id
         <where>
             a.id in
             <foreach collection="merchantIds" index="index" item="item" open="(" separator="," close=")">

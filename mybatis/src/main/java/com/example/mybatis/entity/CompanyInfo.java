@@ -102,12 +102,6 @@ public class CompanyInfo implements Serializable {
     private LocalDateTime companyCreateDate;
 
     /**
-     * 税源地ID(用来获取税源地信息)
-     */
-    private String taxId;
-
-
-    /**
      * 开户行(银行名称)
      */
     private String bankName;
@@ -141,6 +135,11 @@ public class CompanyInfo implements Serializable {
      * 社会统一信用代码
      */
     private String creditCode;
+
+    /**
+     * 审核状态0未审核，1已审核
+     */
+    private Integer auditStatus;
 
     /**
      * 公司状态

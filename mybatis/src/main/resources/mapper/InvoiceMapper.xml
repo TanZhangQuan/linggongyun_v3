@@ -139,7 +139,7 @@
 
     <!--查询总包的发票数量和发票金额-->
     <select id="selectInvoiceMoney" parameterType="string" resultMap="InvoiceMoney">
-        select SUM(d.invoice_numbers) 'count', SUM(d.invoice_money) 'total_money' from tb_merchant a RIGHT JOIN tb_payment_order b on a.id = b.merchant_id
+        select SUM(d.invoice_numbers) 'count', SUM(d.invoice_money) 'total_money' from tb_company_info a RIGHT JOIN tb_payment_order b on a.id = b.company_id
         RIGHT join
         (select * from tb_application_payment
         GROUP BY invoice_application_id)
@@ -149,7 +149,7 @@
     </select>
 
     <select id="selectInvoiceMoneyPaas" parameterType="string" resultMap="InvoiceMoney">
-        select SUM(d.invoice_numbers) 'count', SUM(d.invoice_money) 'total_money' from tb_merchant a RIGHT JOIN tb_payment_order b on a.id = b.merchant_id
+        select SUM(d.invoice_numbers) 'count', SUM(d.invoice_money) 'total_money' from tb_company_info a RIGHT JOIN tb_payment_order b on a.id = b.company_id
         RIGHT join
         (select * from tb_application_payment
         GROUP BY invoice_application_id)
@@ -161,14 +161,14 @@
         </foreach>
     </select>
 
-    <select id="selectTotalpaas" resultMap="resultTotal" parameterType="list">
-        select package_status ,SUM(invoice_money) 'total_money' , COUNT(*) 'count' FROM tb_invoice
-        WHERE merchant_id in
-        <foreach collection="list" index="index" item="merchantIds" open="(" separator="," close=")">
-            #{merchantIds}
-        </foreach>
-        GROUP BY package_status
-    </select>
+<!--    <select id="selectTotalpaas" resultMap="resultTotal" parameterType="list">-->
+<!--        select package_status ,SUM(invoice_money) 'total_money' , COUNT(*) 'count' FROM tb_invoice-->
+<!--        WHERE merchant_id in-->
+<!--        <foreach collection="list" index="index" item="merchantIds" open="(" separator="," close=")">-->
+<!--            #{merchantIds}-->
+<!--        </foreach>-->
+<!--        GROUP BY package_status-->
+<!--    </select>-->
 
 
     <resultMap id="TobeInvoiced" type="com.example.mybatis.vo.TobeinvoicedVo">

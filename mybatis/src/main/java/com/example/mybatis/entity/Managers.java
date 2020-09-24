@@ -31,6 +31,10 @@ public class Managers implements Serializable {
     private String roleId;
 
     /**
+     * 真实姓名
+     */
+    private String realName;
+    /**
      * 登录用户名
      */
     private String userName;
