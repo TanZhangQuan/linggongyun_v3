@@ -1,6 +1,7 @@
 package com.example.merchant.util;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.example.merchant.exception.CommonException;
 import com.example.merchant.service.CompanyInfoService;
 import com.example.merchant.service.MerchantService;
 import com.example.mybatis.entity.CompanyInfo;
@@ -34,9 +35,12 @@ public class AcquireID {
     @Autowired
     private MerchantDao merchantDao;
 
-    public List<String> getMerchantIds(String managersId) {
+    public List<String> getMerchantIds(String managersId) throws CommonException{
         List<String> merchantIds = new ArrayList<>();
         Managers managers = managersDao.selectById(managersId);
+        if(managers == null) {
+            throw new CommonException(300,"输入的ID有误，没有这个管理人员存在！");
+        }
         Integer userSign = managers.getUserSign();
         if (userSign == 1) {//管理人员为代理商
             List<CompanyInfo> merchants = companyInfoService.list(new QueryWrapper<CompanyInfo>().eq("agent_id", managers.getId()));
