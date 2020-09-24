@@ -95,10 +95,10 @@ redis:
   timeout: 3000ms # 连接超时时间（毫秒）
 
 #本地图片存储路径
-PathImage_KEY: "G:/upload/image/"
+PathImage_KEY: "D:/upload/image/"
 
 #本地excel存储路径
-PathExcel_KEY: "G:/upload/excel/"
+PathExcel_KEY: "D:/upload/excel/"
 
 #图片的访问路径
 fileStaticAccesspathImage: "/static/image/"

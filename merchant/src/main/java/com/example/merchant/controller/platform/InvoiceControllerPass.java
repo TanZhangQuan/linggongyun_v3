@@ -2,13 +2,17 @@ package com.example.merchant.controller.platform;
 
 
 import com.example.common.util.ReturnJson;
+import com.example.merchant.dto.MakerTotalInvoiceDto;
 import com.example.merchant.service.InvoiceService;
+import com.example.merchant.service.MakerInvoiceService;
+import com.example.merchant.service.MakerTotalInvoiceService;
 import com.example.mybatis.dto.AddInvoiceDto;
 import com.example.mybatis.dto.TobeinvoicedDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -32,6 +36,10 @@ public class InvoiceControllerPass {
 
     @Resource
     private InvoiceService invoiceService;
+    @Autowired
+    private MakerTotalInvoiceService makerTotalInvoiceService;
+    @Autowired
+    private MakerInvoiceService makerInvoiceService;
 
     @ApiOperation("总包开票，待开票")
     @PostMapping("/getPlaInvoiceList")
@@ -100,6 +108,30 @@ public class InvoiceControllerPass {
         ReturnJson returnJson=new ReturnJson("查询失败",300);
         try{
             returnJson=invoiceService.getInvoiceListQuery(invoiceId, companySNames, platformServiceProviders);
+        }catch (Exception err){
+            logger.error("出现异常错误",err);
+        }
+        return returnJson;
+    }
+
+    @ApiOperation("汇总代开")
+    @PostMapping("/saveOrUpdateMakerTotalInvoice")
+    public ReturnJson saveOrUpdateMakerTotalInvoice(MakerTotalInvoiceDto makerTotalInvoiceDto){
+        ReturnJson returnJson=new ReturnJson("查询失败",300);
+        try{
+            returnJson=makerTotalInvoiceService.saveOrUpdateMakerTotalInvoice(makerTotalInvoiceDto);
+        }catch (Exception err){
+            logger.error("出现异常错误",err);
+        }
+        return returnJson;
+    }
+
+    @ApiOperation("门征单开,开票清单明细信息")
+    @PostMapping("/getPaymentInventory")
+    public ReturnJson getPaymentInventory(String invoiceId){
+        ReturnJson returnJson=new ReturnJson("查询失败",300);
+        try{
+            returnJson=makerInvoiceService.getPaymentInventory(invoiceId);
         }catch (Exception err){
             logger.error("出现异常错误",err);
         }

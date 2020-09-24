@@ -7,8 +7,10 @@ import com.example.common.util.ReturnJson;
 import com.example.common.util.UuidUtil;
 import com.example.merchant.service.FileOperationService;
 import com.example.merchant.service.WorkerService;
+import com.example.mybatis.entity.MakerInvoice;
 import com.example.mybatis.entity.PaymentInventory;
 import com.example.mybatis.entity.Worker;
+import com.example.mybatis.mapper.MakerInvoiceDao;
 import com.example.mybatis.mapper.WorkerDao;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +36,9 @@ public class FileOperationServiceImpl implements FileOperationService {
 
     @Autowired
     private WorkerService workerService;
+
+    @Autowired
+    private MakerInvoiceDao makerInvoiceDao;
 
     @Value("${PWD_KEY}")
     private String PWD_KEY;
@@ -187,6 +192,50 @@ public class FileOperationServiceImpl implements FileOperationService {
             return ReturnJson.success("Excel上传成功！", accessPath, paymentInventorys);
         } else {
             return ReturnJson.error("你上传的文件格式不正确！");
+        }
+    }
+
+    /**
+     * 上传门征单开发票或税票
+     *
+     * @param state
+     * @param uploadTaxReceipt
+     * @param paymentInventoryId
+     * @param request
+     * @return
+     * @throws IOException
+     */
+    @Override
+    public ReturnJson uploadInvoiceOrTaxReceipt(String state, MultipartFile uploadTaxReceipt, String paymentInventoryId, HttpServletRequest request) throws IOException {
+        if (uploadTaxReceipt.getSize() == 0) {
+            return ReturnJson.error("上传文件不能为空！");
+        }
+        String[] files = {"pdf", "jpg", "png", "rar", "zip", "7z", "arj"};
+        String fileName = uploadTaxReceipt.getOriginalFilename();
+        String suffixName = fileName.substring(fileName.indexOf(".") + 1);
+        if (Arrays.asList(files).contains(suffixName.toLowerCase())) {
+            String newFileName = UuidUtil.get32UUID() + "." + suffixName;
+            File fileMkdir = new File(PathImage_KEY);
+            if (!fileMkdir.exists()) {// 判断目录是否存在
+                fileMkdir.mkdirs();
+            }
+            String filePath = PathImage_KEY + newFileName;
+            File file = new File(filePath);
+            String accessPath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() +
+                    request.getContextPath() + fileStaticAccesspathImage + newFileName;
+            uploadTaxReceipt.transferTo(file);
+            MakerInvoice makerInvoice = new MakerInvoice();
+            if (state.equals("0")) {
+                makerInvoice.setMakerVoiceUrl(fileName);
+                makerInvoiceDao.update(makerInvoice,new QueryWrapper<MakerInvoice>().eq("payment_inventory_id",paymentInventoryId));
+                return ReturnJson.success("发票上传成功", accessPath);
+            } else {
+                makerInvoice.setMakerTaxUrl(fileName);
+                makerInvoiceDao.update(makerInvoice,new QueryWrapper<MakerInvoice>().eq("payment_inventory_id",paymentInventoryId));
+                return ReturnJson.success("税票上传成功", accessPath);
+            }
+        } else {
+            return ReturnJson.error("你上传的文件格式不正确！,请上传" + Arrays.toString(files) + "格式的文件。");
         }
     }
 }

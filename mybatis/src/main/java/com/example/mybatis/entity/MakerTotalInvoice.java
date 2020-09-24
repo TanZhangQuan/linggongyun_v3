@@ -1,12 +1,12 @@
 package com.example.mybatis.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 /**
@@ -41,7 +41,7 @@ public class MakerTotalInvoice implements Serializable {
     /**
      * 开票日期
      */
-    private Date invoiceDate;
+    private LocalDateTime invoiceDate;
 
     /**
      * 服务类型
@@ -51,17 +51,12 @@ public class MakerTotalInvoice implements Serializable {
     /**
      * 价税合计
      */
-    private Double totalAmount;
-
-    /**
-     * 金额总价
-     */
-    private Double salesAmount;
+    private BigDecimal totalAmount;
 
     /**
      * 税额总价
      */
-    private Double taxAmount;
+    private BigDecimal taxAmount;
 
     /**
      * 开票人
@@ -91,17 +86,19 @@ public class MakerTotalInvoice implements Serializable {
     /**
      * 发票上传日期
      */
-    private Date makerVoiceUploadDateTime;
+    private LocalDateTime makerVoiceUploadDateTime;
 
     /**
      * 创建时间
      */
-    private Date createTime;
+    @TableField(fill = FieldFill.INSERT)
+    private LocalDateTime createTime;
 
     /**
      * 修改时间
      */
-    private Date updateTime;
+    @TableField(fill = FieldFill.INSERT)
+    private LocalDateTime updateTime;
 
     private static final long serialVersionUID = 1L;
 

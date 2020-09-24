@@ -81,6 +81,16 @@ public class PaymentOrder implements Serializable {
     private String subpackagePayment;
 
     /**
+     * 是否申请总包开票：0为申请,1已申请
+     */
+    private Integer isInvoice;
+
+    /**
+     * 是否分包开票0，为开票 1，已开票
+     */
+    private Integer isSubpackage;
+
+    /**
      * 关联的任务(可以不关联)
      */
     private String taskId;
