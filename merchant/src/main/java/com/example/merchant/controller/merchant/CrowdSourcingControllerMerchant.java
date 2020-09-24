@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 
-@Api(value = "众包发票关操作接口", tags = {"众包发票关操作接口"})
+@Api(value = "商户端众包发票关操作接口", tags = {"商户端众包发票关操作接口"})
 @RestController
 @RequestMapping("/merchant/subpackage")
 public class CrowdSourcingControllerMerchant {

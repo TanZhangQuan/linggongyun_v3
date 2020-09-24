@@ -9,8 +9,8 @@
         <result column="invoice_id" property="invoiceId"/>
         <result column="task_code" property="taskCode"/>
         <result column="task_name" property="taskName"/>
-        <result column="release_data" property="releaseData"/>
-        <result column="deadline_data" property="deadlineData"/>
+        <result column="release_data" property="releaseDate"/>
+        <result column="deadline_data" property="deadlineDate"/>
         <result column="task_desc" property="taskDesc"/>
         <result column="industry_type" property="industryType"/>
         <result column="task_cost_min" property="taskCostMin"/>
@@ -117,9 +117,8 @@
         <result column="task_code" property="taskCode"/>
         <result column="merchant_name" property="merchantName"/>
         <result column="task_name" property="taskName"/>
-        <result column="release_data" property="releaseData"/>
+        <result column="release_data" property="releaseDate"/>
         <result column="industry_type" property="industryType"/>
-        <result column="task_skill" property="taskSkill"/>
         <result column="release_time" property="releaseTime"/>
         <result column="cooperate_mode" property="cooperateMode"/>
         <result column="task_mode" property="taskMode"/>

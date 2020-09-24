@@ -5,11 +5,15 @@ import lombok.Data;
 import java.math.BigDecimal;
 
 /**
- * 开票清单明细信息
+ * 分包开票清单明细信息
  */
 @Data
 public class InvoiceListVo {
 
+    /**
+     * 支付清单id
+     */
+    private String id;
     /**
      * 创客名称
      */
@@ -57,5 +61,20 @@ public class InvoiceListVo {
      * 个人服务费
      */
     private BigDecimal personalServiceFee;
+
+    /**
+     * 门征单开使用是否分包开票
+     */
+    private String invoiceStatu;
+
+    /**
+     * 门征单开使用分包发票
+     */
+    private String makerVoiceUrl;
+
+    /**
+     * 门征单开使用分包税票
+     */
+    private String makerTaxUrl;
 
 }

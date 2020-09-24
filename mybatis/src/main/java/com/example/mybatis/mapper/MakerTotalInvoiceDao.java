@@ -1,8 +1,9 @@
 package com.example.mybatis.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.example.mybatis.entity.MakerTotalInvoice;
 
-public interface MakerTotalInvoiceDao {
+public interface MakerTotalInvoiceDao extends BaseMapper<MakerTotalInvoice> {
     int deleteByPrimaryKey(String id);
 
     int insert(MakerTotalInvoice record);

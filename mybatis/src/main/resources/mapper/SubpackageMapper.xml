@@ -69,10 +69,10 @@
             AND po.platform_service_provider=#{platformServiceProvider}
         </if>
         <if test="applicationDateOne != null and applicationDateOne != ''">
-            AND ia.invapp.application_date>={applicationDate}
+            AND ia.invapp.application_date>=#{applicationDateOne}
         </if>
         <if test="applicationDateTwo != null and applicationDateTwo != ''">
-            AND ia.invapp.application_date <![CDATA[<=]]> {applicationDate}
+            AND ia.invapp.application_date <![CDATA[<=]]> #{applicationDateTwo}
         </if>
     </sql>
 

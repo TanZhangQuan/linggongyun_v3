@@ -100,6 +100,7 @@ class MerchantApplicationTests {
 
 	@Test
 	void getTotal(){
+		System.out.println(0x1F & 0x01 );
 //		List<PaymentOrderPO> paymentOrderPOS = paymentOrderDao.selectTotal("3666abe4ec7691d8c83d5b7b4d257bc9");
 //		for (PaymentOrderPO payPo : paymentOrderPOS){
 //			System.out.println(payPo.getPackageStatus()+"=================="+payPo.getTotalMoney());

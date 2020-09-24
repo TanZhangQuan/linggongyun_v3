@@ -1,32 +1,33 @@
 package com.example.mybatis.entity;
 
-import com.baomidou.mybatisplus.annotation.*;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Date;
 
+import com.baomidou.mybatisplus.annotation.*;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
+
 /**
- * tb_maker_total_invoice
+ * tb_maker_invoice
  * @author 
  */
 @Data
-@EqualsAndHashCode(callSuper = false)
-@TableName("tb_maker_total_invoice")
-public class MakerTotalInvoice implements Serializable {
+@TableName("tb_maker_invoice")
+public class MakerInvoice implements Serializable {
     /**
-     * 汇总代开id
+     * 门征单开主键
      */
-    @TableId(value = "id", type = IdType.ASSIGN_ID)
+    @TableId(type = IdType.ASSIGN_ID,value = "id")
     private String id;
 
     /**
-     * 申请开票id
+     * 创客支付ID
      */
-    private String invoiceApplicationId;
+    private String paymentInventoryId;
 
     /**
      * 发票代码
@@ -39,29 +40,29 @@ public class MakerTotalInvoice implements Serializable {
     private String invoiceSerialNo;
 
     /**
-     * 开票日期
+     * 发票开具日期
      */
-    private LocalDateTime invoiceDate;
+    private LocalDateTime makerVoiceGetDateTime;
 
     /**
-     * 服务类型
+     * 服务名称
      */
     private String invoiceCategory;
 
     /**
-     * 价税合计
+     * 开票金额
      */
     private BigDecimal totalAmount;
 
     /**
-     * 税额总价
+     * 税额合计
      */
     private BigDecimal taxAmount;
 
     /**
      * 开票人
      */
-    private String invoicePerson;
+    private String ivoicePerson;
 
     /**
      * 销售方名称
@@ -69,17 +70,28 @@ public class MakerTotalInvoice implements Serializable {
     private String saleCompany;
 
     /**
-     * 开票说明
+     * 代开机关名称
      */
-    private String makerInvoiceDesc;
+    private String helpMakeOrganationName;
 
     /**
-     * 分包发票url
+     * 代开企业名称
      */
-    private String makerInvoiceUrl;
+    private String helpMakeCompany;
 
     /**
-     * 分包完税证明URL
+     * 代开企业税号
+     */
+    @ApiModelProperty(value = "代开企业税号")
+    private String helpMakeTaxNo;
+
+    /**
+     * 发票URL
+     */
+    private String makerVoiceUrl;
+
+    /**
+     * 税票URL
      */
     private String makerTaxUrl;
 
@@ -95,11 +107,10 @@ public class MakerTotalInvoice implements Serializable {
     private LocalDateTime createTime;
 
     /**
-     * 修改时间
+     * 更新时间
      */
-    @TableField(fill = FieldFill.INSERT)
+    @TableField(fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime updateTime;
 
     private static final long serialVersionUID = 1L;
-
 }

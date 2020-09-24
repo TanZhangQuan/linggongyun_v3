@@ -11,8 +11,10 @@ import com.example.mybatis.dto.AddInvoiceDto;
 import com.example.mybatis.dto.TobeinvoicedDto;
 import com.example.mybatis.entity.Invoice;
 import com.example.mybatis.entity.InvoiceLadderPrice;
+import com.example.mybatis.entity.PaymentInventory;
 import com.example.mybatis.mapper.InvoiceDao;
 import com.example.mybatis.mapper.InvoiceLadderPriceDao;
+import com.example.mybatis.mapper.PaymentInventoryDao;
 import com.example.mybatis.vo.*;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +49,8 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
     private InvoiceApplicationService invoiceApplicationService;
     @Autowired
     private InvoiceLadderPriceDao invoiceLadderPriceDao;
+    @Autowired
+    private PaymentInventoryDao paymentInventoryDao;
 
 
     @Override
@@ -189,6 +193,11 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
         return returnJson;
     }
 
+    /**
+     * 分包开票待开票
+     * @param tobeinvoicedDto
+     * @return
+     */
     @Override
     public ReturnJson getListSubQuery(TobeinvoicedDto tobeinvoicedDto) {
         ReturnJson returnJson = new ReturnJson("操作失败", 300);
@@ -232,6 +241,8 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
         }
         List<InvoiceListVo> voList = invoiceDao.getInvoiceListQuery(list);
         for (InvoiceListVo vo : voList) {
+            PaymentInventory paymentInventory=new PaymentInventory();
+            paymentInventory.setId(vo.getId());
             totalTaxPrice = totalTaxPrice.add(vo.getTaskMoney());
             List<InvoiceLadderPrice> invoiceLadderPrice = invoiceLadderPriceDao.selectList(new QueryWrapper<InvoiceLadderPrice>().eq("tax_id", vo.getTaxId()));
             if (invoiceLadderPrice != null) {
