@@ -34,6 +34,37 @@
         <result column="express_company_name" property="expressCompanyName"/>
         <result column="express_sheet_no" property="expressSheetNo"/>
     </resultMap>
+
+    <resultMap id="CrowdSourcingInvoicePass" type="com.example.mybatis.vo.CrowdSourcingInvoiceVo">
+        <result column="application_id" property="applicationId"/>
+        <result column="company_id" property="companyId"/>
+        <result column="company_s_name" property="companySName"/>
+        <result column="platform_service_provider" property="platformServiceProvider"/>
+        <result column="id" property="id"/>
+        <result column="payment_inventory" property="paymentInventory"/>
+        <result column="many_payment" property="manyPayment"/>
+        <result column="is_application" property="isApplication"/>
+        <result column="application_state" property="applicationState"/>
+        <result column="application_date" property="applicationDate"/>
+    </resultMap>
+
+    <resultMap id="PayOrderManyById" type="com.example.mybatis.vo.PaymentOrderManyVo">
+        <result column="id" property="id"/>
+        <result column="company_s_name" property="companySName"/>
+        <result column="platform_service_provider" property="platformServiceProvider"/>
+        <result column="acceptance_certificate" property="acceptanceCertificate"/>
+        <result column="payment_order_status" property="paymentOrderStatus"/>
+        <result column="payment_inventory" property="paymentInventory"/>
+        <result column="payment_date" property="paymentDate"/>
+        <result column="real_money" property="realMoney"/>
+        <association property="taskVo" javaType="com.example.mybatis.vo.TaskVo">
+            <result column="task_code" property="taskCode"/>
+            <result column="task_name" property="taskName"/>
+            <result column="release_date" property="releaseDate"/>
+            <result column="deadline_date" property="deadlineDate"/>
+            <result column="industry_type" property="industryType"/>
+        </association>
+    </resultMap>
     <!--查询条件-->
     <sql id="que">
         <if test="merchantId != null and merchantId != ''">
@@ -43,10 +74,10 @@
             AND pom.platform_service_provider=#{platformServiceProvider}
         </if>
         <if test="applicationDateOne != null and applicationDateOne != ''">
-            AND csp.invapp.application_date>={applicationDate}
+            AND csp.application_date>=#{applicationDateOne}
         </if>
         <if test="applicationDateTwo != null and applicationDateTwo != ''">
-            AND csp.invapp.application_date <![CDATA[<=]]> {applicationDate}
+            AND csp.application_date <![CDATA[<=]]> #{applicationDateTwo}
         </if>
     </sql>
 
@@ -112,6 +143,73 @@
         join tb_crowd_sourcing_application c on b.id = c.payment_order_many_id
         join tb_crowd_sourcing_invoice d on c.id = d.application_id
         where b.tax_id = #{taxId}
+    </select>
+
+
+    <select id="getCrowdSourcingInvoicePass" resultMap="CrowdSourcingInvoicePass">
+        SELECT  csa.id as application_id,pom.company_id,pom.company_s_name,pom.platform_service_provider,pom.id,pom.payment_inventory,pom.many_payment,pom.is_application,csa.application_state,csa.application_date
+        FROM tb_payment_order_many pom
+        LEFT JOIN tb_crowd_sourcing_application csa ON csa.payment_order_many_id=pom.id
+        WHERE csa.application_state=1 or csa.application_state is null
+        AND pom.payment_order_status=3
+        <if test="companySName != null and companySName != ''">
+            AND po.company_s_name like CONCAT('%',#{companySName},'%')
+        </if>
+        <if test="platformServiceProvider != null and platformServiceProvider != ''">
+            AND pom.platform_service_provider=#{platformServiceProvider}
+        </if>
+        <if test="applicationDateOne != null and applicationDateOne != ''">
+            AND csa.application_date>=#{applicationDateOne}
+        </if>
+        <if test="applicationDateTwo != null and applicationDateTwo != ''">
+            AND csa.application_date <![CDATA[<=]]> #{applicationDateTwo}
+        </if>
+    </select>
+    <!--平台查询支付信息-->
+    <select id="getPaymentOrderManyPass" resultMap="PayOrderManyById">
+        SELECT pom.id,pom.company_s_name,pom.platform_service_provider,pom.payment_inventory,pom.acceptance_certificate,
+        pom.many_payment,pom.payment_order_status,pom.payment_date,t.task_code,t.task_name,t.release_date,t.deadline_date,t.industry_type
+        from tb_payment_order_many pom
+        LEFT JOIN tb_task t ON t.id=pom.task_id
+        WHERE pom.id=#{payId}
+    </select>
+    <!--平台端查询开票清单明细-->
+    <resultMap id="InvoiceListQuery" type="com.example.mybatis.vo.InvoiceDetailsVo">
+        <id column="id" property="id"/>
+        <result column="worker_name" property="workerName"/>
+        <result column="mobile_code" property="mobileCode"/>
+        <result column="id_card_code" property="idCardCode"/>
+        <result column="bank_code" property="bankCode"/>
+        <result column="real_money" property="realMoney"/>
+        <result column="task_money" property="taskMoney"/>
+        <result column="tax_id" property="taxId"/>
+        <result column="recevice_tax" property="receviceTax"/>
+    </resultMap>
+    <select id="getPaymentInventoryPass" resultMap="InvoiceListQuery">
+        SELECT pi.id,pi.worker_name,pi.mobile_code,pi.id_card_code,pi.bank_code,pi.real_money,pi.task_money,pom.tax_id,pom.recevice_tax
+        FROM tb_payment_order_many pom
+        LEFT JOIN tb_payment_inventory pi ON pi.payment_order_id=pom.id
+        WHERE pom.id=#{payId}
+    </select>
+
+    <resultMap id="BuyerById" type="com.example.mybatis.vo.BuyerVo">
+        <result column="company_name" property="companyName"/>
+        <result column="credit_code" property="creditCode"/>
+        <result column="company_address" property="companyAddress"/>
+        <result column="telephones" property="telephones"/>
+        <result column="bank_name" property="bankName"/>
+        <result column="bank_code" property="bankCode"/>
+    </resultMap>
+    <select id="getBuyer" resultType="com.example.mybatis.vo.BuyerVo">
+        SELECT m.company_name,ci.credit_code,ci.company_address,ci.telephones,ci.bank_name,ci.bank_code
+        FROM tb_merchant as m
+        LEFT JOIN tb_company_info as ci ON m.company_id=ci.id
+        WHERE m.id=#{id}
+    </select>
+    <select id="getCrowdInvoiceCode" resultType="java.lang.String">
+        select invoice_code from tb_crowd_sourcing_invoice
+        where create_date in
+        (select MAX(create_date) from tb_crowd_sourcing_invoice)
     </select>
 
 </mapper>

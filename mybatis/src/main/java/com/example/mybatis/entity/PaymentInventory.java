@@ -74,6 +74,12 @@ public class PaymentInventory implements Serializable {
     private String bankCode;
 
     /**
+     * 任务金额
+     */
+    @ApiModelProperty("任务金额")
+    private BigDecimal taskMoney;
+
+    /**
      * 创客的实际到手的金额
      */
     @ApiModelProperty("创客的实际到手的金额")
@@ -90,6 +96,18 @@ public class PaymentInventory implements Serializable {
      */
     @ApiModelProperty("综合税率")
     private BigDecimal compositeTax;
+
+    /**
+     * 纳税率
+     */
+    @ApiModelProperty("综合税率")
+    private BigDecimal taxRate;
+
+    /**
+     * 纳税金额
+     */
+    @ApiModelProperty("综合税率")
+    private BigDecimal taxAmount;
 
     /**
      * 商户支付金额
