@@ -85,6 +85,22 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
         return returnJson;
     }
 
+    /**
+     * 判断是否为同一服务商
+     * @param serviceProviderNames
+     * @return
+     */
+    @Override
+    public ReturnJson isServiceProvider(String serviceProviderNames) {
+        ReturnJson returnJson = new ReturnJson("操作失败", 300);
+        String[] serviceProviderName = serviceProviderNames.split(",");
+        for (int i = 0; i < serviceProviderName.length; i++) {
+            if (serviceProviderName[0].equals(serviceProviderName[i])){
+                returnJson = new ReturnJson("操作成功", 200);
+            }
+        }
+        return returnJson;
+    }
 
 
     @Override

@@ -94,7 +94,7 @@ public class InvoiceControllerMerchant {
         return returnJson;
     }
 
-    @ApiOperation("总包发票列表,发票信息")
+    @ApiOperation("总包发票列表已开票,发票信息")
     @PostMapping(value = "/getInvInfoById")
     public ReturnJson getInvInfoById(String InvId) {
         ReturnJson returnJson = new ReturnJson("查询失败", 300);
@@ -161,6 +161,18 @@ public class InvoiceControllerMerchant {
         ReturnJson returnJson = new ReturnJson("查询失败", 300);
         try {
             returnJson = invoiceCatalogService.getListInv(id);
+        } catch (Exception err) {
+            logger.error("出现异常错误", err);
+        }
+        return returnJson;
+    }
+
+    @ApiOperation("判断是否为同一服务商,同时传入多个name")
+    @GetMapping(value = "isServiceProvider")
+    public ReturnJson isServiceProvider(String serviceProviderNames){
+        ReturnJson returnJson = new ReturnJson("查询失败", 300);
+        try {
+            returnJson =invoiceService.isServiceProvider(serviceProviderNames);
         } catch (Exception err) {
             logger.error("出现异常错误", err);
         }

@@ -18,7 +18,7 @@ import javax.annotation.Resource;
 
 @Api(value = "商户端众包发票关操作接口", tags = {"商户端众包发票关操作接口"})
 @RestController
-@RequestMapping("/merchant/subpackage")
+@RequestMapping("/merchant/crowdSourcing")
 public class CrowdSourcingControllerMerchant {
 
     @Resource
@@ -102,4 +102,6 @@ public class CrowdSourcingControllerMerchant {
         }
         return returnJson;
     }
+
+
 }

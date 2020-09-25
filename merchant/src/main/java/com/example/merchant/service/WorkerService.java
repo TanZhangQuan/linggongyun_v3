@@ -5,6 +5,7 @@ import com.example.common.util.ReturnJson;
 import com.example.merchant.exception.CommonException;
 import com.example.mybatis.entity.Worker;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -42,4 +43,13 @@ public interface WorkerService extends IService<Worker> {
 
     ReturnJson updateWorkerPaas(Worker worker);
 
+    ReturnJson loginWorker(String username, String password, HttpServletResponse response);
+
+    ReturnJson senSMS(String mobileCode);
+
+    ReturnJson loginMobile(String loginMobile, String checkCode, HttpServletResponse resource);
+
+    ReturnJson updataPassWord(String loginMobile, String checkCode, String newPassWord);
+
+    ReturnJson wxLogin(String code);
 }
