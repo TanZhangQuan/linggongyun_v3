@@ -112,29 +112,4 @@ public class TaskControllerMerchant {
         return returnJson;
     }
 
-
-    @ApiOperation("平台端任务列表")
-    @PostMapping(value = "/getplatformTasks")
-    public ReturnJson<Task> platformTaskList(TaskListDto taskListDto) {
-        ReturnJson returnJson = new ReturnJson("查询失败", 300);
-        try {
-            returnJson = taskService.getPlatformTaskList(taskListDto);
-        } catch (Exception err) {
-            logger.error("返回错误类型",err);
-        }
-        return returnJson;
-    }
-
-    //平台端添加任务信息
-    @ApiOperation("平台端任务新增")
-    @PostMapping(value = "/addPlatformTask")
-    public ReturnJson addPlatformTask(@RequestBody TaskDto taskDto) {
-        try {
-            return taskService.savePlatformTask(taskDto);
-        } catch (Exception err) {
-            logger.error("添加备注标签异常", err);
-            return new ReturnJson(err.toString(), 300);
-        }
-    }
-
 }

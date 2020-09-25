@@ -63,7 +63,7 @@
     <!--通用查询-->
     <sql id="que">
         <if test="merchantId != null and merchantId != ''">
-            AND po.merchant_id=#{merchantId}
+            AND po.company_id=#{merchantId}
         </if>
         <if test="platformServiceProvider != null and platformServiceProvider != ''">
             AND po.platform_service_provider=#{platformServiceProvider}
