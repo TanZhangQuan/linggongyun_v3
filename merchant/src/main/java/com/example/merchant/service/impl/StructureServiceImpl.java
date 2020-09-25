@@ -65,7 +65,7 @@ public class StructureServiceImpl implements StructureService {
      */
     @Override
     public ReturnJson addSalesMan(ManagersDto managersDto) {
-        if (!StringUtils.isBlank(managersDto.getConfirmPassWord()) || !StringUtils.isBlank(managersDto.getInitPassWord())) {
+        if (StringUtils.isBlank(managersDto.getConfirmPassWord()) || StringUtils.isBlank(managersDto.getInitPassWord())) {
             return ReturnJson.error("密码不能为空！");
         }
         if (!managersDto.getInitPassWord().equals(managersDto.getConfirmPassWord())) {
@@ -214,7 +214,7 @@ public class StructureServiceImpl implements StructureService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ReturnJson addAgent(AgentInfoDto agentInfoDto) {
-        if (!StringUtils.isBlank(agentInfoDto.getConfirmPassWord()) || !StringUtils.isBlank(agentInfoDto.getInitPassWord())) {
+        if (StringUtils.isBlank(agentInfoDto.getConfirmPassWord()) || StringUtils.isBlank(agentInfoDto.getInitPassWord())) {
             return ReturnJson.error("密码不能为空！");
         }
         if (!agentInfoDto.getInitPassWord().equals(agentInfoDto.getConfirmPassWord())) {

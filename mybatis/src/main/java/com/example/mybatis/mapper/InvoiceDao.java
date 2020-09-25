@@ -5,6 +5,7 @@ import com.example.mybatis.entity.Invoice;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.example.mybatis.po.InvoicePO;
 import com.example.mybatis.vo.*;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;
 
 import java.util.List;
@@ -28,6 +29,8 @@ public interface InvoiceDao extends BaseMapper<Invoice> {
     List<InvoiceListVo> getInvoiceListQuery(List<String> InvoiceIds);
 
     InvoicePO selectInvoiceMoneyPaasTax(String taxId);
+
+    InvoicePO selectInvoiceMoneyPaasRegultor(@Param("taxIds") List<String> taxIds);
 
     /**
      * 根据发票id查询发票信息

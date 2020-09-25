@@ -314,5 +314,19 @@
         where b.tax_id = #{taxId}
     </select>
 
+    <!--查询总包的发票数量和发票金额-->
+    <select id="selectInvoiceMoneyPaasRegultor" parameterType="string" resultMap="InvoiceMoney">
+        select SUM(d.invoice_numbers) 'count', SUM(d.invoice_money) 'total_money' from tb_payment_order b
+        RIGHT join
+        (select * from tb_application_payment
+        GROUP BY invoice_application_id)
+        c on b.id = c.payment_order_id
+        join tb_invoice d on c.invoice_application_id = d.application_id
+        where b.tax_id in
+        <foreach collection="taxIds" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
 
 </mapper>
