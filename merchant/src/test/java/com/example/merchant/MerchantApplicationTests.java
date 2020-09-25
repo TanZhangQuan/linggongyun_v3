@@ -139,14 +139,6 @@ class MerchantApplicationTests {
 	private InvoiceDao invoiceDao;
 
 	@Test
-	void TestInvoiceDao(){
-		List<InvoicePO> invoicePOS = invoiceDao.selectTotal("3666abe4ec7691d8c83d5b7b4d257bc9");
-		for (InvoicePO in : invoicePOS ){
-			System.out.println(in.getPackageStatus()+"------"+in.getTotalMoney()+"-------"+in.getCount());
-		}
-	}
-
-	@Test
 	void TestPage(){
 		Page<Invoice> invoicePage = new Page<>(2,2);
 		QueryWrapper<Invoice> queryWrapper = new QueryWrapper<>();
@@ -268,4 +260,9 @@ class MerchantApplicationTests {
 //		System.out.println(s);
 	}
 
+	@Test
+	void isNullTest(){
+		String a = "null";
+		a.equals(null);
+	}
 }
