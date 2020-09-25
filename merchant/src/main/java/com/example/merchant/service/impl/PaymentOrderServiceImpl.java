@@ -196,6 +196,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
             compositeTax = companyTax.getServiceCharge();
             for (PaymentInventory paymentInventory : paymentInventories) {
                 BigDecimal realMoney = paymentInventory.getRealMoney();
+                paymentInventory.setCompositeTax(compositeTax);
                 if (taxStatus == 0){
                     paymentInventory.setMerchantPaymentMoney(realMoney.multiply(compositeTax));
                     paymentInventory.setServiceMoney(realMoney.multiply(compositeTax));
@@ -216,6 +217,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
             for (PaymentInventory paymentInventory : paymentInventories) {
                 BigDecimal realMoney = paymentInventory.getRealMoney();
                 compositeTax = this.getCompositeTax(companyLadderServices,realMoney);
+                paymentInventory.setCompositeTax(compositeTax);
                 if (taxStatus == 0){
                     paymentInventory.setMerchantPaymentMoney(realMoney.multiply(compositeTax));
                     paymentInventory.setServiceMoney(realMoney.multiply(compositeTax));

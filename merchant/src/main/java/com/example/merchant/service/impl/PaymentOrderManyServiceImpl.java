@@ -229,6 +229,7 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
             compositeTax = companyTax.getServiceCharge();
             for (PaymentInventory paymentInventory : paymentInventories) {
                 BigDecimal realMoney = paymentInventory.getRealMoney();
+                paymentInventory.setCompositeTax(compositeTax);
                 if (taxStatus == 0){
                     paymentInventory.setMerchantPaymentMoney(realMoney.multiply(compositeTax));
                     paymentInventory.setServiceMoney(realMoney.multiply(compositeTax));
@@ -248,6 +249,7 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
             for (PaymentInventory paymentInventory : paymentInventories) {
                 BigDecimal realMoney = paymentInventory.getRealMoney();
                 compositeTax = this.getCompositeTax(companyLadderServices,realMoney);
+                paymentInventory.setCompositeTax(compositeTax);
                 if (taxStatus == 0){
                     paymentInventory.setMerchantPaymentMoney(realMoney.multiply(compositeTax));
                     paymentInventory.setServiceMoney(realMoney.multiply(compositeTax));
@@ -414,7 +416,7 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
      * @return
      */
     private BigDecimal getCompositeTax(List<CompanyLadderService> companyLadderServices,BigDecimal realMoney){
-        BigDecimal compositeTax = null;
+        BigDecimal compositeTax = new BigDecimal("0");
         for (CompanyLadderService companyLadderService : companyLadderServices) {
             BigDecimal startMoney = companyLadderService.getStartMoney();
             if (realMoney.compareTo(startMoney) >= 0){

@@ -18,6 +18,7 @@ import com.example.mybatis.mapper.CompanyInfoDao;
 import com.example.mybatis.mapper.ManagersDao;
 import com.example.mybatis.po.AgentListPO;
 import com.example.mybatis.po.SalesManPaymentListPO;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -63,23 +64,44 @@ public class StructureServiceImpl implements StructureService {
      * @return
      */
     @Override
-    public ReturnJson addOrUpdataSalesMan(ManagersDto managersDto) {
+    public ReturnJson addSalesMan(ManagersDto managersDto) {
+        if (!StringUtils.isBlank(managersDto.getConfirmPassWord()) || !StringUtils.isBlank(managersDto.getInitPassWord())) {
+            return ReturnJson.error("密码不能为空！");
+        }
         if (!managersDto.getInitPassWord().equals(managersDto.getConfirmPassWord())) {
             return ReturnJson.error("输入的2次密码不一样！");
         }
         Managers managers = new Managers();
-        if (managers.getId() != null) {
-            managers = managersDao.selectById(managers.getId());
-            BeanUtils.copyProperties(managersDto, managers);
-            if (!managers.getPassWord().equals(managersDto.getConfirmPassWord())) {
-                managers.setPassWord(PWD_KEY + MD5.md5(managersDto.getConfirmPassWord()));
+        BeanUtils.copyProperties(managersDto, managers);
+        managers.setPassWord(PWD_KEY + MD5.md5(managersDto.getConfirmPassWord()));
+        managersService.save(managers);
+        return ReturnJson.success("添加业务员成功！");
+    }
+
+    /**
+     * 编辑业务员
+     *
+     * @param managersDto
+     * @return
+     */
+    @Override
+    public ReturnJson updateSalesMan(ManagersDto managersDto) {
+        Managers managers = new Managers();
+        BeanUtils.copyProperties(managersDto, managers);
+        if (!StringUtils.isBlank(managersDto.getConfirmPassWord())) {
+            if (!managersDto.getConfirmPassWord().equals(managersDto.getInitPassWord())) {
+                return ReturnJson.error("输入的2次密码不一样！");
             }
-        } else {
-            BeanUtils.copyProperties(managersDto, managers);
             managers.setPassWord(PWD_KEY + MD5.md5(managersDto.getConfirmPassWord()));
         }
-        managersService.saveOrUpdate(managers);
-        return ReturnJson.success("添加业务员成功！");
+        if (StringUtils.isBlank(managersDto.getInitPassWord())) {
+            if (!managersDto.getInitPassWord().equals(managersDto.getConfirmPassWord())) {
+                return ReturnJson.error("输入的2次密码不一样！");
+            }
+            managers.setPassWord(PWD_KEY + MD5.md5(managersDto.getInitPassWord()));
+        }
+        managersService.updateById(managers);
+        return ReturnJson.success("编辑业务员成功！");
     }
 
     /**
@@ -91,6 +113,7 @@ public class StructureServiceImpl implements StructureService {
     @Override
     public ReturnJson findBySalesManId(String managersId) {
         Managers managers = managersService.getById(managersId);
+        managers.setPassWord("");
         return ReturnJson.success(managers);
     }
 
@@ -183,42 +206,78 @@ public class StructureServiceImpl implements StructureService {
     }
 
     /**
-     * 添加或编辑代理商
+     * 添加代理商
      *
      * @param agentInfoDto
      * @return
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ReturnJson addOrUpdataAgent(AgentInfoDto agentInfoDto) {
+    public ReturnJson addAgent(AgentInfoDto agentInfoDto) {
+        if (!StringUtils.isBlank(agentInfoDto.getConfirmPassWord()) || !StringUtils.isBlank(agentInfoDto.getInitPassWord())) {
+            return ReturnJson.error("密码不能为空！");
+        }
         if (!agentInfoDto.getInitPassWord().equals(agentInfoDto.getConfirmPassWord())) {
             return ReturnJson.error("输入的2次密码不一样");
         }
 
         Managers managers = new Managers();
         Agent agent = new Agent();
+        managers.setPassWord(PWD_KEY + MD5.md5(agentInfoDto.getConfirmPassWord()));
+        managers.setRealName(agentInfoDto.getAgentName());
+        managers.setUserName(agentInfoDto.getUserName());
+        managers.setUserSign(agentInfoDto.getUserSign());
+        managers.setMobileCode(agentInfoDto.getLinkMobile());
+        managers.setStatus(agentInfoDto.getAgentStatus());
+        managersService.save(managers);
 
-        if (agentInfoDto.getAgentId() != null) {
-            agent = agentDao.selectOne(new QueryWrapper<Agent>().eq("managers_id", agentInfoDto.getAgentId()));
-            managers = managersDao.selectById(agentInfoDto.getAgentId());
-            if (!agentInfoDto.getConfirmPassWord().equals(managers.getPaasName())) {
-                managers.setPassWord(PWD_KEY + MD5.md5(agentInfoDto.getConfirmPassWord()));
+        BeanUtils.copyProperties(agentInfoDto, agent);
+        agent.setManagersId(managers.getId());
+        agentService.save(agent);
+        return ReturnJson.success("添加代理商成功!");
+    }
+
+
+    /**
+     * 编辑代理商
+     *
+     * @param agentInfoDto
+     * @return
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public ReturnJson updataAgent(AgentInfoDto agentInfoDto) {
+
+        Managers managers = new Managers();
+        Agent agent = new Agent();
+        if (!StringUtils.isBlank(agentInfoDto.getConfirmPassWord())) {
+            if (!agentInfoDto.getConfirmPassWord().equals(agentInfoDto.getInitPassWord())) {
+                return ReturnJson.error("输入的2次密码不一样");
             }
-        } else {
             managers.setPassWord(PWD_KEY + MD5.md5(agentInfoDto.getConfirmPassWord()));
+        }
+        if (!StringUtils.isBlank(agentInfoDto.getInitPassWord())) {
+            if (!agentInfoDto.getInitPassWord().equals(agentInfoDto.getConfirmPassWord())) {
+                return ReturnJson.error("输入的2次密码不一样");
+            }
+            managers.setPassWord(PWD_KEY + MD5.md5(agentInfoDto.getInitPassWord()));
         }
         managers.setRealName(agentInfoDto.getAgentName());
         managers.setUserName(agentInfoDto.getUserName());
         managers.setUserSign(agentInfoDto.getUserSign());
         managers.setMobileCode(agentInfoDto.getLinkMobile());
         managers.setStatus(agentInfoDto.getAgentStatus());
-        managersService.saveOrUpdate(managers);
+        managersService.updateById(managers);
+
+        Agent agentOne = agentService.getOne(new QueryWrapper<Agent>().eq("mangers_id", agentInfoDto.getAgentId()));
 
         BeanUtils.copyProperties(agentInfoDto, agent);
         agent.setManagersId(managers.getId());
-        agentService.saveOrUpdate(agent);
-        return ReturnJson.success("添加代理商成功!");
+        agent.setId(agentOne.getId());
+        agentService.updateById(agent);
+        return ReturnJson.success("编辑代理商成功!");
     }
+
 
     /**
      * 查询所以代理商
@@ -247,10 +306,9 @@ public class StructureServiceImpl implements StructureService {
         BeanUtils.copyProperties(agent, agentInfoDto);
 
         Managers managers = managersDao.selectById(agentId);
+        managers.setPassWord("");
         agentInfoDto.setAgentId(agentId);
         agentInfoDto.setUserName(managers.getUserName());
-        agentInfoDto.setConfirmPassWord(managers.getPassWord());
-        agentInfoDto.setInitPassWord(managers.getPassWord());
         return ReturnJson.success(agentInfoDto);
     }
 

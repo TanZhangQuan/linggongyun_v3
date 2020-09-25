@@ -43,14 +43,14 @@ public class ManagersDto{
     /**
      * 初始密码
      */
-    @NotBlank(message = "初始密码不能为空！")
+
     @ApiModelProperty(notes = "初始密码", value = "初始密码",required = true)
     private String initPassWord;
 
     /**
      * 确认密码
      */
-    @NotBlank(message = "确认密码不能为空！")
+
     @ApiModelProperty(notes = "确认密码", value = "确认密码",required = true)
     private String confirmPassWord;
     /**

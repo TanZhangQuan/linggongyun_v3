@@ -1,8 +1,5 @@
 package com.example.merchant.dto;
 
-import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.example.mybatis.entity.Agent;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -12,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
-import java.time.LocalDateTime;
 
 @Data
 @ApiModel(description = "添加代理商的参数")
@@ -71,14 +67,12 @@ public class AgentInfoDto {
     /**
      * 初始密码
      */
-    @NotBlank(message = "初始密码不能为空！")
     @ApiModelProperty(notes = "初始密码", value = "初始密码", required = true)
     private String initPassWord;
 
     /**
      * 确认密码
      */
-    @NotBlank(message = "确认密码不能为空！")
     @ApiModelProperty(notes = "确认密码", value = "确认密码", required = true)
     private String confirmPassWord;
     /**

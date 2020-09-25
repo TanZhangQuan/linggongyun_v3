@@ -26,11 +26,18 @@ public class StructureController {
     @Autowired
     private StructureService structureService;
 
-    @PostMapping("/addOrUpdataSalesMan")
-    @ApiOperation(value = "添加或修改业务员", notes = "添加或修改业务员", httpMethod = "POST")
+    @PostMapping("/addSalesMan")
+    @ApiOperation(value = "添加业务员", notes = "添加或修改业务员", httpMethod = "POST")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "managersDto", value = "业务员的信息", required = true, dataType = "ManagersDto")})
-    public ReturnJson addOrUpdataSalesMan(@Valid @RequestBody ManagersDto managersDto) {
-        return structureService.addOrUpdataSalesMan(managersDto);
+    public ReturnJson addSalesMan(@Valid @RequestBody ManagersDto managersDto) {
+        return structureService.addSalesMan(managersDto);
+    }
+
+    @PostMapping("/updateSalesMan")
+    @ApiOperation(value = "编辑业务员", notes = "编辑业务员", httpMethod = "POST")
+    @ApiImplicitParams(value = {@ApiImplicitParam(name = "managersDto", value = "业务员的信息", required = true, dataType = "ManagersDto")})
+    public ReturnJson updateSalesMan(@Valid @RequestBody ManagersDto managersDto) {
+        return structureService.updateSalesMan(managersDto);
     }
 
     @PostMapping("/findBySalesManId")
@@ -82,11 +89,18 @@ public class StructureController {
         return structureService.getPaymentInventory(paymentOrderId, page, pageSize);
     }
 
-    @PostMapping("/addOrUpdataAgent")
-    @ApiOperation(value = "添加或编辑代理商", notes = "添加或编辑代理商", httpMethod = "POST")
+    @PostMapping("/addAgent")
+    @ApiOperation(value = "添加代理商", notes = "添加代理商", httpMethod = "POST")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "agentInfoDto", value = "代理商的信息", required = true, dataType = "AgentInfoDto")})
-    public ReturnJson addOrUpdataAgent(@Valid @RequestBody AgentInfoDto agentInfoDto) {
-        return structureService.addOrUpdataAgent(agentInfoDto);
+    public ReturnJson addAgent(@Valid @RequestBody AgentInfoDto agentInfoDto) {
+        return structureService.addAgent(agentInfoDto);
+    }
+
+    @PostMapping("/updataAgent")
+    @ApiOperation(value = "编辑代理商", notes = "编辑代理商", httpMethod = "POST")
+    @ApiImplicitParams(value = {@ApiImplicitParam(name = "agentInfoDto", value = "代理商的信息", required = true, dataType = "AgentInfoDto")})
+    public ReturnJson updataAgent(@Valid @RequestBody AgentInfoDto agentInfoDto) {
+        return structureService.updataAgent(agentInfoDto);
     }
 
     @PostMapping("/getAgentAll")
