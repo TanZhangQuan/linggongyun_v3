@@ -1,15 +1,21 @@
 package com.example.merchant.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.example.common.sms.SenSMS;
+import com.example.common.util.HttpClientUtils;
+import com.example.common.util.JsonUtils;
+import com.example.common.util.MD5;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.exception.CommonException;
 import com.example.merchant.service.CompanyWorkerService;
 import com.example.merchant.service.TaskService;
 import com.example.merchant.service.WorkerService;
 import com.example.merchant.service.WorkerTaskService;
+import com.example.merchant.util.JwtUtils;
 import com.example.mybatis.entity.CompanyWorker;
 import com.example.mybatis.entity.Merchant;
 import com.example.mybatis.entity.Worker;
@@ -19,13 +25,18 @@ import com.example.mybatis.mapper.WorkerDao;
 import com.example.mybatis.po.WorekerPaymentListPo;
 import com.example.mybatis.po.WorkerPo;
 import com.example.merchant.util.AcquireID;
+import com.example.redis.dao.RedisDao;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -53,6 +64,10 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
     @Autowired
     private MerchantDao merchantDao;
 
+    @Value("${PWD_KEY}")
+    String PWD_KEY;
+    @Value("${TOKEN}")
+    private String TOKEN;
 
     /**
      * 分页查询商户下的所以创客
@@ -317,6 +332,154 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
             return ReturnJson.success("编辑成功！");
         }
         return ReturnJson.error("编辑失败！");
+    }
+
+    @Autowired
+    private JwtUtils jwtUtils;
+
+    @Autowired
+    private SenSMS senSMS;
+
+    @Autowired
+    private RedisDao redisDao;
+
+    @Value("${APPID}")
+    private String APPID;
+
+    @Value("${SECRET}")
+    private String SECRET;
+
+    /**
+     * 创客登录
+     * @param username
+     * @param password
+     * @param response
+     * @return
+     */
+    @Override
+    public ReturnJson loginWorker(String username, String password, HttpServletResponse response) {
+        String encryptPWD = PWD_KEY + MD5.md5(password);
+        QueryWrapper<Worker> workerQueryWrapper = new QueryWrapper<>();
+        workerQueryWrapper.eq("user_name", username).eq("user_pwd", encryptPWD);
+        Worker worker = this.getOne(workerQueryWrapper);
+        if (worker != null) {
+            String token = jwtUtils.generateToken(worker.getId());
+            worker.setUserPwd("");
+            redisDao.set(worker.getId(), JsonUtils.objectToJson(worker));
+            response.setHeader(TOKEN, token);
+            redisDao.setExpire(worker.getId(), 60 * 60 * 24 * 7);
+            return ReturnJson.success(worker);
+        }
+        return ReturnJson.error("你输入的用户名或密码有误！");
+    }
+
+    /**
+     * 发送验证码
+     * @param mobileCode
+     * @return
+     */
+    @Override
+    public ReturnJson senSMS(String mobileCode) {
+        ReturnJson rj = new ReturnJson();
+        Worker worker = this.getOne(new QueryWrapper<Worker>().eq("mobile_code", mobileCode));
+        if (worker == null){
+            rj.setCode(401);
+            rj.setMessage("你还未注册，请先去注册！");
+            return rj;
+        }
+        Map<String, Object> result = senSMS.senSMS(mobileCode);
+        if ("000000".equals(result.get("statusCode"))) {
+            rj.setCode(200);
+            rj.setMessage("验证码发送成功");
+            redisDao.set(mobileCode,String.valueOf(result.get("checkCode")));
+            redisDao.setExpire(mobileCode,5*60);
+        } else if ("160040".equals(result.get("statusCode"))) {
+            rj.setCode(300);
+            rj.setMessage(String.valueOf(result.get("statusMsg")));
+        } else {
+            rj.setCode(300);
+            rj.setMessage(String.valueOf(result.get("statusMsg")));
+        }
+        return rj;
+    }
+
+    /**
+     *手机号登录
+     * @param loginMobile
+     * @param checkCode
+     * @param resource
+     * @return
+     */
+    @Override
+    public ReturnJson loginMobile(String loginMobile, String checkCode, HttpServletResponse resource) {
+        String redisCheckCode = redisDao.get(loginMobile);
+        if (StringUtils.isBlank(redisCheckCode)){
+            return ReturnJson.error("验证码以过期，请重新获取！");
+        } else if (!checkCode.equals(redisCheckCode)){
+            return ReturnJson.error("输入的验证码有误!");
+        } else {
+            redisDao.remove(loginMobile);
+            Worker worker = this.getOne(new QueryWrapper<Worker>().eq("mobile_code", loginMobile));
+            worker.setUserPwd("");
+            String token = jwtUtils.generateToken(worker.getId());
+            resource.setHeader(TOKEN,token);
+            redisDao.set(worker.getId(), JsonUtils.objectToJson(worker));
+            redisDao.setExpire(worker.getId(),60*60*24*7);
+            return ReturnJson.success(worker);
+        }
+    }
+
+    /**
+     * 修改密码忘记密码
+     * @param loginMobile
+     * @param checkCode
+     * @param newPassWord
+     * @return
+     */
+    @Override
+    public ReturnJson updataPassWord(String loginMobile, String checkCode, String newPassWord) {
+        String redisCode = redisDao.get(loginMobile);
+        if (redisCode.equals(checkCode)) {
+            Worker worker = new Worker();
+            worker.setUserPwd(PWD_KEY + MD5.md5(newPassWord));
+            boolean flag = this.update(worker, new QueryWrapper<Worker>().eq("login_mobile", loginMobile));
+            if (flag) {
+                redisDao.remove(loginMobile);
+                return ReturnJson.success("密码修改成功！");
+            } else {
+                return ReturnJson.success("密码修改失败！");
+            }
+        }
+        return ReturnJson.error("你的验证码有误！");
+    }
+
+    /**
+     * 微信登录
+     * @param code
+     * @return
+     */
+    @Override
+    public ReturnJson wxLogin(String code) {
+        //通过code换取网页授权access_token
+        String url="https://api.weixin.qq.com/sns/jscode2session?appid="+APPID+"&secret="+SECRET+"&js_code="+code+"&grant_type=authorization_code";//请求路径
+        JSONObject wxResult= HttpClientUtils.httpGet(url);
+        String openid = wxResult.getString("openid");
+        String access_Token = wxResult.getString("access_token");
+
+        //拉取用户信息(需scope为 snsapi_userinfo)
+        url = "https://api.weixin.qq.com/sns/userinfo?access_token=" + access_Token +
+                "&openid=" + openid +
+                "&lang=zh_CN";
+        JSONObject workerInfoJson = HttpClientUtils.httpGet(url);
+
+        Worker worker = workerDao.selectOne(new QueryWrapper<Worker>().eq("wx_id",openid));
+        if (worker == null) {
+            worker = new Worker();
+
+        } else {
+
+        }
+        return null;
     }
 }
 

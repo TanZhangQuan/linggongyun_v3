@@ -45,6 +45,12 @@ public class Task implements Serializable {
     private String merchantId;
 
     /**
+     * 商户ID(用来判断是哪个商户发布的任务)
+     */
+    @ApiModelProperty("商户ID")
+    private String merchantName;
+
+    /**
      * 任务的发票信息
      */
     @ApiModelProperty("任务的发票信息")

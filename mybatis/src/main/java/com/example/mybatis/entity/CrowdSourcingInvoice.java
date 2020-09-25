@@ -35,6 +35,11 @@ public class CrowdSourcingInvoice implements Serializable {
     private String id;
 
     /**
+     * 众包支付id
+     */
+    private String paymentOrderManyId;
+
+    /**
      * 申请id
      */
     @ApiModelProperty("申请id:可以为空，为空则说明商户未申请")
