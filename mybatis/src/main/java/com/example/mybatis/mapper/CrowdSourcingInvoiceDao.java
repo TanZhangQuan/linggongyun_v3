@@ -41,4 +41,8 @@ public interface CrowdSourcingInvoiceDao extends BaseMapper<CrowdSourcingInvoice
     List<InvoiceDetailsVo> getPaymentInventoryPass(String payId);
 
     String getCrowdInvoiceCode();
+
+    List<CrowdSourcingInfoVo> getCrowdSourcingInfoPass(TobeinvoicedDto tobeinvoicedDto, RowBounds rowBounds);
+
+    List<InvoiceDetailsVo> getPaymentInventoryInfoPass(String invoiceId);
 }

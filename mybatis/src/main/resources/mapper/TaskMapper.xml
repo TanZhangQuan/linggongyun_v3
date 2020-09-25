@@ -6,6 +6,7 @@
     <resultMap id="BaseResultMap" type="com.example.mybatis.entity.Task">
         <id column="id" property="id"/>
         <result column="merchant_id" property="merchantId"/>
+        <result column="merchant_name" property="merchantName"/>
         <result column="invoice_id" property="invoiceId"/>
         <result column="task_code" property="taskCode"/>
         <result column="task_name" property="taskName"/>
@@ -89,7 +90,7 @@
 
     <!--根据任务id查询任务详情-->
     <select id="setTaskById" resultMap="BaseResultMap">
-        SELECT task_code,task_name,task_desc,industry_type,task_cost_min,task_cost_max,task_skill,release_date,deadline_date,upper_limit,cooperate_mode,task_mode,state,create_date
+        SELECT task_code,(SELECT company_name FROM tb_merchant WHERE id=merchant_id) as merchant_name,task_name,task_desc,industry_type,task_cost_min,task_cost_max,task_skill,release_date,deadline_date,upper_limit,cooperate_mode,task_mode,state,create_date
         FROM tb_task where id=#{id}
     </select>
 

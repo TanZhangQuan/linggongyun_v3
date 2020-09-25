@@ -34,19 +34,6 @@ public class TaskControllerPaas {
     @Resource
     private TaskService taskService;
 
-    @ApiOperation("任务列表")
-    @PostMapping(value = "/getTasks")
-    public ReturnJson<Task> TaskList(TaskListDto taskListDto) {
-        ReturnJson returnJson = new ReturnJson("查询失败", 300);
-        try {
-            RowBounds rowBounds=new RowBounds(taskListDto.getPageNo(),3);
-            returnJson = taskService.selectList(taskListDto,rowBounds);
-        } catch (Exception err) {
-            logger.error("返回错误类型",err);
-        }
-        return returnJson;
-    }
-
 
     // 删除任务信息
     @ApiOperation("删除任务信息")
@@ -60,18 +47,6 @@ public class TaskControllerPaas {
         }
     }
 
-
-    //添加任务信息
-    @ApiOperation("任务新增")
-    @PostMapping(value = "/addTask")
-    public ReturnJson addTask(@RequestBody TaskDto taskDto) {
-        try {
-            return taskService.saveTask(taskDto);
-        } catch (Exception err) {
-            logger.error("添加备注标签异常", err);
-            return new ReturnJson(err.toString(), 300);
-        }
-    }
 
 
     //查看任务详情

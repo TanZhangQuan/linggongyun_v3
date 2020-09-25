@@ -141,10 +141,10 @@ class MerchantApplicationTests {
 
 	@Test
 	void TestInvoiceDao(){
-		List<InvoicePO> invoicePOS = invoiceDao.selectTotal("3666abe4ec7691d8c83d5b7b4d257bc9");
-		for (InvoicePO in : invoicePOS ){
-			System.out.println(in.getPackageStatus()+"------"+in.getTotalMoney()+"-------"+in.getCount());
-		}
+//		List<InvoicePO> invoicePOS = invoiceDao.selectTotal("3666abe4ec7691d8c83d5b7b4d257bc9");
+//		for (InvoicePO in : invoicePOS ){
+//			System.out.println(in.getPackageStatus()+"------"+in.getTotalMoney()+"-------"+in.getCount());
+//		}
 	}
 
 	@Test

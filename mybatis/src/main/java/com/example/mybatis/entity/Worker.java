@@ -30,6 +30,15 @@ public class Worker implements Serializable {
     @TableId(value = "id", type = IdType.ASSIGN_ID)
     @JsonSerialize(using = ToStringSerializer.class)
     private String id;
+    /**
+     * 微信openid
+     */
+    private String wxId;
+
+    /**
+     * 微信名称
+     */
+    private String wxName;
 
     /**
      * 创客姓名
@@ -136,6 +145,5 @@ public class Worker implements Serializable {
      */
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime updateDate;
-
 
 }

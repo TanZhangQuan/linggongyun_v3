@@ -2,6 +2,8 @@ package com.example.mybatis.vo;
 
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 /**
  * 众包发票已开票
  */
@@ -11,7 +13,7 @@ public class CrowdSourcingInfoVo {
     //发票id
     private String id;
     //商户ID
-    private String merchantId;
+    private String companyId;
     //发票code
     private String invoiceCode;
     //商户名称
@@ -30,9 +32,9 @@ public class CrowdSourcingInfoVo {
     private String invoiceUrl;
     //税票URL
     private String taxReceiptUrl;
-    //申请开票状态0.未申请；1.申请中；2.已拒绝；3.已开票，4未开票
-    private Integer applicationState;
+    //开票状态已开票，未开票
+    private String applicationState;
     //开票时间
-    private String invoicePrintDate;
+    private LocalDateTime invoicePrintDate;
 
 }

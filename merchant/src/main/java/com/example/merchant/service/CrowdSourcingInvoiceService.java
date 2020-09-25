@@ -23,4 +23,8 @@ public interface CrowdSourcingInvoiceService {
     ReturnJson getApplicationInfo(String applicationId);
 
     ReturnJson saveCrowdSourcingInvoice(CrowdSourcingInvoice crowdSourcingInvoice);
+
+    ReturnJson getCrowdSourcingInfoPass(TobeinvoicedDto tobeinvoicedDto);
+
+    ReturnJson getPaymentInventoryInfoPass(String invoiceId);
 }
