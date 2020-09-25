@@ -39,7 +39,7 @@ public class HomePageControllerPaas {
      * @param managersId
      * @return
      */
-    @PostMapping("/homePageInfo")
+    @PostMapping("/platform/homePageInfo")
     @ApiOperation(value = "获取首页基本信息", notes = "获取首页基本信息", httpMethod = "POST")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "managersId", value = "用户ID", required = true)})
     public ReturnJson myWorker(@NotBlank(message = "用户不能为空") @RequestParam(required = false) String managersId) throws CommonException {

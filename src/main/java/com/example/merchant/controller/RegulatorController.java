@@ -7,14 +7,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * <p>
- *  前端控制器
+ * 监管部门 前端控制器
  * </p>
  *
  * @author hzp
- * @since 2020-09-23
+ * @since 2020-09-25
  */
 @RestController
-@RequestMapping("/merchant/company-worker")
-public class CompanyWorkerController {
+@RequestMapping("/merchant/regulator")
+public class RegulatorController {
 
 }

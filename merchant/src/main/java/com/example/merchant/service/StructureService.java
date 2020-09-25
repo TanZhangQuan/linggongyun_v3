@@ -6,7 +6,9 @@ import com.example.merchant.dto.ManagersDto;
 import com.example.merchant.exception.CommonException;
 
 public interface StructureService {
-    ReturnJson addOrUpdataSalesMan(ManagersDto managersDto);
+    ReturnJson addSalesMan(ManagersDto managersDto);
+
+    ReturnJson updateSalesMan(ManagersDto managersDto);
 
     ReturnJson findBySalesManId(String managersId);
 
@@ -22,11 +24,14 @@ public interface StructureService {
 
     ReturnJson getPaymentInventory(String paymentOrderId, Integer page, Integer pageSize);
 
-    ReturnJson addOrUpdataAgent(AgentInfoDto agentInfoDto);
+    ReturnJson addAgent(AgentInfoDto agentInfoDto);
+
+    ReturnJson updataAgent(AgentInfoDto agentInfoDto);
 
     ReturnJson getAgentAll(Integer page, Integer pageSize);
 
     ReturnJson findByAgentId(String agentId);
 
     ReturnJson removeAgent(String agentId);
+
 }

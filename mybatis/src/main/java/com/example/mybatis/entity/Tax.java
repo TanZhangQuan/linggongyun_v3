@@ -77,7 +77,7 @@ public class Tax implements Serializable {
     private Integer taxStatus;
 
     /**
-     * 修改时间
+     * 创建时间
      */
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createDate;

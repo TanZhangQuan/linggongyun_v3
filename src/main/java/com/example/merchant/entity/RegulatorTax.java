@@ -10,40 +10,42 @@ import lombok.EqualsAndHashCode;
 
 /**
  * <p>
- * 
+ * 监管部门监管的服务商
  * </p>
  *
  * @author hzp
- * @since 2020-09-23
+ * @since 2020-09-25
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-@TableName("tb_company_worker")
-public class CompanyWorker implements Serializable {
+@TableName("tb_regulator_tax")
+public class RegulatorTax implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private String id;
+    @TableId(value = "id", type = IdType.ASSIGN_ID)
+    private Long id;
 
     /**
-     * 创客id
+     * 服务商ID
      */
-    @TableId(value = "worker_id", type = IdType.ASSIGN_ID)
-    private String workerId;
+    private String taxId;
 
     /**
-     * 商户ID
+     * 监管部门ID
      */
-    private String companyId;
+    private Long regulatorId;
 
     /**
-     * 创建时间
+     * 状态0开启监管，1关闭监管
+     */
+    private Integer status;
+
+    /**
+     * 开始监管时间
      */
     private LocalDateTime createDate;
 
-    /**
-     * 修改时间
-     */
     private LocalDateTime updateDate;
 
 
