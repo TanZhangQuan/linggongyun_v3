@@ -309,4 +309,25 @@
         and tax_id = #{taxId}
     </select>
 
+    <!--    查询最近30天-->
+    <select id="selectBy30DayPaasRegulator" parameterType="list" resultType="decimal">
+        select SUM(real_money) 'total_money' from tb_payment_order where
+        date_sub(curdate(), INTERVAL 30 DAY) &lt;= date(`payment_date`)
+        and payment_order_status &gt;= 2
+        and tax_id in
+        <foreach collection="taxIds" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <!--查询总支付-->
+    <select id="selectTotalPaasRegulator" parameterType="list" resultType="decimal">
+        select SUM(real_money) 'total_money' from tb_payment_order where
+        payment_order_status &gt;= 2
+        and tax_id in
+        <foreach collection="taxIds" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
 </mapper>
