@@ -6,6 +6,7 @@ import com.example.mybatis.entity.CrowdSourcingInvoice;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.example.mybatis.po.InvoicePO;
 import com.example.mybatis.vo.*;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;
 
 import java.util.List;
@@ -29,6 +30,8 @@ public interface CrowdSourcingInvoiceDao extends BaseMapper<CrowdSourcingInvoice
     InvoiceInformationVo getInvoiceById(String csiId);
 
     InvoicePO selectCrowdInvoiceMoneyPaasTax(String taxId);
+
+    InvoicePO selectCrowdInvoiceMoneyPaasRegultor(@Param("taxIds") List<String> taxIds);
 
     //购买方id
     BuyerVo getBuyer(String id);

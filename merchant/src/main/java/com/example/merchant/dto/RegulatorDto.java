@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 @Data
@@ -68,7 +69,7 @@ public class RegulatorDto  {
     /**
      * 状态0启用，1停用
      */
-    @NotBlank(message = "状态不能为空！")
+    @NotNull(message = "状态不能为空！")
     @ApiModelProperty(notes = "状态0启用，1停用", value = "状态0启用，1停用",required = true)
     private Integer status;
 

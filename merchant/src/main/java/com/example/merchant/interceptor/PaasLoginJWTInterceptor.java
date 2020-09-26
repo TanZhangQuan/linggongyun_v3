@@ -44,7 +44,7 @@ public class PaasLoginJWTInterceptor implements HandlerInterceptor {
             } catch (Exception e) {
                 throw new CommonException(403,"请求格式错误！");
             }
-            String merchantId = "";
+            String userId = "";
             if (!loginRequired.required()) {
                 return true;
             } else {
@@ -53,17 +53,16 @@ public class PaasLoginJWTInterceptor implements HandlerInterceptor {
                 }
                 Claims claim = jwtUtils.getClaimByToken(token);
                 if (claim == null) {
-                    throw new CommonException(405,"请求格式错误");
+                    throw new CommonException(402,"你的登录以过期请重新登录");
                 }
                 if (jwtUtils.isTokenExpired(claim.getExpiration())){
                     throw new CommonException(402,"你的登录以过期请重新登录！");
                 }
-                merchantId = claim.getSubject();
-                String managers = redisDao.get(merchantId);
+                userId = claim.getSubject();
+                String managers = redisDao.get(userId);
                 if (StringUtils.isBlank(managers)) {
                     throw new CommonException(402,"你的登录以过期请重新登录！");
                 }
-                request.setAttribute("merchantId",merchantId);
                 return true;
             }
         }

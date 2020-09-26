@@ -18,7 +18,30 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, regulator_name, address, linkman, link_mobile, user_name, pass_word, status, create_date, update_date
+        id, regulator_name, address, linkman, link_mobile, user_name, pass_word, status, , update_date
     </sql>
+    
+    <select id="selectRegulator" parameterType="list" resultMap="BaseResultMap">
+        SELECT
+        id,
+        regulator_name,
+        user_name,
+        linkman,
+        link_mobile,
+        status,
+        create_date
+        FROM tb_regulator
+        <where>
+            <if test="regulatorName != null and regulatorName != ''">
+                AND regulator_name like CONCAT('%',#{regulatorName},'%') 
+            </if>
+            <if test="startDate != null and startDate != ''">
+                AND date(create_date) &gt;= #{startDate}
+            </if>
+            <if test="endDate != null and endDate != ''">
+                AND date(create_date) &lt;= #{endDate}
+            </if>
+        </where>
+    </select>
 
 </mapper>
