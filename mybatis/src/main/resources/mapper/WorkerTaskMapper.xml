@@ -29,4 +29,28 @@
         UPDATE tb_worker_task SET check_money=#{money}
         WHERE id=#{id}
     </update>
+
+    <resultMap id="workerTask" type="com.example.mybatis.vo.WorkerTaskVo">
+        <result column="task_id" property="taskId"/>
+        <result column="worker_task_id" property="workerTaskId"/>
+        <result column="task_name" property="taskName"/>
+        <result column="task_cost_min" property="taskCostMin"/>
+        <result column="task_cost_max" property="taskCostMax"/>
+        <result column="cooperate_mode" property="cooperateMode"/>
+        <result column="release_date" property="releaseDate"/>
+        <result column="deadline_date" property="deadlineDate"/>
+        <result column="industry_type" property="industryType"/>
+        <result column="status" property="status"/>
+    </resultMap>
+
+    <select id="myTask" resultMap="workerTask">
+        SELECT 	t.id as task_id,wt.id as worker_task_id,t.task_name,t.task_cost_min,t.task_cost_max, t.cooperate_mode,
+        t.release_date,t.deadline_date,t.industry_type,wt.`status`
+        FROM tb_task t
+        INNER JOIN tb_worker_task wt ON wt.task_id=t.id
+        WHERE wt.worker_id=#{workerId}
+        <if test="status != null ">
+            AND wt.`status`=#{status}
+        </if>
+    </select>
 </mapper>

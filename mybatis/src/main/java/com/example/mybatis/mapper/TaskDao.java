@@ -5,8 +5,10 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.example.mybatis.dto.TaskDto;
 import com.example.mybatis.dto.TaskListDto;
 import com.example.mybatis.entity.Task;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;
 
+import javax.validation.constraints.Pattern;
 import java.util.List;
 
 /**
@@ -46,4 +48,6 @@ public interface TaskDao extends BaseMapper<Task> {
 
     //平台端添加任务信息
     int addPlatformTask(TaskDto TaskDto);
+
+    List<Task> setTask(@Param("merchantId") String merchantId, @Param("industryType")String industryType);
 }

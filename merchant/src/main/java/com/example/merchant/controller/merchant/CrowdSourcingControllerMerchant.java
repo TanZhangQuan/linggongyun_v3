@@ -27,7 +27,7 @@ public class CrowdSourcingControllerMerchant {
     private CrowdSourcingInvoiceService crowdSourcingInvoiceService;
 
 
-    private static Logger logger = LoggerFactory.getLogger(InvoiceControllerMerchant.class);
+    private static Logger logger = LoggerFactory.getLogger(CrowdSourcingControllerMerchant.class);
 
     @ApiOperation("众包发票列表")
     @PostMapping(value = "/getListCSIByID")

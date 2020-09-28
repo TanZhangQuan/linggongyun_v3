@@ -7,6 +7,7 @@ import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.PaymentOrderDto;
 import com.example.merchant.service.InvoiceService;
 import com.example.merchant.service.PaymentOrderService;
+import com.example.merchant.service.TaskService;
 import com.example.merchant.service.WorkerService;
 import com.example.merchant.service.impl.MerchantServiceImpl;
 import com.example.mybatis.entity.Invoice;
@@ -269,4 +270,18 @@ class MerchantApplicationTests {
 //		System.out.println(s);
 	}
 
+	@Autowired
+	private TaskService taskService;
+
+
+	@Test
+	void orderGrabbing() {
+		String taskId="ee08f52f-f40a-11ea-aa21-6045cb81e5c1";
+		List<String> workerId=new ArrayList<String>();
+		workerId.add("172b0c1d479874f938a5cf344308f82e");
+		workerId.add("6b01a57f1901e850e3d16e505c7037f8");
+		workerId.add("73b3cc6e29482eb50ea628324711b5d5");
+
+
+	}
 }

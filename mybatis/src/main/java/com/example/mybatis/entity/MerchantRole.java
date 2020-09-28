@@ -6,6 +6,7 @@ import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * <p>
@@ -45,6 +46,12 @@ public class MerchantRole implements Serializable {
      * 角色拥有的菜单
      */
     private String roleMenu;
+
+    /**
+     * 角色拥有的菜单
+     */
+    @TableField(exist = false)
+    private List<Menu> menuList;
 
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createDate;
