@@ -1,15 +1,14 @@
 package com.example.merchant.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.interfaces.Func;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.api.R;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.common.sms.SenSMS;
-import com.example.common.util.HttpClientUtils;
-import com.example.common.util.JsonUtils;
-import com.example.common.util.MD5;
-import com.example.common.util.ReturnJson;
+import com.example.common.util.*;
 import com.example.merchant.exception.CommonException;
 import com.example.merchant.service.CompanyWorkerService;
 import com.example.merchant.service.TaskService;
@@ -351,6 +350,7 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
 
     /**
      * 创客登录
+     *
      * @param username
      * @param password
      * @param response
@@ -375,6 +375,7 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
 
     /**
      * 发送验证码
+     *
      * @param mobileCode
      * @return
      */
@@ -382,7 +383,7 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
     public ReturnJson senSMS(String mobileCode) {
         ReturnJson rj = new ReturnJson();
         Worker worker = this.getOne(new QueryWrapper<Worker>().eq("mobile_code", mobileCode));
-        if (worker == null){
+        if (worker == null) {
             rj.setCode(401);
             rj.setMessage("你还未注册，请先去注册！");
             return rj;
@@ -391,8 +392,8 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
         if ("000000".equals(result.get("statusCode"))) {
             rj.setCode(200);
             rj.setMessage("验证码发送成功");
-            redisDao.set(mobileCode,String.valueOf(result.get("checkCode")));
-            redisDao.setExpire(mobileCode,5*60);
+            redisDao.set(mobileCode, String.valueOf(result.get("checkCode")));
+            redisDao.setExpire(mobileCode, 5 * 60);
         } else if ("160040".equals(result.get("statusCode"))) {
             rj.setCode(300);
             rj.setMessage(String.valueOf(result.get("statusMsg")));
@@ -404,7 +405,8 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
     }
 
     /**
-     *手机号登录
+     * 手机号登录
+     *
      * @param loginMobile
      * @param checkCode
      * @param resource
@@ -413,24 +415,25 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
     @Override
     public ReturnJson loginMobile(String loginMobile, String checkCode, HttpServletResponse resource) {
         String redisCheckCode = redisDao.get(loginMobile);
-        if (StringUtils.isBlank(redisCheckCode)){
+        if (StringUtils.isBlank(redisCheckCode)) {
             return ReturnJson.error("验证码以过期，请重新获取！");
-        } else if (!checkCode.equals(redisCheckCode)){
+        } else if (!checkCode.equals(redisCheckCode)) {
             return ReturnJson.error("输入的验证码有误!");
         } else {
             redisDao.remove(loginMobile);
             Worker worker = this.getOne(new QueryWrapper<Worker>().eq("mobile_code", loginMobile));
             worker.setUserPwd("");
             String token = jwtUtils.generateToken(worker.getId());
-            resource.setHeader(TOKEN,token);
+            resource.setHeader(TOKEN, token);
             redisDao.set(worker.getId(), JsonUtils.objectToJson(worker));
-            redisDao.setExpire(worker.getId(),60*60*24*7);
+            redisDao.setExpire(worker.getId(), 60 * 60 * 24 * 7);
             return ReturnJson.success(worker);
         }
     }
 
     /**
      * 修改密码忘记密码
+     *
      * @param loginMobile
      * @param checkCode
      * @param newPassWord
@@ -455,31 +458,87 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
 
     /**
      * 微信登录
+     *
      * @param code
      * @return
      */
     @Override
-    public ReturnJson wxLogin(String code) {
-        //通过code换取网页授权access_token
-        String url="https://api.weixin.qq.com/sns/jscode2session?appid="+APPID+"&secret="+SECRET+"&js_code="+code+"&grant_type=authorization_code";//请求路径
-        JSONObject wxResult= HttpClientUtils.httpGet(url);
-        String openid = wxResult.getString("openid");
-        String access_Token = wxResult.getString("access_token");
-
-        //拉取用户信息(需scope为 snsapi_userinfo)
-        url = "https://api.weixin.qq.com/sns/userinfo?access_token=" + access_Token +
-                "&openid=" + openid +
-                "&lang=zh_CN";
-        JSONObject workerInfoJson = HttpClientUtils.httpGet(url);
-
-        Worker worker = workerDao.selectOne(new QueryWrapper<Worker>().eq("wx_id",openid));
-        if (worker == null) {
-            worker = new Worker();
-
-        } else {
-
+    public ReturnJson wxLogin(String code, String iv, String encryptedData) {
+        ReturnJson returnJson = new ReturnJson("操作失败", 300);
+        JSONObject result = new JSONObject();
+        if (code.equals("")) {
+            return returnJson.error("请输入微信授权码");
         }
-        return null;
+        //通过code换取网页授权access_token
+        String url = "https://api.weixin.qq.com/sns/jscode2session?" +
+                "appid=" + APPID +         //开发者设置中的appId
+                "&secret=" + SECRET +      //开发者设置中的appSecret
+                "&js_code=" + code +       //小程序调用wx.login返回的code
+                "&grant_type=authorization_code";    //默认参数
+
+        JSONObject wxResult = HttpClientUtils.httpGet(url);
+        if (wxResult == null) {
+            log.error("微信授权失败, 查询数据失败");
+            return returnJson.error("登录失败");
+        }
+
+        Object errcode = wxResult.get("errcode");
+        String errmsg = wxResult.getString("errmsg");
+        if (errcode != null) {
+            log.error(errmsg);
+            return returnJson.error(errmsg);
+        }
+
+        String openid = wxResult.getString("openid");
+        String sessionKey = wxResult.getString("session_key");
+        if (StringUtils.isBlank(openid)) {
+            log.error("微信授权失败, openid为空");
+            return returnJson.error("登录失败");
+        }
+
+        if (StringUtils.isBlank(sessionKey)) {
+            log.error("微信授权失败, session_key为空");
+            return returnJson.error("登录失败");
+        }
+        result.put("openid", openid);
+        result.put("sessionKey", sessionKey);
+
+        if (StringUtils.isNoneBlank(iv, encryptedData)) {
+            // 参数含义：第一个，加密数据串（String）；第二个，session_key需要通过微信小程序的code获得（String）；
+            // 第三个，数据加密时所使用的偏移量，解密时需要使用（String）；第四个，编码
+            String AesResult = AesCbcUtil.decrypt(encryptedData, sessionKey, iv, "UTF-8");
+
+            if (StringUtils.isBlank(AesResult)) {
+                log.error("解密数据失败");
+                return returnJson.error("登录失败");
+            }
+
+            // 将解密后的JSON格式字符串转化为对象
+            wxResult = JSONObject.parseObject(AesResult);
+            // 查询手机号
+            String purePhoneNumber = wxResult.getString("purePhoneNumber");
+            if (StringUtils.isBlank(purePhoneNumber)) {
+                log.error("微信授权失败，手机号为空");
+                return returnJson.error("登录失败");
+            }
+
+            result.put("purePhoneNumber", purePhoneNumber);
+
+            Worker worker = workerDao.selectOne(new QueryWrapper<Worker>().eq("wx_id", openid));
+            if (worker == null) {
+                worker = new Worker();
+                worker.setWxId(openid);
+                worker.setMobileCode((String) wxResult.get("mobileCode"));
+                worker.setAccountName((String) wxResult.get("nickName"));//用户昵称
+                worker.setWorkerSex((Integer) wxResult.get("gender"));//用户性别
+            } else {
+                worker = new Worker();
+                worker.setWxName((String) wxResult.get("nickName"));//获取微信名称
+                worker.setHeadPortraits((String) wxResult.get("avatarUrl"));//获取微信头像
+                workerDao.update(worker, new QueryWrapper<Worker>().eq("wx_id", openid));
+            }
+        }
+        return returnJson.success(wxResult);
     }
 }
 

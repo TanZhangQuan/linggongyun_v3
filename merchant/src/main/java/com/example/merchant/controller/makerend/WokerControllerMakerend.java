@@ -2,6 +2,7 @@ package com.example.merchant.controller.makerend;
 
 import com.example.common.util.ReturnJson;
 import com.example.merchant.service.WorkerService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -15,8 +16,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
+@Api(value = "小程序创客登录", tags = {"小程序创客登录"})
 @RestController(value = "makerend/woker")
-public class WokerController {
+public class WokerControllerMakerend {
 
     @Autowired
     private WorkerService workerService;
@@ -56,5 +58,13 @@ public class WokerController {
             @ApiImplicitParam(name="checkCode",value = "验证码",required = true),@ApiImplicitParam(name="newPassWord",value = "新密码",required = true)})
     public ReturnJson workerupdataPassWord(@NotBlank(message = "手机号不能为空") @RequestParam(required = false) String loginMobile, @NotBlank(message = "验证码不能为空") @RequestParam(required = false) String checkCode, @NotBlank(message = "新密码不能为空") @RequestParam(required = false)String newPassWord){
         return workerService.updataPassWord(loginMobile, checkCode, newPassWord);
+    }
+
+    @PostMapping("/workerWeiXinLogin")
+    @ApiOperation(value = "微信登陆", notes = "修改或忘记密码", httpMethod = "POST")
+    @ApiImplicitParams(value={@ApiImplicitParam(name="code",value = "微信授权码",required = true),
+            @ApiImplicitParam(name="vi",value = "数据加密时所使用的偏移量",required = true),@ApiImplicitParam(name="encryptedData",value = "加密数据串",required = true)})
+    public ReturnJson workerWeiXinLogin(@NotBlank(message = "微信授权码不能为空") @RequestParam(required = false) String code, @NotBlank(message = "数据加密时所使用的偏移量不能为空") @RequestParam(required = false) String vi, @NotBlank(message = "加密数据串不能为空") @RequestParam(required = false)String encryptedData){
+        return workerService.wxLogin(code, vi, encryptedData);
     }
 }
