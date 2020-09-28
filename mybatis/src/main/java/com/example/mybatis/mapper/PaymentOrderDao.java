@@ -2,6 +2,8 @@ package com.example.mybatis.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.example.mybatis.entity.PaymentOrder;
+import com.example.mybatis.po.BillCountPO;
+import com.example.mybatis.po.BillPO;
 import com.example.mybatis.vo.BillingInfoVo;
 import com.example.mybatis.vo.PaymentOrderVo;
 import org.apache.ibatis.annotations.Param;
@@ -50,4 +52,7 @@ public interface PaymentOrderDao extends BaseMapper<PaymentOrder> {
     PaymentOrderVo getPaymentOrderById(String id);
 
     BillingInfoVo getBillingInfo(String id);
+
+    List<BillPO> selectMonthBill(@Param("year") Integer year,@Param("month")Integer month);
+    BillCountPO selectYearCount(@Param("year") Integer year);
 }

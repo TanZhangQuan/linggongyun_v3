@@ -13,6 +13,7 @@ import com.example.mybatis.mapper.PaymentOrderSubpackageDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,6 +46,7 @@ public class PaymentOrderSubpackageServiceImpl extends ServiceImpl<PaymentOrderS
         paymentOrder.setSubpackagePayment(subpackagePayment);
         PaymentOrderSubpackage paymentOrderSubpackage = new PaymentOrderSubpackage();
         paymentOrderSubpackage.setPaymentOrderStatus(2);
+        paymentOrderSubpackage.setPaymentDate(LocalDateTime.now());
         paymentOrderSubpackage.setSubpackagePayment(subpackagePayment);
         paymentOrderDao.updateById(paymentOrder);
         this.update(paymentOrderSubpackage,new QueryWrapper<PaymentOrderSubpackage>().in("payment_inventory_id",ids));
