@@ -52,4 +52,6 @@ public interface WorkerService extends IService<Worker> {
     ReturnJson updataPassWord(String loginMobile, String checkCode, String newPassWord);
 
     ReturnJson wxLogin(String code,String iv, String encryptedData);
+
+    ReturnJson setWorkerMakeMoney();
 }

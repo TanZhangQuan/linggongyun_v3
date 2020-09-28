@@ -38,5 +38,12 @@ public interface TaskService extends IService<Task> {
 
     ReturnJson savePlatformTask(TaskDto taskDto);
 
+    ReturnJson setTask(String merchantId,String industryType);
+
+    ReturnJson taskDetails(String taskId);
+
+    ReturnJson orderGrabbing(String taskId,String workerId);
+
+    ReturnJson myTask(String workerId,String status);
 
 }
