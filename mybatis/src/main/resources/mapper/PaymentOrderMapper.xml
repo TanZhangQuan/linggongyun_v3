@@ -314,4 +314,51 @@
         </foreach>
     </select>
 
+    <!-- 通用查询映射结果 -->
+    <resultMap id="billPO" type="com.example.mybatis.po.BillPO">
+        <result column="company_s_name" property="merchantName"/>
+        <result column="platform_service_provider" property="taxName"/>
+        <result column="company_contract" property="contract"/>
+        <result column="payment_inventory" property="paymentInventory"/>
+        <result column="subpackage_payment" property="paymentReceipt"/>
+        <result column="task_id" property="tastId"/>
+        <result column="acceptance_certificate" property="acceptanceCertificate"/>
+        <result column="payment_date" property="paymentDate"/>
+        <result column="real_money" property="money"/>
+    </resultMap>
+
+    <!--查询账单详情-->
+    <select id="selectMonthBill" resultMap="billPO" parameterType="int">
+        SELECT
+        b.company_s_name,
+        b.platform_service_provider,
+        b.company_contract,
+        b.payment_inventory,
+        b.task_id,
+        b.acceptance_certificate,
+        b.subpackage_payment,
+        b.payment_date,
+        a.real_money
+        FROM tb_payment_inventory a
+        JOIN tb_payment_order b
+        ON a.payment_order_id = b.id
+        WHERE YEAR(b.payment_date) = #{year}
+        AND MONTH(b.payment_date) = #{month}
+    </select>
+
+    <resultMap id="billCountPO" type="com.example.mybatis.po.BillCountPO">
+        <result column="order_count" property="orderCount"/>
+        <result column="bill_money" property="billMoney"/>
+    </resultMap>
+
+    <!--账单统计-->
+    <select id="selectYearCount" resultMap="billCountPO" parameterType="int">
+        SELECT
+        COUNT(1) as 'order_count',
+        SUM(a.real_money) as 'bill_money'
+        FROM tb_payment_inventory a
+        JOIN tb_payment_order b
+        ON a.payment_order_id = b.id
+        WHERE YEAR(b.payment_date) = #{year}
+    </select>
 </mapper>

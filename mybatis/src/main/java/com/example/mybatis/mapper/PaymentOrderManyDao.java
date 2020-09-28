@@ -3,6 +3,8 @@ package com.example.mybatis.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.example.mybatis.dto.TobeinvoicedDto;
 import com.example.mybatis.entity.PaymentOrderMany;
+import com.example.mybatis.po.BillCountPO;
+import com.example.mybatis.po.BillPO;
 import com.example.mybatis.vo.CrowdSourcingInvoiceVo;
 import com.example.mybatis.vo.InvoiceDetailsVo;
 import com.example.mybatis.vo.PaymentOrderManyVo;
@@ -59,4 +61,8 @@ public interface PaymentOrderManyDao extends BaseMapper<PaymentOrderMany> {
     List<PaymentOrderMany> selectWeekpaas(List<String> merchantId);
     List<PaymentOrderMany> selectMonthpaas(List<String> merchantId);
     List<PaymentOrderMany> selectYearpaas(List<String> merchantId);
+
+
+    List<BillPO> selectMonthBill(@Param("year") Integer year, @Param("month")Integer month);
+    BillCountPO selectYearCount(@Param("year") Integer year);
 }

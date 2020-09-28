@@ -48,11 +48,17 @@ public class FileOperationServiceImpl implements FileOperationService {
     @Value("${PathExcel_KEY}")
     private String PathExcel_KEY;
 
+    @Value("${PathVideo_KEY}")
+    private String PathVideo_KEY;
+
     @Value("${fileStaticAccesspathImage}")
     private String fileStaticAccesspathImage;
 
     @Value("${fileStaticAccesspathExcel}")
     private String fileStaticAccesspathExcel;
+
+    @Value("${fileStaticAccesspathVideo}")
+    private String fileStaticAccesspathVideo;
 
 
     /**
@@ -236,6 +242,36 @@ public class FileOperationServiceImpl implements FileOperationService {
                 makerInvoiceDao.update(makerInvoice,new QueryWrapper<MakerInvoice>().eq("payment_inventory_id",paymentInventoryId));
                 return ReturnJson.success("税票上传成功", accessPath);
             }
+        } else {
+            return ReturnJson.error("你上传的文件格式不正确！,请上传" + Arrays.toString(files) + "格式的文件。");
+        }
+    }
+
+    @Override
+    public ReturnJson uploadVideo(MultipartFile uploadVideo, HttpServletRequest request) {
+        if (uploadVideo.getSize() == 0) {
+            return ReturnJson.error("上传文件不能为空！");
+        }
+        String[] files = {"avi", "vavi", "mp4"};
+        String fileName = uploadVideo.getOriginalFilename();
+        String suffixName = fileName.substring(fileName.indexOf(".") + 1);
+        if (Arrays.asList(files).contains(suffixName.toLowerCase())) {
+            String newFileName = UuidUtil.get32UUID() + "." + suffixName;
+            File fileMkdir = new File(PathVideo_KEY);
+            String accessPath = null;
+            try {
+                if (!fileMkdir.exists()) {// 判断目录是否存在
+                    fileMkdir.mkdirs();
+                }
+                String filePath = PathVideo_KEY + newFileName;
+                File file = new File(filePath);
+                accessPath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() +
+                        request.getContextPath() + fileStaticAccesspathVideo + newFileName;
+                uploadVideo.transferTo(file);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return ReturnJson.success("视频上传成功", accessPath);
         } else {
             return ReturnJson.error("你上传的文件格式不正确！,请上传" + Arrays.toString(files) + "格式的文件。");
         }
