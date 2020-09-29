@@ -1,5 +1,6 @@
 package com.example.merchant.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.incrementer.DefaultIdentifierGenerator;
 import com.baomidou.mybatisplus.core.incrementer.IdentifierGenerator;
 import com.example.common.util.*;
@@ -9,14 +10,22 @@ import com.example.mybatis.dto.TaskDto;
 import com.example.mybatis.dto.TaskListDto;
 import com.example.mybatis.entity.Merchant;
 import com.example.mybatis.entity.Task;
+import com.example.mybatis.entity.Worker;
+import com.example.mybatis.entity.WorkerTask;
+import com.example.mybatis.mapper.MerchantDao;
 import com.example.mybatis.mapper.TaskDao;
 import com.example.merchant.service.TaskService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.example.mybatis.mapper.WorkerDao;
+import com.example.mybatis.mapper.WorkerTaskDao;
+import com.example.mybatis.vo.WorkerTaskVo;
 import org.apache.ibatis.session.RowBounds;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.time.LocalDateTime;
 import java.util.*;
 
 /**
@@ -30,12 +39,16 @@ import java.util.*;
 @Service
 public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskService {
 
-    @Resource
+    @Autowired
     private TaskDao taskDao;
-    @Resource
-    private MerchantService merchantService;
-    @Resource
+    @Autowired
+    private MerchantDao merchantDao;
+    @Autowired
     private WorkerTaskService workerTaskService;
+    @Autowired
+    private WorkerTaskDao workerTaskDao;
+    @Autowired
+    private WorkerDao workerDao;
 
 
     @Override
@@ -44,19 +57,20 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
     }
 
 
+    /**
+     * 任务列表
+     *
+     * @param taskListDto
+     * @param rowBounds
+     * @return
+     */
     @Override
     public ReturnJson selectList(TaskListDto taskListDto, RowBounds rowBounds) {
         ReturnJson returnJson = new ReturnJson("查询失败", 300);
-        String currentUserId = "3666abe4ec7691d8c83d5b7b4d257bc9";
-        Merchant merchant = merchantService.findByID(currentUserId);
-        if (merchant != null) {
-            rowBounds = new RowBounds(rowBounds.getOffset() * rowBounds.getLimit(), rowBounds.getLimit());
-            List<Task> taskList = taskDao.selectLists(taskListDto, rowBounds);
-            if (taskList!=null){
-                returnJson = new ReturnJson("查询成功", taskList, 200);
-            }
-        } else {
-            returnJson = new ReturnJson("请先登录", 300);
+        rowBounds = new RowBounds(rowBounds.getOffset() * rowBounds.getLimit(), rowBounds.getLimit());
+        List<Task> taskList = taskDao.selectLists(taskListDto, rowBounds);
+        if (taskList != null) {
+            returnJson = new ReturnJson("查询成功", taskList, 200);
         }
         return returnJson;
     }
@@ -92,36 +106,30 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
     @Override
     @Transactional
     public ReturnJson saveTask(TaskDto taskDto) {
-        String currentUserId = "3666abe4ec7691d8c83d5b7b4d257bc9";
-        Merchant merchant = merchantService.findByID(currentUserId);
-        if (merchant != null) {
-            if (taskDto.getTaskMode() == 0) {
-                if (!VerificationCheck.isNull(taskDto.getMakerIds())) {
-                    return new ReturnJson("必须指定创客", 300);
-                }
+        if (taskDto.getTaskMode() == 0) {
+            if (!VerificationCheck.isNull(taskDto.getMakerIds())) {
+                return new ReturnJson("必须指定创客", 300);
             }
-            if (Tools.str2Date(taskDto.getReleaseDate()) == null) {
-                taskDto.setReleaseDate(DateUtil.getDay());
-            }
-            String taskCode = this.getTaskCode();
-            int code = Integer.valueOf(taskCode.substring(2)) + 1;
-            taskDto.setTaskCode("RW" + String.valueOf(code));
-            IdentifierGenerator identifierGenerator=new DefaultIdentifierGenerator();
-            taskDto.setId(identifierGenerator.nextId(new Object()).toString());
-            int i = taskDao.addTask(taskDto);
-            if (i > 0) {
-                if (taskDto.getTaskMode() != 1) {
-                    Map<String, String> map = new HashMap<String, String>();
-                    map.put("workerId", taskDto.getMakerIds());
-                    map.put("taskId", taskDto.getId());
-                    map.put("arrangePerson",merchantService.getNameById(taskDto.getMerchantId()));
-                    return workerTaskService.seavWorkerTask(map);
-                }
-            }
-            return new ReturnJson("添加失败", 300);
-        } else {
-            return new ReturnJson("请先登录", 300);
         }
+        if (Tools.str2Date(taskDto.getReleaseDate()) == null) {
+            taskDto.setReleaseDate(DateUtil.getDay());
+        }
+        String taskCode = this.getTaskCode();
+        int code = Integer.valueOf(taskCode.substring(2)) + 1;
+        taskDto.setTaskCode("RW" + String.valueOf(code));
+        IdentifierGenerator identifierGenerator = new DefaultIdentifierGenerator();
+        taskDto.setId(identifierGenerator.nextId(new Object()).toString());
+        int i = taskDao.addTask(taskDto);
+        if (i > 0) {
+            if (taskDto.getTaskMode() != 1) {
+                Map<String, String> map = new HashMap<String, String>();
+                map.put("workerId", taskDto.getMakerIds());
+                map.put("taskId", taskDto.getId());
+                map.put("arrangePerson", merchantDao.getNameById(taskDto.getMerchantId()));
+                return workerTaskService.seavWorkerTask(map);
+            }
+        }
+        return new ReturnJson("添加失败", 300);
     }
 
     /**
@@ -191,20 +199,32 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
         return returnJson;
     }
 
+    /**
+     * 平台任务列表
+     *
+     * @param taskListDto
+     * @return
+     */
     @Override
     public ReturnJson getPlatformTaskList(TaskListDto taskListDto) {
         ReturnJson returnJson = new ReturnJson("查询失败", 300);
-        if (taskListDto.getPageNo()==null){
+        if (taskListDto.getPageNo() == null) {
             taskListDto.setPageNo(1);
         }
-        RowBounds rowBounds = new RowBounds((taskListDto.getPageNo()-1) * 3,3);
+        RowBounds rowBounds = new RowBounds((taskListDto.getPageNo() - 1) * 3, 3);
         List<Task> taskList = taskDao.getPlatformTaskList(taskListDto, rowBounds);
-        if (taskList!=null){
+        if (taskList != null) {
             returnJson = new ReturnJson("查询成功", taskList, 200);
         }
         return returnJson;
     }
 
+    /**
+     * 平台任务添加
+     *
+     * @param taskDto
+     * @return
+     */
     @Override
     public ReturnJson savePlatformTask(TaskDto taskDto) {
         if (taskDto.getTaskMode() == 0) {
@@ -218,7 +238,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
         String taskCode = this.getTaskCode();
         int code = Integer.valueOf(taskCode.substring(2)) + 1;
         taskDto.setTaskCode("RW" + String.valueOf(code));
-        IdentifierGenerator identifierGenerator=new DefaultIdentifierGenerator();
+        IdentifierGenerator identifierGenerator = new DefaultIdentifierGenerator();
         taskDto.setId(identifierGenerator.nextId(new Object()).toString());
         int i = taskDao.addPlatformTask(taskDto);
         if (i > 0) {
@@ -226,11 +246,99 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
                 Map<String, String> map = new HashMap<String, String>();
                 map.put("workerId", taskDto.getMakerIds());
                 map.put("taskId", taskDto.getId());
-                map.put("arrangePerson",merchantService.getNameById(taskDto.getMerchantId()));
+                map.put("arrangePerson", merchantDao.getNameById(taskDto.getMerchantId()));
                 return workerTaskService.seavWorkerTask(map);
             }
         }
         return new ReturnJson("添加失败", 300);
+    }
+
+    /**
+     * 小程序任务大厅
+     *
+     * @param industryType
+     * @return
+     */
+    @Override
+    public ReturnJson setTask(String merchantId, String industryType) {
+        ReturnJson returnJson = new ReturnJson("操作失败", 300);
+        List<Task> list = taskDao.setTask(merchantId, industryType);
+        if (list != null) {
+            returnJson = new ReturnJson("操作成功", list, 200);
+        }
+        return returnJson;
+    }
+
+    /**
+     * 查询任务详情
+     *
+     * @param taskId
+     * @return
+     */
+    @Override
+    public ReturnJson taskDetails(String taskId) {
+        ReturnJson returnJson = new ReturnJson("操作失败", 300);
+        Task task = taskDao.selectById(taskId);
+        if (task != null) {
+            returnJson = new ReturnJson("操作成功", task, 200);
+        }
+        return returnJson;
+    }
+
+    /**
+     * 抢单
+     *
+     * @param taskId
+     * @param workerId
+     * @return
+     */
+    @Override
+    @Transactional
+    public ReturnJson orderGrabbing(String taskId, String workerId) {
+        ReturnJson returnJson = new ReturnJson("操作失败", 300);
+        Worker worker = workerDao.selectOne(new QueryWrapper<Worker>().eq("id", workerId));
+        if (worker.getAttestation() != 1 && worker.getAgreementSign() != 1) {
+            return returnJson.error("您还不是认证用户");
+        }
+        Task task = taskDao.selectById(taskId);
+        int count = workerTaskDao.selectCount(new QueryWrapper<WorkerTask>().eq("task_id", taskId).eq("task_status", 0));
+        int count1 = workerTaskDao.selectCount(new QueryWrapper<WorkerTask>().eq("task_id", taskId).eq("worker_id", workerId));//用户是否已经抢过这一单
+        if (count1 > 0) {
+            return returnJson.error("您已经抢过这一单了");
+        }
+        synchronized (this) {
+            if (count >= task.getUpperLimit()) {
+                return returnJson.error("任务所需人数已满");
+            }
+            WorkerTask workerTask = new WorkerTask();
+            workerTask.setTaskId(taskId);
+            workerTask.setWorkerId(workerId);
+            workerTask.setTaskStatus(0);
+            workerTask.setGetType(0);
+            workerTask.setCreateDate(LocalDateTime.now());
+            int num = workerTaskDao.insert(workerTask);
+            if (num > 0) {
+                return returnJson.error("恭喜,抢单成功");
+            }
+        }
+        return returnJson;
+    }
+
+    /**
+     * 我的任务,某个创客的所有任务
+     *
+     * @param workerId 创客id
+     * @param status   任务状态
+     * @return
+     */
+    @Override
+    public ReturnJson myTask(String workerId, String status) {
+        ReturnJson returnJson = new ReturnJson("操作失败", 300);
+        List<WorkerTaskVo> workerTaskList = workerTaskDao.myTask(workerId, status);
+        if (workerTaskList != null) {
+            returnJson = new ReturnJson("操作成功", workerTaskList, 200);
+        }
+        return returnJson;
     }
 
 }

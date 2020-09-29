@@ -18,26 +18,14 @@ import java.util.Map;
  */
 public interface WorkerTaskService extends IService<WorkerTask> {
 
-    /**
-     * 派单给指定创客
-     * @param map
-     * @return
-     */
     ReturnJson seavWorkerTask(Map map);
 
-    /**
-     * 剔除用户,判断任务是否为发布中或已接单
-     * @param workerId
-     * @return
-     */
     ReturnJson eliminateWorker(Integer state,String workerId);
 
-    /**
-     * 修改验收金额
-     * @param money
-     * @return
-     */
     ReturnJson updateCheckMoney(Double money,String id);
 
+    ReturnJson acceptanceResults(String workerTaskId,String achievementDesc,String achievementFiles);
+
+    ReturnJson getWorkerTask(String workerTaskId);
 
 }

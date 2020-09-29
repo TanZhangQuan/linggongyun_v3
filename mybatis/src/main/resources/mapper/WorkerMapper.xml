@@ -185,4 +185,16 @@
         where a.worker_id = #{workerId}
     </select>
 
+    <resultMap id="workerMakeMoney" type="com.example.mybatis.vo.WorkerVo">
+        <result column="real_money" property="realMoney"/>
+        <result column="head_portraits" property="headPortraits"/>
+        <result column="account_name" property="accountName"/>
+    </resultMap>
+
+    <select id="setWorkerMakeMoney" resultMap="workerMakeMoney">
+        SELECT SUM(real_money) as real_money ,w.head_portraits,w.account_name
+        FROM tb_payment_inventory pi
+        INNER JOIN tb_worker w ON w.id=pi.worker_id
+        GROUP BY w.id
+    </select>
 </mapper>

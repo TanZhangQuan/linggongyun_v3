@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author hzp
@@ -24,7 +24,7 @@ public class WorkerTask implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @TableId(value = "id",type = IdType.ASSIGN_ID)
+    @TableId(value = "id", type = IdType.ASSIGN_ID)
     @JsonSerialize(using = ToStringSerializer.class)
     private String id;
 
@@ -38,24 +38,12 @@ public class WorkerTask implements Serializable {
     private Integer taskStatus;
 
     /**
-     * 修改时间
-     */
-    @TableField(fill = FieldFill.INSERT)
-    private LocalDateTime createDate;
-
-    /**
-     * 修改时间
-     */
-    @TableField(fill = FieldFill.INSERT_UPDATE)
-    private LocalDateTime updateDate;
-
-    /**
      * 获得方式1,抢单获得；2，派单获得
      */
     private Integer getType;
 
     /**
-     *工作成果说明
+     * 工作成果说明
      */
     private String achievementDesc;
 
@@ -88,5 +76,22 @@ public class WorkerTask implements Serializable {
      * 派单人员
      */
     private String arrangePerson;
+
+    /**
+     * 创客完成状态
+     */
+    private Integer status;
+
+    /**
+     * 创建时间
+     */
+    @TableField(fill = FieldFill.INSERT)
+    private LocalDateTime createDate;
+
+    /**
+     * 修改时间
+     */
+    @TableField(fill = FieldFill.INSERT_UPDATE)
+    private LocalDateTime updateDate;
 
 }

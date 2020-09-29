@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.mybatis.entity.Worker;
 import com.example.mybatis.po.WorekerPaymentListPo;
 import com.example.mybatis.po.WorkerPo;
+import com.example.mybatis.vo.WorkerVo;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;
 
@@ -41,4 +42,6 @@ public interface WorkerDao extends BaseMapper<Worker> {
     IPage<Worker> selectWorkerAllNot(Page page, @Param("merchantIds")List<String> merchantIds);
     IPage<Worker> selectWorkerAll(Page page, @Param("merchantIds")List<String> merchantIds);
     IPage<WorekerPaymentListPo> workerPaymentList(Page page, @Param("workerId")String workerId);
+
+    List<WorkerVo> setWorkerMakeMoney();
 }

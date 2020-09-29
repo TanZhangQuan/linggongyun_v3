@@ -47,7 +47,8 @@ public class Task implements Serializable {
     /**
      * 商户ID(用来判断是哪个商户发布的任务)
      */
-    @ApiModelProperty("商户ID")
+    @TableField(exist = false)
+    @ApiModelProperty("商户名称")
     private String merchantName;
 
     /**

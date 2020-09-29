@@ -24,6 +24,7 @@ import com.example.mybatis.mapper.WorkerDao;
 import com.example.mybatis.po.WorekerPaymentListPo;
 import com.example.mybatis.po.WorkerPo;
 import com.example.merchant.util.AcquireID;
+import com.example.mybatis.vo.WorkerVo;
 import com.example.redis.dao.RedisDao;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.RowBounds;
@@ -528,17 +529,46 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
             if (worker == null) {
                 worker = new Worker();
                 worker.setWxId(openid);
-                worker.setMobileCode((String) wxResult.get("mobileCode"));
+                worker.setMobileCode((String) wxResult.get("purePhoneNumber"));
                 worker.setAccountName((String) wxResult.get("nickName"));//用户昵称
                 worker.setWorkerSex((Integer) wxResult.get("gender"));//用户性别
+                workerDao.insert(worker);
             } else {
-                worker = new Worker();
                 worker.setWxName((String) wxResult.get("nickName"));//获取微信名称
                 worker.setHeadPortraits((String) wxResult.get("avatarUrl"));//获取微信头像
                 workerDao.update(worker, new QueryWrapper<Worker>().eq("wx_id", openid));
             }
         }
         return returnJson.success(wxResult);
+    }
+
+    /**
+     * 首页创客赚钱信息
+     * @return
+     */
+    @Override
+    public ReturnJson setWorkerMakeMoney() {
+        ReturnJson returnJson = new ReturnJson("操作失败", 300);
+        List<WorkerVo> workerVos = workerDao.setWorkerMakeMoney();
+        if (workerVos != null) {
+            for (int i = 0; i < workerVos.size(); i++) {
+                int num = workerVos.get(i).getAccountName().length();
+                String name = workerVos.get(i).getAccountName().substring(0, 1);
+                switch (num-1) {
+                    case 1:
+                        workerVos.get(i).setAccountName(name + "*");
+                        break;
+                    case 2:
+                        workerVos.get(i).setAccountName(name + "**");
+                        break;
+                    case 3:
+                        workerVos.get(i).setAccountName(name + "***");
+                        break;
+                }
+            }
+            returnJson = new ReturnJson("操作成功", workerVos, 200);
+        }
+        return returnJson;
     }
 }
 

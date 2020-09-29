@@ -10,8 +10,8 @@
         <result column="invoice_id" property="invoiceId"/>
         <result column="task_code" property="taskCode"/>
         <result column="task_name" property="taskName"/>
-        <result column="release_data" property="releaseDate"/>
-        <result column="deadline_data" property="deadlineDate"/>
+        <result column="release_date" property="releaseDate"/>
+        <result column="deadline_date" property="deadlineDate"/>
         <result column="task_desc" property="taskDesc"/>
         <result column="industry_type" property="industryType"/>
         <result column="task_cost_min" property="taskCostMin"/>
@@ -29,7 +29,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, merchant_id, invoice_id, task_name, release_data, task_desc, industry_type, task_cost_min, task_cost_max, task_skill, task_begin_time, task_end_time, upper_limit, cooperate_mode, task_mode, create_date, update_date, state
+        id, merchant_id, invoice_id, task_name, release_date, task_desc, industry_type, task_cost_min, task_cost_max, task_skill, task_begin_time, task_end_time, upper_limit, cooperate_mode, task_mode, create_date, update_date, state
     </sql>
 
 
@@ -142,4 +142,20 @@
         ,#{releaseDate},#{deadlineDate},#{taskDesc},#{industryType},#{taskCostMin},
         #{taskCostMax},#{taskSkill},#{releaseTime},#{deadlineTime},#{upperLimit},#{cooperateMode},#{taskMode},#{state})
     </insert>
+
+    <select id="setTask" resultMap="BaseResultMap">
+        SELECT 	id,task_name,task_cost_min,task_cost_max, cooperate_mode,
+        release_date,deadline_date,industry_type
+        FROM tb_task
+        WHERE
+        task_mode != 0
+        AND state = 0
+        AND deadline_date > NOW()
+        <if test="merchantId !=null and merchantId != '' ">
+            AND merchant_id=#{merchantId}
+        </if>
+        <if test="industryType != null and industryType != '' ">
+            AND SUBSTRING_INDEX(industry_type, '/',1)=#{industryType}
+        </if>
+    </select>
 </mapper>
