@@ -17,7 +17,6 @@ import com.example.mybatis.mapper.InvoiceDao;
 import com.example.mybatis.mapper.PaymentOrderDao;
 import com.example.mybatis.mapper.PaymentOrderManyDao;
 import com.example.mybatis.mapper.WorkerDao;
-import com.example.mybatis.po.InvoicePO;
 import com.example.redis.dao.RedisDao;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -268,5 +267,11 @@ class MerchantApplicationTests {
 //		String s = JsonUtils.objectToJson(paymentOrderDto);
 //		System.out.println(s);
 	}
+
+	@Test
+	void dateTest(){
+
+	}
+
 
 }
