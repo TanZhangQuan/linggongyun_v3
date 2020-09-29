@@ -1,5 +1,6 @@
 package com.example.merchant.exception;
 
+import com.example.common.contract.exception.DefineException;
 import com.example.common.util.ReturnJson;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -66,6 +67,14 @@ public class BaseExceptionHandler {
     public ReturnJson exceptionHandler(Exception e) {
         log.error(e.toString());
         return ReturnJson.error("服务内部错误");
+    }
+
+    //处理非以上异常问题
+    @ResponseBody
+    @ExceptionHandler(value = DefineException.class)
+    public ReturnJson signAContractException(DefineException e) {
+        log.error(e.toString());
+        return ReturnJson.error(e.getMessage());
     }
 
 }
