@@ -5,11 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.common.sms.SenSMS;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.PaymentOrderDto;
-import com.example.merchant.service.InvoiceService;
-import com.example.merchant.service.PaymentOrderService;
-import com.example.merchant.service.TaskService;
-import com.example.merchant.service.WorkerService;
-import com.example.merchant.service.impl.MerchantServiceImpl;
+import com.example.merchant.service.*;
 import com.example.mybatis.entity.Invoice;
 import com.example.mybatis.entity.PaymentInventory;
 import com.example.mybatis.entity.PaymentOrder;
@@ -18,7 +14,6 @@ import com.example.mybatis.mapper.InvoiceDao;
 import com.example.mybatis.mapper.PaymentOrderDao;
 import com.example.mybatis.mapper.PaymentOrderManyDao;
 import com.example.mybatis.mapper.WorkerDao;
-import com.example.mybatis.po.InvoicePO;
 import com.example.redis.dao.RedisDao;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +30,7 @@ import java.util.List;
 class MerchantApplicationTests {
 
 	@Autowired
-	private MerchantServiceImpl merchantService;
+	private MerchantService merchantService;
 	@Value("${PWD_KEY}")
 	private String PWD_KEY;
 
@@ -101,11 +96,14 @@ class MerchantApplicationTests {
 
 	@Test
 	void getTotal(){
-		System.out.println(0x1F & 0x01 );
-//		List<PaymentOrderPO> paymentOrderPOS = paymentOrderDao.selectTotal("3666abe4ec7691d8c83d5b7b4d257bc9");
-//		for (PaymentOrderPO payPo : paymentOrderPOS){
-//			System.out.println(payPo.getPackageStatus()+"=================="+payPo.getTotalMoney());
+//		try {
+//			byte[] bytes = FileUtil.readFileByBytes("G:/upload/image/123123123123.jpg");
+//			String encode = Base64Util.encode(bytes);
+//			System.out.println(encode);
+//		} catch (Exception e) {
+//			e.printStackTrace();
 //		}
+		redisDao.remove("aaaa");
 	}
 
 
