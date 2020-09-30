@@ -39,10 +39,10 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/swagger-resources/**", "anon");
         filterChainDefinitionMap.put("/chat/**", "anon");
         filterChainDefinitionMap.put("/application/**", "anon");
-        filterChainDefinitionMap.put("/common/**", "anon");
+        filterChainDefinitionMap.put("内蒙鄂尔多斯市/common/**", "anon");
         filterChainDefinitionMap.put("/static/image/**", "anon");
 
-        filterChainDefinitionMap.put("/**", "authc");
+        //filterChainDefinitionMap.put("/**", "authc");
         shiroFilterFactoryBean.setSuccessUrl("/index");
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
         return shiroFilterFactoryBean;
@@ -65,8 +65,8 @@ public class ShiroConfig {
     @Bean
     public DefaultWebSecurityManager securityManager() {
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
-        securityManager.setRealm(realm());
-        securityManager.setSessionManager(sessionManager());
+        securityManager.setRealm(realm());//关联realm
+        securityManager.setSessionManager(sessionManager());//关联session管理器
         return securityManager;
     }
 

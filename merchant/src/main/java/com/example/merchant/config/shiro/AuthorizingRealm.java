@@ -42,8 +42,15 @@ public class AuthorizingRealm extends org.apache.shiro.realm.AuthorizingRealm {
     @Autowired
     private MerchantRoleDao merchantRoleDao;
 
+    /**
+     * 授权逻辑
+     *
+     * @param principals
+     * @return
+     */
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
+        logger.info("执行授权逻辑");
         if (principals == null) {
             throw new AuthorizationException("PrincipalCollection method argument cannot be null.");
         }
@@ -61,12 +68,19 @@ public class AuthorizingRealm extends org.apache.shiro.realm.AuthorizingRealm {
         return authorizationInfo;
     }
 
+    /**
+     * 认证逻辑
+     *
+     * @param authenticationToken
+     * @return
+     * @throws AuthenticationException
+     */
     @SneakyThrows
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
-        System.out.println("MyShiroRealm.doGetAuthenticationInfo()");
+        logger.info("执行权限认证逻辑");
         //获取用户的输入的账号
-//        redis鉴定，从redis取数据，不用频繁的冲db查询，如果redis数据被删除，过期，重新查询
+        //redis鉴定，从redis取数据，不用频繁的冲db查询，如果redis数据被删除，过期，重新查询
         if (authenticationToken instanceof UsernamePasswordToken) {
             UsernamePasswordToken token = (UsernamePasswordToken) authenticationToken;
 

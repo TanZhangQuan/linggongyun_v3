@@ -11,7 +11,7 @@ import java.io.Serializable;
 
 public class WebSessionManager extends DefaultWebSessionManager {
 
-	public static final String LOGIN_TOKEN_KEY = "X-Dts-Admin-Token";
+	public static final String LOGIN_TOKEN_KEY = "X-LGY-Admin-Token";
 	private static final String REFERENCED_SESSION_ID_SOURCE = "Stateless request";
 
 	@Override

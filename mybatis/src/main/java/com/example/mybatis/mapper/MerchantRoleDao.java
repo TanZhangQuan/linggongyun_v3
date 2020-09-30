@@ -4,6 +4,7 @@ import com.example.mybatis.entity.Menu;
 import com.example.mybatis.entity.Merchant;
 import com.example.mybatis.entity.MerchantRole;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.example.mybatis.entity.MerchantRoleMenu;
 
 import java.util.List;
 
@@ -19,4 +20,6 @@ import java.util.List;
 public interface MerchantRoleDao extends BaseMapper<MerchantRole> {
 
     List<Menu> getMenuById(String MerchantId);
+
+    List<MerchantRole> getRolemenu(String merchantId);
 }
