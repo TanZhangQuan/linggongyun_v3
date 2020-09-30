@@ -55,6 +55,13 @@ public class AuthenticationController {
         return authenticationService.saveWorkerVideo(workerId, fileVideoPath);
     }
 
+    @PostMapping("/findSignAContract")
+    @ApiOperation(value = "查看创客是否签署了加盟合同", notes = "查看创客是否签署了加盟合同", httpMethod = "POST")
+    @ApiImplicitParams(value = {@ApiImplicitParam(name = "workerId", value = "创客ID", paramType = "query", required = true)})
+    public ReturnJson findSignAContract(@NotBlank(message = "创客ID不能为空！") @RequestParam String workerId){
+        return authenticationService.findSignAContract(workerId);
+    }
+
     @PostMapping("/senSignAContract")
     @ApiOperation(value = "发送签署加盟合同", notes = "发送签署加盟合同", httpMethod = "POST")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "workerId", value = "创客ID", paramType = "query", required = true)})
@@ -63,6 +70,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/callBackSignAContract")
+    @ApiOperation(value = "签署加盟合同回调接口", notes = "签署加盟合同回调接口", httpMethod = "POST",hidden = true)
     public ReturnJson callBackSignAContract(HttpServletRequest request) {
         ReturnJson returnJson = null;
         try {

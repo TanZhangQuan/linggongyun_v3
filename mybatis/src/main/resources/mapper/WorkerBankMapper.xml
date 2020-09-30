@@ -5,7 +5,7 @@
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.example.mybatis.entity.WorkerBank">
         <result column="id" property="id" />
-        <result column="woker_id" property="wokerId" />
+        <result column="worker_id" property="workerId" />
         <result column="real_name" property="realName" />
         <result column="bank_name" property="bankName" />
         <result column="bank_code" property="bankCode" />
@@ -14,7 +14,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, woker_id, real_name, bank_name, bank_code, sort
+        id, worker_id, real_name, bank_name, bank_code, sort
     </sql>
 
 </mapper>
