@@ -1,10 +1,8 @@
 package com.example.merchant.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.core.conditions.interfaces.Func;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.api.R;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.common.sms.SenSMS;
@@ -26,6 +24,7 @@ import com.example.mybatis.po.WorkerPo;
 import com.example.merchant.util.AcquireID;
 import com.example.mybatis.vo.WorkerVo;
 import com.example.redis.dao.RedisDao;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +33,6 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -482,14 +480,12 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
             log.error("微信授权失败, 查询数据失败");
             return returnJson.error("登录失败");
         }
-
         Object errcode = wxResult.get("errcode");
         String errmsg = wxResult.getString("errmsg");
         if (errcode != null) {
             log.error(errmsg);
             return returnJson.error(errmsg);
         }
-
         String openid = wxResult.getString("openid");
         String sessionKey = wxResult.getString("session_key");
         if (StringUtils.isBlank(openid)) {

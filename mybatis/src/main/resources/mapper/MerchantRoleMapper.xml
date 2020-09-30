@@ -17,5 +17,12 @@
     <sql id="Base_Column_List">
         id, merchant_id, role_name, role_desc, role_menu, create_date, update_date
     </sql>
+    <select id="getMenuById" resultMap="BaseResultMap">
+        SELECT m.*
+        FROM tb_merchant_role_menu mrm
+        INNER JOIN tb_menu m ON m.id=mrm.menu_id
+        INNER JOIN tb_merchant_role mr ON mr.id=mrm.merchant_role_id
+        WHERE mr.id=#{MerchantId}
+    </select>
 
 </mapper>

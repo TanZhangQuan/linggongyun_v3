@@ -9,10 +9,8 @@ import io.swagger.annotations.ApiOperation;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
@@ -71,4 +69,5 @@ public class WorkerControllerMakerend {
     public ReturnJson workerWeiXinLogin(@NotBlank(message = "微信授权码不能为空") @RequestParam(required = false) String code, @NotBlank(message = "数据加密时所使用的偏移量不能为空") @RequestParam(required = false) String vi, @NotBlank(message = "加密数据串不能为空") @RequestParam(required = false)String encryptedData){
         return workerService.wxLogin(code, vi, encryptedData);
     }
+
 }

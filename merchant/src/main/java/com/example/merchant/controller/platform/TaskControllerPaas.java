@@ -27,7 +27,7 @@ import javax.annotation.Resource;
 @Api(value = "平台端任务相关操作接口", tags = {"平台端任务相关操作接口"})
 @RestController
 @RequestMapping("/platform/task")
-public class TaskControllerPaas {
+public class TaskControllerPaas{
 
     private static Logger logger = LoggerFactory.getLogger(TaskControllerPaas.class);
 
