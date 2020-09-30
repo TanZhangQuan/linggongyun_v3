@@ -44,6 +44,18 @@ public class RedisDaoImpl implements RedisDao {
     }
 
     /**
+     * 设置过期时间
+     * @param key
+     * @param expire
+     * @param timeUnit
+     * @return
+     */
+    @Override
+    public boolean setExpire(String key, long expire, TimeUnit timeUnit) {
+        return redisTemplate.expire(key,expire, timeUnit);
+    }
+
+    /**
      * 删除数据
      */
     @Override

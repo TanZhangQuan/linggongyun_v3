@@ -35,6 +35,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * <p>
@@ -217,15 +218,7 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
         merchantIds.add(managersId);
         Page<Worker> workerPage = new Page<>(page, pageSize);
         IPage<Worker> workerIPage = workerDao.selectWorkerAll(workerPage, merchantIds);
-        ReturnJson returnJson = new ReturnJson();
-        returnJson.setCode(200);
-        returnJson.setState("success");
-        returnJson.setFinished(true);
-        returnJson.setPageSize(pageSize);
-        returnJson.setItemsCount((int) workerIPage.getTotal());
-        returnJson.setPageCount((int) workerIPage.getPages());
-        returnJson.setData(workerIPage.getRecords());
-        return returnJson;
+        return ReturnJson.success(workerIPage);
     }
 
     @Override
@@ -234,15 +227,7 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
         merchantIds.add(managersId);
         Page<Worker> workerPage = new Page<>(page, pageSize);
         IPage<Worker> workerIPage = workerDao.selectWorkerAllNot(workerPage, merchantIds);
-        ReturnJson returnJson = new ReturnJson();
-        returnJson.setCode(200);
-        returnJson.setState("success");
-        returnJson.setFinished(true);
-        returnJson.setPageSize(pageSize);
-        returnJson.setItemsCount((int) workerIPage.getTotal());
-        returnJson.setPageCount((int) workerIPage.getPages());
-        returnJson.setData(workerIPage.getRecords());
-        return returnJson;
+        return ReturnJson.success(workerIPage);
     }
 
     /**
@@ -285,12 +270,7 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
             ids.add(workerTask.getTaskId());
         }
         List list = taskService.listByIds(ids);
-        ReturnJson returnJson = new ReturnJson();
-        returnJson.setObj(worker);
-        returnJson.setData(list);
-        returnJson.setCode(200);
-        returnJson.setState("success");
-        return returnJson;
+        return ReturnJson.success(worker,list);
     }
 
 
@@ -366,7 +346,7 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
             worker.setUserPwd("");
             redisDao.set(worker.getId(), JsonUtils.objectToJson(worker));
             response.setHeader(TOKEN, token);
-            redisDao.setExpire(worker.getId(), 60 * 60 * 24 * 7);
+            redisDao.setExpire(worker.getId(), 7, TimeUnit.DAYS);
             return ReturnJson.success(worker);
         }
         return ReturnJson.error("你输入的用户名或密码有误！");
@@ -425,7 +405,7 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
             String token = jwtUtils.generateToken(worker.getId());
             resource.setHeader(TOKEN, token);
             redisDao.set(worker.getId(), JsonUtils.objectToJson(worker));
-            redisDao.setExpire(worker.getId(), 60 * 60 * 24 * 7);
+            redisDao.setExpire(worker.getId(), 7, TimeUnit.DAYS);
             return ReturnJson.success(worker);
         }
     }

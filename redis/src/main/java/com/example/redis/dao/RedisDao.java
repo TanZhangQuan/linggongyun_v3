@@ -1,5 +1,7 @@
 package com.example.redis.dao;
 
+import java.util.concurrent.TimeUnit;
+
 public interface RedisDao {
 
     /**
@@ -13,7 +15,7 @@ public interface RedisDao {
     String get(String key);
 
     /**
-     * 设置超期时间
+     * 设置过期时间
      */
     boolean setExpire(String key, long expire);
 
@@ -22,6 +24,10 @@ public interface RedisDao {
      */
     Long getExpire(String key);
 
+    /**
+     * 设置过期时间
+     */
+    public boolean setExpire(String key, long expire, TimeUnit timeUnit);
     /**
      * 删除数据
      */
