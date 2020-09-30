@@ -1,10 +1,8 @@
 package com.example.merchant.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.core.conditions.interfaces.Func;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.api.R;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.common.sms.SenSMS;
@@ -14,6 +12,7 @@ import com.example.merchant.service.CompanyWorkerService;
 import com.example.merchant.service.TaskService;
 import com.example.merchant.service.WorkerService;
 import com.example.merchant.service.WorkerTaskService;
+import com.example.merchant.util.AcquireID;
 import com.example.merchant.util.JwtUtils;
 import com.example.mybatis.entity.CompanyWorker;
 import com.example.mybatis.entity.Merchant;
@@ -23,7 +22,6 @@ import com.example.mybatis.mapper.MerchantDao;
 import com.example.mybatis.mapper.WorkerDao;
 import com.example.mybatis.po.WorekerPaymentListPo;
 import com.example.mybatis.po.WorkerPo;
-import com.example.merchant.util.AcquireID;
 import com.example.mybatis.vo.WorkerVo;
 import com.example.redis.dao.RedisDao;
 import org.apache.commons.lang3.StringUtils;
@@ -34,7 +32,6 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -569,6 +566,17 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
             returnJson = new ReturnJson("操作成功", workerVos, 200);
         }
         return returnJson;
+    }
+
+    /**
+     * 退出登录
+     * @param workerId
+     * @return
+     */
+    @Override
+    public ReturnJson logout(String workerId) {
+        redisDao.remove(workerId);
+        return ReturnJson.success("退出登录成功！");
     }
 }
 

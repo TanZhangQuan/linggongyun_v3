@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -163,5 +164,21 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 return ReturnJson.success("签署加盟合同成功！");
             }
         return ReturnJson.success("签署流程开启！");
+    }
+
+    /**
+     * 查看创客是否签署了加盟合同
+     * @param workerId
+     * @return
+     */
+    @Override
+    public ReturnJson findSignAContract(String workerId) {
+        Worker worker = workerDao.selectById(workerId);
+        if (worker == null) {
+            return ReturnJson.error("该用户不存在！");
+        }
+        Map<String,Integer> map = new HashMap<>();
+        map.put("status",worker.getAgreementSign());
+        return  ReturnJson.success(map);
     }
 }

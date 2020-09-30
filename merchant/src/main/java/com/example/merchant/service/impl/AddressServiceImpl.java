@@ -23,7 +23,7 @@ public class AddressServiceImpl extends ServiceImpl<AddressDao, Address> impleme
 
     @Override
     public ReturnJson getAddressAll(String merchantId) {
-        List<Address> addressList = this.list(new QueryWrapper<Address>().eq("merchant_id", merchantId).orderByAsc("is_not"));
+        List<Address> addressList = this.list(new QueryWrapper<Address>().eq("company_id", merchantId).orderByAsc("is_not"));
         return ReturnJson.success(addressList);
     }
 

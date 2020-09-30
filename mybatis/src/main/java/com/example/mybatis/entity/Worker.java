@@ -135,6 +135,11 @@ public class Worker implements Serializable {
     private String picture;
 
     /**
+     * 营业执照
+     */
+    private String businessLicense;
+
+    /**
      * 修改时间
      */
     @TableField(fill = FieldFill.INSERT)
