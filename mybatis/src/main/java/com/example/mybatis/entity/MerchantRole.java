@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -35,23 +37,37 @@ public class MerchantRole implements Serializable {
     /**
      * 角色名称
      */
+    @NotNull(message = "角色名称不能为空")
     private String roleName;
 
     /**
-     * 角色的描述
+     * 手机号码
      */
-    private String roleDesc;
+    @NotBlank(message = "手机号不能为空")
+    private String mobileCode;
+    /**
+     * 角色的职位
+     */
+    @NotNull(message = "角色的职位不能为空")
+    private String rolePosition;
+    /**
+     * 登录账户
+     */
+    @NotNull(message = "登录账户不能为空")
+    private String loginAccount;
+    /**
+     * 登录密码
+     */
+    @NotNull(message = "登录密码不能为空")
+    private String loginPassword;
 
     /**
-     * 角色拥有的菜单
+     * 子账户状态
      */
-    private String roleMenu;
+    private Integer status;
 
-    /**
-     * 角色拥有的菜单
-     */
     @TableField(exist = false)
-    private List<Menu> menuList;
+    private List<Menu> list;
 
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createDate;

@@ -27,7 +27,7 @@ public class MerchantRoleMenu implements Serializable {
      * 权限id
      */
     @TableId(value = "id", type = IdType.ASSIGN_ID)
-    private Integer id;
+    private String id;
 
     /**
      * 菜单ID

@@ -7,15 +7,51 @@
         <id column="id" property="id" />
         <result column="merchant_id" property="merchantId" />
         <result column="role_name" property="roleName" />
-        <result column="role_desc" property="roleDesc" />
-        <result column="role_menu" property="roleMenu" />
+        <result column="mobile_code" property="mobileCode"/>
+        <result column="role_position" property="rolePosition"/>
+        <result column="login_account" property="loginAccount"/>
+        <result column="login_password" property="loginPassword"/>
+        <result column="status" property="status"/>
         <result column="create_date" property="createDate" />
         <result column="update_date" property="updateDate" />
     </resultMap>
 
-    <!-- 通用查询结果列 -->
-    <sql id="Base_Column_List">
-        id, merchant_id, role_name, role_desc, role_menu, create_date, update_date
-    </sql>
+    <resultMap id="Rolemenu" type="com.example.mybatis.entity.MerchantRole">
+        <id column="id" property="id" />
+        <result column="merchant_id" property="merchantId" />
+        <result column="role_name" property="roleName" />
+        <result column="mobile_code" property="mobileCode"/>
+        <result column="role_position" property="rolePosition"/>
+        <result column="login_account" property="loginAccount"/>
+        <result column="login_password" property="loginPassword"/>
+        <result column="status" property="status"/>
+        <result column="create_date" property="createDate" />
+        <result column="update_date" property="updateDate" />
+        <collection property="list" ofType="com.example.mybatis.entity.Menu">
+            <id column="mid" property="id"/>
+            <result column="menu_name" property="menuName"/>
+            <result column="menu_zhname" property="menuZhname"/>
+            <result column="menu_parent" property="menuParent"/>
+            <result column="mcreate_date" property="createDate"/>
+            <result column="mupdate_date" property="updateDate"/>
+        </collection>
+    </resultMap>
+
+    <select id="getMenuById" resultMap="BaseResultMap">
+        SELECT m.*
+        FROM tb_merchant_role_menu mrm
+        INNER JOIN tb_menu m ON m.id=mrm.menu_id
+        INNER JOIN tb_merchant_role mr ON mr.id=mrm.merchant_role_id
+        WHERE mr.id=#{MerchantId}
+    </select>
+
+    <select id="getRolemenu" resultMap="Rolemenu">
+        select mr.*,m.id as mid,m.menu_name,m.menu_zhname,m.menu_parent,m.create_date as mcreate_date,m.update_date as mupdate_date
+        from tb_merchant_role mr
+        INNER JOIN tb_merchant mer ON mer.id=mr.merchant_id
+        INNER JOIN tb_merchant_role_menu mrm ON mrm.merchant_role_id=mr.id
+        INNER JOIN tb_menu m ON m.id=mrm.menu_id
+        WHERE mer.id=#{merchantId}
+    </select>
 
 </mapper>

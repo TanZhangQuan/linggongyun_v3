@@ -37,10 +37,10 @@ public class TaskControllerMerchant {
     public ReturnJson<Task> TaskList(TaskListDto taskListDto) {
         ReturnJson returnJson = new ReturnJson("查询失败", 300);
         try {
-            RowBounds rowBounds=new RowBounds(taskListDto.getPageNo(),3);
-            returnJson = taskService.selectList(taskListDto,rowBounds);
+            RowBounds rowBounds = new RowBounds(taskListDto.getPageNo(), taskListDto.getPageSize());
+            returnJson = taskService.selectList(taskListDto, rowBounds);
         } catch (Exception err) {
-            logger.error("返回错误类型",err);
+            logger.error("返回错误类型", err);
         }
         return returnJson;
     }

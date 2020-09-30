@@ -211,7 +211,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
         if (taskListDto.getPageNo() == null) {
             taskListDto.setPageNo(1);
         }
-        RowBounds rowBounds = new RowBounds((taskListDto.getPageNo() - 1) * 3, 3);
+        RowBounds rowBounds = new RowBounds((taskListDto.getPageNo() - 1) * taskListDto.getPageSize(), taskListDto.getPageSize());
         List<Task> taskList = taskDao.getPlatformTaskList(taskListDto, rowBounds);
         if (taskList != null) {
             returnJson = new ReturnJson("查询成功", taskList, 200);
