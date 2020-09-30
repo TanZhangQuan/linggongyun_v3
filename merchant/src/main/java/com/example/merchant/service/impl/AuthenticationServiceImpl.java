@@ -43,6 +43,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Value("${appSecret}")
     private String appSecret;
+
     /**
      * 识别身份证获取信息
      *
@@ -65,8 +66,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
      */
     @Override
     public ReturnJson saveIdCardinfo(IdCardInfoDto idCardInfoDto) {
-        Worker worker = new Worker();
-        worker.setId(idCardInfoDto.getWokerId());
+        Worker worker = workerDao.selectById(idCardInfoDto.getWokerId());
+        if (worker == null) {
+            return ReturnJson.error("该创客不存在！");
+        }
         worker.setAccountName(idCardInfoDto.getRealName());
         worker.setIdcardCode(idCardInfoDto.getIdCard());
         worker.setIdcardFront(idCardInfoDto.getIdCardFront());
@@ -80,13 +83,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     /**
      * 绑定银行卡号
+     *
      * @param workerBankDto
      * @return
      */
     @Override
     public ReturnJson saveBankInfo(WorkerBankDto workerBankDto) {
         WorkerBank workerBank = new WorkerBank();
-        BeanUtils.copyProperties(workerBankDto,workerBank);
+        BeanUtils.copyProperties(workerBankDto, workerBank);
         int insert = workerBankDao.insert(workerBank);
         if (insert == 1) {
             return ReturnJson.success("银行卡绑定成功！");
@@ -96,13 +100,17 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     /**
      * 保存创客的活体视频信息
+     *
      * @param workerId
      * @param fileVideoPath
      * @return
      */
     @Override
     public ReturnJson saveWorkerVideo(String workerId, String fileVideoPath) {
-        Worker worker = new Worker();
+        Worker worker = workerDao.selectById(workerId);
+        if (worker == null) {
+            return ReturnJson.error("该创客不存在！");
+        }
         worker.setId(workerId);
         worker.setAttestationVideo(fileVideoPath);
         int i = workerDao.updateById(worker);
@@ -114,6 +122,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     /**
      * 发送签署加盟合同
+     *
      * @param workerId
      * @return
      */
@@ -123,51 +132,61 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         if (worker == null) {
             return ReturnJson.error("该用户不存在！");
         }
-        if (worker.getAgreementSign() == 0){
+        if (worker.getAgreementSign() == 0) {
             ReturnJson returnJson = SignAContractUtils.signAContract(PathContractFile_KEY, worker.getId(), worker.getAccountName(), worker.getIdcardCode(),
                     worker.getMobileCode());
+            worker.setAgreementSign(2);
+            workerDao.updateById(worker);
             return returnJson;
+        } else if (worker.getAgreementSign() == 2) {
+            return ReturnJson.error("加盟合同正在签署中，请查看手机短信并通过链接进行网签《加盟合同》！");
         }
         return ReturnJson.error("您已经签署了加盟合同，请勿重复签署！");
     }
 
     /**
      * 合同签署成功后的回调
+     *
      * @param request
      * @return
      */
     @Override
-    public ReturnJson callBackSignAContract(HttpServletRequest request) throws Exception{
+    public ReturnJson callBackSignAContract(HttpServletRequest request) throws Exception {
         //查询body的数据进行验签
-            String rbody = RealnameVerifyUtil.getRequestBody(request, "UTF-8");
-            Map map = JsonUtils.jsonToPojo(rbody, Map.class);
-            String flowId = (String) map.get("flowId");
-            Integer signResult = (Integer)map.get("signResult");
-            String thirdPartyUserId = (String)map.get("thirdPartyUserId");
-            boolean res = RealnameVerifyUtil.checkPass(request, rbody, appSecret);
-            if (!res) {
-                return ReturnJson.error("签约失败！");
-            }
-            if (signResult != null && signResult == 2) {
-                log.info("---------------------签署完成后，通知回调，平台方进行签署流程归档 start-----------------------------");
-                SignHelper.archiveSignFlow(flowId);
-                log.info("---------------------归档后，获取文件下载地址 start-----------------------------");
-                Map<String, List<Map<String,Object>>> jsonHelper= (Map<String, List<Map<String,Object>>>)SignHelper.downloadFlowDoc(flowId);
-                List<Map<String, Object>> list = jsonHelper.get("docs");
-                Map<String, Object> flowInfo = list.get(0);
-                Worker worker = workerDao.selectById(thirdPartyUserId);
-                if (worker != null) {
-                    worker.setAgreementSign(1);
-                    worker.setAgreementUrl(String.valueOf(flowInfo.get("fileUrl")));
-                    workerDao.updateById(worker);
-                }
+        String rbody = RealnameVerifyUtil.getRequestBody(request, "UTF-8");
+        Map map = JsonUtils.jsonToPojo(rbody, Map.class);
+        String flowId = (String) map.get("flowId");
+        Integer signResult = (Integer) map.get("signResult");
+        String thirdPartyUserId = (String) map.get("thirdPartyUserId");
+        boolean res = RealnameVerifyUtil.checkPass(request, rbody, appSecret);
+        if (!res) {
+            return ReturnJson.error("签约失败！");
+        }
+        if (signResult != null && signResult == 2) {
+            log.info("---------------------签署完成后，通知回调，平台方进行签署流程归档 start-----------------------------");
+            SignHelper.archiveSignFlow(flowId);
+            log.info("---------------------归档后，获取文件下载地址 start-----------------------------");
+            Map<String, List<Map<String, Object>>> jsonHelper = (Map<String, List<Map<String, Object>>>) SignHelper.downloadFlowDoc(flowId);
+            List<Map<String, Object>> list = jsonHelper.get("docs");
+            Map<String, Object> flowInfo = list.get(0);
+            Worker worker = workerDao.selectById(thirdPartyUserId);
+            if (worker != null) {
+                worker.setAgreementSign(1);
+                worker.setAgreementUrl(String.valueOf(flowInfo.get("fileUrl")));
+                workerDao.updateById(worker);
                 return ReturnJson.success("签署加盟合同成功！");
+            } else {
+                worker.setAgreementSign(3);
+                workerDao.updateById(worker);
+                return ReturnJson.error("签署加盟合同失败！");
             }
+        }
         return ReturnJson.success("签署流程开启！");
     }
 
     /**
      * 查看创客是否签署了加盟合同
+     *
      * @param workerId
      * @return
      */
@@ -177,8 +196,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         if (worker == null) {
             return ReturnJson.error("该用户不存在！");
         }
-        Map<String,Integer> map = new HashMap<>();
-        map.put("status",worker.getAgreementSign());
-        return  ReturnJson.success(map);
+        Map<String, Integer> map = new HashMap<>();
+        map.put("status", worker.getAgreementSign());
+        return ReturnJson.success(map);
     }
 }
