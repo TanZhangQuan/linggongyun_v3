@@ -54,4 +54,6 @@ public interface WorkerService extends IService<Worker> {
     ReturnJson wxLogin(String code,String iv, String encryptedData);
 
     ReturnJson setWorkerMakeMoney();
+
+    ReturnJson logout(String workerId);
 }

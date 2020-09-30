@@ -3,6 +3,7 @@ package com.example.merchant.dto;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotBlank;
 
@@ -19,6 +20,7 @@ public class IdCardInfoDto {
     private String realName;
 
     @NotBlank(message = "创客身份证号码不能为空！")
+    @Length(min = 18,max = 18, message = "身份证格式错误！")
     @ApiModelProperty(notes = "创客身份证号码", value = "创客身份证号码")
     private String IdCard;
 

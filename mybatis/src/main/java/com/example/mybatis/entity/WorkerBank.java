@@ -26,7 +26,7 @@ public class WorkerBank implements Serializable {
     /**
      * 创客ID
      */
-    private String wokerId;
+    private String workerId;
 
     /**
      * 户名
