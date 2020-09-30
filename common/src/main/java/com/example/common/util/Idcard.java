@@ -1,8 +1,8 @@
 package com.example.common.util;
+
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.URLEncoder;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -23,7 +23,7 @@ public class Idcard {
         try {
             // 本地文件路径
             byte[] imgData = FileUtil.readFileByBytes(filePath);
-            String imgStr = Base64Util.encode(imgData);
+            String imgStr = com.baidu.aip.util.Base64Util.encode(imgData);
             String imgParam = URLEncoder.encode(imgStr, "UTF-8");
 
             String param = "id_card_side=" + id_card_side + "&image=" + imgParam;
