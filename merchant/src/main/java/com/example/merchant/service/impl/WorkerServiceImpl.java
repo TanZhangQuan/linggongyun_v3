@@ -30,6 +30,7 @@ import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
@@ -80,26 +81,20 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
     public ReturnJson getWorkerAll(String merchantId, Integer page, Integer pageSize) {
         ReturnJson returnJson = new ReturnJson();
         Merchant merchant = merchantDao.selectById(merchantId);
-        Page<CompanyWorker> pageData = new Page<>(page, pageSize);
         QueryWrapper<CompanyWorker> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("company_id", merchant.getCompanyId());
-        Page<CompanyWorker> merchantWorkerPage = companyWorkerService.page(pageData, queryWrapper);
-        List<CompanyWorker> records = merchantWorkerPage.getRecords();
+        List<CompanyWorker> records = companyWorkerService.list(queryWrapper);
+        Page<Worker> workerPage = null;
         if (records != null && records.size() != 0) {
             List<String> ids = new ArrayList<>();
             for (CompanyWorker companyWorker : records) {
                 ids.add(companyWorker.getWorkerId());
             }
-            List<Worker> workers = workerDao.selectBatchIds(ids);
-            returnJson.setData(workers);
+            Page<Worker> pageData = new Page<>(page, pageSize);
+            workerPage = workerDao.selectPage(pageData, new QueryWrapper<Worker>().in("id", ids));
+            return ReturnJson.success(workerPage);
         }
-        returnJson.setCode(200);
-        returnJson.setState("success");
-        returnJson.setFinished(true);
-        returnJson.setPageSize(pageSize);
-        returnJson.setItemsCount((int) merchantWorkerPage.getTotal());
-        returnJson.setPageCount((int) merchantWorkerPage.getPages());
-        return returnJson;
+        return ReturnJson.success("");
     }
 
     /**
@@ -149,6 +144,7 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
      * @return
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public ReturnJson saveWorker(List<Worker> workers, String merchantId) {
         List<CompanyWorker> companyWorkers = new ArrayList<>();
         Merchant merchant = merchantDao.selectById(merchantId);
@@ -156,16 +152,8 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
         for (Worker worker : workers) {
             mobileCodes.add(worker.getMobileCode());
             if (StringUtils.isBlank(worker.getId())) {
-                this.saveOrUpdate(worker);
-            } else {
-                CompanyWorker companyWorker = new CompanyWorker();
-                companyWorker.setCompanyId(merchant.getCompanyId());
-                companyWorker.setWorkerId(worker.getId());
-                companyWorkers.add(companyWorker);
+                this.save(worker);
             }
-        }
-        List<Worker> newworkers = workerDao.selectList(new QueryWrapper<Worker>().in("mobile_code", mobileCodes));
-        for (Worker worker : newworkers) {
             CompanyWorker companyWorker = new CompanyWorker();
             companyWorker.setCompanyId(merchant.getCompanyId());
             companyWorker.setWorkerId(worker.getId());
