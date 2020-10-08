@@ -1,7 +1,10 @@
 package com.example.mybatis.mapper;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.example.mybatis.entity.MerchantRoleMenu;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+
+import java.util.List;
 
 /**
  * <p>
@@ -12,5 +15,4 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @since 2020-09-07
  */
 public interface MerchantRoleMenuDao extends BaseMapper<MerchantRoleMenu> {
-
 }

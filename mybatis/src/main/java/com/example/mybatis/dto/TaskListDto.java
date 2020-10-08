@@ -36,7 +36,8 @@ public class TaskListDto {
     private Integer cooperateMode;
     //页码
     @ApiModelProperty(value = "页码数,默认第一页参数为1")
-    @NotNull(message = "页码数不能为空")
-    private Integer pageNo;
-
+    private Integer pageNo=1;
+    //页大小
+    @ApiModelProperty(value = "页大小,默认大小为10")
+    private Integer pageSize=10;
 }

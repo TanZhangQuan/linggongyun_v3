@@ -32,6 +32,18 @@ spring:
       max-file-size: 40MB
       # 上传文件总的最大值
       max-request-size: 100MB
+   #thymeleaf配置
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: HTML5
+    encoding: utf-8
+    servlet:
+      content-type: text/html
+    cache: false
+
+
+
 
 mybatis-plus:
   configuration:
@@ -48,7 +60,6 @@ mybatis-plus:
       logic-not-delete-value: 1
       # 删除后
       logic-delete-value: 0
-
 
 #微信Appid
 APPID: "wx3870ff35a721932e"

@@ -124,7 +124,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
     public ReturnJson merchantLogin(String username, String password, HttpServletResponse response) {
         String encryptPWD = PWD_KEY + MD5.md5(password);
         QueryWrapper<Merchant> merchantQueryWrapper = new QueryWrapper<>();
-        merchantQueryWrapper.eq("user_name", username).eq("pass_word", encryptPWD).eq("audit_status",1);
+        merchantQueryWrapper.eq("user_name", username).eq("pass_word", encryptPWD).eq("status",1);
         Merchant me = merchantDao.selectOne(merchantQueryWrapper);
         if (me == null) {
             return ReturnJson.error("账号或密码有误！");
