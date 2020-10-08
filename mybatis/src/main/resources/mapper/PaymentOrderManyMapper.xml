@@ -75,28 +75,7 @@
         <where>
             company_id = #{merchantId}
             <if test="id != null and id!=''">
-                and id = #{id}
-            </if>
-            <if test="taxId != null and taxId!=''">
-                and tax_id = #{taxId}
-            </if>
-            <if test="beginDate != null and beginDate!=''">
-                and date(create_date) &gt;= #{beginDate}
-            </if>
-            <if test="endDate != null and endDate!=''">
-                and date(create_date) &lt;= #{endDate}
-            </if>
-        </where>
-        LIMIT #{page},#{pageSize}
-    </select>
-
-    <!--总记录数-->
-    <select id="selectManyCount" parameterType="int" resultType="int" >
-        select COUNT(1) from tb_payment_order_many
-        <where>
-            company_id = #{merchantId}
-            <if test="id != null and id!=''">
-                and id = #{id}
+                and id like CONCAT('%',#{id},'%')
             </if>
             <if test="taxId != null and taxId!=''">
                 and tax_id = #{taxId}

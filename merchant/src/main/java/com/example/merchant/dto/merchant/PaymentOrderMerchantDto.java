@@ -1,35 +1,22 @@
-package com.example.merchant.dto;
+package com.example.merchant.dto.merchant;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.util.List;
 
 @Data
 @ApiModel(description = "查询订单参数")
-public class PaymentOrderDto {
+public class PaymentOrderMerchantDto {
 
     /**
-     * 管理人员ID
+     * 商户的公司ID
      */
-    @ApiModelProperty("管理人员ID")
-    private String managersId;
-
-    /**
-     * 商户名称
-     */
-    private String merchantName;
-
-    /**
-     * 商户ID集合
-     */
-    @ApiModelProperty(hidden = true)
-    private List<String> merchantIds;
-
-
-    private String merchantId;
+    @NotBlank(message = "商户的公司ID不能为空！")
+    @ApiModelProperty("商户的公司ID")
+    private String companyId;
 
     /**
      * 支付订单ID

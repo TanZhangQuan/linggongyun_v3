@@ -72,24 +72,28 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
 
     /**
      * 查询商户可用使用的平台服务商
+     *
      * @param merchantId
      * @return
      */
     @Override
     public ReturnJson getTaxAll(String merchantId, Integer packageStatus) {
-        Merchant merchant = merchantDao.selectById(merchantId);
         List<CompanyTax> companyTaxes = companyTaxDao.selectList(new QueryWrapper<CompanyTax>()
-                .eq("company_id", merchant.getCompanyId()).eq("package_status",packageStatus));
+                .eq("company_id", merchantId).eq("package_status", packageStatus));
         List<String> ids = new LinkedList<>();
-        for (CompanyTax companyTax : companyTaxes ) {
+        for (CompanyTax companyTax : companyTaxes) {
             ids.add(companyTax.getTaxId());
         }
-        List<Tax> taxes = taxDao.selectList(new QueryWrapper<Tax>().in("id", ids).eq("tax_status", 1));
+        List<Tax> taxes = null;
+        if (!VerificationCheck.listIsNull(ids)) {
+            taxes = taxDao.selectList(new QueryWrapper<Tax>().in("id", ids).eq("tax_status", 0));
+        }
         return ReturnJson.success(taxes);
     }
 
     /**
      * 查询所以开票类目
+     *
      * @return
      */
     @Override
@@ -100,6 +104,7 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
 
     /**
      * 添加开票类目
+     *
      * @param invoiceCatalog
      * @return
      */
@@ -114,40 +119,41 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
 
     /**
      * 添加服务商
+     *
      * @param taxDto
      * @return
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ReturnJson saveTax(TaxDto taxDto) throws CommonException{
-        if (taxDto.getId() != null){
-            invoiceLadderPriceService.remove(new QueryWrapper<InvoiceLadderPrice>().eq("tax_id",taxDto.getId()));
-            taxPackageDao.delete(new QueryWrapper<TaxPackage>().eq("tax_id",taxDto.getId()));
+    public ReturnJson saveTax(TaxDto taxDto) throws CommonException {
+        if (taxDto.getId() != null) {
+            invoiceLadderPriceService.remove(new QueryWrapper<InvoiceLadderPrice>().eq("tax_id", taxDto.getId()));
+            taxPackageDao.delete(new QueryWrapper<TaxPackage>().eq("tax_id", taxDto.getId()));
             this.removeById(taxDto.getId());
         }
         Tax tax = new Tax();
-        BeanUtils.copyProperties(taxDto,tax);
+        BeanUtils.copyProperties(taxDto, tax);
         log.error(tax.toString());
         taxDao.insert(tax);
         TaxPackage totalTaxPackage = taxDto.getTotalTaxPackage();
         //判断是否有总包，有总包就添加
-        if (totalTaxPackage != null){
+        if (totalTaxPackage != null) {
             totalTaxPackage.setTaxId(tax.getId());
             taxPackageDao.insert(totalTaxPackage);
             List<InvoiceLadderPrice> totalLadders = taxDto.getTotalLadders();
             //判断是否有梯度价
-            if (!VerificationCheck.listIsNull(totalLadders)){
+            if (!VerificationCheck.listIsNull(totalLadders)) {
                 //判断梯度价是否合理
                 for (int i = 0; i < totalLadders.size(); i++) {
-                    if (i != totalLadders.size()-1){
+                    if (i != totalLadders.size() - 1) {
                         InvoiceLadderPrice invoiceLadderPrice = totalLadders.get(i);
-                        if (invoiceLadderPrice.getEndMoney().compareTo(invoiceLadderPrice.getStartMoney()) < 0){
-                            throw new CommonException(300,"结束金额应该大于起始金额");
+                        if (invoiceLadderPrice.getEndMoney().compareTo(invoiceLadderPrice.getStartMoney()) < 0) {
+                            throw new CommonException(300, "结束金额应该大于起始金额");
                         }
-                        InvoiceLadderPrice invoiceLadderPriceNext = totalLadders.get(i+1);
+                        InvoiceLadderPrice invoiceLadderPriceNext = totalLadders.get(i + 1);
                         invoiceLadderPriceNext.getStartMoney().compareTo(invoiceLadderPrice.getEndMoney());
-                        if (invoiceLadderPriceNext.getStartMoney().compareTo(invoiceLadderPrice.getEndMoney()) < 0 ){
-                            throw new CommonException(300,"上梯度结束金额应小于下梯度起始金额");
+                        if (invoiceLadderPriceNext.getStartMoney().compareTo(invoiceLadderPrice.getEndMoney()) < 0) {
+                            throw new CommonException(300, "上梯度结束金额应小于下梯度起始金额");
                         }
                     }
                     totalLadders.get(i).setTaxId(tax.getId());
@@ -165,18 +171,18 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
             taxPackageDao.insert(manyTaxPackage);
             List<InvoiceLadderPrice> manyLadders = taxDto.getManyLadders();
             //判断是否有梯度价
-            if (!VerificationCheck.listIsNull(manyLadders)){
+            if (!VerificationCheck.listIsNull(manyLadders)) {
                 //判断梯度价是否合理
                 for (int i = 0; i < manyLadders.size(); i++) {
-                    if (i != manyLadders.size()-1){
+                    if (i != manyLadders.size() - 1) {
                         InvoiceLadderPrice invoiceLadderPrice = manyLadders.get(i);
-                        if (invoiceLadderPrice.getEndMoney().compareTo(invoiceLadderPrice.getStartMoney()) < 0){
-                            throw new CommonException(300,"结束金额应该大于起始金额");
+                        if (invoiceLadderPrice.getEndMoney().compareTo(invoiceLadderPrice.getStartMoney()) < 0) {
+                            throw new CommonException(300, "结束金额应该大于起始金额");
                         }
-                        InvoiceLadderPrice invoiceLadderPriceNext = manyLadders.get(i+1);
+                        InvoiceLadderPrice invoiceLadderPriceNext = manyLadders.get(i + 1);
                         invoiceLadderPriceNext.getStartMoney().compareTo(invoiceLadderPrice.getEndMoney());
-                        if (invoiceLadderPriceNext.getStartMoney().compareTo(invoiceLadderPrice.getEndMoney()) < 0 ){
-                            throw new CommonException(300,"上梯度结束金额应小于下梯度起始金额");
+                        if (invoiceLadderPriceNext.getStartMoney().compareTo(invoiceLadderPrice.getEndMoney()) < 0) {
+                            throw new CommonException(300, "上梯度结束金额应小于下梯度起始金额");
                         }
                     }
                     manyLadders.get(i).setTaxId(tax.getId());
@@ -190,18 +196,20 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
 
     /**
      * 查询服务商列表
+     *
      * @param taxListDto
      * @return
      */
     @Override
     public ReturnJson getTaxList(TaxListDto taxListDto) {
-        Page<TaxListPO> taxListPOPage = new Page<>(taxListDto.getPage(),taxListDto.getPageSize());
+        Page<TaxListPO> taxListPOPage = new Page<>(taxListDto.getPage(), taxListDto.getPageSize());
         IPage<TaxListPO> taxListPage = taxDao.selectTaxList(taxListPOPage, taxListDto.getTaxName(), taxListDto.getStartDate(), taxListDto.getEndDate());
         return ReturnJson.success(taxListPage);
     }
 
     /**
      * 查询服务商详情
+     *
      * @param taxId
      * @return
      */
@@ -209,7 +217,7 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
     public ReturnJson getTaxInfo(String taxId) {
         Tax tax = taxDao.selectById(taxId);
         TaxDto taxDto = new TaxDto();
-        BeanUtils.copyProperties(tax,taxDto);
+        BeanUtils.copyProperties(tax, taxDto);
         TaxPackage totalTaxPackage = taxPackageDao.selectOne(new QueryWrapper<TaxPackage>().eq("tax_id", taxId).eq("package_status", 0));
         if (totalTaxPackage != null) {
             List<InvoiceLadderPrice> totalLadder = invoiceLadderPriceService.list(new QueryWrapper<InvoiceLadderPrice>().eq("tax_package_id", totalTaxPackage.getId()));
@@ -227,6 +235,7 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
 
     /**
      * 查询交易流水统计
+     *
      * @param taxId
      * @return
      */
@@ -258,6 +267,7 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
 
     /**
      * 查询具体的交易流水
+     *
      * @param taxId
      * @param page
      * @param pageSize
@@ -275,15 +285,17 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
         for (PaymentOrderMany paymentOrderMany : paymentOrderManies) {
             ids.add(paymentOrderMany.getId());
         }
-        if (VerificationCheck.listIsNull(ids)){
+        if (VerificationCheck.listIsNull(ids)) {
             return ReturnJson.success(ids);
         }
-        Page<MerchantPaymentListPO> taxPage = new Page<>(page,pageSize);
-        IPage<MerchantPaymentListPO> taxPaymentListPage = taxDao.selectTaxPaymentList(taxPage,ids);
+        Page<MerchantPaymentListPO> taxPage = new Page<>(page, pageSize);
+        IPage<MerchantPaymentListPO> taxPaymentListPage = taxDao.selectTaxPaymentList(taxPage, ids);
         return ReturnJson.success(taxPaymentListPage);
     }
+
     /**
      * 销售方信息
+     *
      * @param id
      * @return
      */
