@@ -4,19 +4,19 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.example.mybatis.entity.Tax">
-        <id column="id" property="id" />
-        <result column="tax_s_name" property="taxSName" />
-        <result column="tax_man" property="taxMan" />
-        <result column="business_license" property="businessLicense" />
-        <result column="tax_name" property="taxName" />
-        <result column="tax_address" property="taxAddress" />
-        <result column="tax_create_date" property="taxCreateDate" />
-        <result column="link_man" property="linkMan" />
-        <result column="link_mobile" property="linkMobile" />
-        <result column="credit_code" property="creditCode" />
-        <result column="tax_status" property="taxStatus" />
-        <result column="create_date" property="createDate" />
-        <result column="update_date" property="updateDate" />
+        <id column="id" property="id"/>
+        <result column="tax_s_name" property="taxSName"/>
+        <result column="tax_man" property="taxMan"/>
+        <result column="business_license" property="businessLicense"/>
+        <result column="tax_name" property="taxName"/>
+        <result column="tax_address" property="taxAddress"/>
+        <result column="tax_create_date" property="taxCreateDate"/>
+        <result column="link_man" property="linkMan"/>
+        <result column="link_mobile" property="linkMobile"/>
+        <result column="credit_code" property="creditCode"/>
+        <result column="tax_status" property="taxStatus"/>
+        <result column="create_date" property="createDate"/>
+        <result column="update_date" property="updateDate"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
@@ -25,11 +25,11 @@
     </sql>
 
     <resultMap id="SellerById" type="com.example.mybatis.vo.SellerVo">
-        <result column="tax_name" property="taxName" />
-        <result column="tax_address" property="taxAddress" />
-        <result column="phone" property="phone" />
-        <result column="bank_name" property="bankName" />
-        <result column="bank_code" property="bankCode" />
+        <result column="tax_name" property="taxName"/>
+        <result column="tax_address" property="taxAddress"/>
+        <result column="phone" property="phone"/>
+        <result column="bank_name" property="bankName"/>
+        <result column="bank_code" property="bankCode"/>
     </resultMap>
 
     <select id="getSellerById" resultMap="SellerById">
@@ -37,33 +37,67 @@
         FROM tb_tax WHERE id=#{id}
     </select>
 
+    <resultMap id="taxPO" type="com.example.mybatis.po.TaxPO">
+        <result column="id" property="companyTaxId"/>
+        <result column="charge_status" property="chargeStatus"/>
+        <result column="tax_name" property="taxName"/>
+        <result column="package_status" property="packageStatus"/>
+        <result column="service_charge" property="serviceCharge"/>
+        <result column="contract" property="contract"/>
+        <result column="payee" property="payee"/>
+        <result column="bank_name" property="bankName"/>
+        <result column="bank_code" property="bankCode"/>
+    </resultMap>
+
+    <!--按公司查找服务商信息-->
+    <select id="selectByMerchantId" parameterType="string" resultMap="taxPO">
+        SELECT
+        ct.id,
+        ct.charge_status,
+        t.tax_name,
+        ct.package_status,
+        ct.service_charge,
+        ct.contract,
+        tp.payee,
+        tp.bank_name,
+        tp.bank_code
+        FROM tb_company_tax as ct
+        LEFT JOIN tb_tax as t
+        ON ct.tax_id = t.id
+        LEFT JOIN tb_tax_package as tp
+        ON ct.package_status = tp.package_status
+        AND t.id = tp.tax_id
+        WHERE ct.company_id = #{companyId}
+    </select>
 
     <resultMap id="TaxListPO" type="com.example.mybatis.po.TaxListPO">
-        <result column="tax_name" property="taxName" />
-        <result column="id" property="taxId" />
-        <result column="total_status" property="totalStatus" />
-        <result column="many_status" property="manyStatus" />
-        <result column="tax_status" property="taxStatus" />
-        <result column="create_date" property="createDate" />
+        <result column="tax_name" property="taxName"/>
+        <result column="id" property="taxId"/>
+        <result column="total_status" property="totalStatus"/>
+        <result column="many_status" property="manyStatus"/>
+        <result column="tax_status" property="taxStatus"/>
+        <result column="create_date" property="createDate"/>
     </resultMap>
     <!--查询服务商列表-->
     <select id="selectTaxList" resultMap="TaxListPO" parameterType="list">
         select f.id,f.tax_name,e.total_status,e.many_status,f.tax_status,f.create_date from tb_tax f LEFT JOIN
         ((select (case when a.tax_id is null then b.tax_id else a.tax_id end) 'tax_id',
-        (case when a.id is null then 1 else 0 end) 'total_status',(case when b.id is null then 1 else 0 end) 'many_status' from
+        (case when a.id is null then 1 else 0 end) 'total_status',(case when b.id is null then 1 else 0 end)
+        'many_status' from
         (select * from tb_tax_package
         where package_status = 0) a
-        left  join
+        left join
         (select * from tb_tax_package
         where package_status = 1) b
         on a.tax_id = b.tax_id
         )
         union
         (select (case when c.tax_id is null then d.tax_id else c.tax_id end) 'tax_id' ,
-        (case when c.id is null then 1 else 0 end) 'total_status',(case when d.id is null then 1 else 0 end) 'many_status' from
+        (case when c.id is null then 1 else 0 end) 'total_status',(case when d.id is null then 1 else 0 end)
+        'many_status' from
         (select * from tb_tax_package
         where package_status = 0) c
-        right  join
+        right join
         (select * from tb_tax_package
         where package_status = 1) d
         on c.tax_id = d.tax_id
@@ -83,13 +117,13 @@
     </select>
 
     <resultMap id="MerchantPaymentList" type="com.example.mybatis.po.MerchantPaymentListPO">
-        <id column="payment_order_id" property="paymentOrderId" />
-        <result column="merchant_name" property="merchantName" />
-        <result column="tax_name" property="taxName" />
-        <result column="package_status" property="packageStatus" />
-        <result column="real_money" property="realMoney" />
-        <result column="is_invoice" property="isInvoice" />
-        <result column="payment_sate" property="paymentDate" />
+        <id column="payment_order_id" property="paymentOrderId"/>
+        <result column="merchant_name" property="merchantName"/>
+        <result column="tax_name" property="taxName"/>
+        <result column="package_status" property="packageStatus"/>
+        <result column="real_money" property="realMoney"/>
+        <result column="is_invoice" property="isInvoice"/>
+        <result column="payment_sate" property="paymentDate"/>
     </resultMap>
 
     <!--服务商的交易流水-->

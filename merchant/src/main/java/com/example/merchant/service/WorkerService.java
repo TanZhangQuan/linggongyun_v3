@@ -19,7 +19,7 @@ import java.util.List;
 public interface WorkerService extends IService<Worker> {
     ReturnJson getWorkerAll(String merchantId, Integer page, Integer pageSize);
 
-    ReturnJson getByIdAndAccountNameAndMobile(String merchantId, String id, String accountName, String mobileCode);
+    ReturnJson getByIdAndAccountNameAndMobile(String merchantId, String id, String accountName, String mobileCode, Integer page, Integer pageSize);
 
     ReturnJson getWorkerInfo(String id);
 
@@ -31,7 +31,7 @@ public interface WorkerService extends IService<Worker> {
 
     ReturnJson getWorkerAllPaas(String managersId, Integer page, Integer pageSize) throws CommonException;
 
-    ReturnJson getWorkerAllNotPaas(String managersId, Integer page, Integer pageSize)throws CommonException;
+    ReturnJson getWorkerAllNotPaas(String managersId, Integer page, Integer pageSize) throws CommonException;
 
     ReturnJson getByIdAndAccountNameAndMobilePaas(String managersId, String id, String accountName, String mobileCode) throws CommonException;
 
@@ -51,7 +51,7 @@ public interface WorkerService extends IService<Worker> {
 
     ReturnJson updataPassWord(String loginMobile, String checkCode, String newPassWord);
 
-    ReturnJson wxLogin(String code,String iv, String encryptedData);
+    ReturnJson wxLogin(String code, String iv, String encryptedData);
 
     ReturnJson setWorkerMakeMoney();
 

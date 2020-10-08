@@ -25,7 +25,7 @@ public interface TaxDao extends BaseMapper<Tax> {
     //销售方查询
     SellerVo getSellerById(String id);
 
-    List<TaxPO> selectByMerchantId(String merchantId);
+    List<TaxPO> selectByMerchantId(String companyId);
 
     IPage<TaxListPO> selectTaxList(Page page, @Param("taxName") String taxName, @Param("startDate") String startDate, @Param("endDate") String endDate);
     IPage<MerchantPaymentListPO> selectTaxPaymentList(Page page, @Param("paymentOrderIds") List<String> paymentOrderIds);

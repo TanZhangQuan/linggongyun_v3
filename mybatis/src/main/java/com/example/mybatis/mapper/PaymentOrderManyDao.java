@@ -1,6 +1,8 @@
 package com.example.mybatis.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.mybatis.dto.TobeinvoicedDto;
 import com.example.mybatis.entity.PaymentOrderMany;
 import com.example.mybatis.po.BillCountPO;
@@ -41,7 +43,7 @@ public interface PaymentOrderManyDao extends BaseMapper<PaymentOrderMany> {
     //根据众包支付id查询对应的开票清单
     List<InvoiceDetailsVo> getInvoiceDetailsByPayId(String id, RowBounds rowBounds);
 
-    List<PaymentOrderMany> selectMany(@Param("merchantId")String mercahntId, @Param("id") String id, @Param("taxId") String taxId, @Param("beginDate") String beginDate, @Param("endDate") String endDate, @Param("page") Integer page, @Param("pageSize")Integer pageSize);
+    IPage<PaymentOrderMany> selectMany(Page page, @Param("merchantId")String mercahntId, @Param("id") String id, @Param("taxId") String taxId, @Param("beginDate") String beginDate, @Param("endDate") String endDate);
     Integer selectManyCount(@Param("merchantId")String mercahntId, @Param("id") String id, @Param("taxId") String taxId, @Param("beginDate") String beginDate, @Param("endDate") String endDate);
 
     List<PaymentOrderMany> selectManyPaas(@Param("merchantIds")List<String> merchantIds, @Param("merchantName")String merchantName, @Param("id") String id, @Param("taxId") String taxId, @Param("beginDate") String beginDate, @Param("endDate") String endDate, @Param("page") Integer page, @Param("pageSize")Integer pageSize);

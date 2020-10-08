@@ -107,9 +107,10 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
      * @return
      */
     @Override
-    public ReturnJson getByIdAndAccountNameAndMobile(String merchantId, String id, String accountName, String mobileCode) {
-        List<Worker> workers = workerDao.selectByIdAndAccountNameAndMobile(merchantId, id, accountName, mobileCode);
-        return ReturnJson.success(workers);
+    public ReturnJson getByIdAndAccountNameAndMobile(String merchantId, String id, String accountName, String mobileCode, Integer page, Integer pageSize) {
+        Page<Worker> workerPage = new Page<>(page, pageSize);
+        IPage<Worker> workerIPage = workerDao.selectByIdAndAccountNameAndMobile(workerPage, merchantId, id, accountName, mobileCode);
+        return ReturnJson.success(workerIPage);
     }
 
     /**
@@ -121,19 +122,17 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
     @Override
     public ReturnJson getWorkerInfo(String id) {
         Worker worker = workerDao.selectById(id);
+        worker.setUserPwd("");
         List<WorkerTask> workerTasks = workerTaskService.list(new QueryWrapper<WorkerTask>().eq("worker_id", worker.getId()));
         List ids = new ArrayList();
-        System.out.println(workerTasks.size());
         for (WorkerTask workerTask : workerTasks) {
             ids.add(workerTask.getTaskId());
         }
-        List list = taskService.listByIds(ids);
-        ReturnJson returnJson = new ReturnJson();
-        returnJson.setObj(worker);
-        returnJson.setData(list);
-        returnJson.setCode(200);
-        returnJson.setState("success");
-        return returnJson;
+        List list = null;
+        if (!VerificationCheck.listIsNull(ids)) {
+            list = taskService.listByIds(ids);
+        }
+        return ReturnJson.success(worker, list);
     }
 
     /**
@@ -258,7 +257,7 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
             ids.add(workerTask.getTaskId());
         }
         List list = taskService.listByIds(ids);
-        return ReturnJson.success(worker,list);
+        return ReturnJson.success(worker, list);
     }
 
 
@@ -508,6 +507,7 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
 
     /**
      * 首页创客赚钱信息
+     *
      * @return
      */
     @Override
@@ -518,7 +518,7 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
             for (int i = 0; i < workerVos.size(); i++) {
                 int num = workerVos.get(i).getAccountName().length();
                 String name = workerVos.get(i).getAccountName().substring(0, 1);
-                switch (num-1) {
+                switch (num - 1) {
                     case 1:
                         workerVos.get(i).setAccountName(name + "*");
                         break;
@@ -537,6 +537,7 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
 
     /**
      * 退出登录
+     *
      * @param workerId
      * @return
      */

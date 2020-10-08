@@ -3,12 +3,11 @@ package com.example.merchant.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.PaymentOrderDto;
+import com.example.merchant.dto.merchant.AddPaymentOrderManyDto;
+import com.example.merchant.dto.merchant.PaymentOrderMerchantDto;
 import com.example.merchant.exception.CommonException;
 import com.example.mybatis.dto.TobeinvoicedDto;
-import com.example.mybatis.entity.PaymentInventory;
 import com.example.mybatis.entity.PaymentOrderMany;
-
-import java.util.List;
 
 /**
  * <p>
@@ -36,11 +35,11 @@ public interface PaymentOrderManyService extends IService<PaymentOrderMany> {
 
     ReturnJson getInvoiceDetailsByPayId(String id, Integer pageNo);
 
-    ReturnJson getPaymentOrderMany(PaymentOrderDto paymentOrderDto);
+    ReturnJson getPaymentOrderMany(PaymentOrderMerchantDto paymentOrderMerchantDto);
 
     ReturnJson getPaymentOrderManyInfo(String id);
 
-    ReturnJson saveOrUpdataPaymentOrderMany(PaymentOrderMany paymentOrderMany, List<PaymentInventory> paymentInventories);
+    ReturnJson saveOrUpdataPaymentOrderMany(AddPaymentOrderManyDto addPaymentOrderManyDto);
 
     ReturnJson offlinePayment(String id, String manyPayment);
 
