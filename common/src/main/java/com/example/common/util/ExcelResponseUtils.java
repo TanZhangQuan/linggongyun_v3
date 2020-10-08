@@ -152,7 +152,7 @@ public class ExcelResponseUtils {
                         //DecimalFormat df = new DecimalFormat("#");
                         //String s = row.getCell(cellIndex).getStringCellValue();
                         Object cellValue = getCellValue(row.getCell(cellIndex));
-                        dataItem.put(fieldNameList.get(cellIndex), cellIndex);
+                        dataItem.put(fieldNameList.get(cellIndex), cellValue);
                     }else{
                         //列
                         Cell valueCell = row.getCell(cellIndex);
@@ -176,7 +176,7 @@ public class ExcelResponseUtils {
 
 
     /**
-     * 读取商户导入的创客信息
+     * 读取支付清单的信息
      * @param excel
      * @return
      */

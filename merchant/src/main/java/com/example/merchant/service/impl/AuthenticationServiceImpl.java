@@ -132,13 +132,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         if (worker == null) {
             return ReturnJson.error("该用户不存在！");
         }
-        if (worker.getAgreementSign() == 0) {
+        if (worker.getAgreementSign() == 0 || worker.getAgreementSign() == 3) {
             ReturnJson returnJson = SignAContractUtils.signAContract(PathContractFile_KEY, worker.getId(), worker.getAccountName(), worker.getIdcardCode(),
                     worker.getMobileCode());
-            worker.setAgreementSign(2);
+            worker.setAgreementSign(1);
             workerDao.updateById(worker);
             return returnJson;
-        } else if (worker.getAgreementSign() == 2) {
+        } else if (worker.getAgreementSign() == 1) {
             return ReturnJson.error("加盟合同正在签署中，请查看手机短信并通过链接进行网签《加盟合同》！");
         }
         return ReturnJson.error("您已经签署了加盟合同，请勿重复签署！");
@@ -171,15 +171,18 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             Map<String, Object> flowInfo = list.get(0);
             Worker worker = workerDao.selectById(thirdPartyUserId);
             if (worker != null) {
-                worker.setAgreementSign(1);
+                worker.setAgreementSign(2);
                 worker.setAgreementUrl(String.valueOf(flowInfo.get("fileUrl")));
                 workerDao.updateById(worker);
                 return ReturnJson.success("签署加盟合同成功！");
-            } else {
-                worker.setAgreementSign(3);
-                workerDao.updateById(worker);
-                return ReturnJson.error("签署加盟合同失败！");
             }
+        }
+        if (signResult == 3) {
+            Worker worker = workerDao.selectById(thirdPartyUserId);
+            worker.setAgreementSign(3);
+            workerDao.updateById(worker);
+            String resultDescription = (String) map.get("resultDescription");
+            return ReturnJson.success(resultDescription);
         }
         return ReturnJson.success("签署流程开启！");
     }
