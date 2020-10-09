@@ -2,9 +2,9 @@ package com.example.merchant.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.common.util.ReturnJson;
-import com.example.merchant.dto.RegulatorDto;
-import com.example.merchant.dto.RegulatorQueryDto;
-import com.example.merchant.dto.RegulatorTaxDto;
+import com.example.merchant.dto.platform.RegulatorDto;
+import com.example.merchant.dto.platform.RegulatorQueryDto;
+import com.example.merchant.dto.platform.RegulatorTaxDto;
 import com.example.mybatis.entity.Regulator;
 
 import java.util.List;

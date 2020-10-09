@@ -4,8 +4,9 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.common.sms.SenSMS;
 import com.example.common.util.ReturnJson;
-import com.example.merchant.dto.PaymentOrderDto;
+import com.example.merchant.dto.platform.PaymentOrderDto;
 import com.example.merchant.service.*;
+import com.example.merchant.util.JwtUtils;
 import com.example.mybatis.entity.Invoice;
 import com.example.mybatis.entity.PaymentInventory;
 import com.example.mybatis.entity.PaymentOrder;
@@ -15,6 +16,7 @@ import com.example.mybatis.mapper.PaymentOrderDao;
 import com.example.mybatis.mapper.PaymentOrderManyDao;
 import com.example.mybatis.mapper.WorkerDao;
 import com.example.redis.dao.RedisDao;
+import io.jsonwebtoken.Claims;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -46,52 +48,13 @@ class MerchantApplicationTests {
 	@Autowired
 	private PaymentOrderDao paymentOrderDao;
 
+	@Autowired
+	private JwtUtils jwtUtils;
+
 	@Test
 	void contextLoads() {
-//		Merchant merchant = new Merchant();
-//		merchant.setSalesManId("1111");
-//		merchant.setUserName("yixi");
-//		merchant.setPassWord(PWD_KEY+ MD5.md5("123"));
-//		merchant.setCompanyId("111");
-//		merchantService.save(merchant);
-//		System.out.println(StringUtils.isBlank(""));
-//		Map<String, Object> map = senSMS.senSMS("12312312312");
-//		System.out.println(map.get("statusCode"));
-
-//		redisDao.set("key","value");
-//		System.out.println(redisDao.get("key"));
-//		boolean b = Tools.checkMobileNumber("17373671818");
-//		System.out.println(b);
-
-//		PaymentOrder paymentOrder = new PaymentOrder();
-//		paymentOrder.setMerchantId("3666abe4ec7691d8c83d5b7b4d257bc9");
-//		paymentOrder.setPackageStatus(0);
-//		paymentOrder.setPaymentOrderStatus(1);
-//		paymentOrder.setRealMoney(BigDecimal.valueOf(28888.2222));
-//
-//		PaymentOrder paymentOrder2 = new PaymentOrder();
-//		paymentOrder2.setMerchantId("3666abe4ec7691d8c83d5b7b4d257bc9");
-//		paymentOrder2.setPackageStatus(0);
-//		paymentOrder2.setPaymentOrderStatus(0);
-//		paymentOrder2.setRealMoney(BigDecimal.valueOf(28888.2222));
-//
-//		PaymentOrder paymentOrder3 = new PaymentOrder();
-//		paymentOrder3.setMerchantId("3666abe4ec7691d8c83d5b7b4d257bc9");
-//		paymentOrder3.setPackageStatus(1);
-//		paymentOrder3.setPaymentOrderStatus(1);
-//		paymentOrder3.setRealMoney(BigDecimal.valueOf(28888.2222));
-//		List<PaymentOrder> list = new ArrayList<>();
-//		list.add(paymentOrder);
-//		list.add(paymentOrder2);
-//		list.add(paymentOrder3);
-//		boolean b = paymentOrderService.saveBatch(list);
-//		System.out.println(b);
-
-//		List<PaymentOrderPO> paymentOrderPOS = paymentOrderDao.selectBy30Day("3666abe4ec7691d8c83d5b7b4d257bc9");
-//		for (PaymentOrderPO payPo : paymentOrderPOS){
-//			System.out.println(payPo.getPackageStatus()+"=================="+payPo.getTotalMoney());
-//		}
-
+		Claims claim = jwtUtils.getClaimByToken("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI4ODg4ODg4OCIsImlhdCI6MTYwMjIzNzgzNCwiZXhwIjoxNjAyODQyNjM0fQ.nErGKTGQdOKBtmwikrJFxDeW5Q2Y6SuwSu6b2fEHXVrIyMAu7-zaLk34p96J8bYy44b7zOb6nKXYn4LqtEnQgQ");
+		System.out.println(claim.getSubject());
 	}
 
 	@Test
@@ -218,11 +181,11 @@ class MerchantApplicationTests {
 	@Test
 	void payService(){
 		PaymentOrderDto paymentOrderDto = new PaymentOrderDto();
-		paymentOrderDto.setMerchantId("3666abe4ec7691d8c83d5b7b4d257bc9");
+//		paymentOrderDto.setMerchantId("3666abe4ec7691d8c83d5b7b4d257bc9");
 		paymentOrderDto.setBeginDate("2020-08-09");
 		paymentOrderDto.setEndDate("2020-09-09");
-		ReturnJson paymentOrder = paymentOrderService.getPaymentOrder(paymentOrderDto);
-		System.out.println(paymentOrder.getData().size());
+//		ReturnJson paymentOrder = paymentOrderService.getPaymentOrder(paymentOrderDto);
+//		System.out.println(paymentOrder.getData().size());
 	}
 
 	@Autowired
@@ -255,8 +218,8 @@ class MerchantApplicationTests {
 		paymentInventory.setAttestation(1);
 		paymentInventory.setRealMoney(BigDecimal.valueOf(8888.22));
 		list.add(paymentInventory);
-		ReturnJson returnJson = paymentOrderService.saveOrUpdataPaymentOrder(paymentOrder, list);
-		System.out.println(returnJson);
+//		ReturnJson returnJson = paymentOrderService.saveOrUpdataPaymentOrder(paymentOrder, list);
+//		System.out.println(returnJson);
 
 //		PaymentOrder paymentOrderDto = new PaymentOrder();
 //		paymentOrderDto.setId("1304319493147660290");

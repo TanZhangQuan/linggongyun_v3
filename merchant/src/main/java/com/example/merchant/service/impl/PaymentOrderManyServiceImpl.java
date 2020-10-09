@@ -5,7 +5,8 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.common.util.ReturnJson;
-import com.example.merchant.dto.PaymentOrderDto;
+import com.example.common.util.VerificationCheck;
+import com.example.merchant.dto.platform.PaymentOrderDto;
 import com.example.merchant.dto.merchant.AddPaymentOrderManyDto;
 import com.example.merchant.dto.merchant.PaymentOrderMerchantDto;
 import com.example.merchant.exception.CommonException;
@@ -288,6 +289,12 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
         return ReturnJson.success("支付订单创建成功！");
     }
 
+    /**
+     * 众包线下支付
+     * @param id
+     * @param manyPayment
+     * @return
+     */
     @Override
     public ReturnJson offlinePayment(String id, String manyPayment) {
         PaymentOrderMany paymentOrder = new PaymentOrderMany();
@@ -356,6 +363,11 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
         return ReturnJson.success(list);
     }
 
+    /**
+     * 众包确认收款
+     * @param id
+     * @return
+     */
     @Override
     public ReturnJson confirmPaymentManyPaas(String id) {
         PaymentOrderMany paymentOrderMany = new PaymentOrderMany();
@@ -374,8 +386,19 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
     @Override
     public ReturnJson getPaymentOrderManyPaas(PaymentOrderDto paymentOrderDto) throws CommonException {
         List<String> merchantIds = acquireID.getMerchantIds(paymentOrderDto.getManagersId());
-        paymentOrderDto.setMerchantIds(merchantIds);
-        return this.getPaymentOrderData(paymentOrderDto);
+        if (VerificationCheck.listIsNull(merchantIds)) {
+            return ReturnJson.success("");
+        }
+        String merchantName = paymentOrderDto.getMerchantName();
+        String paymentOrderId = paymentOrderDto.getPaymentOrderId();
+        String taxId = paymentOrderDto.getTaxId();
+        Integer pageSize = paymentOrderDto.getPageSize();
+        Integer page = paymentOrderDto.getPage();
+        String beginDate = paymentOrderDto.getBeginDate();
+        String endDate = paymentOrderDto.getEndDate();
+        Page<PaymentOrderMany> paymentOrderManyPage = new Page<>(page,pageSize);
+        IPage<PaymentOrderMany> paymentOrderManyIPage = paymentOrderManyDao.selectManyPaas(paymentOrderManyPage, merchantIds, merchantName, paymentOrderId, taxId, beginDate, endDate);
+        return ReturnJson.success(paymentOrderManyIPage);
     }
 
     /**
@@ -395,30 +418,6 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
         map.put("tax", tax);
         list.add(map);
         return ReturnJson.success(paymentOrderMany, list);
-    }
-
-    private ReturnJson getPaymentOrderData(PaymentOrderDto paymentOrderDto) {
-        List<String> merchantIds = paymentOrderDto.getMerchantIds();
-        String merchantName = paymentOrderDto.getMerchantName();
-        String paymentOrderId = paymentOrderDto.getPaymentOrderId();
-        String taxId = paymentOrderDto.getTaxId();
-        Integer pageSize = paymentOrderDto.getPageSize();
-        Integer page = (paymentOrderDto.getPage() - 1) * pageSize;
-        String beginDate = paymentOrderDto.getBeginDate();
-        String endDate = paymentOrderDto.getEndDate();
-
-        Integer total = paymentOrderManyDao.selectManyCountPaas(merchantIds, merchantName, paymentOrderId, taxId, beginDate, endDate);
-        Integer totalPage = total % pageSize == 0 ? total / pageSize : total / pageSize + 1;
-
-        List<PaymentOrderMany> list = paymentOrderManyDao.selectManyPaas(merchantIds, merchantName, paymentOrderId, taxId, beginDate, endDate, page, pageSize);
-        ReturnJson returnJson = new ReturnJson();
-        returnJson.setState("success");
-        returnJson.setPageCount(totalPage);
-        returnJson.setPageSize(pageSize);
-        returnJson.setItemsCount(total);
-        returnJson.setData(list);
-        returnJson.setCode(200);
-        return returnJson;
     }
 
     /**

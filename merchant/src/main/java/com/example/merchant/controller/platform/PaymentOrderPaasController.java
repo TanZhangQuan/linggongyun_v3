@@ -2,13 +2,12 @@ package com.example.merchant.controller.platform;
 
 
 import com.example.common.util.ReturnJson;
-import com.example.merchant.dto.PaymentOrderDto;
+import com.example.merchant.dto.merchant.AddPaymentOrderDto;
+import com.example.merchant.dto.platform.PaymentOrderDto;
 import com.example.merchant.exception.CommonException;
 import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.PaymentOrderService;
 import com.example.merchant.service.PaymentOrderSubpackageService;
-import com.example.mybatis.entity.PaymentInventory;
-import com.example.mybatis.entity.PaymentOrder;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -20,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
-import java.util.List;
 
 /**
  * <p>
@@ -52,7 +50,6 @@ public class PaymentOrderPaasController {
     }
 
     @GetMapping("/getPaymentOrderInfo")
-    @LoginRequired
     @ApiOperation(value = "查询总包+分包支付订单详情", notes = "查询总包+分包支付订单详情", httpMethod = "GET")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "id", value = "总包+分包支付订单ID", required = true)})
     public ReturnJson getPaymentOrderInfo(@NotBlank(message = "支付订单ID不能为空") @RequestParam(required = false) String id) {
@@ -61,7 +58,6 @@ public class PaymentOrderPaasController {
 
 
     @PostMapping("/findMerchant")
-    @LoginRequired
     @ApiOperation(value = "查询商户", notes = "查询商户", httpMethod = "POST")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "managersId", value = "管理人员ID", required = true)})
     public ReturnJson findMerchant(@NotBlank(message = "支付订单不能为空！") @RequestParam String managersId) {
@@ -70,15 +66,13 @@ public class PaymentOrderPaasController {
 
     @PostMapping("/saveOrUpdata")
     @ApiOperation(value = "创建或修改总包+分包支付订单", notes = "创建或修改总包+分包支付订单", httpMethod = "POST")
-    @ApiImplicitParams(value = {@ApiImplicitParam(name = "paymentOrder", value = "新建或修改的支付订单", required = true, dataType = "PaymentOrder"),
-            @ApiImplicitParam(name = "paymentInventories", value = "支付清单", required = true, allowMultiple = true, dataType = "PaymentInventory")})
-    public ReturnJson saveOrUpdataPaymentOrder(@NotEmpty(message = "订单内容不能为空") @RequestBody PaymentOrder paymentOrder, @NotEmpty(message = "支付清单不能为空") @RequestBody List<PaymentInventory> paymentInventories) {
-        return paymentOrderService.saveOrUpdataPaymentOrder(paymentOrder, paymentInventories);
+    @ApiImplicitParams(value = {@ApiImplicitParam(name = "addPaymentOrderDto", value = "新建或修改的支付订单", required = true, dataType = "AddPaymentOrderDto")})
+    public ReturnJson saveOrUpdataPaymentOrder(@NotEmpty(message = "订单内容不能为空") @RequestBody AddPaymentOrderDto addPaymentOrderDto) {
+        return paymentOrderService.saveOrUpdataPaymentOrder(addPaymentOrderDto);
     }
 
 
     @PostMapping("/offlinePayment")
-    @LoginRequired
     @ApiOperation(value = "总包线下支付", notes = "总包线下支付", httpMethod = "POST")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "paymentOrderId", value = "支付订单ID", required = true),
             @ApiImplicitParam(name = "turnkeyProjectPayment", value = "支付回单存储地址", required = true)})
@@ -87,7 +81,6 @@ public class PaymentOrderPaasController {
     }
 
     @PostMapping("subpackagePayment")
-    @LoginRequired
     @ApiOperation(value = "分包线下支付", notes = "分包线下支付", httpMethod = "POST")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "paymentOrderId", value = "总包支付订单ID", required = true),
             @ApiImplicitParam(name = "subpackagePayment", value = "分包支付回单存储地址", required = true)})
@@ -97,7 +90,6 @@ public class PaymentOrderPaasController {
 
     @PostMapping("/confirmReceipt")
     @ApiOperation(value = "确认收款", notes = "确认收款", httpMethod = "POST")
-    @LoginRequired
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "paymentOrderId", value = "支付订单ID", required = true)})
     public ReturnJson confirmReceipt(@NotBlank(message = "支付订单不能为空！") @RequestParam String paymentOrderId) {
         return paymentOrderService.confirmReceiptPaas(paymentOrderId);

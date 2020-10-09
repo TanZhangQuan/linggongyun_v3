@@ -2,10 +2,9 @@ package com.example.merchant.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.common.util.ReturnJson;
-import com.example.merchant.dto.TaxDto;
-import com.example.merchant.dto.TaxListDto;
+import com.example.merchant.dto.platform.TaxDto;
+import com.example.merchant.dto.platform.TaxListDto;
 import com.example.merchant.exception.CommonException;
-import com.example.mybatis.entity.Industry;
 import com.example.mybatis.entity.InvoiceCatalog;
 import com.example.mybatis.entity.Tax;
 

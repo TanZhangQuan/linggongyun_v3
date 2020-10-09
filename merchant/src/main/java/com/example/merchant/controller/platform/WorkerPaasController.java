@@ -63,9 +63,9 @@ public class WorkerPaasController {
     @PostMapping("/getWorkerMany")
     @ApiOperation(value = "按条件查询已认证的创客", notes = "按条件查询已认证的创客", httpMethod = "POST")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "managersId", value = "管理人员ID", required = true),
-            @ApiImplicitParam(name = "id", value = "创客ID", required = false),
-            @ApiImplicitParam(name = "accountName", value = "创客的真实姓名", required = false),
-            @ApiImplicitParam(name = "mobileCode", value = "创客的手机号", required = false)
+            @ApiImplicitParam(name = "id", value = "创客ID"),
+            @ApiImplicitParam(name = "accountName", value = "创客的真实姓名"),
+            @ApiImplicitParam(name = "mobileCode", value = "创客的手机号")
     })
     public ReturnJson getWorkerMany(@NotBlank(message = "管理人员ID不能为空") @RequestParam(required = false) String managersId, @RequestParam(required = false) String id,
                                     @RequestParam(required = false) String accountName, @RequestParam(required = false) String mobileCode) throws CommonException {
@@ -75,9 +75,9 @@ public class WorkerPaasController {
     @PostMapping("/getWorkerManyNot")
     @ApiOperation(value = "按条件查询未认证的创客", notes = "按条件查询已认证的创客", httpMethod = "POST")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "managersId", value = "管理人员ID", required = true),
-            @ApiImplicitParam(name = "id", value = "创客ID", required = false),
-            @ApiImplicitParam(name = "accountName", value = "创客的真实姓名", required = false),
-            @ApiImplicitParam(name = "mobileCode", value = "创客的手机号", required = false)
+            @ApiImplicitParam(name = "id", value = "创客ID"),
+            @ApiImplicitParam(name = "accountName", value = "创客的真实姓名"),
+            @ApiImplicitParam(name = "mobileCode", value = "创客的手机号")
     })
     public ReturnJson getWorkerManyNot(@NotBlank(message = "管理人员ID不能为空") @RequestParam(required = false) String managersId, @RequestParam(required = false) String id,
                                        @RequestParam(required = false) String accountName, @RequestParam(required = false) String mobileCode) throws CommonException {

@@ -5,13 +5,14 @@ import com.example.common.util.ReturnJson;
 import com.example.merchant.exception.CommonException;
 import com.example.merchant.service.HomePageService;
 import com.example.merchant.util.AcquireID;
-import com.example.merchant.vo.HomePageVO;
+import com.example.merchant.vo.merchant.HomePageMerchantVO;
+import com.example.merchant.vo.platform.HomePageVO;
 import com.example.mybatis.entity.Agent;
 import com.example.mybatis.entity.CompanyWorker;
 import com.example.mybatis.entity.Managers;
-import com.example.mybatis.entity.Merchant;
 import com.example.mybatis.mapper.*;
 import com.example.mybatis.po.InvoicePO;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +21,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+@Slf4j
 @Service
 public class HomePageServiceImpl implements HomePageService {
 
@@ -65,42 +67,62 @@ public class HomePageServiceImpl implements HomePageService {
      */
     @Override
     public ReturnJson getHomePageInof(String merchantId) {
-        Merchant merchant = merchantDao.selectById(merchantId);
-        HomePageVO homePageVO = new HomePageVO();
-        BigDecimal payment30TotalMoney = paymentOrderDao.selectBy30Day(merchantId);
-        homePageVO.setPayment30TotalMoney(payment30TotalMoney);
+        String companyId = merchantId;
+        HomePageMerchantVO homePageMerchantVO = new HomePageMerchantVO();
+        BigDecimal payment30TotalMoney = paymentOrderDao.selectBy30Day(companyId);
+        homePageMerchantVO.setPayment30TotalMoney(payment30TotalMoney);
 
-        BigDecimal paymentTotalMoney = paymentOrderDao.selectTotal(merchantId);
-        homePageVO.setPaymentTotalMoney(paymentTotalMoney);
+        BigDecimal paymentTotalMoney = paymentOrderDao.selectTotal(companyId);
+        homePageMerchantVO.setPaymentTotalMoney(paymentTotalMoney);
 
-        BigDecimal payment30ManyMoney = paymentOrderManyDao.selectBy30Day(merchantId);
-        homePageVO.setPayment30ManyMoney(payment30ManyMoney);
+        BigDecimal payment30ManyMoney = paymentOrderManyDao.selectBy30Day(companyId);
+        homePageMerchantVO.setPayment30ManyMoney(payment30ManyMoney);
 
-        BigDecimal paymentManyMoney = paymentOrderManyDao.selectTotal(merchantId);
-        homePageVO.setPaymentManyMoney(paymentManyMoney);
-
-
-        InvoicePO invoicePO = invoiceDao.selectInvoiceMoney(merchantId);
-
-        homePageVO.setInvoiceTotalCount(invoicePO.getCount());
-        homePageVO.setInvoiceTotalMoney(invoicePO.getTotalMoney());
+        BigDecimal paymentManyMoney = paymentOrderManyDao.selectTotal(companyId);
+        homePageMerchantVO.setPaymentManyMoney(paymentManyMoney);
 
 
-        InvoicePO invoicePOCrow = crowdSourcingInvoiceDao.selectCrowdInvoiceMoney(merchantId);
+        InvoicePO invoicePO = invoiceDao.selectInvoiceMoney(companyId);
 
-        homePageVO.setInvoiceManyCount(invoicePOCrow.getCount());
-        homePageVO.setInvoiceManyMoney(invoicePOCrow.getTotalMoney());
+        try {
+            homePageMerchantVO.setInvoiceTotalCount(invoicePO.getCount());
+        } catch (Exception e) {
+            log.info(e.toString() + ":" + e.getMessage());
+        }
+        try {
+            homePageMerchantVO.setInvoiceTotalMoney(invoicePO.getTotalMoney());
+        } catch (Exception e) {
+            log.info(e.toString() + ":" + e.getMessage());
+        }
 
-        Integer workeCount = companyWorkerDao.selectCount(new QueryWrapper<CompanyWorker>().eq("company_id", merchant.getCompanyId()));
-        homePageVO.setWorkerTotal(workeCount);
-        return ReturnJson.success(homePageVO);
+
+        InvoicePO invoicePOCrow = crowdSourcingInvoiceDao.selectCrowdInvoiceMoney(companyId);
+
+        try {
+            homePageMerchantVO.setInvoiceManyCount(invoicePOCrow.getCount());
+        } catch (Exception e) {
+            log.info(e.toString() + ":" + e.getMessage());
+        }
+        try {
+            homePageMerchantVO.setInvoiceManyMoney(invoicePOCrow.getTotalMoney());
+        } catch (Exception e) {
+            log.info(e.toString() + ":" + e.getMessage());
+        }
+
+        Integer workeCount = companyWorkerDao.selectCount(new QueryWrapper<CompanyWorker>().eq("company_id", companyId));
+        homePageMerchantVO.setWorkerTotal(workeCount);
+        return ReturnJson.success(homePageMerchantVO);
     }
 
     @Override
     public ReturnJson getHomePageInofpaas(String managersId) throws CommonException {
         Managers managers = managersDao.selectById(managersId);
+        HomePageVO homePageVO = null;
         List<String> merchantIds = acquireID.getMerchantIds(managersId);
-        HomePageVO homePageVO = this.getHomePageOV(merchantIds);
+        if (merchantIds == null || merchantIds.size() == 0) {
+            return ReturnJson.success(homePageVO);
+        }
+        homePageVO = this.getHomePageOV(merchantIds);
         if (managers.getUserSign() == 1) { //当为代理商时可以查看代理商的所有商户及商户所拥有的创客
             Integer workerTotal = companyWorkerDao.selectCount(new QueryWrapper<CompanyWorker>().in("company_id", merchantIds));
             //除去可能重复的商户ID
@@ -144,12 +166,28 @@ public class HomePageServiceImpl implements HomePageService {
         BigDecimal payMany = paymentOrderManyDao.selectTotalpaas(ids);
 
         InvoicePO invoicePO = invoiceDao.selectInvoiceMoneyPaas(ids);
-        homePageVO.setInvoiceTotalCount(invoicePO.getCount());
-        homePageVO.setInvoiceTotalMoney(invoicePO.getTotalMoney());
+        try {
+            homePageVO.setInvoiceTotalCount(invoicePO.getCount());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            homePageVO.setInvoiceTotalMoney(invoicePO.getTotalMoney());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         InvoicePO invoicePOCrow = crowdSourcingInvoiceDao.selectCrowdInvoiceMoneyPaas(ids);
-        homePageVO.setInvoiceManyCount(invoicePOCrow.getCount());
-        homePageVO.setInvoiceManyMoney(invoicePOCrow.getTotalMoney());
+        try {
+            homePageVO.setInvoiceManyCount(invoicePOCrow.getCount());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            homePageVO.setInvoiceManyMoney(invoicePOCrow.getTotalMoney());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         homePageVO.setPayment30TotalMoney(pay30Total);
         homePageVO.setPayment30ManyMoney(pay30Many);

@@ -1,6 +1,8 @@
 package com.example.mybatis.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.mybatis.entity.PaymentOrder;
 import com.example.mybatis.po.BillCountPO;
 import com.example.mybatis.po.BillPO;
@@ -28,11 +30,9 @@ public interface PaymentOrderDao extends BaseMapper<PaymentOrder> {
     List<PaymentOrder> selectWeek(String merchantId);
     List<PaymentOrder> selectMonth(String merchantId);
     List<PaymentOrder> selectYear(String merchantId);
-    List<PaymentOrder> selectMany(@Param("merchantId")String mercahntId, @Param("id") String id, @Param("taxId") String taxId, @Param("beginDate") String beginDate, @Param("endDate") String endDate,@Param("page") Integer page, @Param("pageSize")Integer pageSize);
-    Integer selectManyCount(@Param("merchantId")String mercahntId, @Param("id") String id, @Param("taxId") String taxId, @Param("beginDate") String beginDate, @Param("endDate") String endDate);
+    IPage<PaymentOrder> selectMany(Page page, @Param("merchantId")String mercahntId, @Param("id") String id, @Param("taxId") String taxId, @Param("beginDate") String beginDate, @Param("endDate") String endDate);
 
-    List<PaymentOrder> selectManyPaas(@Param("merchantIds")List<String> mercahntIds, @Param("merchantName")String merchantName, @Param("id") String id, @Param("taxId") String taxId, @Param("beginDate") String beginDate, @Param("endDate") String endDate,@Param("page") Integer page, @Param("pageSize")Integer pageSize);
-    Integer selectManyCountPaas(@Param("merchantIds")List<String> mercahntIds, @Param("merchantName")String merchantName, @Param("id") String id, @Param("taxId") String taxId, @Param("beginDate") String beginDate, @Param("endDate") String endDate);
+    IPage<PaymentOrder> selectManyPaas(Page page,@Param("merchantIds")List<String> mercahntIds, @Param("merchantName")String merchantName, @Param("id") String id, @Param("taxId") String taxId, @Param("beginDate") String beginDate, @Param("endDate") String endDate);
 
 
     BigDecimal selectBy30Daypaas(List<String> merchantId);

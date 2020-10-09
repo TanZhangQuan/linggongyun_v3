@@ -1,4 +1,4 @@
-package com.example.merchant.dto;
+package com.example.merchant.dto.platform;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;

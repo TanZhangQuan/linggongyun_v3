@@ -2,7 +2,7 @@ package com.example.merchant.controller.platform;
 
 
 import com.example.common.util.ReturnJson;
-import com.example.merchant.dto.CompanyDto;
+import com.example.merchant.dto.platform.CompanyDto;
 import com.example.merchant.exception.CommonException;
 import com.example.merchant.service.AddressService;
 import com.example.merchant.service.LinkmanService;
@@ -86,23 +86,23 @@ public class MerchantPaasController {
     @PostMapping("/auditMerchant")
     @ApiOperation(value = "审核商户", notes = "审核商户", httpMethod = "POST")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "merchantId", value = "商户ID", required = true)})
-    public ReturnJson auditMerchant(@NotBlank(message = "商户ID不能为空！") @RequestParam String merchantId) {
+    public ReturnJson auditMerchant(@NotBlank(message = "商户公司ID不能为空！") @RequestParam String merchantId) {
         return merchantService.auditMerchant(merchantId);
     }
 
 
     @PostMapping("/removeMerchant")
     @ApiOperation(value = "删除商户", notes = "删除商户", httpMethod = "POST")
-    @ApiImplicitParams(value = {@ApiImplicitParam(name = "merchantId", value = "商户ID", required = true)})
-    public ReturnJson removeMerchant(@NotBlank(message = "商户ID不能为空！") @RequestParam String merchantId) {
-        return merchantService.removeMerchant(merchantId);
+    @ApiImplicitParams(value = {@ApiImplicitParam(name = "companyId", value = "商户公司ID", required = true)})
+    public ReturnJson removeMerchant(@NotBlank(message = "商户公司ID不能为空！") @RequestParam String companyId) {
+        return merchantService.removeMerchant(companyId);
     }
 
     @PostMapping("/merchantInfo")
     @ApiOperation(value = "获取商户信息", notes = "获取商户信息", httpMethod = "POST")
-    @ApiImplicitParams(value = {@ApiImplicitParam(name = "merchantId", value = "商户ID", required = true)})
-    public ReturnJson merchantInfo(@NotBlank(message = "商户ID不能为空！") @RequestParam String merchantId) {
-        return merchantService.merchantInfoPaas(merchantId);
+    @ApiImplicitParams(value = {@ApiImplicitParam(name = "companyId", value = "商户公司ID", required = true)})
+    public ReturnJson merchantInfo(@NotBlank(message = "商户公司ID不能为空！") @RequestParam String companyId) {
+        return merchantService.merchantInfoPaas(companyId);
     }
 
     @PostMapping("/addMerchant")

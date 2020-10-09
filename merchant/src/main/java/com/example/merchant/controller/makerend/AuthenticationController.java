@@ -2,8 +2,8 @@ package com.example.merchant.controller.makerend;
 
 import com.example.common.contract.exception.DefineException;
 import com.example.common.util.ReturnJson;
-import com.example.merchant.dto.IdCardInfoDto;
-import com.example.merchant.dto.WorkerBankDto;
+import com.example.merchant.dto.makerend.IdCardInfoDto;
+import com.example.merchant.dto.makerend.WorkerBankDto;
 import com.example.merchant.service.AuthenticationService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;

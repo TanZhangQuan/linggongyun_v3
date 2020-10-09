@@ -2,7 +2,7 @@ package com.example.merchant.service.impl;
 
 import com.example.common.util.ReturnJson;
 import com.example.merchant.service.BillService;
-import com.example.merchant.vo.MonthBillCountVO;
+import com.example.merchant.vo.makerend.MonthBillCountVO;
 import com.example.mybatis.mapper.PaymentInventoryDao;
 import com.example.mybatis.mapper.PaymentOrderDao;
 import com.example.mybatis.mapper.PaymentOrderManyDao;

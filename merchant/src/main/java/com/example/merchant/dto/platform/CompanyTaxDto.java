@@ -1,4 +1,4 @@
-package com.example.merchant.dto;
+package com.example.merchant.dto.platform;
 
 import com.example.mybatis.entity.CompanyLadderService;
 import com.example.mybatis.entity.CompanyTax;

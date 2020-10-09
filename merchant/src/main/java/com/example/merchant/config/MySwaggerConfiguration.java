@@ -29,7 +29,7 @@ public class MySwaggerConfiguration {
         //在配置好的配置类中增加此段代码即可
         ParameterBuilder ticketPar = new ParameterBuilder();
         List<Parameter> pars = new ArrayList<Parameter>();
-        ticketPar.name("Authorization").description("登录校验")//name表示名称，description表示描述
+        ticketPar.name("token").description("登录校验")//name表示名称，description表示描述
                 .modelRef(new ModelRef("string")).parameterType("header")
                 .required(false).defaultValue("Bearer ").build();//required表示是否必填，defaultvalue表示默认值
         pars.add(ticketPar.build());//添加完此处一定要把下边的带***的也加上否则不生效

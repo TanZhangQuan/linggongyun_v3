@@ -29,7 +29,7 @@ public class LinkmanServiceImpl extends ServiceImpl<LinkmanDao, Linkman> impleme
     @Override
     public ReturnJson addOrUpdataLinkman(Linkman linkman) {
         if (linkman.getIsNot() == 0) {
-            Linkman linkmanOne = this.getOne(new QueryWrapper<Linkman>().eq("company_id", linkman.getCompanyId()).eq("is_not", 1));
+            Linkman linkmanOne = this.getOne(new QueryWrapper<Linkman>().eq("company_id", linkman.getCompanyId()).eq("is_not", 0));
             if (linkmanOne != null) {
                 linkmanOne.setIsNot(1);
                 this.saveOrUpdate(linkmanOne);
@@ -44,7 +44,7 @@ public class LinkmanServiceImpl extends ServiceImpl<LinkmanDao, Linkman> impleme
 
     @Override
     public ReturnJson getLinkmanAll(String merchantId) {
-        List<Linkman> list = this.list(new QueryWrapper<Linkman>().eq("merchant_id", merchantId).orderByAsc("is_not"));
+        List<Linkman> list = this.list(new QueryWrapper<Linkman>().eq("company_id", merchantId).orderByAsc("is_not"));
         return ReturnJson.success(list);
     }
 

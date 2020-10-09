@@ -1,10 +1,9 @@
 package com.example.merchant.controller.platform;
 
 import com.example.common.util.ReturnJson;
-import com.example.merchant.dto.PaymentOrderDto;
 import com.example.merchant.dto.merchant.AddPaymentOrderManyDto;
+import com.example.merchant.dto.platform.PaymentOrderDto;
 import com.example.merchant.exception.CommonException;
-import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.PaymentOrderManyService;
 import com.example.merchant.service.PaymentOrderService;
 import io.swagger.annotations.Api;
@@ -40,10 +39,9 @@ public class PaymentOrderManyPaasController {
 
 
     @PostMapping("/findMerchant")
-    @LoginRequired
     @ApiOperation(value = "查询商户", notes = "查询商户", httpMethod = "POST")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "managersId", value = "管理人员ID", required = true)})
-    public ReturnJson findMerchant(@NotBlank(message = "支付订单不能为空！") @RequestParam String managersId) {
+    public ReturnJson findMerchant(@NotBlank(message = "管理人员ID不能为空！") @RequestParam String managersId) {
         return paymentOrderService.findMerchantPaas(managersId);
     }
 
