@@ -57,4 +57,6 @@ public interface MerchantService extends IService<Merchant> {
     ReturnJson getMerchantPaymentInventory(String paymentOrderId, Integer page, Integer pageSize);
 
     ReturnJson addMerchant(CompanyDto companyDto) throws CommonException;
+
+    ReturnJson logout(String merchantId);
 }

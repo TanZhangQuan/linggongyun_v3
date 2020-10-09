@@ -37,7 +37,16 @@
         </collection>
     </resultMap>
 
-    <select id="getMenuById" resultMap="BaseResultMap">
+    <resultMap id="MenuById" type="com.example.mybatis.entity.Menu">
+        <id column="mid" property="id"/>
+        <result column="menu_name" property="menuName"/>
+        <result column="menu_zhname" property="menuZhname"/>
+        <result column="menu_parent" property="menuParent"/>
+        <result column="mcreate_date" property="createDate"/>
+        <result column="mupdate_date" property="updateDate"/>
+    </resultMap>
+
+    <select id="getMenuById" resultMap="MenuById">
         SELECT m.*
         FROM tb_merchant_role_menu mrm
         INNER JOIN tb_menu m ON m.id=mrm.menu_id

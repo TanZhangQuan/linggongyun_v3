@@ -48,7 +48,8 @@ public class MerchantMerchantController {
     @ApiOperation(value = "账号密码登录", notes = "账号密码登录", httpMethod = "POST")
     @ApiImplicitParams(value={@ApiImplicitParam(name="username",value = "登录账号",required = true),
             @ApiImplicitParam(name="password",value = "登录密码",required = true)})
-    public ReturnJson merchantLogin(@NotBlank(message = "用户名不能为空")  @RequestParam(required = false) String username, @NotBlank(message = "密码不能为空") @RequestParam(required = false) String password , HttpServletResponse response){
+    public ReturnJson merchantLogin(@NotBlank(message = "用户名不能为空")  @RequestParam(required = false) String username,
+                                    @NotBlank(message = "密码不能为空") @RequestParam(required = false) String password , HttpServletResponse response){
         return  merchantService.merchantLogin(username, password,response);
     }
 
@@ -81,7 +82,8 @@ public class MerchantMerchantController {
     @ApiOperation(value = "手机号登录", notes = "手机号登录", httpMethod = "POST")
     @ApiImplicitParams(value={@ApiImplicitParam(name="loginMobile",value = "登录用的手机号码",required = true),
             @ApiImplicitParam(name="checkCode",value = "验证码",required = true)})
-    public ReturnJson loginMobile(@NotBlank(message = "手机号不能为空") @RequestParam(required = false) String loginMobile, @NotBlank(message = "验证码不能为空") @RequestParam(required = false) String checkCode, HttpServletResponse resource){
+    public ReturnJson loginMobile(@NotBlank(message = "手机号不能为空") @RequestParam(required = false) String loginMobile,
+                                  @NotBlank(message = "验证码不能为空") @RequestParam(required = false) String checkCode, HttpServletResponse resource){
         return merchantService.loginMobile(loginMobile, checkCode, resource);
     }
 
@@ -153,8 +155,17 @@ public class MerchantMerchantController {
     @ApiOperation(value = "修改或忘记密码", notes = "修改或忘记密码", httpMethod = "POST")
     @ApiImplicitParams(value={@ApiImplicitParam(name="loginMobile",value = "登录用的手机号码",required = true),
             @ApiImplicitParam(name="checkCode",value = "验证码",required = true),@ApiImplicitParam(name="newPassWord",value = "新密码",required = true)})
-    public ReturnJson updataPassWord(@NotBlank(message = "手机号不能为空") @RequestParam(required = false) String loginMobile, @NotBlank(message = "验证码不能为空") @RequestParam(required = false) String checkCode, @NotBlank(message = "新密码不能为空") @RequestParam(required = false)String newPassWord){
+    public ReturnJson updataPassWord(@NotBlank(message = "手机号不能为空") @RequestParam(required = false) String loginMobile,
+                                     @NotBlank(message = "验证码不能为空") @RequestParam(required = false) String checkCode,
+                                     @NotBlank(message = "新密码不能为空") @RequestParam(required = false)String newPassWord){
         return merchantService.updataPassWord(loginMobile, checkCode, newPassWord);
+    }
+
+    @PostMapping("/merchantLogout")
+    @ApiOperation(value = "登出", notes = "登出", httpMethod = "POST")
+    @ApiImplicitParams(value={@ApiImplicitParam(name="merchantId",value = "登录的商户id",required = true)})
+    public ReturnJson merchantLogout(@NotBlank(message = "商户id不能为空") @RequestParam(required = false) String merchantId){
+        return merchantService.logout(merchantId);
     }
 
 }

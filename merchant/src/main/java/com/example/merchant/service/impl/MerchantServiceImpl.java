@@ -31,6 +31,9 @@ import com.example.mybatis.vo.BuyerVo;
 import com.example.redis.dao.RedisDao;
 import io.jsonwebtoken.Claims;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -99,6 +102,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
 
     @Autowired
     private SenSMS senSMS;
+
     @Autowired
     private HomePageService homePageService;
 
@@ -135,6 +139,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         if (me == null) {
             return ReturnJson.error("账号或密码有误！");
         }
+        SecurityUtils.getSubject().login(new UsernamePasswordToken(username, encryptPWD));//shiro验证身份
         String token = jwtUtils.generateToken(me.getId());
         response.setHeader(TOKEN, token);
         redisDao.set(me.getId(), JsonUtils.objectToJson(me));
@@ -329,7 +334,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
     public ReturnJson getIdAndName() {
         ReturnJson returnJson = new ReturnJson("查询失败", 300);
         List<Merchant> list = merchantDao.getIdAndName();
-        if (list != null && list.size() > 0) {
+        if (list != null) {
             returnJson = new ReturnJson("查询成功", list, 200);
         }
         return returnJson;
@@ -539,5 +544,18 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         addressDao.insert(address);
 
         return ReturnJson.success("添加商户成功！");
+    }
+
+    /**
+     * 退出登录
+     *
+     * @param merchantId
+     * @return
+     */
+    @Override
+    public ReturnJson logout(String merchantId) {
+        redisDao.remove(merchantId);
+        SecurityUtils.getSubject().logout();
+        return ReturnJson.success("退出登录成功！");
     }
 }

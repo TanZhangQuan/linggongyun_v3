@@ -34,7 +34,7 @@
 
 
     <sql id="task_list">
-       select task_code,task_name,release_date,industry_type,release_time,cooperate_mode,task_mode,state from tb_task
+       select * from tb_task
     </sql>
 
     <!--查询参数-->

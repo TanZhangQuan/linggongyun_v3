@@ -39,10 +39,11 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/swagger-resources/**", "anon");
         filterChainDefinitionMap.put("/chat/**", "anon");
         filterChainDefinitionMap.put("/application/**", "anon");
-        filterChainDefinitionMap.put("内蒙鄂尔多斯市/common/**", "anon");
+        filterChainDefinitionMap.put("/common/**", "anon");
         filterChainDefinitionMap.put("/static/image/**", "anon");
+        filterChainDefinitionMap.put("/merchant/merchant/login", "anon");
 
-        //filterChainDefinitionMap.put("/**", "authc");
+        filterChainDefinitionMap.put("/merchant/**", "authc");
         shiroFilterFactoryBean.setSuccessUrl("/index");
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
         return shiroFilterFactoryBean;
@@ -70,17 +71,29 @@ public class ShiroConfig {
         return securityManager;
     }
 
-    @Bean
+    /**
+     * 开启aop注解支持
+     * @param securityManager
+     * @return
+     */
+    @Bean(name = "authorizationAttributeSourceAdvisor")
     public AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor(SecurityManager securityManager) {
         AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor = new AuthorizationAttributeSourceAdvisor();
         authorizationAttributeSourceAdvisor.setSecurityManager(securityManager);
         return authorizationAttributeSourceAdvisor;
     }
 
-    @Bean
+
+    /**
+     *  开启Shiro的注解(如@RequiresRoles,@RequiresPermissions),需借助SpringAOP扫描使用Shiro注解的类,并在必要时进行安全逻辑验证
+     *  配置以下两个bean(DefaultAdvisorAutoProxyCreator和AuthorizationAttributeSourceAdvisor)即可实现此功能
+     * @return
+     */
+    @Bean(name = "defaultAdvisorAutoProxyCreator")
     public static DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator() {
         DefaultAdvisorAutoProxyCreator creator = new DefaultAdvisorAutoProxyCreator();
         creator.setProxyTargetClass(true);
         return creator;
     }
+
 }

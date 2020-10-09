@@ -5,19 +5,15 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.example.mybatis.entity.Menu;
 import com.example.mybatis.entity.Merchant;
 import com.example.mybatis.entity.MerchantRole;
-import com.example.mybatis.entity.MerchantRoleMenu;
-import com.example.mybatis.mapper.MenuDao;
 import com.example.mybatis.mapper.MerchantDao;
 import com.example.mybatis.mapper.MerchantRoleDao;
-import com.example.mybatis.mapper.MerchantRoleMenuDao;
-import com.google.gson.internal.$Gson$Preconditions;
+
 import lombok.SneakyThrows;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationException;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.subject.PrincipalCollection;
-import org.apache.shiro.util.ByteSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,15 +52,17 @@ public class AuthorizingRealm extends org.apache.shiro.realm.AuthorizingRealm {
         }
         SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
         String loginName = (String) principals.getPrimaryPrincipal();//获取登录用户
+        System.out.println(loginName);
         Merchant merchant = merchantDao.selectOne(new QueryWrapper<Merchant>().eq("user_name", loginName));//查询登录用户的角色
         MerchantRole merchantRole = merchantRoleDao.selectOne(new QueryWrapper<MerchantRole>().eq("merchant_id", merchant.getId()));
-        List<Menu> menuList = merchantRoleDao.getMenuById(merchant.getId());
+        List<Menu> menuList = merchantRoleDao.getMenuById(merchantRole.getId());
         authorizationInfo.addRole(merchantRole.getRoleName());//添加角色
         Set<String> permissions = new HashSet<>();
-        for (Menu menu : menuList) {
-            permissions.add(menu.getMenuName());
+        for (int i = 0; i < menuList.size(); i++) {
+            permissions.add(menuList.get(i).getMenuName());//添加权限
+
         }
-        authorizationInfo.setStringPermissions(permissions);//添加权限
+        authorizationInfo.setStringPermissions(permissions);
         return authorizationInfo;
     }
 
@@ -78,7 +76,7 @@ public class AuthorizingRealm extends org.apache.shiro.realm.AuthorizingRealm {
     @SneakyThrows
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
-        logger.info("执行权限认证逻辑");
+        logger.info("执行认证逻辑");
         //获取用户的输入的账号
         //redis鉴定，从redis取数据，不用频繁的冲db查询，如果redis数据被删除，过期，重新查询
         if (authenticationToken instanceof UsernamePasswordToken) {
@@ -96,9 +94,7 @@ public class AuthorizingRealm extends org.apache.shiro.realm.AuthorizingRealm {
                 throw new LockedAccountException("账号已被禁用");
             }
             System.out.println("----->>merchant=" + merchant);
-            if (merchant == null) {
-                return null;
-            }
+
             SimpleAuthenticationInfo authenticationInfo = new SimpleAuthenticationInfo(
                     username, //用户名
                     merchant.getPassWord(), //密码
