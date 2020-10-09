@@ -2,8 +2,8 @@ package com.example.merchant.controller.platform;
 
 
 import com.example.common.util.ReturnJson;
-import com.example.merchant.dto.platform.PaymentOrderDto;
 import com.example.merchant.dto.merchant.AddPaymentOrderDto;
+import com.example.merchant.dto.platform.PaymentOrderDto;
 import com.example.merchant.exception.CommonException;
 import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.PaymentOrderService;
@@ -42,6 +42,7 @@ public class PaymentOrderPaasController {
     private PaymentOrderSubpackageService paymentOrderSubpackageService;
 
     @PostMapping("/getPaymentOrderAll")
+    @LoginRequired
     @ApiOperation(value = "查询总包+分包支付订单", notes = "查询总包+分包支付订单", httpMethod = "POST")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "paymentOrderDto", value = "查询条件", required = true, dataType = "PaymentOrderDto")})
     public ReturnJson getPaymentOrderAll(@Valid @RequestBody PaymentOrderDto paymentOrderDto) throws CommonException {

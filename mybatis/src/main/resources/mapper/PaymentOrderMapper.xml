@@ -109,6 +109,7 @@
                 and date(create_date) &lt;= #{endDate}
             </if>
         </where>
+        ORDER BY update_date DESC
     </select>
 
 
@@ -199,6 +200,7 @@
                 and date(create_date) &lt;= #{endDate}
             </if>
         </where>
+        ORDER BY update_date DESC
     </select>
 
     <select id="getPaymentOrderById" resultMap="PaymentOrderById">
