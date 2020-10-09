@@ -7,6 +7,8 @@ import com.example.mybatis.dto.TobeinvoicedDto;
 import com.example.mybatis.entity.ApplicationCrowdSourcing;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,6 +31,8 @@ public class CrowdSourcingMerchantController {
 
     private static Logger logger = LoggerFactory.getLogger(CrowdSourcingMerchantController.class);
 
+//    @RequiresRoles("admin")
+    @RequiresPermissions("crowd_sourcing_invoice")
     @ApiOperation("众包发票列表")
     @PostMapping(value = "/getListCSIByID")
     public ReturnJson getListCSIByID(TobeinvoicedDto tobeinvoicedDto) {
@@ -41,7 +45,7 @@ public class CrowdSourcingMerchantController {
         return returnJson;
     }
 
-
+    @RequiresRoles("caiwu")
     @ApiOperation("众包支付信息")
     @GetMapping(value = "/getPayOrderManyById")
     public ReturnJson getPayOrderManyById(String id) {
