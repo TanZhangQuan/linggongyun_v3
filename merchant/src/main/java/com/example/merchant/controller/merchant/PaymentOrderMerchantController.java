@@ -2,19 +2,19 @@ package com.example.merchant.controller.merchant;
 
 
 import com.example.common.util.ReturnJson;
-import com.example.merchant.dto.PaymentOrderDto;
+import com.example.merchant.dto.merchant.AddPaymentOrderDto;
+import com.example.merchant.dto.merchant.PaymentOrderMerchantDto;
 import com.example.merchant.service.PaymentOrderService;
-import com.example.mybatis.entity.PaymentInventory;
-import com.example.mybatis.entity.PaymentOrder;
-import io.swagger.annotations.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
-import java.util.List;
 
 /**
  * <p>
@@ -36,9 +36,9 @@ public class PaymentOrderMerchantController {
 
     @PostMapping("/getPaymentOrderAll")
     @ApiOperation(value = "查询总包+分包支付订单", notes = "查询总包+分包支付订单", httpMethod = "POST")
-    @ApiImplicitParams(value={@ApiImplicitParam(name="paymentOrderDto",value = "查询条件",required = true, dataType = "PaymentOrderDto")})
-    public ReturnJson getPaymentOrderAll(@Valid @RequestBody PaymentOrderDto paymentOrderDto){
-        return paymentOrderService.getPaymentOrder(paymentOrderDto);
+    @ApiImplicitParams(value={@ApiImplicitParam(name="paymentOrderMerchantDto",value = "查询条件",required = true, dataType = "PaymentOrderMerchantDto")})
+    public ReturnJson getPaymentOrderAll(@Valid @RequestBody PaymentOrderMerchantDto paymentOrderMerchantDto){
+        return paymentOrderService.getPaymentOrder(paymentOrderMerchantDto);
     }
 
     @GetMapping("/getPaymentOrderInfo")
@@ -50,10 +50,9 @@ public class PaymentOrderMerchantController {
 
     @PostMapping("/saveOrUpdata")
     @ApiOperation(value = "创建或修改总包+分包支付订单", notes = "创建或修改总包+分包支付订单", httpMethod = "POST")
-    @ApiImplicitParams(value={@ApiImplicitParam(name="paymentOrder",value = "新建或修改的支付订单",required = true, dataType = "PaymentOrder"),
-            @ApiImplicitParam(name="paymentInventories",value = "支付清单",required = true, allowMultiple = true, dataType = "PaymentInventory")})
-    public ReturnJson saveOrUpdataPaymentOrder(@NotEmpty(message = "订单内容不能为空") @RequestBody PaymentOrder paymentOrder, @NotEmpty(message = "支付清单不能为空") @RequestBody List<PaymentInventory> paymentInventories){
-        return paymentOrderService.saveOrUpdataPaymentOrder(paymentOrder, paymentInventories);
+    @ApiImplicitParams(value={@ApiImplicitParam(name="addPaymentOrderDto",value = "新建或修改的支付订单",required = true, dataType = "AddPaymentOrderDto")})
+    public ReturnJson saveOrUpdataPaymentOrder(@Valid @RequestBody AddPaymentOrderDto addPaymentOrderDto){
+        return paymentOrderService.saveOrUpdataPaymentOrder(addPaymentOrderDto);
     }
 
 

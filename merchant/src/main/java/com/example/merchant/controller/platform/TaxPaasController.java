@@ -2,11 +2,10 @@ package com.example.merchant.controller.platform;
 
 
 import com.example.common.util.ReturnJson;
-import com.example.merchant.dto.TaxDto;
-import com.example.merchant.dto.TaxListDto;
+import com.example.merchant.dto.platform.TaxDto;
+import com.example.merchant.dto.platform.TaxListDto;
 import com.example.merchant.exception.CommonException;
 import com.example.merchant.service.TaxService;
-import com.example.mybatis.entity.Industry;
 import com.example.mybatis.entity.InvoiceCatalog;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;

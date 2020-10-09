@@ -3,15 +3,10 @@ package com.example.merchant.util;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.example.merchant.exception.CommonException;
 import com.example.merchant.service.CompanyInfoService;
-import com.example.merchant.service.MerchantService;
 import com.example.mybatis.entity.CompanyInfo;
 import com.example.mybatis.entity.Managers;
-import com.example.mybatis.entity.Merchant;
-import com.example.mybatis.entity.Tax;
-import com.example.mybatis.mapper.CompanyTaxDao;
 import com.example.mybatis.mapper.ManagersDao;
 import com.example.mybatis.mapper.MerchantDao;
-import com.example.mybatis.mapper.TaxDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -23,8 +18,6 @@ import java.util.List;
  */
 @Component
 public class AcquireID {
-    @Autowired
-    private MerchantService merchantService;
 
     @Autowired
     private ManagersDao managersDao;
@@ -35,11 +28,11 @@ public class AcquireID {
     @Autowired
     private MerchantDao merchantDao;
 
-    public List<String> getMerchantIds(String managersId) throws CommonException{
+    public List<String> getMerchantIds(String managersId) throws CommonException {
         List<String> merchantIds = new ArrayList<>();
         Managers managers = managersDao.selectById(managersId);
-        if(managers == null) {
-            throw new CommonException(300,"输入的ID有误，没有这个管理人员存在！");
+        if (managers == null) {
+            throw new CommonException(300, "输入的ID有误，没有这个管理人员存在！");
         }
         Integer userSign = managers.getUserSign();
         if (userSign == 1) {//管理人员为代理商
@@ -52,20 +45,12 @@ public class AcquireID {
             for (CompanyInfo merchant : merchants) {
                 merchantIds.add(merchant.getId());
             }
-        }else {
+        } else {
             List<CompanyInfo> merchants = companyInfoService.list();
             for (CompanyInfo merchant : merchants) {
                 merchantIds.add(merchant.getId());
             }
         }
         return merchantIds;
-    }
-
-    public String getCompanyId(String merchantId){
-        Merchant merchant = merchantDao.selectById(merchantId);
-        if (merchant != null) {
-            return merchant.getCompanyId();
-        }
-        return "";
     }
 }

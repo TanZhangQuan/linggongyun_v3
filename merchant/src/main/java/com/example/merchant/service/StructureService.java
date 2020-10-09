@@ -1,8 +1,8 @@
 package com.example.merchant.service;
 
 import com.example.common.util.ReturnJson;
-import com.example.merchant.dto.AgentInfoDto;
-import com.example.merchant.dto.ManagersDto;
+import com.example.merchant.dto.platform.AgentInfoDto;
+import com.example.merchant.dto.platform.ManagersDto;
 import com.example.merchant.exception.CommonException;
 
 public interface StructureService {

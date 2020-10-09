@@ -2,7 +2,7 @@ package com.example.merchant.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.common.util.ReturnJson;
-import com.example.merchant.dto.PaymentOrderDto;
+import com.example.merchant.dto.platform.PaymentOrderDto;
 import com.example.merchant.dto.merchant.AddPaymentOrderManyDto;
 import com.example.merchant.dto.merchant.PaymentOrderMerchantDto;
 import com.example.merchant.exception.CommonException;
