@@ -92,7 +92,7 @@ public class HomePageMerchantController {
      * @return
      */
     @PostMapping("/totalYearInfo")
-    @ApiOperation(value = "获取总包+分包今年的支付额", notes = "获取总包+分包今年的支付额", httpMethod = "POST")
+    @ApiOperation(value = "获取总包+分包全年的支付额", notes = "获取总包+分包全年的支付额", httpMethod = "POST")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "companyId", value = "商户的公司ID", required = true)})
     public ReturnJson totalYearInfo(@NotBlank(message = "商户的公司ID不能为空") @RequestParam(required = false) String companyId) {
         return paymentOrderService.getYear(companyId);
@@ -144,7 +144,7 @@ public class HomePageMerchantController {
      * @return
      */
     @PostMapping("/manyYearInfo")
-    @ApiOperation(value = "获取众包今年的支付额", notes = "获取众包今年的支付额", httpMethod = "POST")
+    @ApiOperation(value = "获取众包全年的支付额", notes = "获取众包全年的支付额", httpMethod = "POST")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "companyId", value = "商户的公司ID", required = true)})
     public ReturnJson manyYearInfo(@NotBlank(message = "商户的公司ID不能为空") @RequestParam(required = false) String companyId) {
         return paymentOrderManyService.getYear(companyId);

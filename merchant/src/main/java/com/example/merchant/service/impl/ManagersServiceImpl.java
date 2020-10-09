@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * <p>
@@ -53,7 +54,7 @@ public class ManagersServiceImpl extends ServiceImpl<ManagersDao, Managers> impl
             managers.setPassWord("");
             redisDao.set(managers.getId(), JsonUtils.objectToJson(managers));
             response.setHeader(TOKEN,token);
-            redisDao.setExpire(managers.getId(),60*60*24*7);
+            redisDao.setExpire(managers.getId(),7, TimeUnit.DAYS);
             return ReturnJson.success(managers);
         }
         return ReturnJson.error("你输入的用户名或密码有误！");
