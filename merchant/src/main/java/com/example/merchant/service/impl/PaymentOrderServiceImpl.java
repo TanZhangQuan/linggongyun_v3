@@ -193,7 +193,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
         Integer taxStatus = paymentOrder.getTaxStatus();
         //判断服务费是一口价还是梯度价
         if (companyTax.getChargeStatus() == 0) {
-            compositeTax = companyTax.getServiceCharge();
+            compositeTax = companyTax.getServiceCharge().divide(BigDecimal.valueOf(100));
             for (PaymentInventory paymentInventory : paymentInventories) {
                 BigDecimal realMoney = paymentInventory.getRealMoney();
                 paymentInventory.setCompositeTax(compositeTax);

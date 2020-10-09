@@ -36,7 +36,7 @@ public interface WorkerDao extends BaseMapper<Worker> {
      */
     List<WorkerPo> getCheckByTaskId(String taskId,RowBounds rowBounds);
 
-    List<Worker> selectByIdAndAccountNameAndMobile(@Param("merchantId") String merchantId, @Param("id") String id, @Param("accountName")String accountName, @Param("mobileCode") String mobileCode);
+    IPage<Worker> selectByIdAndAccountNameAndMobile(Page page,@Param("merchantId") String merchantId, @Param("id") String id, @Param("accountName")String accountName, @Param("mobileCode") String mobileCode);
     List<Worker> selectByIdAndAccountNameAndMobilePaas(@Param("merchantIds") List<String> merchantIds, @Param("id") String id, @Param("accountName")String accountName, @Param("mobileCode") String mobileCode);
     List<Worker> selectByIdAndAccountNameAndMobilePaasNot(@Param("merchantIds") List<String> merchantIds, @Param("id") String id, @Param("accountName")String accountName, @Param("mobileCode") String mobileCode);
     IPage<Worker> selectWorkerAllNot(Page page, @Param("merchantIds")List<String> merchantIds);

@@ -19,6 +19,8 @@ import com.example.merchant.service.TaskService;
 import com.example.merchant.util.AcquireID;
 import com.example.merchant.util.JwtUtils;
 import com.example.merchant.vo.HomePageVO;
+import com.example.merchant.vo.merchant.MerchantInfoVO;
+import com.example.merchant.vo.merchant.TaxVO;
 import com.example.mybatis.entity.*;
 import com.example.mybatis.mapper.*;
 import com.example.mybatis.po.MerchantInfoPo;
@@ -38,7 +40,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -106,10 +107,14 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
     @Autowired
     private PaymentInventoryDao paymentInventoryDao;
 
+    @Autowired
+    private ManagersDao managersDao;
+
+
     @Value("${PWD_KEY}")
     String PWD_KEY;
-    @Value("${TOKEN}")
 
+    @Value("${TOKEN}")
     private String TOKEN;
 
     /**
@@ -124,7 +129,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
     public ReturnJson merchantLogin(String username, String password, HttpServletResponse response) {
         String encryptPWD = PWD_KEY + MD5.md5(password);
         QueryWrapper<Merchant> merchantQueryWrapper = new QueryWrapper<>();
-        merchantQueryWrapper.eq("user_name", username).eq("pass_word", encryptPWD).eq("status",1);
+        merchantQueryWrapper.eq("user_name", username).eq("pass_word", encryptPWD).eq("status", 1);
         Merchant me = merchantDao.selectOne(merchantQueryWrapper);
         if (me == null) {
             return ReturnJson.error("账号或密码有误！");
@@ -190,7 +195,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
      * @return
      */
     @Override
-    public ReturnJson loginMobile(String loginMobile,String checkCode, HttpServletResponse resource) {
+    public ReturnJson loginMobile(String loginMobile, String checkCode, HttpServletResponse resource) {
         String redisCheckCode = redisDao.get(loginMobile);
         if (StringUtils.isBlank(redisCheckCode)) {
             return ReturnJson.error("验证码已过期，请重新获取！");
@@ -198,11 +203,11 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
             return ReturnJson.error("输入的验证码有误");
         } else {
             redisDao.remove(loginMobile);
-            Merchant merchant = this.getOne(new QueryWrapper<Merchant>().eq("login_mobile", loginMobile).eq("audit_status",1));
+            Merchant merchant = this.getOne(new QueryWrapper<Merchant>().eq("login_mobile", loginMobile).eq("audit_status", 1));
             merchant.setPassWord("");
             merchant.setPayPwd("");
             String token = jwtUtils.generateToken(merchant.getId());
-            resource.setHeader(TOKEN,token);
+            resource.setHeader(TOKEN, token);
             redisDao.set(merchant.getId(), JsonUtils.objectToJson(merchant));
             redisDao.setExpire(merchant.getId(), 60 * 60 * 24 * 7);
             return ReturnJson.success(merchant);
@@ -211,6 +216,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
 
     /**
      * 获取商户信息
+     *
      * @param merchantId
      * @return
      */
@@ -218,18 +224,46 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
     public ReturnJson merchantInfo(String merchantId) {
         Merchant merchant = merchantDao.selectById(merchantId);
         CompanyInfo companyInfo = companyInfoDao.selectById(merchant.getCompanyId());
-        List<TaxPO> taxPOS = taxDao.selectByMerchantId(merchantId);
-        List<Linkman> linkmanList = linkmanDao.selectList(new QueryWrapper<Linkman>().eq("merchant_id", merchantId).orderByAsc("is_not"));
-        List<Address> addressList = addressDao.selectList(new QueryWrapper<Address>().eq("owner_id", merchantId).orderByAsc("is_not"));
-        List<Map<String, Object>> list = new ArrayList<>();
-        Map<String, Object> map = new HashMap<>();
-        map.put("merchant", merchant);
-        map.put("companyInfo", companyInfo);
-        map.put("taxPOS", taxPOS);
-        map.put("linkmanList", linkmanList);
-        map.put("addressList", addressList);
-        list.add(map);
-        return ReturnJson.success(list);
+        CompanyInvoiceInfo companyInvoiceInfo = companyInvoiceInfoDao.selectOne(new QueryWrapper<CompanyInvoiceInfo>().eq("company_id", merchant.getCompanyId()));
+        Managers salesMan = managersDao.selectById(companyInfo.getSalesManId());
+        Managers agent = managersDao.selectById(companyInfo.getAgentId());
+        List<TaxPO> taxPOS = taxDao.selectByMerchantId(merchant.getCompanyId());
+        List<TaxVO> taxVOS = new ArrayList<>();
+        for (TaxPO taxPO : taxPOS) {
+            TaxVO taxVO = new TaxVO();
+            BeanUtils.copyProperties(taxPO, taxVO);
+            if (taxPO.getChargeStatus() == 1) {
+                List<CompanyLadderService> companyLadderServiceList = companyLadderServiceService.list(new QueryWrapper<CompanyLadderService>().eq("company_tax_id", taxPO.getCompanyTaxId()).orderByAsc("start_money"));
+                taxVO.setCompanyLadderServices(companyLadderServiceList);
+            }
+            taxVOS.add(taxVO);
+        }
+        List<Linkman> linkmanList = linkmanDao.selectList(new QueryWrapper<Linkman>().eq("company_id", merchant.getCompanyId()).orderByAsc("is_not"));
+        List<Address> addressList = addressDao.selectList(new QueryWrapper<Address>().eq("company_id", merchant.getCompanyId()).orderByAsc("is_not"));
+
+        MerchantInfoVO merchantInfoVO = new MerchantInfoVO();
+        BeanUtils.copyProperties(companyInfo, merchantInfoVO);
+        BeanUtils.copyProperties(merchant, merchantInfoVO);
+        merchantInfoVO.setTaxVOList(taxVOS);
+        try {
+            merchantInfoVO.setSalesManNmae(salesMan.getRealName());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            merchantInfoVO.setAgentName(agent.getRealName());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            merchantInfoVO.setCompanyInvoiceInfo(companyInvoiceInfo);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        merchantInfoVO.setMerchantId(merchant.getId());
+        merchantInfoVO.setLinkmanList(linkmanList);
+        merchantInfoVO.setAddressList(addressList);
+        return ReturnJson.success(merchantInfoVO);
     }
 
     /**
@@ -259,6 +293,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
 
     /**
      * 购买方信息
+     *
      * @param id
      * @return
      */
@@ -305,9 +340,9 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
     }
 
 
-
     /**
      * 获取的商户
+     *
      * @param managersId
      * @param merchantId
      * @param merchantName
@@ -316,9 +351,9 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
      * @return
      */
     @Override
-    public ReturnJson getMerchantList(String managersId, String merchantId, String merchantName, String linkMobile, Integer auditStatus ,Integer page,Integer pageSize) throws CommonException{
+    public ReturnJson getMerchantList(String managersId, String merchantId, String merchantName, String linkMobile, Integer auditStatus, Integer page, Integer pageSize) throws CommonException {
         List<String> merchantIds = acquireID.getMerchantIds(managersId);
-        Page<MerchantInfoPo> merchantPage = new Page<>(page,pageSize);
+        Page<MerchantInfoPo> merchantPage = new Page<>(page, pageSize);
         IPage<MerchantInfoPo> merchantInfoPoIPage = merchantDao.selectMerchantInfoPo(merchantPage, merchantIds, merchantId, merchantName, linkMobile, auditStatus);
         ReturnJson returnJson = new ReturnJson();
         returnJson.setCode(200);
@@ -326,13 +361,14 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         returnJson.setFinished(true);
         returnJson.setPageSize(pageSize);
         returnJson.setItemsCount((int) merchantInfoPoIPage.getTotal());
-        returnJson.setPageCount((int)merchantInfoPoIPage.getPages());
+        returnJson.setPageCount((int) merchantInfoPoIPage.getPages());
         returnJson.setData(merchantInfoPoIPage.getRecords());
         return returnJson;
     }
 
     /**
      * 删除商户
+     *
      * @param merchantId
      * @return
      */
@@ -345,10 +381,10 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
             companyInfoDao.deleteById(companyId);
             return ReturnJson.success("删除成功！");
         }
-        List<Task> tasks = taskService.list(new QueryWrapper<Task>().eq("company_id",companyId));
+        List<Task> tasks = taskService.list(new QueryWrapper<Task>().eq("company_id", companyId));
         List<PaymentOrder> paymentOrders = paymentOrderDao.selectList(new QueryWrapper<PaymentOrder>().eq("company_id", companyId));
         List<PaymentOrderMany> paymentOrderManies = paymentOrderManyDao.selectList(new QueryWrapper<PaymentOrderMany>().eq("company_id", companyId));
-        if (VerificationCheck.listIsNull(tasks) && VerificationCheck.listIsNull(paymentOrders) && VerificationCheck.listIsNull(paymentOrderManies) ) {
+        if (VerificationCheck.listIsNull(tasks) && VerificationCheck.listIsNull(paymentOrders) && VerificationCheck.listIsNull(paymentOrderManies)) {
             companyInfoDao.deleteById(companyId);
             return ReturnJson.success("删除成功！");
         }
@@ -358,6 +394,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
 
     /**
      * 审核商户
+     *
      * @param merchantId
      * @return
      */
@@ -376,13 +413,14 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
 
     /**
      * 获取商户的支付流水
+     *
      * @param merchantId
      * @return
      */
     @Override
     public ReturnJson merchantInfoPaas(String merchantId) {
         ReturnJson returnJson = homePageService.getHomePageInof(merchantId);
-        HomePageVO homePageVO =(HomePageVO) returnJson.getObj();
+        HomePageVO homePageVO = (HomePageVO) returnJson.getObj();
         Merchant merchant = merchantDao.selectById(merchantId);
         Integer taxTotal = companyTaxDao.selectCount(new QueryWrapper<CompanyTax>().eq("company_id", merchant.getCompanyId()));
         homePageVO.setTaxTotal(taxTotal);
@@ -394,6 +432,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
 
     /**
      * 获取商户的支付列表
+     *
      * @param merchantId
      * @param page
      * @param pageSize
@@ -401,13 +440,14 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
      */
     @Override
     public ReturnJson getMerchantPaymentList(String merchantId, Integer page, Integer pageSize) {
-        Page<MerchantPaymentListPO> paymentListPage = new Page(page,pageSize);
+        Page<MerchantPaymentListPO> paymentListPage = new Page(page, pageSize);
         IPage<MerchantPaymentListPO> merchantPaymentListIPage = merchantDao.selectMerchantPaymentList(paymentListPage, merchantId);
         return ReturnJson.success(merchantPaymentListIPage);
     }
 
     /**
      * 获取支付详情
+     *
      * @param paymentOrderId
      * @param packgeStatus
      * @return
@@ -427,6 +467,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
 
     /**
      * 获取支付清单
+     *
      * @param paymentOrderId
      * @param page
      * @param pageSize
@@ -434,25 +475,26 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
      */
     @Override
     public ReturnJson getMerchantPaymentInventory(String paymentOrderId, Integer page, Integer pageSize) {
-        Page<PaymentInventory> paymentInventoryPage = new Page<>(page,pageSize);
+        Page<PaymentInventory> paymentInventoryPage = new Page<>(page, pageSize);
         Page<PaymentInventory> paymentInventoryPages = paymentInventoryDao.selectPage(paymentInventoryPage, new QueryWrapper<PaymentInventory>().eq("payment_order_id", paymentOrderId));
         return ReturnJson.success(paymentInventoryPages);
     }
 
     /**
      * 添加商户
+     *
      * @param companyDto
      * @return
      * @throws CommonException
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ReturnJson addMerchant(CompanyDto companyDto) throws CommonException{
+    public ReturnJson addMerchant(CompanyDto companyDto) throws CommonException {
         CompanyInfo companyInfo = new CompanyInfo();
-        BeanUtils.copyProperties(companyDto,companyInfo);
+        BeanUtils.copyProperties(companyDto, companyInfo);
 
         CompanyInvoiceInfo companyInvoiceInfo = new CompanyInvoiceInfo();
-        BeanUtils.copyProperties(companyDto.getCompanyInvoiceInfo(),companyInvoiceInfo);
+        BeanUtils.copyProperties(companyDto.getCompanyInvoiceInfo(), companyInvoiceInfo);
 
         companyInfo.setBankName(companyInvoiceInfo.getBankName());
         companyInfo.setBankCode(companyInvoiceInfo.getBankCode());
@@ -465,7 +507,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         List<CompanyTaxDto> companyTaxDtos = companyDto.getCompanyTaxDtos();
         for (CompanyTaxDto companyTaxDto : companyTaxDtos) {
             CompanyTax companyTax = new CompanyTax();
-            BeanUtils.copyProperties(companyTaxDto,companyTax);
+            BeanUtils.copyProperties(companyTaxDto, companyTax);
             companyTax.setCompanyId(companyInfo.getId());
             companyTaxDao.insert(companyTax);
             List<CompanyLadderService> companyLadderServices = companyTaxDto.getCompanyLadderServices();
@@ -474,11 +516,11 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
                     if (i != companyLadderServices.size() - 1) {
                         BigDecimal endMoney = companyLadderServices.get(i).getEndMoney();
                         if (endMoney.compareTo(companyLadderServices.get(i).getEndMoney()) < 1) {
-                            throw new CommonException(300,"结束金额应该大于起始金额");
+                            throw new CommonException(300, "结束金额应该大于起始金额");
                         }
                         BigDecimal startMoney = companyLadderServices.get(i + 1).getStartMoney();
                         if (startMoney.compareTo(endMoney) < 1) {
-                            throw new CommonException(300,"上梯度结束金额应小于下梯度起始金额");
+                            throw new CommonException(300, "上梯度结束金额应小于下梯度起始金额");
                         }
                     }
                     companyLadderServices.get(i).setCompanyTaxId(companyTax.getId());
@@ -487,17 +529,15 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
             }
         }
         Linkman linkman = new Linkman();
-        BeanUtils.copyProperties(companyDto.getLinkman(),linkman);
+        BeanUtils.copyProperties(companyDto.getLinkman(), linkman);
         linkman.setCompanyId(companyInfo.getId());
         linkmanDao.insert(linkman);
 
         Address address = new Address();
-        BeanUtils.copyProperties(companyDto.getAddress(),address);
+        BeanUtils.copyProperties(companyDto.getAddress(), address);
         address.setCompanyId(companyInfo.getId());
         addressDao.insert(address);
 
         return ReturnJson.success("添加商户成功！");
     }
-
-
 }
