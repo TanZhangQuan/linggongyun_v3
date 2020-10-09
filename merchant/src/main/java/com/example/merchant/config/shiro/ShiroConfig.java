@@ -39,7 +39,7 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/swagger-resources/**", "anon");
         filterChainDefinitionMap.put("/chat/**", "anon");
         filterChainDefinitionMap.put("/application/**", "anon");
-        filterChainDefinitionMap.put("内蒙鄂尔多斯市/common/**", "anon");
+        filterChainDefinitionMap.put("/common/**", "anon");
         filterChainDefinitionMap.put("/static/image/**", "anon");
 
         //filterChainDefinitionMap.put("/**", "authc");
