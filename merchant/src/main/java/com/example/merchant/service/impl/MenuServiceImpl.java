@@ -10,6 +10,7 @@ import com.example.mybatis.entity.MerchantRoleMenu;
 import com.example.mybatis.mapper.MenuDao;
 import com.example.merchant.service.MenuService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.example.mybatis.mapper.MerchantDao;
 import com.example.mybatis.mapper.MerchantRoleDao;
 import com.example.mybatis.mapper.MerchantRoleMenuDao;
 import com.example.mybatis.vo.MenuListVo;
@@ -43,6 +44,8 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
     private MerchantRoleDao merchantRoleDao;
     @Autowired
     private MerchantRoleMenuDao merchantRoleMenuDao;
+    @Autowired
+    private MerchantDao merchantDao;
 
     /**
      * 查询所有的权限列表
@@ -90,8 +93,8 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
                 roleMenu.setMenuId(menuId[i]);
                 roleMenu.setMerchantRoleId(merchantRole.getId());
                 merchantRoleMenuDao.insert(roleMenu);
-                return ReturnJson.success("账户添加成功");
             }
+            return ReturnJson.success("账户添加成功");
         }
         return ReturnJson.error("系统出现异常，添加失败");
     }
@@ -169,10 +172,10 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
      */
     @Override
     public ReturnJson updataRoleStatus(String merchantRoleId, Integer status) {
-        MerchantRole merchantRole = new MerchantRole();
-        merchantRole.setId(merchantRoleId);
-        merchantRole.setStatus(status);
-        int num = merchantRoleDao.updateById(merchantRole);
+        Merchant merchant = new Merchant();
+        merchant.setId(merchantRoleId);
+        merchant.setStatus(status);
+        int num = merchantDao.updateById(merchant);
         if (num > 0) {
             return ReturnJson.success("修改成功");
         }
