@@ -1,11 +1,15 @@
 package com.example.merchant.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.common.util.ReturnJson;
-import com.example.merchant.dto.PaymentOrderDto;
+import com.example.common.util.VerificationCheck;
+import com.example.merchant.dto.merchant.AddPaymentOrderDto;
+import com.example.merchant.dto.merchant.PaymentOrderMerchantDto;
+import com.example.merchant.dto.platform.PaymentOrderDto;
 import com.example.merchant.exception.CommonException;
-import com.example.merchant.service.MerchantService;
 import com.example.merchant.service.PaymentInventoryService;
 import com.example.merchant.service.PaymentOrderService;
 import com.example.merchant.util.AcquireID;
@@ -27,7 +31,7 @@ import java.util.Map;
 /**
  * <p>
  * 支付单信息
- 服务实现类
+ * 服务实现类
  * </p>
  *
  * @author hzp
@@ -55,13 +59,10 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
     private ManagersDao managersDao;
 
     @Autowired
-    private MerchantDao merchantDao;
+    private CompanyInfoDao companyInfoDao;
 
     @Autowired
     private CompanyTaxDao companyTaxDao;
-
-    @Autowired
-    private MerchantService merchantService;
 
     @Autowired
     private CompanyLadderServiceDao companyLadderServiceDao;
@@ -72,79 +73,73 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
 
     /**
      * 获取今天的支付总额
+     *
      * @param merchantId
      * @return
      */
     @Override
     public ReturnJson getDay(String merchantId) {
-        List<PaymentOrder> list = paymentOrderDao.selectDay(acquireID.getCompanyId(merchantId));
+        List<PaymentOrder> list = paymentOrderDao.selectDay(merchantId);
         return ReturnJson.success(list);
     }
 
     /**
      * 获取本周的支付总额
+     *
      * @param merchantId
      * @return
      */
     @Override
     public ReturnJson getWeek(String merchantId) {
-        List<PaymentOrder> list = paymentOrderDao.selectWeek(acquireID.getCompanyId(merchantId));
+        List<PaymentOrder> list = paymentOrderDao.selectWeek(merchantId);
         return ReturnJson.success(list);
     }
 
     /**
      * 获取本月的支付总额
+     *
      * @param merchantId
      * @return
      */
     @Override
     public ReturnJson getMonth(String merchantId) {
-        List<PaymentOrder> list = paymentOrderDao.selectMonth(acquireID.getCompanyId(merchantId));
+        List<PaymentOrder> list = paymentOrderDao.selectMonth(merchantId);
         return ReturnJson.success(list);
     }
 
     /**
      * 获取今年的支付总额
+     *
      * @param merchantId
      * @return
      */
     @Override
     public ReturnJson getYear(String merchantId) {
-        List<PaymentOrder> list = paymentOrderDao.selectYear(acquireID.getCompanyId(merchantId));
+        List<PaymentOrder> list = paymentOrderDao.selectYear(merchantId);
         return ReturnJson.success(list);
     }
 
     /**
      * 查询总包+分包的支付订单
-     * @param paymentOrderDto
+     *
+     * @param paymentOrderMerchantDto
      * @return
      */
     @Override
-    public ReturnJson getPaymentOrder(PaymentOrderDto paymentOrderDto) {
-        String merchantId = acquireID.getCompanyId(paymentOrderDto.getMerchantId());
-        String paymentOrderId = paymentOrderDto.getPaymentOrderId();
-        String taxId = paymentOrderDto.getTaxId();
-        Integer pageSize = paymentOrderDto.getPageSize();
-        Integer page = (paymentOrderDto.getPage()-1)*pageSize;
-        String beginDate = paymentOrderDto.getBeginDate();
-        String endDate = paymentOrderDto.getEndDate();
+    public ReturnJson getPaymentOrder(PaymentOrderMerchantDto paymentOrderMerchantDto) {
+        String paymentOrderId = paymentOrderMerchantDto.getPaymentOrderId();
+        String taxId = paymentOrderMerchantDto.getTaxId();
+        String beginDate = paymentOrderMerchantDto.getBeginDate();
+        String endDate = paymentOrderMerchantDto.getEndDate();
+        Page<PaymentOrder> paymentOrderPage = new Page<>(paymentOrderMerchantDto.getPage(), paymentOrderMerchantDto.getPageSize());
 
-        Integer total = paymentOrderDao.selectManyCount(merchantId, paymentOrderId, taxId, beginDate, endDate);
-        Integer totalPage = total%pageSize == 0 ? total/pageSize:total/pageSize+1;
-
-        List<PaymentOrder> list = paymentOrderDao.selectMany(merchantId, paymentOrderId, taxId, beginDate, endDate, page, pageSize);
-        ReturnJson returnJson = new ReturnJson();
-        returnJson.setState("success");
-        returnJson.setPageCount(totalPage);
-        returnJson.setPageSize(pageSize);
-        returnJson.setItemsCount(total);
-        returnJson.setData(list);
-        returnJson.setCode(200);
-        return returnJson;
+        IPage<PaymentOrder> paymentOrderIPage = paymentOrderDao.selectMany(paymentOrderPage, paymentOrderMerchantDto.getCompanyId(), paymentOrderId, taxId, beginDate, endDate);
+        return ReturnJson.success(paymentOrderIPage);
     }
 
     /**
      * 查询支付订单详情
+     *
      * @param id
      * @return
      */
@@ -152,26 +147,26 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
     public ReturnJson getPaymentOrderInfo(String id) {
         PaymentOrder paymentOrder = paymentOrderDao.selectById(id);
         List<PaymentInventory> paymentInventories = paymentInventoryDao.selectList(new QueryWrapper<PaymentInventory>().eq("payment_order_id", id));
-        List<PaymentOrderSubpackage> paymentOrderSubpackages = paymentOrderSubpackageDao.selectList(new QueryWrapper<PaymentOrderSubpackage>().eq("payment_order_id", id));
         Tax tax = taxDao.selectById(paymentOrder.getTaxId());
         List<Map<String, Object>> list = new ArrayList<>();
         Map<String, Object> map = new HashMap<>();
-        map.put("paymentInventories",paymentInventories);
-        map.put("paymentOrderSubpackages",paymentOrderSubpackages);
-        map.put("tax",tax);
+        map.put("paymentInventories", paymentInventories);
+        map.put("tax", tax);
         list.add(map);
-        return ReturnJson.success(paymentOrder,list);
+        return ReturnJson.success(paymentOrder, list);
     }
 
     /**
      * 插入或更新数据
-     * @param paymentOrder
-     * @param paymentInventories
+     *
+     * @param addPaymentOrderDto
      * @return
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ReturnJson saveOrUpdataPaymentOrder(PaymentOrder paymentOrder, List<PaymentInventory> paymentInventories) {
+    public ReturnJson saveOrUpdataPaymentOrder(AddPaymentOrderDto addPaymentOrderDto) {
+        PaymentOrder paymentOrder = addPaymentOrderDto.getPaymentOrder();
+        List<PaymentInventory> paymentInventories = addPaymentOrderDto.getPaymentInventories();
         String id = paymentOrder.getId();
         if (id != null && paymentOrder.getPaymentOrderStatus() == 0) {
             List<PaymentInventory> paymentInventoryList = paymentInventoryDao.selectList(new QueryWrapper<PaymentInventory>().eq("payment_order_id", id));
@@ -179,8 +174,8 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
             for (PaymentInventory paymentInventory : paymentInventoryList) {
                 ids.add(paymentInventory.getId());
             }
-            paymentOrderSubpackageDao.delete(new QueryWrapper<PaymentOrderSubpackage>().in("payment_inventory_id",ids));
-            paymentInventoryDao.delete(new QueryWrapper<PaymentInventory>().eq("payment_order_id",id));
+            paymentOrderSubpackageDao.delete(new QueryWrapper<PaymentOrderSubpackage>().in("payment_inventory_id", ids));
+            paymentInventoryDao.delete(new QueryWrapper<PaymentInventory>().eq("payment_order_id", id));
             this.removeById(id);
         }
         BigDecimal receviceTax = paymentOrder.getReceviceTax().divide(BigDecimal.valueOf(100));
@@ -194,13 +189,14 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
         //判断服务费是一口价还是梯度价
         if (companyTax.getChargeStatus() == 0) {
             compositeTax = companyTax.getServiceCharge().divide(BigDecimal.valueOf(100));
+            paymentOrder.setCompositeTax(compositeTax.multiply(BigDecimal.valueOf(100)));
             for (PaymentInventory paymentInventory : paymentInventories) {
                 BigDecimal realMoney = paymentInventory.getRealMoney();
-                paymentInventory.setCompositeTax(compositeTax);
-                if (taxStatus == 0){
-                    paymentInventory.setMerchantPaymentMoney(realMoney.multiply(compositeTax));
+                paymentInventory.setCompositeTax(compositeTax.multiply(BigDecimal.valueOf(100)));
+                if (taxStatus == 0) {
+                    paymentInventory.setMerchantPaymentMoney(realMoney.multiply(compositeTax.add(new BigDecimal(1))));
                     paymentInventory.setServiceMoney(realMoney.multiply(compositeTax));
-                } else if (taxStatus == 1){
+                } else if (taxStatus == 1) {
                     paymentInventory.setMerchantPaymentMoney(realMoney);
                     paymentInventory.setServiceMoney(realMoney.multiply(compositeTax));
                     paymentInventory.setRealMoney(realMoney.subtract(realMoney.multiply(compositeTax)));
@@ -214,14 +210,16 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
             }
         } else {
             List<CompanyLadderService> companyLadderServices = companyLadderServiceDao.selectList(new QueryWrapper<CompanyLadderService>().eq("company_tax_id", companyTax.getId()).orderByAsc("start_money"));
+            BigDecimal compositeTaxCount = new BigDecimal(0);
             for (PaymentInventory paymentInventory : paymentInventories) {
                 BigDecimal realMoney = paymentInventory.getRealMoney();
-                compositeTax = this.getCompositeTax(companyLadderServices,realMoney);
-                paymentInventory.setCompositeTax(compositeTax);
-                if (taxStatus == 0){
-                    paymentInventory.setMerchantPaymentMoney(realMoney.multiply(compositeTax));
+                compositeTax = this.getCompositeTax(companyLadderServices, realMoney);
+                paymentInventory.setCompositeTax(compositeTax.multiply(BigDecimal.valueOf(100)));
+                compositeTaxCount = compositeTaxCount.add(compositeTax);
+                if (taxStatus == 0) {
+                    paymentInventory.setMerchantPaymentMoney(realMoney.multiply(compositeTax.add(new BigDecimal(1))));
                     paymentInventory.setServiceMoney(realMoney.multiply(compositeTax));
-                } else if (taxStatus == 1){
+                } else if (taxStatus == 1) {
                     paymentInventory.setMerchantPaymentMoney(realMoney);
                     paymentInventory.setServiceMoney(realMoney.multiply(compositeTax));
                     paymentInventory.setRealMoney(realMoney.subtract(realMoney.multiply(compositeTax)));
@@ -233,12 +231,14 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
                 countMoney = countMoney.add(paymentInventory.getMerchantPaymentMoney());
                 countWorkerMoney = countWorkerMoney.add(paymentInventory.getRealMoney());
             }
+            //算平均税率
+            paymentOrder.setCompositeTax(compositeTaxCount.multiply(new BigDecimal(100).divide(new BigDecimal(paymentInventories.size()))));
         }
         paymentOrder.setRealMoney(countMoney);
         paymentOrder.setWorkerMoney(countWorkerMoney);
         //生成总包支付订单
         boolean b = this.saveOrUpdate(paymentOrder);
-        if (!b){
+        if (!b) {
             return ReturnJson.error("订单创建失败！");
         }
         for (PaymentInventory paymentInventory : paymentInventories) {
@@ -260,6 +260,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
 
     /**
      * 线下支付
+     *
      * @param paymentOrderId
      * @param turnkeyProjectPayment
      * @return
@@ -280,6 +281,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
 
     /**
      * 总包支付信息
+     *
      * @param id
      * @return
      */
@@ -300,6 +302,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
 
     /**
      * 开票信息，支付
+     *
      * @param id
      * @return
      */
@@ -322,7 +325,11 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
     @Override
     public ReturnJson getDayPaas(String merchantId) throws CommonException {
         List<String> merchantIds = acquireID.getMerchantIds(merchantId);
-        List<PaymentOrder> list = paymentOrderDao.selectDaypaas(merchantIds);
+        List<PaymentOrder> list = null;
+        if (VerificationCheck.listIsNull(merchantIds)) {
+            return ReturnJson.success(list);
+        }
+        list = paymentOrderDao.selectDaypaas(merchantIds);
         return ReturnJson.success(list);
     }
 
@@ -333,9 +340,13 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
      * @return
      */
     @Override
-    public ReturnJson getWeekPaas(String merchantId) throws CommonException{
+    public ReturnJson getWeekPaas(String merchantId) throws CommonException {
         List<String> merchantIds = acquireID.getMerchantIds(merchantId);
-        List<PaymentOrder> list = paymentOrderDao.selectWeekpaas(merchantIds);
+        List<PaymentOrder> list = null;
+        if (VerificationCheck.listIsNull(merchantIds)) {
+            return ReturnJson.success(list);
+        }
+        list = paymentOrderDao.selectWeekpaas(merchantIds);
         return ReturnJson.success(list);
     }
 
@@ -346,9 +357,13 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
      * @return
      */
     @Override
-    public ReturnJson getMonthPaas(String merchantId) throws CommonException{
+    public ReturnJson getMonthPaas(String merchantId) throws CommonException {
         List<String> merchantIds = acquireID.getMerchantIds(merchantId);
-        List<PaymentOrder> list = paymentOrderDao.selectMonthpaas(merchantIds);
+        List<PaymentOrder> list = null;
+        if (VerificationCheck.listIsNull(merchantIds)) {
+            return ReturnJson.success(list);
+        }
+        list = paymentOrderDao.selectMonthpaas(merchantIds);
         return ReturnJson.success(list);
     }
 
@@ -359,9 +374,13 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
      * @return
      */
     @Override
-    public ReturnJson getYearPaas(String merchantId) throws CommonException{
+    public ReturnJson getYearPaas(String merchantId) throws CommonException {
         List<String> merchantIds = acquireID.getMerchantIds(merchantId);
-        List<PaymentOrder> list = paymentOrderDao.selectYearpaas(merchantIds);
+        List<PaymentOrder> list = null;
+        if (VerificationCheck.listIsNull(merchantIds)) {
+            return ReturnJson.success(list);
+        }
+        list = paymentOrderDao.selectYearpaas(merchantIds);
         return ReturnJson.success(list);
     }
 
@@ -372,10 +391,22 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
      * @return
      */
     @Override
-    public ReturnJson getPaymentOrderPaas(PaymentOrderDto paymentOrderDto) throws CommonException{
+    public ReturnJson getPaymentOrderPaas(PaymentOrderDto paymentOrderDto) throws CommonException {
         List<String> merchantIds = acquireID.getMerchantIds(paymentOrderDto.getManagersId());
-        paymentOrderDto.setMerchantIds(merchantIds);
-        return this.getPaymentOrderData(paymentOrderDto);
+        List<PaymentOrder> list = null;
+        if (VerificationCheck.listIsNull(merchantIds)) {
+            return ReturnJson.success(list);
+        }
+        String merchantName = paymentOrderDto.getMerchantName();
+        String paymentOrderId = paymentOrderDto.getPaymentOrderId();
+        String taxId = paymentOrderDto.getTaxId();
+        Integer pageSize = paymentOrderDto.getPageSize();
+        Integer page = paymentOrderDto.getPage();
+        String beginDate = paymentOrderDto.getBeginDate();
+        String endDate = paymentOrderDto.getEndDate();
+        Page<PaymentOrder> paymentOrderPage = new Page<>(page, pageSize);
+        IPage<PaymentOrder> paymentOrderIPage = paymentOrderDao.selectManyPaas(paymentOrderPage, merchantIds, merchantName, paymentOrderId, taxId, beginDate, endDate);
+        return ReturnJson.success(paymentOrderIPage);
     }
 
     /**
@@ -401,6 +432,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
 
     /**
      * 线下支付
+     *
      * @param paymentOrderId
      * @param turnkeyProjectPayment
      * @return
@@ -421,6 +453,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
 
     /**
      * 确认支付
+     *
      * @param paymentOrderId
      * @return
      */
@@ -446,53 +479,31 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
     public ReturnJson findMerchantPaas(String managersId) {
         Managers managers = managersDao.selectById(managersId);
         Integer userSign = managers.getUserSign();
-        List<Merchant> merchants = null;
+        List<CompanyInfo> companyInfos = null;
         if (userSign == 1) {//管理人员为代理商
-            merchants = merchantDao.selectList(new QueryWrapper<Merchant>().eq("agent_id", managers.getId()));
+            companyInfos = companyInfoDao.selectList(new QueryWrapper<CompanyInfo>().eq("agent_id", managers.getId()));
         } else if (userSign == 2) {//管理人员为业务员
-            merchants = merchantDao.selectList(new QueryWrapper<Merchant>().eq("sales_man_id", managers.getId()));
+            companyInfos = companyInfoDao.selectList(new QueryWrapper<CompanyInfo>().eq("sales_man_id", managers.getId()));
         } else {
-            merchants = merchantService.list();
+            companyInfos = companyInfoDao.selectList(new QueryWrapper<>());
         }
-        return ReturnJson.success(merchants);
+        return ReturnJson.success(companyInfos);
     }
 
-    private ReturnJson getPaymentOrderData(PaymentOrderDto paymentOrderDto) {
-        List<String> merchantIds = paymentOrderDto.getMerchantIds();
-        String merchantName = paymentOrderDto.getMerchantName();
-        String paymentOrderId = paymentOrderDto.getPaymentOrderId();
-        String taxId = paymentOrderDto.getTaxId();
-        Integer pageSize = paymentOrderDto.getPageSize();
-        Integer page = (paymentOrderDto.getPage() - 1) * pageSize;
-        String beginDate = paymentOrderDto.getBeginDate();
-        String endDate = paymentOrderDto.getEndDate();
-
-        Integer total = paymentOrderDao.selectManyCountPaas(merchantIds, merchantName, paymentOrderId, taxId, beginDate, endDate);
-        Integer totalPage = total % pageSize == 0 ? total / pageSize : total / pageSize + 1;
-
-        List<PaymentOrder> list = paymentOrderDao.selectManyPaas(merchantIds, merchantName, paymentOrderId, taxId, beginDate, endDate, page, pageSize);
-        ReturnJson returnJson = new ReturnJson();
-        returnJson.setState("success");
-        returnJson.setPageCount(totalPage);
-        returnJson.setPageSize(pageSize);
-        returnJson.setItemsCount(total);
-        returnJson.setData(list);
-        returnJson.setCode(200);
-        return returnJson;
-    }
 
     /**
      * 获取综合费率
+     *
      * @param companyLadderServices
      * @param realMoney
      * @return
      */
-    private BigDecimal getCompositeTax(List<CompanyLadderService> companyLadderServices,BigDecimal realMoney){
+    private BigDecimal getCompositeTax(List<CompanyLadderService> companyLadderServices, BigDecimal realMoney) {
         BigDecimal compositeTax = null;
         for (CompanyLadderService companyLadderService : companyLadderServices) {
             BigDecimal startMoney = companyLadderService.getStartMoney();
-            if (realMoney.compareTo(startMoney) >= 0){
-                compositeTax = companyLadderService.getServiceCharge();
+            if (realMoney.compareTo(startMoney) >= 0) {
+                compositeTax = companyLadderService.getServiceCharge().divide(new BigDecimal(100));
             }
         }
         return compositeTax;

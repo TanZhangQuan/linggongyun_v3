@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.example.common.util.ReturnJson;
 import com.example.common.util.VerificationCheck;
 import com.example.merchant.service.PersonalCenterService;
-import com.example.merchant.vo.WorkerInfoVO;
+import com.example.merchant.vo.makerend.WorkerInfoVO;
 import com.example.mybatis.entity.Worker;
 import com.example.mybatis.entity.WorkerBank;
 import com.example.mybatis.mapper.WorkerBankDao;

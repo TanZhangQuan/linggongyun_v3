@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.common.sms.SenSMS;
 import com.example.common.util.ReturnJson;
-import com.example.merchant.dto.PaymentOrderDto;
+import com.example.merchant.dto.platform.PaymentOrderDto;
 import com.example.merchant.service.*;
 import com.example.mybatis.entity.Invoice;
 import com.example.mybatis.entity.PaymentInventory;
@@ -218,11 +218,11 @@ class MerchantApplicationTests {
 	@Test
 	void payService(){
 		PaymentOrderDto paymentOrderDto = new PaymentOrderDto();
-		paymentOrderDto.setMerchantId("3666abe4ec7691d8c83d5b7b4d257bc9");
+//		paymentOrderDto.setMerchantId("3666abe4ec7691d8c83d5b7b4d257bc9");
 		paymentOrderDto.setBeginDate("2020-08-09");
 		paymentOrderDto.setEndDate("2020-09-09");
-		ReturnJson paymentOrder = paymentOrderService.getPaymentOrder(paymentOrderDto);
-		System.out.println(paymentOrder.getData().size());
+//		ReturnJson paymentOrder = paymentOrderService.getPaymentOrder(paymentOrderDto);
+//		System.out.println(paymentOrder.getData().size());
 	}
 
 	@Autowired
@@ -255,8 +255,8 @@ class MerchantApplicationTests {
 		paymentInventory.setAttestation(1);
 		paymentInventory.setRealMoney(BigDecimal.valueOf(8888.22));
 		list.add(paymentInventory);
-		ReturnJson returnJson = paymentOrderService.saveOrUpdataPaymentOrder(paymentOrder, list);
-		System.out.println(returnJson);
+//		ReturnJson returnJson = paymentOrderService.saveOrUpdataPaymentOrder(paymentOrder, list);
+//		System.out.println(returnJson);
 
 //		PaymentOrder paymentOrderDto = new PaymentOrder();
 //		paymentOrderDto.setId("1304319493147660290");

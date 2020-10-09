@@ -1,4 +1,4 @@
-package com.example.merchant.dto;
+package com.example.merchant.dto.platform;
 
 import com.example.mybatis.entity.*;
 import io.swagger.annotations.ApiModel;
@@ -66,7 +66,7 @@ public class CompanyDto {
     @ApiModelProperty(notes = "代理商ID", value = "代理商ID")
     private String agentId;
 
-    @ApiModelProperty(notes = "合作信息", value = "合作信息")
+    @ApiModelProperty(notes = "服务商合作信息", value = "服务商合作信息")
     List<CompanyTaxDto> companyTaxDtos;
 
     @ApiModelProperty(notes = "商户公司的开票信息", value = "商户公司的开票信息")
@@ -75,7 +75,7 @@ public class CompanyDto {
     @ApiModelProperty(notes = "商户公司的联系人", value = "商户公司的联系人")
     private Linkman linkman;
 
-    @ApiModelProperty(notes = "商户公司的地址", value = "商户公司的地址")
+    @ApiModelProperty(notes = "商户公司的收货地址", value = "商户公司的收货地址")
     private Address address;
 
     @ApiModelProperty(notes = "商户的登录信息", value = "商户的登录信息")

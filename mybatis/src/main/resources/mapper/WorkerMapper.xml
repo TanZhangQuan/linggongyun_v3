@@ -94,9 +94,9 @@
     <select id="selectByIdAndAccountNameAndMobilePaasNot" resultMap="BaseResultMap" parameterType="list">
         select
         a.id, account_name, mobile_code, idcard_code, bank_code, attestation, agreementSign ,a.create_date
-        from tb_worker a join tb_merchant_worker b on a.id = b.worker_id
+        from tb_worker a join tb_company_worker b on a.id = b.worker_id
         <where>
-            b.merchant_id in
+            b.company_id in
             <foreach collection="merchantIds" index="index" item="merchantIds" open="(" separator="," close=")">
                 #{merchantIds}
             </foreach>
@@ -110,9 +110,9 @@
     <select id="selectWorkerAll" resultMap="BaseResultMap" parameterType="list">
         select
         a.id, account_name, mobile_code, idcard_code, bank_code, attestation, agreementSign ,a.create_date
-        from tb_worker a join tb_merchant_worker b on a.id = b.worker_id
+        from tb_worker a join tb_company_worker b on a.id = b.worker_id
         <where>
-            b.merchant_id in
+            b.company_id in
             <foreach collection="merchantIds" index="index" item="merchantIds" open="(" separator="," close=")">
                 #{merchantIds}
             </foreach>
@@ -124,9 +124,9 @@
     <select id="selectWorkerAllNot" resultMap="BaseResultMap" parameterType="list">
         select
         a.id, account_name, mobile_code, idcard_code, bank_code, attestation, agreementSign ,a.create_date
-        from tb_worker a join tb_merchant_worker b on a.id = b.worker_id
+        from tb_worker a join tb_company_worker b on a.id = b.worker_id
         <where>
-            b.merchant_id in
+            b.company_id in
             <foreach collection="merchantIds" index="index" item="merchantIds" open="(" separator="," close=")">
                 #{merchantIds}
             </foreach>

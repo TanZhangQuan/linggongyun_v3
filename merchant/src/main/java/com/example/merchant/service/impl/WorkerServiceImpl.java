@@ -79,7 +79,6 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
      */
     @Override
     public ReturnJson getWorkerAll(String merchantId, Integer page, Integer pageSize) {
-        ReturnJson returnJson = new ReturnJson();
         Merchant merchant = merchantDao.selectById(merchantId);
         QueryWrapper<CompanyWorker> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("company_id", merchant.getCompanyId());
@@ -203,6 +202,9 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
     public ReturnJson getWorkerAllPaas(String managersId, Integer page, Integer pageSize) throws CommonException {
         List<String> merchantIds = acquireID.getMerchantIds(managersId);
         merchantIds.add(managersId);
+        if (VerificationCheck.listIsNull(merchantIds)) {
+            return ReturnJson.success("");
+        }
         Page<Worker> workerPage = new Page<>(page, pageSize);
         IPage<Worker> workerIPage = workerDao.selectWorkerAll(workerPage, merchantIds);
         return ReturnJson.success(workerIPage);
@@ -212,6 +214,9 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
     public ReturnJson getWorkerAllNotPaas(String managersId, Integer page, Integer pageSize) throws CommonException {
         List<String> merchantIds = acquireID.getMerchantIds(managersId);
         merchantIds.add(managersId);
+        if (VerificationCheck.listIsNull(merchantIds)) {
+            return ReturnJson.success("");
+        }
         Page<Worker> workerPage = new Page<>(page, pageSize);
         IPage<Worker> workerIPage = workerDao.selectWorkerAllNot(workerPage, merchantIds);
         return ReturnJson.success(workerIPage);
@@ -230,6 +235,9 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
     public ReturnJson getByIdAndAccountNameAndMobilePaas(String managersId, String id, String accountName, String mobileCode) throws CommonException {
         List<String> merchantIds = acquireID.getMerchantIds(managersId);
         merchantIds.add(managersId);
+        if (VerificationCheck.listIsNull(merchantIds)) {
+            return ReturnJson.success("");
+        }
         List<Worker> workers = workerDao.selectByIdAndAccountNameAndMobilePaas(merchantIds, id, accountName, mobileCode);
         return ReturnJson.success(workers);
     }
@@ -238,6 +246,9 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
     public ReturnJson getByIdAndAccountNameAndMobileNotPaas(String managersId, String id, String accountName, String mobileCode) throws CommonException {
         List<String> merchantIds = acquireID.getMerchantIds(managersId);
         merchantIds.add(managersId);
+        if (VerificationCheck.listIsNull(merchantIds)) {
+            return ReturnJson.success("");
+        }
         List<Worker> workers = workerDao.selectByIdAndAccountNameAndMobilePaasNot(merchantIds, id, accountName, mobileCode);
         return ReturnJson.success(workers);
     }
@@ -273,15 +284,7 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
     public ReturnJson getWorkerPaymentListPaas(String id, Integer page, Integer pageSize) {
         Page<WorekerPaymentListPo> worekerPaymentListPoPage = new Page<>(page, pageSize);
         IPage<WorekerPaymentListPo> worekerPaymentListPoIPage = workerDao.workerPaymentList(worekerPaymentListPoPage, id);
-        ReturnJson returnJson = new ReturnJson();
-        returnJson.setCode(200);
-        returnJson.setState("success");
-        returnJson.setFinished(true);
-        returnJson.setPageSize(pageSize);
-        returnJson.setItemsCount((int) worekerPaymentListPoIPage.getTotal());
-        returnJson.setPageCount((int) worekerPaymentListPoIPage.getPages());
-        returnJson.setData(worekerPaymentListPoIPage.getRecords());
-        return returnJson;
+        return ReturnJson.success(worekerPaymentListPoIPage);
     }
 
     /**

@@ -1,11 +1,10 @@
-package com.example.merchant.dto;
+package com.example.merchant.dto.platform;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
-import java.util.List;
 
 @Data
 @ApiModel(description = "查询订单参数")
@@ -21,16 +20,6 @@ public class PaymentOrderDto {
      * 商户名称
      */
     private String merchantName;
-
-    /**
-     * 商户ID集合
-     */
-    @ApiModelProperty(hidden = true)
-    private List<String> merchantIds;
-
-
-    private String merchantId;
-
     /**
      * 支付订单ID
      */

@@ -1,8 +1,8 @@
 package com.example.merchant.controller.platform;
 
 import com.example.common.util.ReturnJson;
-import com.example.merchant.dto.AgentInfoDto;
-import com.example.merchant.dto.ManagersDto;
+import com.example.merchant.dto.platform.AgentInfoDto;
+import com.example.merchant.dto.platform.ManagersDto;
 import com.example.merchant.exception.CommonException;
 import com.example.merchant.service.StructureService;
 import io.swagger.annotations.Api;
@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.PastOrPresent;
 
 @RestController
 @RequestMapping("/platform/struture")

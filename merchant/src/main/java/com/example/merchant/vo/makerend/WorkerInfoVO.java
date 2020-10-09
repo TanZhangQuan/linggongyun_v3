@@ -1,4 +1,4 @@
-package com.example.merchant.vo;
+package com.example.merchant.vo.makerend;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import io.swagger.annotations.ApiModel;

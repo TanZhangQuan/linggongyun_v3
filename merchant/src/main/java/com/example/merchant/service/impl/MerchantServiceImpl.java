@@ -9,8 +9,8 @@ import com.example.common.util.JsonUtils;
 import com.example.common.util.MD5;
 import com.example.common.util.ReturnJson;
 import com.example.common.util.VerificationCheck;
-import com.example.merchant.dto.CompanyDto;
-import com.example.merchant.dto.CompanyTaxDto;
+import com.example.merchant.dto.platform.CompanyDto;
+import com.example.merchant.dto.platform.CompanyTaxDto;
 import com.example.merchant.exception.CommonException;
 import com.example.merchant.service.CompanyLadderServiceService;
 import com.example.merchant.service.HomePageService;
@@ -18,7 +18,8 @@ import com.example.merchant.service.MerchantService;
 import com.example.merchant.service.TaskService;
 import com.example.merchant.util.AcquireID;
 import com.example.merchant.util.JwtUtils;
-import com.example.merchant.vo.HomePageVO;
+import com.example.merchant.vo.platform.HomePageVO;
+import com.example.merchant.vo.merchant.HomePageMerchantVO;
 import com.example.merchant.vo.merchant.MerchantInfoVO;
 import com.example.merchant.vo.merchant.TaxVO;
 import com.example.mybatis.entity.*;
@@ -374,18 +375,16 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
      */
     @Override
     public ReturnJson removeMerchant(String merchantId) {
-        Merchant merchant = merchantDao.selectById(merchantId);
-        String companyId = acquireID.getCompanyId(merchantId);
-        CompanyInfo companyInfo = companyInfoDao.selectById(companyId);
+        CompanyInfo companyInfo = companyInfoDao.selectById(merchantId);
         if (companyInfo.getAuditStatus() == 0) {
-            companyInfoDao.deleteById(companyId);
+            companyInfoDao.deleteById(merchantId);
             return ReturnJson.success("删除成功！");
         }
-        List<Task> tasks = taskService.list(new QueryWrapper<Task>().eq("company_id", companyId));
-        List<PaymentOrder> paymentOrders = paymentOrderDao.selectList(new QueryWrapper<PaymentOrder>().eq("company_id", companyId));
-        List<PaymentOrderMany> paymentOrderManies = paymentOrderManyDao.selectList(new QueryWrapper<PaymentOrderMany>().eq("company_id", companyId));
+        List<Task> tasks = taskService.list(new QueryWrapper<Task>().eq("company_id", merchantId));
+        List<PaymentOrder> paymentOrders = paymentOrderDao.selectList(new QueryWrapper<PaymentOrder>().eq("company_id", merchantId));
+        List<PaymentOrderMany> paymentOrderManies = paymentOrderManyDao.selectList(new QueryWrapper<PaymentOrderMany>().eq("company_id", merchantId));
         if (VerificationCheck.listIsNull(tasks) && VerificationCheck.listIsNull(paymentOrders) && VerificationCheck.listIsNull(paymentOrderManies)) {
-            companyInfoDao.deleteById(companyId);
+            companyInfoDao.deleteById(merchantId);
             return ReturnJson.success("删除成功！");
         }
         return ReturnJson.error("该商户做过业务，只能停用该用户！");
@@ -400,10 +399,9 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
      */
     @Override
     public ReturnJson auditMerchant(String merchantId) {
-        String companyId = acquireID.getCompanyId(merchantId);
         CompanyInfo companyInfo = new CompanyInfo();
         companyInfo.setAuditStatus(1);
-        companyInfo.setId(companyId);
+        companyInfo.setId(merchantId);
         int i = companyInfoDao.updateById(companyInfo);
         if (i == 1) {
             return ReturnJson.success("审核成功！");
@@ -420,7 +418,9 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
     @Override
     public ReturnJson merchantInfoPaas(String merchantId) {
         ReturnJson returnJson = homePageService.getHomePageInof(merchantId);
-        HomePageVO homePageVO = (HomePageVO) returnJson.getObj();
+        HomePageVO homePageVO = new HomePageVO();
+        HomePageMerchantVO homePageMerchantVO = (HomePageMerchantVO) returnJson.getObj();
+        BeanUtils.copyProperties(homePageMerchantVO,homePageVO);
         Merchant merchant = merchantDao.selectById(merchantId);
         Integer taxTotal = companyTaxDao.selectCount(new QueryWrapper<CompanyTax>().eq("company_id", merchant.getCompanyId()));
         homePageVO.setTaxTotal(taxTotal);
