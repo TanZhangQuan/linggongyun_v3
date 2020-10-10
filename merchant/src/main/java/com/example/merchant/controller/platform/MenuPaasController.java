@@ -31,14 +31,16 @@ public class MenuPaasController {
     private MenuService menuService;
 
     @ApiOperation("查询权限菜单")
-    @GetMapping(value = "/getMenuList")
-    public ReturnJson getMenuList(){
+    @GetMapping(value = "/getPlatformMenuList")
+    public ReturnJson getPlatformMenuList(){
         ReturnJson returnJson=new ReturnJson("查询失败",300);
         try {
-            returnJson=menuService.getMenuList();
+            returnJson=menuService.getPlatformMenuList();
         }catch (Exception err){
             logger.error("出现异常错误",err);
         }
         return returnJson;
     }
+
+
 }

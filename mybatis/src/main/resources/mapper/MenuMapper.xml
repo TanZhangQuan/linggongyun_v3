@@ -27,7 +27,16 @@
         </collection>
     </resultMap>
 
+    <!--商户端-->
     <select id="getMenuList" resultMap="MenuList">
+        SELECT me.id,me.menu_name,me.menu_zhname,mes.id as ids,mes.menu_name as name,mes.menu_zhname as zhname
+        FROM tb_menu me LEFT JOIN tb_menu mes ON me.id=mes.menu_parent
+        WHERE me.menu_parent is NULL and me.is_merchant=0
+        order by me.id ASC
+    </select>
+
+
+    <select id="getPlatformMenuList" resultMap="MenuList">
         SELECT me.id,me.menu_name,me.menu_zhname,mes.id as ids,mes.menu_name as name,mes.menu_zhname as zhname
         FROM tb_menu me LEFT JOIN tb_menu mes ON me.id=mes.menu_parent
         WHERE me.menu_parent is NULL

@@ -18,7 +18,7 @@ public class ShiroConfig {
 
     @Bean
     public Realm realm() {
-        return new AuthorizingRealm();
+        return new MerchantRealm();
     }
 
     //Filter工厂，设置对应的过滤条件和跳转条件

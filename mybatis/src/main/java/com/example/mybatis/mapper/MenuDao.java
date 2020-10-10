@@ -17,4 +17,6 @@ import java.util.List;
 public interface MenuDao extends BaseMapper<Menu> {
 
     List<MenuListVo> getMenuList();
+
+    List<MenuListVo> getPlatformMenuList();
 }
