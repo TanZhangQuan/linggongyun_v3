@@ -1,6 +1,5 @@
 package com.example.merchant.config.shiro;
 
-
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.example.mybatis.entity.Menu;
 import com.example.mybatis.entity.Merchant;
@@ -29,9 +28,9 @@ import java.util.Set;
  * @author qiguliuxing
  * @since 1.0.0
  */
-public class AuthorizingRealm extends org.apache.shiro.realm.AuthorizingRealm {
+public class MerchantRealm extends org.apache.shiro.realm.AuthorizingRealm {
 
-    private static final Logger logger = LoggerFactory.getLogger(AuthorizingRealm.class);
+    private static final Logger logger = LoggerFactory.getLogger(MerchantRealm.class);
 
     @Autowired
     private MerchantDao merchantDao;
@@ -52,15 +51,14 @@ public class AuthorizingRealm extends org.apache.shiro.realm.AuthorizingRealm {
         }
         SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
         String loginName = (String) principals.getPrimaryPrincipal();//获取登录用户
-        System.out.println(loginName);
+        System.out.println("登录的用户-------------------------------"+loginName);
         Merchant merchant = merchantDao.selectOne(new QueryWrapper<Merchant>().eq("user_name", loginName));//查询登录用户的角色
-        MerchantRole merchantRole = merchantRoleDao.selectOne(new QueryWrapper<MerchantRole>().eq("merchant_id", merchant.getId()));
+        MerchantRole merchantRole = merchantRoleDao.selectById(merchant.getRoleId());
         List<Menu> menuList = merchantRoleDao.getMenuById(merchantRole.getId());
         authorizationInfo.addRole(merchantRole.getRoleName());//添加角色
         Set<String> permissions = new HashSet<>();
         for (int i = 0; i < menuList.size(); i++) {
             permissions.add(menuList.get(i).getMenuName());//添加权限
-
         }
         authorizationInfo.setStringPermissions(permissions);
         return authorizationInfo;
@@ -90,10 +88,9 @@ public class AuthorizingRealm extends org.apache.shiro.realm.AuthorizingRealm {
             if (Objects.isNull(merchant)) {
                 throw new AuthenticationException("账号或密码错误");
             }
-            if (merchant.getStatus().equals("1")) {
+            if (merchant.getStatus() == 1) {
                 throw new LockedAccountException("账号已被禁用");
             }
-            System.out.println("----->>merchant=" + merchant);
 
             SimpleAuthenticationInfo authenticationInfo = new SimpleAuthenticationInfo(
                     username, //用户名

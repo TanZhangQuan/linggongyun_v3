@@ -164,7 +164,7 @@ public class MerchantMerchantController {
     @PostMapping("/merchantLogout")
     @ApiOperation(value = "登出", notes = "登出", httpMethod = "POST")
     @ApiImplicitParams(value={@ApiImplicitParam(name="merchantId",value = "登录的商户id",required = true)})
-    public ReturnJson merchantLogout(@NotBlank(message = "商户id不能为空") @RequestParam(required = false) String merchantId){
+    public ReturnJson merchantLogout(@NotNull(message = "商户id不能为空") @RequestParam(required = false) String merchantId){
         return merchantService.logout(merchantId);
     }
 

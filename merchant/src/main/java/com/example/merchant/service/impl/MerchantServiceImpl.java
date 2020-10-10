@@ -134,7 +134,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
     public ReturnJson merchantLogin(String username, String password, HttpServletResponse response) {
         String encryptPWD = PWD_KEY + MD5.md5(password);
         QueryWrapper<Merchant> merchantQueryWrapper = new QueryWrapper<>();
-        merchantQueryWrapper.eq("user_name", username).eq("pass_word", encryptPWD).eq("status", 1);
+        merchantQueryWrapper.eq("user_name", username).eq("pass_word", encryptPWD).eq("status", 0);
         Merchant me = merchantDao.selectOne(merchantQueryWrapper);
         if (me == null) {
             return ReturnJson.error("账号或密码有误！");
@@ -216,6 +216,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
             resource.setHeader(TOKEN, token);
             redisDao.set(merchant.getId(), JsonUtils.objectToJson(merchant));
             redisDao.setExpire(merchant.getId(), 60 * 60 * 24 * 7);
+            SecurityUtils.getSubject().login(new UsernamePasswordToken(merchant.getUserName(), merchant.getPassWord()));//shiro验证身份
             return ReturnJson.success(merchant);
         }
     }

@@ -15,14 +15,14 @@ public class ShiroExceptionHandler {
 
 	@ExceptionHandler(AuthenticationException.class)
 	@ResponseBody
-	public Object unauthenticatedHandler(AuthenticationException e) {
+	public ReturnJson unauthenticatedHandler(AuthenticationException e) {
 		e.printStackTrace();
-		return ReturnJson.error("请登录");
+		return ReturnJson.error(e.getMessage());
 	}
 
 	@ExceptionHandler(AuthorizationException.class)
 	@ResponseBody
-	public Object unauthorizedHandler(AuthorizationException e) {
+	public ReturnJson unauthorizedHandler(AuthorizationException e) {
 		e.printStackTrace();
 		return ReturnJson.error("权限不够访问该接口");
 	}

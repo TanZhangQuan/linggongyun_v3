@@ -124,7 +124,7 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
         ReturnJson returnJson = new ReturnJson("查询失败", 300);
         RowBounds rowBounds = new RowBounds((tobeinvoicedDto.getPageNo() - 1) * 3, 3);
         List<CrowdSourcingInvoiceVo> list = paymentOrderManyDao.getListCSIByID(tobeinvoicedDto, rowBounds);
-        if (list != null && list.size() > 0) {
+        if (list != null) {
             returnJson = new ReturnJson("查询成功", list, 200);
         }
         return returnJson;
@@ -138,12 +138,8 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
      */
     @Override
     public ReturnJson getPayOrderManyById(String id) {
-        ReturnJson returnJson = new ReturnJson("查询失败", 300);
         PaymentOrderManyVo paymentOrderManyVo = paymentOrderManyDao.getPayOrderManyById(id);
-        if (paymentOrderManyVo != null) {
-            returnJson = new ReturnJson("查询成功", paymentOrderManyVo, 200);
-        }
-        return returnJson;
+        return ReturnJson.success(paymentOrderManyVo);
     }
 
     /**
@@ -158,7 +154,7 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
         ReturnJson returnJson = new ReturnJson("查询失败", 300);
         RowBounds rowBounds = new RowBounds((pageNo - 1) * 3, 3);
         List<InvoiceDetailsVo> list = paymentOrderManyDao.getInvoiceDetailsByPayId(id, rowBounds);
-        if (list != null && list.size() > 0) {
+        if (list != null) {
             returnJson = new ReturnJson("查询成功", list, 200);
         }
         return returnJson;
@@ -291,6 +287,7 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
 
     /**
      * 众包线下支付
+     *
      * @param id
      * @param manyPayment
      * @return
@@ -365,6 +362,7 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
 
     /**
      * 众包确认收款
+     *
      * @param id
      * @return
      */
@@ -396,7 +394,7 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
         Integer page = paymentOrderDto.getPage();
         String beginDate = paymentOrderDto.getBeginDate();
         String endDate = paymentOrderDto.getEndDate();
-        Page<PaymentOrderMany> paymentOrderManyPage = new Page<>(page,pageSize);
+        Page<PaymentOrderMany> paymentOrderManyPage = new Page<>(page, pageSize);
         IPage<PaymentOrderMany> paymentOrderManyIPage = paymentOrderManyDao.selectManyPaas(paymentOrderManyPage, merchantIds, merchantName, paymentOrderId, taxId, beginDate, endDate);
         return ReturnJson.success(paymentOrderManyIPage);
     }
