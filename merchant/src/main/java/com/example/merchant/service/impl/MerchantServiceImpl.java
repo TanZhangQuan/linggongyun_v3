@@ -9,6 +9,7 @@ import com.example.common.util.JsonUtils;
 import com.example.common.util.MD5;
 import com.example.common.util.ReturnJson;
 import com.example.common.util.VerificationCheck;
+import com.example.merchant.config.shiro.CustomizedToken;
 import com.example.merchant.dto.platform.CompanyDto;
 import com.example.merchant.dto.platform.CompanyTaxDto;
 import com.example.merchant.exception.CommonException;
@@ -32,6 +33,8 @@ import com.example.redis.dao.RedisDao;
 import io.jsonwebtoken.Claims;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.LockedAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.BeanUtils;
@@ -122,6 +125,8 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
     @Value("${TOKEN}")
     private String TOKEN;
 
+    private static final String MERCHANT= "MERCHANT";
+
     /**
      * 根据用户名和密码进行登录
      *
@@ -133,13 +138,18 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
     @Override
     public ReturnJson merchantLogin(String username, String password, HttpServletResponse response) {
         String encryptPWD = PWD_KEY + MD5.md5(password);
+        Subject currentUser = SecurityUtils.getSubject();
         QueryWrapper<Merchant> merchantQueryWrapper = new QueryWrapper<>();
-        merchantQueryWrapper.eq("user_name", username).eq("pass_word", encryptPWD).eq("status", 0);
+        merchantQueryWrapper.eq("user_name", username).eq("pass_word", encryptPWD);
         Merchant me = merchantDao.selectOne(merchantQueryWrapper);
         if (me == null) {
-            return ReturnJson.error("账号或密码有误！");
+            throw new AuthenticationException("账号或密码错误");
         }
-        SecurityUtils.getSubject().login(new UsernamePasswordToken(username, encryptPWD));//shiro验证身份
+        if (me.getStatus() == 1) {
+            throw new LockedAccountException("账号已被禁用");
+        }
+        CustomizedToken customizedToken = new CustomizedToken(username, encryptPWD, MERCHANT);
+        currentUser.login(customizedToken);//shiro验证身份
         String token = jwtUtils.generateToken(me.getId());
         response.setHeader(TOKEN, token);
         redisDao.set(me.getId(), JsonUtils.objectToJson(me));
