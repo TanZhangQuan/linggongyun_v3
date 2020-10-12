@@ -62,8 +62,8 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/common/**", "anon");
         filterChainDefinitionMap.put("/static/image/**", "anon");
         filterChainDefinitionMap.put("/merchant/merchant/login", "anon");
-        filterChainDefinitionMap.put("/platform/managers/passLogin", "anon");
-
+//        filterChainDefinitionMap.put("/platform/managers/passLogin", "anon");
+//
         filterChainDefinitionMap.put("/**", "authc");
         shiroFilterFactoryBean.setSuccessUrl("/index");
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
