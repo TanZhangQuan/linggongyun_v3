@@ -17,13 +17,14 @@ import com.example.mybatis.entity.WorkerBank;
 import com.example.mybatis.mapper.WorkerBankDao;
 import com.example.mybatis.mapper.WorkerDao;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -157,18 +158,28 @@ public class AuthenticationServiceImpl implements AuthenticationService {
      * @return
      */
     @Override
-    public ReturnJson callBackSignAContract(HttpServletRequest request) throws Exception {
+    public synchronized ReturnJson callBackSignAContract(HttpServletRequest request) throws Exception {
         //查询body的数据进行验签
         String rbody = RealnameVerifyUtil.getRequestBody(request, "UTF-8");
         Map map = JsonUtils.jsonToPojo(rbody, Map.class);
-        String flowId = (String) map.get("flowId");
-        Integer signResult = (Integer) map.get("signResult");
-        String thirdPartyUserId = (String) map.get("thirdPartyUserId");
+        String flowId = map.get("flowId") == null ? "" : String.valueOf(map.get("flowId"));
+        Integer signResult = map.get("signResult") == null ? null : (Integer) map.get("signResult");
+        String thirdPartyUserId = map.get("thirdPartyUserId") == null ? "" : String.valueOf(map.get("thirdPartyUserId"));
+        if (!StringUtils.isBlank(thirdPartyUserId)) {
+            Worker worker = workerDao.selectById(thirdPartyUserId);
+            if (worker != null) {
+                if (worker.getAgreementSign() == 2) {
+                    log.info("该创客加盟合同已签署完成！");
+                    return ReturnJson.error("该创客加盟合同已签署完成!");
+                }
+            }
+        }
         boolean res = RealnameVerifyUtil.checkPass(request, rbody, appSecret);
         if (!res) {
             return ReturnJson.error("签约失败！");
         }
-        if (signResult != null && signResult == 2) {
+
+        if (signResult != null && signResult == 2 && !StringUtils.isBlank(flowId)) {
             log.info("---------------------签署完成后，通知回调，平台方进行签署流程归档 start-----------------------------");
             SignHelper.archiveSignFlow(flowId);
             log.info("---------------------归档后，获取文件下载地址 start-----------------------------");
@@ -177,21 +188,29 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             Map<String, Object> flowInfo = list.get(0);
             Worker worker = workerDao.selectById(thirdPartyUserId);
             if (worker != null) {
-                worker.setAgreementSign(2);
                 String fileUrl = String.valueOf(flowInfo.get("fileUrl"));
-                InputStream inputStream = HttpClientUtils.httpPost(fileUrl);
-                String s = fileOperationService.uploadJpgOrPdf(inputStream, request);
-                worker.setAgreementUrl(s);
+                CloseableHttpResponse closeableHttpResponse = HttpClientUtils.urlGet(fileUrl);
+                String url = fileOperationService.uploadJpgOrPdf(closeableHttpResponse, request);
+                if (StringUtils.isBlank(url)) {
+                    worker.setAgreementSign(3);
+                    workerDao.updateById(worker);
+                    return ReturnJson.success("签署加盟合同失败！");
+                }
+                worker.setAgreementSign(2);
+                worker.setAgreementUrl(url);
                 workerDao.updateById(worker);
                 return ReturnJson.success("签署加盟合同成功！");
             }
         }
-        if (signResult == 3) {
+
+        if (signResult != null && signResult == 3 && !StringUtils.isBlank(thirdPartyUserId)) {
             Worker worker = workerDao.selectById(thirdPartyUserId);
-            worker.setAgreementSign(3);
-            workerDao.updateById(worker);
-            String resultDescription = (String) map.get("resultDescription");
-            return ReturnJson.success(resultDescription);
+            if (worker != null) {
+                worker.setAgreementSign(3);
+                workerDao.updateById(worker);
+                String resultDescription = (String) map.get("resultDescription");
+                return ReturnJson.success(resultDescription);
+            }
         }
         return ReturnJson.success("签署流程开启！");
     }

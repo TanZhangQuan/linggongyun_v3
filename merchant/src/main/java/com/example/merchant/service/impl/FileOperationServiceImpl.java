@@ -10,6 +10,7 @@ import com.example.mybatis.entity.Worker;
 import com.example.mybatis.mapper.MakerInvoiceDao;
 import com.example.mybatis.mapper.WorkerDao;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -132,7 +133,16 @@ public class FileOperationServiceImpl implements FileOperationService {
     }
 
     @Override
-    public String uploadJpgOrPdf(InputStream inputStream, HttpServletRequest request) {
+    public String uploadJpgOrPdf(CloseableHttpResponse closeableHttpResponse, HttpServletRequest request) {
+        if (closeableHttpResponse == null) {
+            return "";
+        }
+        InputStream inputStream = null;
+        try {
+            inputStream = closeableHttpResponse.getEntity().getContent();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         if (inputStream == null) {
             return "";
         }
@@ -143,7 +153,7 @@ public class FileOperationServiceImpl implements FileOperationService {
         if (!fileMkdir.exists()) {// 判断目录是否存在
             fileMkdir.mkdirs();
         }
-        String fileName = PathImage_KEY + UuidUtil.get32UUID() + ".pdf";
+        String fileName = PathImage_KEY + newFileName;
         in = new BufferedInputStream(inputStream);
         try {
             out = new BufferedOutputStream(new FileOutputStream(fileName));
@@ -165,6 +175,11 @@ public class FileOperationServiceImpl implements FileOperationService {
             }
             try {
                 out.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            try {
+                closeableHttpResponse.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }

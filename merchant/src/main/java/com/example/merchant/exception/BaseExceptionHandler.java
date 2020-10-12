@@ -77,11 +77,10 @@ public class BaseExceptionHandler {
         return ReturnJson.error("服务内部错误");
     }
 
-    //处理非以上异常问题
     @ResponseBody
     @ExceptionHandler(value = DefineException.class)
     public ReturnJson signAContractException(DefineException e) {
-        log.error(e.toString());
+        log.error(e.toString()+":"+e.getMessage());
         return ReturnJson.error(e.getMessage());
     }
 

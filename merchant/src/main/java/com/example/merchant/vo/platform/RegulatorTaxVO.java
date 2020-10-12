@@ -1,5 +1,6 @@
 package com.example.merchant.vo.platform;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -26,5 +27,6 @@ public class RegulatorTaxVO {
     private Integer status;
 
     @ApiModelProperty(notes = "开始监管时间", value = "开始监管时间")
+    @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss")
     private LocalDateTime startRegulatorDate;
 }

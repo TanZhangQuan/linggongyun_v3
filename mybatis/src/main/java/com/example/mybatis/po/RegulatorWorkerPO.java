@@ -1,5 +1,6 @@
 package com.example.mybatis.po;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -29,11 +30,17 @@ public class RegulatorWorkerPO {
     @ApiModelProperty(notes = "创客总包的总金额", value = "创客总包的总金额")
     private BigDecimal totalMoney;
 
+    @ApiModelProperty(notes = "总包纳税金额", value = "总纳税金额")
+    private BigDecimal totalTaxMoney;
+
     @ApiModelProperty(notes = "创客众包单数", value = "创客众包单数")
     private Integer manyOrderCount;
 
     @ApiModelProperty(notes = "创客众包总金额", value = "创客众包总金额")
     private BigDecimal manyMoney;
+
+    @ApiModelProperty(notes = "众包纳税金额", value = "总纳税金额")
+    private BigDecimal manyTaxMoney;
 
     @ApiModelProperty(notes = "创客实名认证：0未认证，1已认证", value = "创客实名认证：0未认证，1已认证")
     private Integer attestation;
@@ -42,5 +49,6 @@ public class RegulatorWorkerPO {
     private String agreementUrl;
 
     @ApiModelProperty(notes = "创客的入驻时间", value = "创客的入驻时间")
+    @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss")
     private LocalDateTime createDate;
 }

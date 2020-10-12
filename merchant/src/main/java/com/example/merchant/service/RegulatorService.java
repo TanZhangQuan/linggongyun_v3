@@ -46,4 +46,8 @@ public interface RegulatorService extends IService<Regulator> {
     ReturnJson getRegulatorWorker(RegulatorWorkerDto regulatorWorkerDto);
 
     ReturnJson exportRegulatorWorker(String workerIds, String regulatorId, HttpServletResponse response);
+
+    ReturnJson countRegulatorWorker(String regulatorId);
+
+    ReturnJson countRegulatorWorkerInfo(String regulatorId, String workerId);
 }

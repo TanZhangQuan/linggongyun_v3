@@ -45,45 +45,36 @@
     </select>
 
     <resultMap id="RegulatorWorkerPO" type="com.example.mybatis.po.RegulatorWorkerPO">
-        <result column="worker_id" property="workerId"/>
-        <result column="worker_name" property="workerName"/>
+        <result column="id" property="workerId"/>
+        <result column="account_name" property="workerName"/>
         <result column="mobile_code" property="mobileCode"/>
-        <result column="id_card_code" property="idCardCode"/>
+        <result column="idcard_code" property="idCardCode"/>
         <result column="total_order_count" property="totalOrderCount"/>
         <result column="total_money" property="totalMoney"/>
         <result column="many_order_count" property="manyOrderCount"/>
         <result column="many_money" property="manyMoney"/>
+        <result column="many_tax_money" property="manyTaxMoney"/>
+        <result column="total_tax_money" property="totalTaxMoney"/>
         <result column="attestation" property="attestation"/>
         <result column="agreementUrl" property="agreementUrl"/>
         <result column="create_date" property="createDate"/>
     </resultMap>
 
-    <!--查询所监管的创客-->
-    <select id="selectRegulatorWorker" resultMap="RegulatorWorkerPO">
-        SELECT
-        f.*,
-        e.attestation,
-        e.agreementUrl,
-        e.create_date
-        FROM tb_worker e
-        JOIN
+    <sql id="RegulatorWorkerTable">
         ((SELECT
         a.worker_id,
-        a.worker_name,
-        a.mobile_code,
-        a.id_card_code,
         IFNULL(total_order_count,0) AS 'total_order_count',
         IFNULL(total_money,0) AS 'total_money',
         IFNULL(many_order_count,0) AS 'many_order_count',
-        IFNULL(many_money,0) AS 'many_money'
+        IFNULL(many_money,0) AS 'many_money',
+        IFNULL(many_tax_money,0) AS 'many_tax_money',
+        IFNULL(total_tax_money,0) AS 'total_tax_money'
         FROM(
         SELECT
         worker_id,
-        worker_name,
-        mobile_code,
-        id_card_code,
         count(1) AS 'total_order_count',
-        sum(real_money) AS 'total_money'
+        sum(real_money) AS 'total_money',
+        sum(tax_amount) AS 'total_tax_money'
         FROM tb_payment_inventory
         WHERE package_status = 0
         AND payment_order_id in
@@ -94,10 +85,9 @@
         LEFT JOIN (
         SELECT
         worker_id,
-        worker_name,
-        mobile_code,id_card_code,
         count(1) as 'many_order_count',
-        sum(real_money) as 'many_money'
+        sum(real_money) as 'many_money',
+        sum(tax_amount) AS 'many_tax_money'
         FROM tb_payment_inventory
         WHERE package_status = 1
         AND payment_order_id in
@@ -110,20 +100,18 @@
         UNION (
         SELECT
         c.worker_id,
-        c.worker_name,
-        c.mobile_code,
-        c.id_card_code,
         IFNULL(total_order_count,0) AS 'total_order_count',
         IFNULL(total_money,0) AS 'total_money',
         IFNULL(many_order_count,0) AS 'many_order_count',
-        IFNULL(many_money,0) AS 'many_money'
+        IFNULL(many_money,0) AS 'many_money',
+        IFNULL(many_tax_money,0) AS 'many_tax_money',
+        IFNULL(total_tax_money,0) AS 'total_tax_money'
         FROM (
-        SELECT worker_id,
-        worker_name,
-        mobile_code,
-        id_card_code,
+        SELECT
+        worker_id,
         count(1) as 'total_order_count',
-        sum(real_money) as 'total_money'
+        sum(real_money) as 'total_money',
+        sum(tax_amount) AS 'total_tax_money'
         FROM tb_payment_inventory
         WHERE package_status = 0
         AND payment_order_id in
@@ -134,10 +122,9 @@
         RIGHT JOIN(
         SELECT
         worker_id,
-        worker_name,
-        mobile_code,
-        id_card_code,count(1) as 'many_order_count',
-         sum(real_money) as 'many_money'
+        count(1) as 'many_order_count',
+        sum(real_money) as 'many_money',
+        sum(tax_amount) AS 'many_tax_money'
         FROM tb_payment_inventory
         WHERE package_status = 1
         AND payment_order_id in
@@ -146,17 +133,39 @@
         </foreach>
         GROUP BY worker_id , package_status) d
         ON c.worker_id = d.worker_id
-        ))f
-        ON e.id =f.worker_id
+        ))
+    </sql>
+
+    <!--查询所监管的创客-->
+    <select id="selectRegulatorWorker" resultMap="RegulatorWorkerPO">
+        SELECT
+        f.total_order_count,
+        f.total_money,
+        f.many_order_count,
+        f.many_money,
+        f.many_tax_money,
+        f.total_tax_money,
+        e.id,
+        e.account_name,
+        e.mobile_code,
+        e.idcard_code,
+        e.attestation,
+        e.agreementUrl,
+        e.create_date
+        FROM tb_worker e
+        JOIN
+        <include refid="RegulatorWorkerTable" />
+        f
+        ON e.id = f.worker_id
         <where>
             <if test="workerId != null and workerId != '' ">
-                AND f.worker_id like CONCAR('%',#{workerId},'%')
+                AND e.id like CONCAR('%',#{workerId},'%')
             </if>
             <if test="workerName != null and workerName != '' ">
-                AND f.worker_name like CONCAR('%',#{workerName},'%')
+                AND e.account_name like CONCAR('%',#{workerName},'%')
             </if>
             <if test="idCardCode != null and idCardCode != '' ">
-                AND f.id_card_code like CONCAR('%',#{idCardCode},'%')
+                AND e.idcard_code like CONCAR('%',#{idCardCode},'%')
             </if>
             <if test="startDate != null and startDate != '' ">
                 AND e.create_date like CONCAR('%',#{startDate},'%')
@@ -170,94 +179,25 @@
     <!--查询所监管的创客-->
     <select id="selectExportRegulatorWorker" resultMap="RegulatorWorkerPO">
         SELECT
-        f.*,
+        f.total_order_count,
+        f.total_money,
+        f.many_order_count,
+        f.many_money,
+        f.many_tax_money,
+        f.total_tax_money,
+        e.id,
+        e.account_name,
+        e.mobile_code,
+        e.idcard_code,
         e.attestation,
         e.agreementUrl,
         e.create_date
         FROM tb_worker e
         JOIN
-        ((SELECT
-        a.worker_id,
-        a.worker_name,
-        a.mobile_code,
-        a.id_card_code,
-        IFNULL(total_order_count,0) AS 'total_order_count',
-        IFNULL(total_money,0) AS 'total_money',
-        IFNULL(many_order_count,0) AS 'many_order_count',
-        IFNULL(many_money,0) AS 'many_money'
-        FROM(
-        SELECT
-        worker_id,
-        worker_name,
-        mobile_code,
-        id_card_code,
-        count(1) AS 'total_order_count',
-        sum(real_money) AS 'total_money'
-        FROM tb_payment_inventory
-        WHERE package_status = 0
-        AND payment_order_id in
-        <foreach collection="paymentOrderIds" index="index" item="item" open="(" separator="," close=")">
-            #{item}
-        </foreach>
-        GROUP BY worker_id , package_status) a
-        LEFT JOIN (
-        SELECT
-        worker_id,
-        worker_name,
-        mobile_code,id_card_code,
-        count(1) as 'many_order_count',
-        sum(real_money) as 'many_money'
-        FROM tb_payment_inventory
-        WHERE package_status = 1
-        AND payment_order_id in
-        <foreach collection="paymentOrderIds" index="index" item="item" open="(" separator="," close=")">
-            #{item}
-        </foreach>
-        GROUP BY worker_id , package_status) b
-        ON a.worker_id = b.worker_id
-        )
-        UNION (
-        SELECT
-        c.worker_id,
-        c.worker_name,
-        c.mobile_code,
-        c.id_card_code,
-        IFNULL(total_order_count,0) AS 'total_order_count',
-        IFNULL(total_money,0) AS 'total_money',
-        IFNULL(many_order_count,0) AS 'many_order_count',
-        IFNULL(many_money,0) AS 'many_money'
-        FROM (
-        SELECT worker_id,
-        worker_name,
-        mobile_code,
-        id_card_code,
-        count(1) as 'total_order_count',
-        sum(real_money) as 'total_money'
-        FROM tb_payment_inventory
-        WHERE package_status = 0
-        AND payment_order_id in
-        <foreach collection="paymentOrderIds" index="index" item="item" open="(" separator="," close=")">
-            #{item}
-        </foreach>
-        GROUP BY worker_id , package_status) c
-        RIGHT JOIN(
-        SELECT
-        worker_id,
-        worker_name,
-        mobile_code,
-        id_card_code,count(1) as 'many_order_count',
-        sum(real_money) as 'many_money'
-        FROM tb_payment_inventory
-        WHERE package_status = 1
-        AND payment_order_id in
-        <foreach collection="paymentOrderIds" index="index" item="item" open="(" separator="," close=")">
-            #{item}
-        </foreach>
-        GROUP BY worker_id , package_status) d
-        ON c.worker_id = d.worker_id
-        ))f
-        ON e.id =f.worker_id
-        AND f.worker_id IN
+        <include refid="RegulatorWorkerTable" />
+        f
+        ON e.id = f.worker_id
+        WHERE e.id IN
         <foreach collection="workerIds" index="index" item="item" open="(" separator="," close=")">
             #{item}
         </foreach>

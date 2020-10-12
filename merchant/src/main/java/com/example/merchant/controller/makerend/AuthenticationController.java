@@ -71,16 +71,11 @@ public class AuthenticationController {
 
     @PostMapping("/callBackSignAContract")
     @ApiOperation(value = "签署加盟合同回调接口", notes = "签署加盟合同回调接口", httpMethod = "POST",hidden = true)
-    public ReturnJson callBackSignAContract(HttpServletRequest request) {
-        ReturnJson returnJson = null;
+    public void callBackSignAContract(HttpServletRequest request) {
         try {
-             returnJson = authenticationService.callBackSignAContract(request);
+            authenticationService.callBackSignAContract(request);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.toString()+":"+e.getMessage());
         }
-        if (returnJson == null){
-            return ReturnJson.error("签署失败！");
-        }
-        return returnJson;
     }
 }
