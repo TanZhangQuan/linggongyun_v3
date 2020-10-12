@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.example.common.contract.exception.DefineException;
 import com.example.common.contract.helper.*;
 import com.example.common.util.ReturnJson;
+import com.example.common.util.UuidUtil;
 import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +31,7 @@ public class SignAContractUtils {
         String orgSealId = orgSealJson.getString("");
 
         LOGGER.info("---------------------通过上传方式创建文件start-----------------------------");
-        JSONObject uploadJson = FileTemplateHelper.createFileByUpload(filePath, "加盟合同.pdf", orgId);
+        JSONObject uploadJson = FileTemplateHelper.createFileByUpload(filePath, UuidUtil.get32UUID() +".pdf", orgId);
         String uploadUrl = uploadJson.getString("uploadUrl");
         String fileId = uploadJson.getString("fileId");
 

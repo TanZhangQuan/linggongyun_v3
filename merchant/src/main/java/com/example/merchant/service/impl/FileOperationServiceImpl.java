@@ -16,8 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -132,6 +131,47 @@ public class FileOperationServiceImpl implements FileOperationService {
         }
     }
 
+    @Override
+    public String uploadJpgOrPdf(InputStream inputStream, HttpServletRequest request) {
+        if (inputStream == null) {
+            return "";
+        }
+        BufferedInputStream in = null;
+        BufferedOutputStream out = null;
+        File fileMkdir = new File(PathImage_KEY);
+        String newFileName = UuidUtil.get32UUID() + ".pdf";
+        if (!fileMkdir.exists()) {// 判断目录是否存在
+            fileMkdir.mkdirs();
+        }
+        String fileName = PathImage_KEY + UuidUtil.get32UUID() + ".pdf";
+        in = new BufferedInputStream(inputStream);
+        try {
+            out = new BufferedOutputStream(new FileOutputStream(fileName));
+            int len = -1;
+            byte[] b = new byte[1024];
+            while ((len = in.read(b)) != -1) {
+                out.write(b, 0, len);
+            }
+            String accessPath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() +
+                    request.getContextPath() + fileStaticAccesspathImage + newFileName;
+            return accessPath;
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                in.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            try {
+                out.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return "";
+    }
+
     /**
      * 上传支付清单
      *
@@ -234,12 +274,12 @@ public class FileOperationServiceImpl implements FileOperationService {
             if (state.equals("0")) {
                 makerInvoice.setMakerVoiceUrl(fileName);
                 makerInvoice.setUpdateTime(LocalDateTime.parse(DateUtil.getTime(), dfd));
-                makerInvoiceDao.update(makerInvoice,new QueryWrapper<MakerInvoice>().eq("payment_inventory_id",paymentInventoryId));
+                makerInvoiceDao.update(makerInvoice, new QueryWrapper<MakerInvoice>().eq("payment_inventory_id", paymentInventoryId));
                 return ReturnJson.success("发票上传成功", accessPath);
             } else {
                 makerInvoice.setMakerTaxUrl(fileName);
                 makerInvoice.setUpdateTime(LocalDateTime.parse(DateUtil.getTime(), dfd));
-                makerInvoiceDao.update(makerInvoice,new QueryWrapper<MakerInvoice>().eq("payment_inventory_id",paymentInventoryId));
+                makerInvoiceDao.update(makerInvoice, new QueryWrapper<MakerInvoice>().eq("payment_inventory_id", paymentInventoryId));
                 return ReturnJson.success("税票上传成功", accessPath);
             }
         } else {
@@ -247,6 +287,13 @@ public class FileOperationServiceImpl implements FileOperationService {
         }
     }
 
+    /**
+     * 上传视频
+     *
+     * @param uploadVideo
+     * @param request
+     * @return
+     */
     @Override
     public ReturnJson uploadVideo(MultipartFile uploadVideo, HttpServletRequest request) {
         if (uploadVideo.getSize() == 0) {
@@ -269,7 +316,7 @@ public class FileOperationServiceImpl implements FileOperationService {
                         request.getContextPath() + fileStaticAccesspathVideo + newFileName;
                 uploadVideo.transferTo(file);
             } catch (IOException e) {
-                e.printStackTrace();
+                log.error(e.toString() + ":" + e.getMessage());
             }
             return ReturnJson.success("视频上传成功", accessPath);
         } else {

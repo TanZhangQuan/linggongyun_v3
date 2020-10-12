@@ -1,211 +1,253 @@
 package com.example.common.util;
 
-import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFCellStyle;
-import org.apache.poi.xssf.usermodel.XSSFColor;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder.BorderSide;
+
+import cn.afterturn.easypoi.excel.ExcelExportUtil;
+import cn.afterturn.easypoi.excel.ExcelImportUtil;
+import cn.afterturn.easypoi.excel.entity.ExportParams;
+import cn.afterturn.easypoi.excel.entity.ImportParams;
+import cn.afterturn.easypoi.excel.entity.enmus.ExcelType;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
-import java.awt.Color;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
-import java.net.URLEncoder;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
 
+/**
+ * @Classname ExcelUtils
+ * @Description
+ * @Date 2020/4/21 0021 17:57
+ * @Created by Administrator
+ */
 public class ExcelUtils {
-
     /**
-     * 使用浏览器选择路径下载
+     * excel 导出
+     *
+     * @param list           数据
+     * @param title          标题
+     * @param sheetName      sheet名称
+     * @param pojoClass      pojo类型
+     * @param fileName       文件名称
+     * @param isCreateHeader 是否创建表头
      * @param response
-     * @param fileName
-     * @param data
-     * @throws Exception
      */
-    public static void exportExcel(HttpServletResponse response, String fileName, ExcelData data) throws Exception {
-        // 告诉浏览器用什么软件可以打开此文件
-        response.setHeader("content-Type", "application/vnd.ms-excel");
-        // 下载文件的默认名称
-        response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(fileName + ".xls", "utf-8"));
-        exportExcel(data, response.getOutputStream());
+    public static void exportExcel(List<?> list, String title, String sheetName, Class<?> pojoClass, String fileName, boolean isCreateHeader, HttpServletResponse response) throws IOException {
+        ExportParams exportParams = new ExportParams(title, sheetName, ExcelType.XSSF);
+        exportParams.setCreateHeadRows(isCreateHeader);
+        defaultExport(list, pojoClass, fileName, response, exportParams);
     }
 
-    public static int generateExcel(ExcelData excelData, String path) throws Exception {
-        File f = new File(path);
-        FileOutputStream out = new FileOutputStream(f);
-        return exportExcel(excelData, out);
+    /**
+     * excel 导出
+     *
+     * @param list      数据
+     * @param title     标题
+     * @param sheetName sheet名称
+     * @param pojoClass pojo类型
+     * @param fileName  文件名称
+     * @param response
+     */
+    public static void exportExcel(List<?> list, String title, String sheetName, Class<?> pojoClass, String fileName, HttpServletResponse response) throws IOException {
+        defaultExport(list, pojoClass, fileName, response, new ExportParams(title, sheetName, ExcelType.XSSF));
     }
 
-    private static int exportExcel(ExcelData data, OutputStream out) throws Exception {
-        XSSFWorkbook wb = new XSSFWorkbook();
-        int rowIndex = 0;
+    /**
+     * excel 导出
+     *
+     * @param list         数据
+     * @param pojoClass    pojo类型
+     * @param fileName     文件名称
+     * @param response
+     * @param exportParams 导出参数
+     */
+    public static void exportExcel(List<?> list, Class<?> pojoClass, String fileName, ExportParams exportParams, HttpServletResponse response) throws IOException {
+        defaultExport(list, pojoClass, fileName, response, exportParams);
+    }
+
+    /**
+     * excel 导出
+     *
+     * @param list     数据
+     * @param fileName 文件名称
+     * @param response
+     */
+    public static void exportExcel(List<Map<String, Object>> list, String fileName, HttpServletResponse response) throws IOException {
+        defaultExport(list, fileName, response);
+    }
+
+    /**
+     * 默认的 excel 导出
+     *
+     * @param list         数据
+     * @param pojoClass    pojo类型
+     * @param fileName     文件名称
+     * @param response
+     * @param exportParams 导出参数
+     */
+    private static void defaultExport(List<?> list, Class<?> pojoClass, String fileName, HttpServletResponse response, ExportParams exportParams) throws IOException {
+        Workbook workbook = ExcelExportUtil.exportExcel(exportParams, pojoClass, list);
+        downLoadExcel(fileName, response, workbook);
+    }
+
+    /**
+     * 默认的 excel 导出
+     *
+     * @param list     数据
+     * @param fileName 文件名称
+     * @param response
+     */
+    private static void defaultExport(List<Map<String, Object>> list, String fileName, HttpServletResponse response) throws IOException {
+        Workbook workbook = ExcelExportUtil.exportExcel(list, ExcelType.HSSF);
+        downLoadExcel(fileName, response, workbook);
+    }
+
+    /**
+     * 下载
+     *
+     * @param fileName 文件名称
+     * @param response
+     * @param workbook excel数据
+     */
+    private static void downLoadExcel(String fileName, HttpServletResponse response, Workbook workbook) throws IOException {
         try {
-            String sheetName = data.getName();
-            if (null == sheetName) {
-                sheetName = "Sheet1";
-            }
-            XSSFSheet sheet = wb.createSheet(sheetName);
-            rowIndex = writeExcel(wb, sheet, data);
-            wb.write(out);
+            response.setCharacterEncoding("UTF-8");
+            response.setHeader("content-Type", "application/vnd.ms-excel");
+            response.setHeader("Content-Disposition", "attachment;filename=" + fileName + "." + ExcelTypeEnum.XLSX.getValue());
+            workbook.write(response.getOutputStream());
         } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            //此处需要关闭 wb 变量
-            out.close();
-        }
-        return rowIndex;
-    }
-
-    /**
-     * 表不显示字段
-     * @param wb
-     * @param sheet
-     * @param data
-     * @return
-     */
-//    private static int writeExcel(XSSFWorkbook wb, Sheet sheet, ExcelData data) {
-//        int rowIndex = 0;
-//        writeTitlesToExcel(wb, sheet, data.getTitles());
-//        rowIndex = writeRowsToExcel(wb, sheet, data.getRows(), rowIndex);
-//        autoSizeColumns(sheet, data.getTitles().size() + 1);
-//        return rowIndex;
-//    }
-
-    /**
-     * 表显示字段
-     * @param wb
-     * @param sheet
-     * @param data
-     * @return
-     */
-    private static int writeExcel(XSSFWorkbook wb, Sheet sheet, ExcelData data) {
-        int rowIndex = 0;
-        rowIndex = writeTitlesToExcel(wb, sheet, data.getTitles());
-        rowIndex = writeRowsToExcel(wb, sheet, data.getRows(), rowIndex);
-        autoSizeColumns(sheet, data.getTitles().size() + 1);
-        return rowIndex;
-    }
-    /**
-     * 设置表头
-     *
-     * @param wb
-     * @param sheet
-     * @param titles
-     * @return
-     */
-    private static int writeTitlesToExcel(XSSFWorkbook wb, Sheet sheet, List<String> titles) {
-        int rowIndex = 0;
-        int colIndex = 0;
-        Font titleFont = wb.createFont();
-        //设置字体
-        titleFont.setFontName("simsun");
-        //设置粗体
-//        titleFont.setBoldweight(Short.MAX_VALUE);
-        //设置字号
-        titleFont.setFontHeightInPoints((short) 14);
-        //设置颜色
-        titleFont.setColor(IndexedColors.BLACK.index);
-        XSSFCellStyle titleStyle = wb.createCellStyle();
-        //水平居中
-        titleStyle.setAlignment(HorizontalAlignment.CENTER);
-        //垂直居中
-        titleStyle.setVerticalAlignment(VerticalAlignment.CENTER);
-        //设置图案颜色
-        titleStyle.setFillForegroundColor(new XSSFColor(new Color(182, 184, 192)));
-        //设置图案样式
-        titleStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-        titleStyle.setFont(titleFont);
-        setBorder(titleStyle, BorderStyle.THIN, new XSSFColor(new Color(0, 0, 0)));
-        Row titleRow = sheet.createRow(rowIndex);
-        titleRow.setHeightInPoints(25);
-        colIndex = 0;
-        for (String field : titles) {
-            Cell cell = titleRow.createCell(colIndex);
-            cell.setCellValue(field);
-            cell.setCellStyle(titleStyle);
-            colIndex++;
-        }
-        rowIndex++;
-        return rowIndex;
-    }
-
-    /**
-     * 设置内容
-     *
-     * @param wb
-     * @param sheet
-     * @param rows
-     * @param rowIndex
-     * @return
-     */
-    private static int writeRowsToExcel(XSSFWorkbook wb, Sheet sheet, List<List<Object>> rows, int rowIndex) {
-        int colIndex;
-        Font dataFont = wb.createFont();
-        dataFont.setFontName("simsun");
-        dataFont.setFontHeightInPoints((short) 14);
-        dataFont.setColor(IndexedColors.BLACK.index);
-
-        XSSFCellStyle dataStyle = wb.createCellStyle();
-        dataStyle.setAlignment(HorizontalAlignment.CENTER);
-        dataStyle.setVerticalAlignment(VerticalAlignment.CENTER);
-        dataStyle.setFont(dataFont);
-        setBorder(dataStyle, BorderStyle.THIN, new XSSFColor(new Color(0, 0, 0)));
-        for (List<Object> rowData : rows) {
-            Row dataRow = sheet.createRow(rowIndex);
-            dataRow.setHeightInPoints(25);
-            colIndex = 0;
-            for (Object cellData : rowData) {
-                Cell cell = dataRow.createCell(colIndex);
-                if (cellData != null) {
-                    cell.setCellValue(cellData.toString());
-                } else {
-                    cell.setCellValue("");
-                }
-                cell.setCellStyle(dataStyle);
-                colIndex++;
-            }
-            rowIndex++;
-        }
-        return rowIndex;
-    }
-
-    /**
-     * 自动调整列宽
-     *
-     * @param sheet
-     * @param columnNumber
-     */
-    private static void autoSizeColumns(Sheet sheet, int columnNumber) {
-        for (int i = 0; i < columnNumber; i++) {
-            int orgWidth = sheet.getColumnWidth(i);
-            sheet.autoSizeColumn(i, true);
-            int newWidth = (int) (sheet.getColumnWidth(i) + 100);
-            if (newWidth > orgWidth) {
-                sheet.setColumnWidth(i, newWidth);
-            } else {
-                sheet.setColumnWidth(i, orgWidth);
-            }
+            throw new IOException(e.getMessage());
         }
     }
 
     /**
-     * 设置边框
+     * excel 导入
      *
-     * @param style
-     * @param border
-     * @param color
+     * @param filePath   excel文件路径
+     * @param titleRows  标题行
+     * @param headerRows 表头行
+     * @param pojoClass  pojo类型
+     * @param <T>
+     * @return
      */
-    private static void setBorder(XSSFCellStyle style, BorderStyle border, XSSFColor color) {
-        style.setBorderTop(border);
-        style.setBorderLeft(border);
-        style.setBorderRight(border);
-        style.setBorderBottom(border);
-        style.setBorderColor(BorderSide.TOP, color);
-        style.setBorderColor(BorderSide.LEFT, color);
-        style.setBorderColor(BorderSide.RIGHT, color);
-        style.setBorderColor(BorderSide.BOTTOM, color);
+    public static <T> List<T> importExcel(String filePath, Integer titleRows, Integer headerRows, Class<T> pojoClass) throws IOException {
+        if (StringUtils.isBlank(filePath)) {
+            return null;
+        }
+        ImportParams params = new ImportParams();
+        params.setTitleRows(titleRows);
+        params.setHeadRows(headerRows);
+        params.setNeedSave(true);
+        params.setSaveUrl("/excel/");
+        try {
+            return ExcelImportUtil.importExcel(new File(filePath), pojoClass, params);
+        } catch (NoSuchElementException e) {
+            throw new IOException("模板不能为空");
+        } catch (Exception e) {
+            throw new IOException(e.getMessage());
+        }
+    }
+
+    /**
+     * excel 导入
+     *
+     * @param file      excel文件
+     * @param pojoClass pojo类型
+     * @param <T>
+     * @return
+     */
+    public static <T> List<T> importExcel(MultipartFile file, Class<T> pojoClass) throws IOException {
+        return importExcel(file, 1, 1, pojoClass);
+    }
+
+    /**
+     * excel 导入
+     *
+     * @param file       excel文件
+     * @param titleRows  标题行
+     * @param headerRows 表头行
+     * @param pojoClass  pojo类型
+     * @param <T>
+     * @return
+     */
+    public static <T> List<T> importExcel(MultipartFile file, Integer titleRows, Integer headerRows, Class<T> pojoClass) throws IOException {
+        return importExcel(file, titleRows, headerRows, false, pojoClass);
+    }
+
+    /**
+     * excel 导入
+     *
+     * @param file       上传的文件
+     * @param titleRows  标题行
+     * @param headerRows 表头行
+     * @param needVerfiy 是否检验excel内容
+     * @param pojoClass  pojo类型
+     * @param <T>
+     * @return
+     */
+    public static <T> List<T> importExcel(MultipartFile file, Integer titleRows, Integer headerRows, boolean needVerfiy, Class<T> pojoClass) throws IOException {
+        if (file == null) {
+            return null;
+        }
+        try {
+            return importExcel(file.getInputStream(), titleRows, headerRows, needVerfiy, pojoClass);
+        } catch (Exception e) {
+            throw new IOException(e.getMessage());
+        }
+    }
+
+    /**
+     * excel 导入
+     *
+     * @param inputStream 文件输入流
+     * @param titleRows   标题行
+     * @param headerRows  表头行
+     * @param needVerfiy  是否检验excel内容
+     * @param pojoClass   pojo类型
+     * @param <T>
+     * @return
+     */
+    public static <T> List<T> importExcel(InputStream inputStream, Integer titleRows, Integer headerRows, boolean needVerfiy, Class<T> pojoClass) throws IOException {
+        if (inputStream == null) {
+            return null;
+        }
+        ImportParams params = new ImportParams();
+        params.setTitleRows(titleRows);
+        params.setHeadRows(headerRows);
+        params.setSaveUrl("/excel/");
+        params.setNeedSave(true);
+//        params.setNeedVerfiy(needVerfiy);
+        params.setNeedVerify(needVerfiy);
+        try {
+            return ExcelImportUtil.importExcel(inputStream, pojoClass, params);
+        } catch (NoSuchElementException e) {
+            throw new IOException("excel文件不能为空");
+        } catch (Exception e) {
+            throw new IOException(e.getMessage());
+        }
+    }
+
+    /**
+     * Excel 类型枚举
+     */
+    enum ExcelTypeEnum {
+        XLS("xls"), XLSX("xlsx");
+        private String value;
+
+        ExcelTypeEnum(String value) {
+            this.value = value;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public void setValue(String value) {
+            this.value = value;
+        }
     }
 }

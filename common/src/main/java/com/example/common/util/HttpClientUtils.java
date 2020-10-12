@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * HttpClient4.3工具类
@@ -177,5 +178,25 @@ public class HttpClientUtils {
             request.releaseConnection();
         }
         return jsonResult;
+    }
+
+    public static InputStream httpPost(String url) {
+        // post请求返回结果
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        HttpPost httpPost = new HttpPost(url);
+        // 设置请求和传输超时时间
+        httpPost.setConfig(requestConfig);
+        try {
+            CloseableHttpResponse result = httpClient.execute(httpPost);
+            // 请求发送成功，并得到响应
+            if (result.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+                return result.getEntity().getContent();
+            }
+        } catch (IOException e) {
+            logger.error("post请求提交失败:" + url, e);
+        } finally {
+            httpPost.releaseConnection();
+        }
+        return null;
     }
 }

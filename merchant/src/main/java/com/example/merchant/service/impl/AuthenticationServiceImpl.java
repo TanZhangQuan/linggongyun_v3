@@ -3,12 +3,14 @@ package com.example.merchant.service.impl;
 import com.example.common.contract.SignAContractUtils;
 import com.example.common.contract.exception.DefineException;
 import com.example.common.contract.helper.SignHelper;
+import com.example.common.util.HttpClientUtils;
 import com.example.common.util.IdCardUtils;
 import com.example.common.util.JsonUtils;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.makerend.IdCardInfoDto;
 import com.example.merchant.dto.makerend.WorkerBankDto;
 import com.example.merchant.service.AuthenticationService;
+import com.example.merchant.service.FileOperationService;
 import com.example.merchant.util.RealnameVerifyUtil;
 import com.example.mybatis.entity.Worker;
 import com.example.mybatis.entity.WorkerBank;
@@ -21,6 +23,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +46,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Value("${appSecret}")
     private String appSecret;
+
+    @Autowired
+    private FileOperationService fileOperationService;
 
     /**
      * 识别身份证获取信息
@@ -172,7 +178,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             Worker worker = workerDao.selectById(thirdPartyUserId);
             if (worker != null) {
                 worker.setAgreementSign(2);
-                worker.setAgreementUrl(String.valueOf(flowInfo.get("fileUrl")));
+                String fileUrl = String.valueOf(flowInfo.get("fileUrl"));
+                InputStream inputStream = HttpClientUtils.httpPost(fileUrl);
+                String s = fileOperationService.uploadJpgOrPdf(inputStream, request);
+                worker.setAgreementUrl(s);
                 workerDao.updateById(worker);
                 return ReturnJson.success("签署加盟合同成功！");
             }
