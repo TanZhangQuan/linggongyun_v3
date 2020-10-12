@@ -53,7 +53,7 @@ public class BaseExceptionHandler {
     @ResponseBody
     @ExceptionHandler(CommonException.class)
     public ReturnJson exceptionHandler(CommonException e) {
-        return ReturnJson.error(Integer.valueOf(e.getResponseCode()),e.getResponseMsg());
+        return ReturnJson.error(e.getResponseCode(),e.getResponseMsg());
     }
 
     @ResponseBody
@@ -73,7 +73,7 @@ public class BaseExceptionHandler {
     @ResponseBody
     @ExceptionHandler(value = Exception.class)
     public ReturnJson exceptionHandler(Exception e) {
-        log.error(e.toString());
+        log.error(e.toString()+":"+e.getMessage());
         return ReturnJson.error("服务内部错误");
     }
 
