@@ -10,6 +10,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,6 +39,7 @@ public class PaymentOrderManyPaasController {
     private PaymentOrderService paymentOrderService;
 
 
+    @RequiresRoles("admin")
     @PostMapping("/findMerchant")
     @ApiOperation(value = "查询商户", notes = "查询商户", httpMethod = "POST")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "managersId", value = "管理人员ID", required = true)})

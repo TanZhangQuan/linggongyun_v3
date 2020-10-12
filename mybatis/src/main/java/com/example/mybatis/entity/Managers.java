@@ -26,6 +26,11 @@ public class Managers implements Serializable {
     private String id;
 
     /**
+     * 父级ID
+     */
+    private String parentId;
+
+    /**
      * 角色ID
      */
     private String roleId;

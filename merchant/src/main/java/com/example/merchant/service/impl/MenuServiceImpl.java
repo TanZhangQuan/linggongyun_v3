@@ -4,19 +4,14 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.example.common.util.MD5;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.merchant.MerchantDto;
-import com.example.mybatis.entity.Menu;
-import com.example.mybatis.entity.Merchant;
-import com.example.mybatis.entity.MerchantRole;
-import com.example.mybatis.entity.MerchantRoleMenu;
-import com.example.mybatis.mapper.MenuDao;
+import com.example.merchant.dto.platform.SaveManagersRoleDto;
+import com.example.mybatis.entity.*;
+import com.example.mybatis.mapper.*;
 import com.example.merchant.service.MenuService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.example.mybatis.mapper.MerchantDao;
-import com.example.mybatis.mapper.MerchantRoleDao;
-import com.example.mybatis.mapper.MerchantRoleMenuDao;
 import com.example.mybatis.vo.MenuListVo;
 import com.example.mybatis.vo.RoleMenuVo;
-import org.apache.commons.lang3.StringUtils;
+import com.example.redis.dao.RedisDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -40,14 +35,23 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
     @Value("${PWD_KEY}")
     private String PWD_KEY;
 
+    @Autowired
+    private RedisDao redisDao;
+
     @Resource
     private MenuDao menuDao;
+
     @Autowired
     private MerchantRoleDao merchantRoleDao;
+
     @Autowired
     private MerchantRoleMenuDao merchantRoleMenuDao;
+
     @Autowired
     private MerchantDao merchantDao;
+
+    @Autowired
+    private ManagersDao managersDao;
 
     /**
      * 商户端查询所有的权限列表
@@ -88,7 +92,8 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
     @Override
     @Transactional
     public ReturnJson saveRole(MerchantDto merchantDto) {
-        if (merchantDto.getMerchantId() == null) {
+        String token = redisDao.get(merchantDto.getMerchantId());
+        if (token == null) {
             return ReturnJson.error("请先登录");
         }
         int count = merchantDao.selectCount(new QueryWrapper<Merchant>().eq("parent_id", merchantDto.getMerchantId()));
@@ -101,11 +106,11 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
         merchantRole.setCreateDate(LocalDateTime.now());
         int ins = merchantRoleDao.insert(merchantRole);
         if (ins > 0) {
-            String[] meunId = merchantDto.getMenuIds().split(",");
-            for (int i = 0; i < meunId.length; i++) {
+            String[] menuId = merchantDto.getMenuIds().split(",");
+            for (int i = 0; i < menuId.length; i++) {
                 MerchantRoleMenu roleMenu = new MerchantRoleMenu();
                 roleMenu.setMerchantRoleId(merchantRole.getId());
-                roleMenu.setMenuId(meunId[i]);
+                roleMenu.setMenuId(menuId[i]);
                 merchantRoleMenuDao.insert(roleMenu);
             }
         }
@@ -188,8 +193,8 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
     @Override
     @Transactional
     public ReturnJson daleteRole(String merchantId) {
-        Merchant merchant=merchantDao.selectById(new QueryWrapper<Merchant>().eq("id",merchantId));
-        merchantRoleMenuDao.delete(new QueryWrapper<MerchantRoleMenu>().eq("merchant_role_id",merchant.getRoleId()));
+        Merchant merchant = merchantDao.selectById(new QueryWrapper<Merchant>().eq("id", merchantId));
+        merchantRoleMenuDao.delete(new QueryWrapper<MerchantRoleMenu>().eq("merchant_role_id", merchant.getRoleId()));
         merchantRoleDao.deleteById(merchant.getRoleId());
         merchantDao.deleteById(merchantId);
         return ReturnJson.error("操作成功");
@@ -212,4 +217,135 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
         }
         return ReturnJson.error("操作失败");
     }
+
+    /**
+     * 平台端添加子账户
+     *
+     * @param saveManagersRoleDto
+     * @return
+     */
+    @Override
+    @Transactional
+    public ReturnJson savePlatRole(SaveManagersRoleDto saveManagersRoleDto) {
+        Managers managersOne = null;
+        String token = redisDao.get(saveManagersRoleDto.getManagersId());
+        if (token == null) {
+            return ReturnJson.error("请先登录");
+        }
+        Managers managers = new Managers();
+        managers.setParentId(saveManagersRoleDto.getManagersId());
+        managers.setRealName(saveManagersRoleDto.getRealName());
+
+        MerchantRole role = new MerchantRole();
+        role.setRoleName(saveManagersRoleDto.getRealName());
+        role.setRolePosition(saveManagersRoleDto.getRolePosition());
+        role.setCreateDate(LocalDateTime.now());
+        int num = merchantRoleDao.insert(role);
+
+        if (saveManagersRoleDto.getMobileCode() == null) {
+            managersOne = managersDao.selectById(saveManagersRoleDto.getManagersId());
+            managers.setMobileCode(managersOne.getMobileCode());
+        }
+        managers.setUserName(saveManagersRoleDto.getUserName());
+        managers.setPassWord(PWD_KEY + MD5.md5(saveManagersRoleDto.getPassWord()));
+        if (num > 0) {
+            managersDao.insert(managers);
+            String[] menuId = saveManagersRoleDto.getMenuIds().split(",");
+            for (int i = 0; i < menuId.length; i++) {
+                MerchantRoleMenu roleMenu = new MerchantRoleMenu();
+                roleMenu.setMerchantRoleId(role.getId());
+                roleMenu.setMenuId(menuId[i]);
+                merchantRoleMenuDao.insert(roleMenu);
+            }
+        }
+        return ReturnJson.error("操作失败");
+    }
+
+    /**
+     * 平台端查询用户对应的子账户
+     *
+     * @param managersId
+     * @return
+     */
+    @Override
+    public ReturnJson getPassAllRole(String managersId) {
+        if (managersId == null) {
+            return ReturnJson.error("managersId不能为空");
+        }
+        List<RoleMenuVo> list = merchantRoleDao.getPassRolemenu(managersId);
+        return ReturnJson.success(list);
+    }
+
+    /**
+     * 修改子账号
+     *
+     * @param saveManagersRoleDto
+     * @return
+     */
+    @Override
+    public ReturnJson updatePassRole(SaveManagersRoleDto saveManagersRoleDto) {
+        MerchantRole merchantRole = new MerchantRole();
+        merchantRole.setId(saveManagersRoleDto.getRoleId());
+        merchantRole.setRoleName(saveManagersRoleDto.getRoleNmae());
+        merchantRole.setRolePosition(saveManagersRoleDto.getRolePosition());
+        merchantRole.setUpdateDate(LocalDateTime.now());
+        int num = merchantRoleDao.updateById(merchantRole);
+        if (num > 0) {
+            merchantRoleMenuDao.delete(new QueryWrapper<MerchantRoleMenu>().eq("merchant_role_id", saveManagersRoleDto.getRoleId()));
+            String[] meunId = saveManagersRoleDto.getMenuIds().split(",");
+            for (int i = 0; i < meunId.length; i++) {
+                MerchantRoleMenu roleMenu = new MerchantRoleMenu();
+                roleMenu.setMerchantRoleId(merchantRole.getId());
+                roleMenu.setMenuId(meunId[i]);
+                merchantRoleMenuDao.insert(roleMenu);
+            }
+
+            Managers managers = new Managers();
+            managers.setId(saveManagersRoleDto.getManagersId());
+            managers.setRealName(saveManagersRoleDto.getRealName());
+            managers.setMobileCode(saveManagersRoleDto.getMobileCode());
+            managers.setPassWord(PWD_KEY + MD5.md5(saveManagersRoleDto.getPassWord()));
+            managers.setUpdateDate(LocalDateTime.now());
+            managersDao.updateById(managers);
+            return ReturnJson.success("操作成功");
+        }
+        return ReturnJson.error("操作失败");
+    }
+
+    /**
+     * 删除子账户
+     *
+     * @param managersId
+     * @return
+     */
+    @Override
+    @Transactional
+    public ReturnJson daletePassRole(String managersId) {
+        Managers managers = managersDao.selectById(new QueryWrapper<Managers>().eq("id", managersId));
+        merchantRoleMenuDao.delete(new QueryWrapper<MerchantRoleMenu>().eq("merchant_role_id", managers.getRoleId()));
+        merchantRoleDao.deleteById(managers.getRoleId());
+        managersDao.deleteById(managersId);
+        return ReturnJson.error("操作成功");
+    }
+
+    /**
+     * 修改子账户状态
+     *
+     * @param managersId
+     * @param status
+     * @return
+     */
+    @Override
+    public ReturnJson updataPassRoleStatus(String managersId, Integer status) {
+        Managers managers = new Managers();
+        managers.setId(managersId);
+        managers.setStatus(status);
+        int num = managersDao.updateById(managers);
+        if (num > 0) {
+            return ReturnJson.success("操作成功");
+        }
+        return ReturnJson.error("操作失败");
+    }
+
+
 }
