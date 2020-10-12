@@ -56,4 +56,13 @@
         where m.id=#{merchantId} or m.parent_id = #{merchantId}
     </select>
 
+    <select id="getPassRolemenu" resultMap="Rolemenu">
+        SELECT m.id,m.parent_id,m.real_name,mr.role_position,m.user_name,m.mobile_code as login_mobile,m.status,m.create_date,me.id as mid,me.menu_name,me.menu_zhname,me.create_date as mcreate_date,me.update_date as mupdate_date
+        FROM tb_managers m
+        INNER JOIN tb_merchant_role mr ON m.role_id=mr.id
+        INNER JOIN tb_merchant_role_menu mrm ON mrm.merchant_role_id=mr.id
+        INNER JOIN tb_menu me ON mrm.menu_id=me.id
+        WHERE m.id=#{managersId} OR m.parent_id=#{managersId}
+    </select>
+
 </mapper>

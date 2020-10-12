@@ -1,12 +1,11 @@
 package com.example.merchant.config.shiro;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.example.mybatis.entity.Managers;
 import com.example.mybatis.entity.Menu;
-import com.example.mybatis.entity.Merchant;
 import com.example.mybatis.entity.MerchantRole;
-import com.example.mybatis.mapper.MerchantDao;
+import com.example.mybatis.mapper.ManagersDao;
 import com.example.mybatis.mapper.MerchantRoleDao;
-
 import lombok.SneakyThrows;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationException;
@@ -22,18 +21,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-/**
- * 授权相关服务-shiro
- *
- * @author qiguliuxing
- * @since 1.0.0
- */
-public class MerchantRealm extends AuthorizingRealm {
+public class ManagersRealm extends AuthorizingRealm {
 
-    private static final Logger logger = LoggerFactory.getLogger(MerchantRealm.class);
+    private static final Logger logger = LoggerFactory.getLogger(ManagersRealm.class);
 
     @Autowired
-    private MerchantDao merchantDao;
+    private ManagersDao managersDao;
     @Autowired
     private MerchantRoleDao merchantRoleDao;
 
@@ -52,8 +45,8 @@ public class MerchantRealm extends AuthorizingRealm {
         SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
         String loginName = (String) principals.getPrimaryPrincipal();//获取登录用户
         System.out.println("当前的用户-------------------------------" + loginName);
-        Merchant merchant = merchantDao.selectOne(new QueryWrapper<Merchant>().eq("user_name", loginName));//查询登录用户的角色
-        MerchantRole merchantRole = merchantRoleDao.selectById(merchant.getRoleId());
+        Managers managers = managersDao.selectOne(new QueryWrapper<Managers>().eq("user_name", loginName));//查询登录用户的角色
+        MerchantRole merchantRole = merchantRoleDao.selectById(managers.getRoleId());
         List<Menu> menuList = merchantRoleDao.getMenuById(merchantRole.getId());
         authorizationInfo.addRole(merchantRole.getRoleName());//添加角色
         Set<String> permissions = new HashSet<>();
@@ -74,7 +67,7 @@ public class MerchantRealm extends AuthorizingRealm {
     @SneakyThrows
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
-        logger.info("执行认证逻辑---------------------------Merchant----doGetAuthenticationInfo");
+        logger.info("执行认证逻辑-----------------------Managers---doGetAuthenticationInfo");
         //获取用户的输入的账号
 
         UsernamePasswordToken upToken = (UsernamePasswordToken) authenticationToken;
@@ -88,5 +81,4 @@ public class MerchantRealm extends AuthorizingRealm {
         );
         return authenticationInfo;
     }
-
 }

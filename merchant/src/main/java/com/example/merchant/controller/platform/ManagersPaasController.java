@@ -9,6 +9,7 @@ import io.swagger.annotations.ApiOperation;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,7 +17,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
-@RestController("/platform/managers")
+@RequestMapping("/platform/managers")
+@RestController
 @Api(value = "平台端登录接口", tags = {"平台端登录接口"})
 public class ManagersPaasController {
 
@@ -24,7 +26,7 @@ public class ManagersPaasController {
     @Autowired
     private ManagersService managersService;
 
-    @PostMapping("/login")
+    @PostMapping("/passLogin")
     @ApiOperation(value = "账号密码登录", notes = "账号密码登录", httpMethod = "POST")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "username", value = "登录账号", required = true),
             @ApiImplicitParam(name = "password", value = "登录密码", required = true)})

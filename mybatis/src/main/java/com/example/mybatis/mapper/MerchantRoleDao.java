@@ -23,4 +23,6 @@ public interface MerchantRoleDao extends BaseMapper<MerchantRole> {
     List<Menu> getMenuById(String MerchantId);
 
     List<RoleMenuVo> getRolemenu(String merchantId);
+
+    List<RoleMenuVo> getPassRolemenu(String managersId);
 }

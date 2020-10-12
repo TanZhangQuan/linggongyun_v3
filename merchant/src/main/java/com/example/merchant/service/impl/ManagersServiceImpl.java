@@ -6,12 +6,16 @@ import com.example.common.sms.SenSMS;
 import com.example.common.util.JsonUtils;
 import com.example.common.util.MD5;
 import com.example.common.util.ReturnJson;
+import com.example.merchant.config.shiro.CustomizedToken;
 import com.example.mybatis.entity.Managers;
 import com.example.mybatis.mapper.ManagersDao;
 import com.example.merchant.service.ManagersService;
 import com.example.merchant.util.JwtUtils;
 import com.example.redis.dao.RedisDao;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -46,15 +50,20 @@ public class ManagersServiceImpl extends ServiceImpl<ManagersDao, Managers> impl
     @Autowired
     private RedisDao redisDao;
 
+    private static final String MANAGERS= "MANAGERS";
+
     @Override
     public ReturnJson managersLogin(String userName, String passWord, HttpServletResponse response) {
         Managers managers = this.getOne(new QueryWrapper<Managers>().eq("user_name", userName).eq("pass_word", PWD_KEY+ MD5.md5(passWord)));
+        Subject currentUser = SecurityUtils.getSubject();
         if (managers != null) {
+            CustomizedToken customizedToken = new CustomizedToken(userName, PWD_KEY+ MD5.md5(passWord), MANAGERS);
             String token = jwtUtils.generateToken(managers.getId());
             managers.setPassWord("");
             redisDao.set(managers.getId(), JsonUtils.objectToJson(managers));
             response.setHeader(TOKEN,token);
             redisDao.setExpire(managers.getId(),7, TimeUnit.DAYS);
+            currentUser.login(customizedToken);//shiro验证身份
             return ReturnJson.success(managers);
         }
         return ReturnJson.error("你输入的用户名或密码有误！");
