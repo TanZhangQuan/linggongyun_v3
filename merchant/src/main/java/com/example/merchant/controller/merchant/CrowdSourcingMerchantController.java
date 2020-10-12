@@ -31,7 +31,6 @@ public class CrowdSourcingMerchantController {
 
     private static Logger logger = LoggerFactory.getLogger(CrowdSourcingMerchantController.class);
 
-//    @RequiresRoles("admin")
     @RequiresPermissions("crowd_sourcing_invoice")
     @ApiOperation("众包发票列表")
     @PostMapping(value = "/getListCSIByID")
@@ -45,7 +44,7 @@ public class CrowdSourcingMerchantController {
         return returnJson;
     }
 
-    @RequiresRoles("caiwu")
+    @RequiresPermissions("crowd_sourcing_invoice")
     @ApiOperation("众包支付信息")
     @GetMapping(value = "/getPayOrderManyById")
     public ReturnJson getPayOrderManyById(String id) {
@@ -93,7 +92,6 @@ public class CrowdSourcingMerchantController {
         }
         return returnJson;
     }
-
 
     @ApiOperation("众包发票列表,发票信息")
     @PostMapping(value = "/getInvoiceById")

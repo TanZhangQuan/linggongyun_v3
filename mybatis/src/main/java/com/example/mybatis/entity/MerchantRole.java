@@ -32,8 +32,6 @@ public class MerchantRole implements Serializable {
     @TableId(value = "id", type = IdType.ASSIGN_ID)
     private String id;
 
-    private String merchantId;
-
     /**
      * 角色名称
      */
@@ -41,30 +39,10 @@ public class MerchantRole implements Serializable {
     private String roleName;
 
     /**
-     * 手机号码
-     */
-    @NotBlank(message = "手机号不能为空")
-    private String mobileCode;
-    /**
      * 角色的职位
      */
     @NotNull(message = "角色的职位不能为空")
     private String rolePosition;
-    /**
-     * 登录账户
-     */
-    @NotNull(message = "登录账户不能为空")
-    private String loginAccount;
-    /**
-     * 登录密码
-     */
-    @NotNull(message = "登录密码不能为空")
-    private String loginPassword;
-
-    /**
-     * 子账户状态
-     */
-    private Integer status;
 
     @TableField(exist = false)
     private List<Menu> list;

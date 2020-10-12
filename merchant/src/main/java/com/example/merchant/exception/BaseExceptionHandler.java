@@ -3,6 +3,7 @@ package com.example.merchant.exception;
 import com.example.common.contract.exception.DefineException;
 import com.example.common.util.ReturnJson;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -59,6 +60,13 @@ public class BaseExceptionHandler {
     @ExceptionHandler(IOException.class)
     public ReturnJson exceptionHandler(IOException e){
         return ReturnJson.error("文件上传失败！");
+    }
+
+    //shiro为登录时
+    @ResponseBody
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ReturnJson exceptionHandler(HttpRequestMethodNotSupportedException e){
+        return ReturnJson.error("请先登录后再进行操作");
     }
 
     //处理非以上异常问题
