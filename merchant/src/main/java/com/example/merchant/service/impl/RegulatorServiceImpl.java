@@ -4,17 +4,25 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.example.common.util.ExcelUtils;
 import com.example.common.util.MD5;
 import com.example.common.util.ReturnJson;
+import com.example.common.util.VerificationCheck;
 import com.example.merchant.dto.platform.RegulatorDto;
 import com.example.merchant.dto.platform.RegulatorQueryDto;
 import com.example.merchant.dto.platform.RegulatorTaxDto;
-import com.example.merchant.service.*;
+import com.example.merchant.dto.regulator.RegulatorWorkerDto;
+import com.example.merchant.service.MerchantService;
+import com.example.merchant.service.RegulatorService;
+import com.example.merchant.service.RegulatorTaxService;
+import com.example.merchant.service.TaxService;
 import com.example.merchant.vo.platform.HomePageVO;
 import com.example.merchant.vo.platform.RegulatorTaxVO;
+import com.example.merchant.vo.regulator.ExportRegulatorWorkerVO;
 import com.example.mybatis.entity.*;
 import com.example.mybatis.mapper.*;
 import com.example.mybatis.po.InvoicePO;
+import com.example.mybatis.po.RegulatorWorkerPO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -22,8 +30,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -300,4 +311,94 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
         return merchantService.getMerchantPaymentInventory(paymentOrderId, page, pageSize);
     }
 
+    /**
+     * 按条件查询所监管的创客
+     *
+     * @param regulatorWorkerDto
+     * @return
+     */
+    @Override
+    public ReturnJson getRegulatorWorker(RegulatorWorkerDto regulatorWorkerDto) {
+        List<String> paymentOrderIds = new ArrayList<>();
+        List<String> taxIds = new ArrayList<>();
+
+        //获取所以监管的服务商
+        List<RegulatorTax> regulatorTaxes = regulatorTaxService.list(new QueryWrapper<RegulatorTax>().eq("regulator_id", regulatorWorkerDto.getRegulatorId()).eq("status", 0));
+        for (RegulatorTax regulatorTax : regulatorTaxes) {
+            taxIds.add(regulatorTax.getTaxId());
+        }
+        if (VerificationCheck.listIsNull(taxIds)) {
+            return ReturnJson.error("您还没有监管的服务商！");
+        }
+
+        //获取所有使用了监管服务商的支付订单
+        List<PaymentOrder> paymentOrders = paymentOrderDao.selectList(new QueryWrapper<PaymentOrder>().in("tax_id", taxIds));
+        for (PaymentOrder paymentOrder : paymentOrders) {
+            paymentOrderIds.add(paymentOrder.getId());
+        }
+
+        List<PaymentOrderMany> paymentOrderManies = paymentOrderManyDao.selectList(new QueryWrapper<PaymentOrderMany>().in("tax_id", taxIds));
+        for (PaymentOrderMany paymentOrderMany : paymentOrderManies) {
+            paymentOrderIds.add(paymentOrderMany.getId());
+        }
+        if (VerificationCheck.listIsNull(paymentOrderIds)) {
+            return ReturnJson.error("您所监管的服务商还没产生过流水！");
+        }
+        Page<RegulatorWorkerPO> regulatorWorkerPOPage = new Page<>(regulatorWorkerDto.getPage(), regulatorWorkerDto.getPageSize());
+        IPage<RegulatorWorkerPO> regulatorWorkerPOIPage = regulatorDao.selectRegulatorWorker(regulatorWorkerPOPage,
+                regulatorWorkerDto.getWorkerId(), regulatorWorkerDto.getWorkerName(), regulatorWorkerDto.getIdCardCode(),
+                paymentOrderIds, regulatorWorkerDto.getStartDate(), regulatorWorkerDto.getEndDate());
+        return ReturnJson.success(regulatorWorkerPOIPage);
+    }
+
+    /**
+     * 导出创客
+     *
+     * @param workerIds
+     * @return
+     */
+    @Override
+    public ReturnJson exportRegulatorWorker(String workerIds, String regulatorId, HttpServletResponse response) {
+        List<String> paymentOrderIds = new ArrayList<>();
+        List<String> taxIds = new ArrayList<>();
+        //获取所以监管的服务商
+        List<RegulatorTax> regulatorTaxes = regulatorTaxService.list(new QueryWrapper<RegulatorTax>().eq("regulator_id", regulatorId).eq("status", 0));
+        for (RegulatorTax regulatorTax : regulatorTaxes) {
+            taxIds.add(regulatorTax.getTaxId());
+        }
+        if (VerificationCheck.listIsNull(taxIds)) {
+            return ReturnJson.error("您还没有监管的服务商！");
+        }
+
+        //获取所有使用了监管服务商的支付订单
+        List<PaymentOrder> paymentOrders = paymentOrderDao.selectList(new QueryWrapper<PaymentOrder>().in("tax_id", taxIds));
+        for (PaymentOrder paymentOrder : paymentOrders) {
+            paymentOrderIds.add(paymentOrder.getId());
+        }
+
+        List<PaymentOrderMany> paymentOrderManies = paymentOrderManyDao.selectList(new QueryWrapper<PaymentOrderMany>().in("tax_id", taxIds));
+        for (PaymentOrderMany paymentOrderMany : paymentOrderManies) {
+            paymentOrderIds.add(paymentOrderMany.getId());
+        }
+        if (VerificationCheck.listIsNull(paymentOrderIds)) {
+            return ReturnJson.error("您所监管的服务商还没产生过流水！");
+        }
+        List<RegulatorWorkerPO> regulatorWorkerPOS = regulatorDao.selectExportRegulatorWorker(Arrays.asList(workerIds.split(",")), paymentOrderIds);
+        List<ExportRegulatorWorkerVO> exportRegulatorWorkerVOS = new ArrayList<>();
+        for (RegulatorWorkerPO regulatorWorkerPO : regulatorWorkerPOS) {
+            ExportRegulatorWorkerVO exportRegulatorWorkerVO = new ExportRegulatorWorkerVO();
+            BeanUtils.copyProperties(regulatorWorkerPO, exportRegulatorWorkerVO);
+            exportRegulatorWorkerVO.setAttestation(regulatorWorkerPO.getAttestation() == 0 ? "未认证" : "已认证");
+            exportRegulatorWorkerVO.setOrderCount(regulatorWorkerPO.getTotalOrderCount() + "/" + regulatorWorkerPO.getManyOrderCount());
+            exportRegulatorWorkerVOS.add(exportRegulatorWorkerVO);
+        }
+        if (!VerificationCheck.listIsNull(exportRegulatorWorkerVOS)) {
+            try {
+                ExcelUtils.exportExcel(exportRegulatorWorkerVOS, "创客交易流水信息", "流水信息", ExportRegulatorWorkerVO.class, "RegulatorWorker", true, response);
+            } catch (IOException e) {
+                log.error(e.toString() + ":" + e.getMessage());
+            }
+        }
+        return ReturnJson.error("创客导出失败！");
+    }
 }
