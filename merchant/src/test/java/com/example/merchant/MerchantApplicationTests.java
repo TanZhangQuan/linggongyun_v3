@@ -59,14 +59,7 @@ class MerchantApplicationTests {
 
 	@Test
 	void getTotal(){
-//		try {
-//			byte[] bytes = FileUtil.readFileByBytes("G:/upload/image/123123123123.jpg");
-//			String encode = Base64Util.encode(bytes);
-//			System.out.println(encode);
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-		redisDao.remove("aaaa");
+
 	}
 
 
@@ -103,10 +96,8 @@ class MerchantApplicationTests {
 
 	@Test
 	void TestInvoiceDao(){
-//		List<InvoicePO> invoicePOS = invoiceDao.selectTotal("3666abe4ec7691d8c83d5b7b4d257bc9");
-//		for (InvoicePO in : invoicePOS ){
-//			System.out.println(in.getPackageStatus()+"------"+in.getTotalMoney()+"-------"+in.getCount());
-//		}
+		Integer i = null;
+		System.out.println(i == 1);
 	}
 
 	@Test

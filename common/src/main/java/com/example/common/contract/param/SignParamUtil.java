@@ -263,7 +263,7 @@ public class SignParamUtil {
 	 * @author 宫清
 	 */
 	private static SignFlowStart createSignFlowStart() {
-		ConfigInfo cfgInfo = new ConfigInfo("http://246953jp33.qicp.vip/makerend/authentication/callBackSignAContract", "1,2", null, null);
+		ConfigInfo cfgInfo = new ConfigInfo("http://2181s627z8.qicp.vip/makerend/authentication/callBackSignAContract", "1,2", null, null);
 		SignFlowStart sfs = new SignFlowStart(null, "签署流程开启", null, null, null, null, null, cfgInfo);
 		return sfs;
 	}

@@ -1,6 +1,7 @@
 package com.example.merchant.vo.regulator;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -10,7 +11,7 @@ import java.time.LocalDateTime;
 
 @Data
 @ApiModel(description = "导出创客的信息")
-public class ExportRegulatorWorkerVO {
+public class RegulatorWorkerVO {
     @Excel(name = "创客编号")
     @ApiModelProperty(notes = "创客ID", value = "创客ID")
     private String workerId;
@@ -40,7 +41,7 @@ public class ExportRegulatorWorkerVO {
     private BigDecimal manyMoney;
 
     @Excel(name = "实名认证")
-    @ApiModelProperty(notes = "创客实名认证：0未认证，1已认证", value = "创客实名认证：0未认证，1已认证")
+    @ApiModelProperty(notes = "创客实名认证:未认证，已认证", value = "创客实名认证：未认证，已认证")
     private String attestation;
 
     @Excel(name = "加盟合同")
@@ -49,5 +50,6 @@ public class ExportRegulatorWorkerVO {
 
     @Excel(name = "创建时间",exportFormat = "yyyy-MM-dd HH:mm:ss")
     @ApiModelProperty(notes = "创客的入驻时间", value = "创客的入驻时间")
+    @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss")
     private LocalDateTime createDate;
 }

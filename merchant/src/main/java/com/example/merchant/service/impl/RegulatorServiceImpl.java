@@ -18,11 +18,15 @@ import com.example.merchant.service.RegulatorTaxService;
 import com.example.merchant.service.TaxService;
 import com.example.merchant.vo.platform.HomePageVO;
 import com.example.merchant.vo.platform.RegulatorTaxVO;
-import com.example.merchant.vo.regulator.ExportRegulatorWorkerVO;
+import com.example.merchant.vo.regulator.CountRegulatorWorkerInfoVO;
+import com.example.merchant.vo.regulator.CountRegulatorWorkerVO;
+import com.example.merchant.vo.regulator.CountSingleRegulatorWorkerVO;
+import com.example.merchant.vo.regulator.RegulatorWorkerVO;
 import com.example.mybatis.entity.*;
 import com.example.mybatis.mapper.*;
 import com.example.mybatis.po.InvoicePO;
 import com.example.mybatis.po.RegulatorWorkerPO;
+import com.example.mybatis.po.WorekerPaymentListPo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -33,9 +37,7 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 /**
  * <p>
@@ -75,6 +77,9 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
 
     @Autowired
     private CrowdSourcingInvoiceDao crowdSourcingInvoiceDao;
+
+    @Autowired
+    private PaymentInventoryDao paymentInventoryDao;
 
     @Value("${PWD_KEY}")
     private String PWD_KEY;
@@ -319,28 +324,11 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
      */
     @Override
     public ReturnJson getRegulatorWorker(RegulatorWorkerDto regulatorWorkerDto) {
-        List<String> paymentOrderIds = new ArrayList<>();
-        List<String> taxIds = new ArrayList<>();
-
-        //获取所以监管的服务商
-        List<RegulatorTax> regulatorTaxes = regulatorTaxService.list(new QueryWrapper<RegulatorTax>().eq("regulator_id", regulatorWorkerDto.getRegulatorId()).eq("status", 0));
-        for (RegulatorTax regulatorTax : regulatorTaxes) {
-            taxIds.add(regulatorTax.getTaxId());
+        ReturnJson result = this.getPaymentOrderIds(regulatorWorkerDto.getRegulatorId());
+        if (result.getCode() == 300) {
+            return result;
         }
-        if (VerificationCheck.listIsNull(taxIds)) {
-            return ReturnJson.error("您还没有监管的服务商！");
-        }
-
-        //获取所有使用了监管服务商的支付订单
-        List<PaymentOrder> paymentOrders = paymentOrderDao.selectList(new QueryWrapper<PaymentOrder>().in("tax_id", taxIds));
-        for (PaymentOrder paymentOrder : paymentOrders) {
-            paymentOrderIds.add(paymentOrder.getId());
-        }
-
-        List<PaymentOrderMany> paymentOrderManies = paymentOrderManyDao.selectList(new QueryWrapper<PaymentOrderMany>().in("tax_id", taxIds));
-        for (PaymentOrderMany paymentOrderMany : paymentOrderManies) {
-            paymentOrderIds.add(paymentOrderMany.getId());
-        }
+        List<String> paymentOrderIds = (List<String>) result.getData();
         if (VerificationCheck.listIsNull(paymentOrderIds)) {
             return ReturnJson.error("您所监管的服务商还没产生过流水！");
         }
@@ -348,7 +336,18 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
         IPage<RegulatorWorkerPO> regulatorWorkerPOIPage = regulatorDao.selectRegulatorWorker(regulatorWorkerPOPage,
                 regulatorWorkerDto.getWorkerId(), regulatorWorkerDto.getWorkerName(), regulatorWorkerDto.getIdCardCode(),
                 paymentOrderIds, regulatorWorkerDto.getStartDate(), regulatorWorkerDto.getEndDate());
-        return ReturnJson.success(regulatorWorkerPOIPage);
+        ReturnJson returnJson = ReturnJson.success(regulatorWorkerPOIPage);
+        List<RegulatorWorkerPO> regulatorWorkerPOS = regulatorWorkerPOIPage.getRecords();
+        List<RegulatorWorkerVO> regulatorWorkerVOS = new ArrayList<>();
+        for (RegulatorWorkerPO regulatorWorkerPO : regulatorWorkerPOS) {
+            RegulatorWorkerVO regulatorWorkerVO = new RegulatorWorkerVO();
+            BeanUtils.copyProperties(regulatorWorkerPO, regulatorWorkerVO);
+            regulatorWorkerVO.setAttestation(regulatorWorkerPO.getAttestation() == 0 ? "未认证" : "已认证");
+            regulatorWorkerVO.setOrderCount(regulatorWorkerPO.getTotalOrderCount() + "/" + regulatorWorkerPO.getManyOrderCount());
+            regulatorWorkerVOS.add(regulatorWorkerVO);
+        }
+        returnJson.setData(regulatorWorkerVOS);
+        return returnJson;
     }
 
     /**
@@ -359,8 +358,118 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
      */
     @Override
     public ReturnJson exportRegulatorWorker(String workerIds, String regulatorId, HttpServletResponse response) {
+        ReturnJson result = this.getPaymentOrderIds(regulatorId);
+        if (result.getCode() == 300) {
+            return result;
+        }
+        List<String> paymentOrderIds = (List<String>) result.getData();
+        if (VerificationCheck.listIsNull(paymentOrderIds)) {
+            return ReturnJson.error("您所监管的服务商还没产生过流水！");
+        }
+        List<RegulatorWorkerPO> regulatorWorkerPOS = regulatorDao.selectExportRegulatorWorker(Arrays.asList(workerIds.split(",")), paymentOrderIds);
+        List<RegulatorWorkerVO> regulatorWorkerVOS = new ArrayList<>();
+        for (RegulatorWorkerPO regulatorWorkerPO : regulatorWorkerPOS) {
+            RegulatorWorkerVO regulatorWorkerVO = new RegulatorWorkerVO();
+            BeanUtils.copyProperties(regulatorWorkerPO, regulatorWorkerVO);
+            regulatorWorkerVO.setAttestation(regulatorWorkerPO.getAttestation() == 0 ? "未认证" : "已认证");
+            regulatorWorkerVO.setOrderCount(regulatorWorkerPO.getTotalOrderCount() + "/" + regulatorWorkerPO.getManyOrderCount());
+            regulatorWorkerVOS.add(regulatorWorkerVO);
+        }
+        if (!VerificationCheck.listIsNull(regulatorWorkerVOS)) {
+            try {
+                ExcelUtils.exportExcel(regulatorWorkerVOS, "创客交易流水信息", "流水信息", RegulatorWorkerVO.class, "RegulatorWorker", true, response);
+                return ReturnJson.success("创客导出成功！");
+            } catch (IOException e) {
+                log.error(e.toString() + ":" + e.getMessage());
+            }
+        }
+        return ReturnJson.error("创客导出失败！");
+    }
+
+    /**
+     * 获取所监管的创客的流水统计
+     *
+     * @param regulatorId
+     * @return
+     */
+    @Override
+    public ReturnJson countRegulatorWorker(String regulatorId) {
+        ReturnJson result = this.getPaymentOrderIds(regulatorId);
+        if (result.getCode() == 300) {
+            return result;
+        }
+        List<String> paymentOrderIds = (List<String>) result.getData();
+        if (VerificationCheck.listIsNull(paymentOrderIds)) {
+            return ReturnJson.error("您所监管的服务商还没产生过流水！");
+        }
+        List<PaymentInventory> paymentInventories = paymentInventoryDao.selectList(new QueryWrapper<PaymentInventory>().in("payment_order_id", paymentOrderIds));
+        Integer totalOrderCount = 0;
+        BigDecimal totalMoney = new BigDecimal(0);
+        BigDecimal totalTaxMoney = new BigDecimal(0);
+        Integer manyOrderCount = 0;
+        BigDecimal manyMoney = new BigDecimal(0);
+        BigDecimal manyTaxMoney = new BigDecimal(0);
+        Set<String> set = new HashSet<>();
+        for (PaymentInventory paymentInventory : paymentInventories) {
+            if (paymentInventory.getPackageStatus() == 0) {
+                totalMoney = totalMoney.add(paymentInventory.getRealMoney());
+                totalTaxMoney = totalTaxMoney.add(paymentInventory.getTaxAmount());
+                totalOrderCount++;
+            } else {
+                manyMoney = manyMoney.add(paymentInventory.getRealMoney());
+                manyTaxMoney = manyTaxMoney.add(paymentInventory.getTaxAmount());
+                manyOrderCount++;
+            }
+            set.add(paymentInventory.getWorkerId());
+        }
+        Integer countWorker = set.size();
+        CountRegulatorWorkerVO countRegulatorWorkerVO = new CountRegulatorWorkerVO(countWorker, totalOrderCount, totalMoney, totalTaxMoney, manyOrderCount, manyMoney, manyTaxMoney);
+        return ReturnJson.success(countRegulatorWorkerVO);
+    }
+
+    @Autowired
+    private WorkerDao workerDao;
+
+    @Override
+    public ReturnJson countRegulatorWorkerInfo(String regulatorId, String workerId) {
+        Worker worker = workerDao.selectById(workerId);
+        if (worker == null) {
+            return ReturnJson.error("您输入的创客ID不存在！");
+        }
+        worker.setUserPwd("");
+        ReturnJson result = this.getPaymentOrderIds(regulatorId);
+        if (result.getCode() == 300) {
+            return result;
+        }
+        List<String> paymentOrderIds = (List<String>) result.getData();
+        if (VerificationCheck.listIsNull(paymentOrderIds)) {
+            return ReturnJson.error("您所监管的服务商还没产生过流水！");
+        }
+        List<String> workerIds = new ArrayList<>();
+        workerIds.add(workerId);
+        List<RegulatorWorkerPO> regulatorWorkerPOS = regulatorDao.selectExportRegulatorWorker(workerIds, paymentOrderIds);
+        RegulatorWorkerPO regulatorWorkerPO = regulatorWorkerPOS.get(0);
+        CountSingleRegulatorWorkerVO countSingleRegulatorWorkerVO = new CountSingleRegulatorWorkerVO();
+        BeanUtils.copyProperties(regulatorWorkerPO, countSingleRegulatorWorkerVO);
+        Page<WorekerPaymentListPo> worekerPaymentListPoPage = new Page<>(1, 10);
+        IPage<WorekerPaymentListPo> worekerPaymentListPoIPage = workerDao.regulatorWorkerPaymentList(worekerPaymentListPoPage, workerId, paymentOrderIds);
+        CountRegulatorWorkerInfoVO countRegulatorWorkerInfoVO = new CountRegulatorWorkerInfoVO();
+        countRegulatorWorkerInfoVO.setCountSingleRegulatorWorkerVO(countSingleRegulatorWorkerVO);
+        countRegulatorWorkerInfoVO.setWorekerPaymentListPos(worekerPaymentListPoIPage.getRecords());
+        countRegulatorWorkerInfoVO.setWorker(worker);
+        return ReturnJson.success(countRegulatorWorkerInfoVO);
+    }
+
+    /**
+     * 获取监管部门所监管的服务商下产生的支付订单
+     *
+     * @param regulatorId
+     * @return
+     */
+    private ReturnJson getPaymentOrderIds(String regulatorId) {
         List<String> paymentOrderIds = new ArrayList<>();
         List<String> taxIds = new ArrayList<>();
+
         //获取所以监管的服务商
         List<RegulatorTax> regulatorTaxes = regulatorTaxService.list(new QueryWrapper<RegulatorTax>().eq("regulator_id", regulatorId).eq("status", 0));
         for (RegulatorTax regulatorTax : regulatorTaxes) {
@@ -380,25 +489,6 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
         for (PaymentOrderMany paymentOrderMany : paymentOrderManies) {
             paymentOrderIds.add(paymentOrderMany.getId());
         }
-        if (VerificationCheck.listIsNull(paymentOrderIds)) {
-            return ReturnJson.error("您所监管的服务商还没产生过流水！");
-        }
-        List<RegulatorWorkerPO> regulatorWorkerPOS = regulatorDao.selectExportRegulatorWorker(Arrays.asList(workerIds.split(",")), paymentOrderIds);
-        List<ExportRegulatorWorkerVO> exportRegulatorWorkerVOS = new ArrayList<>();
-        for (RegulatorWorkerPO regulatorWorkerPO : regulatorWorkerPOS) {
-            ExportRegulatorWorkerVO exportRegulatorWorkerVO = new ExportRegulatorWorkerVO();
-            BeanUtils.copyProperties(regulatorWorkerPO, exportRegulatorWorkerVO);
-            exportRegulatorWorkerVO.setAttestation(regulatorWorkerPO.getAttestation() == 0 ? "未认证" : "已认证");
-            exportRegulatorWorkerVO.setOrderCount(regulatorWorkerPO.getTotalOrderCount() + "/" + regulatorWorkerPO.getManyOrderCount());
-            exportRegulatorWorkerVOS.add(exportRegulatorWorkerVO);
-        }
-        if (!VerificationCheck.listIsNull(exportRegulatorWorkerVOS)) {
-            try {
-                ExcelUtils.exportExcel(exportRegulatorWorkerVOS, "创客交易流水信息", "流水信息", ExportRegulatorWorkerVO.class, "RegulatorWorker", true, response);
-            } catch (IOException e) {
-                log.error(e.toString() + ":" + e.getMessage());
-            }
-        }
-        return ReturnJson.error("创客导出失败！");
+        return ReturnJson.success(paymentOrderIds);
     }
 }

@@ -1,5 +1,6 @@
 package com.example.mybatis.po;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -33,6 +34,7 @@ public class BillPO {
     private String paymentReceipt;
 
     @ApiModelProperty(notes = "支付时间",value = "支付时间")
+    @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss")
     private LocalDateTime paymentDate;
 
     @ApiModelProperty(notes = "金额",value = "金额")

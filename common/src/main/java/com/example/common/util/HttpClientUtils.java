@@ -19,6 +19,7 @@ import java.io.InputStream;
 
 /**
  * HttpClient4.3工具类
+ *
  * @author hang.luo
  */
 public class HttpClientUtils {
@@ -26,30 +27,27 @@ public class HttpClientUtils {
 
     private static RequestConfig requestConfig = null;
 
-    static
-    {
+    static {
         // 设置请求和传输超时时间
         requestConfig = RequestConfig.custom().setSocketTimeout(2000).setConnectTimeout(2000).build();
     }
 
     /**
      * post请求传输json参数
-     * @param url  url地址
+     *
+     * @param url       url地址
      * @param jsonParam 参数
      * @return
      */
-    public static JSONObject httpPost(String url, JSONObject jsonParam)
-    {
+    public static JSONObject httpPost(String url, JSONObject jsonParam) {
         // post请求返回结果
         CloseableHttpClient httpClient = HttpClients.createDefault();
         JSONObject jsonResult = null;
         HttpPost httpPost = new HttpPost(url);
         // 设置请求和传输超时时间
         httpPost.setConfig(requestConfig);
-        try
-        {
-            if (null != jsonParam)
-            {
+        try {
+            if (null != jsonParam) {
                 // 解决中文乱码问题
                 StringEntity entity = new StringEntity(jsonParam.toString(), "utf-8");
                 entity.setContentEncoding("UTF-8");
@@ -58,28 +56,20 @@ public class HttpClientUtils {
             }
             CloseableHttpResponse result = httpClient.execute(httpPost);
             // 请求发送成功，并得到响应
-            if (result.getStatusLine().getStatusCode() == HttpStatus.SC_OK)
-            {
+            if (result.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                 String str = "";
-                try
-                {
+                try {
                     // 读取服务器返回过来的json字符串数据
                     str = EntityUtils.toString(result.getEntity(), "utf-8");
                     // 把json字符串转换成json对象
                     jsonResult = JSONObject.parseObject(str);
-                }
-                catch (Exception e)
-                {
+                } catch (Exception e) {
                     logger.error("post请求提交失败:" + url, e);
                 }
             }
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             logger.error("post请求提交失败:" + url, e);
-        }
-        finally
-        {
+        } finally {
             httpPost.releaseConnection();
         }
         return jsonResult;
@@ -88,21 +78,19 @@ public class HttpClientUtils {
     /**
      * post请求传输String参数 例如：name=Jack&sex=1&type=2
      * Content-type:application/x-www-form-urlencoded
-     * @param url            url地址
-     * @param strParam       参数
+     *
+     * @param url      url地址
+     * @param strParam 参数
      * @return
      */
-    public static JSONObject httpPost(String url, String strParam)
-    {
+    public static JSONObject httpPost(String url, String strParam) {
         // post请求返回结果
         CloseableHttpClient httpClient = HttpClients.createDefault();
         JSONObject jsonResult = null;
         HttpPost httpPost = new HttpPost(url);
         httpPost.setConfig(requestConfig);
-        try
-        {
-            if (null != strParam)
-            {
+        try {
+            if (null != strParam) {
                 // 解决中文乱码问题
                 StringEntity entity = new StringEntity(strParam, "utf-8");
                 entity.setContentEncoding("UTF-8");
@@ -111,28 +99,20 @@ public class HttpClientUtils {
             }
             CloseableHttpResponse result = httpClient.execute(httpPost);
             // 请求发送成功，并得到响应
-            if (result.getStatusLine().getStatusCode() == HttpStatus.SC_OK)
-            {
+            if (result.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                 String str = "";
-                try
-                {
+                try {
                     // 读取服务器返回过来的json字符串数据
                     str = EntityUtils.toString(result.getEntity(), "utf-8");
                     // 把json字符串转换成json对象
                     jsonResult = JSONObject.parseObject(str);
-                }
-                catch (Exception e)
-                {
+                } catch (Exception e) {
                     logger.error("post请求提交失败:" + url, e);
                 }
             }
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             logger.error("post请求提交失败:" + url, e);
-        }
-        finally
-        {
+        } finally {
             httpPost.releaseConnection();
         }
         return jsonResult;
@@ -140,44 +120,57 @@ public class HttpClientUtils {
 
     /**
      * 发送get请求
+     *
      * @param url 路径
      * @return
      */
-    public static JSONObject httpGet(String url)
-    {
+    public static JSONObject httpGet(String url) {
         // get请求返回结果
         JSONObject jsonResult = null;
         CloseableHttpClient client = HttpClients.createDefault();
         // 发送get请求
         HttpGet request = new HttpGet(url);
         request.setConfig(requestConfig);
-        try
-        {
+        try {
             CloseableHttpResponse response = client.execute(request);
 
             // 请求发送成功，并得到响应
-            if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK)
-            {
+            if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                 // 读取服务器返回过来的json字符串数据
                 HttpEntity entity = response.getEntity();
                 String strResult = EntityUtils.toString(entity, "utf-8");
                 // 把json字符串转换成json对象
                 jsonResult = JSONObject.parseObject(strResult);
-            }
-            else
-            {
+            } else {
                 logger.error("get请求提交失败:" + url);
             }
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             logger.error("get请求提交失败:" + url, e);
-        }
-        finally
-        {
+        } finally {
             request.releaseConnection();
         }
         return jsonResult;
+    }
+
+    public static CloseableHttpResponse urlGet(String url) {
+        InputStream inputStream = null;
+        // get请求返回结果
+        CloseableHttpClient client = HttpClients.createDefault();
+        // 发送get请求
+        HttpGet request = new HttpGet(url);
+        request.setConfig(requestConfig);
+        try {
+            CloseableHttpResponse response = client.execute(request);
+            // 请求发送成功，并得到响应
+            if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+                return response;
+            } else {
+                logger.error("get请求提交失败:" + url);
+            }
+        } catch (IOException e) {
+            logger.error("get请求提交失败:" + url, e);
+        }
+        return null;
     }
 
     public static InputStream httpPost(String url) {

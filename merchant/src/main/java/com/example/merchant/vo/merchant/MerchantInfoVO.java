@@ -3,6 +3,7 @@ package com.example.merchant.vo.merchant;
 import com.example.mybatis.entity.Address;
 import com.example.mybatis.entity.CompanyInvoiceInfo;
 import com.example.mybatis.entity.Linkman;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -37,6 +38,7 @@ public class MerchantInfoVO {
      * 公司的成立时间
      */
     @ApiModelProperty("公司的成立时间")
+    @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss")
     private LocalDateTime companyCreateDate;
 
     /**
