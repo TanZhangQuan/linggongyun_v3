@@ -20,38 +20,38 @@ import com.example.mybatis.po.AgentListPO;
 import com.example.mybatis.po.SalesManPaymentListPO;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 @Service
 public class StructureServiceImpl implements StructureService {
 
-    @Autowired
+    @Resource
     private ManagersService managersService;
 
-    @Autowired
+    @Resource
     private CompanyInfoDao companyInfoDao;
 
-    @Autowired
+    @Resource
     private AgentDao agentDao;
 
-    @Autowired
+    @Resource
     private HomePageService homePageService;
 
-    @Autowired
+    @Resource
     private ManagersDao managersDao;
 
-    @Autowired
+    @Resource
     private AcquireID acquireID;
 
-    @Autowired
+    @Resource
     private MerchantService merchantService;
 
-    @Autowired
+    @Resource
     private AgentService agentService;
 
     @Value("${PWD_KEY}")

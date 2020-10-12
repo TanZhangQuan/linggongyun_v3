@@ -11,11 +11,11 @@ import com.example.mybatis.mapper.MakerInvoiceDao;
 import com.example.mybatis.mapper.WorkerDao;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.methods.CloseableHttpResponse;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.io.*;
 import java.math.BigDecimal;
@@ -30,13 +30,13 @@ import java.util.Map;
 @Service
 public class FileOperationServiceImpl implements FileOperationService {
 
-    @Autowired
+    @Resource
     private WorkerDao workerDao;
 
-    @Autowired
+    @Resource
     private WorkerService workerService;
 
-    @Autowired
+    @Resource
     private MakerInvoiceDao makerInvoiceDao;
 
     @Value("${PWD_KEY}")

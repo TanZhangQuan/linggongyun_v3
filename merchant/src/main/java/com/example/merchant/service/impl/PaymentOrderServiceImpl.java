@@ -17,10 +17,10 @@ import com.example.mybatis.entity.*;
 import com.example.mybatis.mapper.*;
 import com.example.mybatis.vo.BillingInfoVo;
 import com.example.mybatis.vo.PaymentOrderVo;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -40,34 +40,34 @@ import java.util.Map;
 @Service
 public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, PaymentOrder> implements PaymentOrderService {
 
-    @Autowired
+    @Resource
     private PaymentOrderDao paymentOrderDao;
 
-    @Autowired
+    @Resource
     private PaymentInventoryDao paymentInventoryDao;
 
-    @Autowired
+    @Resource
     private PaymentInventoryService paymentInventoryService;
 
-    @Autowired
+    @Resource
     private PaymentOrderSubpackageDao paymentOrderSubpackageDao;
 
-    @Autowired
+    @Resource
     private TaxDao taxDao;
 
-    @Autowired
+    @Resource
     private ManagersDao managersDao;
 
-    @Autowired
+    @Resource
     private CompanyInfoDao companyInfoDao;
 
-    @Autowired
+    @Resource
     private CompanyTaxDao companyTaxDao;
 
-    @Autowired
+    @Resource
     private CompanyLadderServiceDao companyLadderServiceDao;
 
-    @Autowired
+    @Resource
     private AcquireID acquireID;
 
 

@@ -10,9 +10,9 @@ import com.example.mybatis.entity.PaymentOrderSubpackage;
 import com.example.mybatis.mapper.PaymentInventoryDao;
 import com.example.mybatis.mapper.PaymentOrderDao;
 import com.example.mybatis.mapper.PaymentOrderSubpackageDao;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,10 +28,10 @@ import java.util.List;
  */
 @Service
 public class PaymentOrderSubpackageServiceImpl extends ServiceImpl<PaymentOrderSubpackageDao, PaymentOrderSubpackage> implements PaymentOrderSubpackageService {
-    @Autowired
+    @Resource
     private PaymentInventoryDao paymentInventoryDao;
 
-    @Autowired
+    @Resource
     private PaymentOrderDao paymentOrderDao;
 
     @Override

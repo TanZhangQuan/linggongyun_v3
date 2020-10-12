@@ -7,22 +7,24 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.hibernate.validator.constraints.Length;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
 @Api(value = "小程序创客登录", tags = {"小程序创客登录"})
 @RestController
-@Validated
 @RequestMapping(value = "makerend/worker")
+@Validated
 public class WorkerMakerendController {
 
-    @Autowired
+    @Resource
     private WorkerService workerService;
 
     @PostMapping("/workerLogin")
@@ -40,6 +42,7 @@ public class WorkerMakerendController {
                                    @Length(min = 11, max = 11, message = "请输入11位手机号")
                                    @Pattern(regexp = "[0-9]*", message = "请输入有效的手机号码")
                                    @RequestParam String mobileCode) {
+
         return workerService.senSMS(mobileCode);
     }
 
@@ -51,6 +54,7 @@ public class WorkerMakerendController {
                                         @Length(min = 11, max = 11, message = "请输入11位手机号")
                                         @Pattern(regexp = "[0-9]*", message = "请输入有效的手机号码")
                                         @RequestParam String mobileCode, @NotBlank(message = "验证码不能为空！") @RequestParam String checkCode, HttpServletResponse resource) {
+
         return workerService.loginMobile(mobileCode, checkCode, resource);
     }
 

@@ -7,23 +7,22 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.hibernate.validator.constraints.Length;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
-@RequestMapping("/platform/managers")
-@RestController
 @Api(value = "平台端登录接口", tags = {"平台端登录接口"})
+@RestController
+@RequestMapping("/platform/managers")
 public class ManagersPaasController {
 
-
-    @Autowired
+    @Resource
     private ManagersService managersService;
 
     @PostMapping("/passLogin")
@@ -41,6 +40,7 @@ public class ManagersPaasController {
                                      @Length(min = 11, max = 11, message = "请输入11位手机号")
                                      @Pattern(regexp = "[0-9]*", message = "请输入有效的手机号码")
                                      @RequestParam String mobileCode) {
+
         return managersService.senSMS(mobileCode);
     }
 
@@ -52,6 +52,7 @@ public class ManagersPaasController {
                                           @Length(min = 11, max = 11, message = "请输入11位手机号")
                                           @Pattern(regexp = "[0-9]*", message = "请输入有效的手机号码")
                                           @RequestParam String mobileCode, @NotBlank(message = "验证码不能为空！") @RequestParam String checkCode, HttpServletResponse resource) {
+
         return managersService.loginMobile(mobileCode, checkCode, resource);
     }
 }

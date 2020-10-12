@@ -20,10 +20,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
@@ -33,10 +33,10 @@ import java.util.Map;
 @Slf4j
 public class AuthenticationServiceImpl implements AuthenticationService {
 
-    @Autowired
+    @Resource
     private WorkerDao workerDao;
 
-    @Autowired
+    @Resource
     private WorkerBankDao workerBankDao;
 
     @Value("${PathImage_KEY}")
@@ -48,7 +48,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Value("${appSecret}")
     private String appSecret;
 
-    @Autowired
+    @Resource
     private FileOperationService fileOperationService;
 
     /**

@@ -19,10 +19,10 @@ import com.example.merchant.service.MerchantService;
 import com.example.merchant.service.TaskService;
 import com.example.merchant.util.AcquireID;
 import com.example.merchant.util.JwtUtils;
-import com.example.merchant.vo.platform.HomePageVO;
 import com.example.merchant.vo.merchant.HomePageMerchantVO;
 import com.example.merchant.vo.merchant.MerchantInfoVO;
 import com.example.merchant.vo.merchant.TaxVO;
+import com.example.merchant.vo.platform.HomePageVO;
 import com.example.mybatis.entity.*;
 import com.example.mybatis.mapper.*;
 import com.example.mybatis.po.MerchantInfoPo;
@@ -38,11 +38,11 @@ import org.apache.shiro.authc.LockedAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
@@ -61,61 +61,62 @@ import java.util.Map;
  */
 @Service
 public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> implements MerchantService {
-    @Autowired
+
+    @Resource
     private MerchantDao merchantDao;
 
-    @Autowired
+    @Resource
     private MerchantRoleDao merchantRoleDao;
 
-    @Autowired
+    @Resource
     private RedisDao redisDao;
 
-    @Autowired
+    @Resource
     private CompanyInfoDao companyInfoDao;
 
-    @Autowired
+    @Resource
     private TaxDao taxDao;
 
-    @Autowired
+    @Resource
     private CompanyTaxDao companyTaxDao;
 
-    @Autowired
+    @Resource
     private CompanyInvoiceInfoDao companyInvoiceInfoDao;
 
-    @Autowired
+    @Resource
     private LinkmanDao linkmanDao;
 
-    @Autowired
+    @Resource
     private AddressDao addressDao;
 
-    @Autowired
+    @Resource
     private TaskService taskService;
 
-    @Autowired
+    @Resource
     private PaymentOrderDao paymentOrderDao;
 
-    @Autowired
+    @Resource
     private PaymentOrderManyDao paymentOrderManyDao;
 
-    @Autowired
+    @Resource
     private AcquireID acquireID;
 
-    @Autowired
+    @Resource
     private JwtUtils jwtUtils;
 
-    @Autowired
+    @Resource
     private SenSMS senSMS;
 
-    @Autowired
+    @Resource
     private HomePageService homePageService;
 
-    @Autowired
+    @Resource
     private CompanyLadderServiceService companyLadderServiceService;
 
-    @Autowired
+    @Resource
     private PaymentInventoryDao paymentInventoryDao;
 
-    @Autowired
+    @Resource
     private ManagersDao managersDao;
 
 

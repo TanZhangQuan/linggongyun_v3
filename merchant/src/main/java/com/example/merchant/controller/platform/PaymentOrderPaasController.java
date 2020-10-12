@@ -12,10 +12,10 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
@@ -29,16 +29,16 @@ import javax.validation.constraints.NotEmpty;
  * @author hzp
  * @since 2020-09-07
  */
+@Api(value = "平台端总包+分包支付管理", tags = "平台端总包+分包支付管理")
 @RestController
 @RequestMapping("/platform/paymentOrder")
-@Api(value = "平台端总包+分包支付管理", tags = "平台端总包+分包支付管理")
 @Validated
 public class PaymentOrderPaasController {
 
-    @Autowired
+    @Resource
     private PaymentOrderService paymentOrderService;
 
-    @Autowired
+    @Resource
     private PaymentOrderSubpackageService paymentOrderSubpackageService;
 
     @PostMapping("/getPaymentOrderAll")
@@ -56,7 +56,6 @@ public class PaymentOrderPaasController {
         return paymentOrderService.getPaymentOrderInfoPaas(id);
     }
 
-
     @PostMapping("/findMerchant")
     @ApiOperation(value = "查询商户", notes = "查询商户", httpMethod = "POST")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "managersId", value = "管理人员ID", required = true)})
@@ -70,7 +69,6 @@ public class PaymentOrderPaasController {
     public ReturnJson saveOrUpdataPaymentOrder(@NotEmpty(message = "订单内容不能为空") @RequestBody AddPaymentOrderDto addPaymentOrderDto) {
         return paymentOrderService.saveOrUpdataPaymentOrder(addPaymentOrderDto);
     }
-
 
     @PostMapping("/offlinePayment")
     @ApiOperation(value = "总包线下支付", notes = "总包线下支付", httpMethod = "POST")

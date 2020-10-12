@@ -24,14 +24,13 @@ import com.example.mybatis.po.WorekerPaymentListPo;
 import com.example.mybatis.po.WorkerPo;
 import com.example.mybatis.vo.WorkerVo;
 import com.example.redis.dao.RedisDao;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.RowBounds;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,19 +48,19 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements WorkerService {
 
-    @Autowired
+    @Resource
     private WorkerDao workerDao;
 
-    @Autowired
+    @Resource
     private TaskService taskService;
 
-    @Autowired
+    @Resource
     private WorkerTaskService workerTaskService;
 
-    @Autowired
+    @Resource
     private CompanyWorkerService companyWorkerService;
 
-    @Autowired
+    @Resource
     private MerchantDao merchantDao;
 
     @Value("${PWD_KEY}")
@@ -187,7 +186,7 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
         return returnJson;
     }
 
-    @Autowired
+    @Resource
     private AcquireID acquireID;
 
     /**
@@ -302,13 +301,13 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
         return ReturnJson.error("编辑失败！");
     }
 
-    @Autowired
+    @Resource
     private JwtUtils jwtUtils;
 
-    @Autowired
+    @Resource
     private SenSMS senSMS;
 
-    @Autowired
+    @Resource
     private RedisDao redisDao;
 
     @Value("${APPID}")

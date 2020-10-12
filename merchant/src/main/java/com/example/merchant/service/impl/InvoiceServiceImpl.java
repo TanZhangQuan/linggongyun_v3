@@ -47,9 +47,9 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
     private InvoiceDao invoiceDao;
     @Resource
     private InvoiceApplicationService invoiceApplicationService;
-    @Autowired
+    @Resource
     private InvoiceLadderPriceDao invoiceLadderPriceDao;
-    @Autowired
+    @Resource
     private PaymentInventoryDao paymentInventoryDao;
 
 

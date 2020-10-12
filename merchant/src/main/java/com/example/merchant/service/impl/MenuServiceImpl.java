@@ -35,22 +35,22 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
     @Value("${PWD_KEY}")
     private String PWD_KEY;
 
-    @Autowired
+    @Resource
     private RedisDao redisDao;
 
     @Resource
     private MenuDao menuDao;
 
-    @Autowired
+    @Resource
     private MerchantRoleDao merchantRoleDao;
 
-    @Autowired
+    @Resource
     private MerchantRoleMenuDao merchantRoleMenuDao;
 
-    @Autowired
+    @Resource
     private MerchantDao merchantDao;
 
-    @Autowired
+    @Resource
     private ManagersDao managersDao;
 
     /**

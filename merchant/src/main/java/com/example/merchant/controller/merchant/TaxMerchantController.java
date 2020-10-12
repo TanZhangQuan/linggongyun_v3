@@ -7,13 +7,13 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
@@ -25,13 +25,13 @@ import javax.validation.constraints.NotNull;
  * @author hzp
  * @since 2020-09-07
  */
+@Api(value = "商户端平台服务商", tags = "商户端平台服务商")
 @RestController
 @RequestMapping("/merchant/tax")
 @Validated
-@Api(value = "商户端平台服务商", tags = "商户端平台服务商")
 public class TaxMerchantController {
 
-    @Autowired
+    @Resource
     private TaxService taxService;
 
     @GetMapping("/getTaxAll")

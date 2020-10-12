@@ -9,10 +9,10 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
@@ -25,13 +25,13 @@ import javax.validation.constraints.NotBlank;
  * @author hzp
  * @since 2020-09-07
  */
+@Api(value = "商户端总包+分包支付管理", tags = "商户端总包+分包支付管理")
 @RestController
 @RequestMapping("/merchant/paymentOrder")
-@Api(value = "商户端总包+分包支付管理", tags = "商户端总包+分包支付管理")
 @Validated
 public class PaymentOrderMerchantController {
 
-    @Autowired
+    @Resource
     private PaymentOrderService paymentOrderService;
 
     @PostMapping("/getPaymentOrderAll")

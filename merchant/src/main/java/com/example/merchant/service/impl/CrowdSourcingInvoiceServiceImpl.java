@@ -32,9 +32,9 @@ public class CrowdSourcingInvoiceServiceImpl extends ServiceImpl<CrowdSourcingIn
 
     @Resource
     private CrowdSourcingInvoiceDao crowdSourcingInvoiceDao;
-    @Autowired
+    @Resource
     private InvoiceLadderPriceDao invoiceLadderPriceDao;
-    @Autowired
+    @Resource
     private CrowdSourcingApplicationDao crowdSourcingApplicationDao;
 
     /**

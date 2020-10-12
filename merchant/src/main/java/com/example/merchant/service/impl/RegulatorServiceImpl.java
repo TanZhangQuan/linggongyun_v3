@@ -30,10 +30,10 @@ import com.example.mybatis.po.WorekerPaymentListPo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -51,34 +51,34 @@ import java.util.*;
 @Slf4j
 public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> implements RegulatorService {
 
-    @Autowired
+    @Resource
     private TaxDao taxDao;
 
-    @Autowired
+    @Resource
     private TaxService taxService;
 
-    @Autowired
+    @Resource
     private RegulatorTaxService regulatorTaxService;
 
-    @Autowired
+    @Resource
     private PaymentOrderDao paymentOrderDao;
 
-    @Autowired
+    @Resource
     private PaymentOrderManyDao paymentOrderManyDao;
 
-    @Autowired
+    @Resource
     private RegulatorDao regulatorDao;
 
-    @Autowired
+    @Resource
     private MerchantService merchantService;
 
-    @Autowired
+    @Resource
     private InvoiceDao invoiceDao;
 
-    @Autowired
+    @Resource
     private CrowdSourcingInvoiceDao crowdSourcingInvoiceDao;
 
-    @Autowired
+    @Resource
     private PaymentInventoryDao paymentInventoryDao;
 
     @Value("${PWD_KEY}")
@@ -427,7 +427,7 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
         return ReturnJson.success(countRegulatorWorkerVO);
     }
 
-    @Autowired
+    @Resource
     private WorkerDao workerDao;
 
     @Override

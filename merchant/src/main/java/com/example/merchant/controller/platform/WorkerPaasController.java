@@ -7,9 +7,6 @@ import com.example.merchant.service.WorkerService;
 import com.example.merchant.service.WorkerTaskService;
 import com.example.mybatis.entity.Worker;
 import io.swagger.annotations.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,8 +29,11 @@ import java.util.List;
 @Validated
 public class WorkerPaasController {
 
-    @Autowired
+    @Resource
     private WorkerService workerService;
+
+    @Resource
+    private WorkerTaskService workerTaskService;
 
     @PostMapping("/getWorkerAll")
     @ApiOperation(value = "获取所以已认证的创客", notes = "获取所以已认证的创客", httpMethod = "POST")
@@ -58,7 +58,6 @@ public class WorkerPaasController {
                                       @RequestParam(defaultValue = "10") Integer pageSize) throws CommonException {
         return workerService.getWorkerAllNotPaas(managersId, page, pageSize);
     }
-
 
     @PostMapping("/getWorkerMany")
     @ApiOperation(value = "按条件查询已认证的创客", notes = "按条件查询已认证的创客", httpMethod = "POST")
@@ -115,60 +114,28 @@ public class WorkerPaasController {
         return workerService.updateWorkerPaas(worker);
     }
 
-    private static Logger logger = LoggerFactory.getLogger(TaskPaasController.class);
-
-
-    @Resource
-    private WorkerTaskService workerTaskService;
-
-
     @ApiOperation("已接单创客明细")
     @PostMapping(value = "/getYjWorkerDetails")
     public ReturnJson getYjWorkerDetails(String taskId, Integer offset) {
-        ReturnJson returnJson = new ReturnJson("查询失败", 300);
-        try {
-            returnJson = workerService.getWorkerByTaskId(taskId, offset);
-        } catch (Exception e) {
-            returnJson = new ReturnJson(e.toString(), 300);
-        }
-        return returnJson;
+        return workerService.getWorkerByTaskId(taskId, offset);
     }
 
     @ApiOperation("验收已接单创客明细")
     @PostMapping(value = "/getCheckByTaskId")
     public ReturnJson getCheckByTaskId(String taskId, Integer offset) {
-        ReturnJson returnJson = new ReturnJson("查询失败", 300);
-        try {
-            returnJson = workerService.getCheckByTaskId(taskId, offset);
-        } catch (Exception e) {
-            returnJson = new ReturnJson(e.toString(), 300);
-        }
-        return returnJson;
+        return workerService.getCheckByTaskId(taskId, offset);
     }
-
 
     @ApiOperation("剔除创客信息")
     @PostMapping(value = "/eliminateWorker")
     public ReturnJson eliminateWorker(@ApiParam(value = "任务状态") Integer state, @ApiParam(value = "创客id") String workerId) {
-        ReturnJson returnJson = new ReturnJson("剔除失败", 300);
-        try {
-            returnJson = workerTaskService.eliminateWorker(state, workerId);
-        } catch (Exception e) {
-            logger.error("出现异常错误", e);
-        }
-        return returnJson;
+        return workerTaskService.eliminateWorker(state, workerId);
     }
 
     @ApiOperation("修改验收金额")
     @PostMapping(value = "/updateCheckMoney")
     public ReturnJson updateCheckMoney(Double money, String id) {
-        ReturnJson returnJson = new ReturnJson("修改失败", 300);
-        try {
-            returnJson = workerTaskService.updateCheckMoney(money, id);
-        } catch (Exception e) {
-            logger.error("出现异常错误", e);
-        }
-        return returnJson;
+        return workerTaskService.updateCheckMoney(money, id);
     }
 
 }

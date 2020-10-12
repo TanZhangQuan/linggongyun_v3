@@ -7,10 +7,10 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
@@ -22,7 +22,7 @@ import javax.validation.constraints.NotBlank;
 @Validated
 public class RegulatorWorkerController {
 
-    @Autowired
+    @Resource
     private RegulatorService regulatorService;
 
     @PostMapping("/getRegulatorWorker")

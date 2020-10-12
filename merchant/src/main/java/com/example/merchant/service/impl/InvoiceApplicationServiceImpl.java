@@ -9,14 +9,15 @@ import com.example.mybatis.dto.ApplicationPaymentDto;
 import com.example.mybatis.dto.InvoiceApplicationDto;
 import com.example.mybatis.entity.InvoiceApplication;
 import com.example.mybatis.mapper.InvoiceApplicationDao;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
 
 @Service
 public class InvoiceApplicationServiceImpl extends ServiceImpl<InvoiceApplicationDao, InvoiceApplication> implements InvoiceApplicationService {
 
-    @Autowired
+    @Resource
     private InvoiceApplicationDao invoiceApplicationDao;
 
     @Override

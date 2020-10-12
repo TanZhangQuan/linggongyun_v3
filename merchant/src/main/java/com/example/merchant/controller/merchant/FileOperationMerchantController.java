@@ -5,7 +5,6 @@ import com.example.merchant.service.FileOperationService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,16 +12,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
+@Api(value = "商户端文件操作", tags = "商户端文件上传下载的操作")
 @RestController
 @RequestMapping("/merchant/file")
-@Api(value = "商户端文件操作", tags = "商户端文件上传下载的操作")
 @Validated
 public class FileOperationMerchantController {
 
-    @Autowired
+    @Resource
     private FileOperationService fileOperationService;
 
     @PostMapping("/uploadWorker")

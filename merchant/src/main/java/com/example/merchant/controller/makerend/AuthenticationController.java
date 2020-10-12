@@ -9,22 +9,21 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
-@Slf4j
+@Api(value = "小程序认证操作", tags = "小程序认证操作")
 @RestController
 @RequestMapping("/makerend/authentication")
-@Api(value = "小程序认证操作", tags = "小程序认证操作")
 @Validated
 public class AuthenticationController {
-    @Autowired
+
+    @Resource
     private AuthenticationService authenticationService;
 
     @PostMapping("/getIdCardInfo")
@@ -58,7 +57,7 @@ public class AuthenticationController {
     @PostMapping("/findSignAContract")
     @ApiOperation(value = "查看创客是否签署了加盟合同", notes = "查看创客是否签署了加盟合同", httpMethod = "POST")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "workerId", value = "创客ID", paramType = "query", required = true)})
-    public ReturnJson findSignAContract(@NotBlank(message = "创客ID不能为空！") @RequestParam String workerId){
+    public ReturnJson findSignAContract(@NotBlank(message = "创客ID不能为空！") @RequestParam String workerId) {
         return authenticationService.findSignAContract(workerId);
     }
 
@@ -70,12 +69,8 @@ public class AuthenticationController {
     }
 
     @PostMapping("/callBackSignAContract")
-    @ApiOperation(value = "签署加盟合同回调接口", notes = "签署加盟合同回调接口", httpMethod = "POST",hidden = true)
-    public void callBackSignAContract(HttpServletRequest request) {
-        try {
-            authenticationService.callBackSignAContract(request);
-        } catch (Exception e) {
-            log.error(e.toString()+":"+e.getMessage());
-        }
+    @ApiOperation(value = "签署加盟合同回调接口", notes = "签署加盟合同回调接口", httpMethod = "POST", hidden = true)
+    public void callBackSignAContract(HttpServletRequest request) throws Exception {
+        authenticationService.callBackSignAContract(request);
     }
 }

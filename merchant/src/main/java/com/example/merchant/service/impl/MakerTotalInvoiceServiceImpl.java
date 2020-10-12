@@ -11,10 +11,10 @@ import com.example.mybatis.entity.PaymentOrder;
 import com.example.mybatis.mapper.InvoiceListDao;
 import com.example.mybatis.mapper.MakerTotalInvoiceDao;
 import com.example.mybatis.mapper.PaymentOrderDao;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
@@ -22,11 +22,14 @@ import java.time.format.DateTimeFormatter;
 
 @Service
 public class MakerTotalInvoiceServiceImpl extends ServiceImpl<MakerTotalInvoiceDao, MakerTotalInvoice> implements MakerTotalInvoiceService {
-    @Autowired
+
+    @Resource
     private MakerTotalInvoiceDao makerTotalInvoiceDao;
-    @Autowired
+
+    @Resource
     private InvoiceListDao invoiceListDao;
-    @Autowired
+
+    @Resource
     private PaymentOrderDao paymentOrderDao;
 
     @Override

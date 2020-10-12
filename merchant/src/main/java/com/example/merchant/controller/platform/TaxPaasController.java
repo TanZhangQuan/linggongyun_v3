@@ -11,10 +11,10 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
@@ -26,13 +26,13 @@ import javax.validation.constraints.NotBlank;
  * @author hzp
  * @since 2020-09-07
  */
+@Api(value = "平台端服务商管理", tags = "平台端服务商管理")
 @RestController
 @RequestMapping("/platform/tax")
 @Validated
-@Api(value = "平台端服务商管理", tags = "平台端服务商管理")
 public class TaxPaasController {
 
-    @Autowired
+    @Resource
     private TaxService taxService;
 
     @GetMapping("/getTaxAll")

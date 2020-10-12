@@ -13,9 +13,9 @@ import com.example.mybatis.entity.Managers;
 import com.example.mybatis.mapper.*;
 import com.example.mybatis.po.InvoicePO;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.List;
@@ -26,37 +26,37 @@ import java.util.Set;
 public class HomePageServiceImpl implements HomePageService {
 
 
-    @Autowired
+    @Resource
     private PaymentOrderDao paymentOrderDao;
 
-    @Autowired
+    @Resource
     private PaymentOrderManyDao paymentOrderManyDao;
 
-    @Autowired
+    @Resource
     private InvoiceDao invoiceDao;
 
-    @Autowired
+    @Resource
     private WorkerDao workerDao;
 
-    @Autowired
+    @Resource
     private CompanyWorkerDao companyWorkerDao;
 
-    @Autowired
+    @Resource
     private MerchantDao merchantDao;
 
-    @Autowired
+    @Resource
     private ManagersDao managersDao;
 
-    @Autowired
+    @Resource
     private AcquireID acquireID;
 
-    @Autowired
+    @Resource
     private AgentDao agentDao;
 
-    @Autowired
+    @Resource
     private TaxDao taxDao;
 
-    @Autowired
+    @Resource
     private CrowdSourcingInvoiceDao crowdSourcingInvoiceDao;
 
     /**

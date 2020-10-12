@@ -6,9 +6,9 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.common.util.ReturnJson;
 import com.example.common.util.VerificationCheck;
-import com.example.merchant.dto.platform.PaymentOrderDto;
 import com.example.merchant.dto.merchant.AddPaymentOrderManyDto;
 import com.example.merchant.dto.merchant.PaymentOrderMerchantDto;
+import com.example.merchant.dto.platform.PaymentOrderDto;
 import com.example.merchant.exception.CommonException;
 import com.example.merchant.service.PaymentInventoryService;
 import com.example.merchant.service.PaymentOrderManyService;
@@ -20,10 +20,10 @@ import com.example.mybatis.vo.CrowdSourcingInvoiceVo;
 import com.example.mybatis.vo.InvoiceDetailsVo;
 import com.example.mybatis.vo.PaymentOrderManyVo;
 import org.apache.ibatis.session.RowBounds;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -43,25 +43,25 @@ import java.util.Map;
 @Service
 public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao, PaymentOrderMany> implements PaymentOrderManyService {
 
-    @Autowired
+    @Resource
     private PaymentOrderManyDao paymentOrderManyDao;
 
-    @Autowired
+    @Resource
     private PaymentInventoryDao paymentInventoryDao;
 
-    @Autowired
+    @Resource
     private CompanyTaxDao companyTaxDao;
 
-    @Autowired
+    @Resource
     private TaxDao taxDao;
 
-    @Autowired
+    @Resource
     private PaymentInventoryService paymentInventoryService;
 
-    @Autowired
+    @Resource
     private CompanyLadderServiceDao companyLadderServiceDao;
 
-    @Autowired
+    @Resource
     private AcquireID acquireID;
 
     /**

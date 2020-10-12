@@ -19,10 +19,10 @@ import com.example.mybatis.po.MerchantPaymentListPO;
 import com.example.mybatis.po.TaxListPO;
 import com.example.mybatis.vo.SellerVo;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -39,34 +39,34 @@ import java.util.List;
 @Service
 public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxService {
 
-    @Autowired
+    @Resource
     private TaxDao taxDao;
 
-    @Autowired
+    @Resource
     private CompanyTaxDao companyTaxDao;
 
-    @Autowired
+    @Resource
     private InvoiceCatalogDao invoiceCatalogDao;
 
-    @Autowired
+    @Resource
     private TaxPackageDao taxPackageDao;
 
-    @Autowired
+    @Resource
     private InvoiceLadderPriceService invoiceLadderPriceService;
 
-    @Autowired
+    @Resource
     private PaymentOrderDao paymentOrderDao;
 
-    @Autowired
+    @Resource
     private PaymentOrderManyDao paymentOrderManyDao;
 
-    @Autowired
+    @Resource
     private InvoiceDao invoiceDao;
 
-    @Autowired
+    @Resource
     private CrowdSourcingInvoiceDao crowdSourcingInvoiceDao;
 
-    @Autowired
+    @Resource
     private MerchantDao merchantDao;
 
 

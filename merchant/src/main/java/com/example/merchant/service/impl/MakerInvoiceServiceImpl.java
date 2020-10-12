@@ -13,10 +13,10 @@ import com.example.mybatis.mapper.InvoiceLadderPriceDao;
 import com.example.mybatis.mapper.MakerInvoiceDao;
 import com.example.mybatis.mapper.PaymentInventoryDao;
 import com.example.mybatis.vo.InvoiceListVo;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
@@ -27,11 +27,14 @@ import java.util.Map;
 
 @Service
 public class MakerInvoiceServiceImpl extends ServiceImpl<MakerInvoiceDao, MakerInvoice> implements MakerInvoiceService {
-    @Autowired
+
+    @Resource
     private MakerInvoiceDao makerInvoiceDao;
-    @Autowired
+
+    @Resource
     private InvoiceLadderPriceDao invoiceLadderPriceDao;
-    @Autowired
+
+    @Resource
     private PaymentInventoryDao paymentInventoryDao;
 
     /**

@@ -5,12 +5,12 @@ import com.example.merchant.util.JwtUtils;
 import com.example.redis.dao.RedisDao;
 import io.jsonwebtoken.Claims;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
@@ -20,10 +20,10 @@ public class PaasLoginJWTInterceptor implements HandlerInterceptor {
     @Value("${TOKEN}")
     private String TOKEN;
 
-    @Autowired
+    @Resource
     private JwtUtils jwtUtils;
 
-    @Autowired
+    @Resource
     private RedisDao redisDao;
 
     @Override

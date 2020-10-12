@@ -7,19 +7,18 @@ import com.example.common.util.JsonUtils;
 import com.example.common.util.MD5;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.config.shiro.CustomizedToken;
-import com.example.mybatis.entity.Managers;
-import com.example.mybatis.mapper.ManagersDao;
 import com.example.merchant.service.ManagersService;
 import com.example.merchant.util.JwtUtils;
+import com.example.mybatis.entity.Managers;
+import com.example.mybatis.mapper.ManagersDao;
 import com.example.redis.dao.RedisDao;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -35,7 +34,7 @@ import java.util.concurrent.TimeUnit;
 @Service("")
 public class ManagersServiceImpl extends ServiceImpl<ManagersDao, Managers> implements ManagersService {
 
-    @Autowired
+    @Resource
     private JwtUtils jwtUtils;
 
     @Value("${TOKEN}")
@@ -44,10 +43,10 @@ public class ManagersServiceImpl extends ServiceImpl<ManagersDao, Managers> impl
     @Value("${PWD_KEY}")
     private String PWD_KEY;
 
-    @Autowired
+    @Resource
     private SenSMS senSMS;
 
-    @Autowired
+    @Resource
     private RedisDao redisDao;
 
     private static final String MANAGERS= "MANAGERS";

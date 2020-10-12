@@ -10,18 +10,18 @@ import com.example.mybatis.entity.WorkerBank;
 import com.example.mybatis.mapper.WorkerBankDao;
 import com.example.mybatis.mapper.WorkerDao;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 @Service
 public class PersonalCenterServiceImpl implements PersonalCenterService {
 
-    @Autowired
+    @Resource
     private WorkerDao workerDao;
 
-    @Autowired
+    @Resource
     private WorkerBankDao workerBankDao;
 
     /**

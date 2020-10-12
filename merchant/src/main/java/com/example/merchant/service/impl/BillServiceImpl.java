@@ -8,22 +8,22 @@ import com.example.mybatis.mapper.PaymentOrderDao;
 import com.example.mybatis.mapper.PaymentOrderManyDao;
 import com.example.mybatis.po.BillCountPO;
 import com.example.mybatis.po.BillPO;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.List;
 
 @Service
 public class BillServiceImpl implements BillService {
 
-    @Autowired
+    @Resource
     private PaymentInventoryDao paymentInventoryDao;
 
-    @Autowired
+    @Resource
     private PaymentOrderDao paymentOrderDao;
 
-    @Autowired
+    @Resource
     private PaymentOrderManyDao paymentOrderManyDao;
 
     /**

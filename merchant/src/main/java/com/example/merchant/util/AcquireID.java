@@ -6,10 +6,9 @@ import com.example.merchant.service.CompanyInfoService;
 import com.example.mybatis.entity.CompanyInfo;
 import com.example.mybatis.entity.Managers;
 import com.example.mybatis.mapper.ManagersDao;
-import com.example.mybatis.mapper.MerchantDao;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,14 +18,11 @@ import java.util.List;
 @Component
 public class AcquireID {
 
-    @Autowired
+    @Resource
     private ManagersDao managersDao;
 
-    @Autowired
+    @Resource
     private CompanyInfoService companyInfoService;
-
-    @Autowired
-    private MerchantDao merchantDao;
 
     public List<String> getMerchantIds(String managersId) throws CommonException {
         List<String> merchantIds = new ArrayList<>();

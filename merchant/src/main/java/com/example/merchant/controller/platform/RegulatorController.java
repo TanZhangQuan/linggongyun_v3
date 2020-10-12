@@ -6,11 +6,14 @@ import com.example.merchant.dto.platform.RegulatorDto;
 import com.example.merchant.dto.platform.RegulatorQueryDto;
 import com.example.merchant.dto.platform.RegulatorTaxDto;
 import com.example.merchant.service.RegulatorService;
-import io.swagger.annotations.*;
-import org.springframework.beans.factory.annotation.Autowired;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -24,12 +27,13 @@ import java.util.List;
  * @author hzp
  * @since 2020-09-25
  */
+@Api(value = "平台端监管部门管理", tags = "平台端监管部门管理")
 @RestController
 @RequestMapping("/platform/regulator")
-@Api(value = "平台端监管部门管理", tags = "平台端监管部门管理")
 @Validated
 public class RegulatorController {
-    @Autowired
+
+    @Resource
     private RegulatorService regulatorService;
 
 

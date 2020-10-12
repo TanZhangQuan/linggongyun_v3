@@ -11,9 +11,9 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.authz.annotation.RequiresRoles;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
@@ -27,15 +27,15 @@ import javax.validation.constraints.NotEmpty;
  * @author hzp
  * @since 2020-09-07
  */
+@Api(value = "平台端众包支付管理", tags = "平台端众包支付管理")
 @RestController
 @RequestMapping("/platform/paymentOrderMany")
-@Api(value = "平台端众包支付管理", tags = "平台端众包支付管理")
 public class PaymentOrderManyPaasController {
 
-    @Autowired
+    @Resource
     private PaymentOrderManyService paymentOrderManyService;
 
-    @Autowired
+    @Resource
     private PaymentOrderService paymentOrderService;
 
 
@@ -46,7 +46,6 @@ public class PaymentOrderManyPaasController {
     public ReturnJson findMerchant(@NotBlank(message = "管理人员ID不能为空！") @RequestParam String managersId) {
         return paymentOrderService.findMerchantPaas(managersId);
     }
-
 
     @PostMapping("/getPaymentOrderManyAll")
     @ApiOperation(value = "查询众包订单", notes = "查询众包订单", httpMethod = "POST")

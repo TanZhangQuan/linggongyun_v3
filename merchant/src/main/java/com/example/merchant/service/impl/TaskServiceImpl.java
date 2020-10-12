@@ -39,15 +39,15 @@ import java.util.*;
 @Service
 public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskService {
 
-    @Autowired
+    @Resource
     private TaskDao taskDao;
-    @Autowired
+    @Resource
     private MerchantDao merchantDao;
-    @Autowired
+    @Resource
     private WorkerTaskService workerTaskService;
-    @Autowired
+    @Resource
     private WorkerTaskDao workerTaskDao;
-    @Autowired
+    @Resource
     private WorkerDao workerDao;
 
 

@@ -7,27 +7,26 @@ import com.example.mybatis.entity.MerchantRole;
 import com.example.mybatis.mapper.ManagersDao;
 import com.example.mybatis.mapper.MerchantRoleDao;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationException;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.Resource;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+@Slf4j
 public class ManagersRealm extends AuthorizingRealm {
 
-    private static final Logger logger = LoggerFactory.getLogger(ManagersRealm.class);
-
-    @Autowired
+    @Resource
     private ManagersDao managersDao;
-    @Autowired
+    
+    @Resource
     private MerchantRoleDao merchantRoleDao;
 
     /**
@@ -38,7 +37,7 @@ public class ManagersRealm extends AuthorizingRealm {
      */
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
-        logger.info("执行授权逻辑");
+        log.info("执行授权逻辑");
         if (principals == null) {
             throw new AuthorizationException("PrincipalCollection method argument cannot be null.");
         }
@@ -67,7 +66,7 @@ public class ManagersRealm extends AuthorizingRealm {
     @SneakyThrows
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
-        logger.info("执行认证逻辑-----------------------Managers---doGetAuthenticationInfo");
+        log.info("执行认证逻辑-----------------------Managers---doGetAuthenticationInfo");
         //获取用户的输入的账号
 
         UsernamePasswordToken upToken = (UsernamePasswordToken) authenticationToken;
