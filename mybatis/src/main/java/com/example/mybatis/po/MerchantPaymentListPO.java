@@ -30,6 +30,6 @@ public class MerchantPaymentListPO {
     private Integer isInvoice;
 
     @ApiModelProperty(value = "完成时间")
-    @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime paymentDate;
 }
