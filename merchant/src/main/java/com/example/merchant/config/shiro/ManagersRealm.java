@@ -37,23 +37,7 @@ public class ManagersRealm extends AuthorizingRealm {
      */
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
-        log.info("执行授权逻辑");
-        if (principals == null) {
-            throw new AuthorizationException("PrincipalCollection method argument cannot be null.");
-        }
-        SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
-        String loginName = (String) principals.getPrimaryPrincipal();//获取登录用户
-        System.out.println("当前的用户-------------------------------" + loginName);
-        Managers managers = managersDao.selectOne(new QueryWrapper<Managers>().eq("user_name", loginName));//查询登录用户的角色
-        MerchantRole merchantRole = merchantRoleDao.selectById(managers.getRoleId());
-        List<Menu> menuList = merchantRoleDao.getMenuById(merchantRole.getId());
-        authorizationInfo.addRole(merchantRole.getRoleName());//添加角色
-        Set<String> permissions = new HashSet<>();
-        for (int i = 0; i < menuList.size(); i++) {
-            permissions.add(menuList.get(i).getMenuName());//添加权限
-        }
-        authorizationInfo.setStringPermissions(permissions);
-        return authorizationInfo;
+       return null;
     }
 
     /**
@@ -73,11 +57,13 @@ public class ManagersRealm extends AuthorizingRealm {
         String username = upToken.getUsername();
         String password = new String(upToken.getPassword());
 
+        String realmName=getName();
         SimpleAuthenticationInfo authenticationInfo = new SimpleAuthenticationInfo(
                 username, //用户名
                 password, //密码
-                getName()  //realm name
+                realmName  //realm name
         );
+        System.out.println("realmName*-----------------------------------------*"+realmName);
         return authenticationInfo;
     }
 }

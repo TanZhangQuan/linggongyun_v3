@@ -22,7 +22,7 @@ public interface TaskService extends IService<Task> {
 
     ReturnJson selectList(TaskListDto taskListDto, RowBounds rowBounds);
 
-    ReturnJson delete (Integer state,String id);
+    ReturnJson delete (String id);
 
     ReturnJson saveTask(TaskDto taskDto);
 
@@ -30,9 +30,9 @@ public interface TaskService extends IService<Task> {
 
     String getTaskCode();
 
-    ReturnJson close(Integer state,String taskId);
+    ReturnJson close(String taskId);
 
-    ReturnJson openTask(Integer state,String taskId);
+    ReturnJson openTask(String taskId);
 
     ReturnJson getPlatformTaskList(TaskListDto taskListDto);
 

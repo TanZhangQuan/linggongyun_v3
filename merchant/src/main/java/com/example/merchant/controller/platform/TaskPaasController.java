@@ -31,8 +31,8 @@ public class TaskPaasController {
 
     @ApiOperation("删除任务信息")
     @DeleteMapping(value = "/deleteTask")
-    public ReturnJson DeleteTask(@ApiParam(value = "任务状态") @RequestParam Integer state, @ApiParam(value = "任务id") @RequestParam String id) {
-        return taskService.delete(state, id);
+    public ReturnJson DeleteTask(@ApiParam(value = "任务id") @RequestParam String taskId) {
+        return taskService.delete(taskId);
     }
 
     @ApiOperation("查看任务详情")
@@ -43,14 +43,14 @@ public class TaskPaasController {
 
     @ApiOperation("关单")
     @PostMapping(value = "/colseTask")
-    public ReturnJson colseTask(@ApiParam(value = "任务状态") @RequestParam Integer state, @ApiParam(value = "任务id") @RequestParam String id) {
-        return taskService.close(state, id);
+    public ReturnJson colseTask(@ApiParam(value = "任务id") @RequestParam String taskId) {
+        return taskService.close(taskId);
     }
 
     @ApiOperation("重新开启任务")
     @PostMapping(value = "/openTask")
-    public ReturnJson openTask(@ApiParam(value = "任务状态") @RequestParam Integer state, @ApiParam(value = "任务id") @RequestParam String id) {
-        return taskService.openTask(state, id);
+    public ReturnJson openTask(@ApiParam(value = "任务状态") @RequestParam Integer state, @ApiParam(value = "任务id") @RequestParam String taskId) {
+        return taskService.openTask(taskId);
     }
 
     @ApiOperation("平台端任务列表")

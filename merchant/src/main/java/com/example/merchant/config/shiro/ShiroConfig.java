@@ -25,13 +25,14 @@ public class ShiroConfig {
 
     @Bean
     public Realm merchantRealm() {
-        MerchantRealm merchant=new MerchantRealm();
+        MerchantRealm merchant = new MerchantRealm();
         merchant.setName("MERCHANT");
         return merchant;
     }
+
     @Bean
-    public Realm managerRealm(){
-        ManagersRealm managers=new ManagersRealm();
+    public Realm managerRealm() {
+        ManagersRealm managers = new ManagersRealm();
         managers.setName("MANAGERS");
         return managers;
     }
@@ -62,14 +63,13 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/common/**", "anon");
         filterChainDefinitionMap.put("/static/image/**", "anon");
         filterChainDefinitionMap.put("/merchant/merchant/login", "anon");
-//        filterChainDefinitionMap.put("/platform/managers/passLogin", "anon");
-//
+        filterChainDefinitionMap.put("/platform/managers/passLogin", "anon");
+
         filterChainDefinitionMap.put("/**", "authc");
         shiroFilterFactoryBean.setSuccessUrl("/index");
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
         return shiroFilterFactoryBean;
     }
-
 
 
     /**
@@ -94,7 +94,7 @@ public class ShiroConfig {
     public DefaultWebSecurityManager securityManager() {
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
         securityManager.setAuthenticator(modularRealmAuthenticator());
-        List<Realm> realms=new ArrayList<>();
+        List<Realm> realms = new ArrayList<>();
         realms.add(merchantRealm());
         realms.add(managerRealm());
         securityManager.setRealms(realms);//关联realm
@@ -104,15 +104,14 @@ public class ShiroConfig {
 
     /**
      * 系统自带的Realm管理，主要针对多realm
-     * */
+     */
     @Bean
-    public ModularRealmAuthenticator modularRealmAuthenticator(){
+    public ModularRealmAuthenticator modularRealmAuthenticator() {
         //自己重写的ModularRealmAuthenticator
         CustomizedModularRealmAuthenticator modularRealmAuthenticator = new CustomizedModularRealmAuthenticator();
         modularRealmAuthenticator.setAuthenticationStrategy(new AtLeastOneSuccessfulStrategy());
         return modularRealmAuthenticator;
     }
-
 
 
     /**
