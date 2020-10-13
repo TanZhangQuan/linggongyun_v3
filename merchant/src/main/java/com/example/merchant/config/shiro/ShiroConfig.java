@@ -62,6 +62,10 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/common/**", "anon");
         filterChainDefinitionMap.put("/static/image/**", "anon");
         filterChainDefinitionMap.put("/merchant/merchant/login", "anon");
+
+        //放行监管部门中心（测试完后可以删除）
+        filterChainDefinitionMap.put("/regulator/regulatorWorker/**", "anon");
+
 //        filterChainDefinitionMap.put("/platform/managers/passLogin", "anon");
 //
         filterChainDefinitionMap.put("/**", "authc");

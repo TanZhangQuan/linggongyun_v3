@@ -34,7 +34,7 @@ public class BillPO {
     private String paymentReceipt;
 
     @ApiModelProperty(notes = "支付时间",value = "支付时间")
-    @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime paymentDate;
 
     @ApiModelProperty(notes = "金额",value = "金额")

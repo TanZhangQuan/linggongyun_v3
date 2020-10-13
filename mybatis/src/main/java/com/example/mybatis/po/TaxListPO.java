@@ -26,6 +26,6 @@ public class TaxListPO {
     private Integer taxStatus;
 
     @ApiModelProperty(notes = "创建时间", value = "创建时间")
-    @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createDate;
 }

@@ -38,7 +38,7 @@ public class MerchantInfoVO {
      * 公司的成立时间
      */
     @ApiModelProperty("公司的成立时间")
-    @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime companyCreateDate;
 
     /**

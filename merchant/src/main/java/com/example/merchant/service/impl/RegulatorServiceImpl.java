@@ -12,19 +12,19 @@ import com.example.merchant.dto.platform.RegulatorDto;
 import com.example.merchant.dto.platform.RegulatorQueryDto;
 import com.example.merchant.dto.platform.RegulatorTaxDto;
 import com.example.merchant.dto.regulator.RegulatorWorkerDto;
+import com.example.merchant.dto.regulator.RegulatorWorkerPaymentDto;
 import com.example.merchant.service.MerchantService;
 import com.example.merchant.service.RegulatorService;
 import com.example.merchant.service.RegulatorTaxService;
 import com.example.merchant.service.TaxService;
+import com.example.merchant.vo.PaymentOrderInfoVO;
 import com.example.merchant.vo.platform.HomePageVO;
 import com.example.merchant.vo.platform.RegulatorTaxVO;
-import com.example.merchant.vo.regulator.CountRegulatorWorkerInfoVO;
-import com.example.merchant.vo.regulator.CountRegulatorWorkerVO;
-import com.example.merchant.vo.regulator.CountSingleRegulatorWorkerVO;
-import com.example.merchant.vo.regulator.RegulatorWorkerVO;
+import com.example.merchant.vo.regulator.*;
 import com.example.mybatis.entity.*;
 import com.example.mybatis.mapper.*;
 import com.example.mybatis.po.InvoicePO;
+import com.example.mybatis.po.PaymentOrderInfoPO;
 import com.example.mybatis.po.RegulatorWorkerPO;
 import com.example.mybatis.po.WorekerPaymentListPo;
 import lombok.extern.slf4j.Slf4j;
@@ -430,6 +430,13 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
     @Resource
     private WorkerDao workerDao;
 
+    /**
+     * 获取所监管的创客的详情
+     *
+     * @param regulatorId
+     * @param workerId
+     * @return
+     */
     @Override
     public ReturnJson countRegulatorWorkerInfo(String regulatorId, String workerId) {
         Worker worker = workerDao.selectById(workerId);
@@ -458,6 +465,109 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
         countRegulatorWorkerInfoVO.setWorekerPaymentListPos(worekerPaymentListPoIPage.getRecords());
         countRegulatorWorkerInfoVO.setWorker(worker);
         return ReturnJson.success(countRegulatorWorkerInfoVO);
+    }
+
+    /**
+     * 查询所监管创客的支付明细
+     *
+     * @param regulatorWorkerPaymentDto
+     * @return
+     */
+    @Override
+    public ReturnJson getRegulatorWorkerPaymentInfo(RegulatorWorkerPaymentDto regulatorWorkerPaymentDto) {
+        ReturnJson result = this.getPaymentOrderIds(regulatorWorkerPaymentDto.getRegulatorId());
+        if (result.getCode() == 300) {
+            return result;
+        }
+        List<String> paymentOrderIds = (List<String>) result.getData();
+        if (VerificationCheck.listIsNull(paymentOrderIds)) {
+            return ReturnJson.error("您所监管的服务商还没产生过流水！");
+        }
+        Page<WorekerPaymentListPo> paymentListPoPage = new Page<>(regulatorWorkerPaymentDto.getPage(), regulatorWorkerPaymentDto.getPageSize());
+        IPage<WorekerPaymentListPo> worekerPaymentListPoIPage = workerDao.selectRegulatorWorkerPaymentInfo(paymentListPoPage,
+                paymentOrderIds, regulatorWorkerPaymentDto.getWorkerId(), regulatorWorkerPaymentDto.getCompanyName(),
+                regulatorWorkerPaymentDto.getTaxName(), regulatorWorkerPaymentDto.getStartDate(), regulatorWorkerPaymentDto.getEndDate());
+        List<RegulatorWorkerPaymentInfoVO> regulatorWorkerPaymentInfoVOS = new ArrayList<>();
+        List<WorekerPaymentListPo> records = worekerPaymentListPoIPage.getRecords();
+        for (WorekerPaymentListPo worekerPaymentListPo : records) {
+            RegulatorWorkerPaymentInfoVO regulatorWorkerPaymentInfoVO = new RegulatorWorkerPaymentInfoVO();
+            BeanUtils.copyProperties(worekerPaymentListPo, regulatorWorkerPaymentInfoVO);
+            regulatorWorkerPaymentInfoVO.setPackageStatus(worekerPaymentListPo.getPackageStatus() == 0 ? "总包+分包" : "众包");
+            regulatorWorkerPaymentInfoVO.setInvoiceStatus(worekerPaymentListPo.getInvoiceStatus() == 0 ? "未开票" : "已完成");
+            regulatorWorkerPaymentInfoVOS.add(regulatorWorkerPaymentInfoVO);
+        }
+        ReturnJson returnJson = ReturnJson.success(worekerPaymentListPoIPage);
+        returnJson.setData(regulatorWorkerPaymentInfoVOS);
+        return returnJson;
+    }
+
+    /**
+     * 导出所监管的创客支付明细
+     *
+     * @param workerId
+     * @param paymentIds
+     * @param response
+     * @return
+     */
+    @Override
+    public ReturnJson exportRegulatorWorkerPaymentInfo(String workerId, String paymentIds, HttpServletResponse response) {
+        List<WorekerPaymentListPo> worekerPaymentListPos = workerDao.exportRegulatorWorkerPaymentInfo(Arrays.asList(paymentIds.split(",")), workerId);
+        if (VerificationCheck.listIsNull(worekerPaymentListPos)) {
+            return ReturnJson.error("订单有误，请重试！");
+        }
+        List<RegulatorWorkerPaymentInfoVO> regulatorWorkerPaymentInfoVOS = new ArrayList<>();
+        for (WorekerPaymentListPo worekerPaymentListPo : worekerPaymentListPos) {
+            RegulatorWorkerPaymentInfoVO regulatorWorkerPaymentInfoVO = new RegulatorWorkerPaymentInfoVO();
+            BeanUtils.copyProperties(worekerPaymentListPo, regulatorWorkerPaymentInfoVO);
+            regulatorWorkerPaymentInfoVO.setPackageStatus(worekerPaymentListPo.getPackageStatus() == 0 ? "总包+分包" : "众包");
+            regulatorWorkerPaymentInfoVO.setInvoiceStatus(worekerPaymentListPo.getInvoiceStatus() == 0 ? "未开票" : "已完成");
+            regulatorWorkerPaymentInfoVOS.add(regulatorWorkerPaymentInfoVO);
+        }
+        try {
+            ExcelUtils.exportExcel(regulatorWorkerPaymentInfoVOS, "创客支付明细", "创客支付明细", RegulatorWorkerPaymentInfoVO.class, "RegulatorWorkerPaymentInfo", true, response);
+            return ReturnJson.success("导出成功！");
+        } catch (IOException e) {
+            log.error(e.toString() + ":" + e.getMessage());
+        }
+        return ReturnJson.error("导出失败！");
+    }
+
+    /**
+     * 查询支付订单详情
+     *
+     * @param workerId
+     * @param paymentId
+     * @param packageStatus
+     * @return
+     */
+    @Override
+    public ReturnJson getPaymentOrderInfo(String workerId, String paymentId, Integer packageStatus) {
+        PaymentOrderInfoPO paymentOrderInfoPO = null;
+        if (packageStatus == 0) {
+            paymentOrderInfoPO = paymentOrderDao.selectPaymentOrderInfo(paymentId);
+        } else {
+            paymentOrderInfoPO = paymentOrderManyDao.selectPaymentOrderInfo(paymentId);
+        }
+        List<PaymentInventory> paymentInventories = paymentInventoryDao.selectPaymentInventoryList(paymentId, workerId);
+        PaymentOrderInfoVO paymentOrderInfoVO = new PaymentOrderInfoVO();
+        paymentOrderInfoVO.setPaymentInventories(paymentInventories);
+        paymentOrderInfoVO.setPaymentOrderInfoPO(paymentOrderInfoPO);
+        return ReturnJson.success(paymentOrderInfoVO);
+    }
+
+    /**
+     * 分页查询支付明细
+     *
+     * @param paymentOrderId
+     * @param page
+     * @param pageSize
+     * @return
+     */
+    @Override
+    public ReturnJson getPaymentInventory(String paymentOrderId, Integer page, Integer pageSize) {
+        Page<PaymentInventory> paymentInventoryPage = new Page<>(page, pageSize);
+        paymentInventoryPage = paymentInventoryDao.selectPage(paymentInventoryPage, new QueryWrapper<PaymentInventory>().eq("payment_order_id", paymentOrderId));
+        return ReturnJson.success(paymentInventoryPage);
     }
 
     /**
