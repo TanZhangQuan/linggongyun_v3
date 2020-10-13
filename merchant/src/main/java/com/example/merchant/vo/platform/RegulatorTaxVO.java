@@ -27,6 +27,6 @@ public class RegulatorTaxVO {
     private Integer status;
 
     @ApiModelProperty(notes = "开始监管时间", value = "开始监管时间")
-    @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime startRegulatorDate;
 }

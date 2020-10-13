@@ -54,7 +54,7 @@
         id, worker_status, worker_name, account_name, worker_sex, mobile_code, idcard_code, bank_code, attestation, idcardFront, idcardBack, attestation_video, user_name, user_pwd, skill, agreementSign, agreementUrl, head_portraits, picture, business_license, create_date, update_date
     </sql>
 
-    <sql id="ByIdAndAccountNameAndMobile" >
+    <sql id="ByIdAndAccountNameAndMobile">
         <if test="id != null and id != ''">
             and a.id like CONCAT('%',#{id},'%')
         </if>
@@ -174,23 +174,66 @@
         ORDER BY payment_date DESC
     </select>
 
-    <!--查询监管部门所监管的创客支付明细-->
-    <select id="regulatorWorkerPaymentList" parameterType="list" resultMap="worekerPaymentListPo">
+    <sql id="WorkerPaymentSql">
         select a.payment_order_id,
-        (case when c.platform_service_provider is null then d.platform_service_provider else c.platform_service_provider end)as tax_name,
+        (case when c.platform_service_provider is null then d.platform_service_provider else c.platform_service_provider
+        end)as tax_name,
         (case when c.company_s_name is null then d.company_s_name else c.company_s_name end)as merchant_name,
         a.worker_name, a.package_status, a.real_money,
-        IFNULL((case when c.payment_date is null then d.payment_date else c.payment_date end),a.create_date) as 'payment_date',
+        IFNULL((case when c.payment_date is null then d.payment_date else c.payment_date end),a.create_date) as
+        'payment_date',
         (case when b.id is null then 0 else 1 end)as invoice_status from tb_payment_inventory a
         left join tb_invoice_payment_inventory b on a.id = b.payment_inventory_id
-        left join tb_payment_order c on a.payment_order_id = c.id
-        left join tb_payment_order_many d on a.payment_order_id = d.id
+        left join tb_payment_order c on a.payment_order_id = c.id and c.payment_order_status &gt;= 2
+        left join tb_payment_order_many d on a.payment_order_id = d.id and d.payment_order_status &gt;= 2
+    </sql>
+
+    <!--查询监管部门所监管的创客支付明细-->
+    <select id="regulatorWorkerPaymentList" parameterType="list" resultMap="worekerPaymentListPo">
+        <include refid="WorkerPaymentSql"/>
         where a.worker_id = #{workerId}
         and a.payment_order_id in
         <foreach collection="paymentOrderIds" index="index" item="item" open="(" separator="," close=")">
             #{item}
         </foreach>
         ORDER BY payment_date DESC
+    </select>
+
+    <!--查询监管部门所监管的创客支付明细-->
+    <select id="selectRegulatorWorkerPaymentInfo" parameterType="list" resultMap="worekerPaymentListPo">
+        <include refid="WorkerPaymentSql"/>
+        <where>
+            a.worker_id = #{workerId}
+            and a.payment_order_id in
+            <foreach collection="paymentOrderIds" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+            <if test="taxName != null and taxName != ''">
+                AND tax_name like CONCAT('%',#{taxName},'%')
+            </if>
+            <if test="companyName != null and regulatorName != ''">
+                AND merchant_name like CONCAT('%',#{companyName},'%')
+            </if>
+            <if test="startDate != null and startDate != ''">
+                AND date(payment_date) &gt;= #{startDate}
+            </if>
+            <if test="endDate != null and endDate != ''">
+                AND date(payment_date) &lt;= #{endDate}
+            </if>
+        </where>
+        ORDER BY payment_date DESC
+    </select>
+
+    <!--导出监管部门所监管的创客支付明细-->
+    <select id="exportRegulatorWorkerPaymentInfo" parameterType="list" resultMap="worekerPaymentListPo">
+        <include refid="WorkerPaymentSql"/>
+        <where>
+            a.worker_id = #{workerId}
+            and a.payment_order_id in
+            <foreach collection="paymentOrderIds" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </where>
     </select>
 
     <resultMap id="workerMakeMoney" type="com.example.mybatis.vo.WorkerVo">

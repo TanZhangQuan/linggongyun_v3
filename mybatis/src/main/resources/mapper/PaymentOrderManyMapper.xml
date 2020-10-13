@@ -334,4 +334,51 @@
         WHERE YEAR(b.payment_date) = #{year}
     </select>
 
+    <resultMap id="PaymentOrderInfoPOResultMap" type="com.example.mybatis.po.PaymentOrderInfoPO">
+        <result column="id" property="paymentOrderId"/>
+        <result column="tax_name" property="taxName"/>
+        <result column="company_contract" property="companyContract"/>
+        <result column="payment_inventory" property="paymentInventory"/>
+        <result column="task_id" property="taskId"/>
+        <result column="acceptance_certificate" property="acceptanceCertificate"/>
+        <result column="payment_order_status" property="paymentOrderStatus"/>
+        <result column="payment_mode" property="paymentMode"/>
+        <result column="real_money" property="realMoney"/>
+        <result column="create_date" property="creatDate"/>
+        <result column="company_name" property="companyName"/>
+        <result column="payment_bank_name" property="paymentBankName"/>
+        <result column="payment_bank_code" property="paymentBankCode"/>
+        <result column="payee" property="payee"/>
+        <result column="payee_bank_name" property="payeeBankName"/>
+        <result column="payee_bank_code" property="payeeBankCode"/>
+    </resultMap>
+
+    <!--查询总包订单信息-->
+    <select id="selectPaymentOrderInfo" parameterType="string" resultMap="PaymentOrderInfoPOResultMap">
+        SELECT
+        pom.id,
+        pom.platform_service_provider AS 'tax_name',
+        pom.company_contract,
+        pom.payment_inventory,
+        pom.task_id,
+        pom.acceptance_certificate,
+        pom.payment_order_status,
+        pom.payment_mode,
+        pom.real_money,
+        pom.create_date,
+        ci.company_name,
+        ci.bank_name AS 'payment_bank_name',
+        ci.bank_code AS 'payment_bank_code',
+        tp.payee,
+        tp.bank_name AS 'payee_bank_name',
+        tp.bank_code AS 'payee_bank_code'
+        FROM tb_payment_order_many pom
+        LEFT JOIN tb_tax_package tp
+        ON pom.tax_id = tp.tax_id
+        AND tp.package_status = 1
+        LEFT JOIN tb_company_info ci
+        ON pom.company_id = ci.id
+        WHERE pom.id = #{paymentOrderId}
+    </select>
+
 </mapper>

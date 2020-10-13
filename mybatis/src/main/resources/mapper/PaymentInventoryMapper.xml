@@ -4,27 +4,34 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.example.mybatis.entity.PaymentInventory">
-        <id column="id" property="id" />
-        <result column="payment_order_id" property="paymentOrderId" />
-        <result column="worker_id" property="workerId" />
-        <result column="worker_name" property="workerName" />
-        <result column="mobile_code" property="mobileCode" />
-        <result column="id_card_code" property="idCardCode" />
-        <result column="bank_name" property="bankName" />
-        <result column="bank_code" property="bankCode" />
-        <result column="real_money" property="realMoney" />
-        <result column="service_money" property="serviceMoney" />
-        <result column="composite_tax" property="compositeTax" />
-        <result column="merchant_payment_money" property="merchantPaymentMoney" />
-        <result column="attestation" property="attestation" />
-        <result column="package_status" property="packageStatus" />
-        <result column="create_date" property="createDate" />
-        <result column="update_date" property="updateDate" />
+        <id column="id" property="id"/>
+        <result column="payment_order_id" property="paymentOrderId"/>
+        <result column="worker_id" property="workerId"/>
+        <result column="worker_name" property="workerName"/>
+        <result column="mobile_code" property="mobileCode"/>
+        <result column="id_card_code" property="idCardCode"/>
+        <result column="bank_name" property="bankName"/>
+        <result column="bank_code" property="bankCode"/>
+        <result column="real_money" property="realMoney"/>
+        <result column="service_money" property="serviceMoney"/>
+        <result column="composite_tax" property="compositeTax"/>
+        <result column="merchant_payment_money" property="merchantPaymentMoney"/>
+        <result column="attestation" property="attestation"/>
+        <result column="package_status" property="packageStatus"/>
+        <result column="create_date" property="createDate"/>
+        <result column="update_date" property="updateDate"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id, payment_order_id, worker_id, worker_name, mobile_code, id_card_code, bank_name, bank_code, real_money, service_money, composite_tax, merchant_payment_money, attestation, create_date, update_date
     </sql>
+
+    <select id="selectPaymentInventoryList" resultMap="BaseResultMap" parameterType="string">
+        SELECT * FROM tb_payment_inventory
+        WHERE payment_order_id = #{paymentOrderId}
+        ORDER BY CASE WHEN worker_id = #{workerId} THEN 0 ELSE 1 END
+        LIMIT 0,10
+    </select>
 
 </mapper>

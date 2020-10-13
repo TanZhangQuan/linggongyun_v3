@@ -7,6 +7,7 @@ import com.example.mybatis.dto.TobeinvoicedDto;
 import com.example.mybatis.entity.PaymentOrderMany;
 import com.example.mybatis.po.BillCountPO;
 import com.example.mybatis.po.BillPO;
+import com.example.mybatis.po.PaymentOrderInfoPO;
 import com.example.mybatis.vo.CrowdSourcingInvoiceVo;
 import com.example.mybatis.vo.InvoiceDetailsVo;
 import com.example.mybatis.vo.PaymentOrderManyVo;
@@ -65,4 +66,6 @@ public interface PaymentOrderManyDao extends BaseMapper<PaymentOrderMany> {
 
     List<BillPO> selectMonthBill(@Param("year") Integer year, @Param("month")Integer month);
     BillCountPO selectYearCount(@Param("year") Integer year);
+
+    PaymentOrderInfoPO selectPaymentOrderInfo(String paymentOrderId);
 }
