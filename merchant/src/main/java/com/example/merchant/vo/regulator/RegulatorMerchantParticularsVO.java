@@ -1,6 +1,5 @@
 package com.example.merchant.vo.regulator;
 
-import com.example.mybatis.po.CompanyPaymentOrderPO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -18,5 +17,5 @@ public class RegulatorMerchantParticularsVO {
     private RegulatorMerchantInfoVO regulatorMerchantInfoVO;
 
     @ApiModelProperty("公司的支付订单")
-    private List<CompanyPaymentOrderPO> companyPaymentOrderPOS;
+    List<RegulatorMerchantPaymentOrderVO> regulatorMerchantPaymentOrderVOS;
 }

@@ -1,5 +1,6 @@
-package com.example.mybatis.po;
+package com.example.merchant.vo.regulator;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -9,7 +10,7 @@ import java.time.LocalDateTime;
 
 @Data
 @ApiModel("公司的支付订单")
-public class CompanyPaymentOrderPO {
+public class RegulatorMerchantPaymentOrderVO {
 
     @ApiModelProperty("支付编号")
     private String paymentOrderId;
@@ -21,7 +22,7 @@ public class CompanyPaymentOrderPO {
     private String taxName;
 
     @ApiModelProperty("合作类型")
-    private Integer packageStatus;
+    private String packageStatus;
 
     @ApiModelProperty("合同文件URL")
     private String companyContract;
@@ -33,9 +34,10 @@ public class CompanyPaymentOrderPO {
     private BigDecimal realMoney;
 
     @ApiModelProperty("是否开发票：0未开，1已开")
-    private Integer isInvoice;
+    private String isInvoice;
 
     @ApiModelProperty("完成时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime paymentDate;
 
 }
