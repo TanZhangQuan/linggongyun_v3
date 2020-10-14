@@ -749,10 +749,20 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
         CountSingleRegulatorMerchantVO countSingleRegulatorMerchantVO = new CountSingleRegulatorMerchantVO(companyInfo.getCompanyName(), totalOrderCount, totalMoney, totalTaxMoney, manyOrderCount, manyMoney, manyTaxMoney);
 
         IPage<CompanyPaymentOrderPO> companyPaymentOrderPOIPage = companyInfoDao.selectCompanyPaymentOrder(new Page(1, 10), companyId, null, null, null);
+        List<CompanyPaymentOrderPO> companyPaymentOrderPOS = companyPaymentOrderPOIPage.getRecords();
+        List<RegulatorMerchantPaymentOrderVO> regulatorMerchantPaymentOrderVOS = new ArrayList<>();
+
+        for (CompanyPaymentOrderPO companyPaymentOrderPO : companyPaymentOrderPOS) {
+            RegulatorMerchantPaymentOrderVO regulatorMerchantPaymentOrderVO = new RegulatorMerchantPaymentOrderVO();
+            BeanUtils.copyProperties(companyPaymentOrderPO,regulatorMerchantPaymentOrderVO);
+            regulatorMerchantPaymentOrderVO.setPackageStatus(companyPaymentOrderPO.getPackageStatus() == 0 ? "总包+分包" : "众包");
+            regulatorMerchantPaymentOrderVO.setIsInvoice(companyPaymentOrderPO.getIsInvoice() == 0 ? "未开票" : "已完成");
+            regulatorMerchantPaymentOrderVOS.add(regulatorMerchantPaymentOrderVO);
+        }
 
         RegulatorMerchantParticularsVO regulatorMerchantParticularsVO = new RegulatorMerchantParticularsVO();
         regulatorMerchantParticularsVO.setCountSingleRegulatorMerchantVO(countSingleRegulatorMerchantVO);
-        regulatorMerchantParticularsVO.setCompanyPaymentOrderPOS(companyPaymentOrderPOIPage.getRecords());
+        regulatorMerchantParticularsVO.setRegulatorMerchantPaymentOrderVOS(regulatorMerchantPaymentOrderVOS);
         regulatorMerchantParticularsVO.setRegulatorMerchantInfoVO(regulatorMerchantInfoVO);
         return ReturnJson.success(regulatorMerchantParticularsVO);
     }
