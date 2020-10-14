@@ -5,6 +5,7 @@ import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.platform.RegulatorDto;
 import com.example.merchant.dto.platform.RegulatorQueryDto;
 import com.example.merchant.dto.platform.RegulatorTaxDto;
+import com.example.merchant.dto.regulator.RegulatorMerchantDto;
 import com.example.merchant.dto.regulator.RegulatorWorkerDto;
 import com.example.merchant.dto.regulator.RegulatorWorkerPaymentDto;
 import com.example.mybatis.entity.Regulator;
@@ -59,4 +60,12 @@ public interface RegulatorService extends IService<Regulator> {
     ReturnJson getPaymentOrderInfo(String workerId, String paymentId, Integer packageStatus);
 
     ReturnJson getPaymentInventory(String paymentOrderId, Integer page, Integer pageSize);
+
+    ReturnJson getRegulatorMerchant(RegulatorMerchantDto regulatorMerchantDto);
+
+    ReturnJson exportRegulatorMerchant(String companyIds, String regulatorId, HttpServletResponse response);
+
+    ReturnJson getCountRegulatorMerchant(String regulatorId);
+
+    ReturnJson getRegulatorMerchantParticulars(String companyId, String regulatorId);
 }

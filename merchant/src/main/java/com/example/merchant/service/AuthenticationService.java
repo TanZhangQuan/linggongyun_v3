@@ -18,7 +18,7 @@ public interface AuthenticationService {
 
     ReturnJson senSignAContract(String workerId) throws DefineException;
 
-    ReturnJson callBackSignAContract(HttpServletRequest request) throws Exception;
+    ReturnJson callBackSignAContract(HttpServletRequest request);
 
     ReturnJson findSignAContract(String workerId);
 }

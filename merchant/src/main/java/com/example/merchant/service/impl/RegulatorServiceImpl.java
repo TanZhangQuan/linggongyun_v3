@@ -11,6 +11,7 @@ import com.example.common.util.VerificationCheck;
 import com.example.merchant.dto.platform.RegulatorDto;
 import com.example.merchant.dto.platform.RegulatorQueryDto;
 import com.example.merchant.dto.platform.RegulatorTaxDto;
+import com.example.merchant.dto.regulator.RegulatorMerchantDto;
 import com.example.merchant.dto.regulator.RegulatorWorkerDto;
 import com.example.merchant.dto.regulator.RegulatorWorkerPaymentDto;
 import com.example.merchant.service.MerchantService;
@@ -23,10 +24,7 @@ import com.example.merchant.vo.platform.RegulatorTaxVO;
 import com.example.merchant.vo.regulator.*;
 import com.example.mybatis.entity.*;
 import com.example.mybatis.mapper.*;
-import com.example.mybatis.po.InvoicePO;
-import com.example.mybatis.po.PaymentOrderInfoPO;
-import com.example.mybatis.po.RegulatorWorkerPO;
-import com.example.mybatis.po.WorekerPaymentListPo;
+import com.example.mybatis.po.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -571,6 +569,195 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
     }
 
     /**
+     * 按条件查询所监管的商户
+     *
+     * @param regulatorMerchantDto
+     * @return
+     */
+    @Override
+    public ReturnJson getRegulatorMerchant(RegulatorMerchantDto regulatorMerchantDto) {
+        ReturnJson returnJson = this.getTaxIds(regulatorMerchantDto.getRegulatorId());
+        if (returnJson.getCode() == 300) {
+            return returnJson;
+        }
+        List<String> taxIds = (List<String>) returnJson.getData();
+        Page<RegulatorMerchantInfoPO> regulatorMerchantInfoPOPage = new Page<>(regulatorMerchantDto.getPage(), regulatorMerchantDto.getPageSize());
+        IPage<RegulatorMerchantInfoPO> regulatorMerchantInfoPOIPage = regulatorDao.selectRegulatorMerchant(regulatorMerchantInfoPOPage, taxIds, regulatorMerchantDto.getCompanyId(),
+                regulatorMerchantDto.getCompanyName(), regulatorMerchantDto.getStartDate(), regulatorMerchantDto.getEndDate());
+        List<RegulatorMerchantInfoPO> records = regulatorMerchantInfoPOIPage.getRecords();
+        List<RegulatorMerchantVO> regulatorMerchantVOS = new ArrayList<>();
+        for (RegulatorMerchantInfoPO regulatorMerchantInfoPO : records) {
+            RegulatorMerchantVO regulatorMerchantVO = new RegulatorMerchantVO();
+            BeanUtils.copyProperties(regulatorMerchantInfoPO, regulatorMerchantVO);
+            regulatorMerchantVO.setOrderCount(regulatorMerchantInfoPO.getCountTotalOrder() + "/" + regulatorMerchantInfoPO.getCountManyOrder());
+            regulatorMerchantVO.setAuditStatus(regulatorMerchantInfoPO.getAuditStatus() == 0 ? "正常" : "停用");
+            regulatorMerchantVOS.add(regulatorMerchantVO);
+        }
+        ReturnJson success = ReturnJson.success(regulatorMerchantInfoPOIPage);
+        success.setData(regulatorMerchantVOS);
+        return success;
+    }
+
+    /**
+     * 导出所监管的商户
+     *
+     * @param companyIds
+     * @param regulatorId
+     * @param response
+     * @return
+     */
+    @Override
+    public ReturnJson exportRegulatorMerchant(String companyIds, String regulatorId, HttpServletResponse response) {
+        ReturnJson returnJson = this.getTaxIds(regulatorId);
+        if (returnJson.getCode() == 300) {
+            return returnJson;
+        }
+        List<String> taxIds = (List<String>) returnJson.getData();
+        List<RegulatorMerchantInfoPO> regulatorMerchantInfoPOS = regulatorDao.selectExportRegulatorMerchant(Arrays.asList(companyIds.split(",")), taxIds);
+        List<RegulatorMerchantVO> regulatorMerchantVOS = new ArrayList<>();
+        for (RegulatorMerchantInfoPO regulatorMerchantInfoPO : regulatorMerchantInfoPOS) {
+            RegulatorMerchantVO regulatorMerchantVO = new RegulatorMerchantVO();
+            BeanUtils.copyProperties(regulatorMerchantInfoPO, regulatorMerchantVO);
+            regulatorMerchantVO.setOrderCount(regulatorMerchantInfoPO.getCountTotalOrder() + "/" + regulatorMerchantInfoPO.getCountManyOrder());
+            regulatorMerchantVO.setAuditStatus(regulatorMerchantInfoPO.getAuditStatus() == 0 ? "正常" : "停用");
+            regulatorMerchantVOS.add(regulatorMerchantVO);
+        }
+        if (VerificationCheck.listIsNull(regulatorMerchantVOS)) {
+            log.error("导出的数据为空！");
+            return ReturnJson.error("导出失败，请重试！");
+        }
+        try {
+            ExcelUtils.exportExcel(regulatorMerchantVOS, "监管的商户", "商户信息", RegulatorMerchantVO.class, "RegulatorMerchant", true, response);
+        } catch (IOException e) {
+            log.error(e.toString() + ":" + e.getMessage());
+            return ReturnJson.error("导出失败，请重试！");
+        }
+        return ReturnJson.success("");
+    }
+
+    @Resource
+    private CompanyTaxDao companyTaxDao;
+
+    /**
+     * 统计所监管的商户的流水
+     *
+     * @param regulatorId
+     * @return
+     */
+    @Override
+    public ReturnJson getCountRegulatorMerchant(String regulatorId) {
+        ReturnJson returnJson = this.getTaxIds(regulatorId);
+        if (returnJson.getCode() == 300) {
+            return returnJson;
+        }
+        List<String> taxIds = (List<String>) returnJson.getData();
+        List<String> paymentOrderIds = new ArrayList<>();
+        List<PaymentOrder> paymentOrders = paymentOrderDao.selectList(new QueryWrapper<PaymentOrder>().in("tax_id", taxIds).ge("payment_order_status", 2));
+        Integer totalOrderCount = paymentOrders.size();
+        BigDecimal totalMoney = new BigDecimal(0);
+        for (PaymentOrder paymentOrder : paymentOrders) {
+            totalMoney = totalMoney.add(paymentOrder.getRealMoney());
+            paymentOrderIds.add(paymentOrder.getId());
+        }
+
+        List<PaymentOrderMany> paymentOrderManies = paymentOrderManyDao.selectList(new QueryWrapper<PaymentOrderMany>().in("tax_id", taxIds).ge("payment_order_status", 2));
+        Integer manyOrderCount = paymentOrderManies.size();
+        BigDecimal manyMoney = new BigDecimal(0);
+        for (PaymentOrderMany paymentOrderMany : paymentOrderManies) {
+            manyMoney = manyMoney.add(paymentOrderMany.getRealMoney());
+            paymentOrderIds.add(paymentOrderMany.getId());
+        }
+
+        List<PaymentInventory> paymentInventories = paymentInventoryDao.selectList(new QueryWrapper<PaymentInventory>().in("payment_order_id", paymentOrderIds));
+        BigDecimal manyTaxMoney = new BigDecimal(0);
+        BigDecimal totalTaxMoney = new BigDecimal(0);
+        if (!VerificationCheck.listIsNull(paymentInventories)) {
+            for (PaymentInventory paymentInventory : paymentInventories) {
+                if (paymentInventory.getPackageStatus() == 0) {
+                    totalTaxMoney = totalTaxMoney.add(paymentInventory.getTaxAmount());
+                } else {
+                    manyTaxMoney = manyTaxMoney.add(paymentInventory.getTaxAmount());
+                }
+            }
+        }
+        Set<String> companyIds = new HashSet<>();
+        List<CompanyTax> companyTaxes = companyTaxDao.selectList(new QueryWrapper<CompanyTax>().in("tax_id", taxIds));
+        for (CompanyTax companyTax : companyTaxes) {
+            companyIds.add(companyTax.getCompanyId());
+        }
+        Integer countMerchant = companyIds.size();
+
+        CountRegulatorMerchantVO countRegulatorMerchantVO = new CountRegulatorMerchantVO(countMerchant, totalOrderCount, totalMoney, totalTaxMoney, manyOrderCount, manyMoney, manyTaxMoney);
+        return ReturnJson.success(countRegulatorMerchantVO);
+    }
+
+
+    @Resource
+    private CompanyInfoDao companyInfoDao;
+
+    /**
+     * 查询所监管的公司详情
+     *
+     * @param companyId
+     * @param regulatorId
+     * @return
+     */
+    @Override
+    public ReturnJson getRegulatorMerchantParticulars(String companyId, String regulatorId) {
+
+        CompanyInfo companyInfo = companyInfoDao.selectById(companyId);
+        if (companyInfo == null) {
+            return ReturnJson.error("输入的公司不存在！");
+        }
+        RegulatorMerchantInfoVO regulatorMerchantInfoVO = new RegulatorMerchantInfoVO();
+        BeanUtils.copyProperties(companyInfo, regulatorMerchantInfoVO);
+
+        ReturnJson returnJson = this.getTaxIds(regulatorId);
+        if (returnJson.getCode() == 300) {
+            return returnJson;
+        }
+        List<String> taxIds = (List<String>) returnJson.getData();
+        List<String> paymentOrderIds = new ArrayList<>();
+        List<PaymentOrder> paymentOrders = paymentOrderDao.selectList(new QueryWrapper<PaymentOrder>().in("tax_id", taxIds).ge("payment_order_status", 2).eq("company_id", companyId));
+        Integer totalOrderCount = paymentOrders.size();
+        BigDecimal totalMoney = new BigDecimal(0);
+        for (PaymentOrder paymentOrder : paymentOrders) {
+            totalMoney = totalMoney.add(paymentOrder.getRealMoney());
+            paymentOrderIds.add(paymentOrder.getId());
+        }
+
+        List<PaymentOrderMany> paymentOrderManies = paymentOrderManyDao.selectList(new QueryWrapper<PaymentOrderMany>().in("tax_id", taxIds).ge("payment_order_status", 2).eq("company_id", companyId));
+        Integer manyOrderCount = paymentOrderManies.size();
+        BigDecimal manyMoney = new BigDecimal(0);
+        for (PaymentOrderMany paymentOrderMany : paymentOrderManies) {
+            manyMoney = manyMoney.add(paymentOrderMany.getRealMoney());
+            paymentOrderIds.add(paymentOrderMany.getId());
+        }
+
+        List<PaymentInventory> paymentInventories = paymentInventoryDao.selectList(new QueryWrapper<PaymentInventory>().in("payment_order_id", paymentOrderIds));
+        BigDecimal manyTaxMoney = new BigDecimal(0);
+        BigDecimal totalTaxMoney = new BigDecimal(0);
+        if (!VerificationCheck.listIsNull(paymentInventories)) {
+            for (PaymentInventory paymentInventory : paymentInventories) {
+                if (paymentInventory.getPackageStatus() == 0) {
+                    totalTaxMoney = totalTaxMoney.add(paymentInventory.getTaxAmount());
+                } else {
+                    manyTaxMoney = manyTaxMoney.add(paymentInventory.getTaxAmount());
+                }
+            }
+        }
+        CountSingleRegulatorMerchantVO countSingleRegulatorMerchantVO = new CountSingleRegulatorMerchantVO(companyInfo.getCompanyName(), totalOrderCount, totalMoney, totalTaxMoney, manyOrderCount, manyMoney, manyTaxMoney);
+
+        IPage<CompanyPaymentOrderPO> companyPaymentOrderPOIPage = companyInfoDao.selectCompanyPaymentOrder(new Page(1, 10), companyId, null, null, null);
+
+        RegulatorMerchantParticularsVO regulatorMerchantParticularsVO = new RegulatorMerchantParticularsVO();
+        regulatorMerchantParticularsVO.setCountSingleRegulatorMerchantVO(countSingleRegulatorMerchantVO);
+        regulatorMerchantParticularsVO.setCompanyPaymentOrderPOS(companyPaymentOrderPOIPage.getRecords());
+        regulatorMerchantParticularsVO.setRegulatorMerchantInfoVO(regulatorMerchantInfoVO);
+        return ReturnJson.success(regulatorMerchantParticularsVO);
+    }
+
+    /**
      * 获取监管部门所监管的服务商下产生的支付订单
      *
      * @param regulatorId
@@ -581,7 +768,7 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
         List<String> taxIds = new ArrayList<>();
 
         //获取所以监管的服务商
-        List<RegulatorTax> regulatorTaxes = regulatorTaxService.list(new QueryWrapper<RegulatorTax>().eq("regulator_id", regulatorId).eq("status", 0));
+        List<RegulatorTax> regulatorTaxes = regulatorTaxService.list(new QueryWrapper<RegulatorTax>().eq("regulator_id", regulatorId));
         for (RegulatorTax regulatorTax : regulatorTaxes) {
             taxIds.add(regulatorTax.getTaxId());
         }
@@ -601,4 +788,26 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
         }
         return ReturnJson.success(paymentOrderIds);
     }
+
+    /**
+     * 获取所有监管的服务商ID
+     *
+     * @param regulatorId
+     * @return
+     */
+    private ReturnJson getTaxIds(String regulatorId) {
+        List<String> paymentOrderIds = new ArrayList<>();
+        List<String> taxIds = new ArrayList<>();
+
+        //获取所以监管的服务商
+        List<RegulatorTax> regulatorTaxes = regulatorTaxService.list(new QueryWrapper<RegulatorTax>().eq("regulator_id", regulatorId));
+        for (RegulatorTax regulatorTax : regulatorTaxes) {
+            taxIds.add(regulatorTax.getTaxId());
+        }
+        if (VerificationCheck.listIsNull(taxIds)) {
+            return ReturnJson.error("您还没有监管的服务商！");
+        }
+        return ReturnJson.success(taxIds);
+    }
+
 }

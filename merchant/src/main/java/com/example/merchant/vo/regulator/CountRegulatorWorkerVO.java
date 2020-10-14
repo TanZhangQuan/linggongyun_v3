@@ -9,8 +9,6 @@ import java.math.BigDecimal;
 @Data
 @ApiModel(description = "创客流水信息统计")
 public class CountRegulatorWorkerVO {
-    @ApiModelProperty(notes = "创客姓名", value = "创客姓名")
-    private String workerName;
 
     @ApiModelProperty(notes = "监管区入驻创客总数", value = "监管区入驻创客总数")
     private Integer countWorker;

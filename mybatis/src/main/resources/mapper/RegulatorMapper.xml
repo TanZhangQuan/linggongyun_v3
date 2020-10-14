@@ -20,7 +20,7 @@
     <sql id="Base_Column_List">
         id, regulator_name, address, linkman, link_mobile, user_name, pass_word, status, , update_date
     </sql>
-    
+
     <select id="selectRegulator" parameterType="list" resultMap="BaseResultMap">
         SELECT
         id,
@@ -33,7 +33,7 @@
         FROM tb_regulator
         <where>
             <if test="regulatorName != null and regulatorName != ''">
-                AND regulator_name like CONCAT('%',#{regulatorName},'%') 
+                AND regulator_name like CONCAT('%',#{regulatorName},'%')
             </if>
             <if test="startDate != null and startDate != ''">
                 AND date(create_date) &gt;= #{startDate}
@@ -154,7 +154,7 @@
         e.create_date
         FROM tb_worker e
         JOIN
-        <include refid="RegulatorWorkerTable" />
+        <include refid="RegulatorWorkerTable"/>
         f
         ON e.id = f.worker_id
         <where>
@@ -168,10 +168,10 @@
                 AND e.idcard_code like CONCAR('%',#{idCardCode},'%')
             </if>
             <if test="startDate != null and startDate != '' ">
-                AND e.create_date like CONCAR('%',#{startDate},'%')
+                AND e.create_date &gt;= #{startDate}
             </if>
             <if test="endDate != null and endDate != '' ">
-                AND e.create_date like CONCAR('%',#{endDate},'%')
+                AND e.create_date &lt;= #{endDate}
             </if>
         </where>
     </select>
@@ -194,13 +194,88 @@
         e.create_date
         FROM tb_worker e
         JOIN
-        <include refid="RegulatorWorkerTable" />
+        <include refid="RegulatorWorkerTable"/>
         f
         ON e.id = f.worker_id
         WHERE e.id IN
         <foreach collection="workerIds" index="index" item="item" open="(" separator="," close=")">
             #{item}
         </foreach>
+    </select>
+
+    <resultMap id="RegulatorMerchantInfoPO" type="com.example.mybatis.po.RegulatorMerchantInfoPO">
+        <result column="id" property="companyId"/>
+        <result column="company_name" property="companyName"/>
+        <result column="contract" property="contract"/>
+        <result column="count_total_order" property="countTotalOrder"/>
+        <result column="count_total_money" property="countTotalMoney"/>
+        <result column="count_many_order" property="countManyOrder"/>
+        <result column="count_many_money" property="countManyMoney"/>
+        <result column="audit_status" property="auditStatus"/>
+        <result column="create_date" property="createDate"/>
+    </resultMap>
+
+    <sql id="RegulatorMerchantSql">
+        SELECT ci.id,
+        ci.company_name,
+        ci.contract,
+        po.count_total_order,
+        po.count_total_money,
+        pom.count_many_order,
+        pom.count_many_money,
+        ci.audit_status,
+        ci.create_date
+        FROM tb_company_info ci
+        JOIN (SELECT COUNT(1) AS 'count_total_order',
+        SUM(real_money) AS 'count_total_money',
+        company_id
+        FROM tb_payment_order
+        WHERE tax_id IN
+        <foreach collection="taxIds" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        GROUP BY company_id) po
+        ON ci.id = po.company_id
+        JOIN (SELECT COUNT(1) AS 'count_many_order',
+        SUM(real_money) AS 'count_many_money',
+        company_id
+        FROM tb_payment_order_many
+        WHERE tax_id IN
+        <foreach collection="taxIds" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        GROUP BY company_id) pom
+        ON ci.id = pom.company_id
+    </sql>
+
+    <!--查询所监管的商户-->
+    <select id="selectRegulatorMerchant" resultMap="RegulatorMerchantInfoPO">
+        <include refid="RegulatorMerchantSql"/>
+        <where>
+            <if test="companyName != null and workerId != '' ">
+                AND ci.company_name like CONCAR('%',#{companyName},'%')
+            </if>
+            <if test="companyId != null and companyId != '' ">
+                AND ci.id like CONCAR('%',#{companyId},'%')
+            </if>
+            <if test="startDate != null and startDate != '' ">
+                AND ci.create_date &gt;= #{startDate}
+            </if>
+            <if test="endDate != null and endDate != '' ">
+                AND ci.create_date &lt;= #{endDate}
+            </if>
+        </where>
+    </select>
+
+    <!--导出所监管的商户-->
+    <select id="selectExportRegulatorMerchant" resultMap="RegulatorMerchantInfoPO">
+        <include refid="RegulatorMerchantSql"/>
+        <where>
+            ci.id in
+            <foreach collection="companyIds" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </where>
     </select>
 
 </mapper>
