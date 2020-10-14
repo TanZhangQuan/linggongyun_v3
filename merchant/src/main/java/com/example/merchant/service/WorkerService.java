@@ -2,6 +2,7 @@ package com.example.merchant.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.common.util.ReturnJson;
+import com.example.merchant.dto.merchant.WorkerDto;
 import com.example.merchant.exception.CommonException;
 import com.example.mybatis.entity.Worker;
 
@@ -19,7 +20,7 @@ import java.util.List;
 public interface WorkerService extends IService<Worker> {
     ReturnJson getWorkerAll(String merchantId, Integer page, Integer pageSize);
 
-    ReturnJson getByIdAndAccountNameAndMobile(String merchantId, String id, String accountName, String mobileCode, Integer page, Integer pageSize);
+    ReturnJson getByIdAndAccountNameAndMobile(WorkerDto workerDto);
 
     ReturnJson getWorkerInfo(String id);
 
