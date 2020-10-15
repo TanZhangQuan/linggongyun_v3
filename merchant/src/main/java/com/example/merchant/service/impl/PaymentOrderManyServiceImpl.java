@@ -122,7 +122,7 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
     @Override
     public ReturnJson getListCSIByID(TobeinvoicedDto tobeinvoicedDto) {
         ReturnJson returnJson = new ReturnJson("查询失败", 300);
-        RowBounds rowBounds = new RowBounds((tobeinvoicedDto.getPageNo() - 1) * 3, 3);
+        RowBounds rowBounds = new RowBounds((tobeinvoicedDto.getPageNo() - 1) * tobeinvoicedDto.getPageSize(), tobeinvoicedDto.getPageSize());
         List<CrowdSourcingInvoiceVo> list = paymentOrderManyDao.getListCSIByID(tobeinvoicedDto, rowBounds);
         if (list != null) {
             returnJson = new ReturnJson("查询成功", list, 200);
@@ -152,7 +152,7 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
     @Override
     public ReturnJson getInvoiceDetailsByPayId(String id, Integer pageNo) {
         ReturnJson returnJson = new ReturnJson("查询失败", 300);
-        RowBounds rowBounds = new RowBounds((pageNo - 1) * 3, 3);
+        RowBounds rowBounds = new RowBounds((pageNo - 1) * 10, 10);
         List<InvoiceDetailsVo> list = paymentOrderManyDao.getInvoiceDetailsByPayId(id, rowBounds);
         if (list != null) {
             returnJson = new ReturnJson("查询成功", list, 200);

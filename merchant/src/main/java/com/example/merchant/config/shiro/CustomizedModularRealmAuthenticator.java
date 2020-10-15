@@ -21,7 +21,6 @@ public class CustomizedModularRealmAuthenticator extends ModularRealmAuthenticat
         // 所有Realm
         Collection<Realm> realms = getRealms();
         // 登录类型对应的所有Realm
-        System.out.println(loginType + "----------------------------realmname");
         Collection<Realm> typeRealms = new ArrayList<>();
         for (Realm realm : realms) {
             System.out.println(realm.getName());

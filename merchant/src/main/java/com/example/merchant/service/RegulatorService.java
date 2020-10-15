@@ -73,4 +73,8 @@ public interface RegulatorService extends IService<Regulator> {
     ReturnJson getRegulatorMerchantPaymentOrder(RegulatorMerchantPaymentOrderDto regulatorMerchantPaymentOrderDto);
 
     ReturnJson exportRegulatorMerchantPaymentOrder(String paymentOrderIds, HttpServletResponse response);
+
+    ReturnJson regulatorLogin(String username, String password, HttpServletResponse response);
+
+    ReturnJson regulatorLogout(String regulatorId);
 }

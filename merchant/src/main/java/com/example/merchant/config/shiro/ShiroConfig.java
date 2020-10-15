@@ -2,6 +2,7 @@ package com.example.merchant.config.shiro;
 
 import org.apache.shiro.authc.pam.AtLeastOneSuccessfulStrategy;
 import org.apache.shiro.authc.pam.ModularRealmAuthenticator;
+import org.apache.shiro.authz.ModularRealmAuthorizer;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.session.mgt.SessionManager;
@@ -12,6 +13,7 @@ import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreato
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
+import org.springframework.data.redis.core.RedisTemplate;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -24,15 +26,14 @@ public class ShiroConfig {
     private Environment environment;
 
     @Bean
-    public Realm merchantRealm() {
-        MerchantRealm merchant=new MerchantRealm();
-        merchant.setName("MERCHANT");
+    public Realm merchantRealm(RedisTemplate redisTemplate) {
+        MerchantRealm merchant = new MerchantRealm();
         return merchant;
     }
+
     @Bean
-    public Realm managerRealm(){
-        ManagersRealm managers=new ManagersRealm();
-        managers.setName("MANAGERS");
+    public Realm managerRealm(RedisTemplate redisTemplate) {
+        ManagersRealm managers = new ManagersRealm();
         return managers;
     }
 
@@ -61,19 +62,16 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/application/**", "anon");
         filterChainDefinitionMap.put("/common/**", "anon");
         filterChainDefinitionMap.put("/static/image/**", "anon");
-        filterChainDefinitionMap.put("/merchant/merchant/login", "anon");
-
+        filterChainDefinitionMap.put("/merchant/login", "anon");
         //放行监管部门中心（测试完后可以删除）
         filterChainDefinitionMap.put("/regulator/**", "anon");
+        filterChainDefinitionMap.put("/platform/managers/**", "anon");
 
-//        filterChainDefinitionMap.put("/platform/managers/passLogin", "anon");
-//
-        filterChainDefinitionMap.put("/**", "authc");
+        filterChainDefinitionMap.put("/**", "anon");
         shiroFilterFactoryBean.setSuccessUrl("/index");
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
         return shiroFilterFactoryBean;
     }
-
 
 
     /**
@@ -95,22 +93,24 @@ public class ShiroConfig {
      * @return securityManager
      */
     @Bean
-    public DefaultWebSecurityManager securityManager() {
+    public DefaultWebSecurityManager securityManager(RedisTemplate redisTemplate) {
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
+        List<Realm> realms = new ArrayList<>();
+        realms.add(merchantRealm(redisTemplate));
+        realms.add(managerRealm(redisTemplate));
         securityManager.setAuthenticator(modularRealmAuthenticator());
-        List<Realm> realms=new ArrayList<>();
-        realms.add(merchantRealm());
-        realms.add(managerRealm());
+        securityManager.setAuthorizer(modularRealmAuthorizer());
         securityManager.setRealms(realms);//关联realm
+
         securityManager.setSessionManager(sessionManager());//关联session管理器
         return securityManager;
     }
 
     /**
      * 系统自带的Realm管理，主要针对多realm
-     * */
+     */
     @Bean
-    public ModularRealmAuthenticator modularRealmAuthenticator(){
+    public ModularRealmAuthenticator modularRealmAuthenticator() {
         //自己重写的ModularRealmAuthenticator
         CustomizedModularRealmAuthenticator modularRealmAuthenticator = new CustomizedModularRealmAuthenticator();
         modularRealmAuthenticator.setAuthenticationStrategy(new AtLeastOneSuccessfulStrategy());
@@ -118,6 +118,15 @@ public class ShiroConfig {
     }
 
 
+    /**
+     * 系统自带的Realm管理，主要针对多realm 授权
+     */
+    @Bean
+    public ModularRealmAuthorizer modularRealmAuthorizer() {
+        //自己重写的ModularRealmAuthorizer
+        CustomizedModularRealmAuthorizer modularRealmAuthorizer = new CustomizedModularRealmAuthorizer();
+        return modularRealmAuthorizer;
+    }
 
     /**
      * 开启Shiro的注解(如@RequiresRoles,@RequiresPermissions),需借助SpringAOP扫描使用Shiro注解的类,并在必要时进行安全逻辑验证

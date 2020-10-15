@@ -32,13 +32,13 @@ public class WorkerTaskServiceImpl extends ServiceImpl<WorkerTaskDao, WorkerTask
 
     /**
      * 派单给指定创客
+     *
      * @param map
      * @return
      */
     @Override
     @Transactional
     public ReturnJson seavWorkerTask(Map map) {
-        ReturnJson returnJson = new ReturnJson("添加失败", 300);
         String wid = map.get("workerId").toString();
         String[] workerIds = wid.split(",");
         for (int i = 0; i < workerIds.length; i++) {
@@ -47,18 +47,14 @@ public class WorkerTaskServiceImpl extends ServiceImpl<WorkerTaskDao, WorkerTask
             workerTask.setWorkerId(workerIds[i]);
             workerTask.setGetType(2);
             workerTask.setArrangePerson(map.get("arrangePerson").toString());
-            int j = workerTaskDao.addWorkerTask(workerTask);
-            if (j > 0) {
-                returnJson = new ReturnJson("添加成功", 200);
-            } else {
-                returnJson = new ReturnJson("添加失败", 300);
-            }
+            workerTaskDao.addWorkerTask(workerTask);
         }
-        return returnJson;
+        return ReturnJson.success("添加成功");
     }
 
     /**
      * 剔除用户,判断任务是否为发布中或已接单,逻辑删除
+     *
      * @param workerId
      * @return
      */
@@ -78,29 +74,31 @@ public class WorkerTaskServiceImpl extends ServiceImpl<WorkerTaskDao, WorkerTask
 
     /**
      * 修改验收金额
+     *
      * @param money
      * @return
      */
     @Override
-    public ReturnJson updateCheckMoney(Double money,String id) {
+    public ReturnJson updateCheckMoney(Double money, String id) {
         ReturnJson returnJson = new ReturnJson("修改失败", 300);
-        WorkerTask workerTask=new WorkerTask();
+        WorkerTask workerTask = new WorkerTask();
         workerTask.setCheckMoney(money);
         workerTask.setId(id);
         workerTask.setStatus(4);
-        if (money != null){
+        if (money != null) {
             returnJson = new ReturnJson("验收金额不能为空", 300);
-        }else {
-            int num=workerTaskDao.updateById(workerTask);
+        } else {
+            int num = workerTaskDao.updateById(workerTask);
             if (num > 0) {
                 returnJson = new ReturnJson("修改成功", 200);
             }
         }
-            return returnJson;
+        return returnJson;
     }
 
     /**
      * 提交工作成成果
+     *
      * @param workerTaskId
      * @param achievementDesc
      * @param achievementFiles
@@ -108,7 +106,7 @@ public class WorkerTaskServiceImpl extends ServiceImpl<WorkerTaskDao, WorkerTask
      */
     @Override
     public ReturnJson acceptanceResults(String workerTaskId, String achievementDesc, String achievementFiles) {
-        WorkerTask workerTask=new WorkerTask();
+        WorkerTask workerTask = new WorkerTask();
         workerTask.setId(workerTaskId);
         workerTask.setAchievementDesc(achievementDesc);
         workerTask.setAchievementFiles(achievementFiles);
@@ -116,7 +114,7 @@ public class WorkerTaskServiceImpl extends ServiceImpl<WorkerTaskDao, WorkerTask
         workerTask.setUpdateDate(LocalDateTime.now());
         workerTask.setStatus(3);
         int num = workerTaskDao.updateById(workerTask);
-        if(num>0){
+        if (num > 0) {
             return ReturnJson.success("提交成功");
         }
         return ReturnJson.error("提交失败");
@@ -124,15 +122,16 @@ public class WorkerTaskServiceImpl extends ServiceImpl<WorkerTaskDao, WorkerTask
 
     /**
      * 查询任务完成成果
+     *
      * @param workerTaskId
      * @return
      */
     @Override
     public ReturnJson getWorkerTask(String workerTaskId) {
-        ReturnJson returnJson=new ReturnJson("操作失败",300);
-        WorkerTask workerTask=workerTaskDao.selectOne(new QueryWrapper<WorkerTask>().eq("id",workerTaskId));
-        if (workerTask!=null){
-            returnJson=new ReturnJson("操作成果",workerTask,200);
+        ReturnJson returnJson = new ReturnJson("操作失败", 300);
+        WorkerTask workerTask = workerTaskDao.selectOne(new QueryWrapper<WorkerTask>().eq("id", workerTaskId));
+        if (workerTask != null) {
+            returnJson = new ReturnJson("操作成果", workerTask, 200);
         }
         return returnJson;
     }

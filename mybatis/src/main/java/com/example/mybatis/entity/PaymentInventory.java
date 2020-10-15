@@ -101,13 +101,13 @@ public class PaymentInventory implements Serializable {
     /**
      * 纳税率
      */
-    @ApiModelProperty("综合税率")
+    @ApiModelProperty("纳税率")
     private BigDecimal taxRate;
 
     /**
      * 纳税金额
      */
-    @ApiModelProperty("综合税率")
+    @ApiModelProperty("纳税金额")
     private BigDecimal taxAmount;
 
     /**

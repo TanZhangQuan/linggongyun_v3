@@ -4,10 +4,9 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.example.common.util.ExcelUtils;
-import com.example.common.util.MD5;
-import com.example.common.util.ReturnJson;
-import com.example.common.util.VerificationCheck;
+import com.example.common.sms.SenSMS;
+import com.example.common.util.*;
+import com.example.merchant.config.shiro.CustomizedToken;
 import com.example.merchant.dto.platform.RegulatorDto;
 import com.example.merchant.dto.platform.RegulatorQueryDto;
 import com.example.merchant.dto.platform.RegulatorTaxDto;
@@ -19,15 +18,25 @@ import com.example.merchant.service.MerchantService;
 import com.example.merchant.service.RegulatorService;
 import com.example.merchant.service.RegulatorTaxService;
 import com.example.merchant.service.TaxService;
+import com.example.merchant.util.JwtUtils;
 import com.example.merchant.vo.PaymentOrderInfoVO;
 import com.example.merchant.vo.platform.HomePageVO;
 import com.example.merchant.vo.platform.RegulatorTaxVO;
 import com.example.merchant.vo.regulator.*;
 import com.example.mybatis.entity.*;
 import com.example.mybatis.mapper.*;
+import com.example.mybatis.po.InvoicePO;
+import com.example.mybatis.po.PaymentOrderInfoPO;
+import com.example.mybatis.po.RegulatorWorkerPO;
+import com.example.mybatis.po.WorekerPaymentListPo;
+import com.example.redis.dao.RedisDao;
 import com.example.mybatis.po.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.LockedAccountException;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -80,8 +89,17 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
     @Resource
     private PaymentInventoryDao paymentInventoryDao;
 
+    @Resource
+    private RedisDao redisDao;
+
+    @Resource
+    private JwtUtils jwtUtils;
+
     @Value("${PWD_KEY}")
     private String PWD_KEY;
+
+    @Value("${TOKEN}")
+    private String TOKEN;
 
     /**
      * 添加监管部门
@@ -693,6 +711,7 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
     }
 
 
+
     @Resource
     private CompanyInfoDao companyInfoDao;
 
@@ -833,6 +852,48 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
     }
 
     /**
+     * 登录
+     * @param username 用户名
+     * @param password 密码
+     * @param response
+     * @return
+     */
+    @Override
+    public ReturnJson regulatorLogin(String username, String password, HttpServletResponse response) {
+        String encryptPWD = PWD_KEY + MD5.md5(password);
+//        Subject currentUser = SecurityUtils.getSubject();
+        QueryWrapper<Regulator> merchantQueryWrapper = new QueryWrapper<>();
+        merchantQueryWrapper.eq("user_name", username).eq("pass_word", encryptPWD);
+        Regulator re = regulatorDao.selectOne(merchantQueryWrapper);
+        if (re == null) {
+            throw new AuthenticationException("账号或密码错误");
+        }
+        if (re.getStatus() == 1) {
+            throw new LockedAccountException("账号已被禁用");
+        }
+//        CustomizedToken customizedToken = new CustomizedToken(username, encryptPWD, REGULATOR);
+//        currentUser.login(customizedToken);//shiro验证身份
+        String token = jwtUtils.generateToken(re.getId());
+        response.setHeader(TOKEN, token);
+        redisDao.set(re.getId(), JsonUtils.objectToJson(re));
+        redisDao.setExpire(re.getId(), 60 * 60 * 24 * 7);
+        re.setPassWord("");
+        return ReturnJson.success(re);
+    }
+
+    /**
+     * 登出
+     * @param regulatorId 监督用户Id
+     * @return
+     */
+    @Override
+    public ReturnJson regulatorLogout(String regulatorId) {
+        redisDao.remove(regulatorId);
+        return ReturnJson.success("登出成功");
+    }
+
+
+    /**
      * 获取监管部门所监管的服务商下产生的支付订单
      *
      * @param regulatorId
@@ -884,5 +945,4 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
         }
         return ReturnJson.success(taxIds);
     }
-
 }
