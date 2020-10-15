@@ -86,10 +86,10 @@
                 AND tax_name LIKE CONCAT('%',#{taxName},'%')
             </if>
             <if test="startDate != null and startDate != '' ">
-                AND payment_date &gt;= #{startDate}
+                AND payment_date &gt;= #{startDate} + ' 00:00:00'
             </if>
             <if test="endDate != null and endDate != '' ">
-                AND payment_date &lt;= #{endDate}
+                AND payment_date &lt;= #{endDate} + ' 23:59:59'
             </if>
         </where>
         ORDER BY payment_date DESC
