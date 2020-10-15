@@ -74,7 +74,7 @@ public class BaseExceptionHandler {
     @ExceptionHandler(value = Exception.class)
     public ReturnJson exceptionHandler(Exception e) {
         log.error(e.toString()+":"+e.getMessage());
-        return ReturnJson.error("服务内部错误");
+        return ReturnJson.error("服务异常，请稍后重试");
     }
 
     @ResponseBody
