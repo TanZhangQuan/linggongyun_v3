@@ -57,6 +57,7 @@ public class RegulatorTaxServiceImpl extends ServiceImpl<RegulatorTaxDao, Regula
     public ReturnJson homeFourData(String regulatorId) {
         Map<String, Object> map = new HashMap<>();
         int serviceProvidernum = regulatorTaxDao.selectCount(new QueryWrapper<RegulatorTax>().eq("regulator_id", regulatorId));//监管区服务商数量
+
         map.put("监管区服务商数量", serviceProvidernum);
 
         return null;
