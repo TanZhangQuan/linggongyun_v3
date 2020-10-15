@@ -49,7 +49,7 @@ public class ManagersServiceImpl extends ServiceImpl<ManagersDao, Managers> impl
     @Resource
     private RedisDao redisDao;
 
-    private static final String MANAGERS= "MANAGERS";
+    private static final String MANAGERS= "manager";
 
     @Override
     public ReturnJson managersLogin(String userName, String passWord, HttpServletResponse response) {

@@ -1,9 +1,12 @@
 package com.example.merchant.config.shiro;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.example.common.util.UserUtils;
+import com.example.mybatis.entity.Managers;
 import com.example.mybatis.entity.Menu;
 import com.example.mybatis.entity.Merchant;
 import com.example.mybatis.entity.MerchantRole;
+import com.example.mybatis.mapper.ManagersDao;
 import com.example.mybatis.mapper.MerchantDao;
 import com.example.mybatis.mapper.MerchantRoleDao;
 import lombok.SneakyThrows;
@@ -23,14 +26,24 @@ import java.util.Set;
 /**
  * 授权相关服务-shiro
  *
- * @author qiguliuxing
+ * @author
  * @since 1.0.0
  */
 @Slf4j
 public class MerchantRealm extends AuthorizingRealm {
 
+    private static final String MANAGER = "MERCHANT";
+
+    {
+        super.setName("merchant");//设置realm的名字，非常重要
+    }
+
+
     @Resource
     private MerchantDao merchantDao;
+
+    @Resource
+    private ManagersDao managersDao;
     
     @Resource
     private MerchantRoleDao merchantRoleDao;
@@ -49,15 +62,12 @@ public class MerchantRealm extends AuthorizingRealm {
         }
         SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
         String loginName = (String) principals.getPrimaryPrincipal();//获取登录用户
-        System.out.println("当前的用户-------------------------------" + loginName);
-        Merchant merchant = merchantDao.selectOne(new QueryWrapper<Merchant>().eq("user_name", loginName));//查询登录用户的角色
-        MerchantRole merchantRole = merchantRoleDao.selectById(merchant.getRoleId());
-        List<Menu> menuList = merchantRoleDao.getMenuById(merchantRole.getId());
+        System.out.println("当前的用户--------------Merchant-----------------" + loginName);
+        Merchant user = merchantDao.selectOne(new QueryWrapper<Merchant>().eq("user_name", loginName));//查询登录用户的角色
+        MerchantRole merchantRole = merchantRoleDao.selectById(user.getRoleId());
+        Set<String> permissions =  merchantRoleDao.getMenuById(merchantRole.getId());
         authorizationInfo.addRole(merchantRole.getRoleName());//添加角色
-        Set<String> permissions = new HashSet<>();
-        for (int i = 0; i < menuList.size(); i++) {
-            permissions.add(menuList.get(i).getMenuName());//添加权限
-        }
+
         authorizationInfo.setStringPermissions(permissions);
         return authorizationInfo;
     }

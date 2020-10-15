@@ -67,11 +67,13 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
     @Override
     public ReturnJson selectList(TaskListDto taskListDto, RowBounds rowBounds) {
         ReturnJson returnJson = new ReturnJson("查询失败", 300);
-        rowBounds = new RowBounds(rowBounds.getOffset() * rowBounds.getLimit(), rowBounds.getLimit());
+        rowBounds = new RowBounds((rowBounds.getOffset() - 1) * rowBounds.getLimit(), rowBounds.getLimit());
         List<Task> taskList = taskDao.selectLists(taskListDto, rowBounds);
         if (taskList != null) {
             returnJson = new ReturnJson("查询成功", taskList, 200);
         }
+        returnJson.setPageSize(taskListDto.getPageSize());
+        returnJson.setItemsCount(taskListDto.getPageNo());
         return returnJson;
     }
 
@@ -83,17 +85,14 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
      * @return
      */
     @Override
-    public ReturnJson delete(Integer state, String id) {
-        ReturnJson returnJson = new ReturnJson("删除失败", 300);
-        if (state == 3) {
-            returnJson = new ReturnJson("已完毕状态下不能删除", 300);
-        } else {
-            int num = taskDao.delete(id);
-            if (num > 0) {
-                returnJson = new ReturnJson("删除成功", 200);
-            }
+    public ReturnJson delete(String id) {
+        Task task = taskDao.selectById(id);
+        if ("3".equals(task.getState())) {
+            ReturnJson.error("已完毕状态下不能删除");
         }
-        return returnJson;
+        workerTaskDao.delete(new QueryWrapper<WorkerTask>().eq("task_id", task.getId()));
+        int num = taskDao.delete(id);
+        return ReturnJson.success("操作成功");
     }
 
 
@@ -141,13 +140,10 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
     @Override
     public ReturnJson setTaskById(String id) {
         if (!VerificationCheck.isNull(id)) {
-            return new ReturnJson("任务编号不能为空", 300);
+            return ReturnJson.error("任务ID不能为空");
         }
         Task task = taskDao.setTaskById(id);
-        if (task != null) {
-            return new ReturnJson("查询成功", task, 300);
-        }
-        return new ReturnJson("查询失败", 300);
+        return ReturnJson.success(task);
     }
 
 
@@ -159,44 +155,36 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
     /**
      * 关单
      *
-     * @param state
      * @param taskId
      * @return
      */
     @Override
-    public ReturnJson close(Integer state, String taskId) {
-        ReturnJson returnJson = new ReturnJson("关单失败", 300);
-        if (state != 0) {
-            returnJson = new ReturnJson("只有在发布中的任务才能进行关单", 300);
+    public ReturnJson close(String taskId) {
+        Task task = taskDao.selectById(taskId);
+        if (task.getState() == 0) {
+            return ReturnJson.error("只有在发布中的任务才能进行关单");
         } else {
             int num = taskDao.closeTask(taskId);
-            if (num > 0) {
-                returnJson = new ReturnJson("关单成功", 200);
-            }
+            return ReturnJson.success("关单成功");
         }
-        return returnJson;
     }
 
 
     /**
      * 重新开启任务
      *
-     * @param state
      * @param taskId
      * @return
      */
     @Override
-    public ReturnJson openTask(Integer state, String taskId) {
-        ReturnJson returnJson = new ReturnJson("重新开启任务失败", 300);
-        if (state != 1) {
-            returnJson = new ReturnJson("任务必需关闭才能重新开启", 300);
-        } else {
+    public ReturnJson openTask(String taskId) {
+        Task task = taskDao.selectById(taskId);
+        if (task.getState() == 1) {
             int num = taskDao.openTask(taskId);
-            if (num > 0) {
-                returnJson = new ReturnJson("重新开启任务成功", 200);
-            }
+            return ReturnJson.success("操作成功");
+        } else {
+            return ReturnJson.error("任务必需关闭才能重新开启");
         }
-        return returnJson;
     }
 
     /**

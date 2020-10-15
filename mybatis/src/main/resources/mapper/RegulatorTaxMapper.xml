@@ -12,9 +12,58 @@
         <result column="update_date" property="updateDate" />
     </resultMap>
 
+    <resultMap id="ServiceProvider" type="com.example.mybatis.vo.TaxVo">
+        <id column="id" property="id"/>
+        <result column="tax_name" property="taxName"/>
+        <result column="payment_order_num" property="paymentOrderNum"/>
+        <result column="payment_order_money" property="paymentOrderMoney"/>
+        <result column="payment_order_many_num" property="paymentOrderManyNum"/>
+        <result column="payment_order_many_money" property="paymentOrderManyMoney"/>
+        <result column="tax_status" property="taxStatus"/>
+        <result column="create_date" property="createDate"/>
+    </resultMap>
+
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id, tax_id, regulator_id, status, create_date, update_date
     </sql>
+
+    <select id="selServiceProviders" resultMap="ServiceProvider">
+        SELECT t.id,t.tax_name,(SELECT COUNT(1) FROM tb_payment_order WHERE tax_id=t.id) as payment_order_num,
+        (SELECT SUM(real_money) FROM tb_payment_order WHERE tax_id=t.id) as payment_order_money,
+        (SELECT COUNT(1) FROM tb_payment_order_many WHERE tax_id=t.id) as payment_order_many_num,
+        (SELECT SUM(real_money) FROM tb_payment_order_many WHERE tax_id=t.id) as payment_order_many_money,
+        t.tax_status,t.create_date
+        from tb_regulator_tax rt
+        INNER JOIN tb_tax t ON t.id=rt.tax_id
+        where rt.regulator_id=#{tax.regulatorId}
+        <if test="tax.serviceProviderName !=null and tax.serviceProviderName != '' " >
+            AND t.tax_name like CONCAR('%',#{tax.serviceProviderName},'%')
+        </if>
+        <if test="tax.serviceProvideId !=null and tax.serviceProvideId != '' " >
+            AND t.id like CONCAR('%',#{tax.serviceProvideId},'%')
+        </if>
+        <if test="tax.startDate !=null and tax.startDate != '' " >
+            AND t.create_date >= #{tax.startDate}
+        </if>
+        <if test="tax.endDate !=null and tax.endDate != '' " >
+            AND t.create_date <![CDATA[<=]]> #{tax.endDate}
+        </if>
+    </select>
+
+
+    <select id="selTaxListByIds" resultMap="ServiceProvider">
+        SELECT t.id,t.tax_name,(SELECT COUNT(1) FROM tb_payment_order WHERE tax_id=t.id) as payment_order_num,
+        (SELECT SUM(real_money) FROM tb_payment_order WHERE tax_id=t.id) as payment_order_money,
+        (SELECT COUNT(1) FROM tb_payment_order_many WHERE tax_id=t.id) as payment_order_many_num,
+        (SELECT SUM(real_money) FROM tb_payment_order_many WHERE tax_id=t.id) as payment_order_many_money,
+        t.tax_status,t.create_date
+        from tb_regulator_tax rt
+        INNER JOIN tb_tax t ON t.id=rt.tax_id
+        where t.id in
+        <foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
 
 </mapper>

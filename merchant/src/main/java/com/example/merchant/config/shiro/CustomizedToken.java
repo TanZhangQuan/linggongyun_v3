@@ -1,7 +1,9 @@
 package com.example.merchant.config.shiro;
 
+import lombok.Data;
 import org.apache.shiro.authc.UsernamePasswordToken;
 
+@Data
 public class CustomizedToken extends UsernamePasswordToken
 {
     /**
@@ -14,14 +16,6 @@ public class CustomizedToken extends UsernamePasswordToken
 
     public CustomizedToken(final String username, final String password,String loginType) {
         super(username,password);
-        this.loginType = loginType;
-    }
-
-    public String getLoginType() {
-        return loginType;
-    }
-
-    public void setLoginType(String loginType) {
         this.loginType = loginType;
     }
 }

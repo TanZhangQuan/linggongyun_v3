@@ -26,7 +26,7 @@ public class Regulator implements Serializable {
      * 监管部门ID
      */
     @TableId(value = "id", type = IdType.ASSIGN_ID)
-    private Long id;
+    private String id;
 
     /**
      * 监管部门名称

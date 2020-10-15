@@ -161,7 +161,7 @@ public class Task implements Serializable {
      * 任务状态:0发布中,1已接单,2交付中,3已完毕,4已关闭
      */
     @ApiModelProperty("任务状态")
-    private String state;
+    private Integer state;
 
 
 

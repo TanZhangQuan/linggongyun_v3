@@ -126,7 +126,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
     @Value("${TOKEN}")
     private String TOKEN;
 
-    private static final String MERCHANT= "MERCHANT";
+    private static final String MERCHANT= "merchant";
 
     /**
      * 根据用户名和密码进行登录
@@ -214,20 +214,22 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
     @Override
     public ReturnJson loginMobile(String loginMobile, String checkCode, HttpServletResponse resource) {
         String redisCheckCode = redisDao.get(loginMobile);
+        Subject currentUser = SecurityUtils.getSubject();
         if (StringUtils.isBlank(redisCheckCode)) {
             return ReturnJson.error("验证码已过期，请重新获取！");
         } else if (!checkCode.equals(redisCheckCode)) {
             return ReturnJson.error("输入的验证码有误");
         } else {
             redisDao.remove(loginMobile);
-            Merchant merchant = this.getOne(new QueryWrapper<Merchant>().eq("login_mobile", loginMobile).eq("audit_status", 1));
+            Merchant merchant = this.getOne(new QueryWrapper<Merchant>().eq("login_mobile", loginMobile).eq("status", 0));
             merchant.setPassWord("");
             merchant.setPayPwd("");
             String token = jwtUtils.generateToken(merchant.getId());
             resource.setHeader(TOKEN, token);
             redisDao.set(merchant.getId(), JsonUtils.objectToJson(merchant));
             redisDao.setExpire(merchant.getId(), 60 * 60 * 24 * 7);
-            SecurityUtils.getSubject().login(new UsernamePasswordToken(merchant.getUserName(), merchant.getPassWord()));//shiro验证身份
+            CustomizedToken customizedToken = new CustomizedToken(merchant.getUserName(), merchant.getPassWord(), MERCHANT);
+            currentUser.login(customizedToken);//shiro验证身份
             return ReturnJson.success(merchant);
         }
     }
