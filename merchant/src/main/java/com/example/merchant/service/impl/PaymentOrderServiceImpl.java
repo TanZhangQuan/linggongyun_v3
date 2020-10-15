@@ -247,13 +247,13 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
             paymentInventory.setPackageStatus(0);
             paymentInventoryService.saveOrUpdate(paymentInventory);
             //生成分包订单
-            PaymentOrderSubpackage paymentOrderSubpackage = new PaymentOrderSubpackage();
-            paymentOrderSubpackage.setCompanyId(paymentOrder.getCompanyId());
-            paymentOrderSubpackage.setPaymentInventoryId(paymentInventory.getId());
-            paymentOrderSubpackage.setRealMoney(paymentInventory.getRealMoney());
-            paymentOrderSubpackage.setTaskId(paymentOrder.getTaskId());
-            paymentOrderSubpackage.setTaxId(paymentOrder.getTaxId());
-            paymentOrderSubpackageDao.insert(paymentOrderSubpackage);
+//            PaymentOrderSubpackage paymentOrderSubpackage = new PaymentOrderSubpackage();
+//            paymentOrderSubpackage.setCompanyId(paymentOrder.getCompanyId());
+//            paymentOrderSubpackage.setPaymentInventoryId(paymentInventory.getId());
+//            paymentOrderSubpackage.setRealMoney(paymentInventory.getRealMoney());
+//            paymentOrderSubpackage.setTaskId(paymentOrder.getTaskId());
+//            paymentOrderSubpackage.setTaxId(paymentOrder.getTaxId());
+//            paymentOrderSubpackageDao.insert(paymentOrderSubpackage);
         }
         return ReturnJson.success("支付订单创建成功！");
     }
