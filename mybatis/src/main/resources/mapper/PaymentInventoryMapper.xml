@@ -30,7 +30,9 @@
     <select id="selectPaymentInventoryList" resultMap="BaseResultMap" parameterType="string">
         SELECT * FROM tb_payment_inventory
         WHERE payment_order_id = #{paymentOrderId}
-        ORDER BY CASE WHEN worker_id = #{workerId} THEN 0 ELSE 1 END
+        <if test="workerId != null and workerId != ''">
+            ORDER BY CASE WHEN worker_id = #{workerId} THEN 0 ELSE 1 END
+        </if>
         LIMIT 0,10
     </select>
 

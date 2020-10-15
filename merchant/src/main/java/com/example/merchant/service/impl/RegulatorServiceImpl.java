@@ -10,6 +10,8 @@ import com.example.merchant.config.shiro.CustomizedToken;
 import com.example.merchant.dto.platform.RegulatorDto;
 import com.example.merchant.dto.platform.RegulatorQueryDto;
 import com.example.merchant.dto.platform.RegulatorTaxDto;
+import com.example.merchant.dto.regulator.RegulatorMerchantDto;
+import com.example.merchant.dto.regulator.RegulatorMerchantPaymentOrderDto;
 import com.example.merchant.dto.regulator.RegulatorWorkerDto;
 import com.example.merchant.dto.regulator.RegulatorWorkerPaymentDto;
 import com.example.merchant.service.MerchantService;
@@ -28,6 +30,7 @@ import com.example.mybatis.po.PaymentOrderInfoPO;
 import com.example.mybatis.po.RegulatorWorkerPO;
 import com.example.mybatis.po.WorekerPaymentListPo;
 import com.example.redis.dao.RedisDao;
+import com.example.mybatis.po.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
@@ -56,7 +59,6 @@ import java.util.*;
 @Slf4j
 public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> implements RegulatorService {
 
-    public static final String REGULATOR = "regulator";
     @Resource
     private TaxDao taxDao;
 
@@ -262,7 +264,7 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
      * @return
      */
     @Override
-        public ReturnJson getRegulatorTaxAll(String regulatorId, Integer page, Integer pageSize) {
+    public ReturnJson getRegulatorTaxAll(String regulatorId, Integer page, Integer pageSize) {
         List<RegulatorTaxVO> regulatorTaxVOS = new ArrayList<>();
         Page<RegulatorTax> taxPage = new Page<>(page, pageSize);
         Page<RegulatorTax> regulatorTaxPage = regulatorTaxService.page(taxPage, new QueryWrapper<RegulatorTax>().eq("regulator_id", regulatorId));
@@ -616,6 +618,10 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
         return ReturnJson.success("登出成功");
     }
 
+    ReturnJson regulatorLogin(String username, String password, HttpServletResponse response);
+
+    ReturnJson regulatorLogout(String regulatorId);
+
     /**
      * 获取监管部门所监管的服务商下产生的支付订单
      *
@@ -627,7 +633,7 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
         List<String> taxIds = new ArrayList<>();
 
         //获取所以监管的服务商
-        List<RegulatorTax> regulatorTaxes = regulatorTaxService.list(new QueryWrapper<RegulatorTax>().eq("regulator_id", regulatorId).eq("status", 0));
+        List<RegulatorTax> regulatorTaxes = regulatorTaxService.list(new QueryWrapper<RegulatorTax>().eq("regulator_id", regulatorId));
         for (RegulatorTax regulatorTax : regulatorTaxes) {
             taxIds.add(regulatorTax.getTaxId());
         }

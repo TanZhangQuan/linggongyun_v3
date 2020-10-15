@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.common.sms.SenSMS;
 import com.example.common.util.*;
+import com.example.merchant.dto.merchant.WorkerDto;
 import com.example.merchant.exception.CommonException;
 import com.example.merchant.service.CompanyWorkerService;
 import com.example.merchant.service.TaskService;
@@ -98,16 +99,13 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
     /**
      * 按编号、姓名、手机号，查询该商户下的创客
      *
-     * @param merchantId
-     * @param id
-     * @param accountName
-     * @param mobileCode
+     * @param workerDto
      * @return
      */
     @Override
-    public ReturnJson getByIdAndAccountNameAndMobile(String merchantId, String id, String accountName, String mobileCode, Integer page, Integer pageSize) {
-        Page<Worker> workerPage = new Page<>(page, pageSize);
-        IPage<Worker> workerIPage = workerDao.selectByIdAndAccountNameAndMobile(workerPage, merchantId, id, accountName, mobileCode);
+    public ReturnJson getByIdAndAccountNameAndMobile(WorkerDto workerDto) {
+        Page<Worker> workerPage = new Page<>(workerDto.getPage(), workerDto.getPageSize());
+        IPage<Worker> workerIPage = workerDao.selectByIdAndAccountNameAndMobile(workerPage, workerDto.getCompanyId(), workerDto.getWorkerId(), workerDto.getAccountName(), workerDto.getMobileCode());
         return ReturnJson.success(workerIPage);
     }
 

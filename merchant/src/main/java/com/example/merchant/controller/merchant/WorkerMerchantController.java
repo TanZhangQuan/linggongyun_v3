@@ -2,6 +2,7 @@ package com.example.merchant.controller.merchant;
 
 
 import com.example.common.util.ReturnJson;
+import com.example.merchant.dto.merchant.WorkerDto;
 import com.example.merchant.service.WorkerService;
 import com.example.merchant.service.WorkerTaskService;
 import com.example.mybatis.entity.Worker;
@@ -10,6 +11,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import java.util.List;
@@ -48,17 +50,9 @@ public class WorkerMerchantController {
 
     @PostMapping("/getWorkerMany")
     @ApiOperation(value = "按条件查询创客", notes = "按条件查询创客", httpMethod = "POST")
-    @ApiImplicitParams(value = {@ApiImplicitParam(name = "merchantId", value = "用户ID", required = true),
-            @ApiImplicitParam(name = "id", value = "创客ID", required = false),
-            @ApiImplicitParam(name = "accountName", value = "创客的真实姓名", required = false),
-            @ApiImplicitParam(name = "mobileCode", value = "创客的手机号", required = false),
-            @ApiImplicitParam(name = "page", value = "当前页数"),
-            @ApiImplicitParam(name = "pageSize", value = "每页的条数")
-    })
-    public ReturnJson getWorkerMany(@NotBlank(message = "商户的公司ID不能为空") @RequestParam(required = false) String companyId, @RequestParam(required = false) String id,
-                                    @RequestParam(required = false) String accountName, @RequestParam(required = false) String mobileCode,
-                                    @RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer pageSize) {
-        return workerService.getByIdAndAccountNameAndMobile(companyId, id, accountName, mobileCode, page, pageSize);
+    @ApiImplicitParams(value = {@ApiImplicitParam(name = "workerDto", value = "查询条件",dataType = "WorkerDto", required = true)})
+    public ReturnJson getWorkerMany(@Valid @RequestBody WorkerDto workerDto) {
+        return workerService.getByIdAndAccountNameAndMobile(workerDto);
     }
 
     @PostMapping("/getWorkerInfo")

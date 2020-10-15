@@ -158,13 +158,27 @@ public class AuthenticationServiceImpl implements AuthenticationService {
      * @return
      */
     @Override
-    public synchronized ReturnJson callBackSignAContract(HttpServletRequest request) throws Exception {
+    public synchronized ReturnJson callBackSignAContract(HttpServletRequest request){
         //查询body的数据进行验签
-        String rbody = RealnameVerifyUtil.getRequestBody(request, "UTF-8");
-        Map map = JsonUtils.jsonToPojo(rbody, Map.class);
+        Map map = null;
+        boolean res = false;
+        try {
+            String rbody = RealnameVerifyUtil.getRequestBody(request, "UTF-8");
+            map = JsonUtils.jsonToPojo(rbody, Map.class);
+            res = RealnameVerifyUtil.checkPass(request, rbody, appSecret);
+        } catch (Exception e) {
+            log.error(e.toString()+":"+e.getMessage());
+            return null;
+        }
+        if (!res) {
+            return ReturnJson.error("签约失败！");
+        }
         String flowId = map.get("flowId") == null ? "" : String.valueOf(map.get("flowId"));
         Integer signResult = map.get("signResult") == null ? null : (Integer) map.get("signResult");
         String thirdPartyUserId = map.get("thirdPartyUserId") == null ? "" : String.valueOf(map.get("thirdPartyUserId"));
+        if (StringUtils.isBlank(thirdPartyUserId) || StringUtils.isBlank(flowId)) {
+            return null;
+        }
         if (!StringUtils.isBlank(thirdPartyUserId)) {
             Worker worker = workerDao.selectById(thirdPartyUserId);
             if (worker != null) {
@@ -174,16 +188,28 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 }
             }
         }
-        boolean res = RealnameVerifyUtil.checkPass(request, rbody, appSecret);
-        if (!res) {
-            return ReturnJson.error("签约失败！");
-        }
-
         if (signResult != null && signResult == 2 && !StringUtils.isBlank(flowId)) {
             log.info("---------------------签署完成后，通知回调，平台方进行签署流程归档 start-----------------------------");
-            SignHelper.archiveSignFlow(flowId);
+            try {
+                SignHelper.archiveSignFlow(flowId);
+            } catch (DefineException e) {
+                log.error(e.toString()+":"+e.getMessage());
+                Worker worker = workerDao.selectById(thirdPartyUserId);
+                worker.setAgreementSign(3);
+                workerDao.updateById(worker);
+                return null;
+            }
             log.info("---------------------归档后，获取文件下载地址 start-----------------------------");
-            Map<String, List<Map<String, Object>>> jsonHelper = (Map<String, List<Map<String, Object>>>) SignHelper.downloadFlowDoc(flowId);
+            Map<String, List<Map<String, Object>>> jsonHelper = null;
+            try {
+                jsonHelper = (Map<String, List<Map<String, Object>>>) SignHelper.downloadFlowDoc(flowId);
+            } catch (DefineException e) {
+                log.error(e.toString()+":"+e.getMessage());
+                Worker worker = workerDao.selectById(thirdPartyUserId);
+                worker.setAgreementSign(3);
+                workerDao.updateById(worker);
+                return null;
+            }
             List<Map<String, Object>> list = jsonHelper.get("docs");
             Map<String, Object> flowInfo = list.get(0);
             Worker worker = workerDao.selectById(thirdPartyUserId);
