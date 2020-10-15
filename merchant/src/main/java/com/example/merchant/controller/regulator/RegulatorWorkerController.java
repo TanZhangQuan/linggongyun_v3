@@ -70,7 +70,7 @@ public class RegulatorWorkerController {
     @PostMapping("/exportRegulatorWorkerPaymentInfo")
     @ApiOperation(value = "导出所监管的创客支付明细", notes = "导出所监管的创客支付明细", httpMethod = "POST")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "workerId", value = "创客ID", required = true),
-            @ApiImplicitParam(name = "paymentIds", value = "支付订单ID字符集，每个支付订单ID之间用英文逗号隔开", required = true)})
+            @ApiImplicitParam(name = "paymentIds", value = "支付订单ID字符集,每个支付订单ID之间用英文逗号隔开", required = true)})
     public ReturnJson exportRegulatorWorkerPaymentInfo(@NotBlank(message = "创客ID不能为空！") @RequestParam String workerId, @NotBlank(message = "支付订单ID字符集！") @RequestParam String paymentIds, HttpServletResponse response) {
         ReturnJson returnJson = regulatorService.exportRegulatorWorkerPaymentInfo(workerId, paymentIds, response);
         if (returnJson.getCode() == 300) {
@@ -94,6 +94,6 @@ public class RegulatorWorkerController {
             @ApiImplicitParam(name = "page", value = "当前页数", required = true),
             @ApiImplicitParam(name = "pageSize", value = "每页显示的条数", required = true)})
     public ReturnJson getPaymentInventory(@NotBlank(message = "支付订单ID不能为空！") @RequestParam String paymentOrderId, @NotNull(message = "当前页数不能为空！") @RequestParam(defaultValue = "1") Integer page, @NotNull(message = "每页显示的条数不能为空！") @RequestParam(defaultValue = "10") Integer pageSize) {
-        return regulatorService.getPaymentInventory(paymentOrderId, page,pageSize);
+        return regulatorService.getPaymentInventory(paymentOrderId, page, pageSize);
     }
 }

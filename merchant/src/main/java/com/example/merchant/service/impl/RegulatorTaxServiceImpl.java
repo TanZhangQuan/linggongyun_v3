@@ -7,13 +7,19 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.common.util.ExcelUtils;
 import com.example.common.util.ReturnJson;
 import com.example.common.util.VerificationCheck;
+import com.example.merchant.dto.regulator.PayInfoDto;
+import com.example.merchant.vo.regulator.RegulatorWorkerPaymentInfoVO;
 import com.example.mybatis.dto.RegulatorTaxDto;
+import com.example.mybatis.entity.PaymentInventory;
 import com.example.mybatis.entity.RegulatorTax;
 import com.example.mybatis.entity.Tax;
+import com.example.mybatis.mapper.PaymentInventoryDao;
 import com.example.mybatis.mapper.RegulatorTaxDao;
 import com.example.merchant.service.RegulatorTaxService;
 import com.example.mybatis.mapper.TaxDao;
+import com.example.mybatis.po.RegulatorTaxPayInfoPo;
 import com.example.mybatis.vo.TaxVo;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -37,6 +43,8 @@ public class RegulatorTaxServiceImpl extends ServiceImpl<RegulatorTaxDao, Regula
     private RegulatorTaxDao regulatorTaxDao;
     @Resource
     private TaxDao taxDao;
+    @Resource
+    private PaymentInventoryDao paymentInventoryDao;
 
 
     /**
@@ -66,7 +74,7 @@ public class RegulatorTaxServiceImpl extends ServiceImpl<RegulatorTaxDao, Regula
         IPage<TaxVo> taxIPage = regulatorTaxDao.selServiceProviders(page, regulatorTaxDto);
         List<TaxVo> voList = taxIPage.getRecords();
         for (int i = 0; i < voList.size(); i++) {
-            voList.get(i).setPaymentOrderCount(voList.get(i).getPaymentOrderNum()+"/"+voList.get(i).getPaymentOrderManyNum());
+            voList.get(i).setPaymentOrderCount(voList.get(i).getPaymentOrderNum() + "/" + voList.get(i).getPaymentOrderManyNum());
             voList.get(i).setStatus(voList.get(i).getTaxStatus() == 0 ? "未认证" : "已认证");
         }
         taxIPage.setRecords(voList);
@@ -81,9 +89,7 @@ public class RegulatorTaxServiceImpl extends ServiceImpl<RegulatorTaxDao, Regula
      */
     @Override
     public ReturnJson getTax(String taxId) {
-        Map<String, Object> map = new HashMap<>();
         Tax tax = taxDao.selectById(taxId);
-        map.put("服务商信息", tax);
         return ReturnJson.success(tax);
     }
 
@@ -94,22 +100,103 @@ public class RegulatorTaxServiceImpl extends ServiceImpl<RegulatorTaxDao, Regula
      * @return
      */
     @Override
-    public ReturnJson batchExport(String taxIds, HttpServletResponse response) {
-        List<TaxVo> taxVos = regulatorTaxDao.selTaxListByIds(Arrays.asList(taxIds.split(",")));
+    public ReturnJson batchExportTax(String taxIds, HttpServletResponse response) {
+        List list=Arrays.asList(taxIds.split(","));
+        List<TaxVo> taxVos = regulatorTaxDao.selTaxListByIds(list);
         for (int i = 0; i < taxVos.size(); i++) {
-            taxVos.get(i).setPaymentOrderCount(taxVos.get(i).getPaymentOrderNum()+"/"+taxVos.get(i).getPaymentOrderManyNum());
+            taxVos.get(i).setPaymentOrderCount(taxVos.get(i).getPaymentOrderNum() + "/" + taxVos.get(i).getPaymentOrderManyNum());
             taxVos.get(i).setStatus(taxVos.get(i).getTaxStatus() == 0 ? "未认证" : "已认证");
         }
         if (!VerificationCheck.listIsNull(taxVos)) {
             try {
-                ExcelUtils.exportExcel(taxVos, "平台服务商信息", "服务商信息", TaxVo.class, "RegulatorWorker", true, response);
-                return ReturnJson.success("创客导出成功！");
+                ExcelUtils.exportExcel(taxVos, "平台服务商信息", "服务商信息", TaxVo.class, "RegulatorTax", true, response);
+                return ReturnJson.success("服务商导出成功！");
             } catch (IOException e) {
                 log.error(e.toString() + ":" + e.getMessage());
             }
         }
         return ReturnJson.error("创客导出失败！");
     }
+
+    /**
+     * 支付订单信息
+     *
+     * @return
+     */
+    @Override
+    public ReturnJson getPayInfo(PayInfoDto payInfoDto) {
+        Page page = new Page(payInfoDto.getPage(), payInfoDto.getPageSize());
+        IPage<RegulatorTaxPayInfoPo> infoPoIPage = taxDao.selectPayInfo(page, payInfoDto.getTaxId(), payInfoDto.getCompanySName(), payInfoDto.getStartDate(), payInfoDto.getEndDate());
+        List<RegulatorTaxPayInfoPo> list= infoPoIPage.getRecords();
+        for (int i = 0; i < list.size(); i++) {
+            switch (list.get(i).getPaymentOrderStatus()) {
+                case 0:
+                    list.get(i).setPaymentOrderZNameStatus("申请中");
+                    break;
+                case 1:
+                    list.get(i).setPaymentOrderZNameStatus("待支付");
+                    break;
+                case 3:
+                    list.get(i).setPaymentOrderZNameStatus("已支付");
+                    break;
+                case 4:
+                    list.get(i).setPaymentOrderZNameStatus("已确认收款");
+                    break;
+            }
+        }
+        infoPoIPage.setRecords(list);
+        return ReturnJson.success(infoPoIPage);
+    }
+
+    /**
+     * 导出支付订单信息
+     *
+     * @param paymentOrderIds
+     * @param response
+     * @return
+     */
+    @Override
+    public ReturnJson batchExportPayInfo(@NotNull String paymentOrderIds, HttpServletResponse response) {
+        List<RegulatorTaxPayInfoPo> voList = taxDao.getPayInfoByIds(Arrays.asList(paymentOrderIds.split(",")));
+        for (int i = 0; i < voList.size(); i++) {
+            switch (voList.get(i).getPaymentOrderStatus()) {
+                case 0:
+                    voList.get(i).setPaymentOrderZNameStatus("申请中");
+                    break;
+                case 1:
+                    voList.get(i).setPaymentOrderZNameStatus("待支付");
+                    break;
+                case 3:
+                    voList.get(i).setPaymentOrderZNameStatus("已支付");
+                    break;
+                case 4:
+                    voList.get(i).setPaymentOrderZNameStatus("已确认收款");
+                    break;
+            }
+        }
+        if (!VerificationCheck.listIsNull(voList)) {
+            try {
+                ExcelUtils.exportExcel(voList, "支付订单信息", "支付订单信息", RegulatorTaxPayInfoPo.class, "RegulatorTaxPayInfoPo", true, response);
+                return ReturnJson.success("支付订单导出成功！");
+            } catch (IOException e) {
+                log.error(e.toString() + ":" + e.getMessage());
+            }
+        }
+        return ReturnJson.error("创客导出失败！");
+    }
+
+    /**
+     * 支付清单明细查询
+     * @param paymentOrderId
+     * @return
+     */
+    @Override
+    public ReturnJson getPaymentInventoryInfo(String paymentOrderId,Integer page,Integer pageSize) {
+        Page<PaymentInventory> paymentInventoryPage = new Page<>(page, pageSize);
+        paymentInventoryPage = paymentInventoryDao.selectPage(paymentInventoryPage, new QueryWrapper<PaymentInventory>().eq("payment_order_id", paymentOrderId));
+        return ReturnJson.success(paymentInventoryPage);
+    }
+
 
 
 }

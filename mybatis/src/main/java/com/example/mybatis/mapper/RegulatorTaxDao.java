@@ -23,5 +23,5 @@ public interface RegulatorTaxDao extends BaseMapper<RegulatorTax> {
 
     IPage<TaxVo> selServiceProviders(Page page,@Param("tax") RegulatorTaxDto regulatorTaxDto);
 
-    List<TaxVo> selTaxListByIds(List<String> ids);
+    List<TaxVo> selTaxListByIds(@Param("ids") List<String> ids);
 }

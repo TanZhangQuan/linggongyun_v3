@@ -2,6 +2,7 @@ package com.example.merchant.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.common.util.ReturnJson;
+import com.example.merchant.dto.regulator.PayInfoDto;
 import com.example.mybatis.dto.RegulatorTaxDto;
 import com.example.mybatis.entity.RegulatorTax;
 import org.apache.http.HttpRequest;
@@ -24,5 +25,11 @@ public interface RegulatorTaxService extends IService<RegulatorTax> {
 
     ReturnJson getTax(String taxId);
 
-    ReturnJson batchExport(String taxIds, HttpServletResponse response);
+    ReturnJson batchExportTax(String taxIds, HttpServletResponse response);
+
+    ReturnJson getPayInfo(PayInfoDto payInfoDto);
+
+    ReturnJson batchExportPayInfo(String paymentOrderIds, HttpServletResponse response);
+
+    ReturnJson getPaymentInventoryInfo(String paymentOrderId,Integer page,Integer pageSize);
 }

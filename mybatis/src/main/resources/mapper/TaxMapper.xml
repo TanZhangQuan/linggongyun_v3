@@ -19,9 +19,32 @@
         <result column="update_date" property="updateDate"/>
     </resultMap>
 
+    <resultMap id="PayInfo" type="com.example.mybatis.po.RegulatorTaxPayInfoPo">
+        <id column="id" property="id"/>
+        <result column="platform_service_provider" property="platformServiceProvider"/>
+        <result column="type" property="type"/>
+        <result column="company_contract" property="companyContract"/>
+        <result column="payment_inventory" property="paymentInventory"/>
+        <result column="real_money" property="realMoney"/>
+        <result column="payment_order_status" property="paymentOrderStatus"/>
+        <result column="payment_date" property="paymentDate"/>
+    </resultMap>
+
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id, tax_s_name, tax_man, business_license, tax_name, tax_address, tax_create_date, link_man, link_mobile, credit_code, tax_status, create_date, update_date
+    </sql>
+
+    <sql id="que">
+        <if test="companySName != null and companySName != '' ">
+            and company_s_name like CONCAT('%',#{companySName},'%')
+        </if>
+        <if test="startDate != null and startDate != ''">
+            and date(create_date) &gt;= #{startDate}
+        </if>
+        <if test="endDate != null and endDate != ''">
+            and date(create_date) &lt;= #{endDate}
+        </if>
     </sql>
 
     <resultMap id="SellerById" type="com.example.mybatis.vo.SellerVo">
@@ -134,6 +157,29 @@
             #{item}
         </foreach>
         ORDER BY payment_date desc
+    </select>
+
+    <select id="selectPayInfo" resultMap="PayInfo">
+        SELECT id,platform_service_provider,company_s_name,if(TRUE,'总包+分包','众包') as type,company_contract,payment_inventory,real_money,payment_order_status,payment_date
+        from tb_payment_order
+        WHERE tax_id=#{taxId}
+        <include refid="que"/>
+        UNION
+        SELECT id,platform_service_provider,company_s_name,if(FALSE,'总包+分包','众包') as type,company_contract,payment_inventory,real_money,payment_order_status,payment_date
+        FROM tb_payment_order_many
+        WHERE tax_id=#{taxId}
+        <include refid="que"/>
+        ORDER BY id
+    </select>
+
+
+    <select id="getPayInfoByIds" resultMap="PayInfo">
+        SELECT id,platform_service_provider,company_s_name,if(TRUE,'总包+分包','众包') as type,company_contract,payment_inventory,real_money,payment_order_status,payment_date
+        from tb_payment_order
+        where id in
+        <foreach collection="payIds" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
     </select>
 
 
