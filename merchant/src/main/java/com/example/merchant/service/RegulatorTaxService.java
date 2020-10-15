@@ -32,4 +32,6 @@ public interface RegulatorTaxService extends IService<RegulatorTax> {
     ReturnJson batchExportPayInfo(String paymentOrderIds, HttpServletResponse response);
 
     ReturnJson getPaymentInventoryInfo(String paymentOrderId,Integer page,Integer pageSize);
+
+    ReturnJson getPaymentOrderInfo(String paymentOrderId,Integer type);
 }
