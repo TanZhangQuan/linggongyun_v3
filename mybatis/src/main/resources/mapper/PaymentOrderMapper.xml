@@ -113,8 +113,6 @@
     </select>
 
 
-
-
     <!--平台端查询...............-->
 
     <!--    查询最近30天-->
@@ -147,8 +145,8 @@
 
     <!--查询本周已支付的订单-->
     <select id="selectWeekpaas" parameterType="list" resultMap="BaseResultMap">
-      SELECT * FROM tb_payment_order WHERE YEARWEEK(date_format(payment_date,'%Y-%m-%d')) = YEARWEEK(now())
-      and payment_order_status &gt;= 2 and company_id in
+        SELECT * FROM tb_payment_order WHERE YEARWEEK(date_format(payment_date,'%Y-%m-%d')) = YEARWEEK(now())
+        and payment_order_status &gt;= 2 and company_id in
         <foreach collection="list" index="index" item="merchantIds" open="(" separator="," close=")">
             #{merchantIds}
         </foreach>
@@ -165,8 +163,8 @@
 
     <!--查询今年已支付的订单-->
     <select id="selectYearpaas" parameterType="list" resultMap="BaseResultMap">
-         select * from `tb_payment_order` where YEAR(payment_date)=YEAR(NOW())
-         and payment_order_status &gt;= 2 and company_id in
+        select * from `tb_payment_order` where YEAR(payment_date)=YEAR(NOW())
+        and payment_order_status &gt;= 2 and company_id in
         <foreach collection="list" index="index" item="merchantIds" open="(" separator="," close=")">
             #{merchantIds}
         </foreach>
@@ -366,5 +364,4 @@
         ON po.company_id = ci.id
         WHERE po.id = #{paymentOrderId}
     </select>
-
 </mapper>

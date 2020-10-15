@@ -16,4 +16,5 @@ public class PaymentOrderInfoVO {
     private PaymentOrderInfoPO paymentOrderInfoPO;
     @ApiModelProperty("支付明细")
     private List<PaymentInventory> paymentInventories;
+
 }

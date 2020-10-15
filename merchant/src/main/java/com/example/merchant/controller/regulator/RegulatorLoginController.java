@@ -27,8 +27,10 @@ public class RegulatorLoginController {
 
     @PostMapping("/regulatorLogin")
     @ApiOperation(value = "账号密码登录", notes = "账号密码登录", httpMethod = "POST")
-    @ApiImplicitParams(value = {@ApiImplicitParam(name = "username", value = "登录账号", required = true),
-            @ApiImplicitParam(name = "password", value = "登录密码", required = true)})
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(name = "username", value = "登录账号", required = true),
+            @ApiImplicitParam(name = "password", value = "登录密码", required = true)
+    })
     public ReturnJson regulatorLogin(@NotBlank(message = "用户名不能为空") @RequestParam(required = false) String username,
                                     @NotBlank(message = "密码不能为空") @RequestParam(required = false) String password, HttpServletResponse response) {
         return regulatorService.regulatorLogin(username, password, response);
@@ -36,7 +38,9 @@ public class RegulatorLoginController {
 
     @PostMapping("/regulatorLogout")
     @ApiOperation(value = "登出", notes = "登出", httpMethod = "POST")
-    @ApiImplicitParams(value = {@ApiImplicitParam(name = "regulatorId", value = "监管人员Id", required = true)})
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(name = "regulatorId", value = "监管人员Id", required = true)
+    })
     public ReturnJson regulatorLogout(@NotBlank(message = "监管人员Id不能为空") @RequestParam(required = false) String regulatorId) {
         return regulatorService.regulatorLogout(regulatorId);
     }
