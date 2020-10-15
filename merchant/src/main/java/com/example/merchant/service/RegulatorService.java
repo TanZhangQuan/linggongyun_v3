@@ -59,4 +59,8 @@ public interface RegulatorService extends IService<Regulator> {
     ReturnJson getPaymentOrderInfo(String workerId, String paymentId, Integer packageStatus);
 
     ReturnJson getPaymentInventory(String paymentOrderId, Integer page, Integer pageSize);
+
+    ReturnJson regulatorLogin(String username, String password, HttpServletResponse response);
+
+    ReturnJson regulatorLogout(String regulatorId);
 }

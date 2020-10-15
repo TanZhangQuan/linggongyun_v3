@@ -126,7 +126,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
     @Value("${TOKEN}")
     private String TOKEN;
 
-    private static final String MERCHANT= "MERCHANT";
+    private static final String MERCHANT= "merchant";
 
     /**
      * 根据用户名和密码进行登录

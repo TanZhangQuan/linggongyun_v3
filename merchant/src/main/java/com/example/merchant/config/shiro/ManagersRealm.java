@@ -1,8 +1,10 @@
 package com.example.merchant.config.shiro;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.example.common.util.UserUtils;
 import com.example.mybatis.entity.Managers;
 import com.example.mybatis.entity.Menu;
+import com.example.mybatis.entity.Merchant;
 import com.example.mybatis.entity.MerchantRole;
 import com.example.mybatis.mapper.ManagersDao;
 import com.example.mybatis.mapper.MerchantRoleDao;
@@ -23,9 +25,15 @@ import java.util.Set;
 @Slf4j
 public class ManagersRealm extends AuthorizingRealm {
 
+    private static final String MANAGER = "MANAGER";
+
+    {
+        super.setName("manager");//设置realm的名字，非常重要
+    }
+
     @Resource
     private ManagersDao managersDao;
-    
+
     @Resource
     private MerchantRoleDao merchantRoleDao;
 
@@ -37,7 +45,21 @@ public class ManagersRealm extends AuthorizingRealm {
      */
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
-       return null;
+        log.info("执行授权逻辑");
+        if (principals == null) {
+            throw new AuthorizationException("PrincipalCollection method argument cannot be null.");
+        }
+        SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
+        String loginName = (String) principals.getPrimaryPrincipal();//获取登录用户
+        System.out.println("当前的用户--------------Manager-----------------" + loginName);
+
+        Managers managers = managersDao.selectOne(new QueryWrapper<Managers>().eq("user_name", loginName));//查询登录用户的角色
+
+        MerchantRole merchantRole = merchantRoleDao.selectById(managers.getRoleId());
+        Set<String> permissions =  merchantRoleDao.getMenuById(merchantRole.getId());
+        authorizationInfo.addRole(merchantRole.getRoleName());//添加角色
+        authorizationInfo.setStringPermissions(permissions);
+        return authorizationInfo;
     }
 
     /**
@@ -57,13 +79,13 @@ public class ManagersRealm extends AuthorizingRealm {
         String username = upToken.getUsername();
         String password = new String(upToken.getPassword());
 
-        String realmName=getName();
+        String realmName = getName();
         SimpleAuthenticationInfo authenticationInfo = new SimpleAuthenticationInfo(
                 username, //用户名
                 password, //密码
                 realmName  //realm name
         );
-        System.out.println("realmName*-----------------------------------------*"+realmName);
         return authenticationInfo;
     }
+
 }

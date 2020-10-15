@@ -8,6 +8,7 @@ import com.example.mybatis.entity.MerchantRoleMenu;
 import com.example.mybatis.vo.RoleMenuVo;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * <p>
@@ -20,7 +21,7 @@ import java.util.List;
  */
 public interface MerchantRoleDao extends BaseMapper<MerchantRole> {
 
-    List<Menu> getMenuById(String MerchantId);
+    Set<String> getMenuById(String MerchantId);
 
     List<RoleMenuVo> getRolemenu(String merchantId);
 

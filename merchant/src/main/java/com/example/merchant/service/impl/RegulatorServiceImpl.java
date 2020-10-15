@@ -4,10 +4,9 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.example.common.util.ExcelUtils;
-import com.example.common.util.MD5;
-import com.example.common.util.ReturnJson;
-import com.example.common.util.VerificationCheck;
+import com.example.common.sms.SenSMS;
+import com.example.common.util.*;
+import com.example.merchant.config.shiro.CustomizedToken;
 import com.example.merchant.dto.platform.RegulatorDto;
 import com.example.merchant.dto.platform.RegulatorQueryDto;
 import com.example.merchant.dto.platform.RegulatorTaxDto;
@@ -17,6 +16,7 @@ import com.example.merchant.service.MerchantService;
 import com.example.merchant.service.RegulatorService;
 import com.example.merchant.service.RegulatorTaxService;
 import com.example.merchant.service.TaxService;
+import com.example.merchant.util.JwtUtils;
 import com.example.merchant.vo.PaymentOrderInfoVO;
 import com.example.merchant.vo.platform.HomePageVO;
 import com.example.merchant.vo.platform.RegulatorTaxVO;
@@ -27,8 +27,13 @@ import com.example.mybatis.po.InvoicePO;
 import com.example.mybatis.po.PaymentOrderInfoPO;
 import com.example.mybatis.po.RegulatorWorkerPO;
 import com.example.mybatis.po.WorekerPaymentListPo;
+import com.example.redis.dao.RedisDao;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.LockedAccountException;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -51,6 +56,7 @@ import java.util.*;
 @Slf4j
 public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> implements RegulatorService {
 
+    public static final String REGULATOR = "regulator";
     @Resource
     private TaxDao taxDao;
 
@@ -81,8 +87,19 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
     @Resource
     private PaymentInventoryDao paymentInventoryDao;
 
+    @Resource
+    private JwtUtils jwtUtils;
+
+    @Resource
+    private RedisDao redisDao;
+
     @Value("${PWD_KEY}")
     private String PWD_KEY;
+
+    @Value("${TOKEN}")
+    private String TOKEN;
+
+
 
     /**
      * 添加监管部门
@@ -245,7 +262,7 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
      * @return
      */
     @Override
-    public ReturnJson getRegulatorTaxAll(String regulatorId, Integer page, Integer pageSize) {
+        public ReturnJson getRegulatorTaxAll(String regulatorId, Integer page, Integer pageSize) {
         List<RegulatorTaxVO> regulatorTaxVOS = new ArrayList<>();
         Page<RegulatorTax> taxPage = new Page<>(page, pageSize);
         Page<RegulatorTax> regulatorTaxPage = regulatorTaxService.page(taxPage, new QueryWrapper<RegulatorTax>().eq("regulator_id", regulatorId));
@@ -568,6 +585,35 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
         Page<PaymentInventory> paymentInventoryPage = new Page<>(page, pageSize);
         paymentInventoryPage = paymentInventoryDao.selectPage(paymentInventoryPage, new QueryWrapper<PaymentInventory>().eq("payment_order_id", paymentOrderId));
         return ReturnJson.success(paymentInventoryPage);
+    }
+
+    @Override
+    public ReturnJson regulatorLogin(String username, String password, HttpServletResponse response) {
+        String encryptPWD = PWD_KEY + MD5.md5(password);
+//        Subject currentUser = SecurityUtils.getSubject();
+        QueryWrapper<Regulator> merchantQueryWrapper = new QueryWrapper<>();
+        merchantQueryWrapper.eq("user_name", username).eq("pass_word", encryptPWD);
+        Regulator re = regulatorDao.selectOne(merchantQueryWrapper);
+        if (re == null) {
+            throw new AuthenticationException("账号或密码错误");
+        }
+        if (re.getStatus() == 1) {
+            throw new LockedAccountException("账号已被禁用");
+        }
+//        CustomizedToken customizedToken = new CustomizedToken(username, encryptPWD, REGULATOR);
+//        currentUser.login(customizedToken);//shiro验证身份
+        String token = jwtUtils.generateToken(re.getId());
+        response.setHeader(TOKEN, token);
+        redisDao.set(re.getId(), JsonUtils.objectToJson(re));
+        redisDao.setExpire(re.getId(), 60 * 60 * 24 * 7);
+        re.setPassWord("");
+        return ReturnJson.success(re);
+    }
+
+    @Override
+    public ReturnJson regulatorLogout(String regulatorId) {
+        redisDao.remove(regulatorId);
+        return ReturnJson.success("登出成功");
     }
 
     /**

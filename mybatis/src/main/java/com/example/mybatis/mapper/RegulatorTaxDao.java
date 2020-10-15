@@ -1,7 +1,15 @@
 package com.example.mybatis.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.example.mybatis.dto.RegulatorTaxDto;
 import com.example.mybatis.entity.RegulatorTax;
+import com.example.mybatis.entity.Tax;
+import com.example.mybatis.vo.TaxVo;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,4 +21,7 @@ import com.example.mybatis.entity.RegulatorTax;
  */
 public interface RegulatorTaxDao extends BaseMapper<RegulatorTax> {
 
+    IPage<TaxVo> selServiceProviders(Page page,@Param("tax") RegulatorTaxDto regulatorTaxDto);
+
+    List<TaxVo> selTaxListByIds(List<String> ids);
 }

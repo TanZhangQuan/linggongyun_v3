@@ -1,6 +1,7 @@
 package com.example.merchant.config.shiro;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.example.common.util.UserUtils;
 import com.example.mybatis.entity.Managers;
 import com.example.mybatis.entity.Menu;
 import com.example.mybatis.entity.Merchant;
@@ -31,6 +32,13 @@ import java.util.Set;
 @Slf4j
 public class MerchantRealm extends AuthorizingRealm {
 
+    private static final String MANAGER = "MERCHANT";
+
+    {
+        super.setName("merchant");//设置realm的名字，非常重要
+    }
+
+
     @Resource
     private MerchantDao merchantDao;
 
@@ -55,21 +63,11 @@ public class MerchantRealm extends AuthorizingRealm {
         SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
         String loginName = (String) principals.getPrimaryPrincipal();//获取登录用户
         System.out.println("当前的用户--------------Merchant-----------------" + loginName);
-        String roleId;
         Merchant user = merchantDao.selectOne(new QueryWrapper<Merchant>().eq("user_name", loginName));//查询登录用户的角色
-        if (user==null){
-            Managers managers = managersDao.selectOne(new QueryWrapper<Managers>().eq("user_name", loginName));//查询登录用户的角色
-            roleId=managers.getRoleId();
-        }else {
-            roleId=user.getRoleId();
-        }
-        MerchantRole merchantRole = merchantRoleDao.selectById(roleId);
-        List<Menu> menuList = merchantRoleDao.getMenuById(merchantRole.getId());
+        MerchantRole merchantRole = merchantRoleDao.selectById(user.getRoleId());
+        Set<String> permissions =  merchantRoleDao.getMenuById(merchantRole.getId());
         authorizationInfo.addRole(merchantRole.getRoleName());//添加角色
-        Set<String> permissions = new HashSet<>();
-        for (int i = 0; i < menuList.size(); i++) {
-            permissions.add(menuList.get(i).getMenuName());//添加权限
-        }
+
         authorizationInfo.setStringPermissions(permissions);
         return authorizationInfo;
     }

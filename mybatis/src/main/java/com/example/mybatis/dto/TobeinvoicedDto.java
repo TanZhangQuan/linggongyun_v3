@@ -30,5 +30,8 @@ public class TobeinvoicedDto {
     @NotNull(message = "当前页不能为空")
     @ApiModelProperty(value = "当前页")
     @Min(value = 1,message = "当前页最小为1")
-    private Integer pageNo;
+    private Integer pageNo=1;
+
+    @ApiModelProperty(value = "每页大小")
+    private Integer pageSize=10;
 }

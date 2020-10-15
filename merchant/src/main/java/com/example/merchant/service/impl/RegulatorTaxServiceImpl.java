@@ -1,10 +1,26 @@
 package com.example.merchant.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.example.common.util.ExcelUtils;
+import com.example.common.util.ReturnJson;
+import com.example.common.util.VerificationCheck;
+import com.example.mybatis.dto.RegulatorTaxDto;
 import com.example.mybatis.entity.RegulatorTax;
+import com.example.mybatis.entity.Tax;
 import com.example.mybatis.mapper.RegulatorTaxDao;
 import com.example.merchant.service.RegulatorTaxService;
+import com.example.mybatis.mapper.TaxDao;
+import com.example.mybatis.vo.TaxVo;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * <p>
@@ -16,5 +32,84 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class RegulatorTaxServiceImpl extends ServiceImpl<RegulatorTaxDao, RegulatorTax> implements RegulatorTaxService {
+
+    @Resource
+    private RegulatorTaxDao regulatorTaxDao;
+    @Resource
+    private TaxDao taxDao;
+
+
+    /**
+     * 监管服务商上方的四个数据
+     *
+     * @param regulatorId
+     * @return
+     */
+    @Override
+    public ReturnJson homeFourData(String regulatorId) {
+        Map<String, Object> map = new HashMap<>();
+        int serviceProvidernum = regulatorTaxDao.selectCount(new QueryWrapper<RegulatorTax>().eq("regulator_id", regulatorId));//监管区服务商数量
+        map.put("监管区服务商数量", serviceProvidernum);
+
+        return null;
+    }
+
+    /**
+     * 查询服务商列表
+     *
+     * @param regulatorTaxDto
+     * @return
+     */
+    @Override
+    public ReturnJson listTax(RegulatorTaxDto regulatorTaxDto) {
+        Page page = new Page(regulatorTaxDto.getPage(), regulatorTaxDto.getPageSize());
+        IPage<TaxVo> taxIPage = regulatorTaxDao.selServiceProviders(page, regulatorTaxDto);
+        List<TaxVo> voList = taxIPage.getRecords();
+        for (int i = 0; i < voList.size(); i++) {
+            voList.get(i).setPaymentOrderCount(voList.get(i).getPaymentOrderNum()+"/"+voList.get(i).getPaymentOrderManyNum());
+            voList.get(i).setStatus(voList.get(i).getTaxStatus() == 0 ? "未认证" : "已认证");
+        }
+        taxIPage.setRecords(voList);
+        return ReturnJson.success(taxIPage);
+    }
+
+    /**
+     * 查询服务商信息
+     *
+     * @param taxId
+     * @return
+     */
+    @Override
+    public ReturnJson getTax(String taxId) {
+        Map<String, Object> map = new HashMap<>();
+        Tax tax = taxDao.selectById(taxId);
+        map.put("服务商信息", tax);
+        return ReturnJson.success(tax);
+    }
+
+    /**
+     * 批量导出服务商信息
+     *
+     * @param taxIds 服务商id
+     * @return
+     */
+    @Override
+    public ReturnJson batchExport(String taxIds, HttpServletResponse response) {
+        List<TaxVo> taxVos = regulatorTaxDao.selTaxListByIds(Arrays.asList(taxIds.split(",")));
+        for (int i = 0; i < taxVos.size(); i++) {
+            taxVos.get(i).setPaymentOrderCount(taxVos.get(i).getPaymentOrderNum()+"/"+taxVos.get(i).getPaymentOrderManyNum());
+            taxVos.get(i).setStatus(taxVos.get(i).getTaxStatus() == 0 ? "未认证" : "已认证");
+        }
+        if (!VerificationCheck.listIsNull(taxVos)) {
+            try {
+                ExcelUtils.exportExcel(taxVos, "平台服务商信息", "服务商信息", TaxVo.class, "RegulatorWorker", true, response);
+                return ReturnJson.success("创客导出成功！");
+            } catch (IOException e) {
+                log.error(e.toString() + ":" + e.getMessage());
+            }
+        }
+        return ReturnJson.error("创客导出失败！");
+    }
+
 
 }

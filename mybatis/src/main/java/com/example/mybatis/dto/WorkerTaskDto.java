@@ -1,5 +1,6 @@
 package com.example.mybatis.dto;
 
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -7,6 +8,7 @@ import lombok.Data;
  * 派单dto
  */
 @Data
+@ApiModel
 public class WorkerTaskDto {
 
     @ApiModelProperty(value = "id")

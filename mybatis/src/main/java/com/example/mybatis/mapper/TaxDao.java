@@ -29,4 +29,6 @@ public interface TaxDao extends BaseMapper<Tax> {
 
     IPage<TaxListPO> selectTaxList(Page page, @Param("taxName") String taxName, @Param("startDate") String startDate, @Param("endDate") String endDate);
     IPage<MerchantPaymentListPO> selectTaxPaymentList(Page page, @Param("paymentOrderIds") List<String> paymentOrderIds);
+
+
 }
