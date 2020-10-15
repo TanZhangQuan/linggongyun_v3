@@ -7,6 +7,8 @@ import com.example.mybatis.entity.CompanyInfo;
 import com.example.mybatis.po.CompanyPaymentOrderPO;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 /**
  * <p>
  * 公司信息
@@ -17,5 +19,7 @@ import org.apache.ibatis.annotations.Param;
  * @since 2020-09-07
  */
 public interface CompanyInfoDao extends BaseMapper<CompanyInfo> {
-    IPage<CompanyPaymentOrderPO> selectCompanyPaymentOrder(Page page,@Param("companyId") String companyId, @Param("taxName") String taxName, @Param("startDate") String startDate, @Param("endDate") String endDate);
+    IPage<CompanyPaymentOrderPO> selectCompanyPaymentOrder(Page page, @Param("taxIds") List<String> taxIds, @Param("companyId") String companyId, @Param("taxName") String taxName, @Param("startDate") String startDate, @Param("endDate") String endDate);
+
+    List<CompanyPaymentOrderPO> exportCompanyPaymentOrder(@Param("paymentOrderIds") List<String> paymentOrderIds);
 }

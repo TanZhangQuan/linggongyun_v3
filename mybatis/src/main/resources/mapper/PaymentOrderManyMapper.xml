@@ -345,6 +345,7 @@
         <result column="payment_mode" property="paymentMode"/>
         <result column="real_money" property="realMoney"/>
         <result column="create_date" property="creatDate"/>
+        <result column="many_payment" property="manyPayment"/>
         <result column="company_name" property="companyName"/>
         <result column="payment_bank_name" property="paymentBankName"/>
         <result column="payment_bank_code" property="paymentBankCode"/>
@@ -366,6 +367,7 @@
         pom.payment_mode,
         pom.real_money,
         pom.create_date,
+        pom.many_payment,
         ci.company_name,
         ci.bank_name AS 'payment_bank_name',
         ci.bank_code AS 'payment_bank_code',

@@ -42,7 +42,7 @@
         (case when b.id is null then 1 else 0 end) package_status,b.real_money,b.is_invoice,b.payment_date
         FROM tb_company_info a RIGHT JOIN tb_payment_order b on a.id = b.company_id and b.payment_order_status &gt;= 2
         ) union
-        (SELECT b.id 'payment_order_id' ,b.tax_id,b.company_id ,b.company_s_name 'merchant_name',
+        (SELECT b.id 'payment_order_id' ,b.tax_id,b.company_id ,b.company_s_name 'company_name',
         b.platform_service_provider 'tax_name', b.company_contract,b.payment_inventory,
         (case when b.id is null then 0 else 1 end) package_status,b.real_money,b.is_application 'is_invoice',b.payment_date
          FROM tb_company_info a RIGHT JOIN tb_payment_order_many b on a.id = b.company_id and b.payment_order_status &gt;= 2
@@ -78,6 +78,10 @@
         <include refid="tb_company_panyment_list"/>
         <where>
             company_id = #{companyId}
+            AND tax_id IN
+            <foreach collection="taxIds" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
             <if test="taxName != null and taxName != ''">
                 AND tax_name LIKE CONCAT('%',#{taxName},'%')
             </if>
@@ -89,6 +93,24 @@
             </if>
         </where>
         ORDER BY payment_date DESC
+    </select>
+
+    <select id="exportCompanyPaymentOrder" resultMap="CompanyPaymentOrderPOResultMap">
+        SELECT payment_order_id,
+        company_name,
+        tax_name,
+        package_status,
+        company_contract,
+        payment_inventory,
+        real_money,
+        is_invoice,
+        payment_date
+        FROM
+        <include refid="tb_company_panyment_list"/>
+        WHERE payment_order_id IN
+        <foreach collection="paymentOrderIds" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
     </select>
 
 </mapper>
