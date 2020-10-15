@@ -38,6 +38,6 @@ public class RegulatorMerchantInfoVO {
     private LocalDateTime createDate;
 
     @ApiModelProperty("公司状态")
-    private Integer companyStatus;
+    private String companyStatus;
 
 }

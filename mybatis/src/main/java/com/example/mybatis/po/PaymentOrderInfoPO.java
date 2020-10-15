@@ -46,6 +46,15 @@ public class PaymentOrderInfoPO {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime creatDate;
 
+    @ApiModelProperty("总包支付回单")
+    private String turnkeyProjectPayment;
+
+    @ApiModelProperty("分包支付回单")
+    private String subpackagePayment;
+
+    @ApiModelProperty("众包支付回单")
+    private String manyPayment;
+
     @ApiModelProperty("商户名称（也是总包的支付方）")
     private String companyName;
 

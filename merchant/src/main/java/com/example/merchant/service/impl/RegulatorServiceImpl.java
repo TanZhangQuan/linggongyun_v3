@@ -12,6 +12,7 @@ import com.example.merchant.dto.platform.RegulatorDto;
 import com.example.merchant.dto.platform.RegulatorQueryDto;
 import com.example.merchant.dto.platform.RegulatorTaxDto;
 import com.example.merchant.dto.regulator.RegulatorMerchantDto;
+import com.example.merchant.dto.regulator.RegulatorMerchantPaymentOrderDto;
 import com.example.merchant.dto.regulator.RegulatorWorkerDto;
 import com.example.merchant.dto.regulator.RegulatorWorkerPaymentDto;
 import com.example.merchant.service.MerchantService;
@@ -711,7 +712,7 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
         }
         RegulatorMerchantInfoVO regulatorMerchantInfoVO = new RegulatorMerchantInfoVO();
         BeanUtils.copyProperties(companyInfo, regulatorMerchantInfoVO);
-
+        regulatorMerchantInfoVO.setCompanyStatus(companyInfo.getCompanyStatus() == 0 ? "正常" : "停用");
         ReturnJson returnJson = this.getTaxIds(regulatorId);
         if (returnJson.getCode() == 300) {
             return returnJson;
@@ -748,13 +749,13 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
         }
         CountSingleRegulatorMerchantVO countSingleRegulatorMerchantVO = new CountSingleRegulatorMerchantVO(companyInfo.getCompanyName(), totalOrderCount, totalMoney, totalTaxMoney, manyOrderCount, manyMoney, manyTaxMoney);
 
-        IPage<CompanyPaymentOrderPO> companyPaymentOrderPOIPage = companyInfoDao.selectCompanyPaymentOrder(new Page(1, 10), companyId, null, null, null);
+        IPage<CompanyPaymentOrderPO> companyPaymentOrderPOIPage = companyInfoDao.selectCompanyPaymentOrder(new Page(1, 10), taxIds, companyId, null, null, null);
         List<CompanyPaymentOrderPO> companyPaymentOrderPOS = companyPaymentOrderPOIPage.getRecords();
         List<RegulatorMerchantPaymentOrderVO> regulatorMerchantPaymentOrderVOS = new ArrayList<>();
 
         for (CompanyPaymentOrderPO companyPaymentOrderPO : companyPaymentOrderPOS) {
             RegulatorMerchantPaymentOrderVO regulatorMerchantPaymentOrderVO = new RegulatorMerchantPaymentOrderVO();
-            BeanUtils.copyProperties(companyPaymentOrderPO,regulatorMerchantPaymentOrderVO);
+            BeanUtils.copyProperties(companyPaymentOrderPO, regulatorMerchantPaymentOrderVO);
             regulatorMerchantPaymentOrderVO.setPackageStatus(companyPaymentOrderPO.getPackageStatus() == 0 ? "总包+分包" : "众包");
             regulatorMerchantPaymentOrderVO.setIsInvoice(companyPaymentOrderPO.getIsInvoice() == 0 ? "未开票" : "已完成");
             regulatorMerchantPaymentOrderVOS.add(regulatorMerchantPaymentOrderVO);
@@ -765,6 +766,70 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
         regulatorMerchantParticularsVO.setRegulatorMerchantPaymentOrderVOS(regulatorMerchantPaymentOrderVOS);
         regulatorMerchantParticularsVO.setRegulatorMerchantInfoVO(regulatorMerchantInfoVO);
         return ReturnJson.success(regulatorMerchantParticularsVO);
+    }
+
+    /**
+     * 查询所监管商户的支付订单
+     *
+     * @param regulatorMerchantPaymentOrderDto
+     * @return
+     */
+    @Override
+    public ReturnJson getRegulatorMerchantPaymentOrder(RegulatorMerchantPaymentOrderDto regulatorMerchantPaymentOrderDto) {
+        ReturnJson returnJson = this.getTaxIds(regulatorMerchantPaymentOrderDto.getRegulatorId());
+        if (returnJson.getCode() == 300) {
+            return returnJson;
+        }
+        List<String> taxIds = (List<String>) returnJson.getData();
+        Page<CompanyPaymentOrderPO> page = new Page(regulatorMerchantPaymentOrderDto.getPage(), regulatorMerchantPaymentOrderDto.getPageSize());
+        IPage<CompanyPaymentOrderPO> companyPaymentOrderPOIPage = companyInfoDao.selectCompanyPaymentOrder(page, taxIds, regulatorMerchantPaymentOrderDto.getCompanyId(),
+                regulatorMerchantPaymentOrderDto.getTaxName(), regulatorMerchantPaymentOrderDto.getStartDate(), regulatorMerchantPaymentOrderDto.getEndDate());
+
+        List<CompanyPaymentOrderPO> companyPaymentOrderPOS = companyPaymentOrderPOIPage.getRecords();
+        List<RegulatorMerchantPaymentOrderVO> regulatorMerchantPaymentOrderVOS = new ArrayList<>();
+
+        for (CompanyPaymentOrderPO companyPaymentOrderPO : companyPaymentOrderPOS) {
+            RegulatorMerchantPaymentOrderVO regulatorMerchantPaymentOrderVO = new RegulatorMerchantPaymentOrderVO();
+            BeanUtils.copyProperties(companyPaymentOrderPO, regulatorMerchantPaymentOrderVO);
+            regulatorMerchantPaymentOrderVO.setPackageStatus(companyPaymentOrderPO.getPackageStatus() == 0 ? "总包+分包" : "众包");
+            regulatorMerchantPaymentOrderVO.setIsInvoice(companyPaymentOrderPO.getIsInvoice() == 0 ? "未开票" : "已完成");
+            regulatorMerchantPaymentOrderVOS.add(regulatorMerchantPaymentOrderVO);
+        }
+        ReturnJson success = ReturnJson.success(companyPaymentOrderPOIPage);
+        success.setData(regulatorMerchantPaymentOrderVOS);
+        return success;
+    }
+
+    /**
+     * 导出所监管商户的支付订单
+     *
+     * @param paymentOrderIds
+     * @return
+     */
+    @Override
+    public ReturnJson exportRegulatorMerchantPaymentOrder(String paymentOrderIds, HttpServletResponse response) {
+        List<CompanyPaymentOrderPO> companyPaymentOrderPOS = companyInfoDao.exportCompanyPaymentOrder(Arrays.asList(paymentOrderIds.split(",")));
+
+        if (VerificationCheck.listIsNull(companyPaymentOrderPOS)) {
+            log.error("数据库没有导出的数据！");
+            ReturnJson.error("导出失败，请重试！");
+        }
+
+        List<RegulatorMerchantPaymentOrderVO> regulatorMerchantPaymentOrderVOS = new ArrayList<>();
+        for (CompanyPaymentOrderPO companyPaymentOrderPO : companyPaymentOrderPOS) {
+            RegulatorMerchantPaymentOrderVO regulatorMerchantPaymentOrderVO = new RegulatorMerchantPaymentOrderVO();
+            BeanUtils.copyProperties(companyPaymentOrderPO, regulatorMerchantPaymentOrderVO);
+            regulatorMerchantPaymentOrderVO.setPackageStatus(companyPaymentOrderPO.getPackageStatus() == 0 ? "总包+分包" : "众包");
+            regulatorMerchantPaymentOrderVO.setIsInvoice(companyPaymentOrderPO.getIsInvoice() == 0 ? "未开票" : "已完成");
+            regulatorMerchantPaymentOrderVOS.add(regulatorMerchantPaymentOrderVO);
+        }
+        try {
+            ExcelUtils.exportExcel(regulatorMerchantPaymentOrderVOS,"商户支付订单","订单信息",RegulatorMerchantPaymentOrderVO.class,"MerchantPaymentOrder",true,response);
+        } catch (IOException e) {
+            log.error(e+":"+e.getMessage());
+            ReturnJson.error("导出失败，请重试！");
+        }
+        return null;
     }
 
     /**

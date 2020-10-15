@@ -327,6 +327,8 @@
         <result column="real_money" property="realMoney"/>
         <result column="create_date" property="creatDate"/>
         <result column="company_name" property="companyName"/>
+        <result column="subpackage_payment" property="subpackagePayment"/>
+        <result column="turnkey_project_payment" property="turnkeyProjectPayment"/>
         <result column="payment_bank_name" property="paymentBankName"/>
         <result column="payment_bank_code" property="paymentBankCode"/>
         <result column="payee" property="payee"/>
@@ -348,6 +350,8 @@
         po.payment_mode,
         po.real_money,
         po.create_date,
+        po.subpackage_payment,
+        po.turnkey_project_payment,
         ci.company_name,
         ci.bank_name AS 'payment_bank_name',
         ci.bank_code AS 'payment_bank_code',
