@@ -34,56 +34,72 @@ public class HomePageMerchantController {
 
     @PostMapping("/homePageInfo")
     @ApiOperation(value = "获取首页基本信息", notes = "获取首页基本信息", httpMethod = "POST")
-    @ApiImplicitParams(value = {@ApiImplicitParam(name = "companyId", value = "商户公司ID", required = true)})
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(name = "companyId", value = "商户公司ID", required = true)
+    })
     public ReturnJson myWorker(@NotBlank(message = "商户公司ID不能为空") @RequestParam(required = false) String companyId) {
         return homePageService.getHomePageInof(companyId);
     }
 
     @PostMapping("/totalDayInfo")
     @ApiOperation(value = "获取总包+分包今天的支付额", notes = "获取总包+分包今天的支付额", httpMethod = "POST")
-    @ApiImplicitParams(value = {@ApiImplicitParam(name = "companyId", value = "商户的公司ID")})
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(name = "companyId", value = "商户的公司ID")
+    })
     public ReturnJson totalDayInfo(@NotBlank(message = "商户的公司ID不能为空") @RequestParam String companyId) {
         return paymentOrderService.getDay(companyId);
     }
 
     @PostMapping("/totalWeekInfo")
     @ApiOperation(value = "获取总包+分包本周的支付额", notes = "获取总包+分包本周的支付额", httpMethod = "POST")
-    @ApiImplicitParams(value = {@ApiImplicitParam(name = "companyId", value = "商户的公司ID", required = true)})
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(name = "companyId", value = "商户的公司ID", required = true)
+    })
     public ReturnJson totalWeekInfo(@NotBlank(message = "商户的公司ID不能为空") @RequestParam(required = false) String companyId) {
         return paymentOrderService.getWeek(companyId);
     }
 
     @PostMapping("/totalMonthInfo")
     @ApiOperation(value = "获取总包+分包本月的支付额", notes = "获取总包+分包本月的支付额", httpMethod = "POST")
-    @ApiImplicitParams(value = {@ApiImplicitParam(name = "companyId", value = "商户的公司ID", required = true)})
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(name = "companyId", value = "商户的公司ID", required = true)
+    })
     public ReturnJson totalMonthInfo(@NotBlank(message = "商户的公司ID不能为空") @RequestParam String companyId) {
         return paymentOrderService.getMonth(companyId);
     }
 
     @PostMapping("/totalYearInfo")
     @ApiOperation(value = "获取总包+分包全年的支付额", notes = "获取总包+分包全年的支付额", httpMethod = "POST")
-    @ApiImplicitParams(value = {@ApiImplicitParam(name = "companyId", value = "商户的公司ID", required = true)})
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(name = "companyId", value = "商户的公司ID", required = true)
+    })
     public ReturnJson totalYearInfo(@NotBlank(message = "商户的公司ID不能为空") @RequestParam(required = false) String companyId) {
         return paymentOrderService.getYear(companyId);
     }
 
     @PostMapping("/manyDayInfo")
     @ApiOperation(value = "获取众包今天的支付额", notes = "获取众包今天的支付额", httpMethod = "POST")
-    @ApiImplicitParams(value = {@ApiImplicitParam(name = "companyId", value = "商户的公司ID", required = true)})
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(name = "companyId", value = "商户的公司ID", required = true)
+    })
     public ReturnJson manyDayInfo(@NotBlank(message = "商户的公司ID不能为空") @RequestParam(required = false) String companyId) {
         return paymentOrderManyService.getDay(companyId);
     }
 
     @PostMapping("/manyWeekInfo")
     @ApiOperation(value = "获取众包本周的支付额", notes = "获取众包本周的支付额", httpMethod = "POST")
-    @ApiImplicitParams(value = {@ApiImplicitParam(name = "companyId", value = "商户的公司ID", required = true)})
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(name = "companyId", value = "商户的公司ID", required = true)
+    })
     public ReturnJson manyWeekInfo(@NotBlank(message = "商户的公司ID不能为空") @RequestParam(required = false) String companyId) {
         return paymentOrderManyService.getWeek(companyId);
     }
 
     @PostMapping("/manyMonthInfo")
     @ApiOperation(value = "获取众包本月的支付额", notes = "获取众包本月的支付额", httpMethod = "POST")
-    @ApiImplicitParams(value = {@ApiImplicitParam(name = "companyId", value = "商户的公司ID", required = true)})
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(name = "companyId", value = "商户的公司ID", required = true)
+    })
     public ReturnJson manyMonthInfo(@NotBlank(message = "商户的公司ID不能为空") @RequestParam(required = false) String companyId) {
         return paymentOrderManyService.getMonth(companyId);
     }

@@ -28,42 +28,58 @@ public class BillController {
 
     @PostMapping("/getTotalMonthBill")
     @ApiOperation(value = "查询总包月账单", notes = "查询总包月账单", httpMethod = "POST")
-    @ApiImplicitParams(value = {@ApiImplicitParam(name = "year", value = "年份（如2020）", paramType = "query",required = true),@ApiImplicitParam(name = "month", value = "月份（1-12月）", paramType = "query",required = true)})
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(name = "year", value = "年份（如2020）", paramType = "query",required = true),
+            @ApiImplicitParam(name = "month", value = "月份（1-12月）", paramType = "query",required = true)
+    })
     public ReturnJson getTotalMonthBill(@NotNull @RequestParam Integer year, @Min (1) @Max (12)@RequestParam Integer month){
         return billService.getTotalMonthBill(year,month);
     }
 
     @PostMapping("/getTotalMonthBillInfo")
     @ApiOperation(value = "查询总包月账单明细", notes = "查询总包月账单明细", httpMethod = "POST")
-    @ApiImplicitParams(value = {@ApiImplicitParam(name = "year", value = "年份（如2020）", paramType = "query",required = true),@ApiImplicitParam(name = "month", value = "月份（1-12月）", paramType = "query",required = true)})
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(name = "year", value = "年份（如2020）", paramType = "query",required = true),
+            @ApiImplicitParam(name = "month", value = "月份（1-12月）", paramType = "query",required = true)
+    })
     public ReturnJson getTotalMonthBillInfo(@NotNull @RequestParam Integer year, @Min (1) @Max (12)@RequestParam Integer month){
         return billService.getTotalMonthBillInfo(year,month);
     }
 
     @PostMapping("/getManyMonthBill")
     @ApiOperation(value = "查询众包月账单", notes = "查询众包月账单", httpMethod = "POST")
-    @ApiImplicitParams(value = {@ApiImplicitParam(name = "year", value = "年份（如2020）", paramType = "query",required = true),@ApiImplicitParam(name = "month", value = "月份（1-12月）", paramType = "query",required = true)})
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(name = "year", value = "年份（如2020）", paramType = "query",required = true),
+            @ApiImplicitParam(name = "month", value = "月份（1-12月）", paramType = "query",required = true)
+    })
     public ReturnJson getManyMonthBill(@NotNull @RequestParam Integer year, @Min (1) @Max (12)@RequestParam Integer month){
         return billService.getManyMonthBill(year,month);
     }
 
     @PostMapping("/getManyMonthBillInfo")
     @ApiOperation(value = "查询众包月账单明细", notes = "查询众包月账单明细", httpMethod = "POST")
-    @ApiImplicitParams(value = {@ApiImplicitParam(name = "year", value = "年份（如2020）", paramType = "query",required = true),@ApiImplicitParam(name = "month", value = "月份（1-12月）", paramType = "query",required = true)})
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(name = "year", value = "年份（如2020）", paramType = "query",required = true),
+            @ApiImplicitParam(name = "month", value = "月份（1-12月）", paramType = "query",required = true)
+    })
     public ReturnJson getManyMonthBillInfo(@NotNull @RequestParam Integer year, @Min (1) @Max (12)@RequestParam Integer month){
         return billService.getManyMonthBillInfo(year,month);
     }
 
     @PostMapping("/getTotalYearBillCount")
     @ApiOperation(value = "查询总包年账单统计", notes = "查询总包年账单统计", httpMethod = "POST")
-    @ApiImplicitParams(value = {@ApiImplicitParam(name = "year", value = "年份（如2020）", paramType = "query",required = true)})
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(name = "year", value = "年份（如2020）", paramType = "query",required = true)
+    })
     public ReturnJson getTotalYearBillCount(@NotNull @RequestParam Integer year){
         return billService.getTotalYearBillCount(year);
     }
 
     @PostMapping("/getManyYearBillCount")
     @ApiOperation(value = "查询众包年账单统计", notes = "查询众包年账单统计", httpMethod = "POST")
-    @ApiImplicitParams(value = {@ApiImplicitParam(name = "year", value = "年份（如2020）", paramType = "query",required = true)})
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(name = "year", value = "年份（如2020）", paramType = "query",required = true)
+    })
     public ReturnJson getManyYearBillCount(@NotNull @RequestParam Integer year){
         return billService.getManyYearBillCount(year);
     }
