@@ -53,7 +53,7 @@ public class PaymentOrderPaasController {
     @ApiOperation(value = "查询总包+分包支付订单详情", notes = "查询总包+分包支付订单详情", httpMethod = "GET")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "id", value = "总包+分包支付订单ID", required = true)})
     public ReturnJson getPaymentOrderInfo(@NotBlank(message = "支付订单ID不能为空") @RequestParam(required = false) String id) {
-        return paymentOrderService.getPaymentOrderInfoPaas(id);
+        return paymentOrderService.getPaymentOrderInfo(id);
     }
 
     @PostMapping("/findMerchant")

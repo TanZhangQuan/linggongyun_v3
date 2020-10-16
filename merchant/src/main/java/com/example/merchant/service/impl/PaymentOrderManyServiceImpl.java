@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.example.common.util.ExpressLogisticsInfo;
+import com.example.common.util.KdniaoTrackQueryAPI;
 import com.example.common.util.ReturnJson;
 import com.example.common.util.VerificationCheck;
 import com.example.merchant.dto.merchant.AddPaymentOrderManyDto;
@@ -13,9 +15,13 @@ import com.example.merchant.exception.CommonException;
 import com.example.merchant.service.PaymentInventoryService;
 import com.example.merchant.service.PaymentOrderManyService;
 import com.example.merchant.util.AcquireID;
+import com.example.merchant.vo.ExpressInfoVO;
+import com.example.merchant.vo.PaymentOrderInfoVO;
 import com.example.mybatis.dto.TobeinvoicedDto;
 import com.example.mybatis.entity.*;
 import com.example.mybatis.mapper.*;
+import com.example.mybatis.po.InvoiceInfoPO;
+import com.example.mybatis.po.PaymentOrderInfoPO;
 import com.example.mybatis.vo.CrowdSourcingInvoiceVo;
 import com.example.mybatis.vo.InvoiceDetailsVo;
 import com.example.mybatis.vo.PaymentOrderManyVo;
@@ -180,6 +186,8 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
         return ReturnJson.success(paymentOrderManyIPage);
     }
 
+    @Resource
+    private CrowdSourcingInvoiceDao crowdSourcingInvoiceDao;
     /**
      * 众包支付订单详情
      *
@@ -188,18 +196,29 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
      */
     @Override
     public ReturnJson getPaymentOrderManyInfo(String id) {
-        PaymentOrderMany paymentOrderMany = paymentOrderManyDao.selectById(id);
-        if (paymentOrderMany == null) {
-            return ReturnJson.error("你输入的订单号不存在！");
+        PaymentOrderInfoPO paymentOrderInfoPO = null;
+        PaymentOrderInfoVO paymentOrderInfoVO = new PaymentOrderInfoVO();
+        ExpressInfoVO expressInfoVO = new ExpressInfoVO();
+
+        //为众包订单
+        paymentOrderInfoPO = paymentOrderManyDao.selectPaymentOrderInfo(id);
+        if (paymentOrderInfoPO == null) {
+            return ReturnJson.error("订单编号有误，请重新输入！");
         }
-        List<PaymentInventory> paymentInventories = paymentInventoryDao.selectList(new QueryWrapper<PaymentInventory>().eq("payment_order_id", id));
-        Tax tax = taxDao.selectById(paymentOrderMany.getTaxId());
-        List<Map<String, Object>> list = new ArrayList<>();
-        Map<String, Object> map = new HashMap<>();
-        map.put("paymentInventories", paymentInventories);
-        map.put("tax", tax);
-        list.add(map);
-        return ReturnJson.success(paymentOrderMany, list);
+        InvoiceInfoPO invoiceInfoPO = crowdSourcingInvoiceDao.selectInvoiceInfoPO(id);
+        if (invoiceInfoPO != null) {
+            //众包发票信息
+            paymentOrderInfoVO.setInvoice(invoiceInfoPO.getInvoiceUrl());
+            expressInfoVO.setExpressCompanyName(invoiceInfoPO.getExpressCompanyName());
+            expressInfoVO.setExpressCode(invoiceInfoPO.getExpressSheetNo());
+            List<ExpressLogisticsInfo> expressLogisticsInfos = KdniaoTrackQueryAPI.getExpressInfo(invoiceInfoPO.getExpressCompanyName(), invoiceInfoPO.getExpressSheetNo());
+            expressInfoVO.setExpressLogisticsInfos(expressLogisticsInfos);
+        }
+        List<PaymentInventory> paymentInventories = paymentInventoryDao.selectPaymentInventoryList(id, null);
+        paymentOrderInfoVO.setPaymentInventories(paymentInventories);
+        paymentOrderInfoVO.setPaymentOrderInfoPO(paymentOrderInfoPO);
+        paymentOrderInfoVO.setExpressInfoVO(expressInfoVO);
+        return ReturnJson.success(paymentOrderInfoVO);
     }
 
     /**
