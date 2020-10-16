@@ -109,6 +109,7 @@ PathExcel_KEY: "/root/linggongyun_v3/excel/"
 #本地视频存储路径
 PathVideo_KEY: "/root/linggongyun_v3/video/"
 
+<<<<<<< HEAD
 #加盟合同模板存储地址
 PathContractFile_KEY: "/root/linggongyun_v3/合同模板.pdf"
 
@@ -120,5 +121,6 @@ fileStaticAccesspathExcel: "/static/excel/"
 
 #视频的访问路径
 fileStaticAccesspathVideo: "/static/Video/"
+
 
 appSecret: "872614e259eded522417c76ad0fb06f0"

@@ -17,6 +17,7 @@ import com.example.merchant.service.RegulatorService;
 import com.example.merchant.service.RegulatorTaxService;
 import com.example.merchant.service.TaxService;
 import com.example.merchant.util.JwtUtils;
+import com.example.merchant.vo.ExpressInfoVO;
 import com.example.merchant.vo.PaymentOrderInfoVO;
 import com.example.merchant.vo.platform.HomePageVO;
 import com.example.merchant.vo.platform.RegulatorTaxVO;
@@ -553,14 +554,43 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
     public ReturnJson getPaymentOrderInfo(String workerId, String paymentId, Integer packageStatus) {
         PaymentOrderInfoPO paymentOrderInfoPO = null;
         PaymentOrderInfoVO paymentOrderInfoVO = new PaymentOrderInfoVO();
+        ExpressInfoVO expressInfoVO = new ExpressInfoVO();
         if (packageStatus == 0) {
+            //为总包订单
             paymentOrderInfoPO = paymentOrderDao.selectPaymentOrderInfo(paymentId);
+            if (paymentOrderInfoPO == null) {
+                return ReturnJson.error("订单编号有误，请重新输入！");
+            }
+            InvoiceInfoPO invoiceInfoPO = invoiceDao.selectInvoiceInfoPO(paymentId);
+            if (invoiceInfoPO != null) {
+                //总包发票信息
+                paymentOrderInfoVO.setInvoice(invoiceInfoPO.getInvoiceUrl());
+                paymentOrderInfoVO.setSubpackageInvoice(invoiceInfoPO.getMakerInvoiceUrl());
+                expressInfoVO.setExpressCompanyName(invoiceInfoPO.getExpressCompanyName());
+                expressInfoVO.setExpressCode(invoiceInfoPO.getExpressSheetNo());
+                List<ExpressLogisticsInfo> expressLogisticsInfos = KdniaoTrackQueryAPI.getExpressInfo(invoiceInfoPO.getExpressCompanyName(), invoiceInfoPO.getExpressSheetNo());
+                expressInfoVO.setExpressLogisticsInfos(expressLogisticsInfos);
+            }
         } else {
+            //为众包订单
             paymentOrderInfoPO = paymentOrderManyDao.selectPaymentOrderInfo(paymentId);
+            if (paymentOrderInfoPO == null) {
+                return ReturnJson.error("订单编号有误，请重新输入！");
+            }
+            InvoiceInfoPO invoiceInfoPO = crowdSourcingInvoiceDao.selectInvoiceInfoPO(paymentId);
+            if (invoiceInfoPO != null) {
+                //众包发票信息
+                paymentOrderInfoVO.setInvoice(invoiceInfoPO.getInvoiceUrl());
+                expressInfoVO.setExpressCompanyName(invoiceInfoPO.getExpressCompanyName());
+                expressInfoVO.setExpressCode(invoiceInfoPO.getExpressSheetNo());
+                List<ExpressLogisticsInfo> expressLogisticsInfos = KdniaoTrackQueryAPI.getExpressInfo(invoiceInfoPO.getExpressCompanyName(), invoiceInfoPO.getExpressSheetNo());
+                expressInfoVO.setExpressLogisticsInfos(expressLogisticsInfos);
+            }
         }
         List<PaymentInventory> paymentInventories = paymentInventoryDao.selectPaymentInventoryList(paymentId, workerId);
         paymentOrderInfoVO.setPaymentInventories(paymentInventories);
         paymentOrderInfoVO.setPaymentOrderInfoPO(paymentOrderInfoPO);
+        paymentOrderInfoVO.setExpressInfoVO(expressInfoVO);
         return ReturnJson.success(paymentOrderInfoVO);
     }
 
@@ -703,7 +733,6 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
     }
 
 
-
     @Resource
     private CompanyInfoDao companyInfoDao;
 
@@ -835,9 +864,9 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
             regulatorMerchantPaymentOrderVOS.add(regulatorMerchantPaymentOrderVO);
         }
         try {
-            ExcelUtils.exportExcel(regulatorMerchantPaymentOrderVOS,"商户支付订单","订单信息",RegulatorMerchantPaymentOrderVO.class,"MerchantPaymentOrder",true,response);
+            ExcelUtils.exportExcel(regulatorMerchantPaymentOrderVOS, "商户支付订单", "订单信息", RegulatorMerchantPaymentOrderVO.class, "MerchantPaymentOrder", true, response);
         } catch (IOException e) {
-            log.error(e+":"+e.getMessage());
+            log.error(e + ":" + e.getMessage());
             ReturnJson.error("导出失败，请重试！");
         }
         return null;
@@ -845,6 +874,7 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
 
     /**
      * 登录
+     *
      * @param username 用户名
      * @param password 密码
      * @param response
@@ -875,6 +905,7 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
 
     /**
      * 登出
+     *
      * @param regulatorId 监督用户Id
      * @return
      */

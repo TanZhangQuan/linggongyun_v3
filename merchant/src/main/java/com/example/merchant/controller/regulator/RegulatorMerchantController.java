@@ -31,7 +31,7 @@ public class RegulatorMerchantController {
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "regulatorId", value = "监管部门的ID", required = true)
     })
-    public ReturnJson getCountRegulatorMerchant(@NotBlank(message = "管理部门ID不能为空！") @RequestParam String regulatorId) {
+    public ReturnJson getCountRegulatorMerchant(@NotBlank(message = "管理部门ID不能为空！") @RequestParam(required = false) String regulatorId) {
         return regulatorService.getCountRegulatorMerchant(regulatorId);
     }
 
@@ -50,7 +50,7 @@ public class RegulatorMerchantController {
             @ApiImplicitParam(name = "companyIds", value = "商户编号字符集，每个商户编号之间用英文逗号隔开", required = true),
             @ApiImplicitParam(name = "regulatorId", value = "管理部门ID", required = true)
     })
-    public ReturnJson exportRegulatorMerchant(@NotBlank(message = "导出的商户不能为空！") @RequestParam String companyIds, @NotBlank(message = "管理部门ID不能为空！") @RequestParam String regulatorId, HttpServletResponse response) {
+    public ReturnJson exportRegulatorMerchant(@NotBlank(message = "导出的商户不能为空！") @RequestParam(required = false) String companyIds, @NotBlank(message = "管理部门ID不能为空！") @RequestParam(required = false) String regulatorId, HttpServletResponse response) {
         ReturnJson returnJson = regulatorService.exportRegulatorMerchant(companyIds, regulatorId, response);
         if (returnJson.getCode() == 300) {
             return returnJson;
@@ -64,7 +64,7 @@ public class RegulatorMerchantController {
             @ApiImplicitParam(name = "companyId", value = "公司ID", required = true),
             @ApiImplicitParam(name = "regulatorId", value = "管理部门ID", required = true)
     })
-    public ReturnJson getRegulatorMerchantParticulars(@NotBlank(message = "公司ID不能为空！") @RequestParam String companyId, @NotBlank(message = "管理部门ID不能为空！") @RequestParam String regulatorId) {
+    public ReturnJson getRegulatorMerchantParticulars(@NotBlank(message = "公司ID不能为空！") @RequestParam(required = false) String companyId, @NotBlank(message = "管理部门ID不能为空！") @RequestParam(required = false) String regulatorId) {
         return regulatorService.getRegulatorMerchantParticulars(companyId, regulatorId);
     }
 
@@ -82,7 +82,7 @@ public class RegulatorMerchantController {
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "paymentOrderIds", value = "支付订单ID字符集，每个支付订单ID之间用英文逗号隔开", required = true)
     })
-    public ReturnJson exportRegulatorMerchantPaymentOrder(@NotBlank(message = "导出的数据不能为空！") @RequestParam String paymentOrderIds, HttpServletResponse response) {
+    public ReturnJson exportRegulatorMerchantPaymentOrder(@NotBlank(message = "导出的数据不能为空！") @RequestParam(required = false) String paymentOrderIds, HttpServletResponse response) {
         return regulatorService.exportRegulatorMerchantPaymentOrder(paymentOrderIds, response);
     }
 
@@ -92,7 +92,7 @@ public class RegulatorMerchantController {
             @ApiImplicitParam(name = "paymentId", value = "支付订单ID", required = true),
             @ApiImplicitParam(name = "packageStatus", value = "合作类型", required = true)
     })
-    public ReturnJson getPaymentOrderInfo(@NotBlank(message = "支付订单ID不能为空！") @RequestParam String paymentId, @NotNull(message = "合作类型不能为空！") @RequestParam Integer packageStatus) {
+    public ReturnJson getPaymentOrderInfo(@NotBlank(message = "支付订单ID不能为空！") @RequestParam(required = false) String paymentId, @NotNull(message = "合作类型不能为空！") @RequestParam(required = false) Integer packageStatus) {
         return regulatorService.getPaymentOrderInfo("", paymentId, packageStatus);
     }
 
@@ -103,7 +103,7 @@ public class RegulatorMerchantController {
             @ApiImplicitParam(name = "page", value = "当前页数", required = true),
             @ApiImplicitParam(name = "pageSize", value = "每页显示的条数", required = true)
     })
-    public ReturnJson getPaymentInventory(@NotBlank(message = "支付订单ID不能为空！") @RequestParam String paymentOrderId, @NotNull(message = "当前页数不能为空！") @RequestParam(defaultValue = "1") Integer page, @NotNull(message = "每页显示的条数不能为空！") @RequestParam(defaultValue = "10") Integer pageSize) {
+    public ReturnJson getPaymentInventory(@NotBlank(message = "支付订单ID不能为空！") @RequestParam(required = false) String paymentOrderId, @NotNull(message = "当前页数不能为空！") @RequestParam(defaultValue = "1") Integer page, @NotNull(message = "每页显示的条数不能为空！") @RequestParam(defaultValue = "10") Integer pageSize) {
         return regulatorService.getPaymentInventory(paymentOrderId, page,pageSize);
     }
 

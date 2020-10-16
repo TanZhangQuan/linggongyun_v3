@@ -34,7 +34,7 @@ public class ManagersPaasController {
             @ApiImplicitParam(name = "username", value = "登录账号", required = true),
             @ApiImplicitParam(name = "password", value = "登录密码", required = true)
     })
-    public ReturnJson managersLogin(@NotBlank(message = "用户名不能为空") @RequestParam String username, @NotBlank(message = "密码不能为空") @RequestParam String password, HttpServletResponse response) {
+    public ReturnJson managersLogin(@NotBlank(message = "用户名不能为空") @RequestParam(required = false) String username, @NotBlank(message = "密码不能为空") @RequestParam(required = false) String password, HttpServletResponse response) {
         return managersService.managersLogin(username, password, response);
     }
 
@@ -44,7 +44,7 @@ public class ManagersPaasController {
             @ApiImplicitParam(name = "mobileCode", value = "手机号码", required = true)
     })
     public ReturnJson managersSenSMS(@NotBlank(message = "请输入手机号") @Length(min = 11, max = 11, message = "请输入11位手机号")
-                                     @Pattern(regexp = "[0-9]*", message = "请输入有效的手机号码") @RequestParam String mobileCode) {
+                                     @Pattern(regexp = "[0-9]*", message = "请输入有效的手机号码") @RequestParam(required = false) String mobileCode) {
 
         return managersService.senSMS(mobileCode);
     }
@@ -58,7 +58,7 @@ public class ManagersPaasController {
     public ReturnJson managersMobileLogin(@NotBlank(message = "请输入手机号")
                                           @Length(min = 11, max = 11, message = "请输入11位手机号")
                                           @Pattern(regexp = "[0-9]*", message = "请输入有效的手机号码")
-                                          @RequestParam String mobileCode, @NotBlank(message = "验证码不能为空！") @RequestParam String checkCode, HttpServletResponse resource) {
+                                          @RequestParam(required = false) String mobileCode, @NotBlank(message = "验证码不能为空！") @RequestParam(required = false) String checkCode, HttpServletResponse resource) {
 
         return managersService.loginMobile(mobileCode, checkCode, resource);
     }

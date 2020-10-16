@@ -42,8 +42,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Value("${PathImage_KEY}")
     private String PathImage_KEY;
 
-    @Value("${PathContractFile_KEY}")
-    private String PathContractFile_KEY;
+    @Value("${TemplateFile.Contract}")
+    private String contract;
 
     @Value("${appSecret}")
     private String appSecret;
@@ -140,7 +140,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             return ReturnJson.error("该用户不存在！");
         }
         if (worker.getAgreementSign() == 0 || worker.getAgreementSign() == 3) {
-            ReturnJson returnJson = SignAContractUtils.signAContract(PathContractFile_KEY, worker.getId(), worker.getAccountName(), worker.getIdcardCode(),
+            ReturnJson returnJson = SignAContractUtils.signAContract(contract, worker.getId(), worker.getAccountName(), worker.getIdcardCode(),
                     worker.getMobileCode());
             worker.setAgreementSign(1);
             workerDao.updateById(worker);

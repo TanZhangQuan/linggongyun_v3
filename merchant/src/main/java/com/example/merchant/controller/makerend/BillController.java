@@ -32,7 +32,7 @@ public class BillController {
             @ApiImplicitParam(name = "year", value = "年份（如2020）", paramType = "query",required = true),
             @ApiImplicitParam(name = "month", value = "月份（1-12月）", paramType = "query",required = true)
     })
-    public ReturnJson getTotalMonthBill(@NotNull @RequestParam Integer year, @Min (1) @Max (12)@RequestParam Integer month){
+    public ReturnJson getTotalMonthBill(@NotNull @RequestParam(required = false) Integer year, @Min (value = 1,message = "月数不能小于一月") @Max (value = 12,message = "月数不能大于12月")@RequestParam(required = false) Integer month){
         return billService.getTotalMonthBill(year,month);
     }
 
@@ -42,7 +42,7 @@ public class BillController {
             @ApiImplicitParam(name = "year", value = "年份（如2020）", paramType = "query",required = true),
             @ApiImplicitParam(name = "month", value = "月份（1-12月）", paramType = "query",required = true)
     })
-    public ReturnJson getTotalMonthBillInfo(@NotNull @RequestParam Integer year, @Min (1) @Max (12)@RequestParam Integer month){
+    public ReturnJson getTotalMonthBillInfo(@NotNull @RequestParam(required = false) Integer year, @Min (value = 1, message = "月数不能小于一月") @Max (value = 12, message = "月数不能大于12月")@RequestParam(required = false) Integer month){
         return billService.getTotalMonthBillInfo(year,month);
     }
 
@@ -52,7 +52,7 @@ public class BillController {
             @ApiImplicitParam(name = "year", value = "年份（如2020）", paramType = "query",required = true),
             @ApiImplicitParam(name = "month", value = "月份（1-12月）", paramType = "query",required = true)
     })
-    public ReturnJson getManyMonthBill(@NotNull @RequestParam Integer year, @Min (1) @Max (12)@RequestParam Integer month){
+    public ReturnJson getManyMonthBill(@NotNull @RequestParam(required = false) Integer year, @Min (value = 1, message = "月数不能小于一月") @Max (value = 12, message = "月数不能大于12月")@RequestParam(required = false) Integer month){
         return billService.getManyMonthBill(year,month);
     }
 
@@ -62,7 +62,7 @@ public class BillController {
             @ApiImplicitParam(name = "year", value = "年份（如2020）", paramType = "query",required = true),
             @ApiImplicitParam(name = "month", value = "月份（1-12月）", paramType = "query",required = true)
     })
-    public ReturnJson getManyMonthBillInfo(@NotNull @RequestParam Integer year, @Min (1) @Max (12)@RequestParam Integer month){
+    public ReturnJson getManyMonthBillInfo(@NotNull @RequestParam(required = false) Integer year, @Min (value = 1, message = "月数不能小于一月") @Max (value = 12, message = "月数不能大于12月")@RequestParam(required = false) Integer month){
         return billService.getManyMonthBillInfo(year,month);
     }
 
@@ -71,7 +71,7 @@ public class BillController {
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "year", value = "年份（如2020）", paramType = "query",required = true)
     })
-    public ReturnJson getTotalYearBillCount(@NotNull @RequestParam Integer year){
+    public ReturnJson getTotalYearBillCount(@NotNull @RequestParam(required = false) Integer year){
         return billService.getTotalYearBillCount(year);
     }
 
@@ -80,7 +80,7 @@ public class BillController {
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "year", value = "年份（如2020）", paramType = "query",required = true)
     })
-    public ReturnJson getManyYearBillCount(@NotNull @RequestParam Integer year){
+    public ReturnJson getManyYearBillCount(@NotNull @RequestParam(required = false) Integer year){
         return billService.getManyYearBillCount(year);
     }
 }

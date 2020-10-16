@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.example.common.util.ExpressLogisticsInfo;
+import com.example.common.util.KdniaoTrackQueryAPI;
 import com.example.common.util.ReturnJson;
 import com.example.common.util.VerificationCheck;
 import com.example.merchant.dto.merchant.AddPaymentOrderDto;
@@ -13,8 +15,12 @@ import com.example.merchant.exception.CommonException;
 import com.example.merchant.service.PaymentInventoryService;
 import com.example.merchant.service.PaymentOrderService;
 import com.example.merchant.util.AcquireID;
+import com.example.merchant.vo.ExpressInfoVO;
+import com.example.merchant.vo.PaymentOrderInfoVO;
 import com.example.mybatis.entity.*;
 import com.example.mybatis.mapper.*;
+import com.example.mybatis.po.InvoiceInfoPO;
+import com.example.mybatis.po.PaymentOrderInfoPO;
 import com.example.mybatis.vo.BillingInfoVo;
 import com.example.mybatis.vo.PaymentOrderVo;
 import org.springframework.stereotype.Service;
@@ -66,6 +72,9 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
 
     @Resource
     private CompanyLadderServiceDao companyLadderServiceDao;
+
+    @Resource
+    private InvoiceDao invoiceDao;
 
     @Resource
     private AcquireID acquireID;
@@ -145,15 +154,29 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
      */
     @Override
     public ReturnJson getPaymentOrderInfo(String id) {
-        PaymentOrder paymentOrder = paymentOrderDao.selectById(id);
-        List<PaymentInventory> paymentInventories = paymentInventoryDao.selectList(new QueryWrapper<PaymentInventory>().eq("payment_order_id", id));
-        Tax tax = taxDao.selectById(paymentOrder.getTaxId());
-        List<Map<String, Object>> list = new ArrayList<>();
-        Map<String, Object> map = new HashMap<>();
-        map.put("paymentInventories", paymentInventories);
-        map.put("tax", tax);
-        list.add(map);
-        return ReturnJson.success(paymentOrder, list);
+        PaymentOrderInfoPO paymentOrderInfoPO = null;
+        PaymentOrderInfoVO paymentOrderInfoVO = new PaymentOrderInfoVO();
+        ExpressInfoVO expressInfoVO = new ExpressInfoVO();
+            //为总包订单
+            paymentOrderInfoPO = paymentOrderDao.selectPaymentOrderInfo(id);
+            if (paymentOrderInfoPO == null) {
+                return ReturnJson.error("订单编号有误，请重新输入！");
+            }
+            InvoiceInfoPO invoiceInfoPO = invoiceDao.selectInvoiceInfoPO(id);
+            if (invoiceInfoPO != null) {
+                //总包发票信息
+                paymentOrderInfoVO.setInvoice(invoiceInfoPO.getInvoiceUrl());
+                paymentOrderInfoVO.setSubpackageInvoice(invoiceInfoPO.getMakerInvoiceUrl());
+                expressInfoVO.setExpressCompanyName(invoiceInfoPO.getExpressCompanyName());
+                expressInfoVO.setExpressCode(invoiceInfoPO.getExpressSheetNo());
+                List<ExpressLogisticsInfo> expressLogisticsInfos = KdniaoTrackQueryAPI.getExpressInfo(invoiceInfoPO.getExpressCompanyName(), invoiceInfoPO.getExpressSheetNo());
+                expressInfoVO.setExpressLogisticsInfos(expressLogisticsInfos);
+            }
+        List<PaymentInventory> paymentInventories = paymentInventoryDao.selectPaymentInventoryList(id, null);
+        paymentOrderInfoVO.setPaymentInventories(paymentInventories);
+        paymentOrderInfoVO.setPaymentOrderInfoPO(paymentOrderInfoPO);
+        paymentOrderInfoVO.setExpressInfoVO(expressInfoVO);
+        return ReturnJson.success(paymentOrderInfoVO);
     }
 
     /**

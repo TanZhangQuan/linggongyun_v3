@@ -45,7 +45,7 @@ public class PaymentOrderManyPaasController {
     @PostMapping("/findMerchant")
     @ApiOperation(value = "查询商户", notes = "查询商户", httpMethod = "POST")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "managersId", value = "管理人员ID", required = true)})
-    public ReturnJson findMerchant(@NotBlank(message = "管理人员ID不能为空！") @RequestParam String managersId) {
+    public ReturnJson findMerchant(@NotBlank(message = "管理人员ID不能为空！") @RequestParam(required = false) String managersId) {
         return paymentOrderService.findMerchantPaas(managersId);
     }
 
@@ -60,7 +60,7 @@ public class PaymentOrderManyPaasController {
     @ApiOperation(value = "查询众包支付订单详情", notes = "查询众包支付订单详情", httpMethod = "GET")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "id", value = "支付订单ID", required = true)})
     public ReturnJson getPaymentOrderManyInfo(@NotBlank(message = "支付订单ID不能为空") @RequestParam(required = false) String id) {
-        return paymentOrderManyService.getPaymentOrderManyInfoPaas(id);
+        return paymentOrderManyService.getPaymentOrderManyInfo(id);
     }
 
     @PostMapping("/saveOrUpdata")

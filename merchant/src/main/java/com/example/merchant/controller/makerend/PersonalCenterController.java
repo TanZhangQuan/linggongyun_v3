@@ -29,7 +29,7 @@ public class PersonalCenterController {
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "workerId", value = "创客ID", paramType = "query", required = true)
     })
-     public ReturnJson personageInfo(@NotBlank(message = "创客ID不能为空！") @RequestParam String workerId){
+     public ReturnJson personageInfo(@NotBlank(message = "创客ID不能为空！") @RequestParam(required = false) String workerId){
         return personalCenterService.personageInfo(workerId);
     }
 }
