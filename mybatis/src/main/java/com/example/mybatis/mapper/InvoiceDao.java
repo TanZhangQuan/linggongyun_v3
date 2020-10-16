@@ -3,6 +3,7 @@ package com.example.mybatis.mapper;
 import com.example.mybatis.dto.TobeinvoicedDto;
 import com.example.mybatis.entity.Invoice;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.example.mybatis.po.InvoiceInfoPO;
 import com.example.mybatis.po.InvoicePO;
 import com.example.mybatis.vo.*;
 import org.apache.ibatis.annotations.Param;
@@ -49,4 +50,7 @@ public interface InvoiceDao extends BaseMapper<Invoice> {
 
     //分包待开票数据
     List<ToSubcontractInvoiceVo> getListSubQuery(TobeinvoicedDto tobeinvoicedDto, RowBounds rowBounds);
+
+    //根据支付订单ID查找发票信息
+    InvoiceInfoPO selectInvoiceInfoPO(String paymentOrderId);
 }

@@ -19,6 +19,9 @@ public class InterceptorConfig extends WebMvcConfigurerAdapter {
     @Value("${PathVideo_KEY}")
     private String PathVideo_KEY;
 
+    @Value("${TemplateFile.Path}")
+    private String templateFilePath;
+
     @Value("${fileStaticAccesspathImage}")
     private String fileStaticAccesspathImage;
 
@@ -27,6 +30,9 @@ public class InterceptorConfig extends WebMvcConfigurerAdapter {
 
     @Value("${fileStaticAccesspathVideo}")
     private String fileStaticAccesspathVideo;
+
+    @Value("${TemplateFile.StaticAccesspath}")
+    private String templateFileStaticAccesspath;
     @Bean
     public PaasLoginJWTInterceptor paasLoginJWTInterceptor() {
         return new PaasLoginJWTInterceptor();
@@ -69,6 +75,8 @@ public class InterceptorConfig extends WebMvcConfigurerAdapter {
                 .addResourceLocations("file:" + PathExcel_KEY);
         registry.addResourceHandler(fileStaticAccesspathVideo+"/**")
                 .addResourceLocations("file:" + PathVideo_KEY);
+        registry.addResourceHandler(templateFileStaticAccesspath+"/**")
+                .addResourceLocations("file:" + templateFilePath);
         super.addResourceHandlers(registry);
     }
 }

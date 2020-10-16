@@ -45,7 +45,7 @@ public class PaymentOrderManyPaasController {
     @PostMapping("/findMerchant")
     @ApiOperation(value = "查询商户", notes = "查询商户", httpMethod = "POST")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "managersId", value = "管理人员ID", required = true)})
-    public ReturnJson findMerchant(@NotBlank(message = "管理人员ID不能为空！") @RequestParam String managersId) {
+    public ReturnJson findMerchant(@NotBlank(message = "管理人员ID不能为空！") @RequestParam(required = false) String managersId) {
         return paymentOrderService.findMerchantPaas(managersId);
     }
 

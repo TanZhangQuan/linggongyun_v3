@@ -61,7 +61,7 @@ public class MerchantPaasController {
             @ApiImplicitParam(name = "page", value = "页数"),
             @ApiImplicitParam(name = "pageSize", value = "一页的条数")
     })
-    public ReturnJson getMerchantList(@NotBlank(message = "商户ID不能为空！") @RequestParam String managersId, String merchantId, String merchantName, String linkMobile, @RequestParam(defaultValue = "1") Integer page,
+    public ReturnJson getMerchantList(@NotBlank(message = "商户ID不能为空！") @RequestParam(required = false) String managersId, String merchantId, String merchantName, String linkMobile, @RequestParam(defaultValue = "1") Integer page,
                                       @RequestParam(defaultValue = "10") Integer pageSize) throws CommonException {
         return merchantService.getMerchantList(managersId, merchantId, merchantName, linkMobile, 1, page, pageSize);
     }
@@ -70,13 +70,13 @@ public class MerchantPaasController {
     @ApiOperation(value = "获取待审核的商户", notes = "获取待审核的商户", httpMethod = "POST")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "managersId", value = "管理人员ID", required = true),
-            @ApiImplicitParam(name = "merchantId", value = "商户ID"),
-            @ApiImplicitParam(name = "merchantName", value = "商户名称"),
-            @ApiImplicitParam(name = "linkMobile", value = "商户的联系人电话"),
+            @ApiImplicitParam(name = "merchantId", value = "商户ID",paramType = "query"),
+            @ApiImplicitParam(name = "merchantName", value = "商户名称",paramType = "query"),
+            @ApiImplicitParam(name = "linkMobile", value = "商户的联系人电话",paramType = "query"),
             @ApiImplicitParam(name = "page", value = "页数"),
             @ApiImplicitParam(name = "pageSize", value = "一页的条数")
     })
-    public ReturnJson getAuditMerchantList(@NotBlank(message = "商户ID不能为空！") @RequestParam String managersId, String merchantId, String merchantName, String linkMobile, @RequestParam(defaultValue = "1") Integer page,
+    public ReturnJson getAuditMerchantList(@NotBlank(message = "商户ID不能为空！") @RequestParam(required = false) String managersId, String merchantId, String merchantName, String linkMobile, @RequestParam(defaultValue = "1") Integer page,
                                            @RequestParam(defaultValue = "10") Integer pageSize) throws CommonException {
         return merchantService.getMerchantList(managersId, merchantId, merchantName, linkMobile, 0, page, pageSize);
     }
@@ -86,7 +86,7 @@ public class MerchantPaasController {
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "merchantId", value = "商户ID", required = true)
     })
-    public ReturnJson auditMerchant(@NotBlank(message = "商户公司ID不能为空！") @RequestParam String merchantId) {
+    public ReturnJson auditMerchant(@NotBlank(message = "商户公司ID不能为空！") @RequestParam(required = false) String merchantId) {
         return merchantService.auditMerchant(merchantId);
     }
 
@@ -95,7 +95,7 @@ public class MerchantPaasController {
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "companyId", value = "商户公司ID", required = true)
     })
-    public ReturnJson removeMerchant(@NotBlank(message = "商户公司ID不能为空！") @RequestParam String companyId) {
+    public ReturnJson removeMerchant(@NotBlank(message = "商户公司ID不能为空！") @RequestParam(required = false) String companyId) {
         return merchantService.removeMerchant(companyId);
     }
 
@@ -104,7 +104,7 @@ public class MerchantPaasController {
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "companyId", value = "商户公司ID", required = true)
     })
-    public ReturnJson merchantInfo(@NotBlank(message = "商户公司ID不能为空！") @RequestParam String companyId) {
+    public ReturnJson merchantInfo(@NotBlank(message = "商户公司ID不能为空！") @RequestParam(required = false) String companyId) {
         return merchantService.merchantInfoPaas(companyId);
     }
 
@@ -124,7 +124,7 @@ public class MerchantPaasController {
             @ApiImplicitParam(name = "page", value = "当前页数", required = true),
             @ApiImplicitParam(name = "pageSize", value = "每页的条数", required = true)
     })
-    public ReturnJson getMerchantPaymentList(@NotBlank(message = "商户ID不能为空！") @RequestParam String merchantId, @RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer pageSize) {
+    public ReturnJson getMerchantPaymentList(@NotBlank(message = "商户ID不能为空！") @RequestParam(required = false) String merchantId, @RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer pageSize) {
         return merchantService.getMerchantPaymentList(merchantId, page, pageSize);
     }
 
@@ -134,7 +134,7 @@ public class MerchantPaasController {
             @ApiImplicitParam(name = "paymentOrderId", value = "支付订单ID", required = true),
             @ApiImplicitParam(name = "packgeStatus", value = "合作类型0总包，1众包", required = true)
     })
-    public ReturnJson getMerchantPaymentInfo(@NotBlank(message = "支付订单ID不能为空") @RequestParam String paymentOrderId, @RequestParam Integer packgeStatus) {
+    public ReturnJson getMerchantPaymentInfo(@NotBlank(message = "支付订单ID不能为空") @RequestParam(required = false) String paymentOrderId, @NotNull(message = "合作类型不能为空！") @RequestParam(required = false) Integer packgeStatus) {
         return merchantService.getMerchantPaymentInfo(paymentOrderId, packgeStatus);
     }
 
@@ -145,7 +145,7 @@ public class MerchantPaasController {
             @ApiImplicitParam(name = "page", value = "当前页数", required = true),
             @ApiImplicitParam(name = "pageSize", value = "每页的条数", required = true)
     })
-    public ReturnJson getMerchantPaymentInventory(@NotBlank(message = "商户ID不能为空！") @RequestParam String paymentOrderId, @RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer pageSize) {
+    public ReturnJson getMerchantPaymentInventory(@NotBlank(message = "商户ID不能为空！") @RequestParam(required = false) String paymentOrderId, @RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer pageSize) {
         return merchantService.getMerchantPaymentInventory(paymentOrderId, page, pageSize);
     }
 
@@ -164,7 +164,7 @@ public class MerchantPaasController {
             @ApiImplicitParam(name = "linkmanId", value = "联系人ID", required = true),
             @ApiImplicitParam(name = "status", value = "联系人状态", required = true)
     })
-    public ReturnJson updataStatus(@NotBlank(message = "联系人ID不能为空！") @RequestParam String linkmanId, @NotNull(message = "状态不能为空！") @RequestParam Integer status) {
+    public ReturnJson updataStatus(@NotBlank(message = "联系人ID不能为空！") @RequestParam(required = false) String linkmanId, @NotNull(message = "状态不能为空！") @RequestParam(required = false) Integer status) {
         return linkmanService.updataStatus(linkmanId, status);
     }
 
@@ -173,7 +173,7 @@ public class MerchantPaasController {
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "linkmanId", value = "联系人ID", required = true)
     })
-    public ReturnJson removeLinkmenById(@NotBlank(message = "联系人ID不能为空") @RequestParam String linkmanId) {
+    public ReturnJson removeLinkmenById(@NotBlank(message = "联系人ID不能为空") @RequestParam(required = false) String linkmanId) {
         return linkmanService.removeLinkmenById(linkmanId);
     }
 
@@ -182,7 +182,7 @@ public class MerchantPaasController {
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "merchantId", value = "商户ID", required = true)
     })
-    public ReturnJson getLinkmanAll(@NotBlank(message = "商户ID不能为空！") @RequestParam String merchantId) {
+    public ReturnJson getLinkmanAll(@NotBlank(message = "商户ID不能为空！") @RequestParam(required = false) String merchantId) {
         return linkmanService.getLinkmanAll(merchantId);
     }
 
@@ -192,7 +192,7 @@ public class MerchantPaasController {
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "merchantId", value = "商户ID", required = true)
     })
-    public ReturnJson getAddressAll(@NotBlank(message = "商户ID") @RequestParam String merchantId) {
+    public ReturnJson getAddressAll(@NotBlank(message = "商户ID") @RequestParam(required = false) String merchantId) {
         return addressService.getAddressAll(merchantId);
     }
 
@@ -211,7 +211,7 @@ public class MerchantPaasController {
             @ApiImplicitParam(name = "addressId", value = "快递地址ID", required = true),
             @ApiImplicitParam(name = "status", value = "快递地址状态", required = true)
     })
-    public ReturnJson updataAddressStatus(@NotBlank(message = "地址ID不能为空") @RequestParam String addressId, @NotNull(message = "地址状态不能为空") @RequestParam Integer status) {
+    public ReturnJson updataAddressStatus(@NotBlank(message = "地址ID不能为空") @RequestParam(required = false) String addressId, @NotNull(message = "地址状态不能为空") @RequestParam(required = false) Integer status) {
         return addressService.updataAddressStatus(addressId, status);
     }
 
@@ -220,7 +220,7 @@ public class MerchantPaasController {
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "addressId", value = "快递地址ID", required = true)
     })
-    public ReturnJson removeAddressById(@NotBlank(message = "地址ID不能为空") @RequestParam String addressId) {
+    public ReturnJson removeAddressById(@NotBlank(message = "地址ID不能为空") @RequestParam(required = false) String addressId) {
         return addressService.removeAddressById(addressId);
     }
 

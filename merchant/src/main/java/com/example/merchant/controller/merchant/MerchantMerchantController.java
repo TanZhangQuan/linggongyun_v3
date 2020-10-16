@@ -49,18 +49,6 @@ public class MerchantMerchantController {
        return merchantService.getIdAndName();
     }
 
-    @PostMapping("/loginMobile")
-    @ApiOperation(value = "手机号登录", notes = "手机号登录", httpMethod = "POST")
-    @ApiImplicitParams(value = {
-            @ApiImplicitParam(name = "loginMobile", value = "登录用的手机号码", required = true),
-            @ApiImplicitParam(name = "checkCode", value = "验证码", required = true)
-    })
-    public ReturnJson loginMobile(@NotBlank(message = "手机号不能为空") @RequestParam(required = false) String loginMobile,
-                                  @NotBlank(message = "验证码不能为空") @RequestParam(required = false) String checkCode, HttpServletResponse resource) {
-
-        return merchantService.loginMobile(loginMobile, checkCode, resource);
-    }
-
     @PostMapping("/merchantInfo")
     @ApiOperation(value = "获取商户信息", notes = "获取商户信息", httpMethod = "POST")
     @ApiImplicitParams(value = {

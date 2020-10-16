@@ -281,4 +281,21 @@
         WHERE csi.id=#{invoiceId}
     </select>
 
+    <resultMap id="InvoiceInfoPO" type="com.example.mybatis.po.InvoiceInfoPO">
+        <result column="invoice_url" property="invoiceUrl"/>
+        <result column="express_company_name" property="expressCompanyName"/>
+        <result column="express_sheet_no" property="expressSheetNo"/>
+    </resultMap>
+
+
+    <select id="selectInvoiceInfoPO" resultMap="InvoiceInfoPO">
+        SELECT csi.invoice_url,
+        csi.express_company_name,
+        csi.express_sheet_no
+        FROM tb_payment_order_many pom
+        JOIN tb_crowd_sourcing_invoice csi
+        ON pom.id = csi.payment_order_many_id
+        WHERE pom.id = #{paymentOrderId}
+    </select>
+
 </mapper>

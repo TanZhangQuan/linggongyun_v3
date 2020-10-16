@@ -46,7 +46,7 @@ public class HomePageMerchantController {
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "companyId", value = "商户的公司ID")
     })
-    public ReturnJson totalDayInfo(@NotBlank(message = "商户的公司ID不能为空") @RequestParam String companyId) {
+    public ReturnJson totalDayInfo(@NotBlank(message = "商户的公司ID不能为空") @RequestParam(required = false) String companyId) {
         return paymentOrderService.getDay(companyId);
     }
 
@@ -64,7 +64,7 @@ public class HomePageMerchantController {
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "companyId", value = "商户的公司ID", required = true)
     })
-    public ReturnJson totalMonthInfo(@NotBlank(message = "商户的公司ID不能为空") @RequestParam String companyId) {
+    public ReturnJson totalMonthInfo(@NotBlank(message = "商户的公司ID不能为空") @RequestParam(required = false) String companyId) {
         return paymentOrderService.getMonth(companyId);
     }
 

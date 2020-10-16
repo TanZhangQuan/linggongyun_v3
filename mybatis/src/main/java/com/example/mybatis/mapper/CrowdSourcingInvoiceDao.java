@@ -4,6 +4,7 @@ import com.example.mybatis.dto.TobeinvoicedDto;
 import com.example.mybatis.entity.ApplicationCrowdSourcing;
 import com.example.mybatis.entity.CrowdSourcingInvoice;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.example.mybatis.po.InvoiceInfoPO;
 import com.example.mybatis.po.InvoicePO;
 import com.example.mybatis.vo.*;
 import org.apache.ibatis.annotations.Param;
@@ -48,4 +49,7 @@ public interface CrowdSourcingInvoiceDao extends BaseMapper<CrowdSourcingInvoice
     List<CrowdSourcingInfoVo> getCrowdSourcingInfoPass(TobeinvoicedDto tobeinvoicedDto, RowBounds rowBounds);
 
     List<InvoiceDetailsVo> getPaymentInventoryInfoPass(String invoiceId);
+
+    //根据支付订单ID查找发票信息
+    InvoiceInfoPO selectInvoiceInfoPO(String paymentOrderId);
 }
