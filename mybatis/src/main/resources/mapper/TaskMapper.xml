@@ -118,7 +118,7 @@
         <result column="task_code" property="taskCode"/>
         <result column="merchant_name" property="merchantName"/>
         <result column="task_name" property="taskName"/>
-        <result column="release_data" property="releaseDate"/>
+        <result column="release_date" property="releaseDate"/>
         <result column="industry_type" property="industryType"/>
         <result column="release_time" property="releaseTime"/>
         <result column="cooperate_mode" property="cooperateMode"/>
@@ -126,11 +126,26 @@
     </resultMap>
 
     <select id="getPlatformTaskList" resultMap="PlatformTaskList">
-        SELECT task_code,
+        SELECT id,task_code,
         (SELECT company_name FROM tb_merchant WHERE id=merchant_id) as merchant_name,
         task_name,release_date,industry_type,release_time,cooperate_mode,task_mode,state
         FROM tb_task
-        <include refid="query"/>
+        WHERE 1=1
+        <if test="merchantName != null and merchantName != ''">
+           and (SELECT id FROM tb_merchant WHERE company_name like CONCAT('%',#{merchantName},'%'))
+        </if>
+        <if test="taskName != null and taskName != ''">
+            AND task_name LIKE CONCAT ('%',#{taskName},'%')
+        </if>
+        <if test="cooperateMode != null and cooperateMode != ''">
+            AND cooperate_mode=#{cooperateMode}
+        </if>
+        <if test="releaseDate != null and releaseDate != ''">
+            AND release_date >= #{releaseDate}
+        </if>
+        <if test="deadlineDate != null and deadlineDate != ''">
+            AND deadline_date <![CDATA[<=]]> #{deadlineDate}
+        </if>
     </select>
 
     <insert id="addPlatformTask" parameterType="com.example.mybatis.dto.TaskDto">

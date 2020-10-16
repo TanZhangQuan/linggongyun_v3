@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.hibernate.validator.constraints.Length;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,6 +21,7 @@ import javax.validation.constraints.Pattern;
 @Api(value = "平台端登录接口", tags = {"平台端登录接口"})
 @RestController
 @RequestMapping("/platform/managers")
+@Validated
 public class ManagersPaasController {
 
     @Resource
@@ -58,5 +60,12 @@ public class ManagersPaasController {
                                           @RequestParam String mobileCode, @NotBlank(message = "验证码不能为空！") @RequestParam String checkCode, HttpServletResponse resource) {
 
         return managersService.loginMobile(mobileCode, checkCode, resource);
+    }
+
+    @PostMapping("/getCustomizedInfo")
+    @ApiOperation(value = "获取当前用用户信息", notes = "获取当前用用户信息", httpMethod = "POST")
+    @ApiImplicitParams(value = {@ApiImplicitParam(name = "customizedId", value = "customizedId", required = true)})
+    public ReturnJson getCustomizedInfo(@NotBlank(message = "customizedId不能为空！") @RequestParam String customizedId) {
+        return managersService.getCustomizedInfo(customizedId);
     }
 }

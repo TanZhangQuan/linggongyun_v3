@@ -3,6 +3,7 @@ package com.example.merchant.controller.platform;
 
 import com.example.common.util.ReturnJson;
 import com.example.merchant.service.TaskService;
+import com.example.mybatis.dto.PlatformTaskDto;
 import com.example.mybatis.dto.TaskDto;
 import com.example.mybatis.dto.TaskListDto;
 import com.example.mybatis.entity.Task;
@@ -55,8 +56,8 @@ public class TaskPaasController {
 
     @ApiOperation("平台端任务列表")
     @PostMapping(value = "/getplatformTasks")
-    public ReturnJson<Task> platformTaskList(TaskListDto taskListDto) {
-        return taskService.getPlatformTaskList(taskListDto);
+    public ReturnJson<Task> platformTaskList(PlatformTaskDto platformTaskDto) {
+        return taskService.getPlatformTaskList(platformTaskDto);
     }
 
     @ApiOperation("平台端任务新增")

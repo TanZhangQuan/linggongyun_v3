@@ -17,9 +17,11 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import springfox.documentation.spring.web.json.Json;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -110,5 +112,20 @@ public class ManagersServiceImpl extends ServiceImpl<ManagersDao, Managers> impl
             redisDao.setExpire(managers.getId(),60*60*24*7);
             return ReturnJson.success(managers);
         }
+    }
+
+    /**
+     * 通过token获取用户信息
+     * @param customizedId
+     * @return
+     */
+    @Override
+    public ReturnJson getCustomizedInfo(String customizedId) {
+        String customized = redisDao.get(customizedId);
+        Map<String,String> map=JsonUtils.jsonToPojo(customized, Map.class);
+        String id = map.get("id");
+        Managers managers=this.getById(id);
+        managers.setPassWord("");
+        return ReturnJson.success(managers);
     }
 }

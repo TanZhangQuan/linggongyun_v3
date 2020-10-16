@@ -73,8 +73,8 @@ public class RgeulatorServiceProviderController {
     @PostMapping("/getPaymentInventory")
     @ApiOperation(value = "查询支付订单的支付明细", notes = "查询支付订单的支付明细", httpMethod = "POST")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "paymentOrderId", value = "支付订单ID", required = true),
-            @ApiImplicitParam(name = "page", value = "当前页数", required = true),
-            @ApiImplicitParam(name = "pageSize", value = "每页显示的条数", required = true)})
+            @ApiImplicitParam(name = "page", value = "当前页数"),
+            @ApiImplicitParam(name = "pageSize", value = "每页显示的条数")})
     public ReturnJson getPaymentInventory(@NotBlank(message = "支付ID不能为空！") @RequestParam String paymentOrderId, @NotNull(message = "当前页数不能为空！") @RequestParam(defaultValue = "1") Integer page, @NotNull(message = "每页显示的条数不能为空！") @RequestParam(defaultValue = "10") Integer pageSize) {
         return regulatorTaxService.getPaymentInventoryInfo(paymentOrderId, page, pageSize);
     }
@@ -90,7 +90,7 @@ public class RgeulatorServiceProviderController {
     @ApiOperation(value = "查询支付订单的信息", notes = "查询支付订单的信息", httpMethod = "POST")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "paymentOrderId", value = "支付订单ID", required = true),
             @ApiImplicitParam(name = "type", value = "支付订单类型", required = true)})
-    public ReturnJson getPaymentOrderInfo(@NotBlank(message = "支付订单ID不能为空！") @RequestParam String paymentOrderId,@NotBlank(message = "支付订单类型不能为空！") @RequestParam Integer type) {
+    public ReturnJson getPaymentOrderInfo(@NotBlank(message = "支付订单ID不能为空！") @RequestParam String paymentOrderId,@NotNull(message = "支付订单类型不能为空！") @RequestParam Integer type) {
         return regulatorTaxService.getPaymentOrderInfo(paymentOrderId,type);
     }
 
