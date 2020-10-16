@@ -3,9 +3,12 @@ package com.example.merchant.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.incrementer.DefaultIdentifierGenerator;
 import com.baomidou.mybatisplus.core.incrementer.IdentifierGenerator;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.common.util.*;
 import com.example.merchant.service.MerchantService;
 import com.example.merchant.service.WorkerTaskService;
+import com.example.mybatis.dto.PlatformTaskDto;
 import com.example.mybatis.dto.TaskDto;
 import com.example.mybatis.dto.TaskListDto;
 import com.example.mybatis.entity.Merchant;
@@ -190,21 +193,13 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
     /**
      * 平台任务列表
      *
-     * @param taskListDto
+     * @param platformTaskDto
      * @return
      */
     @Override
-    public ReturnJson getPlatformTaskList(TaskListDto taskListDto) {
-        ReturnJson returnJson = new ReturnJson("查询失败", 300);
-        if (taskListDto.getPageNo() == null) {
-            taskListDto.setPageNo(1);
-        }
-        RowBounds rowBounds = new RowBounds((taskListDto.getPageNo() - 1) * taskListDto.getPageSize(), taskListDto.getPageSize());
-        List<Task> taskList = taskDao.getPlatformTaskList(taskListDto, rowBounds);
-        if (taskList != null) {
-            returnJson = new ReturnJson("查询成功", taskList, 200);
-        }
-        return returnJson;
+    public ReturnJson getPlatformTaskList(PlatformTaskDto platformTaskDto) {
+        IPage<Task> taskList = taskDao.getPlatformTaskList(platformTaskDto, new Page(platformTaskDto.getPageNo(),platformTaskDto.getPageSize()));
+        return ReturnJson.success(taskList);
     }
 
     /**

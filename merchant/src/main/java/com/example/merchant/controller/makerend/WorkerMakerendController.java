@@ -80,4 +80,11 @@ public class WorkerMakerendController {
     public ReturnJson logout(@NotBlank(message = "手机号不能为空") @RequestParam String workerId) {
         return workerService.logout(workerId);
     }
+
+    @PostMapping("/getWorkerInfoBytoken")
+    @ApiOperation(value = "根据token获取用户信息", notes = "根据token获取用户信息", httpMethod = "POST")
+    @ApiImplicitParams(value = {@ApiImplicitParam(name = "token", value = "token", required = true)})
+    public ReturnJson getWorkerInfoBytoken(@NotBlank(message = "token不能为空") @RequestParam String token) {
+        return workerService.getWorkerInfoBytoken(token);
+    }
 }

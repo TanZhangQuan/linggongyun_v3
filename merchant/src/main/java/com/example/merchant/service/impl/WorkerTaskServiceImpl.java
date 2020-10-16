@@ -79,11 +79,12 @@ public class WorkerTaskServiceImpl extends ServiceImpl<WorkerTaskDao, WorkerTask
      * @return
      */
     @Override
-    public ReturnJson updateCheckMoney(Double money, String id) {
+    public ReturnJson updateCheckMoney(String taskId,Double money, String id) {
         ReturnJson returnJson = new ReturnJson("修改失败", 300);
         WorkerTask workerTask = new WorkerTask();
         workerTask.setCheckMoney(money);
         workerTask.setId(id);
+        workerTask.setTaskId(taskId);
         workerTask.setStatus(4);
         if (money != null) {
             returnJson = new ReturnJson("验收金额不能为空", 300);

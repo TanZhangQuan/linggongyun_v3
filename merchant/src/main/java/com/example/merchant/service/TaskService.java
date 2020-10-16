@@ -2,6 +2,7 @@ package com.example.merchant.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.common.util.ReturnJson;
+import com.example.mybatis.dto.PlatformTaskDto;
 import com.example.mybatis.dto.TaskDto;
 import com.example.mybatis.dto.TaskListDto;
 import com.example.mybatis.entity.Task;
@@ -34,7 +35,7 @@ public interface TaskService extends IService<Task> {
 
     ReturnJson openTask(String taskId);
 
-    ReturnJson getPlatformTaskList(TaskListDto taskListDto);
+    ReturnJson getPlatformTaskList(PlatformTaskDto platformTaskDto);
 
     ReturnJson savePlatformTask(TaskDto taskDto);
 

@@ -18,7 +18,7 @@ public class PlatformTaskListVo {
 
     private String taskName;
 
-    private LocalDateTime releaseDate;
+    private String releaseDate;
 
     private String industryType;
 

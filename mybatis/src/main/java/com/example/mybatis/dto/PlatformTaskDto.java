@@ -6,23 +6,12 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 
-/**
- * 任务列表查询dto
- */
 @Data
-@ApiModel(value = "任务列表查询")
-public class TaskListDto {
+@ApiModel(value = "平台任务搜索")
+public class PlatformTaskDto {
 
-    //商户id
-    @ApiModelProperty(notes = "商户id", value = "商户id")
-    private String merchantId;
-
-    @ApiModelProperty(notes = "商户名称，平台端使用", value = "商户名称，平台端使用")
+    @ApiModelProperty(notes = "商户名称", value = "商户名称")
     private String merchantName;
-
-    //任务编号
-    @ApiModelProperty(notes = "任务编号", value = "任务编号")
-    private String taskCode;
 
     //任务名称
     @ApiModelProperty(notes = "任务名称", value = "任务名称")

@@ -26,9 +26,9 @@ public interface WorkerService extends IService<Worker> {
 
     ReturnJson saveWorker(List<Worker> workers, String merchantId);
 
-    ReturnJson getWorkerByTaskId(String taskId, Integer offset);
+    ReturnJson getWorkerByTaskId(String taskId, Integer pageNo,Integer pageSize);
 
-    ReturnJson getCheckByTaskId(String taskId, Integer offset);
+    ReturnJson getCheckByTaskId(String taskId, Integer pageNo,Integer pageSize);
 
     ReturnJson getWorkerAllPaas(String managersId, Integer page, Integer pageSize) throws CommonException;
 
@@ -57,4 +57,6 @@ public interface WorkerService extends IService<Worker> {
     ReturnJson setWorkerMakeMoney();
 
     ReturnJson logout(String workerId);
+
+    ReturnJson getWorkerInfoBytoken(String token);
 }
