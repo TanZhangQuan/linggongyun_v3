@@ -4,9 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.example.common.sms.SenSMS;
 import com.example.common.util.*;
-import com.example.merchant.config.shiro.CustomizedToken;
 import com.example.merchant.dto.platform.RegulatorDto;
 import com.example.merchant.dto.platform.RegulatorQueryDto;
 import com.example.merchant.dto.platform.RegulatorTaxDto;
@@ -25,18 +23,12 @@ import com.example.merchant.vo.platform.RegulatorTaxVO;
 import com.example.merchant.vo.regulator.*;
 import com.example.mybatis.entity.*;
 import com.example.mybatis.mapper.*;
-import com.example.mybatis.po.InvoicePO;
-import com.example.mybatis.po.PaymentOrderInfoPO;
-import com.example.mybatis.po.RegulatorWorkerPO;
-import com.example.mybatis.po.WorekerPaymentListPo;
-import com.example.redis.dao.RedisDao;
 import com.example.mybatis.po.*;
+import com.example.redis.dao.RedisDao;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.LockedAccountException;
-import org.apache.shiro.subject.Subject;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -560,13 +552,13 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
     @Override
     public ReturnJson getPaymentOrderInfo(String workerId, String paymentId, Integer packageStatus) {
         PaymentOrderInfoPO paymentOrderInfoPO = null;
+        PaymentOrderInfoVO paymentOrderInfoVO = new PaymentOrderInfoVO();
         if (packageStatus == 0) {
             paymentOrderInfoPO = paymentOrderDao.selectPaymentOrderInfo(paymentId);
         } else {
             paymentOrderInfoPO = paymentOrderManyDao.selectPaymentOrderInfo(paymentId);
         }
         List<PaymentInventory> paymentInventories = paymentInventoryDao.selectPaymentInventoryList(paymentId, workerId);
-        PaymentOrderInfoVO paymentOrderInfoVO = new PaymentOrderInfoVO();
         paymentOrderInfoVO.setPaymentInventories(paymentInventories);
         paymentOrderInfoVO.setPaymentOrderInfoPO(paymentOrderInfoPO);
         return ReturnJson.success(paymentOrderInfoVO);

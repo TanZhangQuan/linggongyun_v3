@@ -41,10 +41,11 @@
 			<artifactId>mybatis-plus-boot-starter</artifactId>
 			<version>3.3.2</version>
 		</dependency>
-		<!-- mysql驱动包 -->
+		<!-- https://mvnrepository.com/artifact/com.alibaba/druid-spring-boot-starter druid 数据源 -->
 		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
+			<groupId>com.alibaba</groupId>
+			<artifactId>druid-spring-boot-starter</artifactId>
+			<version>1.1.21</version>
 		</dependency>
 		<!-- 代码生成器 -->
 		<dependency>

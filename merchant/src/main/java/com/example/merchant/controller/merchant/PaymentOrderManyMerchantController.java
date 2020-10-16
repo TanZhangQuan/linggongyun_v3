@@ -8,6 +8,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -26,6 +27,7 @@ import javax.validation.constraints.NotBlank;
 @Api(value = "商户端众包支付管理", tags = "商户端众包支付管理")
 @RestController
 @RequestMapping("/merchant/paymentOrderMany")
+@Validated
 public class PaymentOrderManyMerchantController {
 
     @Resource

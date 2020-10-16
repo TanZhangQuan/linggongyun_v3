@@ -11,6 +11,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.authz.annotation.RequiresRoles;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -30,6 +31,7 @@ import javax.validation.constraints.NotEmpty;
 @Api(value = "平台端众包支付管理", tags = "平台端众包支付管理")
 @RestController
 @RequestMapping("/platform/paymentOrderMany")
+@Validated
 public class PaymentOrderManyPaasController {
 
     @Resource
