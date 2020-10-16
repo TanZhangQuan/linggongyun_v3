@@ -25,6 +25,7 @@ import com.example.mybatis.po.WorekerPaymentListPo;
 import com.example.mybatis.po.WorkerPo;
 import com.example.mybatis.vo.WorkerVo;
 import com.example.redis.dao.RedisDao;
+import io.jsonwebtoken.Claims;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,6 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -47,7 +49,7 @@ import java.util.concurrent.TimeUnit;
  * @since 2020-09-07
  */
 @Service
-public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements WorkerService {
+public class  WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements WorkerService {
 
     @Resource
     private WorkerDao workerDao;
@@ -163,23 +165,23 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
 
 
     @Override
-    public ReturnJson getWorkerByTaskId(String taskId, Integer offset) {
+    public ReturnJson getWorkerByTaskId(String taskId, Integer pageNo,Integer pageSize) {
         ReturnJson returnJson = new ReturnJson("查询失败", 300);
-        RowBounds rowBounds = new RowBounds(offset * 9, 9);
-        List<WorkerPo> poList = workerDao.getWorkerByTaskId(taskId, rowBounds);
+        Page page=new Page(pageNo,pageSize);
+        IPage<WorkerPo> poList = workerDao.getWorkerByTaskId(page,taskId);
         if (poList != null) {
-            returnJson = new ReturnJson("查询成功", poList, 200);
+            return ReturnJson.success(poList);
         }
         return returnJson;
     }
 
     @Override
-    public ReturnJson getCheckByTaskId(String taskId, Integer offset) {
+    public ReturnJson getCheckByTaskId(String taskId, Integer pageNo,Integer pageSize) {
         ReturnJson returnJson = new ReturnJson("验收查询失败", 300);
-        RowBounds rowBounds = new RowBounds(offset * 9, 9);
-        List<WorkerPo> poList = workerDao.getCheckByTaskId(taskId, rowBounds);
+        Page page = new Page(pageNo,pageSize);
+        IPage<WorkerPo> poList = workerDao.getCheckByTaskId(page,taskId);
         if (poList != null) {
-            returnJson = new ReturnJson("验收查询成功", poList, 200);
+            return ReturnJson.success(poList);
         }
         return returnJson;
     }
@@ -331,10 +333,10 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
         if (worker != null) {
             String token = jwtUtils.generateToken(worker.getId());
             worker.setUserPwd("");
-            redisDao.set(worker.getId(), JsonUtils.objectToJson(worker));
+            redisDao.set(token, JsonUtils.objectToJson(worker));
             response.setHeader(TOKEN, token);
             redisDao.setExpire(worker.getId(), 7, TimeUnit.DAYS);
-            return ReturnJson.success(worker);
+            return ReturnJson.success(token);
         }
         return ReturnJson.error("你输入的用户名或密码有误！");
     }
@@ -391,9 +393,9 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
             worker.setUserPwd("");
             String token = jwtUtils.generateToken(worker.getId());
             resource.setHeader(TOKEN, token);
-            redisDao.set(worker.getId(), JsonUtils.objectToJson(worker));
+            redisDao.set(token, JsonUtils.objectToJson(worker));
             redisDao.setExpire(worker.getId(), 7, TimeUnit.DAYS);
-            return ReturnJson.success(worker);
+            return ReturnJson.success(token);
         }
     }
 
@@ -493,16 +495,15 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
                 worker = new Worker();
                 worker.setWxId(openid);
                 worker.setMobileCode((String) wxResult.get("purePhoneNumber"));
-                worker.setAccountName((String) wxResult.get("nickName"));//用户昵称
-                worker.setWorkerSex((Integer) wxResult.get("gender"));//用户性别
+                worker.setCreateDate(LocalDateTime.now());
                 workerDao.insert(worker);
-            } else {
-                worker.setWxName((String) wxResult.get("nickName"));//获取微信名称
-                worker.setHeadPortraits((String) wxResult.get("avatarUrl"));//获取微信头像
-                workerDao.update(worker, new QueryWrapper<Worker>().eq("wx_id", openid));
             }
+            String token = jwtUtils.generateToken(worker.getId());
+            redisDao.set(worker.getId(), JsonUtils.objectToJson(worker));
+            redisDao.setExpire(worker.getId(), 7, TimeUnit.DAYS);
+            return ReturnJson.success(token);
         }
-        return returnJson.success(wxResult);
+        return returnJson.error("信息错误亲重新登录");
     }
 
     /**
@@ -545,6 +546,22 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
     public ReturnJson logout(String workerId) {
         redisDao.remove(workerId);
         return ReturnJson.success("退出登录成功！");
+    }
+
+    /**
+     * 根据token获取用户信息
+     * @param token
+     * @return
+     */
+    @Override
+    public ReturnJson getWorkerInfoBytoken(String token) {
+        Claims c=jwtUtils.getClaimByToken(token);
+        String customized = redisDao.get(c.getSubject());
+        Map<String,String> map=JsonUtils.jsonToPojo(customized, Map.class);
+        String id = map.get("id");
+        Worker worker=this.getById(id);
+        worker.setUserPwd("");
+        return ReturnJson.success(worker);
     }
 }
 

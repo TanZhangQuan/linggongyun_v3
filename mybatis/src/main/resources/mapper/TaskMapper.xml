@@ -53,10 +53,10 @@
             AND cooperate_mode=#{cooperateMode}
         </if>
         <if test="releaseDate != null and releaseDate != ''">
-            AND release_date >= #{releaseDate}
+            AND release_date >= unix_timestamp(#{releaseDate})
         </if>
         <if test="deadlineDate != null and deadlineDate != ''">
-            AND deadline_date <![CDATA[<=]]> #{deadlineDate}
+            AND deadline_date <![CDATA[<=]]> unix_timestamp(#{deadlineDate})
         </if>
     </sql>
 
@@ -141,10 +141,10 @@
             AND cooperate_mode=#{cooperateMode}
         </if>
         <if test="releaseDate != null and releaseDate != ''">
-            AND release_date >= #{releaseDate}
+            AND release_date >= unix_timestamp(#{releaseDate})
         </if>
         <if test="deadlineDate != null and deadlineDate != ''">
-            AND deadline_date <![CDATA[<=]]> #{deadlineDate}
+            AND deadline_date <![CDATA[<=]]> unix_timestamp(#{deadlineDate})
         </if>
     </select>
 

@@ -27,16 +27,9 @@ public interface WorkerDao extends BaseMapper<Worker> {
      *
      * @return
      */
-    List<WorkerPo> getWorkerByTaskId(String taskId, RowBounds rowBounds);
+    IPage<WorkerPo> getWorkerByTaskId(Page page, @Param("taskId") String taskId);
 
-    /**
-     * 验收已接单创客明细
-     *
-     * @param taskId
-     * @param rowBounds
-     * @return
-     */
-    List<WorkerPo> getCheckByTaskId(String taskId, RowBounds rowBounds);
+    IPage<WorkerPo> getCheckByTaskId(Page page, @Param("taskId") String taskId);
 
     IPage<Worker> selectByIdAndAccountNameAndMobile(Page page, @Param("merchantId") String merchantId, @Param("id") String id, @Param("accountName") String accountName, @Param("mobileCode") String mobileCode);
 
@@ -51,6 +44,7 @@ public interface WorkerDao extends BaseMapper<Worker> {
     IPage<WorekerPaymentListPo> workerPaymentList(Page page, @Param("workerId") String workerId);
 
     IPage<WorekerPaymentListPo> regulatorWorkerPaymentList(Page page, @Param("workerId") String workerId, @Param("paymentOrderIds") List<String> paymentOrderIds);
+
     IPage<WorekerPaymentListPo> selectRegulatorWorkerPaymentInfo(Page page, @Param("paymentOrderIds") List<String> paymentOrderIds, @Param("workerId") String workerId,
                                                                  @Param("companyName") String companyName, @Param("taxName") String taxName,
                                                                  @Param("startDate") String startDate, @Param("endDate") String endDate);

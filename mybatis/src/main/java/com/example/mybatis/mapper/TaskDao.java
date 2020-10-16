@@ -2,6 +2,8 @@ package com.example.mybatis.mapper;
 
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.mybatis.dto.PlatformTaskDto;
 import com.example.mybatis.dto.TaskDto;
 import com.example.mybatis.dto.TaskListDto;
@@ -45,7 +47,7 @@ public interface TaskDao extends BaseMapper<Task> {
     int openTask(String taskId);
 
     //平台端查询任务详情
-    List<Task> getPlatformTaskList(PlatformTaskDto platformTaskDto, RowBounds rowBounds);
+    IPage<Task> getPlatformTaskList(PlatformTaskDto platformTaskDto, Page page);
 
     //平台端添加任务信息
     int addPlatformTask(TaskDto TaskDto);

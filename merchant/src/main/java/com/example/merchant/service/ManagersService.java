@@ -14,4 +14,6 @@ public interface ManagersService extends IService<Managers>{
     ReturnJson loginMobile(String loginMobile,String checkCode, HttpServletResponse resource);
 
     ReturnJson getCustomizedInfo(String CustomizedId);
+
+    ReturnJson logout(String manangerId);
 }

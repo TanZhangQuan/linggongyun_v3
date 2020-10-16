@@ -22,7 +22,7 @@ public interface WorkerTaskService extends IService<WorkerTask> {
 
     ReturnJson eliminateWorker(Integer state,String workerId);
 
-    ReturnJson updateCheckMoney(Double money,String id);
+    ReturnJson updateCheckMoney(String taskId,Double money,String id);
 
     ReturnJson acceptanceResults(String workerTaskId,String achievementDesc,String achievementFiles);
 

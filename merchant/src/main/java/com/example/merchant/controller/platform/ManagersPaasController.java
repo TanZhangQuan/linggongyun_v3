@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 @Api(value = "平台端登录接口", tags = {"平台端登录接口"})
@@ -64,8 +65,15 @@ public class ManagersPaasController {
 
     @PostMapping("/getCustomizedInfo")
     @ApiOperation(value = "获取当前用用户信息", notes = "获取当前用用户信息", httpMethod = "POST")
-    @ApiImplicitParams(value = {@ApiImplicitParam(name = "customizedId", value = "customizedId", required = true)})
-    public ReturnJson getCustomizedInfo(@NotBlank(message = "customizedId不能为空！") @RequestParam String customizedId) {
-        return managersService.getCustomizedInfo(customizedId);
+    @ApiImplicitParams(value = {@ApiImplicitParam(name = "token值", value = "token值", required = true)})
+    public ReturnJson getCustomizedInfo(@NotBlank(message = "customizedId不能为空！") @RequestParam String token) {
+        return managersService.getCustomizedInfo(token);
+    }
+
+    @PostMapping("/managerLogout")
+    @ApiOperation(value = "登出", notes = "登出", httpMethod = "POST")
+    @ApiImplicitParams(value = {@ApiImplicitParam(name = "merchantId", value = "登录的商户id", required = true)})
+    public ReturnJson managerLogout(@NotNull(message = "商户id不能为空") @RequestParam(required = false) String merchantId) {
+        return managersService.logout(merchantId);
     }
 }

@@ -72,15 +72,24 @@ public class WorkerMerchantController {
 
     @ApiOperation("已接单创客明细")
     @PostMapping(value = "/getYjWorkerDetails")
-    public ReturnJson getYjWorkerDetails(String taskId, Integer offset) {
-        return workerService.getWorkerByTaskId(taskId, offset);
+    @ApiImplicitParams(value = {@ApiImplicitParam(name = "taskId", value = "任务id", required = true),
+            @ApiImplicitParam(name = "pageNo", value = "第几页"), @ApiImplicitParam(name = "pageSize", value = "页大小")})
+    public ReturnJson getYjWorkerDetails(@ApiParam(value = "任务id") @RequestParam String taskId,
+                                         @ApiParam(value = "第几页") @RequestParam(defaultValue = "1") Integer pageNo,
+                                         @ApiParam(value = "页大小") @RequestParam(defaultValue = "10") Integer pageSize) {
+        return workerService.getWorkerByTaskId(taskId, pageNo, pageSize);
     }
 
     @ApiOperation("验收已接单创客明细")
     @PostMapping(value = "/getCheckByTaskId")
-    public ReturnJson getCheckByTaskId(String taskId, Integer offset) {
-        return workerService.getCheckByTaskId(taskId, offset);
+    @ApiImplicitParams(value = {@ApiImplicitParam(name = "taskId", value = "任务id", required = true),
+            @ApiImplicitParam(name = "pageNo", value = "第几页"), @ApiImplicitParam(name = "pageSize", value = "页大小")})
+    public ReturnJson getCheckByTaskId(@NotBlank(message = "请选择任务") @ApiParam(value = "任务id") @RequestParam String taskId,
+                                       @ApiParam(value = "第几页") @RequestParam(defaultValue = "1") Integer pageNo,
+                                       @ApiParam(value = "页大小") @RequestParam(defaultValue = "10") Integer pageSize) {
+        return workerService.getCheckByTaskId(taskId, pageNo, pageSize);
     }
+
 
 
     @ApiOperation("剔除创客信息")
@@ -91,9 +100,12 @@ public class WorkerMerchantController {
 
     @ApiOperation("修改验收金额")
     @PostMapping(value = "/updateCheckMoney")
-    public ReturnJson updateCheckMoney(Double money, String id) {
-        return workerTaskService.updateCheckMoney(money, id);
+    @ApiImplicitParams(value = {@ApiImplicitParam(name = "money", value = "验收金额", required = true),
+            @ApiImplicitParam(name = "workerId", value = "创客Id", required = true)})
+    public ReturnJson updateCheckMoney(@NotBlank(message = "请选择任务") @ApiParam(value = "任务id") @RequestParam String taskId,
+                                       @NotBlank(message = "验收金额不能为空") @ApiParam(value = "验收金额") @RequestParam Double money,
+                                       @ApiParam(value = "创客Id") @RequestParam String workerId) {
+        return workerTaskService.updateCheckMoney(taskId, money, workerId);
     }
-
 }
 

@@ -3,6 +3,8 @@ package com.example.merchant.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.incrementer.DefaultIdentifierGenerator;
 import com.baomidou.mybatisplus.core.incrementer.IdentifierGenerator;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.common.util.*;
 import com.example.merchant.service.MerchantService;
 import com.example.merchant.service.WorkerTaskService;
@@ -196,8 +198,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
      */
     @Override
     public ReturnJson getPlatformTaskList(PlatformTaskDto platformTaskDto) {
-        RowBounds rowBounds = new RowBounds((platformTaskDto.getPageNo() - 1) * platformTaskDto.getPageSize(), platformTaskDto.getPageSize());
-        List<Task> taskList = taskDao.getPlatformTaskList(platformTaskDto, rowBounds);
+        IPage<Task> taskList = taskDao.getPlatformTaskList(platformTaskDto, new Page(platformTaskDto.getPageNo(),platformTaskDto.getPageSize()));
         return ReturnJson.success(taskList);
     }
 
