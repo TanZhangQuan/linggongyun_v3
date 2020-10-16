@@ -42,11 +42,10 @@ public class MerchantMerchantController {
     private AddressService addressService;
 
 
-
     @ApiOperation("商户列表")
     @GetMapping(value = "/getIdAndName")
     public ReturnJson getIdAndName() {
-       return merchantService.getIdAndName();
+        return merchantService.getIdAndName();
     }
 
     @PostMapping("/merchantInfo")
@@ -54,7 +53,7 @@ public class MerchantMerchantController {
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "merchantId", value = "商户ID", required = true)
     })
-    public ReturnJson merchantInfo(@NotBlank(message = "商户ID不能为空！") @RequestParam String merchantId) {
+    public ReturnJson merchantInfo(@NotBlank(message = "商户ID不能为空！") @RequestParam(required = false) String merchantId) {
         return merchantService.merchantInfo(merchantId);
     }
 
@@ -73,7 +72,7 @@ public class MerchantMerchantController {
             @ApiImplicitParam(name = "linkmanId", value = "联系人ID", required = true),
             @ApiImplicitParam(name = "status", value = "联系人状态", required = true)
     })
-    public ReturnJson updataStatus(@NotBlank(message = "联系人ID不能为空！") @RequestParam String linkmanId, @NotNull(message = "状态不能为空！") @RequestParam Integer status) {
+    public ReturnJson updataStatus(@NotBlank(message = "联系人ID不能为空！") @RequestParam(required = false) String linkmanId, @NotNull(message = "状态不能为空！") @RequestParam(required = false) Integer status) {
         return linkmanService.updataStatus(linkmanId, status);
     }
 
@@ -82,7 +81,7 @@ public class MerchantMerchantController {
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "linkmanId", value = "联系人ID", required = true)
     })
-    public ReturnJson removeLinkmenById(@NotBlank(message = "联系人ID不能为空") @RequestParam String linkmanId) {
+    public ReturnJson removeLinkmenById(@NotBlank(message = "联系人ID不能为空") @RequestParam(required = false) String linkmanId) {
         return linkmanService.removeLinkmenById(linkmanId);
     }
 
@@ -91,7 +90,7 @@ public class MerchantMerchantController {
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "merchantId", value = "商户ID", required = true)
     })
-    public ReturnJson getLinkmanAll(@NotBlank(message = "商户ID不能为空！") @RequestParam String merchantId) {
+    public ReturnJson getLinkmanAll(@NotBlank(message = "商户ID不能为空！") @RequestParam(required = false) String merchantId) {
         return linkmanService.getLinkmanAll(merchantId);
     }
 
@@ -100,7 +99,7 @@ public class MerchantMerchantController {
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "merchantId", value = "商户ID", required = true)
     })
-    public ReturnJson getAddressAll(@NotBlank(message = "商户ID") @RequestParam String merchantId) {
+    public ReturnJson getAddressAll(@NotBlank(message = "商户ID") @RequestParam(required = false) String merchantId) {
         return addressService.getAddressAll(merchantId);
     }
 
@@ -118,7 +117,7 @@ public class MerchantMerchantController {
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "addressId", value = "快递地址ID", required = true), @ApiImplicitParam(name = "status", value = "快递地址状态", required = true)
     })
-    public ReturnJson updataAddressStatus(@NotBlank(message = "地址ID不能为空") @RequestParam String addressId, @NotNull(message = "地址状态不能为空") @RequestParam Integer status) {
+    public ReturnJson updataAddressStatus(@NotBlank(message = "地址ID不能为空") @RequestParam(required = false) String addressId, @NotNull(message = "地址状态不能为空") @RequestParam(required = false) Integer status) {
         return addressService.updataAddressStatus(addressId, status);
     }
 
@@ -127,7 +126,7 @@ public class MerchantMerchantController {
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "addressId", value = "快递地址ID", required = true)
     })
-    public ReturnJson removeAddressById(@NotBlank(message = "地址ID不能为空") @RequestParam String addressId) {
+    public ReturnJson removeAddressById(@NotBlank(message = "地址ID不能为空") @RequestParam(required = false) String addressId) {
         return addressService.removeAddressById(addressId);
     }
 
