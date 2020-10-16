@@ -6,6 +6,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,6 +20,7 @@ import javax.validation.constraints.NotNull;
 @Api(value = "商户端登录接口", tags = {"商户端登录接口"})
 @RestController
 @RequestMapping("/merchant/login")
+@Validated
 public class MerchantLogController {
     @Resource
     private MerchantService merchantService;
