@@ -60,7 +60,7 @@ public class PaymentOrderManyPaasController {
     @ApiOperation(value = "查询众包支付订单详情", notes = "查询众包支付订单详情", httpMethod = "GET")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "id", value = "支付订单ID", required = true)})
     public ReturnJson getPaymentOrderManyInfo(@NotBlank(message = "支付订单ID不能为空") @RequestParam(required = false) String id) {
-        return paymentOrderManyService.getPaymentOrderManyInfoPaas(id);
+        return paymentOrderManyService.getPaymentOrderManyInfo(id);
     }
 
     @PostMapping("/saveOrUpdata")
