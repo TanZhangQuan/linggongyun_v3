@@ -31,7 +31,7 @@ public class AuthenticationController {
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "filePath", value = "身份证正面的访问地址", paramType = "query", required = true)
     })
-    public ReturnJson getIdCardInfo(@NotBlank(message = "访问地址不能为空！") @RequestParam String filePath) {
+    public ReturnJson getIdCardInfo(@NotBlank(message = "访问地址不能为空！") @RequestParam(required = false) String filePath) {
         return authenticationService.getIdCardInfo(filePath);
     }
 
@@ -59,7 +59,7 @@ public class AuthenticationController {
             @ApiImplicitParam(name = "workerId", value = "创客ID", paramType = "query", required = true),
             @ApiImplicitParam(name = "fileVideoPath", value = "活体视频的访问地址", paramType = "query", required = true)
     })
-    public ReturnJson saveWorkerVideo(@NotBlank(message = "创客ID不能为空！") @RequestParam String workerId, @NotBlank(message = "访问地址不能为空！") @RequestParam String fileVideoPath) {
+    public ReturnJson saveWorkerVideo(@NotBlank(message = "创客ID不能为空！") @RequestParam(required = false) String workerId, @NotBlank(message = "访问地址不能为空！") @RequestParam(required = false) String fileVideoPath) {
         return authenticationService.saveWorkerVideo(workerId, fileVideoPath);
     }
 
@@ -68,7 +68,7 @@ public class AuthenticationController {
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "workerId", value = "创客ID", paramType = "query", required = true)
     })
-    public ReturnJson findSignAContract(@NotBlank(message = "创客ID不能为空！") @RequestParam String workerId) {
+    public ReturnJson findSignAContract(@NotBlank(message = "创客ID不能为空！") @RequestParam(required = false) String workerId) {
         return authenticationService.findSignAContract(workerId);
     }
 
@@ -77,7 +77,7 @@ public class AuthenticationController {
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "workerId", value = "创客ID", paramType = "query", required = true)
     })
-    public ReturnJson senSignAContract(@NotBlank(message = "创客ID不能为空！") @RequestParam String workerId) throws DefineException {
+    public ReturnJson senSignAContract(@NotBlank(message = "创客ID不能为空！") @RequestParam(required = false) String workerId) throws DefineException {
         return authenticationService.senSignAContract(workerId);
     }
 

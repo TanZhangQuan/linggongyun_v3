@@ -131,8 +131,25 @@ PathExcel_KEY: "D:/upload/excel/"
 #本地视频存储路径
 PathVideo_KEY: "D:/upload/Video/"
 
-#加盟合同模板存储地址
-PathContractFile_KEY: "D:/upload/contract/test.pdf"
+
+#模板文件
+TemplateFile:
+  #  合同模板
+  Contract: "D:/TemplateFile/test.pdf"
+  #  总包+分包支付明细模板
+  TotalPayInventory: "D:/TemplateFile/inventory.xlsx"
+  #  众包支付明细模板
+  ManyPayInventory: "D:/TemplateFile/inventory.xlsx"
+  #  总包+分包交付支付验收单
+  TotalAcceptanceCertificate: "D:/TemplateFile/acceptanceCertificate.xlsx"
+  #  众包交付支付验收单
+  ManyAcceptanceCertificate: "D:/TemplateFile/acceptanceCertificate.xlsx"
+  #  导入创客的模板
+  ImportWorker: "D:/TemplateFile/importWorker.xlsx"
+  #  模板文件夹路径
+  Path: "D:/TemplateFile/"
+  #  模板访问路径
+  StaticAccesspath: "/static/TemplateFile/"
 
 #图片的访问路径
 fileStaticAccesspathImage: "/static/image/"
@@ -142,5 +159,6 @@ fileStaticAccesspathExcel: "/static/excel/"
 
 #视频的访问路径
 fileStaticAccesspathVideo: "/static/Video/"
+
 
 appSecret: "872614e259eded522417c76ad0fb06f0"
