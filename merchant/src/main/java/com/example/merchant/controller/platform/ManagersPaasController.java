@@ -34,7 +34,8 @@ public class ManagersPaasController {
             @ApiImplicitParam(name = "username", value = "登录账号", required = true),
             @ApiImplicitParam(name = "password", value = "登录密码", required = true)
     })
-    public ReturnJson managersLogin(@NotBlank(message = "用户名不能为空") @RequestParam(required = false) String username, @NotBlank(message = "密码不能为空") @RequestParam(required = false) String password, HttpServletResponse response) {
+    public ReturnJson managersLogin(@NotBlank(message = "用户名不能为空") @RequestParam(required = false) String username,
+                                    @NotBlank(message = "密码不能为空") @RequestParam(required = false) String password, HttpServletResponse response) {
         return managersService.managersLogin(username, password, response);
     }
 

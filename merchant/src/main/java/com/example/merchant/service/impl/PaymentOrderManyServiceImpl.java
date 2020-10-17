@@ -15,6 +15,7 @@ import com.example.merchant.exception.CommonException;
 import com.example.merchant.service.PaymentInventoryService;
 import com.example.merchant.service.PaymentOrderManyService;
 import com.example.merchant.util.AcquireID;
+import com.example.merchant.util.JwtUtils;
 import com.example.merchant.vo.ExpressInfoVO;
 import com.example.merchant.vo.PaymentOrderInfoVO;
 import com.example.mybatis.dto.TobeinvoicedDto;
@@ -25,11 +26,14 @@ import com.example.mybatis.po.PaymentOrderInfoPO;
 import com.example.mybatis.vo.CrowdSourcingInvoiceVo;
 import com.example.mybatis.vo.InvoiceDetailsVo;
 import com.example.mybatis.vo.PaymentOrderManyVo;
+import io.jsonwebtoken.Claims;
 import org.apache.ibatis.session.RowBounds;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -48,6 +52,9 @@ import java.util.Map;
  */
 @Service
 public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao, PaymentOrderMany> implements PaymentOrderManyService {
+
+    @Value("${TOKEN}")
+    private String TOKEN;
 
     @Resource
     private PaymentOrderManyDao paymentOrderManyDao;
@@ -69,6 +76,9 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
 
     @Resource
     private AcquireID acquireID;
+
+    @Resource
+    private JwtUtils jwtUtils;
 
     /**
      * 众包今天的支付金额
@@ -329,11 +339,17 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
     /**
      * 众包今天的支付金额
      *
-     * @param merchantId
+     * @param request
      * @return
      */
     @Override
-    public ReturnJson getDayPaas(String merchantId) throws CommonException {
+    public ReturnJson getDayPaas(HttpServletRequest request) throws CommonException {
+        String token = request.getHeader(TOKEN);
+        Claims claim = jwtUtils.getClaimByToken(token);
+        String merchantId = null;
+        if (claim != null) {
+            merchantId = claim.getSubject();
+        }
         List<String> merchantIds = acquireID.getMerchantIds(merchantId);
         List<PaymentOrderMany> list = paymentOrderManyDao.selectDaypaas(merchantIds);
         return ReturnJson.success(list);
@@ -342,11 +358,17 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
     /**
      * 众包本周的支付金额
      *
-     * @param merchantId
+     * @param request
      * @return
      */
     @Override
-    public ReturnJson getWeekPaas(String merchantId) throws CommonException {
+    public ReturnJson getWeekPaas(HttpServletRequest request) throws CommonException {
+        String token = request.getHeader(TOKEN);
+        Claims claim = jwtUtils.getClaimByToken(token);
+        String merchantId = null;
+        if (claim != null) {
+            merchantId = claim.getSubject();
+        }
         List<String> merchantIds = acquireID.getMerchantIds(merchantId);
         List<PaymentOrderMany> list = paymentOrderManyDao.selectWeekpaas(merchantIds);
         return ReturnJson.success(list);
@@ -356,11 +378,17 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
     /**
      * 众包本月的支付金额
      *
-     * @param merchantId
+     * @param request
      * @return
      */
     @Override
-    public ReturnJson getMonthPaas(String merchantId) throws CommonException {
+    public ReturnJson getMonthPaas(HttpServletRequest request) throws CommonException {
+        String token = request.getHeader(TOKEN);
+        Claims claim = jwtUtils.getClaimByToken(token);
+        String merchantId = null;
+        if (claim != null) {
+            merchantId = claim.getSubject();
+        }
         List<String> merchantIds = acquireID.getMerchantIds(merchantId);
         List<PaymentOrderMany> list = paymentOrderManyDao.selectMonthpaas(merchantIds);
         return ReturnJson.success(list);
@@ -369,11 +397,17 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
     /**
      * 众包今年的支付金额
      *
-     * @param merchantId
+     * @param request
      * @return
      */
     @Override
-    public ReturnJson getYearPaas(String merchantId) throws CommonException {
+    public ReturnJson getYearPaas(HttpServletRequest request) throws CommonException {
+        String token = request.getHeader(TOKEN);
+        Claims claim = jwtUtils.getClaimByToken(token);
+        String merchantId = null;
+        if (claim != null) {
+            merchantId = claim.getSubject();
+        }
         List<String> merchantIds = acquireID.getMerchantIds(merchantId);
         List<PaymentOrderMany> list = paymentOrderManyDao.selectYearpaas(merchantIds);
         return ReturnJson.success(list);

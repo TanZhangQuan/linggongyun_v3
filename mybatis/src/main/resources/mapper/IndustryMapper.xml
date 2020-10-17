@@ -3,10 +3,14 @@
 <mapper namespace="com.example.mybatis.mapper.IndustryDao">
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="com.example.mybatis.entity.Industry">
+    <resultMap id="BaseResultMap" type="com.example.mybatis.vo.IndustryVo">
         <id column="id" property="id"/>
         <result column="industry_type" property="industryType"/>
-        <result column="one_level" property="oneLevel"/>
+        <collection property="list" ofType="com.example.mybatis.entity.Industry">
+            <id column="id2" property="id"/>
+            <result column="type2" property="industryType"/>
+            <result column="one_level" property="oneLevel"/>
+        </collection>
     </resultMap>
 
     <!-- 通用查询结果列 -->
@@ -15,14 +19,10 @@
     </sql>
 
     <select id="getlist" resultMap="BaseResultMap">
-        SELECT * FROM tb_industry 
-        WHERE 1=1
-        <if test="oneLevel == null">
-           and one_level is NULL
-        </if>
-        <if test="oneLevel != null and oneLevel != ''">
-           and one_level = #{oneLevel}
-        </if>
+        SELECT i1.id,i1.industry_type,i2.id as id2, i2.industry_type as type2,i2.one_level
+        from tb_industry i1
+        LEFT JOIN tb_industry i2 ON i1.id=i2.one_level
+        WHERE i1.one_level is NULL
     </select>
 
 </mapper>

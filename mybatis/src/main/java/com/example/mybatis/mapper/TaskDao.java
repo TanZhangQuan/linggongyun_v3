@@ -47,7 +47,7 @@ public interface TaskDao extends BaseMapper<Task> {
     int openTask(String taskId);
 
     //平台端查询任务详情
-    IPage<Task> getPlatformTaskList(PlatformTaskDto platformTaskDto, Page page);
+    IPage<Task> getPlatformTaskList(Page page,@Param("platformTaskDto") PlatformTaskDto platformTaskDto);
 
     //平台端添加任务信息
     int addPlatformTask(TaskDto TaskDto);

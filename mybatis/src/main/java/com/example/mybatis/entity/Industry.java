@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * <p>
@@ -38,6 +39,5 @@ public class Industry implements Serializable {
      * 一级id
      */
     private String oneLevel;
-
 
 }

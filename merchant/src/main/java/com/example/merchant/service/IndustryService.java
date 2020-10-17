@@ -16,5 +16,5 @@ import java.util.List;
  */
 public interface IndustryService extends IService<Industry> {
 
-    ReturnJson getlist(String oneLevel);
+    ReturnJson getlist();
 }

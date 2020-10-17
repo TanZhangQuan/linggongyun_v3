@@ -5,6 +5,7 @@ import com.example.common.util.ReturnJson;
 import com.example.merchant.exception.CommonException;
 import com.example.merchant.service.HomePageService;
 import com.example.merchant.util.AcquireID;
+import com.example.merchant.util.JwtUtils;
 import com.example.merchant.vo.merchant.HomePageMerchantVO;
 import com.example.merchant.vo.platform.HomePageVO;
 import com.example.mybatis.entity.Agent;
@@ -12,11 +13,15 @@ import com.example.mybatis.entity.CompanyWorker;
 import com.example.mybatis.entity.Managers;
 import com.example.mybatis.mapper.*;
 import com.example.mybatis.po.InvoicePO;
+import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
+import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -25,6 +30,8 @@ import java.util.Set;
 @Service
 public class HomePageServiceImpl implements HomePageService {
 
+    @Value("${TOKEN}")
+    private String TOKEN;
 
     @Resource
     private PaymentOrderDao paymentOrderDao;
@@ -58,6 +65,9 @@ public class HomePageServiceImpl implements HomePageService {
 
     @Resource
     private CrowdSourcingInvoiceDao crowdSourcingInvoiceDao;
+
+    @Resource
+    private JwtUtils jwtUtils;
 
     /**
      * 获取首页基本信息
@@ -115,7 +125,13 @@ public class HomePageServiceImpl implements HomePageService {
     }
 
     @Override
-    public ReturnJson getHomePageInofpaas(String managersId) throws CommonException {
+    public ReturnJson getHomePageInofpaas(HttpServletRequest request) throws CommonException {
+        String token = request.getHeader(TOKEN);
+        Claims claim = jwtUtils.getClaimByToken(token);
+        String managersId = null;
+        if (claim != null) {
+            managersId = claim.getSubject();
+        }
         Managers managers = managersDao.selectById(managersId);
         HomePageVO homePageVO = null;
         List<String> merchantIds = acquireID.getMerchantIds(managersId);

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotBlank;
 
 @Api(value = "平台端首页内容的展示", tags = "平台端首页内容的展示")
@@ -35,57 +36,38 @@ public class HomePagePaasController {
 
     @PostMapping("/homePageInfo")
     @ApiOperation(value = "获取首页基本信息", notes = "获取首页基本信息", httpMethod = "POST")
-    @ApiImplicitParams(value = {
-            @ApiImplicitParam(name = "managersId", value = "用户ID", required = true)
-    })
-    public ReturnJson myWorker(@NotBlank(message = "用户不能为空") @RequestParam(required = false) String managersId) throws CommonException {
-        return homePageService.getHomePageInofpaas(managersId);
+    public ReturnJson myWorker(HttpServletRequest request) throws CommonException {
+        return homePageService.getHomePageInofpaas(request);
     }
 
     @PostMapping("/totalDayInfo")
     @ApiOperation(value = "获取总包+分包今天的支付额", notes = "获取总包+分包今天的支付额", httpMethod = "POST")
-    @ApiImplicitParams(value = {
-            @ApiImplicitParam(name = "merchantId", value = "用户ID", required = true)
-    })
-    public ReturnJson totalDayInfo(@NotBlank(message = "用户Id不能为空") @RequestParam(required = false) String merchantId) throws CommonException {
-        return paymentOrderService.getDayPaas(merchantId);
+    public ReturnJson totalDayInfo(HttpServletRequest request) throws CommonException {
+        return paymentOrderService.getDayPaas(request);
     }
 
     @PostMapping("/totalWeekInfo")
     @ApiOperation(value = "获取总包+分包本周的支付额", notes = "获取总包+分包本周的支付额", httpMethod = "POST")
-    @ApiImplicitParams(value = {
-            @ApiImplicitParam(name = "merchantId", value = "用户ID", required = true)
-    })
-    public ReturnJson totalWeekInfo(@NotBlank(message = "用户Id不能为空") @RequestParam(required = false) String merchantId) throws CommonException {
-        System.out.println(merchantId);
-        return paymentOrderService.getWeekPaas(merchantId);
+    public ReturnJson totalWeekInfo(HttpServletRequest request) throws CommonException {
+        return paymentOrderService.getWeekPaas(request);
     }
 
     @PostMapping("/totalMonthInfo")
     @ApiOperation(value = "获取总包+分包本月的支付额", notes = "获取总包+分包本月的支付额", httpMethod = "POST")
-    @ApiImplicitParams(value = {
-            @ApiImplicitParam(name = "merchantId", value = "用户ID", required = true)
-    })
-    public ReturnJson totalMonthInfo(@NotBlank(message = "用户Id不能为空") @RequestParam(required = false) String merchantId) throws CommonException {
-        return paymentOrderService.getMonthPaas(merchantId);
+    public ReturnJson totalMonthInfo(HttpServletRequest request) throws CommonException {
+        return paymentOrderService.getMonthPaas(request);
     }
 
     @PostMapping("/totalYearInfo")
     @ApiOperation(value = "获取总包+分包全年的支付额", notes = "获取总包+分包全年的支付额", httpMethod = "POST")
-    @ApiImplicitParams(value = {
-            @ApiImplicitParam(name = "merchantId", value = "用户ID", required = true)
-    })
-    public ReturnJson totalYearInfo(@NotBlank(message = "用户Id不能为空") @RequestParam(required = false) String merchantId) throws CommonException {
-        return paymentOrderService.getYearPaas(merchantId);
+    public ReturnJson totalYearInfo(HttpServletRequest request) throws CommonException {
+        return paymentOrderService.getYearPaas(request);
     }
 
     @PostMapping("/manyDayInfo")
     @ApiOperation(value = "获取众包今天的支付额", notes = "获取众包今天的支付额", httpMethod = "POST")
-    @ApiImplicitParams(value = {
-            @ApiImplicitParam(name = "merchantId", value = "用户ID", required = true)
-    })
-    public ReturnJson manyDayInfo(@NotBlank(message = "用户Id不能为空") @RequestParam(required = false) String merchantId) throws CommonException {
-        return paymentOrderManyService.getDayPaas(merchantId);
+    public ReturnJson manyDayInfo(HttpServletRequest request) throws CommonException {
+        return paymentOrderManyService.getDayPaas(request);
     }
 
     @PostMapping("/manyWeekInfo")
@@ -93,8 +75,8 @@ public class HomePagePaasController {
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "merchantId", value = "用户ID", required = true)
     })
-    public ReturnJson manyWeekInfo(@NotBlank(message = "用户Id不能为空") @RequestParam(required = false) String merchantId) throws CommonException {
-        return paymentOrderManyService.getWeekPaas(merchantId);
+    public ReturnJson manyWeekInfo(HttpServletRequest request) throws CommonException {
+        return paymentOrderManyService.getWeekPaas(request);
     }
 
     @PostMapping("/manyMonthInfo")
@@ -102,8 +84,8 @@ public class HomePagePaasController {
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "merchantId", value = "用户ID", required = true)
     })
-    public ReturnJson manyMonthInfo(@NotBlank(message = "用户Id不能为空") @RequestParam(required = false) String merchantId) throws CommonException {
-        return paymentOrderManyService.getMonthPaas(merchantId);
+    public ReturnJson manyMonthInfo(HttpServletRequest request) throws CommonException {
+        return paymentOrderManyService.getMonthPaas(request);
     }
 
     @PostMapping("/manyYearInfo")
@@ -111,7 +93,7 @@ public class HomePagePaasController {
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "merchantId", value = "用户ID", required = true)
     })
-    public ReturnJson manyYearInfo(@NotBlank(message = "用户Id不能为空") @RequestParam(required = false) String merchantId) throws CommonException {
-        return paymentOrderManyService.getYearPaas(merchantId);
+    public ReturnJson manyYearInfo(HttpServletRequest request) throws CommonException {
+        return paymentOrderManyService.getYearPaas(request);
     }
 }

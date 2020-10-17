@@ -24,7 +24,7 @@ public class ShiroExceptionHandler {
 	@ResponseBody
 	public ReturnJson unauthorizedHandler(AuthorizationException e) {
 		e.printStackTrace();
-		return ReturnJson.error("权限不够访问该接口");
+		return ReturnJson.error(406,"权限不够访问该接口");
 	}
 
 }
