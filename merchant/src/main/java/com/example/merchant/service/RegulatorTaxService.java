@@ -21,7 +21,7 @@ public interface RegulatorTaxService extends IService<RegulatorTax> {
 
     ReturnJson homeFourData(String regulatorId);
 
-    ReturnJson listTax(RegulatorTaxDto regulatorTaxDto);
+    ReturnJson listTax(RegulatorTaxDto regulatorTaxDto, String regulatorId);
 
     ReturnJson getTax(String taxId);
 

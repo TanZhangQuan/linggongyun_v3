@@ -333,8 +333,8 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
      * @return
      */
     @Override
-    public ReturnJson getRegulatorWorker(RegulatorWorkerDto regulatorWorkerDto) {
-        ReturnJson result = this.getPaymentOrderIds(regulatorWorkerDto.getRegulatorId());
+    public ReturnJson getRegulatorWorker(RegulatorWorkerDto regulatorWorkerDto, String regulatorId) {
+        ReturnJson result = this.getPaymentOrderIds(regulatorId);
         if (result.getCode() == 300) {
             return result;
         }
@@ -484,8 +484,8 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
      * @return
      */
     @Override
-    public ReturnJson getRegulatorWorkerPaymentInfo(RegulatorWorkerPaymentDto regulatorWorkerPaymentDto) {
-        ReturnJson result = this.getPaymentOrderIds(regulatorWorkerPaymentDto.getRegulatorId());
+    public ReturnJson getRegulatorWorkerPaymentInfo(RegulatorWorkerPaymentDto regulatorWorkerPaymentDto, String regulatorId) {
+        ReturnJson result = this.getPaymentOrderIds(regulatorId);
         if (result.getCode() == 300) {
             return result;
         }
@@ -616,8 +616,8 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
      * @return
      */
     @Override
-    public ReturnJson getRegulatorMerchant(RegulatorMerchantDto regulatorMerchantDto) {
-        ReturnJson returnJson = this.getTaxIds(regulatorMerchantDto.getRegulatorId());
+    public ReturnJson getRegulatorMerchant(RegulatorMerchantDto regulatorMerchantDto, String regulatorId) {
+        ReturnJson returnJson = this.getTaxIds(regulatorId);
         if (returnJson.getCode() == 300) {
             return returnJson;
         }
@@ -815,8 +815,8 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
      * @return
      */
     @Override
-    public ReturnJson getRegulatorMerchantPaymentOrder(RegulatorMerchantPaymentOrderDto regulatorMerchantPaymentOrderDto) {
-        ReturnJson returnJson = this.getTaxIds(regulatorMerchantPaymentOrderDto.getRegulatorId());
+    public ReturnJson getRegulatorMerchantPaymentOrder(RegulatorMerchantPaymentOrderDto regulatorMerchantPaymentOrderDto, String regulatorId) {
+        ReturnJson returnJson = this.getTaxIds(regulatorId);
         if (returnJson.getCode() == 300) {
             return returnJson;
         }
@@ -897,10 +897,9 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
 //        currentUser.login(customizedToken);//shiro验证身份
         String token = jwtUtils.generateToken(re.getId());
         response.setHeader(TOKEN, token);
-        redisDao.set(re.getId(), JsonUtils.objectToJson(re));
+        redisDao.set(re.getId(), token);
         redisDao.setExpire(re.getId(), 60 * 60 * 24 * 7);
-        re.setPassWord("");
-        return ReturnJson.success(re);
+        return ReturnJson.success("登录成功！",token);
     }
 
     /**

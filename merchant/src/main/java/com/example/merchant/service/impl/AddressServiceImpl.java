@@ -21,12 +21,22 @@ import java.util.List;
 @Service
 public class AddressServiceImpl extends ServiceImpl<AddressDao, Address> implements AddressService {
 
+    /**
+     * 获取商户的所以收货地址
+     * @param merchantId
+     * @return
+     */
     @Override
     public ReturnJson getAddressAll(String merchantId) {
         List<Address> addressList = this.list(new QueryWrapper<Address>().eq("company_id", merchantId).orderByAsc("is_not"));
         return ReturnJson.success(addressList);
     }
 
+    /**
+     * 添加或修改地址
+     * @param address
+     * @return
+     */
     @Override
     public ReturnJson addOrUpdataAddress(Address address) {
         if (address.getIsNot() == 0) {
@@ -43,6 +53,12 @@ public class AddressServiceImpl extends ServiceImpl<AddressDao, Address> impleme
         return ReturnJson.error("操作失败！");
     }
 
+    /**
+     * 停用或启用地址
+     * @param addressId
+     * @param status
+     * @return
+     */
     @Override
     public ReturnJson updataAddressStatus(String addressId, Integer status) {
         Address address = new Address();
@@ -55,6 +71,11 @@ public class AddressServiceImpl extends ServiceImpl<AddressDao, Address> impleme
         return ReturnJson.error("操作失败！");
     }
 
+    /**
+     * 删除地址
+     * @param addressId
+     * @return
+     */
     @Override
     public ReturnJson removeAddressById(String addressId) {
         boolean flag = this.removeById(addressId);

@@ -21,7 +21,7 @@ import java.util.List;
  */
 public interface RegulatorTaxDao extends BaseMapper<RegulatorTax> {
 
-    IPage<TaxVo> selServiceProviders(Page page,@Param("tax") RegulatorTaxDto regulatorTaxDto);
+    IPage<TaxVo> selServiceProviders(Page page,@Param("tax") RegulatorTaxDto regulatorTaxDto, @Param("regulatorId") String regulatorId);
 
     List<TaxVo> selTaxListByIds(@Param("ids") List<String> ids);
 }

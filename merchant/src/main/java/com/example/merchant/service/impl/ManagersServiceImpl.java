@@ -62,8 +62,7 @@ public class ManagersServiceImpl extends ServiceImpl<ManagersDao, Managers> impl
         if (managers != null) {
             CustomizedToken customizedToken = new CustomizedToken(userName, PWD_KEY+ MD5.md5(passWord), MANAGERS);
             String token = jwtUtils.generateToken(managers.getId());
-            managers.setPassWord("");
-            redisDao.set(managers.getId(), JsonUtils.objectToJson(managers));
+            redisDao.set(managers.getId(), token);
             response.setHeader(TOKEN,token);
             redisDao.setExpire(managers.getId(),7, TimeUnit.DAYS);
             currentUser.login(customizedToken);//shiro验证身份

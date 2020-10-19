@@ -2,6 +2,7 @@ package com.example.merchant.controller.regulator;
 
 import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.regulator.PayInfoDto;
+import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.RegulatorService;
 import com.example.merchant.service.RegulatorTaxService;
 import com.example.mybatis.dto.RegulatorTaxDto;
@@ -23,14 +24,13 @@ public class RgeulatorServiceProviderController {
 
     @Autowired
     private RegulatorTaxService regulatorTaxService;
-    @Autowired
-    private RegulatorService regulatorService;
 
     @PostMapping("getListServiceProvider")
+    @LoginRequired
     @ApiOperation(value = "查询服务商列表", notes = "查询服务商列表", httpMethod = "POST")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "regulatorTaxDto", value = "监管服务商查询", dataType = "RegulatorTaxDto", required = true)})
-    public ReturnJson getListServiceProvider(@Valid @RequestBody RegulatorTaxDto regulatorTaxDto) {
-        return regulatorTaxService.listTax(regulatorTaxDto);
+    public ReturnJson getListServiceProvider(@Valid @RequestBody RegulatorTaxDto regulatorTaxDto, @ApiParam(hidden = true) @RequestAttribute(value = "userId", required = false) String regulatorId) {
+        return regulatorTaxService.listTax(regulatorTaxDto, regulatorId);
     }
 
     @PostMapping("getServiceProvider")
@@ -80,9 +80,9 @@ public class RgeulatorServiceProviderController {
     }
 
     @PostMapping("/homeFourData")
+    @LoginRequired
     @ApiOperation(value = "监管服务商流水信息", notes = "监管服务商流水信息", httpMethod = "POST")
-    @ApiImplicitParams(value = {@ApiImplicitParam(name = "regulatorId", value = "监管人员Id", required = true)})
-    public ReturnJson getHomeFourData(@NotBlank(message = "请先登录！") @RequestParam String regulatorId) {
+    public ReturnJson getHomeFourData(@ApiParam(hidden = true) @RequestAttribute(value = "userId", required = false) String regulatorId) {
         return regulatorTaxService.homeFourData(regulatorId);
     }
 
