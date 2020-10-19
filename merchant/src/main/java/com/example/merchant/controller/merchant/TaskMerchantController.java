@@ -33,8 +33,7 @@ public class TaskMerchantController {
     @ApiOperation("任务列表")
     @PostMapping(value = "/getTasks")
     public ReturnJson<Task> TaskList(TaskListDto taskListDto) {
-        RowBounds rowBounds = new RowBounds(taskListDto.getPageNo(), taskListDto.getPageSize());
-        return taskService.selectList(taskListDto, rowBounds);
+        return taskService.selectList(taskListDto);
     }
 
     @ApiOperation("删除任务信息")

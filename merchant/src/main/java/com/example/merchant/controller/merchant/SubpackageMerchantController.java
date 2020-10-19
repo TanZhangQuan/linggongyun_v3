@@ -40,8 +40,8 @@ public class SubpackageMerchantController {
 
     @ApiOperation("汇总代开,发票信息,创客到手明细")
     @PostMapping(value = "/getListByInvoiceId")
-    public ReturnJson getListByInvoiceId(String invoicedId, Integer PageNo) {
-        return subpackageService.getListByInvoiceId(invoicedId, PageNo);
+    public ReturnJson getListByInvoiceId(String invoicedId, Integer PageNo,Integer pageSize) {
+        return subpackageService.getListByInvoiceId(invoicedId, PageNo,pageSize);
     }
 
 

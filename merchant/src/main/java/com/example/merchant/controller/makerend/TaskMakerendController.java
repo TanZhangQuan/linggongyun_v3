@@ -64,7 +64,6 @@ public class TaskMakerendController {
     @GetMapping(value = "/orderGrabbing")
     public ReturnJson orderGrabbing(@ApiParam(value = "任务id", required = true) @RequestParam("taskId") String taskId,
                                     @ApiParam(value = "创客id", required = true) @RequestParam("workerId") String workerId) {
-
         return taskService.orderGrabbing(taskId, workerId);
     }
 }

@@ -3,6 +3,8 @@ package com.example.merchant.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.incrementer.DefaultIdentifierGenerator;
 import com.baomidou.mybatisplus.core.incrementer.IdentifierGenerator;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.common.util.DateUtil;
 import com.example.common.util.ReturnJson;
@@ -63,13 +65,9 @@ public class CrowdSourcingInvoiceServiceImpl extends ServiceImpl<CrowdSourcingIn
      */
     @Override
     public ReturnJson getCrowdSourcingInfo(TobeinvoicedDto tobeinvoicedDto) {
-        ReturnJson returnJson = new ReturnJson("操作失败", 300);
-        RowBounds rowBounds = new RowBounds((tobeinvoicedDto.getPageNo() - 1) * 9, 9);
-        List<CrowdSourcingInfoVo> vos = crowdSourcingInvoiceDao.getCrowdSourcingInfo(tobeinvoicedDto, rowBounds);
-        if (vos != null) {
-            returnJson = new ReturnJson("操作成功", vos, 200);
-        }
-        return returnJson;
+        Page page = new Page(tobeinvoicedDto.getPageNo(), tobeinvoicedDto.getPageSize());
+        IPage<CrowdSourcingInfoVo> vos = crowdSourcingInvoiceDao.getCrowdSourcingInfo(page, tobeinvoicedDto);
+        return ReturnJson.success(vos);
     }
 
     /**
@@ -96,14 +94,9 @@ public class CrowdSourcingInvoiceServiceImpl extends ServiceImpl<CrowdSourcingIn
      */
     @Override
     public ReturnJson getTobeCrowdSourcingInvoice(TobeinvoicedDto tobeinvoicedDto) {
-        ReturnJson returnJson = new ReturnJson("操作失败", 300);
-        RowBounds rowBounds = new RowBounds((tobeinvoicedDto.getPageNo() - 1) * 9, 9);
-        List<CrowdSourcingInvoiceVo> list = crowdSourcingInvoiceDao.getCrowdSourcingInvoicePass(tobeinvoicedDto, rowBounds);
-
-        if (list != null) {
-            returnJson = new ReturnJson("操作成功", list, 200);
-        }
-        return returnJson;
+        Page page = new Page(tobeinvoicedDto.getPageNo(), tobeinvoicedDto.getPageSize());
+        IPage<CrowdSourcingInvoiceVo> list = crowdSourcingInvoiceDao.getCrowdSourcingInvoicePass(page, tobeinvoicedDto);
+        return ReturnJson.success(list);
     }
 
     @Override
@@ -229,13 +222,9 @@ public class CrowdSourcingInvoiceServiceImpl extends ServiceImpl<CrowdSourcingIn
      */
     @Override
     public ReturnJson getCrowdSourcingInfoPass(TobeinvoicedDto tobeinvoicedDto) {
-        ReturnJson returnJson = new ReturnJson("操作失败", 300);
-        RowBounds rowBounds = new RowBounds((tobeinvoicedDto.getPageNo() - 1) * 9, 9);
-        List<CrowdSourcingInfoVo> vos = crowdSourcingInvoiceDao.getCrowdSourcingInfoPass(tobeinvoicedDto, rowBounds);
-        if (vos != null) {
-            returnJson = new ReturnJson("操作成功", vos, 200);
-        }
-        return returnJson;
+        Page page = new Page(tobeinvoicedDto.getPageNo(), tobeinvoicedDto.getPageSize());
+        IPage<CrowdSourcingInfoVo> vos = crowdSourcingInvoiceDao.getCrowdSourcingInfoPass(page, tobeinvoicedDto);
+        return ReturnJson.success(vos);
     }
 
     @Override

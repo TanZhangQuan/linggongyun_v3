@@ -97,33 +97,33 @@
 
     <!--商户端查询条件-->
     <sql id="que">
-        <if test="merchantId != null and merchantId != ''">
-            AND po.company_s_name=#{companySName}
+        <if test="tobeinvoicedDto.merchantId != null and tobeinvoicedDto.merchantId != ''">
+            AND po.company_s_name=#{tobeinvoicedDto.companySName}
         </if>
-        <if test="platformServiceProvider != null and platformServiceProvider != ''">
-            AND po.platform_service_provider=#{platformServiceProvider}
+        <if test="tobeinvoicedDto.platformServiceProvider != null and tobeinvoicedDto.platformServiceProvider != ''">
+            AND po.platform_service_provider=#{tobeinvoicedDto.platformServiceProvider}
         </if>
-        <if test="applicationDateOne != null and applicationDateOne != ''">
-            AND ia.invapp.application_date>=#{applicationDateOne}
+        <if test="tobeinvoicedDto.applicationDateOne != null and tobeinvoicedDto.applicationDateOne != ''">
+            AND ia.invapp.application_date>=#{tobeinvoicedDto.applicationDateOne}
         </if>
-        <if test="applicationDateTwo != null and applicationDateTwo != ''">
-            AND ia.invapp.application_date <![CDATA[<=]]> #{applicationDateTwo}
+        <if test="tobeinvoicedDto.applicationDateTwo != null and tobeinvoicedDto.applicationDateTwo != ''">
+            AND ia.invapp.application_date <![CDATA[<=]]> #{tobeinvoicedDto.applicationDateTwo}
         </if>
     </sql>
 
     <!--平台端通用查询-->
     <sql id="que2">
-        <if test="companySName != null and companySName != ''">
-            AND po.company_s_name like CONCAT('%',#{companySName},'%')
+        <if test="tobeinvoicedDto.companySName != null and tobeinvoicedDto.companySName != ''">
+            AND po.company_s_name like CONCAT('%',#{tobeinvoicedDto.companySName},'%')
         </if>
-        <if test="platformServiceProvider != null and platformServiceProvider != ''">
-            AND po.platform_service_provider=#{platformServiceProvider}
+        <if test="tobeinvoicedDto.platformServiceProvider != null and tobeinvoicedDto.platformServiceProvider != ''">
+            AND po.platform_service_provider=#{tobeinvoicedDto.platformServiceProvider}
         </if>
-        <if test="applicationDateOne != null and applicationDateOne != ''">
-            AND invapp.invapp.application_date>=#{applicationDateOne}
+        <if test="tobeinvoicedDto.applicationDateOne != null and tobeinvoicedDto.applicationDateOne != ''">
+            AND invapp.invapp.application_date>=#{tobeinvoicedDto.applicationDateOne}
         </if>
-        <if test="applicationDateTwo != null and applicationDateTwo != ''">
-            AND invapp.invapp.application_date <![CDATA[<=]]> #{applicationDateTwo}
+        <if test="tobeinvoicedDto.applicationDateTwo != null and tobeinvoicedDto.applicationDateTwo != ''">
+            AND invapp.invapp.application_date <![CDATA[<=]]> #{tobeinvoicedDto.applicationDateTwo}
         </if>
     </sql>
 

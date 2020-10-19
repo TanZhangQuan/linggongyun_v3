@@ -36,13 +36,13 @@ public interface PaymentOrderManyDao extends BaseMapper<PaymentOrderMany> {
     List<PaymentOrderMany> selectYear(String merchantId);
 
     //根据商户id查众包待开票数据
-    List<CrowdSourcingInvoiceVo> getListCSIByID(TobeinvoicedDto tobeinvoicedDto, RowBounds rowBounds);
+    IPage<CrowdSourcingInvoiceVo> getListCSIByID(Page page,@Param("tobeinvoicedDto") TobeinvoicedDto tobeinvoicedDto);
 
     //根据支付id查询众包支付信息
     PaymentOrderManyVo getPayOrderManyById(String id);
 
     //根据众包支付id查询对应的开票清单
-    List<InvoiceDetailsVo> getInvoiceDetailsByPayId(String id, RowBounds rowBounds);
+    IPage<InvoiceDetailsVo> getInvoiceDetailsByPayId(Page page,@Param("id") String id);
 
     IPage<PaymentOrderMany> selectMany(Page page, @Param("merchantId")String mercahntId, @Param("id") String id, @Param("taxId") String taxId, @Param("beginDate") String beginDate, @Param("endDate") String endDate);
     Integer selectManyCount(@Param("merchantId")String mercahntId, @Param("id") String id, @Param("taxId") String taxId, @Param("beginDate") String beginDate, @Param("endDate") String endDate);

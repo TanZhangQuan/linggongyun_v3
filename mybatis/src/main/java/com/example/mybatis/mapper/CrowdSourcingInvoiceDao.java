@@ -1,5 +1,7 @@
 package com.example.mybatis.mapper;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.mybatis.dto.TobeinvoicedDto;
 import com.example.mybatis.entity.ApplicationCrowdSourcing;
 import com.example.mybatis.entity.CrowdSourcingInvoice;
@@ -25,7 +27,7 @@ public interface CrowdSourcingInvoiceDao extends BaseMapper<CrowdSourcingInvoice
     InvoicePO selectCrowdInvoiceMoneyPaas(List<String> merchantId);
     int addCrowdSourcingInvoice(ApplicationCrowdSourcing applicationCrowdSourcing);
 
-    List<CrowdSourcingInfoVo> getCrowdSourcingInfo(TobeinvoicedDto tobeinvoicedDto, RowBounds rowBounds);
+    IPage<CrowdSourcingInfoVo> getCrowdSourcingInfo(Page page, @Param("tobeinvoicedDto") TobeinvoicedDto tobeinvoicedDto);
 
     //众包发票id
     InvoiceInformationVo getInvoiceById(String csiId);
@@ -38,7 +40,7 @@ public interface CrowdSourcingInvoiceDao extends BaseMapper<CrowdSourcingInvoice
     BuyerVo getBuyer(String id);
 
     /** ----平台端---- **/
-    List<CrowdSourcingInvoiceVo> getCrowdSourcingInvoicePass(TobeinvoicedDto tobeinvoicedDto, RowBounds rowBounds);
+    IPage<CrowdSourcingInvoiceVo> getCrowdSourcingInvoicePass(Page page,@Param("tobeinvoicedDto") TobeinvoicedDto tobeinvoicedDto);
 
     PaymentOrderManyVo getPaymentOrderManyPass(String payId);
 
@@ -46,7 +48,7 @@ public interface CrowdSourcingInvoiceDao extends BaseMapper<CrowdSourcingInvoice
 
     String getCrowdInvoiceCode();
 
-    List<CrowdSourcingInfoVo> getCrowdSourcingInfoPass(TobeinvoicedDto tobeinvoicedDto, RowBounds rowBounds);
+    IPage<CrowdSourcingInfoVo> getCrowdSourcingInfoPass(Page page,@Param("tobeinvoicedDto") TobeinvoicedDto tobeinvoicedDto);
 
     List<InvoiceDetailsVo> getPaymentInventoryInfoPass(String invoiceId);
 

@@ -63,6 +63,7 @@ public class PaasLoginJWTInterceptor implements HandlerInterceptor {
                 if (StringUtils.isBlank(managers)) {
                     throw new CommonException(402, "你的登录以过期请重新登录！");
                 }
+                request.setAttribute("userId",userId);
                 return true;
             }
         }
