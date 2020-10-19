@@ -72,12 +72,18 @@ public class HomePageServiceImpl implements HomePageService {
     /**
      * 获取首页基本信息
      *
-     * @param merchantId
+     * @param request
      * @return
      */
     @Override
-    public ReturnJson getHomePageInof(String merchantId) {
-        String companyId = merchantId;
+    public ReturnJson getHomePageInof(HttpServletRequest request) {
+        String token = request.getHeader(TOKEN);
+        Claims claim = jwtUtils.getClaimByToken(token);
+        String managersId = null;
+        if (claim != null) {
+            managersId = claim.getSubject();
+        }
+        String companyId = managersId;
         HomePageMerchantVO homePageMerchantVO = new HomePageMerchantVO();
         BigDecimal payment30TotalMoney = paymentOrderDao.selectBy30Day(companyId);
         homePageMerchantVO.setPayment30TotalMoney(payment30TotalMoney);

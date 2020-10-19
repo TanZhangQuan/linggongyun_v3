@@ -20,13 +20,13 @@ import javax.servlet.http.HttpServletRequest;
  * @since 2020-09-07
  */
 public interface PaymentOrderService extends IService<PaymentOrder> {
-    ReturnJson getDay(String merchantId);
+    ReturnJson getDay(HttpServletRequest request);
 
-    ReturnJson getWeek(String merchantId);
+    ReturnJson getWeek(HttpServletRequest request);
 
-    ReturnJson getMonth(String merchantId);
+    ReturnJson getMonth(HttpServletRequest request);
 
-    ReturnJson getYear(String merchantId);
+    ReturnJson getYear(HttpServletRequest request);
 
     ReturnJson getPaymentOrder(PaymentOrderMerchantDto paymentOrderMerchantDto);
 

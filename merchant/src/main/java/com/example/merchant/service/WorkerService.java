@@ -6,6 +6,7 @@ import com.example.merchant.dto.merchant.WorkerDto;
 import com.example.merchant.exception.CommonException;
 import com.example.mybatis.entity.Worker;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
@@ -58,5 +59,5 @@ public interface WorkerService extends IService<Worker> {
 
     ReturnJson logout(String workerId);
 
-    ReturnJson getWorkerInfoBytoken(String token);
+    ReturnJson getWorkerInfoBytoken(HttpServletRequest request);
 }

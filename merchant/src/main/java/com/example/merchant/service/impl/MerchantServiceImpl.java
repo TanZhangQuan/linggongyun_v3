@@ -156,7 +156,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         redisDao.set(me.getId(), JsonUtils.objectToJson(me));
         redisDao.setExpire(me.getId(), 60 * 60 * 24 * 7);
         me.setPassWord("");
-        return ReturnJson.success(me);
+        return ReturnJson.success("登录成功",token);
     }
 
     /**
@@ -230,7 +230,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
             redisDao.setExpire(merchant.getId(), 60 * 60 * 24 * 7);
             CustomizedToken customizedToken = new CustomizedToken(merchant.getUserName(), merchant.getPassWord(), MERCHANT);
             currentUser.login(customizedToken);//shiro验证身份
-            return ReturnJson.success(merchant);
+            return ReturnJson.success("登录成功",token);
         }
     }
 
@@ -435,8 +435,8 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
      * @return
      */
     @Override
-    public ReturnJson merchantInfoPaas(String merchantId) {
-        ReturnJson returnJson = homePageService.getHomePageInof(merchantId);
+    public ReturnJson merchantInfoPaas(String merchantId,HttpServletRequest request) {
+        ReturnJson returnJson = homePageService.getHomePageInof(request);
         HomePageVO homePageVO = new HomePageVO();
         HomePageMerchantVO homePageMerchantVO = (HomePageMerchantVO) returnJson.getObj();
         BeanUtils.copyProperties(homePageMerchantVO,homePageVO);

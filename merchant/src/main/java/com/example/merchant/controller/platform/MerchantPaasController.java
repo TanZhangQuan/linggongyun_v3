@@ -17,6 +17,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -104,8 +105,8 @@ public class MerchantPaasController {
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "companyId", value = "商户公司ID", required = true)
     })
-    public ReturnJson merchantInfo(@NotBlank(message = "商户公司ID不能为空！") @RequestParam(required = false) String companyId) {
-        return merchantService.merchantInfoPaas(companyId);
+    public ReturnJson merchantInfo(@NotBlank(message = "商户公司ID不能为空！") @RequestParam(required = false) String companyId, HttpServletRequest request) {
+        return merchantService.merchantInfoPaas(companyId,request);
     }
 
     @PostMapping("/addMerchant")

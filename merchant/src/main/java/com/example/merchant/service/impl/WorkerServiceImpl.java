@@ -33,6 +33,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -336,7 +337,7 @@ public class  WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implement
             redisDao.set(token, JsonUtils.objectToJson(worker));
             response.setHeader(TOKEN, token);
             redisDao.setExpire(worker.getId(), 7, TimeUnit.DAYS);
-            return ReturnJson.success(token);
+            return ReturnJson.success("登录成功",token);
         }
         return ReturnJson.error("你输入的用户名或密码有误！");
     }
@@ -395,7 +396,7 @@ public class  WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implement
             resource.setHeader(TOKEN, token);
             redisDao.set(token, JsonUtils.objectToJson(worker));
             redisDao.setExpire(worker.getId(), 7, TimeUnit.DAYS);
-            return ReturnJson.success(token);
+            return ReturnJson.success("登录成功",token);
         }
     }
 
@@ -550,11 +551,12 @@ public class  WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implement
 
     /**
      * 根据token获取用户信息
-     * @param token
+     * @param request
      * @return
      */
     @Override
-    public ReturnJson getWorkerInfoBytoken(String token) {
+    public ReturnJson getWorkerInfoBytoken(HttpServletRequest request) {
+        String token=request.getHeader(TOKEN);
         Claims c=jwtUtils.getClaimByToken(token);
         String customized = redisDao.get(c.getSubject());
         Map<String,String> map=JsonUtils.jsonToPojo(customized, Map.class);
