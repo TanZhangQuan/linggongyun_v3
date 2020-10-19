@@ -50,8 +50,6 @@ public interface PaymentOrderService extends IService<PaymentOrder> {
 
     ReturnJson getPaymentOrderPaas(PaymentOrderDto paymentOrderDto) throws CommonException;
 
-    ReturnJson getPaymentOrderInfoPaas(String id);
-
     ReturnJson offlinePaymentPaas(String paymentOrderId, String turnkeyProjectPayment);
 
     ReturnJson confirmReceiptPaas(String paymentOrderId);

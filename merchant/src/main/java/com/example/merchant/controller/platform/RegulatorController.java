@@ -104,7 +104,7 @@ public class RegulatorController {
     @ApiOperation(value = "查看成交订单", notes = "查看成交订单", httpMethod = "POST")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "paymentOrderId", value = "成交订单ID", required = true), @ApiImplicitParam(name = "packageStatus", value = "合作类型", required = true)})
     public ReturnJson getPaymentInfo(@NotBlank(message = "成交订单ID不能为空！") @RequestParam(required = false) String paymentOrderId, @NotNull(message = "合作类型不能为空！") @RequestParam(required = false) Integer packageStatus) {
-        return regulatorService.getPaymentInfo(paymentOrderId, packageStatus);
+        return regulatorService.getPaymentOrderInfo(null,paymentOrderId, packageStatus);
     }
 
     @PostMapping("/getPaymentInventoryInfo")

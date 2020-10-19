@@ -1,17 +1,12 @@
 package com.example.merchant.controller.regulator;
 
 import com.example.common.util.ReturnJson;
+import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.RegulatorService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
@@ -37,11 +32,9 @@ public class RegulatorLoginController {
     }
 
     @PostMapping("/regulatorLogout")
+    @LoginRequired
     @ApiOperation(value = "登出", notes = "登出", httpMethod = "POST")
-    @ApiImplicitParams(value = {
-            @ApiImplicitParam(name = "regulatorId", value = "监管人员Id", required = true)
-    })
-    public ReturnJson regulatorLogout(@NotBlank(message = "监管人员Id不能为空") @RequestParam(required = false) String regulatorId) {
+    public ReturnJson regulatorLogout(@ApiParam(hidden = true) @RequestAttribute(value = "userId", required = false) String regulatorId) {
         return regulatorService.regulatorLogout(regulatorId);
     }
 }

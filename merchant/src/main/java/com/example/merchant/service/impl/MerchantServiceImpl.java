@@ -13,10 +13,7 @@ import com.example.merchant.config.shiro.CustomizedToken;
 import com.example.merchant.dto.platform.CompanyDto;
 import com.example.merchant.dto.platform.CompanyTaxDto;
 import com.example.merchant.exception.CommonException;
-import com.example.merchant.service.CompanyLadderServiceService;
-import com.example.merchant.service.HomePageService;
-import com.example.merchant.service.MerchantService;
-import com.example.merchant.service.TaskService;
+import com.example.merchant.service.*;
 import com.example.merchant.util.AcquireID;
 import com.example.merchant.util.JwtUtils;
 import com.example.merchant.vo.merchant.HomePageMerchantVO;
@@ -449,6 +446,13 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         return ReturnJson.success(merchantPaymentListIPage);
     }
 
+
+    @Resource
+    private PaymentOrderService paymentOrderService;
+
+    @Resource
+    private PaymentOrderManyService paymentOrderManyService;
+
     /**
      * 获取支付详情
      *
@@ -460,11 +464,11 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
     public ReturnJson getMerchantPaymentInfo(String paymentOrderId, Integer packgeStatus) {
         ReturnJson returnJson = this.getMerchantPaymentInventory(paymentOrderId, 1, 10);
         if (packgeStatus == 0) {
-            PaymentOrder paymentOrder = paymentOrderDao.selectById(paymentOrderId);
-            returnJson.setObj(paymentOrder);
+            ReturnJson paymentOrderInfo = paymentOrderService.getPaymentOrderInfo(paymentOrderId);
+            returnJson.setObj(paymentOrderInfo);
         } else {
-            PaymentOrderMany paymentOrderMany = paymentOrderManyDao.selectById(paymentOrderId);
-            returnJson.setObj(paymentOrderMany);
+            ReturnJson paymentOrderManyInfo = paymentOrderManyService.getPaymentOrderManyInfo(paymentOrderId);
+            returnJson.setObj(paymentOrderManyInfo);
         }
         return returnJson;
     }

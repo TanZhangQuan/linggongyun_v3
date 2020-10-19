@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.common.util.MD5;
 import com.example.common.util.ReturnJson;
+import com.example.common.util.VerificationCheck;
 import com.example.merchant.dto.platform.AgentInfoDto;
 import com.example.merchant.dto.platform.ManagersDto;
 import com.example.merchant.exception.CommonException;
@@ -126,7 +127,7 @@ public class StructureServiceImpl implements StructureService {
     @Override
     public ReturnJson getSalesManAll(Integer page, Integer pageSize) {
         Page<Managers> managersPage = new Page<>(page, pageSize);
-        IPage<Managers> managersIPage = managersService.page(managersPage, new QueryWrapper<Managers>().eq("user_sign", 2).eq("status", 0));
+        IPage<Managers> managersIPage = managersService.page(managersPage, new QueryWrapper<Managers>().eq("user_sign", 2));
         return ReturnJson.success(managersIPage);
     }
 
@@ -158,6 +159,9 @@ public class StructureServiceImpl implements StructureService {
     @Override
     public ReturnJson getSalesManPaymentListCount(String salesManId,HttpServletRequest request) throws CommonException {
         List<String> companyIds = acquireID.getMerchantIds(salesManId);
+        if (VerificationCheck.listIsNull(companyIds)) {
+            return ReturnJson.error("该业务员还没有产生流水！");
+        }
         IPage<SalesManPaymentListPO> salesManPaymentListPOIPage = managersDao.selectSalesManPaymentList(new Page(1, 10), companyIds);
         ReturnJson returnJson = ReturnJson.success(salesManPaymentListPOIPage);
         ReturnJson homePageInof = homePageService.getHomePageInofpaas(request);
@@ -176,6 +180,9 @@ public class StructureServiceImpl implements StructureService {
     @Override
     public ReturnJson getSalesManPaymentList(String salesManId, Integer page, Integer pageSize) throws CommonException {
         List<String> companyIds = acquireID.getMerchantIds(salesManId);
+        if (VerificationCheck.listIsNull(companyIds)) {
+            return ReturnJson.error("该业务员还没有产生流水！");
+        }
         Page<SalesManPaymentListPO> salesManPaymentListPOPage = new Page<>(page, pageSize);
         IPage<SalesManPaymentListPO> salesManPaymentListPOIPage = managersDao.selectSalesManPaymentList(salesManPaymentListPOPage, companyIds);
         return ReturnJson.success(salesManPaymentListPOIPage);

@@ -477,25 +477,6 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
     }
 
     /**
-     * 众包支付订单详情
-     *
-     * @param id
-     * @return
-     */
-    @Override
-    public ReturnJson getPaymentOrderManyInfoPaas(String id) {
-        PaymentOrderMany paymentOrderMany = paymentOrderManyDao.selectById(id);
-        List<PaymentInventory> paymentInventories = paymentInventoryDao.selectList(new QueryWrapper<PaymentInventory>().eq("payment_order_id", id));
-        Tax tax = taxDao.selectById(paymentOrderMany.getTaxId());
-        List<Map<String, Object>> list = new ArrayList<>();
-        Map<String, Object> map = new HashMap<>();
-        map.put("paymentInventories", paymentInventories);
-        map.put("tax", tax);
-        list.add(map);
-        return ReturnJson.success(paymentOrderMany, list);
-    }
-
-    /**
      * 获取综合费率
      *
      * @param companyLadderServices

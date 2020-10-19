@@ -56,6 +56,4 @@ public interface PaymentOrderManyService extends IService<PaymentOrderMany> {
     ReturnJson confirmPaymentManyPaas(String id);
 
     ReturnJson getPaymentOrderManyPaas(PaymentOrderDto paymentOrderDto) throws CommonException;
-
-    ReturnJson getPaymentOrderManyInfoPaas(String id);
 }
