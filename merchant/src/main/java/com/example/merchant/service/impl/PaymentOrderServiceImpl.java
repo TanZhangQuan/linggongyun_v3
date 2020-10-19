@@ -63,9 +63,6 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
     private PaymentInventoryService paymentInventoryService;
 
     @Resource
-    private PaymentOrderSubpackageDao paymentOrderSubpackageDao;
-
-    @Resource
     private TaxDao taxDao;
 
     @Resource
@@ -230,7 +227,6 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
             for (PaymentInventory paymentInventory : paymentInventoryList) {
                 ids.add(paymentInventory.getId());
             }
-            paymentOrderSubpackageDao.delete(new QueryWrapper<PaymentOrderSubpackage>().in("payment_inventory_id", ids));
             paymentInventoryDao.delete(new QueryWrapper<PaymentInventory>().eq("payment_order_id", id));
             this.removeById(id);
         }
@@ -302,14 +298,6 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
             //生成支付明细
             paymentInventory.setPackageStatus(0);
             paymentInventoryService.saveOrUpdate(paymentInventory);
-            //生成分包订单
-//            PaymentOrderSubpackage paymentOrderSubpackage = new PaymentOrderSubpackage();
-//            paymentOrderSubpackage.setCompanyId(paymentOrder.getCompanyId());
-//            paymentOrderSubpackage.setPaymentInventoryId(paymentInventory.getId());
-//            paymentOrderSubpackage.setRealMoney(paymentInventory.getRealMoney());
-//            paymentOrderSubpackage.setTaskId(paymentOrder.getTaskId());
-//            paymentOrderSubpackage.setTaxId(paymentOrder.getTaxId());
-//            paymentOrderSubpackageDao.insert(paymentOrderSubpackage);
         }
         return ReturnJson.success("支付订单创建成功！");
     }
@@ -475,12 +463,10 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
     public ReturnJson getPaymentOrderInfoPaas(String id) {
         PaymentOrder paymentOrder = paymentOrderDao.selectById(id);
         List<PaymentInventory> paymentInventories = paymentInventoryDao.selectList(new QueryWrapper<PaymentInventory>().eq("payment_order_id", id));
-        List<PaymentOrderSubpackage> paymentOrderSubpackages = paymentOrderSubpackageDao.selectList(new QueryWrapper<PaymentOrderSubpackage>().eq("payment_order_id", id));
         Tax tax = taxDao.selectById(paymentOrder.getTaxId());
         List<Map<String, Object>> list = new ArrayList<>();
         Map<String, Object> map = new HashMap<>();
         map.put("paymentInventories", paymentInventories);
-        map.put("paymentOrderSubpackages", paymentOrderSubpackages);
         map.put("tax", tax);
         list.add(map);
         return ReturnJson.success(paymentOrder, list);
@@ -544,6 +530,17 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
             companyInfos = companyInfoDao.selectList(new QueryWrapper<>());
         }
         return ReturnJson.success(companyInfos);
+    }
+
+    @Override
+    public ReturnJson subpackagePayPaas(String paymentOrderId, String subpackagePayment) {
+        PaymentOrder paymentOrder = this.getById(paymentOrderId);
+        if (paymentOrder == null) {
+            log.error("订单号不存在!");
+            return ReturnJson.error("你输入的订单号不存在！");
+        }
+        paymentOrder.setSubpackagePayment(subpackagePayment);
+        return null;
     }
 
 

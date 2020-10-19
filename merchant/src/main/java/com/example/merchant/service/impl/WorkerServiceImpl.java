@@ -333,8 +333,7 @@ public class  WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implement
         Worker worker = this.getOne(workerQueryWrapper);
         if (worker != null) {
             String token = jwtUtils.generateToken(worker.getId());
-            worker.setUserPwd("");
-            redisDao.set(token, JsonUtils.objectToJson(worker));
+            redisDao.set(token, token);
             response.setHeader(TOKEN, token);
             redisDao.setExpire(worker.getId(), 7, TimeUnit.DAYS);
             return ReturnJson.success("登录成功",token);
@@ -391,10 +390,9 @@ public class  WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implement
         } else {
             redisDao.remove(loginMobile);
             Worker worker = this.getOne(new QueryWrapper<Worker>().eq("mobile_code", loginMobile));
-            worker.setUserPwd("");
             String token = jwtUtils.generateToken(worker.getId());
             resource.setHeader(TOKEN, token);
-            redisDao.set(token, JsonUtils.objectToJson(worker));
+            redisDao.set(token, token);
             redisDao.setExpire(worker.getId(), 7, TimeUnit.DAYS);
             return ReturnJson.success("登录成功",token);
         }

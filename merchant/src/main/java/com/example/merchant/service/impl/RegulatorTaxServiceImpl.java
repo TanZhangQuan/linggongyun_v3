@@ -133,9 +133,9 @@ public class RegulatorTaxServiceImpl extends ServiceImpl<RegulatorTaxDao, Regula
      * @return
      */
     @Override
-    public ReturnJson listTax(RegulatorTaxDto regulatorTaxDto) {
+    public ReturnJson listTax(RegulatorTaxDto regulatorTaxDto, String regulatorId) {
         Page page = new Page(regulatorTaxDto.getPage(), regulatorTaxDto.getPageSize());
-        IPage<TaxVo> taxIPage = regulatorTaxDao.selServiceProviders(page, regulatorTaxDto);
+        IPage<TaxVo> taxIPage = regulatorTaxDao.selServiceProviders(page, regulatorTaxDto,regulatorId);
         List<TaxVo> voList = taxIPage.getRecords();
         for (int i = 0; i < voList.size(); i++) {
             voList.get(i).setPaymentOrderCount(voList.get(i).getPaymentOrderNum() + "/" + voList.get(i).getPaymentOrderManyNum());

@@ -7,7 +7,6 @@ import com.example.merchant.dto.platform.PaymentOrderDto;
 import com.example.merchant.exception.CommonException;
 import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.PaymentOrderService;
-import com.example.merchant.service.PaymentOrderSubpackageService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -37,9 +36,6 @@ public class PaymentOrderPaasController {
 
     @Resource
     private PaymentOrderService paymentOrderService;
-
-    @Resource
-    private PaymentOrderSubpackageService paymentOrderSubpackageService;
 
     @PostMapping("/getPaymentOrderAll")
     @LoginRequired
@@ -83,7 +79,7 @@ public class PaymentOrderPaasController {
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "paymentOrderId", value = "总包支付订单ID", required = true),
             @ApiImplicitParam(name = "subpackagePayment", value = "分包支付回单存储地址", required = true)})
     public ReturnJson subpackagePay(@NotBlank(message = "支付订单不能为空！") @RequestParam(required = false) String paymentOrderId, @NotBlank(message = "分包支付回单URL不能为空！") @RequestParam(required = false) String subpackagePayment) {
-        return paymentOrderSubpackageService.subpackagePayPaas(paymentOrderId, subpackagePayment);
+        return paymentOrderService.subpackagePayPaas(paymentOrderId, subpackagePayment);
     }
 
     @PostMapping("/confirmReceipt")

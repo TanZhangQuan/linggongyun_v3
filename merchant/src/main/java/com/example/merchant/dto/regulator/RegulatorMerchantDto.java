@@ -2,17 +2,15 @@ package com.example.merchant.dto.regulator;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.ApiParam;
 import lombok.Data;
+import org.springframework.web.bind.annotation.RequestAttribute;
 
 import javax.validation.constraints.NotBlank;
 
 @Data
 @ApiModel(description = "监管部门查询所监管的商户参数")
 public class RegulatorMerchantDto {
-
-    @NotBlank(message = "监管部门ID不能为空！")
-    @ApiModelProperty(notes = "监管部门ID", value = "监管部门ID", required = true)
-    private String regulatorId;
 
     @ApiModelProperty(notes = "商户ID", value = "商户ID")
     private String companyId;

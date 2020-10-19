@@ -57,4 +57,6 @@ public interface PaymentOrderService extends IService<PaymentOrder> {
     ReturnJson confirmReceiptPaas(String paymentOrderId);
 
     ReturnJson findMerchantPaas(String managersId);
+
+    ReturnJson subpackagePayPaas(String paymentOrderId, String subpackagePayment);
 }

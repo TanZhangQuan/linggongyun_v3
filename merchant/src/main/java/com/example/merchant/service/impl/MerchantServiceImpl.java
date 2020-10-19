@@ -49,6 +49,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * <p>
@@ -126,7 +127,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
     @Value("${TOKEN}")
     private String TOKEN;
 
-    private static final String MERCHANT= "merchant";
+    private static final String MERCHANT = "merchant";
 
     /**
      * 根据用户名和密码进行登录
@@ -153,23 +154,9 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         currentUser.login(customizedToken);//shiro验证身份
         String token = jwtUtils.generateToken(me.getId());
         response.setHeader(TOKEN, token);
-        redisDao.set(me.getId(), JsonUtils.objectToJson(me));
-        redisDao.setExpire(me.getId(), 60 * 60 * 24 * 7);
-        me.setPassWord("");
-        return ReturnJson.success("登录成功",token);
-    }
-
-    /**
-     * 根据TOKEN获取登录用户的ID
-     *
-     * @param request
-     * @return
-     */
-    @Override
-    public String getId(HttpServletRequest request) {
-        String token = request.getHeader(TOKEN);
-        Claims claim = jwtUtils.getClaimByToken(token);
-        return claim.getSubject();
+        redisDao.set(me.getId(), token);
+        redisDao.setExpire(me.getId(), 7, TimeUnit.DAYS);
+        return ReturnJson.success("登录成功", token);
     }
 
     /**
@@ -182,7 +169,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
     public ReturnJson senSMS(String mobileCode) {
         ReturnJson rj = new ReturnJson();
         Merchant merchant = this.getOne(new QueryWrapper<Merchant>().eq("login_mobile", mobileCode));
-        if (merchant == null || merchant.equals(null)) {
+        if (merchant == null) {
             rj.setCode(401);
             rj.setMessage("你还未注册，请先去注册！");
             return rj;
@@ -222,15 +209,13 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         } else {
             redisDao.remove(loginMobile);
             Merchant merchant = this.getOne(new QueryWrapper<Merchant>().eq("login_mobile", loginMobile).eq("status", 0));
-            merchant.setPassWord("");
-            merchant.setPayPwd("");
             String token = jwtUtils.generateToken(merchant.getId());
             resource.setHeader(TOKEN, token);
-            redisDao.set(merchant.getId(), JsonUtils.objectToJson(merchant));
-            redisDao.setExpire(merchant.getId(), 60 * 60 * 24 * 7);
+            redisDao.set(merchant.getId(), token);
+            redisDao.setExpire(merchant.getId(), 7, TimeUnit.DAYS);
             CustomizedToken customizedToken = new CustomizedToken(merchant.getUserName(), merchant.getPassWord(), MERCHANT);
             currentUser.login(customizedToken);//shiro验证身份
-            return ReturnJson.success("登录成功",token);
+            return ReturnJson.success("登录成功", token);
         }
     }
 
@@ -435,11 +420,11 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
      * @return
      */
     @Override
-    public ReturnJson merchantInfoPaas(String merchantId,HttpServletRequest request) {
+    public ReturnJson merchantInfoPaas(String merchantId, HttpServletRequest request) {
         ReturnJson returnJson = homePageService.getHomePageInof(request);
         HomePageVO homePageVO = new HomePageVO();
         HomePageMerchantVO homePageMerchantVO = (HomePageMerchantVO) returnJson.getObj();
-        BeanUtils.copyProperties(homePageMerchantVO,homePageVO);
+        BeanUtils.copyProperties(homePageMerchantVO, homePageVO);
         Merchant merchant = merchantDao.selectById(merchantId);
         Integer taxTotal = companyTaxDao.selectCount(new QueryWrapper<CompanyTax>().eq("company_id", merchant.getCompanyId()));
         homePageVO.setTaxTotal(taxTotal);

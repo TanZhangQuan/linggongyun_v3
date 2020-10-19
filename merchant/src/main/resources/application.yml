@@ -29,7 +29,7 @@ spring:
   redis:
     host: 127.0.0.1  # Redis服务器地址
     port: 6379 # Redis服务器连接端口
-    password: linggongyun_v3 # Redis服务器连接密码（默认为空）
+    password: #linggongyun_v3 # Redis服务器连接密码（默认为空）
     jedis:
       pool:
         max-active: 8 # 连接池最大连接数（使用负值表示没有限制）
@@ -74,31 +74,33 @@ SECRET: "cf6f1bcea8c984dc699d2e554f9b2bf6"
 PWD_KEY: "esdafw"
 
 #初始化主帐号
-AccountSid: "8a216da873b27ace0173b30bff5d0079"
+SMS:
+  AccountSid: "8a216da873b27ace0173b30bff5d0079"
 
-#主帐号TOKEN
-AccountToken: "b12a28072550438486f44fce85ad3fe6"
+  #主帐号TOKEN
+  AccountToken: "b12a28072550438486f44fce85ad3fe6"
 
-#初始化应用ID
-AppId: "8a216da873b27ace0173b30c00620081"
+  #初始化应用ID
+  AppId: "8a216da873b27ace0173b30c00620081"
 
-#模板ID
-TemplateId: "624431"
+  #模板ID
+  TemplateId: "624431"
 
-#初始化服务器地址,服务器地址不需要写https://
-serverIP: "app.cloopen.com"
+  #初始化服务器地址,服务器地址不需要写https://
+  serverIP: "app.cloopen.com"
 
-#初始化服务器端口
-serverPort: "8883"
+  #初始化服务器端口
+  serverPort: "8883"
 
 
 TOKEN: token
 
-secret: "yixi"
+JWT:
+  secret: "yixi"
 
-expire: "7"
+  expire: "7"
 
-header: "linggongyun_v3"
+  header: "linggongyun_v3"
 
 #本地图片存储路径
 PathImage_KEY: "/root/linggongyun_v3/image/"
@@ -108,9 +110,6 @@ PathExcel_KEY: "/root/linggongyun_v3/excel/"
 
 #本地视频存储路径
 PathVideo_KEY: "/root/linggongyun_v3/video/"
-
-#加盟合同模板存储地址
-PathContractFile_KEY: "/root/linggongyun_v3/合同模板.pdf"
 
 #图片的访问路径
 fileStaticAccesspathImage: "/static/image/"
@@ -140,4 +139,5 @@ TemplateFile:
   #  模板访问路径
   StaticAccesspath: "/static/TemplateFile/"
 
+#发送签署合同应用的密钥
 appSecret: "872614e259eded522417c76ad0fb06f0"
