@@ -45,7 +45,7 @@ public class StructureController {
     }
 
     @PostMapping("/findBySalesManId")
-    @ApiOperation(value = "按ID查找业务员(编辑业务员时用来获取业务员信息)", notes = "按ID查找业务员(编辑业务员时用来获取业务员信息)   ", httpMethod = "POST")
+    @ApiOperation(value = "按ID查找业务员(编辑业务员时用来获取业务员信息)", notes = "按ID查找业务员(编辑业务员时用来获取业务员信息)", httpMethod = "POST")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "managersId", value = "业务员的ID", required = true)
     })

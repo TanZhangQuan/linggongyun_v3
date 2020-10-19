@@ -187,21 +187,21 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
         PaymentOrderInfoPO paymentOrderInfoPO = null;
         PaymentOrderInfoVO paymentOrderInfoVO = new PaymentOrderInfoVO();
         ExpressInfoVO expressInfoVO = new ExpressInfoVO();
-            //为总包订单
-            paymentOrderInfoPO = paymentOrderDao.selectPaymentOrderInfo(id);
-            if (paymentOrderInfoPO == null) {
-                return ReturnJson.error("订单编号有误，请重新输入！");
-            }
-            InvoiceInfoPO invoiceInfoPO = invoiceDao.selectInvoiceInfoPO(id);
-            if (invoiceInfoPO != null) {
-                //总包发票信息
-                paymentOrderInfoVO.setInvoice(invoiceInfoPO.getInvoiceUrl());
-                paymentOrderInfoVO.setSubpackageInvoice(invoiceInfoPO.getMakerInvoiceUrl());
-                expressInfoVO.setExpressCompanyName(invoiceInfoPO.getExpressCompanyName());
-                expressInfoVO.setExpressCode(invoiceInfoPO.getExpressSheetNo());
-                List<ExpressLogisticsInfo> expressLogisticsInfos = KdniaoTrackQueryAPI.getExpressInfo(invoiceInfoPO.getExpressCompanyName(), invoiceInfoPO.getExpressSheetNo());
-                expressInfoVO.setExpressLogisticsInfos(expressLogisticsInfos);
-            }
+        //为总包订单
+        paymentOrderInfoPO = paymentOrderDao.selectPaymentOrderInfo(id);
+        if (paymentOrderInfoPO == null) {
+            return ReturnJson.error("订单编号有误，请重新输入！");
+        }
+        InvoiceInfoPO invoiceInfoPO = invoiceDao.selectInvoiceInfoPO(id);
+        if (invoiceInfoPO != null) {
+            //总包发票信息
+            paymentOrderInfoVO.setInvoice(invoiceInfoPO.getInvoiceUrl());
+            paymentOrderInfoVO.setSubpackageInvoice(invoiceInfoPO.getMakerInvoiceUrl());
+            expressInfoVO.setExpressCompanyName(invoiceInfoPO.getExpressCompanyName());
+            expressInfoVO.setExpressCode(invoiceInfoPO.getExpressSheetNo());
+            List<ExpressLogisticsInfo> expressLogisticsInfos = KdniaoTrackQueryAPI.getExpressInfo(invoiceInfoPO.getExpressCompanyName(), invoiceInfoPO.getExpressSheetNo());
+            expressInfoVO.setExpressLogisticsInfos(expressLogisticsInfos);
+        }
         List<PaymentInventory> paymentInventories = paymentInventoryDao.selectPaymentInventoryList(id, null);
         paymentOrderInfoVO.setPaymentInventories(paymentInventories);
         paymentOrderInfoVO.setPaymentOrderInfoPO(paymentOrderInfoPO);
@@ -451,25 +451,6 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
         Page<PaymentOrder> paymentOrderPage = new Page<>(page, pageSize);
         IPage<PaymentOrder> paymentOrderIPage = paymentOrderDao.selectManyPaas(paymentOrderPage, merchantIds, merchantName, paymentOrderId, taxId, beginDate, endDate);
         return ReturnJson.success(paymentOrderIPage);
-    }
-
-    /**
-     * 查询支付订单详情
-     *
-     * @param id
-     * @return
-     */
-    @Override
-    public ReturnJson getPaymentOrderInfoPaas(String id) {
-        PaymentOrder paymentOrder = paymentOrderDao.selectById(id);
-        List<PaymentInventory> paymentInventories = paymentInventoryDao.selectList(new QueryWrapper<PaymentInventory>().eq("payment_order_id", id));
-        Tax tax = taxDao.selectById(paymentOrder.getTaxId());
-        List<Map<String, Object>> list = new ArrayList<>();
-        Map<String, Object> map = new HashMap<>();
-        map.put("paymentInventories", paymentInventories);
-        map.put("tax", tax);
-        list.add(map);
-        return ReturnJson.success(paymentOrder, list);
     }
 
     /**
