@@ -10,9 +10,9 @@ import javax.servlet.http.HttpServletRequest;
 public interface AuthenticationService {
     ReturnJson getIdCardInfo(String filePath);
 
-    ReturnJson saveIdCardinfo(IdCardInfoDto idCardInfoDto);
+    ReturnJson saveIdCardinfo(IdCardInfoDto idCardInfoDto,String workerId);
 
-    ReturnJson saveBankInfo(WorkerBankDto workerBankDto);
+    ReturnJson saveBankInfo(WorkerBankDto workerBankDto,String workerId);
 
     ReturnJson saveWorkerVideo(String workerId, String fileVideoPath);
 

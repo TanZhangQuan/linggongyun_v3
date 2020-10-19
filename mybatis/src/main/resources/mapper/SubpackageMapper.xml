@@ -62,17 +62,17 @@
 
     <!--通用查询-->
     <sql id="que">
-        <if test="merchantId != null and merchantId != ''">
-            AND po.company_id=#{merchantId}
+        <if test="tobeinvoicedDto.merchantId != null and tobeinvoicedDto.merchantId != ''">
+            AND po.company_id=#{tobeinvoicedDto.merchantId}
         </if>
-        <if test="platformServiceProvider != null and platformServiceProvider != ''">
-            AND po.platform_service_provider=#{platformServiceProvider}
+        <if test="tobeinvoicedDto.platformServiceProvider != null and tobeinvoicedDto.platformServiceProvider != ''">
+            AND po.platform_service_provider=#{tobeinvoicedDto.platformServiceProvider}
         </if>
-        <if test="applicationDateOne != null and applicationDateOne != ''">
-            AND ia.invapp.application_date>=#{applicationDateOne}
+        <if test="tobeinvoicedDto.applicationDateOne != null and tobeinvoicedDto.applicationDateOne != ''">
+            AND ia.invapp.application_date>=#{tobeinvoicedDto.applicationDateOne}
         </if>
-        <if test="applicationDateTwo != null and applicationDateTwo != ''">
-            AND ia.invapp.application_date <![CDATA[<=]]> #{applicationDateTwo}
+        <if test="tobeinvoicedDto.applicationDateTwo != null and tobeinvoicedDto.applicationDateTwo != ''">
+            AND ia.invapp.application_date <![CDATA[<=]]> #{tobeinvoicedDto.applicationDateTwo}
         </if>
     </sql>
 

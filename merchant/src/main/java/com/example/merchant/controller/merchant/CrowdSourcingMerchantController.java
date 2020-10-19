@@ -42,8 +42,8 @@ public class CrowdSourcingMerchantController {
 
     @ApiOperation("众包支付信息,创客支付明细")
     @GetMapping(value = "/getInvoiceDetailsByPayId")
-    public ReturnJson getInvoiceDetailsByPayId(String id, Integer pageNo) {
-        return paymentOrderManyService.getInvoiceDetailsByPayId(id, pageNo);
+    public ReturnJson getInvoiceDetailsByPayId(String id, Integer pageNo,Integer pageSize) {
+        return paymentOrderManyService.getInvoiceDetailsByPayId(id, pageNo,pageSize);
     }
 
     @ApiOperation("众包支付信息,申请开票")

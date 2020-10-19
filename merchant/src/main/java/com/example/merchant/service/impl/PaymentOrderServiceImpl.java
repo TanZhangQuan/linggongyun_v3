@@ -363,17 +363,11 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
     /**
      * 获取今天的支付总额
      *
-     * @param request
+     * @param merchantId
      * @return
      */
     @Override
-    public ReturnJson getDayPaas(HttpServletRequest request) throws CommonException {
-        String token = request.getHeader(TOKEN);
-        Claims claim = jwtUtils.getClaimByToken(token);
-        String merchantId = null;
-        if (claim != null) {
-            merchantId = claim.getSubject();
-        }
+    public ReturnJson getDayPaas(String merchantId) throws CommonException {
         List<String> merchantIds = acquireID.getMerchantIds(merchantId);
         List<PaymentOrder> list = null;
         if (VerificationCheck.listIsNull(merchantIds)) {
@@ -386,17 +380,11 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
     /**
      * 获取本周的支付总额
      *
-     * @param request
+     * @param merchantId
      * @return
      */
     @Override
-    public ReturnJson getWeekPaas(HttpServletRequest request) throws CommonException {
-        String token = request.getHeader(TOKEN);
-        Claims claim = jwtUtils.getClaimByToken(token);
-        String merchantId = null;
-        if (claim != null) {
-            merchantId = claim.getSubject();
-        }
+    public ReturnJson getWeekPaas(String merchantId) throws CommonException {
         List<String> merchantIds = acquireID.getMerchantIds(merchantId);
         List<PaymentOrder> list = null;
         if (VerificationCheck.listIsNull(merchantIds)) {
@@ -409,17 +397,11 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
     /**
      * 获取本月的支付总额
      *
-     * @param request
+     * @param merchantId
      * @return
      */
     @Override
-    public ReturnJson getMonthPaas(HttpServletRequest request) throws CommonException {
-        String token = request.getHeader(TOKEN);
-        Claims claim = jwtUtils.getClaimByToken(token);
-        String merchantId = null;
-        if (claim != null) {
-            merchantId = claim.getSubject();
-        }
+    public ReturnJson getMonthPaas(String merchantId) throws CommonException {
         List<String> merchantIds = acquireID.getMerchantIds(merchantId);
         List<PaymentOrder> list = null;
         if (VerificationCheck.listIsNull(merchantIds)) {
@@ -432,17 +414,11 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
     /**
      * 获取今年的支付总额
      *
-     * @param request
+     * @param merchantId
      * @return
      */
     @Override
-    public ReturnJson getYearPaas(HttpServletRequest request) throws CommonException {
-        String token = request.getHeader(TOKEN);
-        Claims claim = jwtUtils.getClaimByToken(token);
-        String merchantId = null;
-        if (claim != null) {
-            merchantId = claim.getSubject();
-        }
+    public ReturnJson getYearPaas(String merchantId) throws CommonException {
         List<String> merchantIds = acquireID.getMerchantIds(merchantId);
         List<PaymentOrder> list = null;
         if (VerificationCheck.listIsNull(merchantIds)) {

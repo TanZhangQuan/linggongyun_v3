@@ -1,6 +1,7 @@
 package com.example.merchant.controller.makerend;
 
 import com.example.common.util.ReturnJson;
+import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.WorkerService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -8,10 +9,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -84,7 +82,8 @@ public class WorkerMakerendController {
 
     @PostMapping("/getWorkerInfoBytoken")
     @ApiOperation(value = "根据token获取用户信息", notes = "根据token获取用户信息", httpMethod = "POST")
-    public ReturnJson getWorkerInfoBytoken(HttpServletRequest request) {
-        return workerService.getWorkerInfoBytoken(request);
+    @LoginRequired
+    public ReturnJson getWorkerInfoBytoken(@RequestAttribute(value = "userId") String userId) {
+        return workerService.getWorkerInfoBytoken(userId);
     }
 }

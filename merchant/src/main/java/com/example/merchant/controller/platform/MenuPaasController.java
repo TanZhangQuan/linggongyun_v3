@@ -6,12 +6,11 @@ import com.example.merchant.dto.platform.SaveManagersRoleDto;
 import com.example.merchant.service.MenuService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -25,6 +24,7 @@ import javax.validation.constraints.NotNull;
 @Api(value = "平台端权限相关操作接口", tags = {"平台端权限相关操作接口"})
 @RestController
 @RequestMapping("/platform/menu")
+@Validated
 public class MenuPaasController {
 
     @Resource
@@ -38,7 +38,7 @@ public class MenuPaasController {
 
     @ApiOperation("添加子用户")
     @PostMapping(value = "/addManagers")
-    public ReturnJson addMerchant(SaveManagersRoleDto saveManagersRoleDto) {
+    public ReturnJson addMerchant(@Valid @RequestBody SaveManagersRoleDto saveManagersRoleDto) {
         return menuService.savePlatRole(saveManagersRoleDto);
     }
 
@@ -50,7 +50,7 @@ public class MenuPaasController {
 
     @ApiOperation("权限管理，编辑子账户")
     @PostMapping(value = "/updateRole")
-    public ReturnJson updateRole(SaveManagersRoleDto saveManagersRoleDto) {
+    public ReturnJson updateRole(@Valid @RequestBody SaveManagersRoleDto saveManagersRoleDto) {
         return menuService.updatePassRole(saveManagersRoleDto);
     }
 

@@ -26,7 +26,7 @@ public interface TaskDao extends BaseMapper<Task> {
 
     int count(TaskListDto taskListDto);
 
-    List<Task> selectLists(TaskListDto taskListDto, RowBounds rowBounds);
+    IPage<Task> selectLists(Page page,@Param("taskListDto") TaskListDto taskListDto);
 
     //更具任务id删除任务
     int delete(String id);
@@ -52,5 +52,5 @@ public interface TaskDao extends BaseMapper<Task> {
     //平台端添加任务信息
     int addPlatformTask(TaskDto TaskDto);
 
-    List<Task> setTask(@Param("merchantId") String merchantId, @Param("industryType")String industryType);
+    List<Task> setTask(@Param("merchantId") String merchantId, @Param("industryType")String s);
 }

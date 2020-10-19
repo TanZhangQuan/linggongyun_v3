@@ -549,17 +549,12 @@ public class  WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implement
 
     /**
      * 根据token获取用户信息
-     * @param request
+     * @param userId
      * @return
      */
     @Override
-    public ReturnJson getWorkerInfoBytoken(HttpServletRequest request) {
-        String token=request.getHeader(TOKEN);
-        Claims c=jwtUtils.getClaimByToken(token);
-        String customized = redisDao.get(c.getSubject());
-        Map<String,String> map=JsonUtils.jsonToPojo(customized, Map.class);
-        String id = map.get("id");
-        Worker worker=this.getById(id);
+    public ReturnJson getWorkerInfoBytoken(String userId) {
+        Worker worker=this.getById(userId);
         worker.setUserPwd("");
         return ReturnJson.success(worker);
     }
