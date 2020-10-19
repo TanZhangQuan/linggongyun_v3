@@ -1,16 +1,11 @@
 package com.example.merchant.controller.makerend;
 
 import com.example.common.util.ReturnJson;
+import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.PersonalCenterService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.constraints.NotBlank;
@@ -29,7 +24,8 @@ public class PersonalCenterController {
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "workerId", value = "创客ID", paramType = "query", required = true)
     })
-     public ReturnJson personageInfo(@NotBlank(message = "创客ID不能为空！") @RequestParam(required = false) String workerId){
+    @LoginRequired
+     public ReturnJson personageInfo(@RequestAttribute(value = "userId") @ApiParam(hidden = true) String workerId){
         return personalCenterService.personageInfo(workerId);
     }
 }

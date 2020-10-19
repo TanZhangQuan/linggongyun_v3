@@ -35,7 +35,7 @@ public interface PaymentOrderManyService extends IService<PaymentOrderMany> {
     //根据支付id查询众包支付信息
     ReturnJson getPayOrderManyById(String id);
 
-    ReturnJson getInvoiceDetailsByPayId(String id, Integer pageNo);
+    ReturnJson getInvoiceDetailsByPayId(String id, Integer pageNo,Integer pageSize);
 
     ReturnJson getPaymentOrderMany(PaymentOrderMerchantDto paymentOrderMerchantDto);
 
@@ -45,13 +45,13 @@ public interface PaymentOrderManyService extends IService<PaymentOrderMany> {
 
     ReturnJson offlinePayment(String id, String manyPayment);
 
-    ReturnJson getDayPaas(HttpServletRequest request) throws CommonException;
+    ReturnJson getDayPaas(String merchantId) throws CommonException;
 
-    ReturnJson getWeekPaas(HttpServletRequest request) throws CommonException;
+    ReturnJson getWeekPaas(String merchantId) throws CommonException;
 
-    ReturnJson getMonthPaas(HttpServletRequest request) throws CommonException;
+    ReturnJson getMonthPaas(String merchantId) throws CommonException;
 
-    ReturnJson getYearPaas(HttpServletRequest request) throws CommonException;
+    ReturnJson getYearPaas(String merchantId) throws CommonException;
 
     ReturnJson confirmPaymentManyPaas(String id);
 

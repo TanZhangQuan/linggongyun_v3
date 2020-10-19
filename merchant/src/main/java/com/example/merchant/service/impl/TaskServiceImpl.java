@@ -64,20 +64,13 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
      * 任务列表
      *
      * @param taskListDto
-     * @param rowBounds
      * @return
      */
     @Override
-    public ReturnJson selectList(TaskListDto taskListDto, RowBounds rowBounds) {
-        ReturnJson returnJson = new ReturnJson("查询失败", 300);
-        rowBounds = new RowBounds((rowBounds.getOffset() - 1) * rowBounds.getLimit(), rowBounds.getLimit());
-        List<Task> taskList = taskDao.selectLists(taskListDto, rowBounds);
-        if (taskList != null) {
-            returnJson = new ReturnJson("查询成功", taskList, 200);
-        }
-        returnJson.setPageSize(taskListDto.getPageSize());
-        returnJson.setItemsCount(taskListDto.getPageNo());
-        return returnJson;
+    public ReturnJson selectList(TaskListDto taskListDto) {
+        Page page=new Page(taskListDto.getPageNo(),taskListDto.getPageSize());
+        IPage<Task> taskList = taskDao.selectLists(page,taskListDto);
+        return ReturnJson.success(taskList);
     }
 
 
@@ -143,7 +136,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
     @Override
     public ReturnJson setTaskById(String id) {
         if (!VerificationCheck.isNull(id)) {
-            return ReturnJson.error("任务ID不能为空");
+            return ReturnJson.error("请选择任务");
         }
         Task task = taskDao.setTaskById(id);
         return ReturnJson.success(task);
@@ -198,8 +191,8 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
      */
     @Override
     public ReturnJson getPlatformTaskList(PlatformTaskDto platformTaskDto) {
-        Page page=new Page(platformTaskDto.getPageNo(),platformTaskDto.getPageSize());
-        IPage<Task> taskList = taskDao.getPlatformTaskList(page,platformTaskDto);
+        Page page = new Page(platformTaskDto.getPageNo(), platformTaskDto.getPageSize());
+        IPage<Task> taskList = taskDao.getPlatformTaskList(page, platformTaskDto);
         return ReturnJson.success(taskList);
     }
 
@@ -235,6 +228,26 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
             }
         }
         return new ReturnJson("添加失败", 300);
+    }
+
+    /**
+     * 编辑任务
+     *
+     * @param taskDto
+     * @return
+     */
+    @Override
+    public ReturnJson updatePlatfromTask(TaskDto taskDto) {
+        Task task = new Task();
+        if (taskDto.getId() == null) {
+            return ReturnJson.error("请选择任务");
+        }
+        task.setId(taskDto.getId());
+        Merchant merchant=merchantDao.selectOne(new QueryWrapper<Merchant>().select("id").eq("company_name",taskDto.getMerchantName()));
+        task.setMerchantId(merchant.getId());
+
+
+        return null;
     }
 
     /**

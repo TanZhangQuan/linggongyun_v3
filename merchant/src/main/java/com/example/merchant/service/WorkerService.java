@@ -59,5 +59,5 @@ public interface WorkerService extends IService<Worker> {
 
     ReturnJson logout(String workerId);
 
-    ReturnJson getWorkerInfoBytoken(HttpServletRequest request);
+    ReturnJson getWorkerInfoBytoken(String userId);
 }

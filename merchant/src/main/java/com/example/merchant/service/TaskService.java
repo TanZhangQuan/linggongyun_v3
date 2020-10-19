@@ -21,7 +21,7 @@ public interface TaskService extends IService<Task> {
 
     int count(TaskListDto taskListDto);
 
-    ReturnJson selectList(TaskListDto taskListDto, RowBounds rowBounds);
+    ReturnJson selectList(TaskListDto taskListDto);
 
     ReturnJson delete (String id);
 
@@ -38,6 +38,8 @@ public interface TaskService extends IService<Task> {
     ReturnJson getPlatformTaskList(PlatformTaskDto platformTaskDto);
 
     ReturnJson savePlatformTask(TaskDto taskDto);
+
+    ReturnJson updatePlatfromTask(TaskDto taskDto);
 
     ReturnJson setTask(String merchantId,String industryType);
 

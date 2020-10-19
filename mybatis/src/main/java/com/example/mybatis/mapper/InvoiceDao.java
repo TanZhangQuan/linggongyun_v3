@@ -1,5 +1,7 @@
 package com.example.mybatis.mapper;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.mybatis.dto.TobeinvoicedDto;
 import com.example.mybatis.entity.Invoice;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -23,9 +25,9 @@ public interface InvoiceDao extends BaseMapper<Invoice> {
     InvoicePO selectInvoiceMoney(String merchantId);
     InvoicePO selectInvoiceMoneyPaas(List<String> merchantId);
 
-    List<TobeinvoicedVo> selectTobeinvoiced(TobeinvoicedDto tobeinvoicedDto, RowBounds rowBounds);
+    IPage<TobeinvoicedVo> selectTobeinvoiced(Page page,@Param("tobeinvoicedDto")TobeinvoicedDto tobeinvoicedDto);
 
-    List<InvoiceVo> getInvoiceList(TobeinvoicedDto tobeinvoicedDto, RowBounds rowBounds);
+    IPage<InvoiceVo> getInvoiceList(Page page,@Param("tobeinvoicedDto")TobeinvoicedDto tobeinvoicedDto);
 
     List<InvoiceListVo> getInvoiceListQuery(List<String> InvoiceIds);
 
@@ -39,17 +41,17 @@ public interface InvoiceDao extends BaseMapper<Invoice> {
      */
     InvoiceInformationVo getInvInfoById(String invId);
 
-    List<InvoiceVo> getPlaInvoiceList(TobeinvoicedDto tobeinvoicedDto,RowBounds rowBounds);
+    IPage<InvoiceVo> getPlaInvoiceList(Page page,@Param("tobeinvoicedDto") TobeinvoicedDto tobeinvoicedDto);
 
     //更具申请id查询信息
     PlaInvoiceInfoVo getPlaInvoiceInfo(String applicationId);
 
     String getInvoiceCode();
 
-    List<InvoiceVo> getListInvoicequery(TobeinvoicedDto tobeinvoicedDto,RowBounds rowBounds);
+    IPage<InvoiceVo> getListInvoicequery(Page page,@Param("tobeinvoicedDto") TobeinvoicedDto tobeinvoicedDto);
 
     //分包待开票数据
-    List<ToSubcontractInvoiceVo> getListSubQuery(TobeinvoicedDto tobeinvoicedDto, RowBounds rowBounds);
+    IPage<ToSubcontractInvoiceVo> getListSubQuery(Page page,@Param("tobeinvoicedDto")TobeinvoicedDto tobeinvoicedDto);
 
     //根据支付订单ID查找发票信息
     InvoiceInfoPO selectInvoiceInfoPO(String paymentOrderId);

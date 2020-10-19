@@ -40,13 +40,13 @@ public interface PaymentOrderService extends IService<PaymentOrder> {
 
     ReturnJson getBillingInfo(String id);
 
-    ReturnJson getDayPaas(HttpServletRequest request) throws CommonException;
+    ReturnJson getDayPaas(String merchantId) throws CommonException;
 
-    ReturnJson getWeekPaas(HttpServletRequest request) throws CommonException;
+    ReturnJson getWeekPaas(String merchantId) throws CommonException;
 
-    ReturnJson getMonthPaas(HttpServletRequest request) throws CommonException;
+    ReturnJson getMonthPaas(String merchantId) throws CommonException;
 
-    ReturnJson getYearPaas(HttpServletRequest request) throws CommonException;
+    ReturnJson getYearPaas(String merchantId) throws CommonException;
 
     ReturnJson getPaymentOrderPaas(PaymentOrderDto paymentOrderDto) throws CommonException;
 

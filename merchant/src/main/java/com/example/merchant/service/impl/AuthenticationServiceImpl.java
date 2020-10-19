@@ -72,8 +72,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
      * @return
      */
     @Override
-    public ReturnJson saveIdCardinfo(IdCardInfoDto idCardInfoDto) {
-        Worker worker = workerDao.selectById(idCardInfoDto.getWokerId());
+    public ReturnJson saveIdCardinfo(IdCardInfoDto idCardInfoDto,String workerId) {
+        Worker worker = workerDao.selectById(workerId);
         if (worker == null) {
             return ReturnJson.error("该创客不存在！");
         }
@@ -95,9 +95,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
      * @return
      */
     @Override
-    public ReturnJson saveBankInfo(WorkerBankDto workerBankDto) {
+    public ReturnJson saveBankInfo(WorkerBankDto workerBankDto,String workerId) {
         WorkerBank workerBank = new WorkerBank();
         BeanUtils.copyProperties(workerBankDto, workerBank);
+        workerBank.setWorkerId(workerId);
         int insert = workerBankDao.insert(workerBank);
         if (insert == 1) {
             return ReturnJson.success("银行卡绑定成功！");

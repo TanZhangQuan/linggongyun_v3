@@ -61,7 +61,7 @@ public class TaskPaasController {
 
     @ApiOperation("平台端任务列表")
     @PostMapping(value = "/getplatformTasks")
-    public ReturnJson<Task> platformTaskList(PlatformTaskDto platformTaskDto) {
+    public ReturnJson<Task> platformTaskList(@RequestBody PlatformTaskDto platformTaskDto) {
         return taskService.getPlatformTaskList(platformTaskDto);
     }
 

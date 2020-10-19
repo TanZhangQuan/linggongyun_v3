@@ -7,5 +7,5 @@ import javax.servlet.http.HttpServletRequest;
 
 public interface HomePageService {
     ReturnJson getHomePageInof(HttpServletRequest request);
-    ReturnJson getHomePageInofpaas(HttpServletRequest request)throws CommonException;
+    ReturnJson getHomePageInofpaas(String userId)throws CommonException;
 }

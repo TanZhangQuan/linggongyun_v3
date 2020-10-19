@@ -11,5 +11,5 @@ public interface SubpackageService {
 
     ReturnJson  getSubpackageInfoById(String invoiceId);
 
-    ReturnJson getListByInvoiceId(String invoiceId,Integer pageNo);
+    ReturnJson getListByInvoiceId(String invoiceId,Integer pageNo,Integer pageSize);
 }

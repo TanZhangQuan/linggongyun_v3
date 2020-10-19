@@ -105,17 +105,17 @@
         FROM tb_payment_order_many as pom
         LEFT JOIN tb_crowd_sourcing_application as csi ON csi.payment_order_many_id=pom.id
         WHERE pom.payment_order_status=3
-        <if test="merchantId != null and merchantId != ''">
-            AND pom.merchant_id=#{merchantId}
+        <if test="tobeinvoicedDto.merchantId != null and tobeinvoicedDto.merchantId != ''">
+            AND pom.merchant_id=#{tobeinvoicedDto.merchantId}
         </if>
-        <if test="platformServiceProvider != null and platformServiceProvider != ''">
-            AND pom.platform_service_provider=#{platformServiceProvider}
+        <if test="tobeinvoicedDto.platformServiceProvider != null and tobeinvoicedDto.platformServiceProvider != ''">
+            AND pom.platform_service_provider=#{tobeinvoicedDto.platformServiceProvider}
         </if>
-        <if test="applicationDateOne != null and applicationDateOne != ''">
-            AND csi.invapp.application_date>={applicationDate}
+        <if test="tobeinvoicedDto.applicationDateOne != null and tobeinvoicedDto.applicationDateOne != ''">
+            AND csi.invapp.application_date>={tobeinvoicedDto.applicationDate}
         </if>
-        <if test="applicationDateTwo != null and applicationDateTwo != ''">
-            AND csi.invapp.application_date <![CDATA[<=]]> {applicationDate}
+        <if test="tobeinvoicedDto.applicationDateTwo != null and tobeinvoicedDto.applicationDateTwo != ''">
+            AND csi.invapp.application_date <![CDATA[<=]]> {tobeinvoicedDto.applicationDate}
         </if>
     </select>
 

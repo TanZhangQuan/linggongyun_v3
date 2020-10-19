@@ -131,13 +131,8 @@ public class HomePageServiceImpl implements HomePageService {
     }
 
     @Override
-    public ReturnJson getHomePageInofpaas(HttpServletRequest request) throws CommonException {
-        String token = request.getHeader(TOKEN);
-        Claims claim = jwtUtils.getClaimByToken(token);
-        String managersId = null;
-        if (claim != null) {
-            managersId = claim.getSubject();
-        }
+    public ReturnJson getHomePageInofpaas(String userId) throws CommonException {
+        String managersId = userId;
         Managers managers = managersDao.selectById(managersId);
         HomePageVO homePageVO = null;
         List<String> merchantIds = acquireID.getMerchantIds(managersId);

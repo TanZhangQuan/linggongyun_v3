@@ -69,7 +69,7 @@ public class StructureController {
             @ApiImplicitParam(name = "salesManId", value = "业务员ID", required = true)
     })
     public ReturnJson removeSalesMan(@NotBlank(message = "业务员ID不能为空！") @RequestParam String salesManId,HttpServletRequest request) throws CommonException {
-        return structureService.removeSalesMan(salesManId,request);
+        return structureService.removeSalesMan(salesManId);
     }
 
     @PostMapping("/getSalesManPaymentListCount")
@@ -78,7 +78,7 @@ public class StructureController {
             @ApiImplicitParam(name = "salesManId", value = "业务员ID", required = true)
     })
     public ReturnJson getSalesManPaymentListCount(@NotBlank(message = "业务员ID不能为空！") @RequestParam String salesManId, HttpServletRequest request) throws CommonException {
-        return structureService.getSalesManPaymentListCount(salesManId,request);
+        return structureService.getSalesManPaymentListCount(salesManId);
     }
 
     @PostMapping("/getSalesManPaymentList")
@@ -165,7 +165,7 @@ public class StructureController {
             @ApiImplicitParam(name = "agentId", value = "代理商ID", required = true)
     })
     public ReturnJson getAgentPaymentListCount(@NotBlank(message = "代理商ID不能为空！") @RequestParam String agentId,HttpServletRequest request) throws CommonException {
-        return structureService.getSalesManPaymentListCount(agentId,request);
+        return structureService.getSalesManPaymentListCount(agentId);
     }
 
     @PostMapping("/getAgentPaymentList")
