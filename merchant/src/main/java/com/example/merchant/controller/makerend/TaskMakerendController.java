@@ -1,15 +1,13 @@
 package com.example.merchant.controller.makerend;
 
 import com.example.common.util.ReturnJson;
+import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.TaskService;
 import com.example.merchant.service.WorkerTaskService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
@@ -40,7 +38,8 @@ public class TaskMakerendController {
 
     @ApiOperation(value = "我的任务")
     @GetMapping(value = "/myTask")
-    public ReturnJson myTask(@ApiParam(value = "创客id", required = true) @RequestParam("workerId") String workerId,
+    @LoginRequired
+    public ReturnJson myTask(@ApiParam(value = "创客id", hidden = true)@RequestAttribute(value = "userId") String workerId,
                              @ApiParam(value = "创客完成状态0进行中1已完成2已失效3已提交4已验收") @RequestParam(value = "status", required = false) String status) {
         return taskService.myTask(workerId, status);
     }
@@ -62,8 +61,9 @@ public class TaskMakerendController {
 
     @ApiOperation(value = "抢单")
     @GetMapping(value = "/orderGrabbing")
+    @LoginRequired
     public ReturnJson orderGrabbing(@ApiParam(value = "任务id", required = true) @RequestParam("taskId") String taskId,
-                                    @ApiParam(value = "创客id", required = true) @RequestParam("workerId") String workerId) {
+                                    @ApiParam(value = "创客id", hidden = true) @RequestAttribute(value = "userId") String workerId) {
         return taskService.orderGrabbing(taskId, workerId);
     }
 }

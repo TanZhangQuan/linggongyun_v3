@@ -83,7 +83,7 @@ public class WorkerMakerendController {
     @PostMapping("/getWorkerInfoBytoken")
     @ApiOperation(value = "根据token获取用户信息", notes = "根据token获取用户信息", httpMethod = "POST")
     @LoginRequired
-    public ReturnJson getWorkerInfoBytoken(@RequestAttribute String userId) {
+    public ReturnJson getWorkerInfoBytoken(@RequestAttribute(value = "userId") String userId) {
         return workerService.getWorkerInfoBytoken(userId);
     }
 }
