@@ -36,7 +36,7 @@
         t.tax_status,t.create_date
         from tb_regulator_tax rt
         INNER JOIN tb_tax t ON t.id=rt.tax_id
-        where rt.regulator_id=#{tax.regulatorId}
+        where rt.regulator_id=#{regulatorId}
         <if test="tax.serviceProviderName !=null and tax.serviceProviderName != '' " >
             AND t.tax_name like CONCAR('%',#{tax.serviceProviderName},'%')
         </if>

@@ -3,11 +3,9 @@ package com.example.merchant.controller.regulator;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.regulator.RegulatorMerchantDto;
 import com.example.merchant.dto.regulator.RegulatorMerchantPaymentOrderDto;
+import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.RegulatorService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,29 +26,26 @@ public class RegulatorMerchantController {
 
     @PostMapping("/getCountRegulatorMerchant")
     @ApiOperation(value = "统计所监管的商户的流水", notes = "统计所监管的商户的流水", httpMethod = "POST")
-    @ApiImplicitParams(value = {
-            @ApiImplicitParam(name = "regulatorId", value = "监管部门的ID", required = true)
-    })
-    public ReturnJson getCountRegulatorMerchant(@NotBlank(message = "管理部门ID不能为空！") @RequestParam(required = false) String regulatorId) {
+    @LoginRequired
+    public ReturnJson getCountRegulatorMerchant(@NotBlank(message = "管理部门ID不能为空！") @ApiParam(hidden = true) @RequestAttribute(value = "userId", required = false) String regulatorId) {
         return regulatorService.getCountRegulatorMerchant(regulatorId);
     }
 
     @PostMapping("/getRegulatorMerchant")
     @ApiOperation(value = "按条件查询所监管的商户", notes = "按条件查询所监管的商户", httpMethod = "POST")
+    @LoginRequired
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "regulatorMerchantDto", value = "查询所监管的商户条件", required = true, dataType = "RegulatorMerchantDto")
     })
-    public ReturnJson getRegulatorMerchant(@Valid @RequestBody RegulatorMerchantDto regulatorMerchantDto) {
-        return regulatorService.getRegulatorMerchant(regulatorMerchantDto);
+    public ReturnJson getRegulatorMerchant(@RequestBody RegulatorMerchantDto regulatorMerchantDto, @ApiParam(hidden = true) @RequestAttribute(value = "userId", required = false) String regulatorId) {
+        return regulatorService.getRegulatorMerchant(regulatorMerchantDto, regulatorId);
     }
 
     @PostMapping("/exportRegulatorMerchant")
     @ApiOperation(value = "导出所监管的商户", notes = "导出所监管的商户", httpMethod = "POST")
-    @ApiImplicitParams(value = {
-            @ApiImplicitParam(name = "companyIds", value = "商户编号字符集，每个商户编号之间用英文逗号隔开", required = true),
-            @ApiImplicitParam(name = "regulatorId", value = "管理部门ID", required = true)
-    })
-    public ReturnJson exportRegulatorMerchant(@NotBlank(message = "导出的商户不能为空！") @RequestParam(required = false) String companyIds, @NotBlank(message = "管理部门ID不能为空！") @RequestParam(required = false) String regulatorId, HttpServletResponse response) {
+    @LoginRequired
+    @ApiImplicitParams(value = {@ApiImplicitParam(name = "companyIds", value = "商户编号字符集，每个商户编号之间用英文逗号隔开", required = true)})
+    public ReturnJson exportRegulatorMerchant(@NotBlank(message = "导出的商户不能为空！") @RequestParam(required = false) String companyIds, @ApiParam(hidden = true) @RequestAttribute(value = "userId", required = false) String regulatorId, HttpServletResponse response) {
         ReturnJson returnJson = regulatorService.exportRegulatorMerchant(companyIds, regulatorId, response);
         if (returnJson.getCode() == 300) {
             return returnJson;
@@ -60,21 +55,20 @@ public class RegulatorMerchantController {
 
     @PostMapping("/getRegulatorMerchantParticulars")
     @ApiOperation(value = "查询所监管的公司详情", notes = "查询所监管的公司详情", httpMethod = "POST")
-    @ApiImplicitParams(value = {
-            @ApiImplicitParam(name = "companyId", value = "公司ID", required = true),
-            @ApiImplicitParam(name = "regulatorId", value = "管理部门ID", required = true)
-    })
-    public ReturnJson getRegulatorMerchantParticulars(@NotBlank(message = "公司ID不能为空！") @RequestParam(required = false) String companyId, @NotBlank(message = "管理部门ID不能为空！") @RequestParam(required = false) String regulatorId) {
+    @LoginRequired
+    @ApiImplicitParams(value = {@ApiImplicitParam(name = "companyId", value = "公司ID", required = true)})
+    public ReturnJson getRegulatorMerchantParticulars(@NotBlank(message = "公司ID不能为空！") @RequestParam(required = false) String companyId, @ApiParam(hidden = true) @RequestAttribute(value = "userId", required = false) String regulatorId) {
         return regulatorService.getRegulatorMerchantParticulars(companyId, regulatorId);
     }
 
     @PostMapping("/getRegulatorMerchantPaymentOrder")
     @ApiOperation(value = "查询所监管商户的支付订单", notes = "查询所监管商户的支付订单", httpMethod = "POST")
+    @LoginRequired
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "regulatorMerchantPaymentOrderDto", value = "查询所监管商户的支付订单参数", required = true, dataType = "RegulatorMerchantPaymentOrderDto")
     })
-    public ReturnJson getRegulatorMerchantPaymentOrder(@Valid @RequestBody RegulatorMerchantPaymentOrderDto regulatorMerchantPaymentOrderDto) {
-        return regulatorService.getRegulatorMerchantPaymentOrder(regulatorMerchantPaymentOrderDto);
+    public ReturnJson getRegulatorMerchantPaymentOrder(@Valid @RequestBody RegulatorMerchantPaymentOrderDto regulatorMerchantPaymentOrderDto, @ApiParam(hidden = true) @RequestAttribute(value = "userId", required = false) String regulatorId) {
+        return regulatorService.getRegulatorMerchantPaymentOrder(regulatorMerchantPaymentOrderDto, regulatorId);
     }
 
     @PostMapping("/exportRegulatorMerchantPaymentOrder")
@@ -104,7 +98,7 @@ public class RegulatorMerchantController {
             @ApiImplicitParam(name = "pageSize", value = "每页显示的条数", required = true)
     })
     public ReturnJson getPaymentInventory(@NotBlank(message = "支付订单ID不能为空！") @RequestParam(required = false) String paymentOrderId, @NotNull(message = "当前页数不能为空！") @RequestParam(defaultValue = "1") Integer page, @NotNull(message = "每页显示的条数不能为空！") @RequestParam(defaultValue = "10") Integer pageSize) {
-        return regulatorService.getPaymentInventory(paymentOrderId, page,pageSize);
+        return regulatorService.getPaymentInventory(paymentOrderId, page, pageSize);
     }
 
 }

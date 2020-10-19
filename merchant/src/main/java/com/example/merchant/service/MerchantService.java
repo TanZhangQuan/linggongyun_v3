@@ -28,8 +28,6 @@ public interface MerchantService extends IService<Merchant> {
 
     ReturnJson merchantLogin(String username, String password, HttpServletResponse response);
 
-    String getId(HttpServletRequest request);
-
     ReturnJson senSMS(String mobileCode);
 
     ReturnJson loginMobile(String loginMobile, String checkCode, HttpServletResponse resource);
@@ -48,7 +46,7 @@ public interface MerchantService extends IService<Merchant> {
 
     ReturnJson auditMerchant(String merchantId);
 
-    ReturnJson merchantInfoPaas(String merchantId,HttpServletRequest request);
+    ReturnJson merchantInfoPaas(String merchantId, HttpServletRequest request);
 
     ReturnJson getMerchantPaymentList(String merchantId, Integer page, Integer pageSize);
 

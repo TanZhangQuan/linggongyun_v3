@@ -46,7 +46,7 @@ public interface RegulatorService extends IService<Regulator> {
 
     ReturnJson getPaymentInventoryInfo(String paymentOrderId, Integer page, Integer pageSize);
 
-    ReturnJson getRegulatorWorker(RegulatorWorkerDto regulatorWorkerDto);
+    ReturnJson getRegulatorWorker(RegulatorWorkerDto regulatorWorkerDto, String regulatorId);
 
     ReturnJson exportRegulatorWorker(String workerIds, String regulatorId, HttpServletResponse response);
 
@@ -54,7 +54,7 @@ public interface RegulatorService extends IService<Regulator> {
 
     ReturnJson countRegulatorWorkerInfo(String regulatorId, String workerId);
 
-    ReturnJson getRegulatorWorkerPaymentInfo(RegulatorWorkerPaymentDto regulatorWorkerPaymentDto);
+    ReturnJson getRegulatorWorkerPaymentInfo(RegulatorWorkerPaymentDto regulatorWorkerPaymentDto, String regulatorId);
 
     ReturnJson exportRegulatorWorkerPaymentInfo(String workerId, String paymentIds, HttpServletResponse response);
 
@@ -62,7 +62,7 @@ public interface RegulatorService extends IService<Regulator> {
 
     ReturnJson getPaymentInventory(String paymentOrderId, Integer page, Integer pageSize);
 
-    ReturnJson getRegulatorMerchant(RegulatorMerchantDto regulatorMerchantDto);
+    ReturnJson getRegulatorMerchant(RegulatorMerchantDto regulatorMerchantDto, String regulatorId);
 
     ReturnJson exportRegulatorMerchant(String companyIds, String regulatorId, HttpServletResponse response);
 
@@ -70,7 +70,7 @@ public interface RegulatorService extends IService<Regulator> {
 
     ReturnJson getRegulatorMerchantParticulars(String companyId, String regulatorId);
 
-    ReturnJson getRegulatorMerchantPaymentOrder(RegulatorMerchantPaymentOrderDto regulatorMerchantPaymentOrderDto);
+    ReturnJson getRegulatorMerchantPaymentOrder(RegulatorMerchantPaymentOrderDto regulatorMerchantPaymentOrderDto, String regulatorId);
 
     ReturnJson exportRegulatorMerchantPaymentOrder(String paymentOrderIds, HttpServletResponse response);
 

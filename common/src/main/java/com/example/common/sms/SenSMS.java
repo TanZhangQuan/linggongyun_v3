@@ -10,22 +10,22 @@ import java.util.Map;
 @Component
 public class SenSMS {
 
-    @Value("${serverIP}")
+    @Value("${SMS.serverIP}")
     private  String serverIP;
 
-    @Value("${serverPort}")
+    @Value("${SMS.serverPort}")
     private  String serverPort;
 
-    @Value("${AccountSid}")
+    @Value("${SMS.AccountSid}")
     private  String AccountSid;
 
-    @Value("${AccountToken}")
+    @Value("${SMS.AccountToken}")
     private  String AccountToken;
 
-    @Value("${AppId}")
+    @Value("${SMS.AppId}")
     private  String AppId;
 
-    @Value("${TemplateId}")
+    @Value("${SMS.TemplateId}")
     private  String TemplateId;
 
     public  Map<String,Object> senSMS(String mobileCode){
