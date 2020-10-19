@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @Service
@@ -136,14 +137,14 @@ public class StructureServiceImpl implements StructureService {
      * @return
      */
     @Override
-    public ReturnJson removeSalesMan(String salesManId) throws CommonException {
+    public ReturnJson removeSalesMan(String salesManId, HttpServletRequest request) throws CommonException {
         Integer companyInfoCount = companyInfoDao.selectCount(new QueryWrapper<CompanyInfo>().eq("sales_man_id", salesManId));
         Integer agentCount = agentDao.selectCount(new QueryWrapper<Agent>().eq("sales_man_id", salesManId));
         if (companyInfoCount + agentCount == 0) {
             managersService.removeById(salesManId);
             return ReturnJson.success("删除成功！");
         }
-        homePageService.getHomePageInofpaas(salesManId);
+        homePageService.getHomePageInofpaas(request);
         return ReturnJson.error("该业务员有业务记录，只能停用！");
     }
 
@@ -155,11 +156,11 @@ public class StructureServiceImpl implements StructureService {
      * @return
      */
     @Override
-    public ReturnJson getSalesManPaymentListCount(String salesManId) throws CommonException {
+    public ReturnJson getSalesManPaymentListCount(String salesManId,HttpServletRequest request) throws CommonException {
         List<String> companyIds = acquireID.getMerchantIds(salesManId);
         IPage<SalesManPaymentListPO> salesManPaymentListPOIPage = managersDao.selectSalesManPaymentList(new Page(1, 10), companyIds);
         ReturnJson returnJson = ReturnJson.success(salesManPaymentListPOIPage);
-        ReturnJson homePageInof = homePageService.getHomePageInofpaas(salesManId);
+        ReturnJson homePageInof = homePageService.getHomePageInofpaas(request);
         homePageInof.setData(returnJson.getData());
         return homePageInof;
     }

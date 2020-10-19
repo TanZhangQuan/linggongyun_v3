@@ -12,7 +12,7 @@ import java.util.List;
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 @ApiModel(description = "统一返回对象")
 public class ReturnJson<T> {
-	@ApiModelProperty(notes = "状态码，成功：200 , 失败: 300, 登录超时或者无权限: 401，登录过期:402,携带的Token为空：403，携带的Token有误：405  格式错误： 201", value = "状态码")
+	@ApiModelProperty(notes = "状态码，成功：200 , 失败: 300, 登录超时: 401，登录过期:402,携带的Token为空：403，携带的Token有误：405 ,权限不足：406 格式错误： 201", value = "状态码")
 	private int code;
 	@ApiModelProperty(notes = "响应消息内容", value = "响应消息")
 	private String message;

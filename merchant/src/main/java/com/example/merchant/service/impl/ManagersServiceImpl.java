@@ -57,11 +57,9 @@ public class ManagersServiceImpl extends ServiceImpl<ManagersDao, Managers> impl
 
     @Override
     public ReturnJson managersLogin(String userName, String passWord, HttpServletResponse response) {
-        Map<String,Object> map =new HashMap<>();
         Managers managers = this.getOne(new QueryWrapper<Managers>().eq("user_name", userName).eq("pass_word", PWD_KEY+ MD5.md5(passWord)));
         Subject currentUser = SecurityUtils.getSubject();
         if (managers != null) {
-            map.put("用户信息",managers);
             CustomizedToken customizedToken = new CustomizedToken(userName, PWD_KEY+ MD5.md5(passWord), MANAGERS);
             String token = jwtUtils.generateToken(managers.getId());
             managers.setPassWord("");
@@ -69,8 +67,7 @@ public class ManagersServiceImpl extends ServiceImpl<ManagersDao, Managers> impl
             response.setHeader(TOKEN,token);
             redisDao.setExpire(managers.getId(),7, TimeUnit.DAYS);
             currentUser.login(customizedToken);//shiro验证身份
-            map.put("token",token);
-            return ReturnJson.success(map);
+            return ReturnJson.success("登录成功",token);
         }
         return ReturnJson.error("你输入的用户名或密码有误！");
     }
@@ -127,10 +124,7 @@ public class ManagersServiceImpl extends ServiceImpl<ManagersDao, Managers> impl
     @Override
     public ReturnJson getCustomizedInfo(String customizedId) {
         Claims c= jwtUtils.getClaimByToken(customizedId);
-        String customized = redisDao.get(c.getSubject());
-        Map<String,String> map=JsonUtils.jsonToPojo(customized, Map.class);
-        String id = map.get("id");
-        Managers managers=this.getById(id);
+        Managers managers=this.getById(c.getSubject());
         managers.setPassWord("");
         return ReturnJson.success(managers);
     }

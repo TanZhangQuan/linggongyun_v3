@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
@@ -83,8 +84,7 @@ public class WorkerMakerendController {
 
     @PostMapping("/getWorkerInfoBytoken")
     @ApiOperation(value = "根据token获取用户信息", notes = "根据token获取用户信息", httpMethod = "POST")
-    @ApiImplicitParams(value = {@ApiImplicitParam(name = "token", value = "token", required = true)})
-    public ReturnJson getWorkerInfoBytoken(@NotBlank(message = "token不能为空") @RequestParam String token) {
-        return workerService.getWorkerInfoBytoken(token);
+    public ReturnJson getWorkerInfoBytoken(HttpServletRequest request) {
+        return workerService.getWorkerInfoBytoken(request);
     }
 }

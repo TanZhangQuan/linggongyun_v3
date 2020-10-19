@@ -131,20 +131,20 @@
         task_name,release_date,industry_type,release_time,cooperate_mode,task_mode,state
         FROM tb_task
         WHERE 1=1
-        <if test="merchantName != null and merchantName != ''">
-           and (SELECT id FROM tb_merchant WHERE company_name like CONCAT('%',#{merchantName},'%'))
+        <if test="platformTaskDto.merchantName != null and platformTaskDto.merchantName != ''">
+           and (SELECT id FROM tb_merchant WHERE company_name like CONCAT('%',#{platformTaskDto.merchantName},'%'))
         </if>
-        <if test="taskName != null and taskName != ''">
-            AND task_name LIKE CONCAT ('%',#{taskName},'%')
+        <if test="platformTaskDto.taskName != null and platformTaskDto.taskName != ''">
+            AND task_name LIKE CONCAT ('%',#{platformTaskDto.taskName},'%')
         </if>
-        <if test="cooperateMode != null and cooperateMode != ''">
-            AND cooperate_mode=#{cooperateMode}
+        <if test="platformTaskDto.cooperateMode != null and platformTaskDto.cooperateMode != ''">
+            AND cooperate_mode=#{platformTaskDto.cooperateMode}
         </if>
-        <if test="releaseDate != null and releaseDate != ''">
-            AND release_date >= unix_timestamp(#{releaseDate})
+        <if test="platformTaskDto.releaseDate != null and platformTaskDto.releaseDate != ''">
+            AND release_date >= unix_timestamp(#{platformTaskDto.releaseDate})
         </if>
-        <if test="deadlineDate != null and deadlineDate != ''">
-            AND deadline_date <![CDATA[<=]]> unix_timestamp(#{deadlineDate})
+        <if test="platformTaskDto.deadlineDate != null and platformTaskDto.deadlineDate != ''">
+            AND deadline_date <![CDATA[<=]]> unix_timestamp(#{platformTaskDto.deadlineDate})
         </if>
     </select>
 

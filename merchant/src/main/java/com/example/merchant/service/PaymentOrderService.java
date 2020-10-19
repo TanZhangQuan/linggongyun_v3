@@ -8,6 +8,8 @@ import com.example.merchant.dto.merchant.PaymentOrderMerchantDto;
 import com.example.merchant.exception.CommonException;
 import com.example.mybatis.entity.PaymentOrder;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * <p>
  * 支付单信息
@@ -18,13 +20,13 @@ import com.example.mybatis.entity.PaymentOrder;
  * @since 2020-09-07
  */
 public interface PaymentOrderService extends IService<PaymentOrder> {
-    ReturnJson getDay(String merchantId);
+    ReturnJson getDay(HttpServletRequest request);
 
-    ReturnJson getWeek(String merchantId);
+    ReturnJson getWeek(HttpServletRequest request);
 
-    ReturnJson getMonth(String merchantId);
+    ReturnJson getMonth(HttpServletRequest request);
 
-    ReturnJson getYear(String merchantId);
+    ReturnJson getYear(HttpServletRequest request);
 
     ReturnJson getPaymentOrder(PaymentOrderMerchantDto paymentOrderMerchantDto);
 
@@ -38,13 +40,13 @@ public interface PaymentOrderService extends IService<PaymentOrder> {
 
     ReturnJson getBillingInfo(String id);
 
-    ReturnJson getDayPaas(String merchantId) throws CommonException;
+    ReturnJson getDayPaas(HttpServletRequest request) throws CommonException;
 
-    ReturnJson getWeekPaas(String merchantId) throws CommonException;
+    ReturnJson getWeekPaas(HttpServletRequest request) throws CommonException;
 
-    ReturnJson getMonthPaas(String merchantId) throws CommonException;
+    ReturnJson getMonthPaas(HttpServletRequest request) throws CommonException;
 
-    ReturnJson getYearPaas(String merchantId) throws CommonException;
+    ReturnJson getYearPaas(HttpServletRequest request) throws CommonException;
 
     ReturnJson getPaymentOrderPaas(PaymentOrderDto paymentOrderDto) throws CommonException;
 

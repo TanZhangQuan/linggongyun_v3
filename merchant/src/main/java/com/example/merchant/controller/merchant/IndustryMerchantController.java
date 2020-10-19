@@ -29,7 +29,7 @@ public class IndustryMerchantController {
 
     @ApiOperation("二级菜单")
     @PostMapping(value = "getIndustrs")
-    public ReturnJson GetIndustrs(String oneLevel) {
-        return industryService.getlist(oneLevel);
+    public ReturnJson GetIndustrs() {
+        return industryService.getlist();
     }
 }

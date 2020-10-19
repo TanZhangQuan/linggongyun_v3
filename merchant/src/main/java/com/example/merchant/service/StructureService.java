@@ -5,6 +5,8 @@ import com.example.merchant.dto.platform.AgentInfoDto;
 import com.example.merchant.dto.platform.ManagersDto;
 import com.example.merchant.exception.CommonException;
 
+import javax.servlet.http.HttpServletRequest;
+
 public interface StructureService {
     ReturnJson addSalesMan(ManagersDto managersDto);
 
@@ -14,9 +16,9 @@ public interface StructureService {
 
     ReturnJson getSalesManAll(Integer page, Integer pageSize);
 
-    ReturnJson removeSalesMan(String salesManId) throws CommonException;
+    ReturnJson removeSalesMan(String salesManId, HttpServletRequest request) throws CommonException;
 
-    ReturnJson getSalesManPaymentListCount(String salesManId) throws CommonException;
+    ReturnJson getSalesManPaymentListCount(String salesManId, HttpServletRequest request) throws CommonException;
 
     ReturnJson getSalesManPaymentList(String salesManId, Integer page, Integer pageSize) throws CommonException;
 

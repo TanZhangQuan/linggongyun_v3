@@ -198,7 +198,8 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
      */
     @Override
     public ReturnJson getPlatformTaskList(PlatformTaskDto platformTaskDto) {
-        IPage<Task> taskList = taskDao.getPlatformTaskList(platformTaskDto, new Page(platformTaskDto.getPageNo(),platformTaskDto.getPageSize()));
+        Page page=new Page(platformTaskDto.getPageNo(),platformTaskDto.getPageSize());
+        IPage<Task> taskList = taskDao.getPlatformTaskList(page,platformTaskDto);
         return ReturnJson.success(taskList);
     }
 
