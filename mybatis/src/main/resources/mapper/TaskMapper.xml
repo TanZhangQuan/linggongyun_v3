@@ -150,10 +150,10 @@
 
     <insert id="addPlatformTask" parameterType="com.example.mybatis.dto.TaskDto">
 
-        INSERT INTO tb_task (id,merchant_id,invoice_id,task_name,task_code,
+        INSERT INTO tb_task (id,merchant_id,task_name,task_code,
         release_date,deadline_date,task_desc,industry_type,task_cost_min,
         task_cost_max,task_skill,release_time,deadline_time,upper_limit,cooperate_mode,task_mode,state)
-        VALUES (#{id},#{merchantId},#{invoiceId},#{taskName},#{taskCode}
+        VALUES (#{id},#{merchantId},#{taskName},#{taskCode}
         ,#{releaseDate},#{deadlineDate},#{taskDesc},#{industryType},#{taskCostMin},
         #{taskCostMax},#{taskSkill},#{releaseTime},#{deadlineTime},#{upperLimit},#{cooperateMode},#{taskMode},#{state})
     </insert>

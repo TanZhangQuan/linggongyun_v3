@@ -122,7 +122,7 @@ public class WorkerPaasController {
     public ReturnJson getYjWorkerDetails(@ApiParam(value = "任务id") @RequestParam String taskId,
                                          @ApiParam(value = "第几页") @RequestParam(defaultValue = "1") Integer pageNo,
                                          @ApiParam(value = "页大小") @RequestParam(defaultValue = "10") Integer pageSize) {
-        return workerService.getWorkerByTaskId(taskId, pageNo, pageSize);
+        return workerService.getPaasWorkerByTaskId(taskId, pageNo, pageSize);
     }
 
     @ApiOperation("验收已接单创客明细")

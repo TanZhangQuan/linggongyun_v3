@@ -1,17 +1,12 @@
 package com.example.merchant.controller.platform;
 
 import com.example.common.util.ReturnJson;
+import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.ManagersService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
@@ -66,15 +61,15 @@ public class ManagersPaasController {
 
     @PostMapping("/getCustomizedInfo")
     @ApiOperation(value = "获取当前用用户信息", notes = "获取当前用用户信息", httpMethod = "POST")
-    @ApiImplicitParams(value = {@ApiImplicitParam(name = "token值", value = "token值", required = true)})
-    public ReturnJson getCustomizedInfo(@NotBlank(message = "customizedId不能为空！") @RequestParam String token) {
-        return managersService.getCustomizedInfo(token);
+    @LoginRequired
+    public ReturnJson getCustomizedInfo(@RequestAttribute(value = "userId") @ApiParam(hidden = true) String merchantId) {
+        return managersService.getCustomizedInfo(merchantId);
     }
 
     @PostMapping("/managerLogout")
     @ApiOperation(value = "登出", notes = "登出", httpMethod = "POST")
-    @ApiImplicitParams(value = {@ApiImplicitParam(name = "merchantId", value = "登录的商户id", required = true)})
-    public ReturnJson managerLogout(@NotNull(message = "商户id不能为空") @RequestParam(required = false) String merchantId) {
+    @LoginRequired
+    public ReturnJson managerLogout(@RequestAttribute(value = "userId") @ApiParam(hidden = true) String merchantId) {
         return managersService.logout(merchantId);
     }
 }
