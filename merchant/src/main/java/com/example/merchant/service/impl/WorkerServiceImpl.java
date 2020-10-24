@@ -23,6 +23,7 @@ import com.example.mybatis.mapper.MerchantDao;
 import com.example.mybatis.mapper.WorkerDao;
 import com.example.mybatis.po.WorekerPaymentListPo;
 import com.example.mybatis.po.WorkerPo;
+import com.example.mybatis.vo.WorkerPassVo;
 import com.example.mybatis.vo.WorkerVo;
 import com.example.redis.dao.RedisDao;
 import io.jsonwebtoken.Claims;
@@ -557,6 +558,13 @@ public class  WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implement
         Worker worker=this.getById(userId);
         worker.setUserPwd("");
         return ReturnJson.success(worker);
+    }
+
+    @Override
+    public ReturnJson getPaasWorkerByTaskId(String taskId, Integer pageNo, Integer pageSize) {
+        Page page=new Page(pageNo,pageSize);
+        IPage<WorkerPassVo> iPage=workerDao.getPaasCheckByTaskId(page,taskId);
+        return ReturnJson.success(iPage);
     }
 }
 

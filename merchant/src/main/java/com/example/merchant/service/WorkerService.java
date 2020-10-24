@@ -60,4 +60,6 @@ public interface WorkerService extends IService<Worker> {
     ReturnJson logout(String workerId);
 
     ReturnJson getWorkerInfoBytoken(String userId);
+
+    ReturnJson getPaasWorkerByTaskId(String taskId, Integer pageNo,Integer pageSize);
 }

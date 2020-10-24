@@ -122,8 +122,7 @@ public class ManagersServiceImpl extends ServiceImpl<ManagersDao, Managers> impl
      */
     @Override
     public ReturnJson getCustomizedInfo(String customizedId) {
-        Claims c= jwtUtils.getClaimByToken(customizedId);
-        Managers managers=this.getById(c.getSubject());
+        Managers managers=this.getById(customizedId);
         managers.setPassWord("");
         return ReturnJson.success(managers);
     }

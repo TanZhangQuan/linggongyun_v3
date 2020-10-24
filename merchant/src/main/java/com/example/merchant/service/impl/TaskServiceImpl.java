@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.incrementer.DefaultIdentifierGenerator;
 import com.baomidou.mybatisplus.core.incrementer.IdentifierGenerator;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.api.R;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.common.util.*;
 import com.example.merchant.service.MerchantService;
@@ -68,8 +69,8 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
      */
     @Override
     public ReturnJson selectList(TaskListDto taskListDto) {
-        Page page=new Page(taskListDto.getPageNo(),taskListDto.getPageSize());
-        IPage<Task> taskList = taskDao.selectLists(page,taskListDto);
+        Page page = new Page(taskListDto.getPageNo(), taskListDto.getPageSize());
+        IPage<Task> taskList = taskDao.selectLists(page, taskListDto);
         return ReturnJson.success(taskList);
     }
 
@@ -157,7 +158,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
     @Override
     public ReturnJson close(String taskId) {
         Task task = taskDao.selectById(taskId);
-        if (task.getState() == 0) {
+        if (task.getState() != 0) {
             return ReturnJson.error("只有在发布中的任务才能进行关单");
         } else {
             int num = taskDao.closeTask(taskId);
@@ -226,6 +227,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
                 map.put("arrangePerson", merchantDao.getNameById(taskDto.getMerchantId()));
                 return workerTaskService.seavWorkerTask(map);
             }
+            return ReturnJson.success("添加成功");
         }
         return new ReturnJson("添加失败", 300);
     }
@@ -243,7 +245,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
             return ReturnJson.error("请选择任务");
         }
         task.setId(taskDto.getId());
-        Merchant merchant=merchantDao.selectOne(new QueryWrapper<Merchant>().select("id").eq("company_name",taskDto.getMerchantName()));
+        Merchant merchant = merchantDao.selectOne(new QueryWrapper<Merchant>().select("id").eq("company_name", taskDto.getMerchantName()));
         task.setMerchantId(merchant.getId());
 
 
@@ -291,7 +293,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
      */
     @Override
     @Transactional
-    public ReturnJson orderGrabbing(String taskId, String workerId) {
+    public synchronized ReturnJson orderGrabbing(String taskId, String workerId) {
         ReturnJson returnJson = new ReturnJson("操作失败", 300);
         Worker worker = workerDao.selectOne(new QueryWrapper<Worker>().eq("id", workerId));
         if (worker.getAttestation() != 1 && worker.getAgreementSign() != 1) {
@@ -303,21 +305,20 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
         if (count1 > 0) {
             return returnJson.error("您已经抢过这一单了");
         }
-        synchronized (this) {
-            if (count >= task.getUpperLimit()) {
-                return returnJson.error("任务所需人数已满");
-            }
-            WorkerTask workerTask = new WorkerTask();
-            workerTask.setTaskId(taskId);
-            workerTask.setWorkerId(workerId);
-            workerTask.setTaskStatus(0);
-            workerTask.setGetType(0);
-            workerTask.setCreateDate(LocalDateTime.now());
-            int num = workerTaskDao.insert(workerTask);
-            if (num > 0) {
-                return returnJson.error("恭喜,抢单成功");
-            }
+        if (count >= task.getUpperLimit()) {
+            return returnJson.error("任务所需人数已满");
         }
+        WorkerTask workerTask = new WorkerTask();
+        workerTask.setTaskId(taskId);
+        workerTask.setWorkerId(workerId);
+        workerTask.setTaskStatus(0);
+        workerTask.setGetType(0);
+        workerTask.setCreateDate(LocalDateTime.now());
+        int num = workerTaskDao.insert(workerTask);
+        if (num > 0) {
+            return returnJson.error("恭喜,抢单成功");
+        }
+
         return returnJson;
     }
 

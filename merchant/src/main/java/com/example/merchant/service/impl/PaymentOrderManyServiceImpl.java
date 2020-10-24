@@ -428,8 +428,8 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
      * @return
      */
     @Override
-    public ReturnJson getPaymentOrderManyPaas(PaymentOrderDto paymentOrderDto) throws CommonException {
-        List<String> merchantIds = acquireID.getMerchantIds(paymentOrderDto.getManagersId());
+    public ReturnJson getPaymentOrderManyPaas(PaymentOrderDto paymentOrderDto,String managersId) throws CommonException {
+        List<String> merchantIds = acquireID.getMerchantIds(managersId);
         if (VerificationCheck.listIsNull(merchantIds)) {
             return ReturnJson.success("");
         }

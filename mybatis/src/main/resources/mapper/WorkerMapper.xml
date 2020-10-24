@@ -49,6 +49,19 @@
         <result column="create_date" property="createDate"/>
     </resultMap>
 
+    <resultMap id="workerPassVo" type="com.example.mybatis.vo.WorkerPassVo">
+        <id column="id" property="wId"/>
+        <result column="worker_name" property="workerName"/>
+        <result column="mobile_code" property="mobileCode"/>
+        <result column="idcard_code" property="idcardCode"/>
+        <result column="attestation" property="attestation"/>
+        <result column="agreementUrl" property="agreementUrl"/>
+        <result column="create_date" property="createDate"/>
+        <result column="is_deliver" property="isDeliver"/>
+        <result column="acceptance_amount" property="acceptanceAmount"/>
+        <result column="status" property="status"/>
+    </resultMap>
+
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id, worker_status, worker_name, account_name, worker_sex, mobile_code, idcard_code, bank_code, attestation, idcardFront, idcardBack, attestation_video, user_name, user_pwd, skill, agreementSign, agreementUrl, head_portraits, picture, business_license, create_date, update_date
@@ -247,5 +260,27 @@
         FROM tb_payment_inventory pi
         INNER JOIN tb_worker w ON w.id=pi.worker_id
         GROUP BY w.id
+    </select>
+
+
+    <select id="getPaasCheckByTaskId" resultMap="workerPassVo">
+        SELECT
+            w.id,
+            w.worker_name,
+            w.mobile_code,
+            w.idcard_code,
+            w.attestation,
+            w.agreementUrl,
+            wt.achievement_date,
+            wt.achievement_desc,
+            wt.achievement_files,
+            wt.create_date,
+            wt.`status`,
+            IF( ISNULL(achievement_date),0,1) as is_deliver,
+            wt.check_money as acceptance_amount
+        FROM
+            tb_worker AS w
+        INNER JOIN tb_worker_task wt ON wt.worker_id = w.id
+        where wt.task_id=#{taskId}
     </select>
 </mapper>
