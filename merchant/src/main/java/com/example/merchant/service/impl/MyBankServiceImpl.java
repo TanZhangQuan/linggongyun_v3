@@ -25,18 +25,18 @@ public class MyBankServiceImpl implements MyBankService {
     /**
      * 注册商户 企业会员
      *
-     * @param enterpriseName 商户名称
-     * @param uId            商户ID
+     * @param addEnterpriseDto
      * @return
      * @throws Exception
      */
     @Override
-    public ReturnJson registerMerchantMember(String enterpriseName, String uId) throws Exception {
-        Map<String, String> map = new HashMap<>();  //接口所需要的参数
+    public ReturnJson registerMerchantMember(AddEnterpriseDto addEnterpriseDto) throws Exception {
+        if (addEnterpriseDto.getUid() == null || addEnterpriseDto.getEnterprise_name() == null) {
+            ReturnJson.error("Uid,Enterprise_name不能为空");
+        }
         service = "mybank.tc.user.enterprise.register";
+        Map<String, String> map = new HashMap<>();  //接口所需要的参数
         map.put("service", service);
-        map.put("enterprise_name", enterpriseName);
-        map.put("uid", uId);
 
         map = (Map) JSONUtils.parse(myBankClient.myBank(map));  //返回的参数
         if (map.get("is_success").equals("T")) {  //判断返回的状态

@@ -6,7 +6,7 @@ import com.example.merchant.dto.myBank.*;
 public interface MyBankService {
 
     //创建企业会员信息
-    ReturnJson registerMerchantMember(String enterpriseName,String uId) throws Exception;
+    ReturnJson registerMerchantMember(AddEnterpriseDto addEnterpriseDto) throws Exception;
 
     //创建个人会员信息
     ReturnJson registerWorkerMember(String uId,String realName,String memberName,String certificateNo) throws Exception;
