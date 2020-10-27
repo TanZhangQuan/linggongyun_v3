@@ -10,7 +10,7 @@ public class Demo {
 		try {
 			//第一个参数是快递公司简称（YD -- 韵达速递）
 			//第二个参数是需要查询的快递单号
-			String result = api.getOrderTracesByJson("YTO1", "YT4733477430882");
+			String result = api.getOrderTracesByJson("STO", "773062976582817");
 			JSONObject jsonObject = JSONObject.fromObject(result);
 			String ShipperCode = jsonObject.getString("ShipperCode");
 			String LogisticCode = jsonObject.getString("LogisticCode");

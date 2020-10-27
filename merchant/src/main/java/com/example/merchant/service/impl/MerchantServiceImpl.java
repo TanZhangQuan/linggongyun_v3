@@ -38,6 +38,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -453,6 +454,9 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
     @Resource
     private PaymentOrderManyService paymentOrderManyService;
 
+    @Resource
+    private MyBankService myBankService;
+
     /**
      * 获取支付详情
      *
@@ -545,6 +549,9 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         BeanUtils.copyProperties(companyDto.getAddress(), address);
         address.setCompanyId(companyInfo.getId());
         addressDao.insert(address);
+
+
+
 
         return ReturnJson.success("添加商户成功！");
     }
