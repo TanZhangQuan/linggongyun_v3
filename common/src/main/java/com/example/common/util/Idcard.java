@@ -38,14 +38,15 @@ public class Idcard {
     }
 
     public static void main(String[] args) {
-//        String auth = AuthService.getAuth();
-//        String front = Idcard.idcard("G:/upload/image/20200925205103.jpg", auth, "front");
+        String auth = AuthService.getAuth();
+        String front = Idcard.idcard("D:/upload/image/5f8cfeead3eb4d4982b62a30d274eadd.jpg", auth, "back");
+        System.out.println(front);
 //        Map<String,Map<String,Map<String,Object>>> mapMap = new HashMap<>();
 //        Map<String,Map<String,Map<String,Object>>> map = JsonUtils.jsonToPojo(front, mapMap.getClass());
 //        Map<String, Map<String, Object>> words_result = map.get("words_result");
 //        System.out.println(words_result.get("姓名").get("words"));
 //        System.out.println(words_result.get("公民身份号码").get("words"));
-        Map<String, String> idCardInfo = IdCardUtils.getIdCardInfo("G:/upload/image/a9e57dd19d474515a3bd2a6a3c62b1ba.jpg");
-        System.out.println(idCardInfo.toString());
+//        Map<String, String> idCardInfo = IdCardUtils.getIdCardInfo("D:/upload/image/5f8cfeead3eb4d4982b62a30d274eadd.jpg");
+//        System.out.println(idCardInfo.toString());
     }
 }
