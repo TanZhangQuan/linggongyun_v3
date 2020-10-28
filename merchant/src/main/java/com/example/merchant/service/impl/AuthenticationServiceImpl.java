@@ -11,6 +11,7 @@ import com.example.merchant.dto.makerend.IdCardInfoDto;
 import com.example.merchant.dto.makerend.WorkerBankDto;
 import com.example.merchant.service.AuthenticationService;
 import com.example.merchant.service.FileOperationService;
+import com.example.merchant.service.MyBankService;
 import com.example.merchant.util.RealnameVerifyUtil;
 import com.example.mybatis.entity.Worker;
 import com.example.mybatis.entity.WorkerBank;
@@ -51,6 +52,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Resource
     private FileOperationService fileOperationService;
 
+    @Resource
+    private MyBankService myBankService;
+
     /**
      * 识别身份证获取信息
      *
@@ -72,7 +76,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
      * @return
      */
     @Override
-    public ReturnJson saveIdCardinfo(IdCardInfoDto idCardInfoDto,String workerId) {
+    public ReturnJson saveIdCardinfo(IdCardInfoDto idCardInfoDto, String workerId) throws Exception {
         Worker worker = workerDao.selectById(workerId);
         if (worker == null) {
             return ReturnJson.error("该创客不存在！");
@@ -83,6 +87,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         worker.setIdcardBack(idCardInfoDto.getIdCardBack());
         int i = workerDao.updateById(worker);
         if (i == 1) {
+            Map<String, String> map = (Map) myBankService.registerWorkerMember(worker.getId(), worker.getAccountName(), worker.getUserName(), worker.getIdcardCode()).getObj();
+            worker.setMemberId(map.get("member_ic"));
+            worker.setSubAccountNo(map.get("sub_accoun_no"));
+            workerDao.updateById(worker);
             return ReturnJson.success("身份证上传成功！");
         }
         return ReturnJson.error("身份证上传失败！");
@@ -95,7 +103,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
      * @return
      */
     @Override
-    public ReturnJson saveBankInfo(WorkerBankDto workerBankDto,String workerId) {
+    public ReturnJson saveBankInfo(WorkerBankDto workerBankDto, String workerId) {
         WorkerBank workerBank = new WorkerBank();
         BeanUtils.copyProperties(workerBankDto, workerBank);
         workerBank.setWorkerId(workerId);
@@ -159,7 +167,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
      * @return
      */
     @Override
-    public synchronized ReturnJson callBackSignAContract(HttpServletRequest request){
+    public synchronized ReturnJson callBackSignAContract(HttpServletRequest request) {
         //查询body的数据进行验签
         Map map = null;
         boolean res = false;
@@ -168,7 +176,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             map = JsonUtils.jsonToPojo(rbody, Map.class);
             res = RealnameVerifyUtil.checkPass(request, rbody, appSecret);
         } catch (Exception e) {
-            log.error(e.toString()+":"+e.getMessage());
+            log.error(e.toString() + ":" + e.getMessage());
             return null;
         }
         if (!res) {
@@ -194,7 +202,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             try {
                 SignHelper.archiveSignFlow(flowId);
             } catch (DefineException e) {
-                log.error(e.toString()+":"+e.getMessage());
+                log.error(e.toString() + ":" + e.getMessage());
                 Worker worker = workerDao.selectById(thirdPartyUserId);
                 worker.setAgreementSign(3);
                 workerDao.updateById(worker);
@@ -205,7 +213,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             try {
                 jsonHelper = (Map<String, List<Map<String, Object>>>) SignHelper.downloadFlowDoc(flowId);
             } catch (DefineException e) {
-                log.error(e.toString()+":"+e.getMessage());
+                log.error(e.toString() + ":" + e.getMessage());
                 Worker worker = workerDao.selectById(thirdPartyUserId);
                 worker.setAgreementSign(3);
                 workerDao.updateById(worker);

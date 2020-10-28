@@ -66,7 +66,7 @@ public class WorkerMerchantController {
     @ApiOperation(value = "导入创客", notes = "导入创客", httpMethod = "POST")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "workers", value = "需要导入的创客集合", required = true, allowMultiple = true, dataType = "Worker"),
             @ApiImplicitParam(name = "merchantId", value = "商户ID", required = true)})
-    public ReturnJson saveWorker(@NotEmpty(message = "集合不能为空") @RequestBody List<Worker> workers, @NotBlank(message = "用户ID不能为空") @RequestParam(required = false) String merchantId) {
+    public ReturnJson saveWorker(@NotEmpty(message = "集合不能为空") @RequestBody List<Worker> workers, @NotBlank(message = "用户ID不能为空") @RequestParam(required = false) String merchantId) throws Exception {
         return workerService.saveWorker(workers, merchantId);
     }
 

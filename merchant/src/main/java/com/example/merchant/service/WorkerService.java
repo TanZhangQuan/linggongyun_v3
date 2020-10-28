@@ -2,6 +2,7 @@ package com.example.merchant.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.common.util.ReturnJson;
+import com.example.merchant.dto.makerend.AddWorkerDto;
 import com.example.merchant.dto.merchant.WorkerDto;
 import com.example.merchant.exception.CommonException;
 import com.example.mybatis.entity.Worker;
@@ -25,7 +26,7 @@ public interface WorkerService extends IService<Worker> {
 
     ReturnJson getWorkerInfo(String id);
 
-    ReturnJson saveWorker(List<Worker> workers, String merchantId);
+    ReturnJson saveWorker(List<Worker> workers, String merchantId) throws Exception;
 
     ReturnJson getWorkerByTaskId(String taskId, Integer pageNo,Integer pageSize);
 
@@ -62,4 +63,6 @@ public interface WorkerService extends IService<Worker> {
     ReturnJson getWorkerInfoBytoken(String userId);
 
     ReturnJson getPaasWorkerByTaskId(String taskId, Integer pageNo,Integer pageSize);
+
+    ReturnJson registerWorker(AddWorkerDto addWorkerDto);
 }
