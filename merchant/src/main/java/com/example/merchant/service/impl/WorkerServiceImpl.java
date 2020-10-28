@@ -198,6 +198,14 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
     }
 
 
+    /**
+     * 查询任务对应创客
+     *
+     * @param taskId   任务id
+     * @param pageNo   第几页
+     * @param pageSize 页大小
+     * @return
+     */
     @Override
     public ReturnJson getWorkerByTaskId(String taskId, Integer pageNo, Integer pageSize) {
         ReturnJson returnJson = new ReturnJson("查询失败", 300);
@@ -209,6 +217,14 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
         return returnJson;
     }
 
+    /**
+     * 验收创客是否完成
+     *
+     * @param taskId
+     * @param pageNo
+     * @param pageSize
+     * @return
+     */
     @Override
     public ReturnJson getCheckByTaskId(String taskId, Integer pageNo, Integer pageSize) {
         ReturnJson returnJson = new ReturnJson("验收查询失败", 300);

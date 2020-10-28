@@ -9,6 +9,7 @@ import com.example.common.util.JsonUtils;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.makerend.IdCardInfoDto;
 import com.example.merchant.dto.makerend.WorkerBankDto;
+import com.example.merchant.dto.myBank.BankCardDto;
 import com.example.merchant.service.AuthenticationService;
 import com.example.merchant.service.FileOperationService;
 import com.example.merchant.service.MyBankService;
@@ -103,12 +104,29 @@ public class AuthenticationServiceImpl implements AuthenticationService {
      * @return
      */
     @Override
-    public ReturnJson saveBankInfo(WorkerBankDto workerBankDto, String workerId) {
+    public ReturnJson saveBankInfo(WorkerBankDto workerBankDto, String workerId) throws Exception {
+        ReturnJson rj = null;
         WorkerBank workerBank = new WorkerBank();
         BeanUtils.copyProperties(workerBankDto, workerBank);
         workerBank.setWorkerId(workerId);
         int insert = workerBankDao.insert(workerBank);
         if (insert == 1) {
+            BankCardDto bankCardDto = new BankCardDto();
+            bankCardDto.setCard_type("DC");
+            bankCardDto.setCard_attribute("C");
+            bankCardDto.setVerify_type("3");
+            bankCardDto.setUid(workerId);
+            bankCardDto.setBank_account_no(workerBankDto.getBankCode());
+            bankCardDto.setBank_name(workerBankDto.getBankName());
+            rj = myBankService.bindingBankCard(bankCardDto);
+            Map<String, String> map = (Map<String, String>) rj.getObj();
+            if (("T").equals(map.get("is_success"))) {
+                Worker worker = workerDao.selectById(workerId);
+                if (worker.getBankId() == null) {
+                    worker.setBankId(map.get("bnak_id"));
+                    workerDao.updateById(worker);
+                }
+            }
             return ReturnJson.success("银行卡绑定成功！");
         }
         return ReturnJson.success("银行卡绑定失败！");

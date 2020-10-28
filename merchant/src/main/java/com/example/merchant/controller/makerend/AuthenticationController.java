@@ -49,7 +49,7 @@ public class AuthenticationController {
             @ApiImplicitParam(name = "workerBankDto", value = "身份证正面的访问地址", dataType = "WorkerBankDto", required = true)
     })
     @LoginRequired
-    public ReturnJson saveBankInfo(@Valid @RequestBody WorkerBankDto workerBankDto, @RequestAttribute(value = "userId") @ApiParam(hidden = true) String workerId) {
+    public ReturnJson saveBankInfo(@Valid @RequestBody WorkerBankDto workerBankDto, @RequestAttribute(value = "userId") @ApiParam(hidden = true) String workerId) throws Exception {
         return authenticationService.saveBankInfo(workerBankDto, workerId);
     }
 
