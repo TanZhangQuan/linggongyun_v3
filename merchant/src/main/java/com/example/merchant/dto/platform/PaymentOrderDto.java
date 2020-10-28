@@ -11,12 +11,6 @@ import javax.validation.constraints.NotNull;
 public class PaymentOrderDto {
 
     /**
-     * 管理人员ID
-     */
-    @ApiModelProperty("管理人员ID")
-    private String managersId;
-
-    /**
      * 商户名称
      */
     private String merchantName;

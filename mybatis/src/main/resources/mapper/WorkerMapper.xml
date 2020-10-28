@@ -15,6 +15,8 @@
         <result column="attestation" property="attestation"/>
         <result column="idcardFront" property="idcardFront"/>
         <result column="idcardBack" property="idcardBack"/>
+        <result column="member_id" property="memberId"/>
+        <result column="sub_account_no" property="subAccountNo"/>
         <result column="attestation_video" property="attestationVideo"/>
         <result column="user_name" property="userName"/>
         <result column="user_pwd" property="userPwd"/>
@@ -47,6 +49,19 @@
         <result column="attestation" property="attestation"/>
         <result column="agreementUrl" property="agreementUrl"/>
         <result column="create_date" property="createDate"/>
+    </resultMap>
+
+    <resultMap id="workerPassVo" type="com.example.mybatis.vo.WorkerPassVo">
+        <id column="id" property="wId"/>
+        <result column="worker_name" property="workerName"/>
+        <result column="mobile_code" property="mobileCode"/>
+        <result column="idcard_code" property="idcardCode"/>
+        <result column="attestation" property="attestation"/>
+        <result column="agreementUrl" property="agreementUrl"/>
+        <result column="create_date" property="createDate"/>
+        <result column="is_deliver" property="isDeliver"/>
+        <result column="acceptance_amount" property="acceptanceAmount"/>
+        <result column="status" property="status"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
@@ -247,5 +262,27 @@
         FROM tb_payment_inventory pi
         INNER JOIN tb_worker w ON w.id=pi.worker_id
         GROUP BY w.id
+    </select>
+
+
+    <select id="getPaasCheckByTaskId" resultMap="workerPassVo">
+        SELECT
+            w.id,
+            w.worker_name,
+            w.mobile_code,
+            w.idcard_code,
+            w.attestation,
+            w.agreementUrl,
+            wt.achievement_date,
+            wt.achievement_desc,
+            wt.achievement_files,
+            wt.create_date,
+            wt.`status`,
+            IF( ISNULL(achievement_date),0,1) as is_deliver,
+            wt.check_money as acceptance_amount
+        FROM
+            tb_worker AS w
+        INNER JOIN tb_worker_task wt ON wt.worker_id = w.id
+        where wt.task_id=#{taskId}
     </select>
 </mapper>

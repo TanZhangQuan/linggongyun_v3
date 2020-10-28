@@ -4,12 +4,10 @@ import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.merchant.AddPaymentOrderManyDto;
 import com.example.merchant.dto.platform.PaymentOrderDto;
 import com.example.merchant.exception.CommonException;
+import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.PaymentOrderManyService;
 import com.example.merchant.service.PaymentOrderService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -49,11 +47,12 @@ public class PaymentOrderManyPaasController {
         return paymentOrderService.findMerchantPaas(managersId);
     }
 
+    @LoginRequired
     @PostMapping("/getPaymentOrderManyAll")
     @ApiOperation(value = "查询众包订单", notes = "查询众包订单", httpMethod = "POST")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "paymentOrderDto", value = "查询条件", required = true, dataType = "PaymentOrderDto")})
-    public ReturnJson getPaymentOrderManyAll(@Valid @RequestBody PaymentOrderDto paymentOrderDto) throws CommonException {
-        return paymentOrderManyService.getPaymentOrderManyPaas(paymentOrderDto);
+    public ReturnJson getPaymentOrderManyAll(@Valid @RequestBody PaymentOrderDto paymentOrderDto, @RequestAttribute("userId")@ApiParam(hidden = true) String managersId) throws CommonException {
+        return paymentOrderManyService.getPaymentOrderManyPaas(paymentOrderDto,managersId);
     }
 
     @GetMapping("/getPaymentOrderManyInfo")

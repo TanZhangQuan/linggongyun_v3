@@ -1,6 +1,6 @@
 package com.example.common.util;
 
-import com.example.common.GatewayConstant;
+import com.example.common.mybank.GatewayConstant;
 import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Array;

@@ -10,6 +10,7 @@ import com.example.common.util.MD5;
 import com.example.common.util.ReturnJson;
 import com.example.common.util.VerificationCheck;
 import com.example.merchant.config.shiro.CustomizedToken;
+import com.example.merchant.dto.myBank.AddEnterpriseDto;
 import com.example.merchant.dto.platform.CompanyDto;
 import com.example.merchant.dto.platform.CompanyTaxDto;
 import com.example.merchant.exception.CommonException;
@@ -38,6 +39,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -453,6 +455,9 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
     @Resource
     private PaymentOrderManyService paymentOrderManyService;
 
+    @Resource
+    private MyBankService myBankService;
+
     /**
      * 获取支付详情
      *
@@ -497,7 +502,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ReturnJson addMerchant(CompanyDto companyDto) throws CommonException {
+    public ReturnJson addMerchant(CompanyDto companyDto) throws Exception {
         CompanyInfo companyInfo = new CompanyInfo();
         BeanUtils.copyProperties(companyDto, companyInfo);
 
@@ -545,6 +550,24 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         BeanUtils.copyProperties(companyDto.getAddress(), address);
         address.setCompanyId(companyInfo.getId());
         addressDao.insert(address);
+
+
+        AddEnterpriseDto addEnterpriseDto = new AddEnterpriseDto();
+        addEnterpriseDto.setUid(companyInfo.getId());
+        addEnterpriseDto.setEnterprise_name(companyInfo.getCompanyName());
+        addEnterpriseDto.setMember_name(companyInfo.getCompanySName());
+        addEnterpriseDto.setLegal_person(companyInfo.getCompanyMan());
+        addEnterpriseDto.setLegal_person_certificate_type("ID_CARD");
+        addEnterpriseDto.setLegal_person_certificate_no(companyInfo.getCompanyManIdCard());
+        addEnterpriseDto.setLegal_person_phone(companyInfo.getLinkMobile());
+        addEnterpriseDto.setLicense_no(companyInfo.getBusinessLicense());
+        addEnterpriseDto.setUnified_social_credit_code(companyInfo.getCreditCode());
+        addEnterpriseDto.setSummary(companyInfo.getCompanyDesc());
+        Map<String, String> map = (Map) myBankService.registerMerchantMember(addEnterpriseDto).getObj();
+
+        companyInfo.setMemberId(map.get("member_id"));
+        companyInfo.setSubAccountNo(map.get("sub_account_no"));
+        companyInfoDao.updateById(companyInfo);
 
         return ReturnJson.success("添加商户成功！");
     }

@@ -62,11 +62,10 @@ public class BaseExceptionHandler {
         return ReturnJson.error("文件上传失败！");
     }
 
-    //shiro为登录时
     @ResponseBody
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ReturnJson exceptionHandler(HttpRequestMethodNotSupportedException e){
-        return ReturnJson.error("请先登录后再进行操作");
+        return ReturnJson.error("请求异常被拦截");
     }
 
     //处理非以上异常问题

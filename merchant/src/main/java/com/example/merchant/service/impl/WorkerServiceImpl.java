@@ -7,12 +7,11 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.common.sms.SenSMS;
 import com.example.common.util.*;
+import com.example.merchant.dto.makerend.AddWorkerDto;
 import com.example.merchant.dto.merchant.WorkerDto;
+import com.example.merchant.dto.myBank.BankCardDto;
 import com.example.merchant.exception.CommonException;
-import com.example.merchant.service.CompanyWorkerService;
-import com.example.merchant.service.TaskService;
-import com.example.merchant.service.WorkerService;
-import com.example.merchant.service.WorkerTaskService;
+import com.example.merchant.service.*;
 import com.example.merchant.util.AcquireID;
 import com.example.merchant.util.JwtUtils;
 import com.example.mybatis.entity.CompanyWorker;
@@ -23,11 +22,13 @@ import com.example.mybatis.mapper.MerchantDao;
 import com.example.mybatis.mapper.WorkerDao;
 import com.example.mybatis.po.WorekerPaymentListPo;
 import com.example.mybatis.po.WorkerPo;
+import com.example.mybatis.vo.WorkerPassVo;
 import com.example.mybatis.vo.WorkerVo;
 import com.example.redis.dao.RedisDao;
 import io.jsonwebtoken.Claims;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.RowBounds;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,7 +51,7 @@ import java.util.concurrent.TimeUnit;
  * @since 2020-09-07
  */
 @Service
-public class  WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements WorkerService {
+public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements WorkerService {
 
     @Resource
     private WorkerDao workerDao;
@@ -66,6 +67,9 @@ public class  WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implement
 
     @Resource
     private MerchantDao merchantDao;
+
+    @Resource
+    private MyBankService myBankService;
 
     @Value("${PWD_KEY}")
     String PWD_KEY;
@@ -143,7 +147,8 @@ public class  WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implement
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ReturnJson saveWorker(List<Worker> workers, String merchantId) {
+    public ReturnJson saveWorker(List<Worker> workers, String merchantId) throws Exception {
+        ReturnJson rj = null;
         List<CompanyWorker> companyWorkers = new ArrayList<>();
         Merchant merchant = merchantDao.selectById(merchantId);
         List<String> mobileCodes = new ArrayList<>();
@@ -151,6 +156,34 @@ public class  WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implement
             mobileCodes.add(worker.getMobileCode());
             if (StringUtils.isBlank(worker.getId())) {
                 this.save(worker);
+            }
+            if (worker.getAccountName() != null && worker.getIdcardCode() != null) {    //注册个人会员
+                if (worker.getMemberId() == null && worker.getSubAccountNo() == null) {
+                    rj = myBankService.registerWorkerMember(worker.getId(), worker.getAccountName(), worker.getUserName(), worker.getIdcardCode());
+                    Map<String, String> map = (Map<String, String>) rj.getObj();
+                    if (("T").equals(map.get("is_success"))) {
+                        worker.setMemberId(map.get("member_ic"));
+                        worker.setSubAccountNo(map.get("sub_accoun_no"));
+                        baseMapper.updateById(worker);
+                    }
+                }
+            }
+            if (worker.getBankCode() != null) {//网商银行绑定银行卡
+                if (worker.getBankId() == null) {
+                    BankCardDto bankCardDto = new BankCardDto();
+                    bankCardDto.setCard_type("DC");
+                    bankCardDto.setCard_attribute("C");
+                    bankCardDto.setVerify_type("3");
+                    bankCardDto.setUid(worker.getId());
+                    bankCardDto.setBank_account_no(worker.getBankCode());
+                    bankCardDto.setBank_name(worker.getBankName());
+                    rj = myBankService.bindingBankCard(bankCardDto);
+                    Map<String, String> map = (Map<String, String>) rj.getObj();
+                    if (("T").equals(map.get("is_success"))) {
+                        worker.setBankId(map.get("bnak_id"));
+                        baseMapper.updateById(worker);
+                    }
+                }
             }
             CompanyWorker companyWorker = new CompanyWorker();
             companyWorker.setCompanyId(merchant.getCompanyId());
@@ -166,10 +199,10 @@ public class  WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implement
 
 
     @Override
-    public ReturnJson getWorkerByTaskId(String taskId, Integer pageNo,Integer pageSize) {
+    public ReturnJson getWorkerByTaskId(String taskId, Integer pageNo, Integer pageSize) {
         ReturnJson returnJson = new ReturnJson("查询失败", 300);
-        Page page=new Page(pageNo,pageSize);
-        IPage<WorkerPo> poList = workerDao.getWorkerByTaskId(page,taskId);
+        Page page = new Page(pageNo, pageSize);
+        IPage<WorkerPo> poList = workerDao.getWorkerByTaskId(page, taskId);
         if (poList != null) {
             return ReturnJson.success(poList);
         }
@@ -177,10 +210,10 @@ public class  WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implement
     }
 
     @Override
-    public ReturnJson getCheckByTaskId(String taskId, Integer pageNo,Integer pageSize) {
+    public ReturnJson getCheckByTaskId(String taskId, Integer pageNo, Integer pageSize) {
         ReturnJson returnJson = new ReturnJson("验收查询失败", 300);
-        Page page = new Page(pageNo,pageSize);
-        IPage<WorkerPo> poList = workerDao.getCheckByTaskId(page,taskId);
+        Page page = new Page(pageNo, pageSize);
+        IPage<WorkerPo> poList = workerDao.getCheckByTaskId(page, taskId);
         if (poList != null) {
             return ReturnJson.success(poList);
         }
@@ -336,7 +369,7 @@ public class  WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implement
             redisDao.set(token, token);
             response.setHeader(TOKEN, token);
             redisDao.setExpire(worker.getId(), 7, TimeUnit.DAYS);
-            return ReturnJson.success("登录成功",token);
+            return ReturnJson.success("登录成功", token);
         }
         return ReturnJson.error("你输入的用户名或密码有误！");
     }
@@ -350,7 +383,7 @@ public class  WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implement
     @Override
     public ReturnJson senSMS(String mobileCode) {
         ReturnJson rj = new ReturnJson();
-        Worker worker = this.getOne(new QueryWrapper<Worker>().eq("mobile_code", mobileCode));
+        Worker worker = workerDao.selectOne(new QueryWrapper<Worker>().eq("mobile_code", mobileCode));
         if (worker == null) {
             rj.setCode(401);
             rj.setMessage("你还未注册，请先去注册！");
@@ -394,7 +427,7 @@ public class  WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implement
             resource.setHeader(TOKEN, token);
             redisDao.set(token, token);
             redisDao.setExpire(worker.getId(), 7, TimeUnit.DAYS);
-            return ReturnJson.success("登录成功",token);
+            return ReturnJson.success("登录成功", token);
         }
     }
 
@@ -549,14 +582,51 @@ public class  WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implement
 
     /**
      * 根据token获取用户信息
+     *
      * @param userId
      * @return
      */
     @Override
     public ReturnJson getWorkerInfoBytoken(String userId) {
-        Worker worker=this.getById(userId);
+        Worker worker = this.getById(userId);
         worker.setUserPwd("");
         return ReturnJson.success(worker);
+    }
+
+    /**
+     * 平台端查询创客任务
+     *
+     * @param taskId
+     * @param pageNo
+     * @param pageSize
+     * @return
+     */
+    @Override
+    public ReturnJson getPaasWorkerByTaskId(String taskId, Integer pageNo, Integer pageSize) {
+        Page page = new Page(pageNo, pageSize);
+        IPage<WorkerPassVo> iPage = workerDao.getPaasCheckByTaskId(page, taskId);
+        return ReturnJson.success(iPage);
+    }
+
+    /**
+     * 注册创客
+     *
+     * @param addWorkerDto
+     * @return
+     */
+    @Override
+    public ReturnJson registerWorker(AddWorkerDto addWorkerDto) {
+        Worker worker = workerDao.selectOne(new QueryWrapper<Worker>().eq("mobile_code", addWorkerDto.getMobileCode()));
+        if (worker == null) {
+            worker = new Worker();
+            worker.setUserName(addWorkerDto.getUserName());
+            worker.setUserPwd(PWD_KEY + MD5.md5(addWorkerDto.getUserPwd()));
+            worker.setMobileCode(addWorkerDto.getMobileCode());
+            workerDao.insert(worker);
+            return ReturnJson.success("添加成功");
+        } else {
+            return ReturnJson.success("该手机号已经注册过，请直接登录");
+        }
     }
 }
 
