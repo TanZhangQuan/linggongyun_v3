@@ -9,10 +9,10 @@ public interface MyBankService {
     ReturnJson registerMerchantMember(AddEnterpriseDto addEnterpriseDto) throws Exception;
 
     //创建个人会员信息
-    ReturnJson registerWorkerMember(String uId,String realName,String memberName,String certificateNo) throws Exception;
+    ReturnJson registerWorkerMember(String uId, String realName, String memberName, String certificateNo) throws Exception;
 
     //绑卡
-    ReturnJson bindingBankCard(String uId,String bankAccountNo,String accountName,String cardType,String cardAttribute) throws Exception;
+    ReturnJson bindingBankCard(BankCardDto bankCardDto) throws Exception;
 
     //查询余额
     ReturnJson checkTheBalance(String uId) throws Exception;
@@ -24,7 +24,7 @@ public interface MyBankService {
     ReturnJson merchantInfoModify(EnterpriseDto enterpriseDto) throws Exception;
 
     //查询个人信息
-   ReturnJson workerInfoQuery(String uid) throws Exception;
+    ReturnJson workerInfoQuery(String uid) throws Exception;
 
     //查询企业信息
     ReturnJson merchantInfoQuery(String uid) throws Exception;
@@ -36,7 +36,7 @@ public interface MyBankService {
     ReturnJson bindingAlipay(AlipayDto alipayDto) throws Exception;
 
     //解绑银行卡
-    ReturnJson unbindBankCard(String uId,String bankId) throws Exception;
+    ReturnJson unbindBankCard(String uId, String bankId) throws Exception;
 
     //及时入账
     ReturnJson timelyEntry(EntryDto entryDto) throws Exception;

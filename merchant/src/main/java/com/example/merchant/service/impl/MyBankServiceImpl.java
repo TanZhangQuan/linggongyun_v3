@@ -77,26 +77,15 @@ public class MyBankServiceImpl implements MyBankService {
     /**
      * 绑定银行卡
      *
-     * @param uId           UID
-     * @param bankAccountNo 银行账号/卡号，明文
-     * @param accountName   银行开户名，明文
-     * @param cardType      借记
-     * @param cardAttribute C:对私  B:对公
+     * @param bankCardDto
      * @return
      */
     @Override
-    public ReturnJson bindingBankCard(String uId, String bankAccountNo, String accountName, String cardType, String cardAttribute) throws Exception {
-        Map<String, String> map = new HashMap<>();  //接口所需要的参数
+    public ReturnJson bindingBankCard(BankCardDto bankCardDto) throws Exception {
         service = "mybank.tc.user.bankcard.bind";
-        String verifyType = "3";
+        Map<String, String> map = JSON.parseObject(JSON.toJSONString(bankCardDto), Map.class);
         map.put("service", service);
-        map.put("uid", uId);
-        map.put("bank_account_no", bankAccountNo);
-        map.put("account_name", accountName);
-        map.put("card_type", cardType);
-        map.put("card_attribute", cardAttribute);
-        map.put("verify_type", verifyType);
-
+        
         map = (Map) JSONUtils.parse(myBankClient.myBank(map));  //返回的参数
         if (map.get("is_success").equals("T")) {  //判断返回的状态
             return ReturnJson.success("操作成功", map);

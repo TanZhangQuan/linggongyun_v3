@@ -114,7 +114,7 @@ public class MerchantPaasController {
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "companyDto", value = "商户ID", required = true, dataType = "CompanyDto")
     })
-    public ReturnJson addMerchant(@Valid @RequestBody CompanyDto companyDto) throws CommonException {
+    public ReturnJson addMerchant(@Valid @RequestBody CompanyDto companyDto) throws Exception {
         return merchantService.addMerchant(companyDto);
     }
 

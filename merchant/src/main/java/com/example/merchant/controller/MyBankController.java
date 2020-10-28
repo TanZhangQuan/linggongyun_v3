@@ -17,10 +17,10 @@ public class MyBankController {
     @Autowired
     private MyBankService myBankService;
 
-    @GetMapping("/mybankMerchant")//创建企业会员
-    public ReturnJson mybankMerchant(String enterpriseName, String uId) throws Exception {
-        return myBankService.registerMerchantMember(enterpriseName, uId);
-    }
+//    @GetMapping("/mybankMerchant")//创建企业会员
+//    public ReturnJson mybankMerchant(String enterpriseName, String uId) throws Exception {
+//        return myBankService.registerMerchantMember(enterpriseName, uId);
+//    }
 
     @GetMapping("/mybankWorker")//创建个人会员
     public ReturnJson mybankWorker(String uId, String realName, String memberName, String certificateNo) throws Exception {

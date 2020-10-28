@@ -1,6 +1,7 @@
 package com.example.merchant.controller.makerend;
 
 import com.example.common.util.ReturnJson;
+import com.example.merchant.dto.makerend.AddWorkerDto;
 import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.WorkerService;
 import io.swagger.annotations.Api;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
@@ -85,5 +87,11 @@ public class WorkerMakerendController {
     @LoginRequired
     public ReturnJson getWorkerInfoBytoken(@RequestAttribute(value = "userId") String userId) {
         return workerService.getWorkerInfoBytoken(userId);
+    }
+
+    @PostMapping("/registerWorker")
+    @ApiOperation(value = "注册创客", notes = "注册创客", httpMethod = "POST")
+    public ReturnJson registerWorker(@RequestBody @Valid AddWorkerDto addWorkerDto) {
+        return workerService.registerWorker(addWorkerDto);
     }
 }

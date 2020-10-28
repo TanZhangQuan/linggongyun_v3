@@ -104,7 +104,7 @@ public class WorkerPaasController {
     @ApiOperation(value = "导入创客", notes = "导入创客", httpMethod = "POST")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "workers", value = "需要导入的创客集合", required = true, allowMultiple = true, dataType = "Worker"),
             @ApiImplicitParam(name = "managersId", value = "管理人员ID", required = true)})
-    public ReturnJson saveWorker(@NotEmpty(message = "集合不能为空") @RequestBody List<Worker> workers, @NotBlank(message = "用户ID不能为空") @RequestParam(required = false) String managersId) {
+    public ReturnJson saveWorker(@NotEmpty(message = "集合不能为空") @RequestBody List<Worker> workers, @NotBlank(message = "用户ID不能为空") @RequestParam(required = false) String managersId) throws Exception {
         return workerService.saveWorker(workers, managersId);
     }
 
