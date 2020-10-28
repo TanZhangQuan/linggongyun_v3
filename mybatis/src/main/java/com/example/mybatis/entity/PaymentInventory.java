@@ -123,6 +123,12 @@ public class PaymentInventory implements Serializable {
     private Integer attestation;
 
     /**
+     * 支付状态
+     */
+    @ApiModelProperty("支付状态(-1支付失败，0未支付，1已支付)")
+    private Integer paymentStatus;
+
+    /**
      * 合作类型0总包，1众包
      */
     private Integer packageStatus;
