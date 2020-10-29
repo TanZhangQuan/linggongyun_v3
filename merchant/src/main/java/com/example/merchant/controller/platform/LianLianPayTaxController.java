@@ -22,7 +22,7 @@ public class LianLianPayTaxController {
     private LianLianPayTaxService LianLianPayTaxService;
 
     @LoginRequired
-    @ApiOperation("添加连连支付商户号和私钥")
+    @ApiOperation("添加或修改连连支付商户号和私钥")
     @PostMapping(value = "/addLianlianPay")
     public ReturnJson addLianlianPay(@ApiParam("服务商ID") @NotBlank(message = "服务商ID不能为空！") @RequestParam(required = false) String taxId, @RequestBody AddLianLianPay addLianLianPay) {
         return LianLianPayTaxService.addLianlianPay(taxId, addLianLianPay);
@@ -31,6 +31,7 @@ public class LianLianPayTaxController {
     @RequestMapping("/workerNotifyUrl")
     @ApiOperation(value = "支付创客回调接口", notes = "商户支付回调接口", hidden = true, httpMethod = "POST")
     public Map<String, String> workerNotifyUrl(HttpServletRequest request) {
+
         LianLianPayTaxService.workerNotifyUrl(request);
         Map<String, String> map = new HashMap<>();
         map.put("ret_code", "0000");

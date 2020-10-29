@@ -152,11 +152,9 @@ salary:
   #接收付款给创客的连薪回调通知地址
   workerNotifyUrl: http://2181s627z8.qicp.vip/platform/lianlianpay/workerNotifyUrl
   url:
-    #连薪单笔代发申请接口
-    servicePayApply: https://test.lianlianpay-inc.com/salarymt//api/servicePayApply
     #实时付款
     paymentapi: https://test.lianlianpay-inc.com/paymentapi/payment.htm
+    #付款确认接口
+    confirmPayment: https://test.lianlianpay-inc.com/paymentapi/confirmPayment.htm
     #查询商户余额接口
     selectRemainingSum: https://traderapi.lianlianpay.com/traderAcctQuery.htm
-    #查询订单接口
-    querySingleOrder: https://test.lianlianpay-inc.com/paymentapi/queryPayment.htm

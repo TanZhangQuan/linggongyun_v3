@@ -22,7 +22,7 @@ public class LianLianPayController {
     private LianLianPayService lianLianPayService;
 
     @LoginRequired
-    @ApiOperation("添加连连支付商户号和私钥")
+    @ApiOperation("添加或修改连连支付商户号和私钥")
     @PostMapping(value = "/addLianlianPay")
     public ReturnJson addLianlianPay(@RequestAttribute(value = "userId") @ApiParam(hidden = true) String merchantId, @RequestBody AddLianLianPay addLianLianPay) {
         return lianLianPayService.addLianlianPay(merchantId, addLianLianPay);
@@ -50,20 +50,21 @@ public class LianLianPayController {
 
     @RequestMapping("/merchantNotifyUrl")
     @ApiOperation(value = "商户总包支付回调接口", notes = "商户总包支付回调接口", hidden = true, httpMethod = "POST")
-    public Map<String,String> merchantNotifyUrl(HttpServletRequest request) {
+    public Map<String, String> merchantNotifyUrl(HttpServletRequest request) {
         lianLianPayService.merchantNotifyUrl(request);
-        Map<String,String> map = new HashMap<>();
-        map.put("ret_code","0000");
-        map.put("ret_msg","交易成功");
+        Map<String, String> map = new HashMap<>();
+        map.put("ret_code", "0000");
+        map.put("ret_msg", "交易成功");
         return map;
     }
+
     @RequestMapping("/merchantManyNotifyUrl")
     @ApiOperation(value = "商户众包支付回调接口", notes = "商户众包支付回调接口", hidden = true, httpMethod = "POST")
-    public Map<String,String> merchantManyNotifyUrl(HttpServletRequest request) {
+    public Map<String, String> merchantManyNotifyUrl(HttpServletRequest request) {
         lianLianPayService.merchantManyNotifyUrl(request);
-        Map<String,String> map = new HashMap<>();
-        map.put("ret_code","0000");
-        map.put("ret_msg","交易成功");
+        Map<String, String> map = new HashMap<>();
+        map.put("ret_code", "0000");
+        map.put("ret_msg", "交易成功");
         return map;
     }
 }

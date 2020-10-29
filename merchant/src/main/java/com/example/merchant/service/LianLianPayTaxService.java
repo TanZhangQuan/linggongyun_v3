@@ -13,6 +13,7 @@ import java.util.Map;
 public interface LianLianPayTaxService extends IService<LianlianpayTax> {
     /**
      * 添加连连支付商户号和私钥
+     *
      * @param taxId
      * @param addLianLianPay
      * @return
@@ -21,12 +22,14 @@ public interface LianLianPayTaxService extends IService<LianlianpayTax> {
 
     /**
      * 支付创客的回调接口
+     *
      * @param request
      */
     void workerNotifyUrl(HttpServletRequest request);
 
     /**
      * 支付给创客
+     *
      * @param paymentInventoryIds
      * @return
      */
