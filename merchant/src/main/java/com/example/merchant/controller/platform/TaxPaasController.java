@@ -58,7 +58,7 @@ public class TaxPaasController {
     @PostMapping("/saveTax")
     @ApiOperation(value = "添加或修改平台服务商", notes = "添加或修改平台服务商", httpMethod = "POST")
     @ApiImplicitParams(value={@ApiImplicitParam(name="taxDto",value = "平台服务商的信息",required = true,dataType = "TaxDto")})
-    public ReturnJson saveTax(@RequestBody TaxDto taxDto)throws CommonException {
+    public ReturnJson saveTax(@RequestBody TaxDto taxDto) throws Exception {
         return taxService.saveTax(taxDto);
     }
 

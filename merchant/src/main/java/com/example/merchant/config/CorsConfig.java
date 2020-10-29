@@ -20,4 +20,5 @@ public class CorsConfig extends WebMvcConfigurerAdapter {
                 .maxAge(3600);
 
     }
+
 }

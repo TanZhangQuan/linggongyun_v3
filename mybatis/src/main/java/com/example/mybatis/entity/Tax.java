@@ -72,6 +72,16 @@ public class Tax implements Serializable {
     private String creditCode;
 
     /**
+     * 网商银行会员号
+     */
+    private String memberId;
+
+    /**
+     * 网商银行子账户唯一识别码
+     */
+    private String subAccountNo;
+
+    /**
      * 公司状态0正常，1停用
      */
     private Integer taxStatus;

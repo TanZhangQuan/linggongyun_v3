@@ -12,7 +12,7 @@ public interface AuthenticationService {
 
     ReturnJson saveIdCardinfo(IdCardInfoDto idCardInfoDto, String workerId) throws Exception;
 
-    ReturnJson saveBankInfo(WorkerBankDto workerBankDto, String workerId);
+    ReturnJson saveBankInfo(WorkerBankDto workerBankDto, String workerId) throws Exception;
 
     ReturnJson saveWorkerVideo(String workerId, String fileVideoPath);
 

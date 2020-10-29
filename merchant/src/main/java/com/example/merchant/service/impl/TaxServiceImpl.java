@@ -10,6 +10,7 @@ import com.example.merchant.dto.platform.TaxDto;
 import com.example.merchant.dto.platform.TaxListDto;
 import com.example.merchant.exception.CommonException;
 import com.example.merchant.service.InvoiceLadderPriceService;
+import com.example.merchant.service.MyBankService;
 import com.example.merchant.service.TaxService;
 import com.example.merchant.vo.platform.HomePageVO;
 import com.example.mybatis.entity.*;
@@ -27,6 +28,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -68,6 +70,9 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
 
     @Resource
     private MerchantDao merchantDao;
+
+    @Resource
+    private MyBankService myBankService;
 
 
     /**
@@ -125,7 +130,7 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ReturnJson saveTax(TaxDto taxDto) throws CommonException {
+    public ReturnJson saveTax(TaxDto taxDto) throws Exception {
         if (taxDto.getId() != null) {
             invoiceLadderPriceService.remove(new QueryWrapper<InvoiceLadderPrice>().eq("tax_id", taxDto.getId()));
             taxPackageDao.delete(new QueryWrapper<TaxPackage>().eq("tax_id", taxDto.getId()));
@@ -191,6 +196,7 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
                 invoiceLadderPriceService.saveBatch(manyLadders);
             }
         }
+
         return ReturnJson.success("添加成功！");
     }
 
