@@ -33,4 +33,13 @@ public interface LianLianPayService extends IService<Lianlianpay> {
      * @param request
      */
     void merchantNotifyUrl(HttpServletRequest request);
+
+    /**
+     * 商户众包支付
+     * @param paymentOrderId
+     * @return
+     */
+    ReturnJson merchantPayMany(String paymentOrderId) throws CommonException;
+
+    void merchantManyNotifyUrl(HttpServletRequest request);
 }
