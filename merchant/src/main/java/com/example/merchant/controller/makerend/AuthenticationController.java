@@ -86,7 +86,7 @@ public class AuthenticationController {
 
     @PostMapping("/callBackSignAContract")
     @ApiOperation(value = "签署加盟合同回调接口", notes = "签署加盟合同回调接口", httpMethod = "POST", hidden = true)
-    public void callBackSignAContract(HttpServletRequest request) {
-        authenticationService.callBackSignAContract(request);
+    public ReturnJson callBackSignAContract(HttpServletRequest request) {
+        return authenticationService.callBackSignAContract(request);
     }
 }
