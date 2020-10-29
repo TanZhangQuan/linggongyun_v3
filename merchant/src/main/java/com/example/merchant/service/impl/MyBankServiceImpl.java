@@ -1,341 +1,270 @@
 package com.example.merchant.service.impl;
 
-import com.alibaba.druid.support.json.JSONUtils;
-import com.alibaba.fastjson.JSON;
-import com.example.common.mybank.MyBankClient;
-import com.example.common.util.ReturnJson;
+import com.example.common.mybank.*;
+import com.example.merchant.config.MyBankConfig;
 import com.example.merchant.dto.myBank.*;
 import com.example.merchant.service.MyBankService;
+import com.example.merchant.service.RemoteService;
+import com.example.merchant.service.SecurityService;
+import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
+import javax.annotation.Resource;
 import java.util.Map;
 
 
 @Service
 public class MyBankServiceImpl implements MyBankService {
 
-    private String service;  //调用的接口
-
-
     @Autowired
-    private MyBankClient myBankClient;
+    private MyBankConfig myBankConfig;
+    @Autowired
+    private SecurityService securityService;
+    @Resource
+    private RemoteService remoteService;
 
-    /**
-     * 注册商户 企业会员
-     *
-     * @param addEnterpriseDto
-     * @return
-     * @throws Exception
-     */
+    //注册个人会员
     @Override
-    public ReturnJson registerMerchantMember(AddEnterpriseDto addEnterpriseDto) throws Exception {
-        if (addEnterpriseDto.getUid() == null || addEnterpriseDto.getEnterprise_name() == null) {
-            ReturnJson.error("Uid,Enterprise_name不能为空");
-        }
-        service = "mybank.tc.user.enterprise.register";
-        Map<String, String> map = new HashMap<>();  //接口所需要的参数
-        map.put("service", service);
-
-        map = (Map) JSONUtils.parse(myBankClient.myBank(map));  //返回的参数
-        if (map.get("is_success").equals("T")) {  //判断返回的状态
-            return ReturnJson.success("操作成功", map);
-        }
-        return ReturnJson.error("操作失败");
-
+    public Map<String, Object> personalRegister(Personal params) throws Exception {
+        params = (Personal) baseRequest(params);
+        params.setService("mybank.tc.user.personal.register");
+        params.setCertificate_type("ID_CARD");
+        params.setIs_verify("Y");
+        return buildCjmsgAndSend(BeanUtils.describe(params));
     }
 
-    /**
-     * 注册创客 个人会员
-     *
-     * @param uId           创客ID
-     * @param realName      创客真实姓名
-     * @param memberName    会员名称。用户昵称(平台个人会员登录名)
-     * @param certificateNo 作为会员实名认证通过后的证件号
-     * @return
-     */
+    //注册企业会员
     @Override
-    public ReturnJson registerWorkerMember(String uId, String realName, String memberName, String certificateNo) throws Exception {
-        Map<String, String> map = new HashMap<>();  //接口所需要的参数
-        service = "mybank.tc.user.personal.register";
-        String certificateType = "ID_CARD";
-        map.put("service", service);
-        map.put("uid", uId);
-        map.put("real_name", realName);
-        map.put("member_name", memberName);
-        map.put("certificate_type", certificateType);
-        map.put("certificate_no", certificateNo);
-
-        map = (Map) JSONUtils.parse(myBankClient.myBank(map));  //返回的参数
-        if (map.get("is_success").equals("T")) {  //判断返回的状态
-            return ReturnJson.success("操作成功", map);
-        }
-        return ReturnJson.error("操作失败");
+    public Map<String, Object> enterpriseRegister(Enterprise params) throws Exception {
+        params = (Enterprise) baseRequest(params);
+        params.setService("mybank.tc.user.enterprise.register");
+        return buildCjmsgAndSend(BeanUtils.describe(params));
     }
 
-    /**
-     * 绑定银行卡
-     *
-     * @param bankCardDto
-     * @return
-     */
+    //修改个人信息
     @Override
-    public ReturnJson bindingBankCard(BankCardDto bankCardDto) throws Exception {
-        service = "mybank.tc.user.bankcard.bind";
-        Map<String, String> map = JSON.parseObject(JSON.toJSONString(bankCardDto), Map.class);
-        map.put("service", service);
-        
-        map = (Map) JSONUtils.parse(myBankClient.myBank(map));  //返回的参数
-        if (map.get("is_success").equals("T")) {  //判断返回的状态
-            return ReturnJson.success("操作成功", map);
-        }
-        return ReturnJson.error("操作失败");
+    public Map<String, Object> personalInfoModify(Personal params) throws Exception {
+        params = (Personal) baseRequest(params);
+        params.setService("mybank.tc.user.personal.info.modify");
+        return buildCjmsgAndSend(BeanUtils.describe(params));
     }
 
-    /**
-     * 查询余额
-     *
-     * @param uId
-     * @return
-     * @throws Exception
-     */
+    //修改企业信息
     @Override
-    public ReturnJson checkTheBalance(String uId) throws Exception {
-        Map<String, String> map = new HashMap<>();  //接口所需要的参数
-        service = "mybank.tc.user.account.balance";
-        map.put("service", service);
-        map.put("uid", uId);
-
-        map = (Map) JSONUtils.parse(myBankClient.myBank(map));  //返回的参数
-        if (map.get("is_success").equals("T")) {  //判断返回的状态
-            return ReturnJson.success("操作成功", map);
-        }
-        return ReturnJson.error("操作失败");
+    public Map<String, Object> enterpriseInfoModify(Enterprise params) throws Exception {
+        params = (Enterprise) baseRequest(params);
+        params.setService("mybank.tc.user.enterprise.info.modify");
+        return buildCjmsgAndSend(BeanUtils.describe(params));
     }
 
-    /**
-     * 修改个人会员
-     *
-     * @param personalDto
-     * @return
-     * @throws Exception
-     */
+    //查询个人信息
     @Override
-    public ReturnJson workerInfoModify(PersonalDto personalDto) throws Exception {
-        if (("").equals(personalDto.getMobile()) || personalDto.getMobile() == null && ("").equals(personalDto.getEmail()) || personalDto.getEmail() == null) {
-            return ReturnJson.success("手机号与邮箱有一个不能为空");
-        }
-        service = "mybank.tc.user.personal.info.modify";
-        Map<String, String> map = JSON.parseObject(JSON.toJSONString(personalDto), Map.class);
-        map.put("service", service);
-
-        map = (Map) JSONUtils.parse(myBankClient.myBank(map));  //返回的参数
-        if (map.get("is_success").equals("T")) {  //判断返回的状态
-            return ReturnJson.success("操作成功", map);
-        }
-        return ReturnJson.error("操作失败");
-    }
-
-    /**
-     * 修改企业会员
-     *
-     * @param
-     * @return
-     * @throws Exception
-     */
-    @Override
-    public ReturnJson merchantInfoModify(EnterpriseDto enterpriseDto) throws Exception {
-        service = "mybank.tc.user.enterprise.info.modify";
-        Map map = JSON.parseObject(JSON.toJSONString(enterpriseDto), Map.class);
-        map.put("service", service);
-
-        map = (Map) JSONUtils.parse(myBankClient.myBank(map));  //返回的参数
-        if (map.get("is_success").equals("T")) {  //判断返回的状态
-            return ReturnJson.success("操作成功", map);
-        }
-        return ReturnJson.error("操作失败");
-    }
-
-    /**
-     * 查询个人信息
-     *
-     * @param uid
-     * @return
-     * @throws Exception
-     */
-    @Override
-    public ReturnJson workerInfoQuery(String uid) throws Exception {
-        service = "mybank.tc.user.personal.info.query";
-        Map<String, String> map = new HashMap<>();
-        map.put("service", service);
+    public Map<String, Object> personalInfoQuery(String uid) throws Exception {
+        BaseRequest params = baseRequest(new BaseRequest());
+        params.setService("mybank.tc.user.personal.info.query");
+        Map<String, String> map = BeanUtils.describe(params);
         map.put("uid", uid);
-
-        map = (Map) JSONUtils.parse(myBankClient.myBank(map));  //返回的参数
-        if (map.get("is_success").equals("T")) {  //判断返回的状态
-            return ReturnJson.success("操作成功", map);
-        }
-        return ReturnJson.error("操作失败");
+        return buildCjmsgAndSend(map);
     }
 
-    /**
-     * 查询企业信息
-     *
-     * @param uid
-     * @return
-     * @throws Exception
-     */
+    //查询企业信息
     @Override
-    public ReturnJson merchantInfoQuery(String uid) throws Exception {
-        service = "mybank.tc.user.enterprise.info.query";
-        Map<String, String> map = new HashMap<>();
-        map.put("service", service);
+    public Map<String, Object> enterpriseInfoQuery(String uid) throws Exception {
+        BaseRequest params = baseRequest(new BaseRequest());
+        params.setService("mybank.tc.user.enterprise.info.query");
+        Map<String, String> map = BeanUtils.describe(params);
         map.put("uid", uid);
+        return buildCjmsgAndSend(map);
+    }
 
-        map = (Map) JSONUtils.parse(myBankClient.myBank(map));  //返回的参数
-        if (map.get("is_success").equals("T")) {  //判断返回的状态
-            return ReturnJson.success("操作成功", map);
-        }
-        return ReturnJson.error("操作失败");
+    //查余额
+    @Override
+    public Map<String, Object> accountBalance(String uid, String account_type) throws Exception {
+        BaseRequest params = baseRequest(new BaseRequest());
+        params.setService("mybank.tc.user.account.balance");
+        Map<String, String> map = BeanUtils.describe(params);
+        map.put("uid", uid);
+        map.put("account_type", account_type);
+        return buildCjmsgAndSend(map);
+    }
+
+    //绑定银行卡
+    @Override
+    public Map<String, Object> bankCardBind(BankCardBind params) throws Exception {
+        params = (BankCardBind) baseRequest(params);
+        params.setCard_type("IC_CARD");
+        params.setPay_attribute("NORMAL");
+        params.setCard_type("DC");
+        params.setService("mybank.tc.user.bankcard.bind");
+        return buildCjmsgAndSend(BeanUtils.describe(params));
+    }
+
+    //解绑银行卡
+    @Override
+    public Map<String, Object> bankCardUnBind(String uid, String bank_id) throws Exception {
+        BaseRequest params = baseRequest(new BaseRequest());
+        params.setService("mybank.tc.user.bankcard.unbind");
+        Map<String, String> map = BeanUtils.describe(params);
+        map.put("uid", uid);
+        map.put("bank_id", bank_id);
+        return buildCjmsgAndSend(map);
+    }
+
+    //查询绑卡列表
+    @Override
+    public Map<String, Object> bankCardQuery(String uid) throws Exception {
+        BaseRequest params = baseRequest(new BaseRequest());
+        params.setService("mybank.tc.user.bankcard.query");
+        Map<String, String> map = BeanUtils.describe(params);
+        map.put("uid", uid);
+        return buildCjmsgAndSend(map);
+    }
+
+    //绑定支付宝
+    @Override
+    public Map<String, Object> aliPayBind(AliPayBind params) throws Exception {
+        params = (AliPayBind) baseRequest(params);
+        params.setService("mybank.tc.user.alipay.bind");
+        return buildCjmsgAndSend(BeanUtils.describe(params));
+    }
+
+    //单笔提现
+    @Override
+    public Map<String, Object> tradePayToCard(TradePayToCard params) throws Exception {
+        params = (TradePayToCard) baseRequest(params);
+        params.setNotify_url(myBankConfig.getAsyncNotifyUrl());
+        params.setService("mybank.tc.trade.paytocard");
+        return buildCjmsgAndSend(BeanUtils.describe(params));
+    }
+
+    //单笔提现到卡
+    @Override
+    public Map<String, Object> withDrawToCard(WithDrawToCard params) throws Exception {
+        params = (WithDrawToCard) baseRequest(params);
+        params.setReturn_url(myBankConfig.getNotifyUrl());
+        params.setNotify_url(myBankConfig.getAsyncNotifyUrl());
+        params.setService("mybank.tc.trade.withdrawtocard");
+        return buildCjmsgAndSend(BeanUtils.describe(params));
+    }
+
+    //交易详情查询
+    @Override
+    public Map<String, Object> tradeInfoQuery(String outer_trade_no) throws Exception {
+        BaseRequest params = baseRequest(new BaseRequest());
+        params.setService("mybank.tc.trade.info.query");
+        Map<String, String> map = BeanUtils.describe(params);
+        map.put("outer_trade_no", outer_trade_no);
+        return buildCjmsgAndSend(map);
+    }
+
+    //交易流水查询
+    @Override
+    public Map<String, Object> tradeQuery(String start_time, String end_time) throws Exception {
+        BaseRequest params = baseRequest(new BaseRequest());
+        params.setService("mybank.tc.trade.query");
+        Map<String, String> map = BeanUtils.describe(params);
+        map.put("start_time", start_time);
+        map.put("end_time", end_time);
+        return buildCjmsgAndSend(map);
+    }
+
+    //退票
+    @Override
+    public Map<String, Object> tradeRefundTicket(String request_no, String orig_outer_inst_order_no) throws Exception {
+        BaseRequest params = baseRequest(new BaseRequest());
+        params.setService("mybank.tc.trade.refundticket");
+        Map<String, String> map = BeanUtils.describe(params);
+        map.put("request_no", request_no);
+        map.put("orig_outer_inst_order_no", orig_outer_inst_order_no);
+        return buildCjmsgAndSend(map);
+    }
+
+    //即时交易入账
+    @Override
+    public Map<String, Object> tradePayInstant(TradePayInstant params) throws Exception {
+        params = (TradePayInstant) baseRequest(params);
+        params.setReturn_url(myBankConfig.getNotifyUrl());
+        params.setService("mybank.tc.trade.pay.instant");
+        return buildCjmsgAndSend(BeanUtils.describe(params));
+    }
+
+    //来账通知模拟回调
+    @Override
+    public Map<String, Object> mockNotify(MockNotify params) throws Exception {
+        params = (MockNotify) baseRequest(params);
+        StringBuilder ac = new StringBuilder("5");
+        ac.append(myBankConfig.getSettlementAccount().substring(6));
+        ac.append(params.getPayee_card_no());
+        System.out.println(ac);
+        params.setPayee_card_no(ac.toString());
+        params.setNotify_url(myBankConfig.getAsyncNotifyUrl());
+        params.setService("mybank.tc.trade.remit.subaccount");
+        return buildCjmsgAndSend(BeanUtils.describe(params));
+    }
+
+    //转账入账
+    @Override
+    public Map<String, Object> tradeTransfer(TradeTransfer params) throws Exception {
+        params = (TradeTransfer) baseRequest(params);
+        params.setNotify_url(myBankConfig.getAsyncNotifyUrl());
+        params.setService("mybank.tc.trade.transfer");
+        return buildCjmsgAndSend(BeanUtils.describe(params));
     }
 
     /**
-     * 创建会员账户
-     *
-     * @param memberAccountDto
-     * @return
-     * @throws Exception
+     * 组织报文，并发送
      */
-    @Override
-    public ReturnJson createAMemberAccount(MemberAccountDto memberAccountDto) throws Exception {
-        service = "mybank.tc.user.account.create";
-        Map map = JSON.parseObject(JSON.toJSONString(memberAccountDto), Map.class);
-        map.put("service", service);
-
-        map = (Map) JSONUtils.parse(myBankClient.myBank(map));  //返回的参数
-        if (map.get("is_success").equals("T")) {  //判断返回的状态
-            return ReturnJson.success("操作成功", map);
+    private Map<String, Object> buildCjmsgAndSend(Map<String, String> data) throws Exception {
+        MapRemoveNullUtil.removeNullValue(data);
+        try {
+            String sign = sign(data);
+            data.put("sign", sign);
+            //判断接口调用gop地址
+            String service = data.get("service");
+            String url;
+            BankService byServiceName = BankService.getByServiceName(service);
+            if (byServiceName != null) {
+                if (byServiceName.getServiceUrl().equals("tpu")) {
+                    //调用gop
+                    url = myBankConfig.getGopTpuUrl();
+                } else {
+                    //调用mag
+                    url = myBankConfig.getGopMagUrl();
+                }
+            } else {
+                throw new RuntimeException("接口名称不存在");
+            }
+            return remoteService.invoke(data, url);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        } catch (Throwable t) {
+            t.printStackTrace();
+            throw new RuntimeException(t);
         }
-        return ReturnJson.error("操作失败");
     }
+
 
     /**
-     * 绑定支付宝
-     *
-     * @param alipayDto
-     * @return
+     * 基本方法的声明（由子类实现）
      */
-    @Override
-    public ReturnJson bindingAlipay(AlipayDto alipayDto) throws Exception {
-        service = "mybank.tc.user.alipay.bind";
-        Map map = JSON.parseObject(JSON.toJSONString(alipayDto), Map.class);
-        map.put("service", service);
+    private String sign(Map<String, String> data) {
+        String sign_type = data.get(BaseField.SIGN_TYPE.getCode());
+        String inputCharset = data.get(BaseField.INPUT_CHARSET.getCode());
+        securityService.filter(data);
 
-        map = (Map) JSONUtils.parse(myBankClient.myBank(map));  //返回的参数
-        if (map.get("is_success").equals("T")) {  //判断返回的状态
-            return ReturnJson.success("操作成功", map);
-        }
-        return ReturnJson.error("操作失败");
+        SignData sign2 = securityService.sign(data, inputCharset, sign_type);
+
+        return sign2.getSign();
     }
 
-    /**
-     * 解绑银行卡
-     *
-     * @param uId
-     * @param bankId
-     * @return
-     */
-    @Override
-    public ReturnJson unbindBankCard(String uId, String bankId) throws Exception {
-        service = "mybank.tc.user.bankcard.unbind";
-        Map<String, String> map = new HashMap<>();
-        map.put("service", service);
-        map.put("uid", uId);
-        map.put("bank_id", bankId);
-
-        map = (Map) JSONUtils.parse(myBankClient.myBank(map));  //返回的参数
-        if (map.get("is_success").equals("T")) {  //判断返回的状态
-            return ReturnJson.success("操作成功", map);
-        }
-        return ReturnJson.error("操作失败");
+    private BaseRequest baseRequest(BaseRequest request) {
+        request.setCharset("UTF-8");
+        request.setMemo("");
+        request.setPartner_id(myBankConfig.getPartnerId());
+        request.setVersion("2.1");
+        request.setSign_type("TWSIGN");
+        return request;
     }
-
-    /**
-     * 及时入账
-     *
-     * @param entryDto
-     * @return
-     * @throws Exception
-     */
-    @Override
-    public ReturnJson timelyEntry(EntryDto entryDto) throws Exception {
-        service = "mybank.tc.trade.pay.instant";  //及时入账接口
-        Map<String, String> map = JSON.parseObject(JSON.toJSONString(entryDto), Map.class);
-        map.put("service", service);
-
-        map = (Map) JSONUtils.parse(myBankClient.myBank(map));  //返回的参数
-        if (map.get("is_success").equals("T")) {  //判断返回的状态
-            return ReturnJson.success("操作成功", map);
-        }
-        return ReturnJson.error("操作失败");
-    }
-
-    /**
-     * 单笔提现
-     *
-     * @param withdrawalDto
-     * @return
-     */
-    @Override
-    public ReturnJson singleWithdrawal(WithdrawalDto withdrawalDto) throws Exception {
-        service = "mybank.tc.trade.paytocard";
-        Map map = JSON.parseObject(JSON.toJSONString(withdrawalDto), Map.class);
-        map.put("service", service);
-
-        map = (Map) JSONUtils.parse(myBankClient.myBank(map));  //返回的参数
-        if (map.get("is_success").equals("T")) {  //判断返回的状态
-            return ReturnJson.success("操作成功", map);
-        }
-        return ReturnJson.error("操作失败");
-    }
-
-    /**
-     * 单笔提现到卡或支付宝
-     *
-     * @param cashWithdrawalToCardDto
-     * @return
-     */
-    @Override
-    public ReturnJson singleWithdrawalCard(CashWithdrawalToCardDto cashWithdrawalToCardDto) throws Exception {
-        service = "mybank.tc.trade.withdrawtocard";
-        Map map = JSON.parseObject(JSON.toJSONString(cashWithdrawalToCardDto), Map.class);
-        map.put("service", service);
-
-        map = (Map) JSONUtils.parse(myBankClient.myBank(map));  //返回的参数
-        if (map.get("is_success").equals("T")) {  //判断返回的状态
-            return ReturnJson.success("操作成功", map);
-        }
-        return ReturnJson.error("操作失败");
-    }
-
-    /**
-     * 转账入账
-     *
-     * @param transferDto
-     * @return
-     */
-    @Override
-    public ReturnJson tradeTransfer(TransferDto transferDto) throws Exception {
-        service = "mybank.tc.trade.transfer";
-        Map map = JSON.parseObject(JSON.toJSONString(transferDto), Map.class);
-        map.put("service", service);
-
-        map = (Map) JSONUtils.parse(myBankClient.myBank(map));  //返回的参数
-        if (map.get("is_success").equals("T")) {  //判断返回的状态
-            return ReturnJson.success("操作成功", map);
-        }
-        return ReturnJson.error("操作失败");
-    }
-
-
 }

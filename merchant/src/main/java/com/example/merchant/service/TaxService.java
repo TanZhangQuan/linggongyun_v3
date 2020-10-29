@@ -22,7 +22,7 @@ public interface TaxService extends IService<Tax> {
     ReturnJson getCatalogAll();
 
     ReturnJson saveCatalog(InvoiceCatalog invoiceCatalog);
-    ReturnJson saveTax(TaxDto taxDto)throws CommonException;
+    ReturnJson saveTax(TaxDto taxDto) throws Exception;
 
     ReturnJson getTaxList(TaxListDto taxListDto);
 

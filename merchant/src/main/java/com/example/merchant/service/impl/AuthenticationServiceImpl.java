@@ -87,10 +87,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         worker.setIdcardBack(idCardInfoDto.getIdCardBack());
         int i = workerDao.updateById(worker);
         if (i == 1) {
-            Map<String, String> map = (Map) myBankService.registerWorkerMember(worker.getId(), worker.getAccountName(), worker.getUserName(), worker.getIdcardCode()).getObj();
-            worker.setMemberId(map.get("member_ic"));
-            worker.setSubAccountNo(map.get("sub_accoun_no"));
-            workerDao.updateById(worker);
             return ReturnJson.success("身份证上传成功！");
         }
         return ReturnJson.error("身份证上传失败！");
@@ -103,7 +99,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
      * @return
      */
     @Override
-    public ReturnJson saveBankInfo(WorkerBankDto workerBankDto, String workerId) {
+    public ReturnJson saveBankInfo(WorkerBankDto workerBankDto, String workerId) throws Exception {
+        ReturnJson rj = null;
         WorkerBank workerBank = new WorkerBank();
         BeanUtils.copyProperties(workerBankDto, workerBank);
         workerBank.setWorkerId(workerId);
