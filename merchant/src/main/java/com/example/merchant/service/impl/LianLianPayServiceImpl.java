@@ -32,6 +32,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -51,6 +52,9 @@ public class LianLianPayServiceImpl extends ServiceImpl<LianlianpayDao, Lianlian
 
     @Resource
     private PaymentOrderDao paymentOrderDao;
+
+    @Resource
+    private PaymentOrderManyDao paymentOrderManyDao;
 
     @Resource
     private PaymentInventoryDao paymentInventoryDao;
@@ -73,13 +77,19 @@ public class LianLianPayServiceImpl extends ServiceImpl<LianlianpayDao, Lianlian
 
 
     /**
-     * 接收商户付款异步通知地址
+     * 接收商户总包付款的连薪回调通知地址
      */
     @Value("${salary.merchantNotifyUrl}")
     private String merchantNotifyUrl;
 
     /**
-     * 接收商户付款异步通知地址
+     * 接收商户众包付款的连薪回调通知地址
+     */
+    @Value("${salary.merchantManyNotifyUrl}")
+    private String merchantManyNotifyUrl;
+
+    /**
+     * 接收付款给创客的连薪回调通知地址
      */
     @Value("${salary.workerNotifyUrl}")
     private String workerNotifyUrl;
@@ -94,6 +104,7 @@ public class LianLianPayServiceImpl extends ServiceImpl<LianlianpayDao, Lianlian
 
     @Value("${salary.url.querySingleOrder}")
     private String querySingleOrder;
+
     @Override
     public ReturnJson addLianlianPay(String merchantId, AddLianLianPay addLianLianPay) {
         Merchant merchant = merchantDao.selectById(merchantId);
@@ -143,7 +154,7 @@ public class LianLianPayServiceImpl extends ServiceImpl<LianlianpayDao, Lianlian
 //            throw new CommonException(Integer.valueOf(ret_code), map.get("ret_msg").toString());
 //        }
 //
-//        if (!(paymentOrder.getRealMoney().compareTo(money) <= 0)) {
+//        if (!(paymentOrder.getRealMoney().compareTo(money) < 0)) {
 //            log.error("余额不足！");
 //            return ReturnJson.error("余额不足，请先充值！");
 //        }
@@ -192,17 +203,6 @@ public class LianLianPayServiceImpl extends ServiceImpl<LianlianpayDao, Lianlian
         log.info("实时付款接口返回报文：" + res);
         Map<String, String> result = JsonUtils.jsonToPojo(res, new HashMap<String, String>().getClass());
         if ("0000".equals(result.get("ret_code"))) {
-            Map<String, String> querySingleOrderresult = this.querySingleOrder(lianlianpay, paymentOrder.getId());
-            log.info(querySingleOrderresult.toString());
-            if ("0000".equals(querySingleOrderresult.get("ret_code"))) {
-                if ("SUCCESS".equals(querySingleOrderresult.get("bill_state").toUpperCase())) {
-                    paymentOrder.setPaymentOrderStatus(2);
-                    paymentOrderDao.updateById(paymentOrder);
-                    return ReturnJson.success("支付成功！");
-                }
-            } else {
-                log.error("ret_code:" + querySingleOrderresult.get("ret_code") + "\t" + "ret_msg:" + querySingleOrderresult.get("ret_msg"));
-            }
             return ReturnJson.success("后台支付中，请稍后查看！");
         } else {
             log.error(result.get("ret_msg"));
@@ -228,6 +228,8 @@ public class LianLianPayServiceImpl extends ServiceImpl<LianlianpayDao, Lianlian
             }
             if ("SUCCESS".equals(result.get("result_pay"))) {
                 paymentOrder.setPaymentOrderStatus(2);
+                paymentOrder.setPaymentDate(LocalDateTime.now());
+                paymentOrder.setPaymentMode(1);
                 paymentOrderDao.updateById(paymentOrder);
                 LianlianpayTax lianlianpayTax = lianlianpayTaxDao.selectOne(new QueryWrapper<LianlianpayTax>().lambda().eq(LianlianpayTax::getTaxId, paymentOrder.getTaxId()));
                 List<PaymentInventory> paymentInventories = paymentInventoryDao.selectList(new QueryWrapper<PaymentInventory>().lambda().eq(PaymentInventory::getPaymentOrderId, panymentOrderId));
@@ -317,6 +319,127 @@ public class LianLianPayServiceImpl extends ServiceImpl<LianlianpayDao, Lianlian
                 //商户付款失败
                 paymentOrder.setPaymentOrderStatus(-1);
                 paymentOrderDao.updateById(paymentOrder);
+                log.error("商户付款失败:" + result.toString());
+            }
+        } catch (IOException e) {
+            log.error(e + ":" + e.getMessage());
+        }
+    }
+
+    @Override
+    public ReturnJson merchantPayMany(String paymentOrderId) throws CommonException {
+        PaymentOrderMany paymentOrderMany = paymentOrderManyDao.selectById(paymentOrderId);
+        if (paymentOrderMany == null) {
+            return ReturnJson.error("您输入的订单不存在！");
+        }
+        if (paymentOrderMany.getPaymentOrderStatus() > 1) {
+            log.error("请勿重复支付");
+            return ReturnJson.error("请勿重复支付");
+        }
+        Lianlianpay lianlianpay = this.getOne(new QueryWrapper<Lianlianpay>().lambda().eq(Lianlianpay::getCompanyId, paymentOrderMany.getCompanyId()));
+        if (lianlianpay == null) {
+            log.error("连连账号不存在！");
+            return ReturnJson.error("请先添加连连商户号和私钥");
+        }
+
+        TaxPackage taxPackage = taxPackageDao.selectOne(new QueryWrapper<TaxPackage>().lambda().eq(TaxPackage::getTaxId, paymentOrderMany.getTaxId()).eq(TaxPackage::getPackageStatus, 1));
+        if (taxPackage == null) {
+            log.error("服务商不存在！");
+            return ReturnJson.error("您输入的服务商不存在，请联系客服！");
+        }
+
+//        //查询账户余额
+//        Map<String, Object> map = this.selectRemainingSum(lianlianpay.getOidPartner(), lianlianpay.getPrivateKey());
+//        String ret_code = map.get("ret_code") == null ? "" : String.valueOf(map.get("ret_code"));
+//        BigDecimal money = null;
+//        if ("0000".equals(ret_code)) {
+//            money = map.get("ret_code") == null ? new BigDecimal(0) : new BigDecimal(String.valueOf(map.get("amt_balance")));
+//        } else {
+//            log.error(String.valueOf(map.get("ret_msg")));
+//            throw new CommonException(Integer.valueOf(ret_code), map.get("ret_msg").toString());
+//        }
+//
+//        if (!(paymentOrderMany.getRealMoney().compareTo(money) < 0)) {
+//            log.error("余额不足！");
+//            return ReturnJson.error("余额不足，请先充值！");
+//        }
+
+        paymentOrderMany.setPaymentOrderStatus(4);
+        paymentOrderManyDao.updateById(paymentOrderMany);
+        PaymentRequestBean paymentRequestBean = new PaymentRequestBean();
+        paymentRequestBean.setOid_partner(lianlianpay.getOidPartner());
+        paymentRequestBean.setApi_version("1.0");
+        paymentRequestBean.setNo_order(paymentOrderMany.getId());
+        paymentRequestBean.setDt_order(DateUtil.format(new Date(), DatePattern.PURE_DATETIME_PATTERN));
+        paymentRequestBean.setMoney_order(paymentOrderMany.getRealMoney().setScale(2, BigDecimal.ROUND_DOWN).toString());
+        paymentRequestBean.setCard_no(taxPackage.getBankCode());
+        paymentRequestBean.setAcct_name(taxPackage.getPayee());
+        paymentRequestBean.setInfo_order("付款");
+        paymentRequestBean.setFlag_card("0");
+        paymentRequestBean.setMemo("付款");
+        paymentRequestBean.setNotify_url(merchantManyNotifyUrl);
+        paymentRequestBean.setSign_type(SignTypeEnum.RSA.getCode());
+        String signData = SignUtil.genSignData(JSON.parseObject((JSON.toJSONString(paymentRequestBean))));
+        paymentRequestBean.setSign(RSAUtil.sign(lianlianpay.getPrivateKey(), signData));
+        String jsonStr = JSON.toJSONString(paymentRequestBean);
+        log.info("实时付款接口请求报文：" + jsonStr);
+        // 用银通公钥对请求参数json字符串加密
+        // 报Illegal sign key
+        // size异常时，可参考这个网页解决问题http://www.wxdl.cn/java/security-invalidkey-exception.html
+        String encryptStr = null;
+        try {
+            encryptStr = LianLianPaySecurity.encrypt(jsonStr, PUBLIC_KEY_ONLINE);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        //	System.out.print("实时付款接口加密请求报文：" + encryptStr);
+        if (StringUtils.isEmpty(encryptStr)) {
+            // 加密异常
+            log.error("加密失败！");
+            paymentOrderMany.setPaymentOrderStatus(1);
+            paymentOrderManyDao.updateById(paymentOrderMany);
+            return ReturnJson.error("支付失败！");
+        }
+        JSONObject json = new JSONObject();
+        json.put("oid_partner", lianlianpay.getOidPartner());
+        json.put("pay_load", encryptStr);
+        log.info("实时付款接口请求报文：" + json);
+        String res = HttpUtil.post(paymentapi, JSON.toJSONString(json));
+        log.info("实时付款接口返回报文：" + res);
+        Map<String, String> result = JsonUtils.jsonToPojo(res, new HashMap<String, String>().getClass());
+        if ("0000".equals(result.get("ret_code"))) {
+            return ReturnJson.success("后台支付中，请稍后查看！");
+        } else {
+            log.error(result.get("ret_msg"));
+            paymentOrderMany.setPaymentOrderStatus(1);
+            paymentOrderManyDao.updateById(paymentOrderMany);
+            throw new CommonException(Integer.valueOf(result.get("ret_code")), result.get("ret_msg"));
+        }
+    }
+
+    @Override
+    public void merchantManyNotifyUrl(HttpServletRequest request) {
+        String requestBody = null;
+        try {
+            requestBody = RealnameVerifyUtil.getRequestBody(request, "UTF-8");
+            log.info(requestBody);
+            HashMap<String, String> result = JsonUtils.jsonToPojo(requestBody, new HashMap<String, String>().getClass());
+            log.info(result.toString());
+            String panymentOrderId = result.get("no_order");
+            PaymentOrderMany paymentOrderMany = paymentOrderManyDao.selectById(panymentOrderId);
+            if (paymentOrderMany == null) {
+                log.error("支付订单为空！");
+                return;
+            }
+            if ("SUCCESS".equals(result.get("result_pay"))) {
+                paymentOrderMany.setPaymentOrderStatus(2);
+                paymentOrderMany.setPaymentDate(LocalDateTime.now());
+                paymentOrderMany.setPaymentMode(1);
+                paymentOrderManyDao.updateById(paymentOrderMany);
+            } else {
+                //商户付款失败
+                paymentOrderMany.setPaymentOrderStatus(-1);
+                paymentOrderManyDao.updateById(paymentOrderMany);
                 log.error("商户付款失败:" + result.toString());
             }
         } catch (IOException e) {

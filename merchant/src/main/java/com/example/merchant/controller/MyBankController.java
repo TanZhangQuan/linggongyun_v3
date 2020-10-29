@@ -6,7 +6,9 @@ import com.example.merchant.dto.myBank.PersonalDto;
 import com.example.merchant.service.MyBankService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 
 @Api(value = "测试", tags = "测试")
@@ -27,10 +29,10 @@ public class MyBankController {
         return myBankService.registerWorkerMember(uId, realName, memberName, certificateNo);
     }
 
-    @GetMapping("/mybankbinding")//绑定银行卡
-    public ReturnJson mybankbinding(String uId, String bankAccountNo, String accountName, String cardType, String cardAttribute) throws Exception {
-        return myBankService.bindingBankCard(uId, bankAccountNo, accountName, cardType, cardAttribute);
-    }
+//    @GetMapping("/mybankbinding")//绑定银行卡
+//    public ReturnJson mybankbinding(String uId, String bankAccountNo, String accountName, String cardType, String cardAttribute) throws Exception {
+//        return myBankService.bindingBankCard(uId, bankAccountNo, accountName, cardType, cardAttribute);
+//    }
 
     @GetMapping("/checkTheBalance")//查询余额
     public ReturnJson checkTheBalance(String uId) throws Exception {

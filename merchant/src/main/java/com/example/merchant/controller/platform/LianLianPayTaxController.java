@@ -2,7 +2,6 @@ package com.example.merchant.controller.platform;
 
 import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.merchant.AddLianLianPay;
-import com.example.merchant.exception.CommonException;
 import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.LianLianPayTaxService;
 import io.swagger.annotations.*;
