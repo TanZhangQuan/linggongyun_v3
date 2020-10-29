@@ -122,6 +122,11 @@ public class CompanyInfo implements Serializable {
     private String subAccountNo;
 
     /**
+     * 网商银行绑定银行卡
+     */
+    private String bankId;
+
+    /**
      * 公司电话(对外公共)
      */
     private String telephones;

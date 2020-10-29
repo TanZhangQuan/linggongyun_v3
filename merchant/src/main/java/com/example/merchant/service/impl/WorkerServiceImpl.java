@@ -9,7 +9,6 @@ import com.example.common.sms.SenSMS;
 import com.example.common.util.*;
 import com.example.merchant.dto.makerend.AddWorkerDto;
 import com.example.merchant.dto.merchant.WorkerDto;
-import com.example.merchant.dto.myBank.BankCardDto;
 import com.example.merchant.exception.CommonException;
 import com.example.merchant.service.*;
 import com.example.merchant.util.AcquireID;
@@ -25,16 +24,12 @@ import com.example.mybatis.po.WorkerPo;
 import com.example.mybatis.vo.WorkerPassVo;
 import com.example.mybatis.vo.WorkerVo;
 import com.example.redis.dao.RedisDao;
-import io.jsonwebtoken.Claims;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.ibatis.session.RowBounds;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -156,34 +151,6 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
             mobileCodes.add(worker.getMobileCode());
             if (StringUtils.isBlank(worker.getId())) {
                 this.save(worker);
-            }
-            if (worker.getAccountName() != null && worker.getIdcardCode() != null) {    //注册个人会员
-                if (worker.getMemberId() == null && worker.getSubAccountNo() == null) {
-                    rj = myBankService.registerWorkerMember(worker.getId(), worker.getAccountName(), worker.getUserName(), worker.getIdcardCode());
-                    Map<String, String> map = (Map<String, String>) rj.getObj();
-                    if (("T").equals(map.get("is_success"))) {
-                        worker.setMemberId(map.get("member_ic"));
-                        worker.setSubAccountNo(map.get("sub_accoun_no"));
-                        baseMapper.updateById(worker);
-                    }
-                }
-            }
-            if (worker.getBankCode() != null) {//网商银行绑定银行卡
-                if (worker.getBankId() == null) {
-                    BankCardDto bankCardDto = new BankCardDto();
-                    bankCardDto.setCard_type("DC");
-                    bankCardDto.setCard_attribute("C");
-                    bankCardDto.setVerify_type("3");
-                    bankCardDto.setUid(worker.getId());
-                    bankCardDto.setBank_account_no(worker.getBankCode());
-                    bankCardDto.setBank_name(worker.getBankName());
-                    rj = myBankService.bindingBankCard(bankCardDto);
-                    Map<String, String> map = (Map<String, String>) rj.getObj();
-                    if (("T").equals(map.get("is_success"))) {
-                        worker.setBankId(map.get("bnak_id"));
-                        baseMapper.updateById(worker);
-                    }
-                }
             }
             CompanyWorker companyWorker = new CompanyWorker();
             companyWorker.setCompanyId(merchant.getCompanyId());
@@ -551,7 +518,7 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
             redisDao.setExpire(worker.getId(), 7, TimeUnit.DAYS);
             return ReturnJson.success(token);
         }
-        return returnJson.error("信息错误亲重新登录");
+        return returnJson.error("信息错误请重新登录");
     }
 
     /**
