@@ -5,16 +5,13 @@ import com.example.merchant.dto.merchant.AddLianLianPay;
 import com.example.merchant.exception.CommonException;
 import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.LianLianPayService;
-import com.example.merchant.util.RealnameVerifyUtil;
 import io.swagger.annotations.*;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotBlank;
-import java.io.IOException;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 
 @Api(value = "商户端连连支付关操作接口", tags = {"商户端连连支付关操作接口"})
@@ -33,7 +30,7 @@ public class LianLianPayController {
 
     @LoginRequired
     @PostMapping("/merchantPay")
-    @ApiOperation(value = "商户支付", notes = "商户支付", httpMethod = "POST")
+    @ApiOperation(value = "商户总包支付", notes = "商户总包支付", httpMethod = "POST")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "paymentOrderId", value = "支付订单ID", required = true)
     })
@@ -41,8 +38,18 @@ public class LianLianPayController {
         return lianLianPayService.merchantPay(paymentOrderId);
     }
 
+    @LoginRequired
+    @PostMapping("/merchantPayMany")
+    @ApiOperation(value = "商户众包支付", notes = "商户众包支付", httpMethod = "POST")
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(name = "paymentOrderId", value = "支付订单ID", required = true)
+    })
+    public ReturnJson merchantPayMany(@NotBlank(message = "支付订单不能为空！") @RequestParam(required = false) String paymentOrderId) throws CommonException {
+        return lianLianPayService.merchantPayMany(paymentOrderId);
+    }
+
     @RequestMapping("/merchantNotifyUrl")
-    @ApiOperation(value = "商户支付回调接口", notes = "商户支付回调接口", hidden = true, httpMethod = "POST")
+    @ApiOperation(value = "商户总包支付回调接口", notes = "商户总包支付回调接口", hidden = true, httpMethod = "POST")
     public Map<String,String> merchantNotifyUrl(HttpServletRequest request) {
         lianLianPayService.merchantNotifyUrl(request);
         Map<String,String> map = new HashMap<>();
@@ -50,5 +57,13 @@ public class LianLianPayController {
         map.put("ret_msg","交易成功");
         return map;
     }
-
+    @RequestMapping("/merchantManyNotifyUrl")
+    @ApiOperation(value = "商户众包支付回调接口", notes = "商户众包支付回调接口", hidden = true, httpMethod = "POST")
+    public Map<String,String> merchantManyNotifyUrl(HttpServletRequest request) {
+        lianLianPayService.merchantManyNotifyUrl(request);
+        Map<String,String> map = new HashMap<>();
+        map.put("ret_code","0000");
+        map.put("ret_msg","交易成功");
+        return map;
+    }
 }
