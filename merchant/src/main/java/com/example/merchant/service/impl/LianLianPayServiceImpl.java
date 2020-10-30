@@ -15,10 +15,7 @@ import com.example.common.lianlianpay.utils.LianLianPaySecurity;
 import com.example.common.lianlianpay.utils.RSAUtil;
 import com.example.common.lianlianpay.utils.SignUtil;
 import com.example.common.lianlianpay.utils.TraderRSAUtil;
-import com.example.common.util.JsonUtils;
-import com.example.common.util.ReturnJson;
-import com.example.common.util.Tools;
-import com.example.common.util.VerificationCheck;
+import com.example.common.util.*;
 import com.example.merchant.dto.merchant.AddLianLianPay;
 import com.example.merchant.exception.CommonException;
 import com.example.merchant.service.LianLianPayService;
@@ -39,6 +36,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 
 @Slf4j
@@ -70,13 +69,11 @@ public class LianLianPayServiceImpl extends ServiceImpl<LianlianpayDao, Lianlian
     @Resource
     private WorkerBankDao workerBankDao;
 
-
     /**
      * 连连公钥
      */
     @Value("${salary.PUBLIC_KEY_ONLINE}")
     private String PUBLIC_KEY_ONLINE;
-
 
     /**
      * 接收商户总包付款的连薪回调通知地址
@@ -107,6 +104,10 @@ public class LianLianPayServiceImpl extends ServiceImpl<LianlianpayDao, Lianlian
     @Value("${salary.url.confirmPayment}")
     private String confirmPayment;
 
+    @Value("${PWD_KEY}")
+    private String PWD_KEY;
+
+    private static Lock lock = new ReentrantLock();
 
     @Override
     public ReturnJson addLianlianPay(String merchantId, AddLianLianPay addLianLianPay) {
@@ -130,14 +131,16 @@ public class LianLianPayServiceImpl extends ServiceImpl<LianlianpayDao, Lianlian
     }
 
     @Override
-    public ReturnJson merchantPay(String paymentOrderId) throws CommonException {
+    public ReturnJson merchantPay(String merchantId, String payPassWord, String paymentOrderId) throws CommonException {
+        log.info("商户总包付款接口。。。。。。。。。。。。。");
+        boolean flag = this.verifyPayPwd(merchantId, payPassWord);
+        if (!flag) {
+            return ReturnJson.error("支付密码有误，请重新输入！");
+        }
+
         PaymentOrder paymentOrder = paymentOrderDao.selectById(paymentOrderId);
         if (paymentOrder == null) {
             return ReturnJson.error("您输入的订单不存在！");
-        }
-        if (paymentOrder.getPaymentOrderStatus() > 1) {
-            log.error("请勿重复支付");
-            return ReturnJson.error("请勿重复支付");
         }
         Lianlianpay lianlianpay = this.getOne(new QueryWrapper<Lianlianpay>().lambda().eq(Lianlianpay::getCompanyId, paymentOrder.getCompanyId()));
         if (lianlianpay == null) {
@@ -165,10 +168,21 @@ public class LianLianPayServiceImpl extends ServiceImpl<LianlianpayDao, Lianlian
 //            log.error("余额不足！");
 //            return ReturnJson.error("余额不足，请先充值！");
 //        }
-        paymentOrder.setPaymentOrderStatus(4);
-        paymentOrderDao.updateById(paymentOrder);
+
+        //当支付订单ID相同时加锁,防止订单重复支付提交
+        synchronized (paymentOrderId) {
+            log.info(paymentOrderId + "进入同步代码块。。。。。。。。。。。。。。");
+            if (paymentOrder.getPaymentOrderStatus() > 1) {
+                log.error("请勿重复支付");
+                return ReturnJson.error("请勿重复支付");
+            }
+            log.info(paymentOrderId + "执行。。。。。。。。。。。。。。。。。。。");
+            paymentOrder.setPaymentOrderStatus(4);
+            paymentOrderDao.updateById(paymentOrder);
+        }
+
         //创建连连订单号，连连订单号为6位随机数+总包支付订单ID
-        String no_order = Tools.getRandomNum()+paymentOrder.getId();
+        String no_order = Tools.getRandomNum() + paymentOrder.getId();
         PaymentRequestBean paymentRequestBean = new PaymentRequestBean();
         paymentRequestBean.setOid_partner(lianlianpay.getOidPartner());
         paymentRequestBean.setApi_version("1.0");
@@ -285,6 +299,7 @@ public class LianLianPayServiceImpl extends ServiceImpl<LianlianpayDao, Lianlian
 
     @Override
     public void merchantNotifyUrl(HttpServletRequest request) {
+        log.info("商户总包付款回调开始。。。。。。。。。。。。。");
         String requestBody = null;
         try {
             requestBody = RealnameVerifyUtil.getRequestBody(request, "UTF-8");
@@ -354,7 +369,7 @@ public class LianLianPayServiceImpl extends ServiceImpl<LianlianpayDao, Lianlian
                         continue;
                     }
                     //创建连连订单号，连连订单号为6位随机数+总包支付订单ID
-                    String no_order = Tools.getRandomNum()+ paymentInventory.getId();
+                    String no_order = Tools.getRandomNum() + paymentInventory.getId();
                     PaymentRequestBean paymentRequestBean = new PaymentRequestBean();
                     paymentRequestBean.setOid_partner(lianlianpayTax.getOidPartner());
                     paymentRequestBean.setApi_version("1.0");
@@ -411,18 +426,22 @@ public class LianLianPayServiceImpl extends ServiceImpl<LianlianpayDao, Lianlian
         } catch (IOException e) {
             log.error(e + ":" + e.getMessage());
         }
+        log.info("商户总包付款回调结束。。。。。。。。。。。。。");
     }
 
     @Override
-    public ReturnJson merchantPayMany(String paymentOrderId) throws CommonException {
+    public ReturnJson merchantPayMany(String merchantId, String payPassWord, String paymentOrderId) throws CommonException {
+        log.info("商户众包付款接口。。。。。。。。。。。。。");
+        boolean flag = this.verifyPayPwd(merchantId, payPassWord);
+        if (!flag) {
+            return ReturnJson.error("支付密码有误，请重新输入！");
+        }
+
         PaymentOrderMany paymentOrderMany = paymentOrderManyDao.selectById(paymentOrderId);
         if (paymentOrderMany == null) {
             return ReturnJson.error("您输入的订单不存在！");
         }
-        if (paymentOrderMany.getPaymentOrderStatus() > 1) {
-            log.error("请勿重复支付");
-            return ReturnJson.error("请勿重复支付");
-        }
+
         Lianlianpay lianlianpay = this.getOne(new QueryWrapper<Lianlianpay>().lambda().eq(Lianlianpay::getCompanyId, paymentOrderMany.getCompanyId()));
         if (lianlianpay == null) {
             log.error("连连账号不存在！");
@@ -451,10 +470,20 @@ public class LianLianPayServiceImpl extends ServiceImpl<LianlianpayDao, Lianlian
 //            return ReturnJson.error("余额不足，请先充值！");
 //        }
 
-        paymentOrderMany.setPaymentOrderStatus(4);
-        paymentOrderManyDao.updateById(paymentOrderMany);
+        //当支付订单ID相同时加锁,防止订单重复支付提交
+        synchronized (paymentOrderId) {
+            log.info(paymentOrderId + "进入同步代码块。。。。。。。。。。。。。。");
+            if (paymentOrderMany.getPaymentOrderStatus() > 1) {
+                log.error("请勿重复支付");
+                return ReturnJson.error("请勿重复支付");
+            }
+            log.info(paymentOrderId + "执行。。。。。。。。。。。。。。");
+            paymentOrderMany.setPaymentOrderStatus(4);
+            paymentOrderManyDao.updateById(paymentOrderMany);
+        }
+
         //创建连连订单号，连连订单号为6位随机数+总包支付订单ID
-        String no_order = Tools.getRandomNum()+paymentOrderMany.getId();
+        String no_order = Tools.getRandomNum() + paymentOrderMany.getId();
 
         PaymentRequestBean paymentRequestBean = new PaymentRequestBean();
         paymentRequestBean.setOid_partner(lianlianpay.getOidPartner());
@@ -514,7 +543,7 @@ public class LianLianPayServiceImpl extends ServiceImpl<LianlianpayDao, Lianlian
             // 当调用付款接口返回4002，4003，4004时，会返回验证码信息
             confirmPaymentRequestBean.setConfirm_code(result.get("confirm_code"));
             // 填写商户自己的接收付款结果回调异步通知 长度
-            confirmPaymentRequestBean.setNotify_url(merchantNotifyUrl);
+            confirmPaymentRequestBean.setNotify_url(merchantManyNotifyUrl);
             confirmPaymentRequestBean.setOid_partner(lianlianpay.getOidPartner());
             confirmPaymentRequestBean.setSign_type(SignTypeEnum.RSA.getCode());
             String confirmPaymentRequestBeansignData = SignUtil.genSignData(JSON.parseObject((JSON.toJSONString(confirmPaymentRequestBean))));
@@ -562,6 +591,7 @@ public class LianLianPayServiceImpl extends ServiceImpl<LianlianpayDao, Lianlian
 
     @Override
     public void merchantManyNotifyUrl(HttpServletRequest request) {
+        log.info("商户众包付款回调开始。。。。。。。。。。。。。");
         String requestBody = null;
         try {
             requestBody = RealnameVerifyUtil.getRequestBody(request, "UTF-8");
@@ -597,6 +627,7 @@ public class LianLianPayServiceImpl extends ServiceImpl<LianlianpayDao, Lianlian
         } catch (IOException e) {
             log.error(e + ":" + e.getMessage());
         }
+        log.info("商户众包付款回调结束。。。。。。。。。。。。。");
     }
 
     private Map<String, Object> selectRemainingSum(String oidPartner, String privateKey) {
@@ -608,5 +639,10 @@ public class LianLianPayServiceImpl extends ServiceImpl<LianlianpayDao, Lianlian
         String res = HttpUtil.post(selectRemainingSum, JSON.toJSONString(applyRequest));
         log.info("商户号余额查询返回：" + res);
         return JsonUtils.jsonToPojo(res, new HashMap<String, Object>().getClass());
+    }
+
+    private boolean verifyPayPwd(String merchantId, String payPassWord) {
+        Merchant merchant = merchantDao.selectById(merchantId);
+        return (PWD_KEY + MD5.md5(payPassWord)).equals(merchant.getPayPwd());
     }
 }

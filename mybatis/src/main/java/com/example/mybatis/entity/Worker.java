@@ -93,8 +93,8 @@ public class Worker implements Serializable {
     @TableField("sub_account_no")
     private String subAccountNo;
 
-    @TableField("bank_id")
-    private String bankId;
+//    @TableField("bank_id")
+//    private String bankId;
 
     /**
      * 实名认证状态（0未认证，1已认证）
