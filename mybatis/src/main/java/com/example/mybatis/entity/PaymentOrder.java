@@ -126,7 +126,7 @@ public class PaymentOrder implements Serializable {
     private Integer paymentOrderStatus;
 
     /**
-     *支付方式：0线下支付,1连连支付
+     *支付方式：0线下支付,1连连支付,2网商银行支付
      */
     private Integer paymentMode;
 

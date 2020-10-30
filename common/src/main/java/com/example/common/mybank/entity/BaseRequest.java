@@ -1,4 +1,4 @@
-package com.example.merchant.dto.myBank;
+package com.example.common.mybank.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
