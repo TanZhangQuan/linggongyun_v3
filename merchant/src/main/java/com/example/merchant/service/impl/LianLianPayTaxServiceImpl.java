@@ -57,7 +57,7 @@ public class LianLianPayTaxServiceImpl extends ServiceImpl<LianlianpayTaxDao, Li
     @Resource
     private WorkerBankDao workerBankDao;
 
-    @Value("${salary.url.querySingleOrder}")
+    @Value("${salary.url.selectRemainingSum}")
     private String selectRemainingSum;
 
 
