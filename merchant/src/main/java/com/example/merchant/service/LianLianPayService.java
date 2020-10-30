@@ -25,7 +25,7 @@ public interface LianLianPayService extends IService<Lianlianpay> {
      * @return
      * @throws CommonException
      */
-    ReturnJson merchantPay(String paymentOrderId) throws CommonException;
+    ReturnJson merchantPay(String merchantId, String payPassWord, String paymentOrderId) throws CommonException;
 
     /**
      * 商户支付回调
@@ -40,7 +40,7 @@ public interface LianLianPayService extends IService<Lianlianpay> {
      * @param paymentOrderId
      * @return
      */
-    ReturnJson merchantPayMany(String paymentOrderId) throws CommonException;
+    ReturnJson merchantPayMany(String merchantId, String payPassWord, String paymentOrderId) throws CommonException;
 
     void merchantManyNotifyUrl(HttpServletRequest request);
 }

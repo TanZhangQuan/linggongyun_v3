@@ -100,6 +100,7 @@ public class LianLianPayTaxServiceImpl extends ServiceImpl<LianlianpayTaxDao, Li
 
     @Override
     public void workerNotifyUrl(HttpServletRequest request) {
+        log.info("支付创客回调开始。。。。。。。。。。。。。");
         String requestBody = null;
         try {
             requestBody = RealnameVerifyUtil.getRequestBody(request, "UTF-8");
@@ -134,10 +135,12 @@ public class LianLianPayTaxServiceImpl extends ServiceImpl<LianlianpayTaxDao, Li
         } catch (IOException e) {
             log.error(e + ":" + e.getMessage());
         }
+        log.info("支付创客回调结束。。。。。。。。。。。。。");
     }
 
     @Override
     public ReturnJson taxPay(String paymentInventoryIds) {
+        log.info("支付创客付款接口。。。。。。。。。。。。。");
         List<String> ids = Arrays.asList(paymentInventoryIds.split(","));
 
         /**
@@ -175,6 +178,7 @@ public class LianLianPayTaxServiceImpl extends ServiceImpl<LianlianpayTaxDao, Li
                 paymentInventoryDao.updateById(paymentInventory);
                 Map map = new HashMap();
                 map.put("paymentInventoryId", paymentInventory.getId());
+                map.put("workerName", worker.getAccountName());
                 map.put("msg", "创客未认证");
                 errorList.add(map);
                 continue;
@@ -187,6 +191,7 @@ public class LianLianPayTaxServiceImpl extends ServiceImpl<LianlianpayTaxDao, Li
                 paymentInventoryDao.updateById(paymentInventory);
                 Map map = new HashMap();
                 map.put("paymentInventoryId", paymentInventory.getId());
+                map.put("workerName", worker.getAccountName());
                 map.put("msg", "创客未绑定银行卡");
                 errorList.add(map);
                 continue;
@@ -215,6 +220,7 @@ public class LianLianPayTaxServiceImpl extends ServiceImpl<LianlianpayTaxDao, Li
                 log.error("订单已支付！");
                 Map map = new HashMap();
                 map.put("paymentInventoryId", paymentInventory.getId());
+                map.put("workerName", worker.getAccountName());
                 map.put("msg", "订单已支付");
                 errorList.add(map);
                 continue;
@@ -256,6 +262,7 @@ public class LianLianPayTaxServiceImpl extends ServiceImpl<LianlianpayTaxDao, Li
                 log.error("加密失败！");
                 Map map = new HashMap();
                 map.put("paymentInventoryId", paymentInventory.getId());
+                map.put("workerName", worker.getAccountName());
                 map.put("msg", "加密失败");
                 errorList.add(map);
                 continue;
@@ -274,6 +281,7 @@ public class LianLianPayTaxServiceImpl extends ServiceImpl<LianlianpayTaxDao, Li
                 log.error("返回结果验签异常,可能数据被篡改");
                 Map map = new HashMap();
                 map.put("paymentInventoryId", paymentInventory.getId());
+                map.put("workerName", worker.getAccountName());
                 map.put("msg", "数据异常");
                 errorList.add(map);
                 continue;
@@ -284,6 +292,7 @@ public class LianLianPayTaxServiceImpl extends ServiceImpl<LianlianpayTaxDao, Li
                 paymentInventoryDao.updateById(paymentInventory);
                 Map map = new HashMap();
                 map.put("paymentInventoryId", paymentInventory.getId());
+                map.put("workerName", worker.getAccountName());
                 map.put("msg", paymentapiResult.get("ret_msg"));
                 errorList.add(map);
                 continue;
