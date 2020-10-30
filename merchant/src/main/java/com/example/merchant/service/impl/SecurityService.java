@@ -1,6 +1,6 @@
-package com.example.merchant.service;
+package com.example.merchant.service.impl;
 
-import com.example.common.mybank.*;
+import com.example.common.mybank.util.*;
 import com.example.common.util.MD5;
 import com.example.merchant.config.MyBankConfig;
 import org.apache.commons.codec.binary.Base64;

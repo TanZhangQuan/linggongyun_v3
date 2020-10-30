@@ -1,4 +1,4 @@
-package com.example.common.mybank;
+package com.example.common.mybank.util;
 
 import com.wxmlabs.aurora.CMSSigner;
 import com.wxmlabs.aurora.SignatureService;

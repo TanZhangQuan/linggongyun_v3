@@ -1,4 +1,4 @@
-package com.example.common.mybank;
+package com.example.common.mybank.util;
 
 
 import org.apache.commons.codec.binary.Base64;

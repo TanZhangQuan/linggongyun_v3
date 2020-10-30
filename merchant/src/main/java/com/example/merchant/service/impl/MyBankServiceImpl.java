@@ -1,11 +1,12 @@
 package com.example.merchant.service.impl;
 
-import com.example.common.mybank.*;
+import com.example.common.mybank.entity.*;
+import com.example.common.mybank.util.BankService;
+import com.example.common.mybank.util.BaseField;
+import com.example.common.mybank.util.MapRemoveNullUtil;
+import com.example.common.mybank.util.SignData;
 import com.example.merchant.config.MyBankConfig;
-import com.example.merchant.dto.myBank.*;
 import com.example.merchant.service.MyBankService;
-import com.example.merchant.service.RemoteService;
-import com.example.merchant.service.SecurityService;
 import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
