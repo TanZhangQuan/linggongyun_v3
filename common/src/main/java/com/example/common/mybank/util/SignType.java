@@ -1,4 +1,4 @@
-package com.example.common.mybank;
+package com.example.common.mybank.util;
 
 /**
  * <p>支持的签名类型</p>

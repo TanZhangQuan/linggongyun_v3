@@ -1,7 +1,6 @@
 package com.example.merchant.service;
 
-import com.example.common.util.ReturnJson;
-import com.example.merchant.dto.myBank.*;
+import com.example.common.mybank.entity.*;
 
 import java.util.Map;
 

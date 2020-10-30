@@ -1,4 +1,4 @@
-package com.example.common.mybank;
+package com.example.common.mybank.util;
 
 import org.apache.commons.lang3.StringUtils;
 

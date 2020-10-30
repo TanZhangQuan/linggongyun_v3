@@ -1,7 +1,5 @@
-package com.example.common.mybank;
+package com.example.common.mybank.util;
 
-import com.example.common.util.ReturnJson;
-import net.sf.json.JSONObject;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;

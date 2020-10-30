@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 /**
  * <p>
  * 服务商公司信息
-
+ *
  * </p>
  *
  * @author hzp
@@ -74,11 +74,13 @@ public class Tax implements Serializable {
     /**
      * 网商银行会员号
      */
+    @TableField("member_id")
     private String memberId;
 
     /**
      * 网商银行子账户唯一识别码
      */
+    @TableField("sub_account_no")
     private String subAccountNo;
 
     /**
