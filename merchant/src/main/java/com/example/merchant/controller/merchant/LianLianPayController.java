@@ -32,20 +32,22 @@ public class LianLianPayController {
     @PostMapping("/merchantPay")
     @ApiOperation(value = "商户总包支付", notes = "商户总包支付", httpMethod = "POST")
     @ApiImplicitParams(value = {
-            @ApiImplicitParam(name = "paymentOrderId", value = "支付订单ID", required = true)
+            @ApiImplicitParam(name = "paymentOrderId", value = "支付订单ID", required = true),
+            @ApiImplicitParam(name = "payPassWord", value = "支付密码", required = true)
     })
-    public ReturnJson merchantPay(@NotBlank(message = "支付订单不能为空！") @RequestParam(required = false) String paymentOrderId) throws CommonException {
-        return lianLianPayService.merchantPay(paymentOrderId);
+    public ReturnJson merchantPay(@ApiParam(hidden = true) @RequestAttribute("userId") String merchantId, @NotBlank(message = "支付订单不能为空！") @RequestParam(required = false) String paymentOrderId, @NotBlank(message = "支付密码不能为空！") @RequestParam(required = false) String payPassWord) throws CommonException {
+        return lianLianPayService.merchantPay(merchantId, payPassWord, paymentOrderId);
     }
 
     @LoginRequired
     @PostMapping("/merchantPayMany")
     @ApiOperation(value = "商户众包支付", notes = "商户众包支付", httpMethod = "POST")
     @ApiImplicitParams(value = {
-            @ApiImplicitParam(name = "paymentOrderId", value = "支付订单ID", required = true)
+            @ApiImplicitParam(name = "paymentOrderId", value = "支付订单ID", required = true),
+            @ApiImplicitParam(name = "payPassWord", value = "支付密码", required = true)
     })
-    public ReturnJson merchantPayMany(@NotBlank(message = "支付订单不能为空！") @RequestParam(required = false) String paymentOrderId) throws CommonException {
-        return lianLianPayService.merchantPayMany(paymentOrderId);
+    public ReturnJson merchantPayMany(@ApiParam(hidden = true) @RequestAttribute("userId") String merchantId, @NotBlank(message = "支付订单不能为空！") @RequestParam(required = false) String paymentOrderId, @NotBlank(message = "支付密码不能为空！") @RequestParam(required = false) String payPassWord) throws CommonException {
+        return lianLianPayService.merchantPayMany(merchantId, payPassWord, paymentOrderId);
     }
 
     @RequestMapping("/merchantNotifyUrl")
