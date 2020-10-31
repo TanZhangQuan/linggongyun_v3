@@ -52,4 +52,5 @@ public interface MyBankWorkerService {
      * @return
      */
     ReturnJson bankCardUnBind(String bankId, String userId) throws Exception;
+
 }
