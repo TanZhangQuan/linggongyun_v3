@@ -8,6 +8,7 @@ import com.example.mybatis.mapper.PaymentOrderDao;
 import com.example.mybatis.mapper.PaymentOrderManyDao;
 import com.example.mybatis.po.BillCountPO;
 import com.example.mybatis.po.BillPO;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -18,9 +19,6 @@ import java.util.List;
 public class BillServiceImpl implements BillService {
 
     @Resource
-    private PaymentInventoryDao paymentInventoryDao;
-
-    @Resource
     private PaymentOrderDao paymentOrderDao;
 
     @Resource
@@ -28,19 +26,21 @@ public class BillServiceImpl implements BillService {
 
     /**
      * 总包月账单统计
+     *
      * @param year
      * @param month
      * @return
      */
     @Override
-    public ReturnJson getTotalMonthBill(Integer year, Integer month) {
+    public ReturnJson getTotalMonthBill(String workerId, Integer year, Integer month) {
         MonthBillCountVO monthBillCountVO = new MonthBillCountVO();
-        ReturnJson returnJson = this.getTotalMonthBillInfo( year, month);
-        List<BillPO> billPOS = (List<BillPO>)returnJson.getData();
+        ReturnJson returnJson = this.getTotalMonthBillInfo(workerId, year, month);
+        List<BillPO> billPOS = (List<BillPO>) returnJson.getData();
         BigDecimal monthBillMoney = new BigDecimal("0");
         for (BillPO billPO : billPOS) {
             monthBillMoney = monthBillMoney.add(billPO.getMoney());
         }
+        monthBillCountVO.setMonthOrderCount(billPOS.size());
         monthBillCountVO.setMonthBillMoney(monthBillMoney);
         returnJson.setObj(monthBillCountVO);
         return returnJson;
@@ -48,31 +48,34 @@ public class BillServiceImpl implements BillService {
 
     /**
      * 查询总包月账单明细
+     *
      * @param year
      * @param month
      * @return
      */
     @Override
-    public ReturnJson getTotalMonthBillInfo(Integer year, Integer month) {
-        List<BillPO> billPOS = paymentOrderDao.selectMonthBill(year, month);
+    public ReturnJson getTotalMonthBillInfo(String workerId, Integer year, Integer month) {
+        List<BillPO> billPOS = paymentOrderDao.selectMonthBill(workerId, year, month);
         return ReturnJson.success(billPOS);
     }
 
     /**
      * 众包月账单统计
+     *
      * @param year
      * @param month
      * @return
      */
     @Override
-    public ReturnJson getManyMonthBill(Integer year, Integer month) {
+    public ReturnJson getManyMonthBill(String workerId, Integer year, Integer month) {
         MonthBillCountVO monthBillCountVO = new MonthBillCountVO();
-        ReturnJson returnJson = this.getManyMonthBillInfo( year, month);
-        List<BillPO> billPOS = (List<BillPO>)returnJson.getData();
+        ReturnJson returnJson = this.getManyMonthBillInfo(workerId, year, month);
+        List<BillPO> billPOS = (List<BillPO>) returnJson.getData();
         BigDecimal monthBillMoney = new BigDecimal("0");
         for (BillPO billPO : billPOS) {
             monthBillMoney = monthBillMoney.add(billPO.getMoney());
         }
+        monthBillCountVO.setMonthOrderCount(billPOS.size());
         monthBillCountVO.setMonthBillMoney(monthBillMoney);
         returnJson.setObj(monthBillCountVO);
         return returnJson;
@@ -80,35 +83,38 @@ public class BillServiceImpl implements BillService {
 
     /**
      * 查询众包月账单明细
+     *
      * @param year
      * @param month
      * @return
      */
     @Override
-    public ReturnJson getManyMonthBillInfo(Integer year, Integer month) {
-        List<BillPO> billPOS = paymentOrderManyDao.selectMonthBill(year, month);
+    public ReturnJson getManyMonthBillInfo(String workerId, Integer year, Integer month) {
+        List<BillPO> billPOS = paymentOrderManyDao.selectMonthBill(workerId, year, month);
         return ReturnJson.success(billPOS);
     }
 
     /**
      * 总包年账单统计
+     *
      * @param year
      * @return
      */
     @Override
-    public ReturnJson getTotalYearBillCount(Integer year) {
-        BillCountPO billCountPO = paymentOrderDao.selectYearCount(year);
+    public ReturnJson getTotalYearBillCount(String workerId, Integer year) {
+        BillCountPO billCountPO = paymentOrderDao.selectYearCount(workerId, year);
         return ReturnJson.success(billCountPO);
     }
 
     /**
      * 众包年账单统计
+     *
      * @param year
      * @return
      */
     @Override
-    public ReturnJson getManyYearBillCount(Integer year) {
-        BillCountPO billCountPO = paymentOrderManyDao.selectYearCount(year);
+    public ReturnJson getManyYearBillCount(String workerId, Integer year) {
+        BillCountPO billCountPO = paymentOrderManyDao.selectYearCount(workerId, year);
         return ReturnJson.success(billCountPO);
     }
 }

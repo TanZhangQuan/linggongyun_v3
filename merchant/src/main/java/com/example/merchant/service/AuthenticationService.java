@@ -1,6 +1,7 @@
 package com.example.merchant.service;
 
 import com.example.common.contract.exception.DefineException;
+import com.example.common.enums.IdCardSide;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.makerend.IdCardInfoDto;
 import com.example.merchant.dto.makerend.WorkerBankDto;
@@ -8,7 +9,7 @@ import com.example.merchant.dto.makerend.WorkerBankDto;
 import javax.servlet.http.HttpServletRequest;
 
 public interface AuthenticationService {
-    ReturnJson getIdCardInfo(String filePath);
+    ReturnJson getIdCardInfo(String filePath, IdCardSide idCardSide) throws Exception;
 
     ReturnJson saveIdCardinfo(IdCardInfoDto idCardInfoDto, String workerId) throws Exception;
 

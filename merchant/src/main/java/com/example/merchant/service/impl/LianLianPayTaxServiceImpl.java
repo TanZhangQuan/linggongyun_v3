@@ -7,6 +7,8 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.example.common.enums.OrderType;
+import com.example.common.enums.PaymentType;
 import com.example.common.lianlianpay.entity.PaymentRequestBean;
 import com.example.common.lianlianpay.entity.ServicePayApplyRequest;
 import com.example.common.lianlianpay.enums.SignTypeEnum;
@@ -20,6 +22,7 @@ import com.example.common.util.Tools;
 import com.example.common.util.VerificationCheck;
 import com.example.merchant.dto.merchant.AddLianLianPay;
 import com.example.merchant.service.LianLianPayTaxService;
+import com.example.merchant.service.PaymentHistoryService;
 import com.example.merchant.util.RealnameVerifyUtil;
 import com.example.mybatis.entity.*;
 import com.example.mybatis.mapper.*;
@@ -57,8 +60,8 @@ public class LianLianPayTaxServiceImpl extends ServiceImpl<LianlianpayTaxDao, Li
     @Resource
     private WorkerBankDao workerBankDao;
 
-    @Value("${salary.url.selectRemainingSum}")
-    private String selectRemainingSum;
+    @Resource
+    private PaymentHistoryService paymentHistoryService;
 
 
     /**
@@ -76,6 +79,9 @@ public class LianLianPayTaxServiceImpl extends ServiceImpl<LianlianpayTaxDao, Li
     //实时付款接口
     @Value("${salary.url.paymentapi}")
     private String paymentapi;
+
+    @Value("${salary.url.selectRemainingSum}")
+    private String selectRemainingSum;
 
     @Override
     public ReturnJson addLianlianPay(String taxId, AddLianLianPay addLianLianPay) {
@@ -122,6 +128,22 @@ public class LianLianPayTaxServiceImpl extends ServiceImpl<LianlianpayTaxDao, Li
                 log.error("支付清单为空！");
                 return;
             }
+
+            //保存交易记录
+            //先查看是否有交易的记录,有的话就覆盖
+            PaymentHistory paymentHistory = paymentHistoryService.getOne(new QueryWrapper<PaymentHistory>().lambda().eq(PaymentHistory::getOidPaybill, result.get("oid_paybill")));
+            if (paymentHistory == null) {
+                paymentHistory = new PaymentHistory();
+            }
+            paymentHistory.setPaymentOrderId(paymentInventory.getId());
+            paymentHistory.setOrderType(OrderType.INVENTORY);
+            paymentHistory.setPaymentType(PaymentType.LIANLIAN);
+            paymentHistory.setOidPartner(result.get("oid_partner"));
+            paymentHistory.setOidPaybill(result.get("oid_paybill"));
+            paymentHistory.setMoneyOrder(new BigDecimal(result.get("money_order")));
+            paymentHistory.setResultPay(result.get("result_pay"));
+            paymentHistoryService.saveOrUpdate(paymentHistory);
+
             if ("SUCCESS".equals(result.get("result_pay").toUpperCase())) {
                 paymentInventory.setPaymentStatus(1);
                 paymentInventoryDao.updateById(paymentInventory);
@@ -236,7 +258,7 @@ public class LianLianPayTaxServiceImpl extends ServiceImpl<LianlianpayTaxDao, Li
             paymentRequestBean.setDt_order(DateUtil.format(new Date(), DatePattern.PURE_DATETIME_PATTERN));
             paymentRequestBean.setMoney_order(paymentInventory.getRealMoney().setScale(2, BigDecimal.ROUND_DOWN).toString());
             paymentRequestBean.setCard_no(workerBanks.get(0).getBankCode());
-            paymentRequestBean.setAcct_name(worker.getAccountName());
+            paymentRequestBean.setAcct_name(workerBanks.get(0).getRealName());
             paymentRequestBean.setInfo_order("付款");
             paymentRequestBean.setFlag_card("0");
             paymentRequestBean.setMemo("付款");

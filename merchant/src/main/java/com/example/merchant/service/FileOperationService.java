@@ -12,7 +12,7 @@ public interface FileOperationService {
 
     ReturnJson uploadJpgOrPdf(MultipartFile uploadJpgOrPdf, HttpServletRequest request) throws IOException;
 
-    String uploadJpgOrPdf(CloseableHttpResponse closeableHttpResponse, HttpServletRequest request);
+    String uploadJpgOrPdf(String fileUrl, HttpServletRequest request);
 
     ReturnJson uploadInvoice(MultipartFile uploadInvoice, HttpServletRequest request) throws IOException;
 

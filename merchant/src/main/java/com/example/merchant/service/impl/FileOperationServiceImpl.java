@@ -133,7 +133,8 @@ public class FileOperationServiceImpl implements FileOperationService {
     }
 
     @Override
-    public String uploadJpgOrPdf(CloseableHttpResponse closeableHttpResponse, HttpServletRequest request) {
+    public String uploadJpgOrPdf(String fileUrl, HttpServletRequest request) {
+        CloseableHttpResponse closeableHttpResponse = HttpClientUtils.urlGet(fileUrl);
         if (closeableHttpResponse == null) {
             return "";
         }

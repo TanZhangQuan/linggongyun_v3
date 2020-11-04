@@ -64,8 +64,8 @@ public interface PaymentOrderManyDao extends BaseMapper<PaymentOrderMany> {
     List<PaymentOrderMany> selectYearpaas(List<String> merchantId);
 
 
-    List<BillPO> selectMonthBill(@Param("year") Integer year, @Param("month")Integer month);
-    BillCountPO selectYearCount(@Param("year") Integer year);
+    List<BillPO> selectMonthBill(@Param("workerId") String workerId,@Param("year") Integer year, @Param("month")Integer month);
+    BillCountPO selectYearCount(@Param("workerId") String workerId,@Param("year") Integer year);
 
     PaymentOrderInfoPO selectPaymentOrderInfo(String paymentOrderId);
 }

@@ -80,6 +80,12 @@
             <scope>test</scope>
         </dependency>
 
+		<!-- websocket -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-websocket</artifactId>
+		</dependency>
+
 		<!--shrio-->
 		<dependency>
 			<groupId>org.apache.shiro</groupId>

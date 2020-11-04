@@ -7,6 +7,7 @@ import com.example.merchant.exception.CommonException;
 import com.example.mybatis.entity.Lianlianpay;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 public interface LianLianPayService extends IService<Lianlianpay> {
     /**
@@ -43,4 +44,6 @@ public interface LianLianPayService extends IService<Lianlianpay> {
     ReturnJson merchantPayMany(String merchantId, String payPassWord, String paymentOrderId) throws CommonException;
 
     void merchantManyNotifyUrl(HttpServletRequest request);
+
+    Map<String, String> queryPaymentByorderId(String orderId);
 }
