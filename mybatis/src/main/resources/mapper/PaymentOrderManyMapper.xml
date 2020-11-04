@@ -300,7 +300,7 @@
     </resultMap>
 
     <!--查询账单详情-->
-    <select id="selectMonthBill" resultMap="billPO" parameterType="int">
+    <select id="selectMonthBill" resultMap="billPO">
         SELECT
         b.company_s_name,
         b.platform_service_provider,
@@ -314,8 +314,9 @@
         FROM tb_payment_inventory a
         JOIN tb_payment_order_many b
         ON a.payment_order_id = b.id
-        WHERE YEAR(b.payment_date) = #{year}
-        AND MONTH(b.payment_date) = #{month}
+        WHERE YEAR(a.create_date) = #{year}
+        AND MONTH(a.create_date) = #{month}
+        AND a.worker_id = #{workerId}
     </select>
 
     <resultMap id="billCountPO" type="com.example.mybatis.po.BillCountPO">
@@ -324,14 +325,13 @@
     </resultMap>
 
     <!--账单统计-->
-    <select id="selectYearCount" resultMap="billCountPO" parameterType="int">
+    <select id="selectYearCount" resultMap="billCountPO">
         SELECT
         COUNT(1) as 'order_count',
         SUM(a.real_money) as 'bill_money'
         FROM tb_payment_inventory a
-        JOIN tb_payment_order_many b
-        ON a.payment_order_id = b.id
-        WHERE YEAR(b.payment_date) = #{year}
+        WHERE YEAR(a.create_date) = #{year}
+        AND a.worker_id = #{workerId}
     </select>
 
     <resultMap id="PaymentOrderInfoPOResultMap" type="com.example.mybatis.po.PaymentOrderInfoPO">

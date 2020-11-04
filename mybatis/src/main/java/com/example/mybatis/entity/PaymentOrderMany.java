@@ -128,6 +128,11 @@ public class PaymentOrderMany implements Serializable {
     private Integer paymentMode;
 
     /**
+     * 支付人的ID
+     */
+    private String merchantId;
+
+    /**
      * 支付时间
      */
     @ApiModelProperty(notes = "支付时间", value = "支付时间", hidden = true)
