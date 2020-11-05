@@ -9,9 +9,15 @@ import java.util.Map;
  * 识别身份证信息工具类
  */
 public class IdCardUtils {
+
     /**
-     * @param filePath 身份证正面的存储地址
-     * @return
+     * 功能描述: 识别身份证信息
+     *
+     * @param filePath   身份证图片的访问路径
+     * @param idCardSide 身份证正反面
+     * @Return java.util.Map<java.lang.String, java.lang.String>
+     * @Author 忆惜
+     * @Date 2020/11/4 18:28
      */
     public static Map<String, String> getIdCardInfo(String filePath, IdCardSide idCardSide) throws Exception {
         String accessToken = AuthService.getAuth();

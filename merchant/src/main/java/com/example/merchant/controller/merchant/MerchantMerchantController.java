@@ -1,15 +1,13 @@
 package com.example.merchant.controller.merchant;
 
 import com.example.common.util.ReturnJson;
+import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.AddressService;
 import com.example.merchant.service.LinkmanService;
 import com.example.merchant.service.MerchantService;
 import com.example.mybatis.entity.Address;
 import com.example.mybatis.entity.Linkman;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -49,11 +47,9 @@ public class MerchantMerchantController {
     }
 
     @PostMapping("/merchantInfo")
+    @LoginRequired
     @ApiOperation(value = "获取商户信息", notes = "获取商户信息", httpMethod = "POST")
-    @ApiImplicitParams(value = {
-            @ApiImplicitParam(name = "merchantId", value = "商户ID", required = true)
-    })
-    public ReturnJson merchantInfo(@NotBlank(message = "商户ID不能为空！") @RequestParam(required = false) String merchantId) {
+    public ReturnJson merchantInfo(@ApiParam(hidden = true) @RequestAttribute("userId") String merchantId) {
         return merchantService.merchantInfo(merchantId);
     }
 
@@ -87,19 +83,15 @@ public class MerchantMerchantController {
 
     @GetMapping("/getLinkmanAll")
     @ApiOperation(value = "查询商户的联系人", notes = "查询商户的联系人", httpMethod = "GET")
-    @ApiImplicitParams(value = {
-            @ApiImplicitParam(name = "merchantId", value = "商户ID", required = true)
-    })
-    public ReturnJson getLinkmanAll(@NotBlank(message = "商户ID不能为空！") @RequestParam(required = false) String merchantId) {
+    @LoginRequired
+    public ReturnJson getLinkmanAll(@ApiParam(hidden = true) @RequestAttribute("userId") String merchantId) {
         return linkmanService.getLinkmanAll(merchantId);
     }
 
     @GetMapping("/getAddressAll")
     @ApiOperation(value = "查询商户的快递地址信息", notes = "查询商户的快递地址信息", httpMethod = "GET")
-    @ApiImplicitParams(value = {
-            @ApiImplicitParam(name = "merchantId", value = "商户ID", required = true)
-    })
-    public ReturnJson getAddressAll(@NotBlank(message = "商户ID") @RequestParam(required = false) String merchantId) {
+    @LoginRequired
+    public ReturnJson getAddressAll(@ApiParam(hidden = true) @RequestAttribute("userId") String merchantId) {
         return addressService.getAddressAll(merchantId);
     }
 

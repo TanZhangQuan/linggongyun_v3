@@ -414,8 +414,8 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
      * @return
      */
     @Override
-    public ReturnJson merchantInfoPaas(String merchantId, HttpServletRequest request) {
-        ReturnJson returnJson = homePageService.getHomePageInof(request);
+    public ReturnJson merchantInfoPaas(String merchantId) {
+        ReturnJson returnJson = homePageService.getHomePageInof(merchantId);
         HomePageVO homePageVO = new HomePageVO();
         HomePageMerchantVO homePageMerchantVO = (HomePageMerchantVO) returnJson.getObj();
         BeanUtils.copyProperties(homePageMerchantVO, homePageVO);
@@ -438,8 +438,9 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
      */
     @Override
     public ReturnJson getMerchantPaymentList(String merchantId, Integer page, Integer pageSize) {
+        Merchant merchant = merchantDao.selectById(merchantId);
         Page<MerchantPaymentListPO> paymentListPage = new Page(page, pageSize);
-        IPage<MerchantPaymentListPO> merchantPaymentListIPage = merchantDao.selectMerchantPaymentList(paymentListPage, merchantId);
+        IPage<MerchantPaymentListPO> merchantPaymentListIPage = merchantDao.selectMerchantPaymentList(paymentListPage, merchant.getCompanyId());
         return ReturnJson.success(merchantPaymentListIPage);
     }
 
@@ -449,9 +450,6 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
 
     @Resource
     private PaymentOrderManyService paymentOrderManyService;
-
-    @Resource
-    private MyBankService myBankService;
 
     /**
      * 获取支付详情

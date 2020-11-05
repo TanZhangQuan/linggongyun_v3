@@ -5,6 +5,8 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -57,7 +59,8 @@ public class CompanyDto {
     /**
      * 业务员ID(必填)
      */
-    @ApiModelProperty(notes = "业务员ID", value = "业务员ID",required = true)
+    @ApiModelProperty(notes = "业务员ID", value = "业务员ID", required = true)
+    @NotBlank(message = "业务员不能为空！")
     private String salesManId;
 
     /**
@@ -67,6 +70,7 @@ public class CompanyDto {
     private String agentId;
 
     @ApiModelProperty(notes = "服务商合作信息", value = "服务商合作信息")
+    @Valid
     List<CompanyTaxDto> companyTaxDtos;
 
     @ApiModelProperty(notes = "商户公司的开票信息", value = "商户公司的开票信息")

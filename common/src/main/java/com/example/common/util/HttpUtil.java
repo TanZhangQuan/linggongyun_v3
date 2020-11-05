@@ -1,5 +1,7 @@
 package com.example.common.util;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.InputStreamReader;
@@ -11,6 +13,7 @@ import java.util.Map;
 /**
  * http 工具类
  */
+@Slf4j
 public class HttpUtil {
 
     public static String post(String requestUrl, String accessToken, String params)
@@ -59,7 +62,7 @@ public class HttpUtil {
         Map<String, List<String>> headers = connection.getHeaderFields();
         // 遍历所有的响应头字段
         for (String key : headers.keySet()) {
-            System.err.println(key + "--->" + headers.get(key));
+            log.info(key + "--->" + headers.get(key));
         }
         // 定义 BufferedReader输入流来读取URL的响应
         BufferedReader in = null;
@@ -71,7 +74,7 @@ public class HttpUtil {
             result += getLine;
         }
         in.close();
-        System.err.println("result:" + result);
+        log.info("result:" + result);
         return result;
     }
 }

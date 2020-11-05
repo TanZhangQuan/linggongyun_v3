@@ -39,12 +39,5 @@ public class Idcard {
         String auth = AuthService.getAuth();
         String front = Idcard.idcard("http://diyi-cr.oss-cn-shanghai.aliyuncs.com/upload/20201103/2dc6c1dc5c4d4e2da868fd32069348c3.png", auth, "front");
         System.out.println(front);
-//        Map<String,Map<String,Map<String,Object>>> mapMap = new HashMap<>();
-//        Map<String,Map<String,Map<String,Object>>> map = JsonUtils.jsonToPojo(front, mapMap.getClass());
-//        Map<String, Map<String, Object>> words_result = map.get("words_result");
-//        System.out.println(words_result.get("姓名").get("words"));
-//        System.out.println(words_result.get("公民身份号码").get("words"));
-//        Map<String, String> idCardInfo = IdCardUtils.getIdCardInfo("D:/upload/image/5f8cfeead3eb4d4982b62a30d274eadd.jpg");
-//        System.out.println(idCardInfo.toString());
     }
 }

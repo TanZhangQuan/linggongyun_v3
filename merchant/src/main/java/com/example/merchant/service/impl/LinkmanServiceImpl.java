@@ -5,9 +5,12 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.service.LinkmanService;
 import com.example.mybatis.entity.Linkman;
+import com.example.mybatis.entity.Merchant;
 import com.example.mybatis.mapper.LinkmanDao;
+import com.example.mybatis.mapper.MerchantDao;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -20,6 +23,9 @@ import java.util.List;
  */
 @Service
 public class LinkmanServiceImpl extends ServiceImpl<LinkmanDao, Linkman> implements LinkmanService {
+
+    @Resource
+    private MerchantDao merchantDao;
 
     /**
      * 添加或修改联系人
@@ -44,7 +50,8 @@ public class LinkmanServiceImpl extends ServiceImpl<LinkmanDao, Linkman> impleme
 
     @Override
     public ReturnJson getLinkmanAll(String merchantId) {
-        List<Linkman> list = this.list(new QueryWrapper<Linkman>().eq("company_id", merchantId).orderByAsc("is_not"));
+        Merchant merchant = merchantDao.selectById(merchantId);
+        List<Linkman> list = this.list(new QueryWrapper<Linkman>().eq("company_id", merchant.getCompanyId()).orderByAsc("is_not"));
         return ReturnJson.success(list);
     }
 

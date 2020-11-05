@@ -6,16 +6,13 @@ import com.example.common.contract.helper.SignHelper;
 import com.example.common.enums.IdCardSide;
 import com.example.common.enums.MessageStatus;
 import com.example.common.enums.UserType;
-import com.example.common.util.HttpClientUtils;
 import com.example.common.util.IdCardUtils;
 import com.example.common.util.JsonUtils;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.makerend.IdCardInfoDto;
 import com.example.merchant.dto.makerend.WorkerBankDto;
-import com.example.merchant.exception.CommonException;
 import com.example.merchant.service.AuthenticationService;
 import com.example.merchant.service.FileOperationService;
-import com.example.merchant.service.MyBankService;
 import com.example.merchant.util.RealnameVerifyUtil;
 import com.example.merchant.websocket.WebsocketServer;
 import com.example.mybatis.entity.CommonMessage;
@@ -25,11 +22,9 @@ import com.example.mybatis.mapper.WorkerBankDao;
 import com.example.mybatis.mapper.WorkerDao;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.client.methods.CloseableHttpResponse;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import sun.net.www.content.image.png;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -60,9 +55,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Resource
     private WebsocketServer websocketServer;
 
-    @Resource
-    private MyBankService myBankService;
-
     /**
      * 识别身份证获取信息
      *
@@ -72,7 +64,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public ReturnJson getIdCardInfo(String filePath, IdCardSide idCardSide) throws Exception {
         String[] fileFormats = {"jpg", "png", "bmp"};
-        String fileFormat = filePath.substring(filePath.lastIndexOf(".")+1);
+        String fileFormat = filePath.substring(filePath.lastIndexOf(".") + 1);
         log.info(fileFormat);
         if (!Arrays.asList(fileFormats).contains(fileFormat.toLowerCase())) {
             return ReturnJson.error("现在只支持jpg、png、bmp，格式的图片");
@@ -171,7 +163,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         if (worker.getAttestation() != 1) {
             return ReturnJson.error("请您先完成实名认证！");
         }
-        if (worker.getAgreementSign() == 0 || worker.getAgreementSign() == 3) {
+        if (worker.getAgreementSign() == 0 || worker.getAgreementSign() == -1) {
             ReturnJson returnJson = SignAContractUtils.signAContract(contract, worker.getId(), worker.getAccountName(), worker.getIdcardCode(),
                     worker.getMobileCode());
             worker.setAgreementSign(1);
@@ -233,7 +225,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 SignHelper.archiveSignFlow(flowId);
             } catch (DefineException e) {
                 log.error(e.toString() + ":" + e.getMessage());
-                worker.setAgreementSign(3);
+                worker.setAgreementSign(-1);
                 workerDao.updateById(worker);
                 return null;
             }
@@ -243,16 +235,16 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 jsonHelper = (Map<String, List<Map<String, Object>>>) SignHelper.downloadFlowDoc(flowId);
             } catch (DefineException e) {
                 log.error(e.toString() + ":" + e.getMessage());
-                worker.setAgreementSign(3);
+                worker.setAgreementSign(-1);
                 workerDao.updateById(worker);
                 return null;
             }
             List<Map<String, Object>> list = jsonHelper.get("docs");
             Map<String, Object> flowInfo = list.get(0);
             String fileUrl = String.valueOf(flowInfo.get("fileUrl"));
-            String url = fileOperationService.uploadJpgOrPdf(fileUrl,request);
+            String url = fileOperationService.uploadJpgOrPdf(fileUrl, request);
             if (StringUtils.isBlank(url)) {
-                worker.setAgreementSign(3);
+                worker.setAgreementSign(-1);
                 workerDao.updateById(worker);
                 this.senMsg("签署加盟合同失败!", "", "0", UserType.ADMIN, worker.getId(), UserType.WORKER);
                 return ReturnJson.success("签署加盟合同失败！");
@@ -265,7 +257,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
 
         if (signResult != null && signResult == 3 && !StringUtils.isBlank(thirdPartyUserId)) {
-            worker.setAgreementSign(3);
+            worker.setAgreementSign(-1);
             workerDao.updateById(worker);
             String resultDescription = (String) map.get("resultDescription");
             return ReturnJson.success(resultDescription);
