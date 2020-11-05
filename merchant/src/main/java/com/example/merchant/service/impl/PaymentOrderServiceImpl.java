@@ -63,9 +63,6 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
     private PaymentInventoryService paymentInventoryService;
 
     @Resource
-    private TaxDao taxDao;
-
-    @Resource
     private ManagersDao managersDao;
 
     @Resource
@@ -86,20 +83,18 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
     @Resource
     private JwtUtils jwtUtils;
 
+    @Resource
+    private MerchantDao merchantDao;
+
     /**
      * 获取今天的支付总额
      *
-     * @param request
+     * @param merchantId
      * @return
      */
     @Override
-    public ReturnJson getDay(HttpServletRequest request) {
-        String token = request.getHeader(TOKEN);
-        Claims claim = jwtUtils.getClaimByToken(token);
-        String merchantId = null;
-        if (claim != null) {
-            merchantId = claim.getSubject();
-        }
+    public ReturnJson getDay(String merchantId) {
+        Merchant merchant = merchantDao.selectById(merchantId);
         List<PaymentOrder> list = paymentOrderDao.selectDay(merchantId);
         return ReturnJson.success(list);
     }
@@ -107,54 +102,39 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
     /**
      * 获取本周的支付总额
      *
-     * @param request
+     * @param merchantId
      * @return
      */
     @Override
-    public ReturnJson getWeek(HttpServletRequest request) {
-        String token = request.getHeader(TOKEN);
-        Claims claim = jwtUtils.getClaimByToken(token);
-        String merchantId = null;
-        if (claim != null) {
-            merchantId = claim.getSubject();
-        }
-        List<PaymentOrder> list = paymentOrderDao.selectWeek(merchantId);
+    public ReturnJson getWeek(String merchantId) {
+        Merchant merchant = merchantDao.selectById(merchantId);
+        List<PaymentOrder> list = paymentOrderDao.selectWeek(merchant.getCompanyId());
         return ReturnJson.success(list);
     }
 
     /**
      * 获取本月的支付总额
      *
-     * @param request
+     * @param merchantId
      * @return
      */
     @Override
-    public ReturnJson getMonth(HttpServletRequest request) {
-        String token = request.getHeader(TOKEN);
-        Claims claim = jwtUtils.getClaimByToken(token);
-        String merchantId = null;
-        if (claim != null) {
-            merchantId = claim.getSubject();
-        }
-        List<PaymentOrder> list = paymentOrderDao.selectMonth(merchantId);
+    public ReturnJson getMonth(String merchantId) {
+        Merchant merchant = merchantDao.selectById(merchantId);
+        List<PaymentOrder> list = paymentOrderDao.selectMonth(merchant.getCompanyId());
         return ReturnJson.success(list);
     }
 
     /**
      * 获取今年的支付总额
      *
-     * @param request
+     * @param merchantId
      * @return
      */
     @Override
-    public ReturnJson getYear(HttpServletRequest request) {
-        String token = request.getHeader(TOKEN);
-        Claims claim = jwtUtils.getClaimByToken(token);
-        String merchantId = null;
-        if (claim != null) {
-            merchantId = claim.getSubject();
-        }
-        List<PaymentOrder> list = paymentOrderDao.selectYear(merchantId);
+    public ReturnJson getYear(String merchantId) {
+        Merchant merchant = merchantDao.selectById(merchantId);
+        List<PaymentOrder> list = paymentOrderDao.selectYear(merchant.getCompanyId());
         return ReturnJson.success(list);
     }
 
@@ -165,14 +145,14 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
      * @return
      */
     @Override
-    public ReturnJson getPaymentOrder(PaymentOrderMerchantDto paymentOrderMerchantDto) {
+    public ReturnJson getPaymentOrder(String merchantId, PaymentOrderMerchantDto paymentOrderMerchantDto) {
+        Merchant merchant = merchantDao.selectById(merchantId);
         String paymentOrderId = paymentOrderMerchantDto.getPaymentOrderId();
         String taxId = paymentOrderMerchantDto.getTaxId();
         String beginDate = paymentOrderMerchantDto.getBeginDate();
         String endDate = paymentOrderMerchantDto.getEndDate();
         Page<PaymentOrder> paymentOrderPage = new Page<>(paymentOrderMerchantDto.getPage(), paymentOrderMerchantDto.getPageSize());
-
-        IPage<PaymentOrder> paymentOrderIPage = paymentOrderDao.selectMany(paymentOrderPage, paymentOrderMerchantDto.getCompanyId(), paymentOrderId, taxId, beginDate, endDate);
+        IPage<PaymentOrder> paymentOrderIPage = paymentOrderDao.selectMany(paymentOrderPage, merchant.getCompanyId(), paymentOrderId, taxId, beginDate, endDate);
         return ReturnJson.success(paymentOrderIPage);
     }
 
@@ -184,11 +164,10 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
      */
     @Override
     public ReturnJson getPaymentOrderInfo(String id) {
-        PaymentOrderInfoPO paymentOrderInfoPO = null;
         PaymentOrderInfoVO paymentOrderInfoVO = new PaymentOrderInfoVO();
         ExpressInfoVO expressInfoVO = new ExpressInfoVO();
         //为总包订单
-        paymentOrderInfoPO = paymentOrderDao.selectPaymentOrderInfo(id);
+        PaymentOrderInfoPO paymentOrderInfoPO = paymentOrderDao.selectPaymentOrderInfo(id);
         if (paymentOrderInfoPO == null) {
             return ReturnJson.error("订单编号有误，请重新输入！");
         }
@@ -435,7 +414,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
      * @return
      */
     @Override
-    public ReturnJson getPaymentOrderPaas(PaymentOrderDto paymentOrderDto,String managersId) throws CommonException {
+    public ReturnJson getPaymentOrderPaas(PaymentOrderDto paymentOrderDto, String managersId) throws CommonException {
         List<String> merchantIds = acquireID.getMerchantIds(managersId);
         List<PaymentOrder> list = null;
         if (VerificationCheck.listIsNull(merchantIds)) {

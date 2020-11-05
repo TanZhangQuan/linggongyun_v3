@@ -5,16 +5,10 @@ import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.HomePageService;
 import com.example.merchant.service.PaymentOrderManyService;
 import com.example.merchant.service.PaymentOrderService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 import lombok.extern.java.Log;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -37,56 +31,64 @@ public class HomePageMerchantController {
 
     @PostMapping("/homePageInfo")
     @ApiOperation(value = "获取首页基本信息", notes = "获取首页基本信息", httpMethod = "POST")
-    public ReturnJson myWorker(HttpServletRequest request) {
-        return homePageService.getHomePageInof(request);
+    @LoginRequired
+    public ReturnJson myWorker(@RequestAttribute("userId") @ApiParam(hidden = true) String merchantId) {
+        return homePageService.getHomePageInof(merchantId);
     }
 
     @PostMapping("/totalDayInfo")
+    @LoginRequired
     @ApiOperation(value = "获取总包+分包今天的支付额", notes = "获取总包+分包今天的支付额", httpMethod = "POST")
-    public ReturnJson totalDayInfo(HttpServletRequest request) {
-        return paymentOrderService.getDay(request);
+    public ReturnJson totalDayInfo(@RequestAttribute("userId") @ApiParam(hidden = true) String merchantId) {
+        return paymentOrderService.getDay(merchantId);
     }
 
     @PostMapping("/totalWeekInfo")
+    @LoginRequired
     @ApiOperation(value = "获取总包+分包本周的支付额", notes = "获取总包+分包本周的支付额", httpMethod = "POST")
-    public ReturnJson totalWeekInfo(HttpServletRequest request) {
-        return paymentOrderService.getWeek(request);
+    public ReturnJson totalWeekInfo(@RequestAttribute("userId") @ApiParam(hidden = true) String merchantId) {
+        return paymentOrderService.getWeek(merchantId);
     }
 
     @PostMapping("/totalMonthInfo")
+    @LoginRequired
     @ApiOperation(value = "获取总包+分包本月的支付额", notes = "获取总包+分包本月的支付额", httpMethod = "POST")
-    public ReturnJson totalMonthInfo(HttpServletRequest request) {
-        return paymentOrderService.getMonth(request);
+    public ReturnJson totalMonthInfo(@RequestAttribute("userId") @ApiParam(hidden = true) String merchantId) {
+        return paymentOrderService.getMonth(merchantId);
     }
 
     @PostMapping("/totalYearInfo")
+    @LoginRequired
     @ApiOperation(value = "获取总包+分包全年的支付额", notes = "获取总包+分包全年的支付额", httpMethod = "POST")
-    public ReturnJson totalYearInfo(HttpServletRequest request) {
-        return paymentOrderService.getYear(request);
+    public ReturnJson totalYearInfo(@RequestAttribute("userId") @ApiParam(hidden = true) String merchantId) {
+        return paymentOrderService.getYear(merchantId);
     }
 
     @PostMapping("/manyDayInfo")
     @LoginRequired
     @ApiOperation(value = "获取众包今天的支付额", notes = "获取众包今天的支付额", httpMethod = "POST")
-    public ReturnJson manyDayInfo(HttpServletRequest request) {
-        return paymentOrderManyService.getDay(request);
+    public ReturnJson manyDayInfo(@RequestAttribute("userId") @ApiParam(hidden = true) String merchantId) {
+        return paymentOrderManyService.getDay(merchantId);
     }
 
     @PostMapping("/manyWeekInfo")
+    @LoginRequired
     @ApiOperation(value = "获取众包本周的支付额", notes = "获取众包本周的支付额", httpMethod = "POST")
-    public ReturnJson manyWeekInfo(HttpServletRequest request) {
-        return paymentOrderManyService.getWeek(request);
+    public ReturnJson manyWeekInfo(@RequestAttribute("userId") @ApiParam(hidden = true) String merchantId) {
+        return paymentOrderManyService.getWeek(merchantId);
     }
 
     @PostMapping("/manyMonthInfo")
+    @LoginRequired
     @ApiOperation(value = "获取众包本月的支付额", notes = "获取众包本月的支付额", httpMethod = "POST")
-    public ReturnJson manyMonthInfo(HttpServletRequest request) {
-        return paymentOrderManyService.getMonth(request);
+    public ReturnJson manyMonthInfo(@RequestAttribute("userId") @ApiParam(hidden = true) String merchantId) {
+        return paymentOrderManyService.getMonth(merchantId);
     }
 
     @PostMapping("/manyYearInfo")
+    @LoginRequired
     @ApiOperation(value = "获取众包全年的支付额", notes = "获取众包全年的支付额", httpMethod = "POST")
-    public ReturnJson manyYearInfo(HttpServletRequest request) {
-        return paymentOrderManyService.getYear(request);
+    public ReturnJson manyYearInfo(@RequestAttribute("userId") @ApiParam(hidden = true) String merchantId) {
+        return paymentOrderManyService.getYear(merchantId);
     }
 }

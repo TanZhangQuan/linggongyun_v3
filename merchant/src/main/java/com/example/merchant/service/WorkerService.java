@@ -22,15 +22,15 @@ import java.util.List;
 public interface WorkerService extends IService<Worker> {
     ReturnJson getWorkerAll(String merchantId, Integer page, Integer pageSize);
 
-    ReturnJson getByIdAndAccountNameAndMobile(WorkerDto workerDto);
+    ReturnJson getByIdAndAccountNameAndMobile(String merchantId, WorkerDto workerDto);
 
     ReturnJson getWorkerInfo(String id);
 
     ReturnJson saveWorker(List<Worker> workers, String merchantId) throws Exception;
 
-    ReturnJson getWorkerByTaskId(String taskId, Integer pageNo,Integer pageSize);
+    ReturnJson getWorkerByTaskId(String taskId, Integer pageNo, Integer pageSize);
 
-    ReturnJson getCheckByTaskId(String taskId, Integer pageNo,Integer pageSize);
+    ReturnJson getCheckByTaskId(String taskId, Integer pageNo, Integer pageSize);
 
     ReturnJson getWorkerAllPaas(String managersId, Integer page, Integer pageSize) throws CommonException;
 
@@ -62,7 +62,7 @@ public interface WorkerService extends IService<Worker> {
 
     ReturnJson getWorkerInfoBytoken(String userId);
 
-    ReturnJson getPaasWorkerByTaskId(String taskId, Integer pageNo,Integer pageSize);
+    ReturnJson getPaasWorkerByTaskId(String taskId, Integer pageNo, Integer pageSize);
 
     ReturnJson registerWorker(AddWorkerDto addWorkerDto);
 }

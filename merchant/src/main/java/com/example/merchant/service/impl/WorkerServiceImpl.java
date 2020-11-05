@@ -86,7 +86,7 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
         queryWrapper.eq("company_id", merchant.getCompanyId());
         List<CompanyWorker> records = companyWorkerService.list(queryWrapper);
         Page<Worker> workerPage = null;
-        if (records != null && records.size() != 0) {
+        if (!VerificationCheck.listIsNull(records)) {
             List<String> ids = new ArrayList<>();
             for (CompanyWorker companyWorker : records) {
                 ids.add(companyWorker.getWorkerId());
@@ -105,9 +105,10 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
      * @return
      */
     @Override
-    public ReturnJson getByIdAndAccountNameAndMobile(WorkerDto workerDto) {
+    public ReturnJson getByIdAndAccountNameAndMobile(String merchantId, WorkerDto workerDto) {
+        Merchant merchant = merchantDao.selectById(merchantId);
         Page<Worker> workerPage = new Page<>(workerDto.getPage(), workerDto.getPageSize());
-        IPage<Worker> workerIPage = workerDao.selectByIdAndAccountNameAndMobile(workerPage, workerDto.getCompanyId(), workerDto.getWorkerId(), workerDto.getAccountName(), workerDto.getMobileCode());
+        IPage<Worker> workerIPage = workerDao.selectByIdAndAccountNameAndMobile(workerPage, merchant.getCompanyId(), workerDto.getWorkerId(), workerDto.getAccountName(), workerDto.getMobileCode());
         return ReturnJson.success(workerIPage);
     }
 

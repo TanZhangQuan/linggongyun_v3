@@ -6,6 +6,6 @@ import com.example.merchant.exception.CommonException;
 import javax.servlet.http.HttpServletRequest;
 
 public interface HomePageService {
-    ReturnJson getHomePageInof(HttpServletRequest request);
+    ReturnJson getHomePageInof(String merchantId);
     ReturnJson getHomePageInofpaas(String userId)throws CommonException;
 }

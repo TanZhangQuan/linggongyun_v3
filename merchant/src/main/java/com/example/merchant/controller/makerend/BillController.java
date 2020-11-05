@@ -62,8 +62,8 @@ public class BillController {
             @ApiImplicitParam(name = "year", value = "年份（如2020）", paramType = "query", required = true),
             @ApiImplicitParam(name = "month", value = "月份（1-12月）", paramType = "query", required = true)
     })
-    public ReturnJson getManyMonthBillInfo(@ApiParam(hidden = true) @RequestAttribute(value = "userId", required = false) @NotBlank(message = "您的登录以过期，请重新登录") String workerId,@NotNull @RequestParam(required = false) Integer year, @Min(value = 1, message = "月数不能小于一月") @Max(value = 12, message = "月数不能大于12月") @RequestParam(required = false) Integer month) {
-        return billService.getManyMonthBillInfo(workerId,year, month);
+    public ReturnJson getManyMonthBillInfo(@ApiParam(hidden = true) @RequestAttribute(value = "userId", required = false) @NotBlank(message = "您的登录以过期，请重新登录") String workerId, @NotNull @RequestParam(required = false) Integer year, @Min(value = 1, message = "月数不能小于一月") @Max(value = 12, message = "月数不能大于12月") @RequestParam(required = false) Integer month) {
+        return billService.getManyMonthBillInfo(workerId, year, month);
     }
 
     @LoginRequired
@@ -72,8 +72,8 @@ public class BillController {
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "year", value = "年份（如2020）", paramType = "query", required = true)
     })
-    public ReturnJson getTotalYearBillCount(@ApiParam(hidden = true) @RequestAttribute(value = "userId", required = false) @NotBlank(message = "您的登录以过期，请重新登录") String workerId,@NotNull @RequestParam(required = false) Integer year) {
-        return billService.getTotalYearBillCount(workerId,year);
+    public ReturnJson getTotalYearBillCount(@ApiParam(hidden = true) @RequestAttribute(value = "userId", required = false) @NotBlank(message = "您的登录以过期，请重新登录") String workerId, @NotNull @RequestParam(required = false) Integer year) {
+        return billService.getTotalYearBillCount(workerId, year);
     }
 
     @LoginRequired
@@ -82,7 +82,7 @@ public class BillController {
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "year", value = "年份（如2020）", paramType = "query", required = true)
     })
-    public ReturnJson getManyYearBillCount(@ApiParam(hidden = true) @RequestAttribute(value = "userId", required = false) @NotBlank(message = "您的登录以过期，请重新登录") String workerId,@NotNull @RequestParam(required = false) Integer year) {
-        return billService.getManyYearBillCount(workerId,year);
+    public ReturnJson getManyYearBillCount(@ApiParam(hidden = true) @RequestAttribute(value = "userId", required = false) @NotBlank(message = "您的登录以过期，请重新登录") String workerId, @NotNull @RequestParam(required = false) Integer year) {
+        return billService.getManyYearBillCount(workerId, year);
     }
 }
