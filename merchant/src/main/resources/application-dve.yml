@@ -53,7 +53,7 @@ mybatis-plus:
   configuration:
     map-underscore-to-camel-case: true
     auto-mapping-behavior: full
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
   mapper-locations: classpath*:mapper/*Mapper.xml
   type-aliases-package: classpath*:com.example.mybatis.entity
 
@@ -123,19 +123,19 @@ fileStaticAccesspathVideo: "/static/Video/"
 #模板文件
 TemplateFile:
   #  合同模板
-  Contract: "D:/TemplateFile/test.pdf"
+  Contract: "/root/linggongyun_v3/TemplateFile/test.pdf"
   #  总包+分包支付明细模板
-  TotalPayInventory: "D:/TemplateFile/inventory.xlsx"
+  TotalPayInventory: "/root/linggongyun_v3/TemplateFile/inventory.xlsx"
   #  众包支付明细模板
-  ManyPayInventory: "D:/TemplateFile/inventory.xlsx"
+  ManyPayInventory: "/root/linggongyun_v3/TemplateFile/inventory.xlsx"
   #  总包+分包交付支付验收单
-  TotalAcceptanceCertificate: "D:/TemplateFile/acceptanceCertificate.xlsx"
+  TotalAcceptanceCertificate: "/root/linggongyun_v3/TemplateFile/acceptanceCertificate.xlsx"
   #  众包交付支付验收单
-  ManyAcceptanceCertificate: "D:/TemplateFile/acceptanceCertificate.xlsx"
+  ManyAcceptanceCertificate: "/root/linggongyun_v3/TemplateFile/acceptanceCertificate.xlsx"
   #  导入创客的模板
-  ImportWorker: "D:/TemplateFile/importWorker.xlsx"
+  ImportWorker: "/root/linggongyun_v3/TemplateFile/importWorker.xlsx"
   #  模板文件夹路径
-  Path: "D:/TemplateFile/"
+  Path: "/root/linggongyun_v3/TemplateFile/"
   #  模板访问路径
   StaticAccesspath: "/static/TemplateFile/"
 
@@ -158,6 +158,8 @@ salary:
     confirmPayment: https://test.lianlianpay-inc.com/paymentapi/confirmPayment.htm
     #查询商户余额接口
     selectRemainingSum: https://traderapi.lianlianpay.com/traderAcctQuery.htm
+      #付款结果查询
+    queryPayment: https://test.lianlianpay-inc.com/paymentapi/queryPayment.htm
 
 
 myBank:
@@ -171,6 +173,6 @@ myBank:
   # \u5f02\u6b65\u901a\u77e5\u5730\u5740
   async-notify-url: https://hdtzdz.lgyun.com.cn/huidiaojieshou/apis/MyBank/AsyncNotify
   settlement-account: 8888888194111389
-  key-json: @activatedProperties@
+  key-json: "@activatedProperties@"
   #渠道编码
   channel-code: MYBANK00307

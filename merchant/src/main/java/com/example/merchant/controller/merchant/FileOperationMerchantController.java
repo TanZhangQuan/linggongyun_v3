@@ -27,22 +27,21 @@ public class FileOperationMerchantController {
 
     @PostMapping("/uploadWorker")
     @ApiOperation(value = "导入创客Excel表", notes = "导入创客Excel表", httpMethod = "POST")
-    public ReturnJson uploadWorker(@ApiParam(value = "导入创客Excel表",required = true) @RequestParam("workerExcel") MultipartFile workerExcel){
+    public ReturnJson uploadWorker(@ApiParam(value = "导入创客Excel表", required = true) @RequestParam("workerExcel") MultipartFile workerExcel) {
         return fileOperationService.getExcelWorker(workerExcel);
     }
 
     @PostMapping("/uploadInvoice")
     @ApiOperation(value = "上传支付清单", notes = "上传支付清单", httpMethod = "POST")
-    public ReturnJson uploadInvoice(@ApiParam(value = "上传支付清单",required = true) @RequestParam("uploadInvoice") MultipartFile uploadInvoice, HttpServletRequest request) throws IOException{
+    public ReturnJson uploadInvoice(@ApiParam(value = "上传支付清单", required = true) @RequestParam("uploadInvoice") MultipartFile uploadInvoice, HttpServletRequest request) throws IOException {
         return fileOperationService.uploadInvoice(uploadInvoice, request);
     }
 
 
     @PostMapping("/uploadJpgOrPdf")
     @ApiOperation(value = "上传JPG或PDF", notes = "上传JPG或PDF", httpMethod = "POST")
-    public ReturnJson uploadJpgOrPdf(@ApiParam(value = "上传文件",required = true) @RequestParam("uploadJpgOrPdf") MultipartFile uploadJpgOrPdf, HttpServletRequest request) throws IOException {
-        return fileOperationService.uploadJpgOrPdf(uploadJpgOrPdf,request);
+    public ReturnJson uploadJpgOrPdf(@ApiParam(value = "上传文件", required = true) @RequestParam("uploadJpgOrPdf") MultipartFile uploadJpgOrPdf, HttpServletRequest request) throws IOException {
+        return fileOperationService.uploadJpgOrPdf(uploadJpgOrPdf, request);
     }
-
 
 }

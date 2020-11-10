@@ -21,9 +21,6 @@ public class PersonalCenterController {
 
     @PostMapping("/personageInfo")
     @ApiOperation(value = "个人信息", notes = "个人信息", httpMethod = "POST")
-    @ApiImplicitParams(value = {
-            @ApiImplicitParam(name = "workerId", value = "创客ID", paramType = "query", required = true)
-    })
     @LoginRequired
      public ReturnJson personageInfo(@RequestAttribute(value = "userId") @ApiParam(hidden = true) String workerId){
         return personalCenterService.personageInfo(workerId);

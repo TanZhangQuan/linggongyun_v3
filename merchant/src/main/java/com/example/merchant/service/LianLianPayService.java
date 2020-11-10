@@ -45,5 +45,5 @@ public interface LianLianPayService extends IService<Lianlianpay> {
 
     void merchantManyNotifyUrl(HttpServletRequest request);
 
-    Map<String, String> queryPaymentByorderId(String orderId);
+    Map<String, String> queryPaymentByorderId(String merchantId, String oidPaybill);
 }
