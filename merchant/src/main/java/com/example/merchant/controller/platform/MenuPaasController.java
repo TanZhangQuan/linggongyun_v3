@@ -3,9 +3,9 @@ package com.example.merchant.controller.platform;
 
 import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.platform.SaveManagersRoleDto;
+import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.MenuService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,32 +38,36 @@ public class MenuPaasController {
 
     @ApiOperation("添加子用户")
     @PostMapping(value = "/addManagers")
-    public ReturnJson addMerchant(@Valid @RequestBody SaveManagersRoleDto saveManagersRoleDto) {
-        return menuService.savePlatRole(saveManagersRoleDto);
+    public ReturnJson addMerchant(@Valid @RequestBody SaveManagersRoleDto saveManagersRoleDto,@RequestAttribute(value = "userId") @ApiParam(hidden = true) String managersId) {
+        return menuService.savePlatRole(saveManagersRoleDto,managersId);
     }
 
+    @LoginRequired
     @ApiOperation("权限管理，查看所有用户")
     @PostMapping(value = "/getAllRole")
-    public ReturnJson getAllRole(String managersId) {
+    public ReturnJson getAllRole(@RequestAttribute(value = "userId") @ApiParam(hidden = true) String managersId) {
         return menuService.getPassAllRole(managersId);
     }
 
     @ApiOperation("权限管理，编辑子账户")
     @PostMapping(value = "/updateRole")
-    public ReturnJson updateRole(@Valid @RequestBody SaveManagersRoleDto saveManagersRoleDto) {
-        return menuService.updatePassRole(saveManagersRoleDto);
+    public ReturnJson updateRole(@Valid @RequestBody SaveManagersRoleDto saveManagersRoleDto,@RequestAttribute(value = "userId") @ApiParam(hidden = true) String managersId) {
+        return menuService.updatePassRole(saveManagersRoleDto,managersId);
     }
 
     @ApiOperation("权限管理，删除子账户")
     @PostMapping(value = "/daleteRole")
-    public ReturnJson daleteRole(@NotNull(message = "账户Id不能为空") String managersId) {
+    @ApiImplicitParams(value = {@ApiImplicitParam(name = "managersId", value = "子账户Id", required = true)})
+    public ReturnJson daleteRole(@NotNull(message = "子账户Id不能为空") @RequestParam String managersId) {
         return menuService.daletePassRole(managersId);
     }
 
 
     @ApiOperation("权限管理，修改子用户状态")
     @PostMapping(value = "/updataRoleStatus")
-    public ReturnJson updataRoleStatus(@NotNull(message = "managersId不能为空") String managersId, @NotNull(message = "status不能为空") Integer status) {
+    @ApiImplicitParams(value = {@ApiImplicitParam(name = "managersId", value = "子账户Id", required = true),
+            @ApiImplicitParam(name = "status", value = "子账户Id", required = true) })
+    public ReturnJson updataRoleStatus(@NotNull(message = "子账户Id不能为空") @RequestParam String managersId, @NotNull(message = "status不能为空") @RequestParam Integer status) {
         return menuService.updataPassRoleStatus(managersId, status);
     }
 }

@@ -41,8 +41,8 @@ public class TaskPaasController {
     @ApiOperation("查看任务详情")
     @PostMapping(value = "/getTaskById")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "taskId", value = "任务id", required = true)})
-    public ReturnJson getTaskById(@NotBlank(message = "请选择任务") @ApiParam(value = "任务id") @RequestParam String taskCode) {
-        return taskService.setTaskById(taskCode);
+    public ReturnJson getTaskById(@NotBlank(message = "请选择任务") @ApiParam(value = "任务id") @RequestParam String taskId) {
+        return taskService.setTaskById(taskId);
     }
 
     @ApiOperation("关单")

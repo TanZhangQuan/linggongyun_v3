@@ -39,11 +39,10 @@ public class PaymentOrderManyPaasController {
     private PaymentOrderService paymentOrderService;
 
 
-    @RequiresRoles("admin")
+    @LoginRequired
     @PostMapping("/findMerchant")
     @ApiOperation(value = "查询商户", notes = "查询商户", httpMethod = "POST")
-    @ApiImplicitParams(value = {@ApiImplicitParam(name = "managersId", value = "管理人员ID", required = true)})
-    public ReturnJson findMerchant(@NotBlank(message = "管理人员ID不能为空！") @RequestParam(required = false) String managersId) {
+    public ReturnJson findMerchant(@RequestAttribute(value = "userId") @ApiParam(hidden = true) String managersId) {
         return paymentOrderService.findMerchantPaas(managersId);
     }
 

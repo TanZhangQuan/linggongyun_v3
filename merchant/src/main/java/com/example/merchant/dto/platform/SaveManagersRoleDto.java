@@ -8,8 +8,6 @@ import javax.validation.constraints.NotNull;
 @Data
 public class SaveManagersRoleDto {
 
-    private String managersId;
-
     private String roleId;
 
     @NotNull(message = "姓名不能为空")
