@@ -24,19 +24,15 @@ import com.example.mybatis.po.InvoiceInfoPO;
 import com.example.mybatis.po.PaymentOrderInfoPO;
 import com.example.mybatis.vo.BillingInfoVo;
 import com.example.mybatis.vo.PaymentOrderVo;
-import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * <p>
@@ -347,7 +343,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
      */
     @Override
     public ReturnJson getDayPaas(String merchantId) throws CommonException {
-        List<String> merchantIds = acquireID.getMerchantIds(merchantId);
+        List<String> merchantIds = acquireID.getCompanyIds(merchantId);
         List<PaymentOrder> list = null;
         if (VerificationCheck.listIsNull(merchantIds)) {
             return ReturnJson.success(list);
@@ -364,7 +360,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
      */
     @Override
     public ReturnJson getWeekPaas(String merchantId) throws CommonException {
-        List<String> merchantIds = acquireID.getMerchantIds(merchantId);
+        List<String> merchantIds = acquireID.getCompanyIds(merchantId);
         List<PaymentOrder> list = null;
         if (VerificationCheck.listIsNull(merchantIds)) {
             return ReturnJson.success(list);
@@ -381,7 +377,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
      */
     @Override
     public ReturnJson getMonthPaas(String merchantId) throws CommonException {
-        List<String> merchantIds = acquireID.getMerchantIds(merchantId);
+        List<String> merchantIds = acquireID.getCompanyIds(merchantId);
         List<PaymentOrder> list = null;
         if (VerificationCheck.listIsNull(merchantIds)) {
             return ReturnJson.success(list);
@@ -398,7 +394,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
      */
     @Override
     public ReturnJson getYearPaas(String merchantId) throws CommonException {
-        List<String> merchantIds = acquireID.getMerchantIds(merchantId);
+        List<String> merchantIds = acquireID.getCompanyIds(merchantId);
         List<PaymentOrder> list = null;
         if (VerificationCheck.listIsNull(merchantIds)) {
             return ReturnJson.success(list);
@@ -415,7 +411,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
      */
     @Override
     public ReturnJson getPaymentOrderPaas(PaymentOrderDto paymentOrderDto, String managersId) throws CommonException {
-        List<String> merchantIds = acquireID.getMerchantIds(managersId);
+        List<String> merchantIds = acquireID.getCompanyIds(managersId);
         List<PaymentOrder> list = null;
         if (VerificationCheck.listIsNull(merchantIds)) {
             return ReturnJson.success(list);

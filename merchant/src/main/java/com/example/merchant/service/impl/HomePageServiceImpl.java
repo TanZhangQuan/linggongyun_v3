@@ -15,15 +15,12 @@ import com.example.mybatis.entity.Managers;
 import com.example.mybatis.entity.Merchant;
 import com.example.mybatis.mapper.*;
 import com.example.mybatis.po.InvoicePO;
-import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
-import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -132,7 +129,7 @@ public class HomePageServiceImpl implements HomePageService {
         String managersId = userId;
         Managers managers = managersDao.selectById(managersId);
         HomePageVO homePageVO = null;
-        List<String> merchantIds = acquireID.getMerchantIds(managersId);
+        List<String> merchantIds = acquireID.getCompanyIds(managersId);
         if (merchantIds == null || merchantIds.size() == 0) {
             return ReturnJson.success(homePageVO);
         }

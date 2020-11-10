@@ -2,13 +2,13 @@ package com.example.merchant.controller.platform;
 
 
 import com.example.common.util.ReturnJson;
+import com.example.merchant.dto.platform.WorkerQueryDto;
 import com.example.merchant.exception.CommonException;
 import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.WorkerService;
 import com.example.merchant.service.WorkerTaskService;
 import com.example.mybatis.entity.Worker;
 import io.swagger.annotations.*;
-import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,56 +37,24 @@ public class WorkerPaasController {
     @Resource
     private WorkerTaskService workerTaskService;
 
-    @PostMapping("/getWorkerAll")
+    @PostMapping("/getWorkerQuery")
     @LoginRequired
-    @ApiOperation(value = "获取所以已认证的创客", notes = "获取所以已认证的创客", httpMethod = "POST")
+    @ApiOperation(value = "按条件获取已认证的创客", notes = "按条件获取已认证的创客", httpMethod = "POST")
     @ApiImplicitParams(value = {
-            @ApiImplicitParam(name = "page", value = "页数", required = true),
-            @ApiImplicitParam(name = "pageSize", value = "每页的条数", required = true)
+            @ApiImplicitParam(name = "workerQuery", value = "查询条件", dataType = "WorkerQuery")
     })
-    public ReturnJson getWorkerAll(@ApiParam(hidden = true) @RequestAttribute("userId") String managersId,
-                                   @RequestParam(defaultValue = "1") Integer page,
-                                   @RequestParam(defaultValue = "10") Integer pageSize) throws CommonException {
-        return workerService.getWorkerAllPaas(managersId, page, pageSize);
+    public ReturnJson getWorkerQuery(@ApiParam(hidden = true) @RequestAttribute("userId") String managersId, @RequestBody WorkerQueryDto workerQueryDto) throws CommonException {
+        return workerService.getWorkerQuery(managersId, workerQueryDto);
     }
 
-    @PostMapping("/getWorkerAllNot")
+    @PostMapping("/getWorkerQueryNot")
     @LoginRequired
-    @ApiOperation(value = "获取所以未认证的创客", notes = "获取所以未认证的创客", httpMethod = "POST")
+    @ApiOperation(value = "按条件获取所以未认证的创客", notes = "按条件获取所以未认证的创客", httpMethod = "POST")
     @ApiImplicitParams(value = {
-            @ApiImplicitParam(name = "page", value = "页数", required = true),
-            @ApiImplicitParam(name = "pageSize", value = "每页的条数", required = true)
+            @ApiImplicitParam(name = "workerQuery", value = "查询条件", dataType = "WorkerQuery")
     })
-    public ReturnJson getWorkerAllNot(@ApiParam(hidden = true) @RequestAttribute("userId") String managersId,
-                                      @RequestParam(defaultValue = "1") Integer page,
-                                      @RequestParam(defaultValue = "10") Integer pageSize) throws CommonException {
-        return workerService.getWorkerAllNotPaas(managersId, page, pageSize);
-    }
-
-    @PostMapping("/getWorkerMany")
-    @ApiOperation(value = "按条件查询已认证的创客", notes = "按条件查询已认证的创客", httpMethod = "POST")
-    @LoginRequired
-    @ApiImplicitParams(value = {
-            @ApiImplicitParam(name = "id", value = "创客ID"),
-            @ApiImplicitParam(name = "accountName", value = "创客的真实姓名"),
-            @ApiImplicitParam(name = "mobileCode", value = "创客的手机号")
-    })
-    public ReturnJson getWorkerMany(@ApiParam(hidden = true) @RequestAttribute("userId") String managersId, @RequestParam(required = false) String id,
-                                    @RequestParam(required = false) String accountName, @RequestParam(required = false) String mobileCode) throws CommonException {
-        return workerService.getByIdAndAccountNameAndMobilePaas(managersId, id, accountName, mobileCode);
-    }
-
-    @PostMapping("/getWorkerManyNot")
-    @ApiOperation(value = "按条件查询未认证的创客", notes = "按条件查询已认证的创客", httpMethod = "POST")
-    @LoginRequired
-    @ApiImplicitParams(value = {
-            @ApiImplicitParam(name = "id", value = "创客ID"),
-            @ApiImplicitParam(name = "accountName", value = "创客的真实姓名"),
-            @ApiImplicitParam(name = "mobileCode", value = "创客的手机号")
-    })
-    public ReturnJson getWorkerManyNot(@ApiParam(hidden = true) @RequestAttribute("userId") String managersId, @RequestParam(required = false) String id,
-                                       @RequestParam(required = false) String accountName, @RequestParam(required = false) String mobileCode) throws CommonException {
-        return workerService.getByIdAndAccountNameAndMobileNotPaas(managersId, id, accountName, mobileCode);
+    public ReturnJson getWorkerQueryNot(@ApiParam(hidden = true) @RequestAttribute("userId") String managersId, @RequestBody WorkerQueryDto workerQueryDto) throws CommonException {
+        return workerService.getWorkerQueryNot(managersId, workerQueryDto);
     }
 
     @PostMapping("/getWorkerInfo")

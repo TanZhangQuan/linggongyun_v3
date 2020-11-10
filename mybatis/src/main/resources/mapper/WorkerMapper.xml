@@ -136,6 +136,29 @@
         </where>
     </select>
 
+    <select id="selectWorkerQuery" resultMap="BaseResultMap" parameterType="list">
+        select
+        a.id, account_name, mobile_code, idcard_code, bank_code, attestation, agreementSign ,a.create_date
+        from tb_worker a join tb_company_worker b on a.id = b.worker_id
+        <where>
+            b.company_id in
+            <foreach collection="merchantIds" index="index" item="merchantIds" open="(" separator="," close=")">
+                #{merchantIds}
+            </foreach>
+            <if test="workerId != null and workerId != ''">
+                and a.id = #{workerId}
+            </if>
+            <if test="accountName != null and accountName != ''">
+                and a.account_name = #{accountName}
+            </if>
+            <if test="mobileCode != null and mobileCode != ''">
+                and a.mobile_code = #{mobileCode}
+            </if>
+            and attestation = 1
+            and agreementSign = 1
+        </where>
+    </select>
+
     <select id="selectWorkerAllNot" resultMap="BaseResultMap" parameterType="list">
         select
         a.id, account_name, mobile_code, idcard_code, bank_code, attestation, agreementSign ,a.create_date

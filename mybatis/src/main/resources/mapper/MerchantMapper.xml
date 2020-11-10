@@ -69,7 +69,7 @@
         <result column="link_mobile" property="linkMobile" />
         <result column="structure" property="structure" />
         <result column="contract" property="contract" />
-        <result column="status" property="status" />
+        <result column="company_status" property="status" />
         <result column="create_date" property="createDate" />
     </resultMap>
 

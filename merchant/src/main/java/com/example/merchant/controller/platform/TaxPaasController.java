@@ -36,9 +36,9 @@ public class TaxPaasController {
     private TaxService taxService;
 
     @GetMapping("/getTaxAll")
-    @ApiOperation(value = "获取商户可用的平台服务商", notes = "获取商户可用的平台服务商", httpMethod = "GET")
-    @ApiImplicitParams(value={@ApiImplicitParam(name="companyId",value = "商户公司ID",required = true)})
-    public ReturnJson getTaxAll(@NotBlank(message = "商户ID不能为空") @RequestParam(required = false) String companyId, @NotBlank(message = "包的类型不能为空，0为总包，1为众包") @RequestParam(required = false) Integer packageStatus){
+    @ApiOperation(value = "获取商户可用的平台服务商(平台端帮助商户创建支付订单时，通过选择的商户获取商户的服务商)", notes = "获取商户可用的平台服务商(平台端帮助商户创建支付订单时，通过选择的商户获取商户的服务商)", httpMethod = "GET")
+    @ApiImplicitParams(value={@ApiImplicitParam(name="companyId",value = "商户公司ID",required = true),@ApiImplicitParam(name="packageStatus",value = "合作类型不能为空，0为总包，1为众包（建立支付订单通过支付订单的类型自动获取,不是选择）",required = true)})
+    public ReturnJson getTaxAll(@NotBlank(message = "商户ID不能为空") @RequestParam(required = false) String companyId, @NotBlank(message = "合作类型不能为空，0为总包，1为众包") @RequestParam(required = false) Integer packageStatus){
         return taxService.getTaxAll(companyId, packageStatus);
     }
 

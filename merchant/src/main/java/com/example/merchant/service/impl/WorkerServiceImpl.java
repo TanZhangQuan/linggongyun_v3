@@ -9,6 +9,7 @@ import com.example.common.sms.SenSMS;
 import com.example.common.util.*;
 import com.example.merchant.dto.makerend.AddWorkerDto;
 import com.example.merchant.dto.merchant.WorkerDto;
+import com.example.merchant.dto.platform.WorkerQueryDto;
 import com.example.merchant.exception.CommonException;
 import com.example.merchant.service.*;
 import com.example.merchant.util.AcquireID;
@@ -207,29 +208,9 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
     @Resource
     private AcquireID acquireID;
 
-    /**
-     * 分页查询管理人员下的所以创客
-     *
-     * @param managersId
-     * @param page
-     * @param pageSize
-     * @return
-     */
-    @Override
-    public ReturnJson getWorkerAllPaas(String managersId, Integer page, Integer pageSize) throws CommonException {
-        List<String> merchantIds = acquireID.getMerchantIds(managersId);
-        merchantIds.add(managersId);
-        if (VerificationCheck.listIsNull(merchantIds)) {
-            return ReturnJson.success("");
-        }
-        Page<Worker> workerPage = new Page<>(page, pageSize);
-        IPage<Worker> workerIPage = workerDao.selectWorkerAll(workerPage, merchantIds);
-        return ReturnJson.success(workerIPage);
-    }
-
     @Override
     public ReturnJson getWorkerAllNotPaas(String managersId, Integer page, Integer pageSize) throws CommonException {
-        List<String> merchantIds = acquireID.getMerchantIds(managersId);
+        List<String> merchantIds = acquireID.getCompanyIds(managersId);
         merchantIds.add(managersId);
         if (VerificationCheck.listIsNull(merchantIds)) {
             return ReturnJson.success("");
@@ -239,29 +220,9 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
         return ReturnJson.success(workerIPage);
     }
 
-    /**
-     * 按编号、姓名、手机号，查询该管理人员下已认证的创客
-     *
-     * @param managersId
-     * @param id
-     * @param accountName
-     * @param mobileCode
-     * @return
-     */
-    @Override
-    public ReturnJson getByIdAndAccountNameAndMobilePaas(String managersId, String id, String accountName, String mobileCode) throws CommonException {
-        List<String> merchantIds = acquireID.getMerchantIds(managersId);
-        merchantIds.add(managersId);
-        if (VerificationCheck.listIsNull(merchantIds)) {
-            return ReturnJson.success("");
-        }
-        List<Worker> workers = workerDao.selectByIdAndAccountNameAndMobilePaas(merchantIds, id, accountName, mobileCode);
-        return ReturnJson.success(workers);
-    }
-
     @Override
     public ReturnJson getByIdAndAccountNameAndMobileNotPaas(String managersId, String id, String accountName, String mobileCode) throws CommonException {
-        List<String> merchantIds = acquireID.getMerchantIds(managersId);
+        List<String> merchantIds = acquireID.getCompanyIds(managersId);
         merchantIds.add(managersId);
         if (VerificationCheck.listIsNull(merchantIds)) {
             return ReturnJson.success("");
@@ -269,25 +230,6 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
         List<Worker> workers = workerDao.selectByIdAndAccountNameAndMobilePaasNot(merchantIds, id, accountName, mobileCode);
         return ReturnJson.success(workers);
     }
-
-    /**
-     * 查询创客的基本信息
-     *
-     * @param id
-     * @return
-     */
-    @Override
-    public ReturnJson getWorkerInfoPaas(String id) {
-        Worker worker = workerDao.selectById(id);
-        List<WorkerTask> workerTasks = workerTaskService.list(new QueryWrapper<WorkerTask>().eq("worker_id", worker.getId()));
-        List ids = new ArrayList();
-        for (WorkerTask workerTask : workerTasks) {
-            ids.add(workerTask.getTaskId());
-        }
-        List list = taskService.listByIds(ids);
-        return ReturnJson.success(worker, list);
-    }
-
 
     /**
      * 查询创客的收入列表
@@ -611,6 +553,27 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
         } else {
             return ReturnJson.success("该手机号已经注册过，请直接登录");
         }
+    }
+
+    /**
+     * 功能描述: 按条件查询已认证的创客
+     *
+     * @param managersId
+	 * @param workerQueryDto
+     * @Return com.example.common.util.ReturnJson
+     * @Author 忆惜
+     * @Date 2020/11/10 10:50
+     */
+    @Override
+    public ReturnJson getWorkerQuery(String managersId, WorkerQueryDto workerQueryDto) throws CommonException{
+        List<String> companyIds = acquireID.getCompanyIds(managersId);
+        IPage<Worker> workerIPage = workerDao.selectWorkerQuery(new Page(workerQueryDto.getPage(), workerQueryDto.getPageSize()), companyIds, workerQueryDto.getWorkerId(), workerQueryDto.getAccountName(), workerQueryDto.getMobileCode());
+        return ReturnJson.success(workerIPage);
+    }
+
+    @Override
+    public ReturnJson getWorkerQueryNot(String managersId, WorkerQueryDto workerQueryDto) {
+        return null;
     }
 }
 

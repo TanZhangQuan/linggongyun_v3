@@ -9,7 +9,6 @@ import com.example.mybatis.po.WorkerPo;
 import com.example.mybatis.vo.WorkerPassVo;
 import com.example.mybatis.vo.WorkerVo;
 import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.session.RowBounds;
 
 import java.util.List;
 
@@ -41,6 +40,8 @@ public interface WorkerDao extends BaseMapper<Worker> {
     IPage<Worker> selectWorkerAllNot(Page page, @Param("merchantIds") List<String> merchantIds);
 
     IPage<Worker> selectWorkerAll(Page page, @Param("merchantIds") List<String> merchantIds);
+
+    IPage<Worker> selectWorkerQuery(Page page, @Param("merchantIds") List<String> merchantIds, @Param("workerId") String workerId, @Param("accountName") String accountName, @Param("mobileCode") String mobileCode);
 
     IPage<WorekerPaymentListPo> workerPaymentList(Page page, @Param("workerId") String workerId);
 
