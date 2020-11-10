@@ -18,25 +18,23 @@ import com.example.merchant.util.AcquireID;
 import com.example.merchant.util.JwtUtils;
 import com.example.merchant.vo.ExpressInfoVO;
 import com.example.merchant.vo.PaymentOrderInfoVO;
+import com.example.merchant.vo.platform.CompanyBriefVO;
 import com.example.mybatis.entity.*;
 import com.example.mybatis.mapper.*;
 import com.example.mybatis.po.InvoiceInfoPO;
 import com.example.mybatis.po.PaymentOrderInfoPO;
 import com.example.mybatis.vo.BillingInfoVo;
 import com.example.mybatis.vo.PaymentOrderVo;
-import io.jsonwebtoken.Claims;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * <p>
@@ -347,7 +345,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
      */
     @Override
     public ReturnJson getDayPaas(String merchantId) throws CommonException {
-        List<String> merchantIds = acquireID.getMerchantIds(merchantId);
+        List<String> merchantIds = acquireID.getCompanyIds(merchantId);
         List<PaymentOrder> list = null;
         if (VerificationCheck.listIsNull(merchantIds)) {
             return ReturnJson.success(list);
@@ -364,7 +362,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
      */
     @Override
     public ReturnJson getWeekPaas(String merchantId) throws CommonException {
-        List<String> merchantIds = acquireID.getMerchantIds(merchantId);
+        List<String> merchantIds = acquireID.getCompanyIds(merchantId);
         List<PaymentOrder> list = null;
         if (VerificationCheck.listIsNull(merchantIds)) {
             return ReturnJson.success(list);
@@ -381,7 +379,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
      */
     @Override
     public ReturnJson getMonthPaas(String merchantId) throws CommonException {
-        List<String> merchantIds = acquireID.getMerchantIds(merchantId);
+        List<String> merchantIds = acquireID.getCompanyIds(merchantId);
         List<PaymentOrder> list = null;
         if (VerificationCheck.listIsNull(merchantIds)) {
             return ReturnJson.success(list);
@@ -398,7 +396,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
      */
     @Override
     public ReturnJson getYearPaas(String merchantId) throws CommonException {
-        List<String> merchantIds = acquireID.getMerchantIds(merchantId);
+        List<String> merchantIds = acquireID.getCompanyIds(merchantId);
         List<PaymentOrder> list = null;
         if (VerificationCheck.listIsNull(merchantIds)) {
             return ReturnJson.success(list);
@@ -415,7 +413,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
      */
     @Override
     public ReturnJson getPaymentOrderPaas(PaymentOrderDto paymentOrderDto, String managersId) throws CommonException {
-        List<String> merchantIds = acquireID.getMerchantIds(managersId);
+        List<String> merchantIds = acquireID.getCompanyIds(managersId);
         List<PaymentOrder> list = null;
         if (VerificationCheck.listIsNull(merchantIds)) {
             return ReturnJson.success(list);
@@ -489,7 +487,13 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
         } else {
             companyInfos = companyInfoDao.selectList(new QueryWrapper<>());
         }
-        return ReturnJson.success(companyInfos);
+        List<CompanyBriefVO> companyBriefVOS = new ArrayList<>();
+        companyInfos.forEach(companyInfo -> {
+            CompanyBriefVO companyBriefVO = new CompanyBriefVO();
+            BeanUtils.copyProperties(companyInfo, companyBriefVO);
+            companyBriefVOS.add(companyBriefVO);
+        });
+        return ReturnJson.success(companyBriefVOS);
     }
 
     @Override

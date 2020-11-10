@@ -48,7 +48,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, payment_order_id, company_id, company_s_name, real_money, tax_id, platform_service_provider, company_contract, payment_inventory, turnkey_project_payment, subpackage_payment, task_id, acceptance_certificate, tax_status, composite_tax, merchant_tax, recevice_tax, package_status,payment_order_status, payment_date, create_date, update_date
+        id, company_id, company_s_name, real_money, tax_id, platform_service_provider, company_contract, payment_inventory, turnkey_project_payment, subpackage_payment, task_id, acceptance_certificate, tax_status, composite_tax, merchant_tax, recevice_tax,payment_order_status, payment_date, create_date, update_date
     </sql>
 
     <!--    查询最近30天-->
@@ -174,8 +174,7 @@
     <!--多条件查询-->
     <select id="selectManyPaas" resultMap="BaseResultMap" parameterType="list">
         select
-        id,company_s_name, tax_id, platform_service_provider, company_contract, payment_inventory,
-        turnkey_project_payment, subpackage_payment, task_id, acceptance_certificate,payment_order_status, create_date
+        <include refid="Base_Column_List" />
         from tb_payment_order
         <where>
             company_id in

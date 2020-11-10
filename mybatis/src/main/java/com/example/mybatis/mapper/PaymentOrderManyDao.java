@@ -45,7 +45,6 @@ public interface PaymentOrderManyDao extends BaseMapper<PaymentOrderMany> {
     IPage<InvoiceDetailsVo> getInvoiceDetailsByPayId(Page page,@Param("id") String id);
 
     IPage<PaymentOrderMany> selectMany(Page page, @Param("merchantId")String mercahntId, @Param("id") String id, @Param("taxId") String taxId, @Param("beginDate") String beginDate, @Param("endDate") String endDate);
-    Integer selectManyCount(@Param("merchantId")String mercahntId, @Param("id") String id, @Param("taxId") String taxId, @Param("beginDate") String beginDate, @Param("endDate") String endDate);
 
     IPage<PaymentOrderMany> selectManyPaas(Page page,@Param("merchantIds")List<String> merchantIds, @Param("merchantName")String merchantName, @Param("id") String id, @Param("taxId") String taxId, @Param("beginDate") String beginDate, @Param("endDate") String endDate);
 

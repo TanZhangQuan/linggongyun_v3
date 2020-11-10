@@ -4,6 +4,7 @@ package com.example.merchant.controller.platform;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.platform.CompanyDto;
 import com.example.merchant.exception.CommonException;
+import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.AddressService;
 import com.example.merchant.service.LinkmanService;
 import com.example.merchant.service.MerchantService;
@@ -49,8 +50,8 @@ public class MerchantPaasController {
         return merchantService.getIdAndName();
     }
 
-    @LoginRequired
     @PostMapping("/getMerchantList")
+    @LoginRequired
     @ApiOperation(value = "获取已签约的商户", notes = "获取已签约的商户", httpMethod = "POST")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "merchantId", value = "商户ID"),
@@ -59,22 +60,22 @@ public class MerchantPaasController {
             @ApiImplicitParam(name = "page", value = "页数"),
             @ApiImplicitParam(name = "pageSize", value = "一页的条数")
     })
-    public ReturnJson getMerchantList(@RequestAttribute(value = "userId") @ApiParam(hidden = true) String managersId, String merchantId, String merchantName, String linkMobile, @RequestParam(defaultValue = "1") Integer page,
+    public ReturnJson getMerchantList(@NotBlank(message = "商户ID不能为空！") @RequestParam(required = false) String managersId, @RequestAttribute("userId") @ApiParam(hidden = true) String merchantId, String merchantName, String linkMobile, @RequestParam(defaultValue = "1") Integer page,
                                       @RequestParam(defaultValue = "10") Integer pageSize) throws CommonException {
         return merchantService.getMerchantList(managersId, merchantId, merchantName, linkMobile, 1, page, pageSize);
     }
 
-    @LoginRequired
     @PostMapping("/getAuditMerchantList")
+    @LoginRequired
     @ApiOperation(value = "获取待审核的商户", notes = "获取待审核的商户", httpMethod = "POST")
     @ApiImplicitParams(value = {
-            @ApiImplicitParam(name = "merchantId", value = "商户ID",paramType = "query"),
-            @ApiImplicitParam(name = "merchantName", value = "商户名称",paramType = "query"),
-            @ApiImplicitParam(name = "linkMobile", value = "商户的联系人电话",paramType = "query"),
+            @ApiImplicitParam(name = "merchantId", value = "商户ID", paramType = "query"),
+            @ApiImplicitParam(name = "merchantName", value = "商户名称", paramType = "query"),
+            @ApiImplicitParam(name = "linkMobile", value = "商户的联系人电话", paramType = "query"),
             @ApiImplicitParam(name = "page", value = "页数"),
             @ApiImplicitParam(name = "pageSize", value = "一页的条数")
     })
-    public ReturnJson getAuditMerchantList(@RequestAttribute(value = "userId") @ApiParam(hidden = true) String managersId, String merchantId, String merchantName, String linkMobile, @RequestParam(defaultValue = "1") Integer page,
+    public ReturnJson getAuditMerchantList(@RequestAttribute("userId") @ApiParam(hidden = true) String managersId, String merchantId, String merchantName, String linkMobile, @RequestParam(defaultValue = "1") Integer page,
                                            @RequestParam(defaultValue = "10") Integer pageSize) throws CommonException {
         return merchantService.getMerchantList(managersId, merchantId, merchantName, linkMobile, 0, page, pageSize);
     }

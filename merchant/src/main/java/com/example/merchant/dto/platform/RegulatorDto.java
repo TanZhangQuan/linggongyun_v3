@@ -1,5 +1,7 @@
 package com.example.merchant.dto.platform;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -16,6 +18,7 @@ public class RegulatorDto  {
      * 监管部门ID
      */
     @ApiModelProperty(notes = "监管部门ID", value = "监管部门ID")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
 
     /**

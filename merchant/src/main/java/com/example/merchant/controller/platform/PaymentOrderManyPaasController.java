@@ -38,11 +38,10 @@ public class PaymentOrderManyPaasController {
     @Resource
     private PaymentOrderService paymentOrderService;
 
-
-    @LoginRequired
     @PostMapping("/findMerchant")
     @ApiOperation(value = "查询商户", notes = "查询商户", httpMethod = "POST")
-    public ReturnJson findMerchant(@RequestAttribute(value = "userId") @ApiParam(hidden = true) String managersId) {
+    @LoginRequired
+    public ReturnJson findMerchant(@ApiParam(hidden = true) @RequestAttribute("userId") String managersId) {
         return paymentOrderService.findMerchantPaas(managersId);
     }
 
@@ -50,8 +49,8 @@ public class PaymentOrderManyPaasController {
     @PostMapping("/getPaymentOrderManyAll")
     @ApiOperation(value = "查询众包订单", notes = "查询众包订单", httpMethod = "POST")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "paymentOrderDto", value = "查询条件", required = true, dataType = "PaymentOrderDto")})
-    public ReturnJson getPaymentOrderManyAll(@Valid @RequestBody PaymentOrderDto paymentOrderDto, @RequestAttribute("userId")@ApiParam(hidden = true) String managersId) throws CommonException {
-        return paymentOrderManyService.getPaymentOrderManyPaas(paymentOrderDto,managersId);
+    public ReturnJson getPaymentOrderManyAll(@Valid @RequestBody PaymentOrderDto paymentOrderDto, @RequestAttribute("userId") @ApiParam(hidden = true) String managersId) throws CommonException {
+        return paymentOrderManyService.getPaymentOrderManyPaas(paymentOrderDto, managersId);
     }
 
     @GetMapping("/getPaymentOrderManyInfo")

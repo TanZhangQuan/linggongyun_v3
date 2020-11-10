@@ -4,19 +4,19 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.example.mybatis.entity.Merchant">
-        <id column="id" property="id" />
-        <result column="company_id" property="companyId" />
-        <result column="company_name" property="companyName" />
-        <result column="role_id" property="roleId" />
-        <result column="user_name" property="userName" />
-        <result column="pay_pwd" property="payPwd" />
-        <result column="real_name" property="realName" />
-        <result column="pass_word" property="passWord" />
-        <result column="parent_id" property="parentId" />
-        <result column="login_mobile" property="loginMobile" />
-        <result column="status" property="status" />
-        <result column="create_date" property="createDate" />
-        <result column="update_date" property="updateDate" />
+        <id column="id" property="id"/>
+        <result column="company_id" property="companyId"/>
+        <result column="company_name" property="companyName"/>
+        <result column="role_id" property="roleId"/>
+        <result column="user_name" property="userName"/>
+        <result column="pay_pwd" property="payPwd"/>
+        <result column="real_name" property="realName"/>
+        <result column="pass_word" property="passWord"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="login_mobile" property="loginMobile"/>
+        <result column="status" property="status"/>
+        <result column="create_date" property="createDate"/>
+        <result column="update_date" property="updateDate"/>
     </resultMap>
 
     <resultMap id="BuyerById" type="com.example.mybatis.vo.BuyerVo">
@@ -39,8 +39,8 @@
     </select>
 
     <resultMap id="IdAndName" type="com.example.mybatis.vo.MerchantListVo">
-        <id column="id" property="id" />
-        <result column="company_name" property="companyName" />
+        <id column="id" property="id"/>
+        <result column="company_name" property="companyName"/>
     </resultMap>
 
     <select id="getIdAndName" resultMap="IdAndName">
@@ -59,28 +59,27 @@
     </select>
 
 
-
     <!--平台端-->
 
     <resultMap id="MerchantInfoPo" type="com.example.mybatis.po.MerchantInfoPo">
-        <id column="id" property="merchantId" />
-        <result column="company_name" property="merchantName" />
-        <result column="link_name" property="linkName" />
-        <result column="link_mobile" property="linkMobile" />
-        <result column="structure" property="structure" />
-        <result column="contract" property="contract" />
-        <result column="status" property="status" />
-        <result column="create_date" property="createDate" />
+        <id column="id" property="merchantId"/>
+        <result column="company_name" property="merchantName"/>
+        <result column="link_name" property="linkName"/>
+        <result column="link_mobile" property="linkMobile"/>
+        <result column="structure" property="structure"/>
+        <result column="contract" property="contract"/>
+        <result column="company_status" property="status"/>
+        <result column="create_date" property="createDate"/>
     </resultMap>
 
     <resultMap id="MerchantPaymentList" type="com.example.mybatis.po.MerchantPaymentListPO">
-        <id column="payment_order_id" property="paymentOrderId" />
-        <result column="merchant_name" property="merchantName" />
-        <result column="tax_name" property="taxName" />
-        <result column="package_status" property="packageStatus" />
-        <result column="real_money" property="realMoney" />
-        <result column="is_invoice" property="isInvoice" />
-        <result column="payment_sate" property="paymentDate" />
+        <id column="payment_order_id" property="paymentOrderId"/>
+        <result column="merchant_name" property="merchantName"/>
+        <result column="tax_name" property="taxName"/>
+        <result column="package_status" property="packageStatus"/>
+        <result column="real_money" property="realMoney"/>
+        <result column="is_invoice" property="isInvoice"/>
+        <result column="payment_sate" property="paymentDate"/>
     </resultMap>
 
     <!--查询商户-->
@@ -89,22 +88,21 @@
         (case when a.agent_id is null then '业务员' else '业务员/代理商' end) structure,
         a.contract, a.company_status, a.create_date
         from tb_company_info a
-        LEFT JOIN tb_linkman b on a.id = b.company_id
+        left join tb_linkman b on a.id = b.company_id and b.is_not = 0
         <where>
             a.id in
             <foreach collection="merchantIds" index="index" item="item" open="(" separator="," close=")">
                 #{item}
             </foreach>
             and a.audit_status = #{auditStatus}
-            and b.is_not = 0
             <if test="merchantId != null and merchantId != ''">
-                and a.company_id like  CONCAT('%',#{merchantId},'%')
+                and a.company_id = #{merchantId}
             </if>
             <if test="merchantName != null and merchantName != ''">
-                and a.company_name like  CONCAT('%',#{merchantName},'%')
+                and a.company_name = CONCAT('%',#{merchantName},'%')
             </if>
             <if test="linkMobile != null and linkMobile != ''">
-                and b.link_mobile like  CONCAT('%',#{linkMobile},'%')
+                and b.link_mobile = #{linkMobile}
             </if>
         </where>
     </select>
