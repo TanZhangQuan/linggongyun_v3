@@ -2,6 +2,7 @@ package com.example.merchant.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.example.common.util.ReturnJson;
+import com.example.common.util.VerificationCheck;
 import com.example.merchant.exception.CommonException;
 import com.example.merchant.service.HomePageService;
 import com.example.merchant.util.AcquireID;
@@ -11,6 +12,7 @@ import com.example.merchant.vo.platform.HomePageVO;
 import com.example.mybatis.entity.Agent;
 import com.example.mybatis.entity.CompanyWorker;
 import com.example.mybatis.entity.Managers;
+import com.example.mybatis.entity.Merchant;
 import com.example.mybatis.mapper.*;
 import com.example.mybatis.po.InvoicePO;
 import io.jsonwebtoken.Claims;
@@ -76,14 +78,9 @@ public class HomePageServiceImpl implements HomePageService {
      * @return
      */
     @Override
-    public ReturnJson getHomePageInof(HttpServletRequest request) {
-        String token = request.getHeader(TOKEN);
-        Claims claim = jwtUtils.getClaimByToken(token);
-        String managersId = null;
-        if (claim != null) {
-            managersId = claim.getSubject();
-        }
-        String companyId = managersId;
+    public ReturnJson getHomePageInof(String merchantId) {
+        Merchant merchant = merchantDao.selectById(merchantId);
+        String companyId = merchant.getCompanyId();
         HomePageMerchantVO homePageMerchantVO = new HomePageMerchantVO();
         BigDecimal payment30TotalMoney = paymentOrderDao.selectBy30Day(companyId);
         homePageMerchantVO.setPayment30TotalMoney(payment30TotalMoney);
@@ -176,6 +173,9 @@ public class HomePageServiceImpl implements HomePageService {
 
     private HomePageVO getHomePageOV(List<String> ids) {
         HomePageVO homePageVO = new HomePageVO();
+        if (VerificationCheck.listIsNull(ids)) {
+            return homePageVO;
+        }
         BigDecimal pay30Total = paymentOrderDao.selectBy30Daypaas(ids);
         BigDecimal pay30Many = paymentOrderManyDao.selectBy30Daypaas(ids);
 

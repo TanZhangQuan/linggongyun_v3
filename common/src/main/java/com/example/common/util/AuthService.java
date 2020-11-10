@@ -1,5 +1,6 @@
 package com.example.common.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -12,6 +13,7 @@ import java.util.Map;
 /**
  * 获取token类
  */
+@Slf4j
 public class AuthService {
 
     /**
@@ -24,9 +26,9 @@ public class AuthService {
      */
     public static String getAuth() {
         // 官网获取的 API Key 更新为你注册的
-        String clientId = "eLl37gBIFrwG5brOvo2Agpw3";
+        String clientId = "z1SCScoGt6zGIY28Cpd38Dfw";
         // 官网获取的 Secret Key 更新为你注册的
-        String clientSecret = "iQRvEGVOGdvYbm7COBPVa7a56SOxvVCZ";
+        String clientSecret = "ttl96fzOBGKL9jOBM6fiacg0cUjCU410";
         return getAuth(clientId, clientSecret);
     }
 
@@ -58,7 +60,7 @@ public class AuthService {
             Map<String, List<String>> map = connection.getHeaderFields();
             // 遍历所有的响应头字段
             for (String key : map.keySet()) {
-                System.err.println(key + "--->" + map.get(key));
+                log.info(key + "--->" + map.get(key));
             }
             // 定义 BufferedReader输入流来读取URL的响应
             BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
@@ -70,13 +72,12 @@ public class AuthService {
             /**
              * 返回结果示例
              */
-            System.err.println("result:" + result);
+            log.info("result:" + result);
             JSONObject jsonObject = new JSONObject(result);
             String access_token = jsonObject.getString("access_token");
             return access_token;
         } catch (Exception e) {
-            System.err.printf("获取token失败！");
-            e.printStackTrace(System.err);
+            log.error("获取token失败！"+e);
         }
         return null;
     }

@@ -9,11 +9,6 @@ import javax.validation.constraints.NotBlank;
 @Data
 @ApiModel(description = "查询创客所要的参数！")
 public class WorkerDto {
-
-    @NotBlank(message = "商户的公司ID不能为空")
-    @ApiModelProperty("商户的公司ID")
-    private String companyId;
-
     @ApiModelProperty("创客ID")
     private String workerId;
 

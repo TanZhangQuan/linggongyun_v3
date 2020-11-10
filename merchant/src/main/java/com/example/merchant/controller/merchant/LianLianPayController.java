@@ -69,4 +69,11 @@ public class LianLianPayController {
         map.put("ret_msg", "交易成功");
         return map;
     }
+
+    @PostMapping("/queryPayment")
+    @ApiOperation(value = "商户订单查询", notes = "商户订单查询", httpMethod = "POST")
+    public Map<String, String> queryPayment(@RequestParam String orderId) {
+        return lianLianPayService.queryPaymentByorderId(orderId);
+    }
+
 }

@@ -52,7 +52,6 @@ public class PaymentOrderPaasController {
     @LoginRequired
     @PostMapping("/findMerchant")
     @ApiOperation(value = "查询商户", notes = "查询商户", httpMethod = "POST")
-    @ApiImplicitParams(value = {@ApiImplicitParam(name = "managersId", value = "管理人员ID", required = true)})
     public ReturnJson findMerchant(@NotBlank(message = "支付订单不能为空！") @ApiParam(hidden = true)@RequestAttribute(value = "userId") String managersId) {
         return paymentOrderService.findMerchantPaas(managersId);
     }

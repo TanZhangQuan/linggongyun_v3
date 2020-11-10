@@ -37,9 +37,9 @@ public class TaxPaasController {
 
     @GetMapping("/getTaxAll")
     @ApiOperation(value = "获取商户可用的平台服务商", notes = "获取商户可用的平台服务商", httpMethod = "GET")
-    @ApiImplicitParams(value={@ApiImplicitParam(name="merchantId",value = "商户ID",required = true)})
-    public ReturnJson getTaxAll(@NotBlank(message = "商户ID不能为空") @RequestParam(required = false) String merchantId, @NotBlank(message = "包的类型不能为空，0为总包，1为众包") @RequestParam(required = false) Integer packageStatus){
-        return taxService.getTaxAll(merchantId, packageStatus);
+    @ApiImplicitParams(value={@ApiImplicitParam(name="companyId",value = "商户公司ID",required = true)})
+    public ReturnJson getTaxAll(@NotBlank(message = "商户ID不能为空") @RequestParam(required = false) String companyId, @NotBlank(message = "包的类型不能为空，0为总包，1为众包") @RequestParam(required = false) Integer packageStatus){
+        return taxService.getTaxAll(companyId, packageStatus);
     }
 
     @GetMapping("/getCatalogAll")

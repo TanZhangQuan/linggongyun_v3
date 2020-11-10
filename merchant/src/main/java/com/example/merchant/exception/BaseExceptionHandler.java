@@ -57,12 +57,6 @@ public class BaseExceptionHandler {
     }
 
     @ResponseBody
-    @ExceptionHandler(IOException.class)
-    public ReturnJson exceptionHandler(IOException e){
-        return ReturnJson.error("文件上传失败！");
-    }
-
-    @ResponseBody
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ReturnJson exceptionHandler(HttpRequestMethodNotSupportedException e){
         return ReturnJson.error("请求异常被拦截");
@@ -72,15 +66,16 @@ public class BaseExceptionHandler {
     @ResponseBody
     @ExceptionHandler(value = Exception.class)
     public ReturnJson exceptionHandler(Exception e) {
-        log.error(e.toString()+":"+e.getMessage());
+        log.error(e+"");
         return ReturnJson.error("服务异常，请稍后重试");
     }
 
+    //处理e签包的异常信息
     @ResponseBody
     @ExceptionHandler(value = DefineException.class)
     public ReturnJson signAContractException(DefineException e) {
-        log.error(e.toString()+":"+e.getMessage());
-        return ReturnJson.error(e.getMessage());
+        log.error(e.getE()+":"+e.getE().getMessage());
+        return ReturnJson.error(e.getE().getMessage());
     }
 
 }

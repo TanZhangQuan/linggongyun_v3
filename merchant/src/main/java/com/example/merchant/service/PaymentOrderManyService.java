@@ -21,13 +21,13 @@ import javax.servlet.http.HttpServletRequest;
  * @since 2020-09-08
  */
 public interface PaymentOrderManyService extends IService<PaymentOrderMany> {
-    ReturnJson getDay(HttpServletRequest request);
+    ReturnJson getDay(String merchantId);
 
-    ReturnJson getWeek(HttpServletRequest request);
+    ReturnJson getWeek(String merchantId);
 
-    ReturnJson getMonth(HttpServletRequest request);
+    ReturnJson getMonth(String merchantId);
 
-    ReturnJson getYear(HttpServletRequest request);
+    ReturnJson getYear(String merchantId);
 
     //根据商户id查众包待开票数据
     ReturnJson getListCSIByID(TobeinvoicedDto tobeinvoicedDto);
@@ -37,7 +37,7 @@ public interface PaymentOrderManyService extends IService<PaymentOrderMany> {
 
     ReturnJson getInvoiceDetailsByPayId(String id, Integer pageNo,Integer pageSize);
 
-    ReturnJson getPaymentOrderMany(PaymentOrderMerchantDto paymentOrderMerchantDto);
+    ReturnJson getPaymentOrderMany(String merchantId,PaymentOrderMerchantDto paymentOrderMerchantDto);
 
     ReturnJson getPaymentOrderManyInfo(String id);
 

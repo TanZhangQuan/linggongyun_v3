@@ -48,7 +48,7 @@ public interface MerchantService extends IService<Merchant> {
 
     ReturnJson auditMerchant(String merchantId);
 
-    ReturnJson merchantInfoPaas(String merchantId, HttpServletRequest request);
+    ReturnJson merchantInfoPaas(String merchantId);
 
     ReturnJson getMerchantPaymentList(String merchantId, Integer page, Integer pageSize);
 

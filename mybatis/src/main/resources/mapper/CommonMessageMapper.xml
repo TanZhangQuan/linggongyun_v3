@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mybatis.mapper.CommonMessageDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.example.mybatis.entity.CommonMessage">
+        <id column="id" property="id" />
+        <result column="message" property="message" />
+        <result column="message_status" property="messageStatus" />
+        <result column="no_order" property="noOrder" />
+        <result column="send_user_id" property="sendUserId" />
+        <result column="receive_user_id" property="receiveUserId" />
+        <result column="create_date" property="createDate" />
+        <result column="update_date" property="updateDate" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, message, message_status, no_order, send_user_id, receive_user_id, create_date, update_date
+    </sql>
+
+</mapper>

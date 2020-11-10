@@ -53,7 +53,8 @@ mybatis-plus:
   configuration:
     map-underscore-to-camel-case: true
     auto-mapping-behavior: full
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    # sql 打印
+    #log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
   mapper-locations: classpath*:mapper/*Mapper.xml
   type-aliases-package: classpath*:com.example.mybatis.entity
 
@@ -140,10 +141,10 @@ TemplateFile:
   StaticAccesspath: "/static/TemplateFile/"
 
 #发送签署合同应用的密钥
-appSecret: "872614e259eded522417c76ad0fb06f0"
+appSecret: "86d20a7f49bc3c4c20bae23d369d8853"
 
 salary:
-  #连连银通公钥（不需替换，这是连连公钥，用于报文加密和连连返回响应报文时验签，不是商户生成的公钥.
+  #连连银通公钥（不需替换，这是连连公钥，用于报文加密和连连返回响应报文时验签，不是商户生成的公钥.)
   PUBLIC_KEY_ONLINE: MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCSS/DiwdCf/aZsxxcacDnooGph3d2JOj5GXWi+q3gznZauZjkNP8SKl3J2liP0O6rU/Y/29+IUe+GTMhMOFJuZm1htAtKiu5ekW0GlBMWxf4FPkYlQkPE0FtaoMP3gYfh+OwI+fIRrpW3ySn3mScnc6Z700nU/VYrRkfcSCbSnRwIDAQAB
   #接收商户总包付款的连薪回调通知地址
   merchantNotifyUrl: http://2181s627z8.qicp.vip/merchant/lianlianpay/merchantNotifyUrl
@@ -158,3 +159,5 @@ salary:
     confirmPayment: https://test.lianlianpay-inc.com/paymentapi/confirmPayment.htm
     #查询商户余额接口
     selectRemainingSum: https://traderapi.lianlianpay.com/traderAcctQuery.htm
+    #付款结果查询
+    queryPayment: https://test.lianlianpay-inc.com/paymentapi/queryPayment.htm

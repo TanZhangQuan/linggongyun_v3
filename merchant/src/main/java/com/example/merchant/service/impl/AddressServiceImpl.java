@@ -4,10 +4,13 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.common.util.ReturnJson;
 import com.example.mybatis.entity.Address;
+import com.example.mybatis.entity.Merchant;
 import com.example.mybatis.mapper.AddressDao;
 import com.example.merchant.service.AddressService;
+import com.example.mybatis.mapper.MerchantDao;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -21,6 +24,9 @@ import java.util.List;
 @Service
 public class AddressServiceImpl extends ServiceImpl<AddressDao, Address> implements AddressService {
 
+    @Resource
+    private MerchantDao merchantDao;
+
     /**
      * 获取商户的所以收货地址
      * @param merchantId
@@ -28,7 +34,8 @@ public class AddressServiceImpl extends ServiceImpl<AddressDao, Address> impleme
      */
     @Override
     public ReturnJson getAddressAll(String merchantId) {
-        List<Address> addressList = this.list(new QueryWrapper<Address>().eq("company_id", merchantId).orderByAsc("is_not"));
+        Merchant merchant = merchantDao.selectById(merchantId);
+        List<Address> addressList = this.list(new QueryWrapper<Address>().eq("company_id", merchant.getCompanyId()).orderByAsc("is_not"));
         return ReturnJson.success(addressList);
     }
 

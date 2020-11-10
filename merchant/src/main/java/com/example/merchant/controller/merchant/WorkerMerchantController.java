@@ -3,6 +3,7 @@ package com.example.merchant.controller.merchant;
 
 import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.merchant.WorkerDto;
+import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.WorkerService;
 import com.example.merchant.service.WorkerTaskService;
 import com.example.mybatis.entity.Worker;
@@ -37,22 +38,24 @@ public class WorkerMerchantController {
     private WorkerTaskService workerTaskService;
 
     @PostMapping("/getWorkerAll")
+    @LoginRequired
     @ApiOperation(value = "获取商户的所以创客", notes = "获取商户的所以创客", httpMethod = "POST")
-    @ApiImplicitParams(value = {@ApiImplicitParam(name = "merchantId", value = "用户ID", required = true),
+    @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "page", value = "页数", required = true),
             @ApiImplicitParam(name = "pageSize", value = "每页的条数", required = true)
     })
-    public ReturnJson getWorkerAll(@NotBlank(message = "用户ID不能为空") @RequestParam(required = false) String merchantId,
+    public ReturnJson getWorkerAll(@ApiParam(hidden = true) @RequestAttribute("userId") String merchantId,
                                    @RequestParam(defaultValue = "1") Integer page,
                                    @RequestParam(defaultValue = "10") Integer pageSize) {
         return workerService.getWorkerAll(merchantId, page, pageSize);
     }
 
     @PostMapping("/getWorkerMany")
+    @LoginRequired
     @ApiOperation(value = "按条件查询创客", notes = "按条件查询创客", httpMethod = "POST")
-    @ApiImplicitParams(value = {@ApiImplicitParam(name = "workerDto", value = "查询条件",dataType = "WorkerDto", required = true)})
-    public ReturnJson getWorkerMany(@Valid @RequestBody WorkerDto workerDto) {
-        return workerService.getByIdAndAccountNameAndMobile(workerDto);
+    @ApiImplicitParams(value = {@ApiImplicitParam(name = "workerDto", value = "查询条件", dataType = "WorkerDto", required = true)})
+    public ReturnJson getWorkerMany(@ApiParam(hidden = true) @RequestAttribute("userId") String merchantId, @Valid @RequestBody WorkerDto workerDto) {
+        return workerService.getByIdAndAccountNameAndMobile(merchantId, workerDto);
     }
 
     @PostMapping("/getWorkerInfo")
@@ -63,10 +66,11 @@ public class WorkerMerchantController {
     }
 
     @PostMapping("/saveWorker")
+    @LoginRequired
     @ApiOperation(value = "导入创客", notes = "导入创客", httpMethod = "POST")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "workers", value = "需要导入的创客集合", required = true, allowMultiple = true, dataType = "Worker"),
             @ApiImplicitParam(name = "merchantId", value = "商户ID", required = true)})
-    public ReturnJson saveWorker(@NotEmpty(message = "集合不能为空") @RequestBody List<Worker> workers, @NotBlank(message = "用户ID不能为空") @RequestParam(required = false) String merchantId) throws Exception {
+    public ReturnJson saveWorker(@NotEmpty(message = "集合不能为空") @RequestBody List<Worker> workers, @ApiParam(hidden = true) @RequestAttribute("userId") String merchantId) throws Exception {
         return workerService.saveWorker(workers, merchantId);
     }
 
@@ -89,7 +93,6 @@ public class WorkerMerchantController {
                                        @ApiParam(value = "页大小") @RequestParam(defaultValue = "10") Integer pageSize) {
         return workerService.getCheckByTaskId(taskId, pageNo, pageSize);
     }
-
 
 
     @ApiOperation("剔除创客信息")
