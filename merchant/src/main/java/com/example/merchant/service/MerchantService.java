@@ -32,6 +32,8 @@ public interface MerchantService extends IService<Merchant> {
 
     ReturnJson loginMobile(String loginMobile, String checkCode, HttpServletResponse resource);
 
+    ReturnJson getmerchantCustomizedInfo(String merchantId);
+
     ReturnJson merchantInfo(String merchantId);
 
     ReturnJson updataPassWord(String loginMobile, String checkCode, String newPassWord);

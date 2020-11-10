@@ -28,6 +28,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * @author Jwei
+ */
 @Slf4j
 @Service
 public class MyBankPayServiceImpl implements MyBankPayService {
@@ -60,8 +63,8 @@ public class MyBankPayServiceImpl implements MyBankPayService {
             log.error("请勿重复支付");
             return ReturnJson.error("请勿重复支付");
         }
-
-        CompanyInfo companyInfo = companyInfoDao.selectById(paymentOrder.getCompanyId());//查询对应商户并判断商户是否注册网商银行账号没有就创建
+        //查询对应商户并判断商户是否注册网商银行账号没有就创建
+        CompanyInfo companyInfo = companyInfoDao.selectById(paymentOrder.getCompanyId());
         if (companyInfo.getMemberId() == null) {
             Enterprise enterprise = new Enterprise();
             enterprise.setUid(companyInfo.getId());
@@ -69,7 +72,7 @@ public class MyBankPayServiceImpl implements MyBankPayService {
             enterprise.setLegal_person_certificate_no(companyInfo.getCompanyManIdCard());
             enterprise.setLegal_person_certificate_type("ID_CARD");
             Map<String, Object> result = myBankService.enterpriseRegister(enterprise);
-            if (result.get("is_success").equals("F")) {
+            if ("F".equals(result.get("is_success"))) {
                 log.error("商户注册企业会员失败" + JSONUtils.toJSONString(result));
                 return ReturnJson.error(300, "商户注册企业会员失败", JSONUtils.toJSONString(result));
             } else {
@@ -82,7 +85,7 @@ public class MyBankPayServiceImpl implements MyBankPayService {
         Map<String, Object> balancebefore = myBankService.accountBalance(companyInfo.getId(), "");
         BigDecimal balance_amount_before = BigDecimal.ZERO;
         List bInfoList_before = (List) balancebefore.get("account_list");
-        if (!balancebefore.get("is_success").toString().equals("F")) {
+        if (!"F".equals(balancebefore.get("is_success").toString())) {
             if (bInfoList_before.size() > 0) {
                 Map<String, Object> bInfo = (Map) bInfoList_before.get(0);
                 balance_amount_before = new BigDecimal(bInfo.get("available_balance").toString());
@@ -99,7 +102,7 @@ public class MyBankPayServiceImpl implements MyBankPayService {
             enterprise.setUid(tax.getId());
             enterprise.setEnterprise_name(tax.getTaxName());
             Map<String, Object> result = myBankService.enterpriseRegister(enterprise);
-            if (result.get("is_success").equals("F")) {
+            if ("F".equals(result.get("is_success"))) {
                 log.error("服务商注册企业会员失败");
                 return ReturnJson.error(300, "服务商注册企业会员失败", JSONUtils.toJSONString(result));
             } else {
@@ -114,9 +117,10 @@ public class MyBankPayServiceImpl implements MyBankPayService {
         transfer.setFundin_account_type("BASIC");
         transfer.setFundout_uid(companyInfo.getId());
         transfer.setFundout_account_type("BASIC");
-        transfer.setTransfer_amount(paymentOrder.getRealMoney()); //所有该付的钱先转到平台
+        //所有该付的钱先转到平台
+        transfer.setTransfer_amount(paymentOrder.getRealMoney());
         Map<String, Object> mybankresult = myBankService.tradeTransfer(transfer);
-        if (mybankresult.get("is_success").equals("F")) {
+        if ("F".equals(mybankresult.get("is_success"))) {
             log.error("审核失败" + mybankresult.get("error_message").toString());
             return ReturnJson.error(300, "审核失败", mybankresult.get("error_message").toString());
         } else {
@@ -152,7 +156,7 @@ public class MyBankPayServiceImpl implements MyBankPayService {
                 log.error("商户付款失败:" + result.toString());
             }
         } catch (Exception e) {
-            log.info("出现不可预估操作以进行回退！" + e.getMessage());
+            log.info("出现不可预估操作！" + e.getMessage());
         }
     }
 
@@ -168,7 +172,8 @@ public class MyBankPayServiceImpl implements MyBankPayService {
             log.error("请勿重复支付");
             return ReturnJson.error("请勿重复支付");
         }
-        CompanyInfo companyInfo = companyInfoDao.selectById(paymentOrderMany.getCompanyId());//查询对应商户并判断商户是否注册网商银行账号没有就创建
+        //查询对应商户并判断商户是否注册网商银行账号没有就创建
+        CompanyInfo companyInfo = companyInfoDao.selectById(paymentOrderMany.getCompanyId());
         if (companyInfo.getMemberId() == null) {
             Enterprise enterprise = new Enterprise();
             enterprise.setUid(companyInfo.getId());
@@ -176,7 +181,7 @@ public class MyBankPayServiceImpl implements MyBankPayService {
             enterprise.setLegal_person_certificate_no(companyInfo.getCompanyManIdCard());
             enterprise.setLegal_person_certificate_type("ID_CARD");
             Map<String, Object> result = myBankService.enterpriseRegister(enterprise);
-            if (result.get("is_success").equals("F")) {
+            if ("F".equals(result.get("is_success"))) {
                 log.error("商户注册企业会员失败:meg{}", JSONUtils.toJSONString(result));
                 return ReturnJson.error(300, "商户注册企业会员失败", JSONUtils.toJSONString(result));
             } else {
@@ -189,7 +194,7 @@ public class MyBankPayServiceImpl implements MyBankPayService {
         Map<String, Object> balancebefore = myBankService.accountBalance(companyInfo.getId(), "");
         BigDecimal balance_amount_before = BigDecimal.ZERO;
         List bInfoList_before = (List) balancebefore.get("account_list");
-        if (!balancebefore.get("is_success").toString().equals("F")) {
+        if (!"F".equals(balancebefore.get("is_success").toString())) {
             if (bInfoList_before.size() > 0) {
                 Map<String, Object> bInfo = (Map) bInfoList_before.get(0);
                 balance_amount_before = new BigDecimal(bInfo.get("available_balance").toString());
@@ -206,7 +211,7 @@ public class MyBankPayServiceImpl implements MyBankPayService {
             enterprise.setUid(tax.getId());
             enterprise.setEnterprise_name(tax.getTaxName());
             Map<String, Object> result = myBankService.enterpriseRegister(enterprise);
-            if (result.get("is_success").equals("F")) {
+            if ("F".equals(result.get("is_success"))) {
                 log.error("服务商注册企业会员失败{}", result.get("error_code"));
                 return ReturnJson.error(300, "服务商注册企业会员失败", JSONUtils.toJSONString(result));
             } else {
@@ -221,9 +226,10 @@ public class MyBankPayServiceImpl implements MyBankPayService {
         transfer.setFundin_account_type("BASIC");
         transfer.setFundout_uid(companyInfo.getId());
         transfer.setFundout_account_type("BASIC");
-        transfer.setTransfer_amount(paymentOrderMany.getRealMoney()); //所有该付的钱先转到平台
+        //所有该付的钱先转到平台
+        transfer.setTransfer_amount(paymentOrderMany.getRealMoney());
         Map<String, Object> mybankresult = myBankService.tradeTransfer(transfer);
-        if (mybankresult.get("is_success").equals("F")) {
+        if ("F".equals(mybankresult.get("is_success"))) {
             log.error("审核失败" + mybankresult.get("error_message").toString());
             return ReturnJson.error(300, "审核失败", mybankresult.get("error_message").toString());
         } else {
@@ -294,7 +300,7 @@ public class MyBankPayServiceImpl implements MyBankPayService {
         } else {
             Map<String, Object> map = myBankService.enterpriseInfoModify(enterprise);
             if (("F").equals(map.get("is_success"))) {
-                log.info("商户注册企业会员失败{}", map.get("error_message"));
+                log.info("商户修改企业会员失败{}", map.get("error_message"));
                 return ReturnJson.error("商户修改企业会员失败");
             } else {
                 return ReturnJson.success("修改成功");

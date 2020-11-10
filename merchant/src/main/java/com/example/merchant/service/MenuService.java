@@ -30,11 +30,11 @@ public interface MenuService extends IService<Menu> {
 
     ReturnJson updataRoleStatus(String merchantId, Integer status);
 
-    ReturnJson savePlatRole(SaveManagersRoleDto saveManagersRoleDto);
+    ReturnJson savePlatRole(SaveManagersRoleDto saveManagersRoleDto,String managersId);
 
     ReturnJson getPassAllRole(String managersId);
 
-    ReturnJson updatePassRole(SaveManagersRoleDto saveManagersRoleDto);
+    ReturnJson updatePassRole(SaveManagersRoleDto saveManagersRoleDto,String managersId);
 
     ReturnJson daletePassRole(String managersId);
 
