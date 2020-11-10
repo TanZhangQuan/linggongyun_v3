@@ -9,6 +9,7 @@ import com.example.merchant.service.WorkerService;
 import com.example.merchant.service.WorkerTaskService;
 import com.example.mybatis.entity.Worker;
 import io.swagger.annotations.*;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,7 +42,9 @@ public class WorkerPaasController {
     @LoginRequired
     @ApiOperation(value = "按条件获取已认证的创客", notes = "按条件获取已认证的创客", httpMethod = "POST")
     @ApiImplicitParams(value = {
-            @ApiImplicitParam(name = "workerQueryDto", value = "查询条件", dataType = "WorkerQueryDto")
+            @ApiImplicitParam(name = "id", value = "创客ID"),
+            @ApiImplicitParam(name = "accountName", value = "创客的真实姓名"),
+            @ApiImplicitParam(name = "mobileCode", value = "创客的手机号")
     })
     public ReturnJson getWorkerQuery(@ApiParam(hidden = true) @RequestAttribute("userId") String managersId, @RequestBody WorkerQueryDto workerQueryDto) throws CommonException {
         return workerService.getWorkerQuery(managersId, workerQueryDto);
@@ -51,7 +54,9 @@ public class WorkerPaasController {
     @LoginRequired
     @ApiOperation(value = "按条件获取所以未认证的创客", notes = "按条件获取所以未认证的创客", httpMethod = "POST")
     @ApiImplicitParams(value = {
-            @ApiImplicitParam(name = "workerQueryDto", value = "查询条件", dataType = "WorkerQueryDto")
+            @ApiImplicitParam(name = "id", value = "创客ID"),
+            @ApiImplicitParam(name = "accountName", value = "创客的真实姓名"),
+            @ApiImplicitParam(name = "mobileCode", value = "创客的手机号")
     })
     public ReturnJson getWorkerQueryNot(@ApiParam(hidden = true) @RequestAttribute("userId") String managersId, @RequestBody WorkerQueryDto workerQueryDto) throws CommonException {
         return workerService.getWorkerQueryNot(managersId, workerQueryDto);
@@ -113,7 +118,7 @@ public class WorkerPaasController {
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "state", value = "当前任务的状态", required = true),
             @ApiImplicitParam(name = "workerId", value = "创客Id", required = true)})
     public ReturnJson eliminateWorker(@NotBlank(message = "当前任务的状态") @ApiParam(value = "任务状态") @RequestParam Integer state,
-                                      @ApiParam(value = "创客id") String workerId) {
+                                      @ApiParam(value = "创客id") @RequestParam String workerId) {
         return workerTaskService.eliminateWorker(state, workerId);
     }
 

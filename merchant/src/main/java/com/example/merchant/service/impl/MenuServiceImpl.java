@@ -226,14 +226,14 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
      */
     @Override
     @Transactional
-    public ReturnJson savePlatRole(SaveManagersRoleDto saveManagersRoleDto) {
+    public ReturnJson savePlatRole(SaveManagersRoleDto saveManagersRoleDto,String managersId) {
         Managers managersOne = null;
-        String token = redisDao.get(saveManagersRoleDto.getManagersId());
+        String token = redisDao.get(managersId);
         if (token == null) {
             return ReturnJson.error("请先登录");
         }
         Managers managers = new Managers();
-        managers.setParentId(saveManagersRoleDto.getManagersId());
+        managers.setParentId(managersId);
         managers.setRealName(saveManagersRoleDto.getRealName());
 
         MerchantRole role = new MerchantRole();
@@ -243,7 +243,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
         int num = merchantRoleDao.insert(role);
 
         if (saveManagersRoleDto.getMobileCode() == null) {
-            managersOne = managersDao.selectById(saveManagersRoleDto.getManagersId());
+            managersOne = managersDao.selectById(managersId);
             managers.setMobileCode(managersOne.getMobileCode());
         }
         managers.setUserName(saveManagersRoleDto.getUserName());
@@ -283,7 +283,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
      * @return
      */
     @Override
-    public ReturnJson updatePassRole(SaveManagersRoleDto saveManagersRoleDto) {
+    public ReturnJson updatePassRole(SaveManagersRoleDto saveManagersRoleDto,String managersId) {
         MerchantRole merchantRole = new MerchantRole();
         merchantRole.setId(saveManagersRoleDto.getRoleId());
         merchantRole.setRoleName(saveManagersRoleDto.getRoleNmae());
@@ -301,7 +301,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
             }
 
             Managers managers = new Managers();
-            managers.setId(saveManagersRoleDto.getManagersId());
+            managers.setId(managersId);
             managers.setRealName(saveManagersRoleDto.getRealName());
             managers.setMobileCode(saveManagersRoleDto.getMobileCode());
             managers.setPassWord(PWD_KEY + MD5.md5(saveManagersRoleDto.getPassWord()));

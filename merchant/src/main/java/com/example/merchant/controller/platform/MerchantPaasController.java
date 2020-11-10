@@ -60,7 +60,7 @@ public class MerchantPaasController {
             @ApiImplicitParam(name = "page", value = "页数"),
             @ApiImplicitParam(name = "pageSize", value = "一页的条数")
     })
-    public ReturnJson getMerchantList(@RequestAttribute("userId") @ApiParam(hidden = true) String managersId, String merchantId, String merchantName, String linkMobile, @RequestParam(defaultValue = "1") Integer page,
+    public ReturnJson getMerchantList(@NotBlank(message = "商户ID不能为空！") @RequestParam(required = false) String managersId, @RequestAttribute("userId") @ApiParam(hidden = true) String merchantId, String merchantName, String linkMobile, @RequestParam(defaultValue = "1") Integer page,
                                       @RequestParam(defaultValue = "10") Integer pageSize) throws CommonException {
         return merchantService.getMerchantList(managersId, merchantId, merchantName, linkMobile, 1, page, pageSize);
     }

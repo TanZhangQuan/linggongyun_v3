@@ -212,6 +212,13 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         }
     }
 
+    @Override
+    public ReturnJson getmerchantCustomizedInfo(String merchantId) {
+        Merchant merchant=merchantDao.selectById(merchantId);
+        merchant.setPassWord("");
+        return ReturnJson.success(merchant);
+    }
+
     /**
      * 获取商户信息
      *

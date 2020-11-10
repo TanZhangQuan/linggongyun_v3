@@ -10,6 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * @author Jwei
+ */
 @Api(value = "创客网商银行个人信息", tags = "创客网商银行个人信息")
 @RestController
 @RequestMapping("/makerend/myBankWorker")
@@ -55,7 +58,7 @@ public class MyBankWorkerController {
     @ApiOperation(value = "解绑网商银行卡", notes = "解绑网商银行卡", httpMethod = "POST")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "bankId", value = "绑定的网商银行卡", required = true)})
     public ReturnJson bankCardUnBind(String bankId,
-                                   @RequestAttribute(value = "userId") @ApiParam(hidden = true) String userId) throws Exception {
+                                     @RequestAttribute(value = "userId") @ApiParam(hidden = true) String userId) throws Exception {
         return myBankWorkerService.bankCardUnBind(bankId, userId);
     }
 }
