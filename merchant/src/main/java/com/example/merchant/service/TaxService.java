@@ -18,6 +18,7 @@ import com.example.mybatis.entity.Tax;
  */
 public interface TaxService extends IService<Tax> {
     ReturnJson getTaxAll(String merchantId, Integer packageStatus);
+    ReturnJson getTaxPaasAll(String companyId, Integer packageStatus);
 
     ReturnJson getCatalogAll();
 

@@ -32,10 +32,6 @@ public interface WorkerService extends IService<Worker> {
 
     ReturnJson getCheckByTaskId(String taskId, Integer pageNo, Integer pageSize);
 
-    ReturnJson getWorkerAllNotPaas(String managersId, Integer page, Integer pageSize) throws CommonException;
-
-    ReturnJson getByIdAndAccountNameAndMobileNotPaas(String managersId, String id, String accountName, String mobileCode) throws CommonException;
-
     ReturnJson getWorkerPaymentListPaas(String id, Integer page, Integer pageSize);
 
     ReturnJson updateWorkerPaas(Worker worker);
@@ -80,5 +76,5 @@ public interface WorkerService extends IService<Worker> {
      * @Author 忆惜
      * @Date 2020/11/10 10:56
      */
-    ReturnJson getWorkerQueryNot(String managersId, WorkerQueryDto workerQueryDto);
+    ReturnJson getWorkerQueryNot(String managersId, WorkerQueryDto workerQueryDto) throws CommonException;
 }

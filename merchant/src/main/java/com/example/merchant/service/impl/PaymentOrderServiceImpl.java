@@ -18,12 +18,14 @@ import com.example.merchant.util.AcquireID;
 import com.example.merchant.util.JwtUtils;
 import com.example.merchant.vo.ExpressInfoVO;
 import com.example.merchant.vo.PaymentOrderInfoVO;
+import com.example.merchant.vo.platform.CompanyBriefVO;
 import com.example.mybatis.entity.*;
 import com.example.mybatis.mapper.*;
 import com.example.mybatis.po.InvoiceInfoPO;
 import com.example.mybatis.po.PaymentOrderInfoPO;
 import com.example.mybatis.vo.BillingInfoVo;
 import com.example.mybatis.vo.PaymentOrderVo;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -485,7 +487,13 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
         } else {
             companyInfos = companyInfoDao.selectList(new QueryWrapper<>());
         }
-        return ReturnJson.success(companyInfos);
+        List<CompanyBriefVO> companyBriefVOS = new ArrayList<>();
+        companyInfos.forEach(companyInfo -> {
+            CompanyBriefVO companyBriefVO = new CompanyBriefVO();
+            BeanUtils.copyProperties(companyInfo, companyBriefVO);
+            companyBriefVOS.add(companyBriefVO);
+        });
+        return ReturnJson.success(companyBriefVOS);
     }
 
     @Override

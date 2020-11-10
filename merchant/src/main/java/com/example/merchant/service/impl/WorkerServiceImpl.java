@@ -208,29 +208,6 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
     @Resource
     private AcquireID acquireID;
 
-    @Override
-    public ReturnJson getWorkerAllNotPaas(String managersId, Integer page, Integer pageSize) throws CommonException {
-        List<String> merchantIds = acquireID.getCompanyIds(managersId);
-        merchantIds.add(managersId);
-        if (VerificationCheck.listIsNull(merchantIds)) {
-            return ReturnJson.success("");
-        }
-        Page<Worker> workerPage = new Page<>(page, pageSize);
-        IPage<Worker> workerIPage = workerDao.selectWorkerAllNot(workerPage, merchantIds);
-        return ReturnJson.success(workerIPage);
-    }
-
-    @Override
-    public ReturnJson getByIdAndAccountNameAndMobileNotPaas(String managersId, String id, String accountName, String mobileCode) throws CommonException {
-        List<String> merchantIds = acquireID.getCompanyIds(managersId);
-        merchantIds.add(managersId);
-        if (VerificationCheck.listIsNull(merchantIds)) {
-            return ReturnJson.success("");
-        }
-        List<Worker> workers = workerDao.selectByIdAndAccountNameAndMobilePaasNot(merchantIds, id, accountName, mobileCode);
-        return ReturnJson.success(workers);
-    }
-
     /**
      * 查询创客的收入列表
      *
@@ -571,9 +548,20 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
         return ReturnJson.success(workerIPage);
     }
 
+    /**
+     * 功能描述: 按条件查询未认证的创客
+     *
+     * @param managersId
+	 * @param workerQueryDto
+     * @Return com.example.common.util.ReturnJson
+     * @Author 忆惜
+     * @Date 2020/11/10 11:53
+     */
     @Override
-    public ReturnJson getWorkerQueryNot(String managersId, WorkerQueryDto workerQueryDto) {
-        return null;
+    public ReturnJson getWorkerQueryNot(String managersId, WorkerQueryDto workerQueryDto) throws CommonException{
+        List<String> companyIds = acquireID.getCompanyIds(managersId);
+        IPage<Worker> workerIPage = workerDao.selectWorkerQueryNot(new Page(workerQueryDto.getPage(), workerQueryDto.getPageSize()), companyIds, workerQueryDto.getWorkerId(), workerQueryDto.getAccountName(), workerQueryDto.getMobileCode());
+        return ReturnJson.success(workerIPage);
     }
 }
 

@@ -353,15 +353,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         List<String> merchantIds = acquireID.getCompanyIds(managersId);
         Page<MerchantInfoPo> merchantPage = new Page<>(page, pageSize);
         IPage<MerchantInfoPo> merchantInfoPoIPage = merchantDao.selectMerchantInfoPo(merchantPage, merchantIds, merchantId, merchantName, linkMobile, auditStatus);
-        ReturnJson returnJson = new ReturnJson();
-        returnJson.setCode(200);
-        returnJson.setState("success");
-        returnJson.setFinished(true);
-        returnJson.setPageSize(pageSize);
-        returnJson.setItemsCount((int) merchantInfoPoIPage.getTotal());
-        returnJson.setPageCount((int) merchantInfoPoIPage.getPages());
-        returnJson.setData(merchantInfoPoIPage.getRecords());
-        return returnJson;
+        return ReturnJson.success(merchantInfoPoIPage);
     }
 
     /**

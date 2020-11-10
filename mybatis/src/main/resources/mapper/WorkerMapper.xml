@@ -70,14 +70,14 @@
     </sql>
 
     <sql id="ByIdAndAccountNameAndMobile">
-        <if test="id != null and id != ''">
-            and a.id like CONCAT('%',#{id},'%')
+        <if test="workerId != null and workerId != ''">
+            and a.id = #{workerId}
         </if>
         <if test="accountName != null and accountName != ''">
             and account_name like CONCAT('%',#{accountName},'%')
         </if>
         <if test="mobileCode != null and mobileCode != ''">
-            and mobile_code like CONCAT('%',#{mobileCode},'%')
+            and mobile_code = #{mobileCode}
         </if>
     </sql>
 
@@ -91,48 +91,18 @@
         </where>
     </select>
 
-    <select id="selectByIdAndAccountNameAndMobilePaas" resultMap="BaseResultMap" parameterType="list">
+    <select id="selectWorkerQueryNot" resultMap="BaseResultMap" parameterType="list">
         select
         a.id, account_name, mobile_code, idcard_code, bank_code, attestation, agreementSign ,a.create_date
         from tb_worker a join tb_company_worker b on a.id = b.worker_id
         <where>
             b.company_id in
-            <foreach collection="merchantIds" index="index" item="merchantIds" open="(" separator="," close=")">
-                #{merchantIds}
-            </foreach>
-            and attestation = 1
-            and agreementSign = 1
-            <include refid="ByIdAndAccountNameAndMobile"></include>
-        </where>
-    </select>
-
-    <select id="selectByIdAndAccountNameAndMobilePaasNot" resultMap="BaseResultMap" parameterType="list">
-        select
-        a.id, account_name, mobile_code, idcard_code, bank_code, attestation, agreementSign ,a.create_date
-        from tb_worker a join tb_company_worker b on a.id = b.worker_id
-        <where>
-            b.company_id in
-            <foreach collection="merchantIds" index="index" item="merchantIds" open="(" separator="," close=")">
-                #{merchantIds}
+            <foreach collection="companyIds" index="index" item="item" open="(" separator="," close=")">
+                #{item}
             </foreach>
             <include refid="ByIdAndAccountNameAndMobile"></include>
             and (attestation = 0
             or agreementSign = 0)
-        </where>
-        limit 0,10
-    </select>
-
-    <select id="selectWorkerAll" resultMap="BaseResultMap" parameterType="list">
-        select
-        a.id, account_name, mobile_code, idcard_code, bank_code, attestation, agreementSign ,a.create_date
-        from tb_worker a join tb_company_worker b on a.id = b.worker_id
-        <where>
-            b.company_id in
-            <foreach collection="merchantIds" index="index" item="merchantIds" open="(" separator="," close=")">
-                #{merchantIds}
-            </foreach>
-            and attestation = 1
-            and agreementSign = 1
         </where>
     </select>
 
@@ -142,37 +112,14 @@
         from tb_worker a join tb_company_worker b on a.id = b.worker_id
         <where>
             b.company_id in
-            <foreach collection="merchantIds" index="index" item="merchantIds" open="(" separator="," close=")">
-                #{merchantIds}
+            <foreach collection="companyIds" index="index" item="item" open="(" separator="," close=")">
+                #{item}
             </foreach>
-            <if test="workerId != null and workerId != ''">
-                and a.id = #{workerId}
-            </if>
-            <if test="accountName != null and accountName != ''">
-                and a.account_name = #{accountName}
-            </if>
-            <if test="mobileCode != null and mobileCode != ''">
-                and a.mobile_code = #{mobileCode}
-            </if>
+            <include refid="ByIdAndAccountNameAndMobile"></include>
             and attestation = 1
             and agreementSign = 1
         </where>
     </select>
-
-    <select id="selectWorkerAllNot" resultMap="BaseResultMap" parameterType="list">
-        select
-        a.id, account_name, mobile_code, idcard_code, bank_code, attestation, agreementSign ,a.create_date
-        from tb_worker a join tb_company_worker b on a.id = b.worker_id
-        <where>
-            b.company_id in
-            <foreach collection="merchantIds" index="index" item="merchantIds" open="(" separator="," close=")">
-                #{merchantIds}
-            </foreach>
-            and (attestation = 0
-            or agreementSign = 0)
-        </where>
-    </select>
-
 
     <select id="getWorkerByTaskId" resultMap="WorkerPo">
         SELECT w.id,w.worker_name,w.mobile_code,w.idcard_code,w.attestation,w.agreementUrl,wt.create_date FROM tb_worker_task as wt,tb_worker as w
