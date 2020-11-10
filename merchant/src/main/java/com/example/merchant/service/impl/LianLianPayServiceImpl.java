@@ -76,6 +76,7 @@ public class LianLianPayServiceImpl extends ServiceImpl<LianlianpayDao, Lianlian
     @Resource
     private PaymentHistoryService paymentHistoryService;
 
+
     /**
      * 连连公钥
      */
@@ -773,8 +774,10 @@ public class LianLianPayServiceImpl extends ServiceImpl<LianlianpayDao, Lianlian
     }
 
     @Override
-    public Map<String, String> queryPaymentByorderId(String orderId) {
-        return this.queryPayment("201703280000324272", orderId, "MIICeQIBADANBgkqhkiG9w0BAQEFAASCAmMwggJfAgEAAoGBAK5oCtldgp6A0cdjiRjYTJ3fFxBZ55bmFqNxCSICEMp4loS2a0Qm42bov5V3zmmgbhnOJh13dEZU8a1SEeoiYiiKE0F5Pan+RPt329F5YXLfT0h87N3YPmzfx2xiSJa3snmLy0gQHyo/+TfrO59HnY3DuB7aX0U5MkSMQauBiORLAgMBAAECgYEArQiCgwe4eQN7nePN+D1ZPmRA4LMiBt9+5GdYVUpRWF/tjfviTnp6sPYIZgW4X6mQsr+Jp0CFtuW95WSAa5fzY3ulxchf34Hxt1j4h/9IcMAc0qPdB0HTF7M06eEpVLZ5GnbpepStB18HBaGO66kqnwUZ38Hub2EZ8vwN8O8+q1ECQQDaATZ7W9TmPovPhUlerbYEzM2v2IpkhIaziDpwV152bta215fql1iwKINibCta/PYU7spZSLcNpJumHz93OUYJAkEAzM2W2hgujCnZm8trR+c7aY6tlo/8GSRRvFVxnfUOGKYdALXGGYoWE5donH5/2Yfkzzivqar/e/kc+qbFTLCMswJBAL2WRG0vRY0eY7QLM+1UoHC4M0Bzzpbv8bz8AeZk9M+GQNAt2f23tPctpGTZsTKlvtQhfnP7GsaQmpPzpNvoQRECQQCeGmRHT323pKMiG2Jhase50HR/k/345snWi1ufpktQigQ/xRP+KVSroSoYDavjIX5o3oj1gVWjvgc6FL6hWnXzAkEAlyzQsNoFu65uN8Cdc3bHm01H6UHsCdjR5p3KGK3RbAydAbbXInE3003duU/JxWh8P7fVpJohXQc4eh4bIBEhuw==");
+    public Map<String, String> queryPaymentByorderId(String merchantId, String oidPaybill) {
+        Merchant merchant = merchantDao.selectById(merchantId);
+        Lianlianpay lianlianpay = this.getOne(new QueryWrapper<Lianlianpay>().lambda().eq(Lianlianpay::getCompanyId, merchant.getCompanyId()));
+        return this.queryPayment(lianlianpay.getOidPartner(), null, oidPaybill,lianlianpay.getPrivateKey());
     }
 
     private Map<String, Object> selectRemainingSum(String oidPartner, String privateKey) {
@@ -791,6 +794,20 @@ public class LianLianPayServiceImpl extends ServiceImpl<LianlianpayDao, Lianlian
     private Map<String, String> queryPayment(String oidPartner, String noOrder, String privateKey) {
         PaymentRequestBean paymentRequestBean = new PaymentRequestBean();
         paymentRequestBean.setOid_partner(oidPartner);
+        paymentRequestBean.setApi_version("1.0");
+        paymentRequestBean.setNo_order(noOrder);
+        paymentRequestBean.setSign_type(SignTypeEnum.RSA.getCode());
+        String signData = SignUtil.genSignData(JSON.parseObject((JSON.toJSONString(paymentRequestBean))));
+        paymentRequestBean.setSign(RSAUtil.sign(privateKey, signData));
+        String res = HttpUtil.post(queryPayment, JSON.toJSONString(paymentRequestBean));
+        log.info("商户付款查询返回数据：" + res);
+        return JsonUtils.jsonToPojo(res, new HashMap<String, String>().getClass());
+    }
+
+    private Map<String, String> queryPayment(String oidPartner, String noOrder, String oidPaybill,String privateKey) {
+        PaymentRequestBean paymentRequestBean = new PaymentRequestBean();
+        paymentRequestBean.setOid_partner(oidPartner);
+        paymentRequestBean.setOid_paybill(oidPaybill);
         paymentRequestBean.setApi_version("1.0");
         paymentRequestBean.setNo_order(noOrder);
         paymentRequestBean.setSign_type(SignTypeEnum.RSA.getCode());

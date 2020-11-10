@@ -72,8 +72,8 @@ public class LianLianPayController {
 
     @PostMapping("/queryPayment")
     @ApiOperation(value = "商户订单查询", notes = "商户订单查询", httpMethod = "POST")
-    public Map<String, String> queryPayment(@RequestParam String orderId) {
-        return lianLianPayService.queryPaymentByorderId(orderId);
+    public Map<String, String> queryPayment(@ApiParam(hidden = true) @RequestAttribute("userId") String merchantId, @RequestParam String oidPaybill) {
+        return lianLianPayService.queryPaymentByorderId(merchantId, oidPaybill);
     }
 
 }
