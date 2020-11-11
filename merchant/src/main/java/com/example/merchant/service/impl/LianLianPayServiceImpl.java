@@ -37,7 +37,9 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 
@@ -386,6 +388,8 @@ public class LianLianPayServiceImpl extends ServiceImpl<LianlianpayDao, Lianlian
             paymentHistory.setOidPaybill(result.get("oid_paybill"));
             paymentHistory.setMoneyOrder(new BigDecimal(result.get("money_order")));
             paymentHistory.setResultPay(result.get("result_pay"));
+            paymentHistory.setUserType(UserType.MERCHANT);
+            paymentHistory.setPayDate(DateUtil.parseLocalDateTime(result.get("dt_order"),DatePattern.PURE_DATETIME_PATTERN));
             paymentHistoryService.saveOrUpdate(paymentHistory);
 
             if ("SUCCESS".equals(result.get("result_pay").toUpperCase())) {
@@ -752,6 +756,8 @@ public class LianLianPayServiceImpl extends ServiceImpl<LianlianpayDao, Lianlian
             paymentHistory.setOidPaybill(result.get("oid_paybill"));
             paymentHistory.setMoneyOrder(new BigDecimal(result.get("money_order")));
             paymentHistory.setResultPay(result.get("result_pay"));
+            paymentHistory.setUserType(UserType.MERCHANT);
+            paymentHistory.setPayDate(DateUtil.parseLocalDateTime(result.get("dt_order"),DatePattern.PURE_DATETIME_PATTERN));
             paymentHistoryService.saveOrUpdate(paymentHistory);
 
             if ("SUCCESS".equals(result.get("result_pay"))) {
@@ -774,10 +780,14 @@ public class LianLianPayServiceImpl extends ServiceImpl<LianlianpayDao, Lianlian
     }
 
     @Override
-    public Map<String, String> queryPaymentByorderId(String merchantId, String oidPaybill) {
+    public Map<String, String> queryPaymentByorderId(String merchantId, String oidPaybill) throws CommonException {
         Merchant merchant = merchantDao.selectById(merchantId);
         Lianlianpay lianlianpay = this.getOne(new QueryWrapper<Lianlianpay>().lambda().eq(Lianlianpay::getCompanyId, merchant.getCompanyId()));
-        return this.queryPayment(lianlianpay.getOidPartner(), null, oidPaybill,lianlianpay.getPrivateKey());
+        Map<String, String> result = this.queryPayment(lianlianpay.getOidPartner(), "", oidPaybill, lianlianpay.getPrivateKey());
+        if ("0000".equals(result.get("ret_code"))) {
+            return result;
+        }
+        throw new CommonException(Integer.valueOf(result.get("ret_code")), result.get("ret_msg"));
     }
 
     private Map<String, Object> selectRemainingSum(String oidPartner, String privateKey) {
@@ -804,7 +814,7 @@ public class LianLianPayServiceImpl extends ServiceImpl<LianlianpayDao, Lianlian
         return JsonUtils.jsonToPojo(res, new HashMap<String, String>().getClass());
     }
 
-    private Map<String, String> queryPayment(String oidPartner, String noOrder, String oidPaybill,String privateKey) {
+    private Map<String, String> queryPayment(String oidPartner, String noOrder, String oidPaybill, String privateKey) {
         PaymentRequestBean paymentRequestBean = new PaymentRequestBean();
         paymentRequestBean.setOid_partner(oidPartner);
         paymentRequestBean.setOid_paybill(oidPaybill);
@@ -813,6 +823,7 @@ public class LianLianPayServiceImpl extends ServiceImpl<LianlianpayDao, Lianlian
         paymentRequestBean.setSign_type(SignTypeEnum.RSA.getCode());
         String signData = SignUtil.genSignData(JSON.parseObject((JSON.toJSONString(paymentRequestBean))));
         paymentRequestBean.setSign(RSAUtil.sign(privateKey, signData));
+        log.info("商户付款查询参数数据：" + JSON.toJSONString(paymentRequestBean));
         String res = HttpUtil.post(queryPayment, JSON.toJSONString(paymentRequestBean));
         log.info("商户付款查询返回数据：" + res);
         return JsonUtils.jsonToPojo(res, new HashMap<String, String>().getClass());
