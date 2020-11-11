@@ -71,8 +71,12 @@ public class LianLianPayController {
     }
 
     @PostMapping("/queryPayment")
+    @LoginRequired
     @ApiOperation(value = "商户订单查询", notes = "商户订单查询", httpMethod = "POST")
-    public Map<String, String> queryPayment(@ApiParam(hidden = true) @RequestAttribute("userId") String merchantId, @RequestParam String oidPaybill) {
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(name = "oidPaybill", value = "连连订单号", required = true)
+    })
+    public Map<String, String> queryPayment(@ApiParam(hidden = true) @NotBlank(message = "您的登录已过期！") @RequestAttribute(value = "userId",required = false) String merchantId, @NotBlank(message = "请选择订单") @RequestParam String oidPaybill) throws CommonException{
         return lianLianPayService.queryPaymentByorderId(merchantId, oidPaybill);
     }
 

@@ -147,6 +147,8 @@ public class LianLianPayTaxServiceImpl extends ServiceImpl<LianlianpayTaxDao, Li
             paymentHistory.setOidPaybill(result.get("oid_paybill"));
             paymentHistory.setMoneyOrder(new BigDecimal(result.get("money_order")));
             paymentHistory.setResultPay(result.get("result_pay"));
+            paymentHistory.setUserType(UserType.ADMIN);
+            paymentHistory.setPayDate(DateUtil.parseLocalDateTime(result.get("dt_order"),DatePattern.PURE_DATETIME_PATTERN));
             paymentHistoryService.saveOrUpdate(paymentHistory);
 
             if ("SUCCESS".equals(result.get("result_pay").toUpperCase())) {

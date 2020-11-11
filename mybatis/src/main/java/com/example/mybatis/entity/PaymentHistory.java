@@ -1,17 +1,17 @@
 package com.example.mybatis.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
-
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.io.Serializable;
-
 import com.example.common.enums.OrderType;
 import com.example.common.enums.PaymentType;
+import com.example.common.enums.UserType;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 /**
  * <p>
@@ -48,6 +48,11 @@ public class PaymentHistory implements Serializable {
     private PaymentType paymentType;
 
     /**
+     * 支付人类型
+     */
+    private UserType userType;
+
+    /**
      * 第三方支付账户
      */
     private String oidPartner;
@@ -66,6 +71,11 @@ public class PaymentHistory implements Serializable {
      * 支付结果
      */
     private String resultPay;
+
+    /**
+     * 支付时间
+     */
+    private LocalDateTime payDate;
 
     /**
      * 创建时间
