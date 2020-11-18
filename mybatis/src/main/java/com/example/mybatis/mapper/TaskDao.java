@@ -92,5 +92,5 @@ public interface TaskDao extends BaseMapper<Task> {
      */
     int addPlatformTask(TaskDto TaskDto);
 
-    List<Task> setTask(@Param("industryType") String s);
+    IPage<Task> setTask(Page page,@Param("industryType") String s);
 }

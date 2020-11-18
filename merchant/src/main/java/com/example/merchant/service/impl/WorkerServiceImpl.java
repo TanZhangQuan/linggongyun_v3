@@ -49,26 +49,20 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements WorkerService {
 
-    @Resource
-    private WorkerDao workerDao;
-
-    @Resource
-    private TaskService taskService;
-
-    @Resource
-    private WorkerTaskService workerTaskService;
-
-    @Resource
-    private CompanyWorkerService companyWorkerService;
-
-    @Resource
-    private MerchantDao merchantDao;
-
-    @Resource
-    private MyBankService myBankService;
-
     @Value("${PWD_KEY}")
     String PWD_KEY;
+    @Resource
+    private WorkerDao workerDao;
+    @Resource
+    private TaskService taskService;
+    @Resource
+    private WorkerTaskService workerTaskService;
+    @Resource
+    private CompanyWorkerService companyWorkerService;
+    @Resource
+    private MerchantDao merchantDao;
+    @Resource
+    private MyBankService myBankService;
     @Value("${TOKEN}")
     private String TOKEN;
     @Resource
@@ -284,9 +278,23 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
         Worker worker = workerDao.selectOne(new QueryWrapper<Worker>().eq("mobile_code", mobileCode));
         if ("T".equals(isNot)) {
             if (worker == null) {
-                rj.setCode(401);
+                rj.setCode(300);
                 rj.setMessage("你还未注册，请先去注册！");
                 return rj;
+            } else {
+                Map<String, Object> result = senSMS.senSMS(mobileCode);
+                if ("000000".equals(result.get("statusCode"))) {
+                    rj.setCode(200);
+                    rj.setMessage("验证码发送成功");
+                    redisDao.set(mobileCode, String.valueOf(result.get("checkCode")));
+                    redisDao.setExpire(mobileCode, 5 * 60);
+                } else if ("160040".equals(result.get("statusCode"))) {
+                    rj.setCode(300);
+                    rj.setMessage(String.valueOf(result.get("statusMsg")));
+                } else {
+                    rj.setCode(300);
+                    rj.setMessage(String.valueOf(result.get("statusMsg")));
+                }
             }
         } else {
             Map<String, Object> result = senSMS.senSMS(mobileCode);
@@ -344,14 +352,18 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
     public ReturnJson updataPassWord(String loginMobile, String checkCode, String newPassWord) {
         String redisCode = redisDao.get(loginMobile);
         if (redisCode.equals(checkCode)) {
-            Worker worker = new Worker();
-            worker.setUserPwd(PWD_KEY + MD5.md5(newPassWord));
-            boolean flag = this.update(worker, new QueryWrapper<Worker>().eq("login_mobile", loginMobile));
-            if (flag) {
-                redisDao.remove(loginMobile);
-                return ReturnJson.success("密码修改成功！");
+            Worker worker = workerDao.selectOne(new QueryWrapper<Worker>().eq("mobile_code", loginMobile));
+            if (worker == null) {
+                worker.setUserPwd(PWD_KEY + MD5.md5(newPassWord));
+                int flag = workerDao.updateById(worker);
+                if (flag > 0) {
+                    redisDao.remove(loginMobile);
+                    return ReturnJson.success("密码修改成功！");
+                } else {
+                    return ReturnJson.success("密码修改失败！");
+                }
             } else {
-                return ReturnJson.success("密码修改失败！");
+                return ReturnJson.error("你输入的号码不存在对应创客！");
             }
         }
         return ReturnJson.error("你的验证码有误！");
@@ -423,18 +435,21 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
 
             result.put("purePhoneNumber", purePhoneNumber);
 
-            Worker worker = workerDao.selectOne(new QueryWrapper<Worker>().eq("wx_id", openid));
+            Worker worker = workerDao.selectOne(new QueryWrapper<Worker>().eq("mobile_code", purePhoneNumber));
             if (worker == null) {
                 worker = new Worker();
                 worker.setWxId(openid);
                 worker.setMobileCode((String) wxResult.get("purePhoneNumber"));
                 worker.setCreateDate(LocalDateTime.now());
                 workerDao.insert(worker);
+            } else {
+                worker.setWxId(openid);
+                workerDao.updateById(worker);
             }
             String token = jwtUtils.generateToken(worker.getId());
             redisDao.set(worker.getId(), token);
             redisDao.setExpire(worker.getId(), 7, TimeUnit.DAYS);
-            return ReturnJson.success(token);
+            return ReturnJson.success("登录成功", token);
         }
         return ReturnJson.error("信息错误请重新登录");
     }
@@ -540,13 +555,13 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
      * 功能描述: 按条件查询已认证的创客
      *
      * @param managersId
-	 * @param workerQueryDto
+     * @param workerQueryDto
      * @Return com.example.common.util.ReturnJson
      * @Author 忆惜
      * @Date 2020/11/10 10:50
      */
     @Override
-    public ReturnJson getWorkerQuery(String managersId, WorkerQueryDto workerQueryDto) throws CommonException{
+    public ReturnJson getWorkerQuery(String managersId, WorkerQueryDto workerQueryDto) throws CommonException {
         List<String> companyIds = acquireID.getCompanyIds(managersId);
         IPage<Worker> workerIPage = workerDao.selectWorkerQuery(new Page(workerQueryDto.getPage(), workerQueryDto.getPageSize()), companyIds, workerQueryDto.getWorkerId(), workerQueryDto.getAccountName(), workerQueryDto.getMobileCode());
         return ReturnJson.success(workerIPage);
@@ -556,13 +571,13 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
      * 功能描述: 按条件查询未认证的创客
      *
      * @param managersId
-	 * @param workerQueryDto
+     * @param workerQueryDto
      * @Return com.example.common.util.ReturnJson
      * @Author 忆惜
      * @Date 2020/11/10 11:53
      */
     @Override
-    public ReturnJson getWorkerQueryNot(String managersId, WorkerQueryDto workerQueryDto) throws CommonException{
+    public ReturnJson getWorkerQueryNot(String managersId, WorkerQueryDto workerQueryDto) throws CommonException {
         List<String> companyIds = acquireID.getCompanyIds(managersId);
         IPage<Worker> workerIPage = workerDao.selectWorkerQueryNot(new Page(workerQueryDto.getPage(), workerQueryDto.getPageSize()), companyIds, workerQueryDto.getWorkerId(), workerQueryDto.getAccountName(), workerQueryDto.getMobileCode());
         return ReturnJson.success(workerIPage);

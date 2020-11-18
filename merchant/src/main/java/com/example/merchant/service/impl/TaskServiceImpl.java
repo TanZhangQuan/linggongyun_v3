@@ -1,5 +1,6 @@
 package com.example.merchant.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.incrementer.DefaultIdentifierGenerator;
 import com.baomidou.mybatisplus.core.incrementer.IdentifierGenerator;
@@ -7,6 +8,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.api.R;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.common.util.*;
+import com.example.merchant.dto.makerend.QueryMissionHall;
 import com.example.merchant.service.MerchantService;
 import com.example.merchant.service.WorkerTaskService;
 import com.example.mybatis.dto.PlatformTaskDto;
@@ -18,6 +20,7 @@ import com.example.merchant.service.TaskService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.mybatis.vo.WorkerTaskVo;
 import org.apache.ibatis.session.RowBounds;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -236,30 +239,31 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
      */
     @Override
     public ReturnJson updatePlatfromTask(TaskDto taskDto) {
-        Task task = new Task();
         if (taskDto.getId() == null) {
             return ReturnJson.error("请选择任务");
         }
-        task.setId(taskDto.getId());
-        Merchant merchant = merchantDao.selectOne(new QueryWrapper<Merchant>().select("id").eq("company_name", taskDto.getMerchantName()));
-        task.setMerchantId(merchant.getId());
-
-
-        return null;
+        Task task = taskDao.selectById(taskDto.getId());
+        if (task == null) {
+            return ReturnJson.error("你选择的任务不存在，请选择正确的任务");
+        }
+        BeanUtil.copyProperties(task,taskDto);
+        taskDao.updateById(task);
+        return ReturnJson.success("编辑成功");
     }
 
     /**
      * 小程序任务大厅
      *
-     * @param industryType
+     * @param queryMissionHall
      * @return
      */
     @Override
-    public ReturnJson setTask( String industryType) {
+    public ReturnJson setTask(QueryMissionHall queryMissionHall) {
         ReturnJson returnJson = new ReturnJson("操作失败", 300);
-        List<Task> list = taskDao.setTask(industryType);
+        Page page = new Page(queryMissionHall.getPageNo(), queryMissionHall.getPageSize());
+        IPage<Task> list = taskDao.setTask(page, queryMissionHall.getIndustryType());
         if (list != null) {
-            returnJson = new ReturnJson("操作成功", list, 200);
+            return ReturnJson.success(list);
         }
         return returnJson;
     }
@@ -297,7 +301,8 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
         }
         Task task = taskDao.selectById(taskId);
         int count = workerTaskDao.selectCount(new QueryWrapper<WorkerTask>().eq("task_id", taskId).eq("task_status", 0));
-        int count1 = workerTaskDao.selectCount(new QueryWrapper<WorkerTask>().eq("task_id", taskId).eq("worker_id", workerId));//用户是否已经抢过这一单
+        //用户是否已经抢过这一单
+        int count1 = workerTaskDao.selectCount(new QueryWrapper<WorkerTask>().eq("task_id", taskId).eq("worker_id", workerId));
         if (count1 > 0) {
             return ReturnJson.error("您已经抢过这一单了");
         }
@@ -338,7 +343,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
 
     @Override
     public ReturnJson getindustryType() {
-        List<String> list =industryDao.getIndustryType();
+        List<String> list = industryDao.getIndustryType();
         return ReturnJson.success(list);
     }
 

@@ -12,6 +12,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
 /**
@@ -67,8 +68,13 @@ public class TaskPaasController {
 
     @ApiOperation("平台端任务新增")
     @PostMapping(value = "/addPlatformTask")
-    public ReturnJson addPlatformTask(@RequestBody TaskDto taskDto) {
+    public ReturnJson addPlatformTask(@Valid @RequestBody TaskDto taskDto) {
         return taskService.savePlatformTask(taskDto);
     }
 
+    @ApiOperation("平台端任务编辑")
+    @PostMapping(value = "/updatePlatfromTask")
+    public ReturnJson updatePlatfromTask(@Valid @RequestBody TaskDto taskDto) {
+        return taskService.updatePlatfromTask(taskDto);
+    }
 }

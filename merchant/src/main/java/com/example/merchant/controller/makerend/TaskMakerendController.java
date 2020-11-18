@@ -1,6 +1,7 @@
 package com.example.merchant.controller.makerend;
 
 import com.example.common.util.ReturnJson;
+import com.example.merchant.dto.makerend.QueryMissionHall;
 import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.TaskService;
 import com.example.merchant.service.WorkerTaskService;
@@ -10,6 +11,7 @@ import io.swagger.annotations.ApiParam;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.validation.Valid;
 
 @Api(value = "小程序任务", tags = {"小程序任务"})
 @RestController
@@ -23,11 +25,9 @@ public class TaskMakerendController {
     private WorkerTaskService workerTaskService;
 
     @ApiOperation(value = "任务大厅")
-    @GetMapping(value = "/missionHall")
-    public ReturnJson setTask(
-            @ApiParam(value = "任务行业类型") @RequestParam("industryType") String industryType) {
-
-        return taskService.setTask(industryType);
+    @PostMapping(value = "/missionHall")
+    public ReturnJson setTask(@Valid @RequestBody QueryMissionHall queryMissionHall) {
+        return taskService.setTask(queryMissionHall);
     }
 
     @ApiOperation(value = "任务详情")
