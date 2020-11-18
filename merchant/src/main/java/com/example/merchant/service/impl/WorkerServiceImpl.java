@@ -9,6 +9,7 @@ import com.example.common.sms.SenSMS;
 import com.example.common.util.*;
 import com.example.merchant.dto.makerend.AddWorkerDto;
 import com.example.merchant.dto.merchant.WorkerDto;
+import com.example.merchant.dto.platform.WorkerQueryDto;
 import com.example.merchant.exception.CommonException;
 import com.example.merchant.service.*;
 import com.example.merchant.util.AcquireID;
@@ -48,20 +49,26 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements WorkerService {
 
-    @Value("${PWD_KEY}")
-    String PWD_KEY;
     @Resource
     private WorkerDao workerDao;
+
     @Resource
     private TaskService taskService;
+
     @Resource
     private WorkerTaskService workerTaskService;
+
     @Resource
     private CompanyWorkerService companyWorkerService;
+
     @Resource
     private MerchantDao merchantDao;
+
     @Resource
     private MyBankService myBankService;
+
+    @Value("${PWD_KEY}")
+    String PWD_KEY;
     @Value("${TOKEN}")
     private String TOKEN;
     @Resource
@@ -171,6 +178,7 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
         return ReturnJson.error("导入失败！");
     }
 
+
     /**
      * 查询任务对应创客
      *
@@ -208,6 +216,9 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
         }
         return returnJson;
     }
+
+    @Resource
+    private AcquireID acquireID;
 
     /**
      * 分页查询管理人员下的所以创客
@@ -606,6 +617,38 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
         } else {
             return ReturnJson.success("该手机号已经注册过，请直接登录");
         }
+    }
+
+    /**
+     * 功能描述: 按条件查询已认证的创客
+     *
+     * @param managersId
+	 * @param workerQueryDto
+     * @Return com.example.common.util.ReturnJson
+     * @Author 忆惜
+     * @Date 2020/11/10 10:50
+     */
+    @Override
+    public ReturnJson getWorkerQuery(String managersId, WorkerQueryDto workerQueryDto) throws CommonException{
+        List<String> companyIds = acquireID.getCompanyIds(managersId);
+        IPage<Worker> workerIPage = workerDao.selectWorkerQuery(new Page(workerQueryDto.getPage(), workerQueryDto.getPageSize()), companyIds, workerQueryDto.getWorkerId(), workerQueryDto.getAccountName(), workerQueryDto.getMobileCode());
+        return ReturnJson.success(workerIPage);
+    }
+
+    /**
+     * 功能描述: 按条件查询未认证的创客
+     *
+     * @param managersId
+	 * @param workerQueryDto
+     * @Return com.example.common.util.ReturnJson
+     * @Author 忆惜
+     * @Date 2020/11/10 11:53
+     */
+    @Override
+    public ReturnJson getWorkerQueryNot(String managersId, WorkerQueryDto workerQueryDto) throws CommonException{
+        List<String> companyIds = acquireID.getCompanyIds(managersId);
+        IPage<Worker> workerIPage = workerDao.selectWorkerQueryNot(new Page(workerQueryDto.getPage(), workerQueryDto.getPageSize()), companyIds, workerQueryDto.getWorkerId(), workerQueryDto.getAccountName(), workerQueryDto.getMobileCode());
+        return ReturnJson.success(workerIPage);
     }
 }
 

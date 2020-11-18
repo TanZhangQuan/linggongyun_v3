@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.common.enums.OrderType;
 import com.example.common.enums.PaymentType;
+import com.example.common.enums.UserType;
 import com.example.common.lianlianpay.entity.PaymentRequestBean;
 import com.example.common.lianlianpay.entity.ServicePayApplyRequest;
 import com.example.common.lianlianpay.enums.SignTypeEnum;
@@ -24,6 +25,7 @@ import com.example.merchant.dto.merchant.AddLianLianPay;
 import com.example.merchant.service.LianLianPayTaxService;
 import com.example.merchant.service.PaymentHistoryService;
 import com.example.merchant.util.RealnameVerifyUtil;
+import com.example.merchant.websocket.SenMessage;
 import com.example.mybatis.entity.*;
 import com.example.mybatis.mapper.*;
 import lombok.extern.slf4j.Slf4j;
@@ -62,6 +64,9 @@ public class LianLianPayTaxServiceImpl extends ServiceImpl<LianlianpayTaxDao, Li
 
     @Resource
     private PaymentHistoryService paymentHistoryService;
+
+    @Resource
+    private SenMessage senMessage;
 
 
     /**
@@ -142,11 +147,14 @@ public class LianLianPayTaxServiceImpl extends ServiceImpl<LianlianpayTaxDao, Li
             paymentHistory.setOidPaybill(result.get("oid_paybill"));
             paymentHistory.setMoneyOrder(new BigDecimal(result.get("money_order")));
             paymentHistory.setResultPay(result.get("result_pay"));
+            paymentHistory.setUserType(UserType.ADMIN);
+            paymentHistory.setPayDate(DateUtil.parseLocalDateTime(result.get("dt_order"),DatePattern.PURE_DATETIME_PATTERN));
             paymentHistoryService.saveOrUpdate(paymentHistory);
 
             if ("SUCCESS".equals(result.get("result_pay").toUpperCase())) {
                 paymentInventory.setPaymentStatus(1);
                 paymentInventoryDao.updateById(paymentInventory);
+                senMessage.senMsg("您有一笔" + paymentInventory.getRealMoney() + "元的收益", result.get("no_order"), "0", UserType.ADMIN, paymentInventory.getWorkerId(), UserType.WORKER);
                 return;
             } else {
                 log.error(result.toString());
@@ -203,6 +211,7 @@ public class LianLianPayTaxServiceImpl extends ServiceImpl<LianlianpayTaxDao, Li
                 map.put("workerName", worker.getAccountName());
                 map.put("msg", "创客未认证");
                 errorList.add(map);
+                senMessage.senMsg("您有一笔" + paymentInventory.getRealMoney() + "元的薪资未领取成功！,请实名认证和签署加盟合同后在领取！", paymentInventory.getId(), "0", UserType.ADMIN, paymentInventory.getWorkerId(), UserType.WORKER);
                 continue;
             }
 
@@ -216,6 +225,7 @@ public class LianLianPayTaxServiceImpl extends ServiceImpl<LianlianpayTaxDao, Li
                 map.put("workerName", worker.getAccountName());
                 map.put("msg", "创客未绑定银行卡");
                 errorList.add(map);
+                senMessage.senMsg("您有一笔" + paymentInventory.getRealMoney() + "元的薪资未领取成功！,请绑定银行卡后在领取！", paymentInventory.getId(), "0", UserType.ADMIN, paymentInventory.getWorkerId(), UserType.WORKER);
                 continue;
             }
 

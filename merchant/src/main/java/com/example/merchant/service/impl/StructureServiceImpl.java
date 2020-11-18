@@ -26,8 +26,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import java.lang.reflect.Array;
 import java.util.List;
 
 @Service
@@ -159,7 +157,7 @@ public class StructureServiceImpl implements StructureService {
      */
     @Override
     public ReturnJson getSalesManPaymentListCount(String salesManId) throws CommonException {
-        List<String> companyIds = acquireID.getMerchantIds(salesManId);
+        List<String> companyIds = acquireID.getCompanyIds(salesManId);
         if (VerificationCheck.listIsNull(companyIds)) {
             return ReturnJson.error("该业务员还没有产生流水！");
         }
@@ -180,7 +178,7 @@ public class StructureServiceImpl implements StructureService {
      */
     @Override
     public ReturnJson getSalesManPaymentList(String salesManId, Integer page, Integer pageSize) throws CommonException {
-        List<String> companyIds = acquireID.getMerchantIds(salesManId);
+        List<String> companyIds = acquireID.getCompanyIds(salesManId);
         if (VerificationCheck.listIsNull(companyIds)) {
             return ReturnJson.error("该业务员还没有产生流水！");
         }

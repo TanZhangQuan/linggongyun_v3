@@ -4,10 +4,10 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.makerend.AddWorkerDto;
 import com.example.merchant.dto.merchant.WorkerDto;
+import com.example.merchant.dto.platform.WorkerQueryDto;
 import com.example.merchant.exception.CommonException;
 import com.example.mybatis.entity.Worker;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
@@ -32,16 +32,6 @@ public interface WorkerService extends IService<Worker> {
 
     ReturnJson getCheckByTaskId(String taskId, Integer pageNo, Integer pageSize);
 
-    ReturnJson getWorkerAllPaas(String managersId, Integer page, Integer pageSize) throws CommonException;
-
-    ReturnJson getWorkerAllNotPaas(String managersId, Integer page, Integer pageSize) throws CommonException;
-
-    ReturnJson getByIdAndAccountNameAndMobilePaas(String managersId, String id, String accountName, String mobileCode) throws CommonException;
-
-    ReturnJson getByIdAndAccountNameAndMobileNotPaas(String managersId, String id, String accountName, String mobileCode) throws CommonException;
-
-    ReturnJson getWorkerInfoPaas(String id);
-
     ReturnJson getWorkerPaymentListPaas(String id, Integer page, Integer pageSize);
 
     ReturnJson updateWorkerPaas(Worker worker);
@@ -65,4 +55,26 @@ public interface WorkerService extends IService<Worker> {
     ReturnJson getPaasWorkerByTaskId(String taskId, Integer pageNo, Integer pageSize);
 
     ReturnJson registerWorker(AddWorkerDto addWorkerDto);
+
+    /**
+     * 功能描述: 按添加查询已认证的创客
+     *
+     * @param managersId
+	 * @param workerQueryDto
+     * @Return com.example.common.util.ReturnJson
+     * @Author 忆惜
+     * @Date 2020/11/10 10:34
+     */
+    ReturnJson getWorkerQuery(String managersId, WorkerQueryDto workerQueryDto) throws CommonException;
+
+    /**
+     * 功能描述: 按添加查询未认证的创客
+     *
+     * @param managersId
+	 * @param workerQueryDto
+     * @Return com.example.common.util.ReturnJson
+     * @Author 忆惜
+     * @Date 2020/11/10 10:56
+     */
+    ReturnJson getWorkerQueryNot(String managersId, WorkerQueryDto workerQueryDto) throws CommonException;
 }

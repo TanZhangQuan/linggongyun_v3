@@ -19,6 +19,7 @@ import com.example.merchant.service.TaxService;
 import com.example.merchant.util.JwtUtils;
 import com.example.merchant.vo.ExpressInfoVO;
 import com.example.merchant.vo.PaymentOrderInfoVO;
+import com.example.merchant.vo.TaxBriefVO;
 import com.example.merchant.vo.platform.HomePageVO;
 import com.example.merchant.vo.platform.RegulatorTaxVO;
 import com.example.merchant.vo.regulator.*;
@@ -180,8 +181,16 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
      */
     @Override
     public ReturnJson getTaxAll(Integer page, Integer pageSize) {
-        Page<Tax> taxPage = new Page<>(page, pageSize);
+        Page taxPage = new Page<>(page, pageSize);
         taxPage = taxDao.selectPage(taxPage, new QueryWrapper<Tax>().eq("tax_status", 0));
+        List<Tax> records = taxPage.getRecords();
+        List<TaxBriefVO> taxBriefVOS = new ArrayList<>();
+        records.forEach(tax -> {
+            TaxBriefVO taxBriefVO = new TaxBriefVO();
+            BeanUtils.copyProperties(tax,taxBriefVO);
+            taxBriefVOS.add(taxBriefVO);
+        });
+        taxPage.setRecords(taxBriefVOS);
         return ReturnJson.success(taxPage);
     }
 

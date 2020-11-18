@@ -9,7 +9,6 @@ import com.example.mybatis.po.WorkerPo;
 import com.example.mybatis.vo.WorkerPassVo;
 import com.example.mybatis.vo.WorkerVo;
 import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.session.RowBounds;
 
 import java.util.List;
 
@@ -34,13 +33,9 @@ public interface WorkerDao extends BaseMapper<Worker> {
 
     IPage<Worker> selectByIdAndAccountNameAndMobile(Page page, @Param("merchantId") String merchantId, @Param("id") String id, @Param("accountName") String accountName, @Param("mobileCode") String mobileCode);
 
-    List<Worker> selectByIdAndAccountNameAndMobilePaas(@Param("merchantIds") List<String> merchantIds, @Param("id") String id, @Param("accountName") String accountName, @Param("mobileCode") String mobileCode);
+    IPage<Worker> selectWorkerQuery(Page page, @Param("companyIds") List<String> companyIds, @Param("workerId") String workerId, @Param("accountName") String accountName, @Param("mobileCode") String mobileCode);
 
-    List<Worker> selectByIdAndAccountNameAndMobilePaasNot(@Param("merchantIds") List<String> merchantIds, @Param("id") String id, @Param("accountName") String accountName, @Param("mobileCode") String mobileCode);
-
-    IPage<Worker> selectWorkerAllNot(Page page, @Param("merchantIds") List<String> merchantIds);
-
-    IPage<Worker> selectWorkerAll(Page page, @Param("merchantIds") List<String> merchantIds);
+    IPage<Worker> selectWorkerQueryNot(Page page, @Param("companyIds") List<String> companyIds, @Param("workerId") String workerId, @Param("accountName") String accountName, @Param("mobileCode") String mobileCode);
 
     IPage<WorekerPaymentListPo> workerPaymentList(Page page, @Param("workerId") String workerId);
 

@@ -37,7 +37,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -359,18 +358,10 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
      */
     @Override
     public ReturnJson getMerchantList(String managersId, String merchantId, String merchantName, String linkMobile, Integer auditStatus, Integer page, Integer pageSize) throws CommonException {
-        List<String> merchantIds = acquireID.getMerchantIds(managersId);
+        List<String> merchantIds = acquireID.getCompanyIds(managersId);
         Page<MerchantInfoPo> merchantPage = new Page<>(page, pageSize);
         IPage<MerchantInfoPo> merchantInfoPoIPage = merchantDao.selectMerchantInfoPo(merchantPage, merchantIds, merchantId, merchantName, linkMobile, auditStatus);
-        ReturnJson returnJson = new ReturnJson();
-        returnJson.setCode(200);
-        returnJson.setState("success");
-        returnJson.setFinished(true);
-        returnJson.setPageSize(pageSize);
-        returnJson.setItemsCount((int) merchantInfoPoIPage.getTotal());
-        returnJson.setPageCount((int) merchantInfoPoIPage.getPages());
-        returnJson.setData(merchantInfoPoIPage.getRecords());
-        return returnJson;
+        return ReturnJson.success(merchantInfoPoIPage);
     }
 
     /**

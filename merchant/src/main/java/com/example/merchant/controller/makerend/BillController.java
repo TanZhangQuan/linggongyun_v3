@@ -20,7 +20,7 @@ import javax.validation.constraints.NotNull;
 public class BillController {
 
     @Resource
-    BillService billService;
+    private BillService billService;
 
     @LoginRequired
     @PostMapping("/getTotalMonthBill")
