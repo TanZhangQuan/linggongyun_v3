@@ -32,12 +32,14 @@ public class AcquireID {
             throw new CommonException(300, "输入的ID有误，没有这个管理人员存在！");
         }
         Integer userSign = managers.getUserSign();
-        if (userSign == 1) {//管理人员为代理商
+        //管理人员为代理商
+        if (userSign == 1) {
             List<CompanyInfo> merchants = companyInfoService.list(new QueryWrapper<CompanyInfo>().eq("agent_id", managers.getId()));
             for (CompanyInfo merchant : merchants) {
                 companyIds.add(merchant.getId());
             }
-        } else if (userSign == 2) {//管理人员为业务员
+            //管理人员为业务员
+        } else if (userSign == 2) {
             List<CompanyInfo> merchants = companyInfoService.list(new QueryWrapper<CompanyInfo>().eq("sales_man_id", managers.getId()));
             for (CompanyInfo merchant : merchants) {
                 companyIds.add(merchant.getId());

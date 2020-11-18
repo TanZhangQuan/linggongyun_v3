@@ -15,12 +15,15 @@ import com.example.mybatis.entity.Managers;
 import com.example.mybatis.entity.Merchant;
 import com.example.mybatis.mapper.*;
 import com.example.mybatis.po.InvoicePO;
+import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
+import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -71,7 +74,7 @@ public class HomePageServiceImpl implements HomePageService {
     /**
      * 获取首页基本信息
      *
-     * @param request
+     * @param merchantId
      * @return
      */
     @Override
@@ -167,6 +170,44 @@ public class HomePageServiceImpl implements HomePageService {
             return ReturnJson.success(homePageVO);
         }
     }
+
+    @Override
+    public ReturnJson getTodayById(String merchantId) {
+        Merchant merchant = merchantDao.selectById(merchantId);
+        if (merchant == null) {
+            return ReturnJson.error("您输入的信息有误！");
+        }
+        return ReturnJson.success((merchantDao.getTodayById(merchant.getCompanyId())));
+    }
+
+    @Override
+    public ReturnJson getWeekTradeById(String merchantId) {
+        Merchant merchant = merchantDao.selectById(merchantId);
+        if (merchant == null) {
+            return ReturnJson.error("您输入的信息有误！");
+        }
+        return ReturnJson.success((merchantDao.getWeekTradeById(merchant.getCompanyId())));
+    }
+
+    @Override
+    public ReturnJson getMonthTradeById(String merchantId) {
+        Merchant merchant = merchantDao.selectById(merchantId);
+        if (merchant == null) {
+            return ReturnJson.error("您输入的信息有误！");
+        }
+        return ReturnJson.success((merchantDao.getMonthTradeById(merchant.getCompanyId())));
+    }
+
+    @Override
+    public ReturnJson getYearTradeById(String merchantId) {
+        Merchant merchant = merchantDao.selectById(merchantId);
+        if (merchant == null) {
+            return ReturnJson.error("您输入的信息有误！");
+        }
+        return ReturnJson.success((merchantDao.getYearTradeById(merchant.getCompanyId())));
+    }
+
+
 
     private HomePageVO getHomePageOV(List<String> ids) {
         HomePageVO homePageVO = new HomePageVO();

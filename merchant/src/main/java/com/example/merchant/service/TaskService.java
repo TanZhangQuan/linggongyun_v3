@@ -2,6 +2,7 @@ package com.example.merchant.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.common.util.ReturnJson;
+import com.example.merchant.dto.makerend.QueryMissionHall;
 import com.example.mybatis.dto.PlatformTaskDto;
 import com.example.mybatis.dto.TaskDto;
 import com.example.mybatis.dto.TaskListDto;
@@ -25,7 +26,7 @@ public interface TaskService extends IService<Task> {
 
     ReturnJson delete (String id);
 
-    ReturnJson saveTask(TaskDto taskDto);
+    ReturnJson saveTask(TaskDto taskDto,String userId);
 
     ReturnJson setTaskById(String id);
 
@@ -41,12 +42,18 @@ public interface TaskService extends IService<Task> {
 
     ReturnJson updatePlatfromTask(TaskDto taskDto);
 
-    ReturnJson setTask(String merchantId,String industryType);
+    ReturnJson setTask(QueryMissionHall queryMissionHall);
 
     ReturnJson taskDetails(String taskId);
 
     ReturnJson orderGrabbing(String taskId,String workerId);
 
     ReturnJson myTask(String workerId,String status);
+
+    /**
+     * 获取任务列表
+     * @return
+     */
+    ReturnJson getindustryType();
 
 }

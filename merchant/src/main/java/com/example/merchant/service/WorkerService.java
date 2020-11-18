@@ -38,7 +38,7 @@ public interface WorkerService extends IService<Worker> {
 
     ReturnJson loginWorker(String username, String password, HttpServletResponse response);
 
-    ReturnJson senSMS(String mobileCode);
+    ReturnJson senSMS(String mobileCode,String isNot);
 
     ReturnJson loginMobile(String loginMobile, String checkCode, HttpServletResponse resource);
 

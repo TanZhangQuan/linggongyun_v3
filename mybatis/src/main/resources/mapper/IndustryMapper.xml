@@ -24,5 +24,13 @@
         LEFT JOIN tb_industry i2 ON i1.id=i2.one_level
         WHERE i1.one_level is NULL
     </select>
+    <select id="getIndustryType" resultType="java.lang.String">
+                SELECT
+            industry_type
+        FROM
+            tb_industry
+        WHERE
+            one_level is NULL
+    </select>
 
 </mapper>

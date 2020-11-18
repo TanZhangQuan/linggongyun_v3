@@ -165,9 +165,6 @@
         task_mode != 0
         AND state = 0
         AND deadline_date > NOW()
-        <if test="merchantId !=null and merchantId != '' ">
-            AND merchant_id=#{merchantId}
-        </if>
         <if test="industryType != null and industryType != '' ">
             AND SUBSTRING_INDEX(industry_type, '/',1)=#{industryType}
         </if>

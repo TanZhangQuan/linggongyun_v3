@@ -26,31 +26,71 @@ public interface TaskDao extends BaseMapper<Task> {
 
     int count(TaskListDto taskListDto);
 
-    IPage<Task> selectLists(Page page,@Param("taskListDto") TaskListDto taskListDto);
+    IPage<Task> selectLists(Page page, @Param("taskListDto") TaskListDto taskListDto);
 
-    //更具任务id删除任务
+    /**
+     * 更具任务id删除任务
+     *
+     * @param id
+     * @return
+     */
     int delete(String id);
 
-    //添加任务信息
+    /**
+     * 添加任务信息
+     *
+     * @param TaskDto
+     * @return
+     */
     int addTask(TaskDto TaskDto);
 
-    //根据任务id查询任务
+    /**
+     * 根据任务id查询任务
+     *
+     * @param id
+     * @return
+     */
     Task setTaskById(String id);
 
-    //查找最新的taskcode
+    /**
+     * 查找最新的taskcode
+     *
+     * @return
+     */
     String getTaskCode();
 
-    //关单
+    /**
+     * 关单
+     *
+     * @param taskId
+     * @return
+     */
     int closeTask(String taskId);
 
-    //重新开单
+    /**
+     * 重新开单
+     *
+     * @param taskId
+     * @return
+     */
     int openTask(String taskId);
 
-    //平台端查询任务详情
-    IPage<Task> getPlatformTaskList(Page page,@Param("platformTaskDto") PlatformTaskDto platformTaskDto);
+    /**
+     * 平台端查询任务详情
+     *
+     * @param page
+     * @param platformTaskDto
+     * @return
+     */
+    IPage<Task> getPlatformTaskList(Page page, @Param("platformTaskDto") PlatformTaskDto platformTaskDto);
 
-    //平台端添加任务信息
+    /**
+     * 平台端添加任务信息
+     *
+     * @param TaskDto
+     * @return
+     */
     int addPlatformTask(TaskDto TaskDto);
 
-    List<Task> setTask(@Param("merchantId") String merchantId, @Param("industryType")String s);
+    IPage<Task> setTask(Page page,@Param("industryType") String s);
 }

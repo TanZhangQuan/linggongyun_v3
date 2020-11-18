@@ -8,9 +8,7 @@ import com.example.mybatis.entity.PaymentOrderMany;
 import com.example.mybatis.po.BillCountPO;
 import com.example.mybatis.po.BillPO;
 import com.example.mybatis.po.PaymentOrderInfoPO;
-import com.example.mybatis.vo.CrowdSourcingInvoiceVo;
-import com.example.mybatis.vo.InvoiceDetailsVo;
-import com.example.mybatis.vo.PaymentOrderManyVo;
+import com.example.mybatis.vo.*;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;
 
@@ -30,10 +28,34 @@ public interface PaymentOrderManyDao extends BaseMapper<PaymentOrderMany> {
     BigDecimal selectBy30Day(String merchantId);
     BigDecimal selectTotal(String merchantId);
 
-    List<PaymentOrderMany> selectDay(String merchantId);
-    List<PaymentOrderMany> selectWeek(String merchantId);
-    List<PaymentOrderMany> selectMonth(String merchantId);
-    List<PaymentOrderMany> selectYear(String merchantId);
+    /**
+     * 查询商户今日成交总额
+     * @param merchantId
+     * @return
+     */
+    TodayVo getTodayById(String merchantId);
+
+    /**
+     * 查询商户本周成交总额
+     * @param merchantId
+     * @return
+     */
+    WeekTradeVO getWeekTradeById(String merchantId);
+
+    /**
+     * 查询商户本月成交总额
+     * @param merchantId
+     * @return
+     */
+    MonthTradeVO getMonthTradeById(String merchantId);
+
+    /**
+     * 查询商户本年成交总额
+     * @param merchantId
+     * @return
+     */
+    YearTradeVO getYearTradeById(String merchantId);
+
 
     //根据商户id查众包待开票数据
     IPage<CrowdSourcingInvoiceVo> getListCSIByID(Page page,@Param("tobeinvoicedDto") TobeinvoicedDto tobeinvoicedDto);

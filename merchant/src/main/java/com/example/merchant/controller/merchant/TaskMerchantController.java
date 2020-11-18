@@ -2,6 +2,7 @@ package com.example.merchant.controller.merchant;
 
 
 import com.example.common.util.ReturnJson;
+import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.TaskService;
 import com.example.mybatis.dto.TaskDto;
 import com.example.mybatis.dto.TaskListDto;
@@ -42,10 +43,11 @@ public class TaskMerchantController {
         return taskService.delete(taskId);
     }
 
+    @LoginRequired
     @ApiOperation("任务新增")
     @PostMapping(value = "/addTask")
-    public ReturnJson addTask(@RequestBody TaskDto taskDto) {
-        return taskService.saveTask(taskDto);
+    public ReturnJson addTask(@RequestBody TaskDto taskDto,@RequestAttribute(value = "userId") @ApiParam(hidden = true) String userId) {
+        return taskService.saveTask(taskDto,userId);
     }
 
     @ApiOperation("查看任务详情")

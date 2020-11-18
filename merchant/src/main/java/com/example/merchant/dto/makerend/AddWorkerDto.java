@@ -26,4 +26,8 @@ public class AddWorkerDto {
     @ApiModelProperty(value = "创客性别")
     @NotNull(message = "请选择性别")
     private Integer workerSex;
+
+    @ApiModelProperty(value = "验证码")
+    @NotBlank(message = "验证码不能为空")
+    private String checkCode;
 }

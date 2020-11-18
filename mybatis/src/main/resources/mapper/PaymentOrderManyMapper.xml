@@ -41,30 +41,7 @@
     <select id="selectTotal" parameterType="java.lang.String" resultType="decimal">
         select SUM(real_money) 'total_money' from tb_payment_order_many where
         payment_order_status &gt;= 2 and company_id = #{merchantId}
-    </select>
 
-    <!--查询今天已支付的订单-->
-    <select id="selectDay" parameterType="list" resultMap="BaseResultMap">
-        select * from tb_payment_order_many where to_days(payment_date) = to_days(now())
-        and payment_order_status &gt;= 2 and company_id = #{merchantId}
-    </select>
-
-    <!--查询本周已支付的订单-->
-    <select id="selectWeek" parameterType="list" resultMap="BaseResultMap">
-      SELECT * FROM tb_payment_order_many WHERE YEARWEEK(date_format(payment_date,'%Y-%m-%d')) = YEARWEEK(now())
-      and payment_order_status &gt;= 2 and company_id = #{merchantId}
-    </select>
-
-    <!--查询本月已支付的订单-->
-    <select id="selectMonth" parameterType="list" resultMap="BaseResultMap">
-        SELECT * FROM tb_payment_order_many WHERE DATE_FORMAT( payment_date, '%Y%m' ) = DATE_FORMAT( CURDATE( ) , '%Y%m' )
-        and payment_order_status &gt;= 2 and company_id = #{merchantId}
-    </select>
-
-    <!--查询今年已支付的订单-->
-    <select id="selectYear" parameterType="list" resultMap="BaseResultMap">
-         select * from `tb_payment_order_many` where YEAR(payment_date)=YEAR(NOW())
-         and payment_order_status &gt;= 2 and company_id = #{merchantId}
     </select>
 
     <!--多条件查询-->
@@ -75,16 +52,22 @@
         from tb_payment_order_many
         <where>
             company_id = #{merchantId}
-            <if test="id != null and id!=''">
+
+            <if test="id != null and id != ''">
+
                 and id like CONCAT('%',#{id},'%')
+
             </if>
-            <if test="taxId != null and taxId!=''">
+            <if test="taxId != null and taxId != ''">
+
                 and tax_id = #{taxId}
             </if>
-            <if test="beginDate != null and beginDate!=''">
+            <if test="beginDate != null and beginDate != ''">
+
                 and date(create_date) &gt;= #{beginDate}
             </if>
-            <if test="endDate != null and endDate!=''">
+            <if test="endDate != null and endDate != ''">
+
                 and date(create_date) &lt;= #{endDate}
             </if>
         </where>
@@ -164,6 +147,8 @@
     </select>
 
 
+
+
     <!--平台端的SQL。。。。。。。。。。。。。-->
 
     <!--    查询最近30天-->
@@ -186,6 +171,7 @@
     </select>
 
 
+
     <!--查询今天已支付订单-->
     <select id="selectDaypaas" parameterType="list" resultMap="BaseResultMap">
         select * from tb_payment_order_many where to_days(payment_date) = to_days(now())
@@ -206,8 +192,7 @@
 
     <!--查询本月已支付的订单-->
     <select id="selectMonthpaas" parameterType="list" resultMap="BaseResultMap">
-        SELECT * FROM tb_payment_order_many WHERE DATE_FORMAT( payment_date, '%Y%m' ) = DATE_FORMAT( CURDATE( ) , '%Y%m'
-        )
+        SELECT * FROM tb_payment_order_many WHERE DATE_FORMAT( payment_date, '%Y%m' ) = DATE_FORMAT( CURDATE( ) , '%Y%m' )
         and payment_order_status &gt;= 2 and company_id in
         <foreach collection="list" index="index" item="merchantIds" open="(" separator="," close=")">
             #{merchantIds}
@@ -353,6 +338,93 @@
         <result column="payee_bank_code" property="payeeBankCode"/>
     </resultMap>
 
+    <resultMap type="com.example.mybatis.vo.TodayVo" id="dayTradeVO">
+        <result property="oneHourIncome" column="one_hour_income"/>
+        <result property="twoHourIncome" column="two_hour_income"/>
+        <result property="threeHourIncome" column="three_hour_income"/>
+        <result property="fourHourIncome" column="four_hour_income"/>
+        <result property="fiveHourIncome" column="five_hour_income"/>
+        <result property="sixHourIncome" column="six_hour_income"/>
+        <result property="sevenHourIncome" column="seven_hour_income"/>
+        <result property="eightHourIncome" column="eight_hour_income"/>
+        <result property="nineHourIncome" column="nine_hour_income"/>
+        <result property="tenHourIncome" column="ten_hour_income"/>
+        <result property="elevenHourIncome" column="eleven_hour_income"/>
+        <result property="twelveHourIncome" column="twelve_hour_income"/>
+        <result property="thirteenHourIncome" column="thirteen_hour_income"/>
+        <result property="fourteenHourIncome" column="fourteen_hour_income"/>
+        <result property="fifteenHourIncome" column="fifteen_hour_income"/>
+        <result property="sixteenHourIncome" column="sixteen_hour_income"/>
+        <result property="seventeenHourIncome" column="seventeen_hour_income"/>
+        <result property="eighteenHourIncome" column="eighteen_hour_income"/>
+        <result property="nineteenHourIncome" column="nineteen_hour_income"/>
+        <result property="twentyHourIncome" column="twenty_hour_income"/>
+        <result property="twentyOneHourIncome" column="twenty_one_hour_income"/>
+        <result property="twentyTwoHourIncome" column="twenty_two_hour_income"/>
+        <result property="twentyThreeHourIncome" column="twenty_three_hour_income"/>
+        <result property="twentyFourHourIncome" column="twenty_four_hour_income"/>
+    </resultMap>
+
+    <resultMap type="com.example.mybatis.vo.WeekTradeVO" id="weekTradeVO">
+        <result property="monIncome" column="mon_income"/>
+        <result property="tueIncome" column="tue_income"/>
+        <result property="wedIncome" column="wed_income"/>
+        <result property="thuIncome" column="thu_income"/>
+        <result property="friIncome" column="fri_income"/>
+        <result property="satIncome" column="sat_income"/>
+        <result property="sunIncome" column="sun_income"/>
+    </resultMap>
+
+    <resultMap type="com.example.mybatis.vo.MonthTradeVO" id="monthTradeVO">
+        <result property="oneDayIncome" column="one_day_income"/>
+        <result property="twoDayIncome" column="two_day_income"/>
+        <result property="threeDayIncome" column="three_day_income"/>
+        <result property="fourDayIncome" column="four_day_income"/>
+        <result property="fiveDayIncome" column="five_day_income"/>
+        <result property="sixDayIncome" column="six_day_income"/>
+        <result property="sevenDayIncome" column="seven_day_income"/>
+        <result property="eightDayIncome" column="eight_day_income"/>
+        <result property="nineDayIncome" column="nine_day_income"/>
+        <result property="tenDayIncome" column="ten_day_income"/>
+        <result property="elevenDayIncome" column="eleven_day_income"/>
+        <result property="twelveDayIncome" column="twelve_day_income"/>
+        <result property="thirteenDayIncome" column="thirteen_day_income"/>
+        <result property="fourteenDayIncome" column="fourteen_day_income"/>
+        <result property="fifteenDayIncome" column="fifteen_day_income"/>
+        <result property="sixteenDayIncome" column="sixteen_day_income"/>
+        <result property="seventeenDayIncome" column="seventeen_day_income"/>
+        <result property="eighteenDayIncome" column="eighteen_day_income"/>
+        <result property="nineteenDayIncome" column="nineteen_day_income"/>
+        <result property="twentyDayIncome" column="twenty_day_income"/>
+        <result property="twentyOneDayIncome" column="twenty_one_day_income"/>
+        <result property="twentyTwoDayIncome" column="twenty_two_day_income"/>
+        <result property="twentyThreeDayIncome" column="twenty_three_day_income"/>
+        <result property="twentyFourDayIncome" column="twenty_four_day_income"/>
+        <result property="twentyFiveDayIncome" column="twenty_five_day_income"/>
+        <result property="twentySixDayIncome" column="twenty_six_day_income"/>
+        <result property="twentySevenDayIncome" column="twenty_seven_day_income"/>
+        <result property="twentyEightDayIncome" column="twenty_eight_day_income"/>
+        <result property="twentyNineDayIncome" column="twenty_nine_day_income"/>
+        <result property="thirtyDayIncome" column="thirty_day_income"/>
+        <result property="thirtyOneDayIncome" column="thirty_one_day_income"/>
+    </resultMap>
+
+
+    <resultMap type="com.example.mybatis.vo.YearTradeVO" id="yearTradeVO">
+        <result property="janIncome" column="jan_income"/>
+        <result property="febIncome" column="feb_income"/>
+        <result property="marIncome" column="mar_income"/>
+        <result property="aprIncome" column="apr_income"/>
+        <result property="mayIncome" column="may_income"/>
+        <result property="junIncome" column="jun_income"/>
+        <result property="julIncome" column="jul_income"/>
+        <result property="augIncome" column="aug_income"/>
+        <result property="sepIncome" column="sep_income"/>
+        <result property="octIncome" column="oct_income"/>
+        <result property="novIncome" column="nov_income"/>
+        <result property="decIncome" column="dec_income"/>
+    </resultMap>
+
     <!--查询总包订单信息-->
     <select id="selectPaymentOrderInfo" parameterType="string" resultMap="PaymentOrderInfoPOResultMap">
         SELECT
@@ -380,6 +452,405 @@
         LEFT JOIN tb_company_info ci
         ON pom.company_id = ci.id
         WHERE pom.id = #{paymentOrderId}
+
+    </select>
+    <select id="getTodayById" resultMap="dayTradeVO">
+
+        SELECT
+            IFNULL(
+                SUM(
+
+                    IF (
+                        HOUR (payment_date) = 1,
+                        real_money,
+                        0
+                    )
+                ),
+                0
+            ) AS one_hour_income,
+            IFNULL(
+                SUM(
+
+                    IF (
+                        HOUR (payment_date) = 2,
+                        real_money,
+                        0
+                    )
+                ),
+                0
+            ) AS two_hour_income,
+            IFNULL(
+                SUM(
+
+                    IF (
+                        HOUR (payment_date) = 3,
+                        real_money,
+                        0
+                    )
+                ),
+                0
+            ) AS three_hour_income,
+            IFNULL(
+                SUM(
+
+                    IF (
+                        HOUR (payment_date) = 4,
+                        real_money,
+                        0
+                    )
+                ),
+                0
+            ) AS four_hour_income,
+            IFNULL(
+                SUM(
+
+                    IF (
+                        HOUR (payment_date) = 5,
+                        real_money,
+                        0
+                    )
+                ),
+                0
+            ) AS five_hour_income,
+            IFNULL(
+                SUM(
+
+                    IF (
+                        HOUR (payment_date) = 6,
+                        real_money,
+                        0
+                    )
+                ),
+                0
+            ) AS six_hour_income,
+            IFNULL(
+                SUM(
+
+                    IF (
+                        HOUR (payment_date) = 7,
+                        real_money,
+                        0
+                    )
+                ),
+                0
+            ) AS seven_hour_income,
+            IFNULL(
+                SUM(
+
+                    IF (
+                        HOUR (payment_date) = 8,
+                        real_money,
+                        0
+                    )
+                ),
+                0
+            ) AS eight_hour_income,
+            IFNULL(
+                SUM(
+
+                    IF (
+                        HOUR (payment_date) = 9,
+                        real_money,
+                        0
+                    )
+                ),
+                0
+            ) AS nine_hour_income,
+            IFNULL(
+                SUM(
+
+                    IF (
+                        HOUR (payment_date) = 10,
+                        real_money,
+                        0
+                    )
+                ),
+                0
+            ) AS ten_hour_income,
+            IFNULL(
+                SUM(
+
+                    IF (
+                        HOUR (payment_date) = 11,
+                        real_money,
+                        0
+                    )
+                ),
+                0
+            ) AS eleven_hour_income,
+            IFNULL(
+                SUM(
+
+                    IF (
+                        HOUR (payment_date) = 12,
+                        real_money,
+                        0
+                    )
+                ),
+                0
+            ) AS twelve_hour_income,
+            IFNULL(
+                SUM(
+
+                    IF (
+                        HOUR (payment_date) = 13,
+                        real_money,
+                        0
+                    )
+                ),
+                0
+            ) AS thirteen_hour_income,
+            IFNULL(
+                SUM(
+
+                    IF (
+                        HOUR (payment_date) = 14,
+                        real_money,
+                        0
+                    )
+                ),
+                0
+            ) AS fourteen_hour_income,
+            IFNULL(
+                SUM(
+
+                    IF (
+                        HOUR (payment_date) = 15,
+                        real_money,
+                        0
+                    )
+                ),
+                0
+            ) AS fifteen_hour_income,
+            IFNULL(
+                SUM(
+
+                    IF (
+                        HOUR (payment_date) = 16,
+                        real_money,
+                        0
+                    )
+                ),
+                0
+            ) AS sixteen_hour_income,
+            IFNULL(
+                SUM(
+
+                    IF (
+                        HOUR (payment_date) = 17,
+                        real_money,
+                        0
+                    )
+                ),
+                0
+            ) AS seventeen_hour_income,
+            IFNULL(
+                SUM(
+
+                    IF (
+                        HOUR (payment_date) = 18,
+                        real_money,
+                        0
+                    )
+                ),
+                0
+            ) AS eighteen_hour_income,
+            IFNULL(
+                SUM(
+
+                    IF (
+                        HOUR (payment_date) = 19,
+                        real_money,
+                        0
+                    )
+                ),
+                0
+            ) AS nineteen_hour_income,
+            IFNULL(
+                SUM(
+
+                    IF (
+                        HOUR (payment_date) = 20,
+                        real_money,
+                        0
+                    )
+                ),
+                0
+            ) AS twenty_hour_income,
+            IFNULL(
+                SUM(
+
+                    IF (
+                        HOUR (payment_date) = 21,
+                        real_money,
+                        0
+                    )
+                ),
+                0
+            ) AS twenty_one_hour_income,
+            IFNULL(
+                SUM(
+
+                    IF (
+                        HOUR (payment_date) = 22,
+                        real_money,
+                        0
+                    )
+                ),
+                0
+            ) AS twenty_two_hour_income,
+            IFNULL(
+                SUM(
+
+                    IF (
+                        HOUR (payment_date) = 23,
+                        real_money,
+                        0
+                    )
+                ),
+                0
+            ) AS twenty_three_hour_income,
+            IFNULL(
+                SUM(
+
+                    IF (
+                        HOUR (payment_date) = 0,
+                        real_money,
+                        0
+                    )
+                ),
+                0
+            ) AS twenty_four_hour_income
+        FROM
+            tb_payment_order_many
+        WHERE
+            payment_order_status = 3
+        AND DATE(real_money) = DATE(NOW())
+        AND company_id =#{merchantId}
+
+    </select>
+    <select id="getWeekTradeById" resultMap="weekTradeVO">
+
+         SELECT
+            IFNULL(
+                SUM(
+
+                    IF (
+                        WEEKDAY(payment_date) = 0,
+                        real_money,
+                        0
+                    )
+                ),
+                0
+            ) AS mon_income,
+            IFNULL(
+                SUM(
+
+                    IF (
+                        WEEKDAY(payment_date) = 1,
+                        real_money,
+                        0
+                    )
+                ),
+                0
+            ) AS tue_income,
+            IFNULL(
+                SUM(
+
+                    IF (
+                        WEEKDAY(payment_date) = 2,
+                        real_money,
+                        0
+                    )
+                ),
+                0
+            ) AS wed_income,
+            IFNULL(
+                SUM(
+
+                    IF (
+                        WEEKDAY(payment_date) = 3,
+                        real_money,
+                        0
+                    )
+                ),
+                0
+            ) AS thu_income,
+            IFNULL(
+                SUM(
+
+                    IF (
+                        WEEKDAY(payment_date) = 4,
+                        real_money,
+                        0
+                    )
+                ),
+                0
+            ) AS fri_income,
+            IFNULL(
+                SUM(
+
+                    IF (
+                        WEEKDAY(payment_date) = 5,
+                        real_money,
+                        0
+                    )
+                ),
+                0
+            ) AS sat_income,
+            IFNULL(
+                SUM(
+
+                    IF (
+                        WEEKDAY(payment_date) = 6,
+                        real_money,
+                        0
+                    )
+                ),
+                0
+            ) AS sun_income
+        FROM
+            tb_payment_order_many
+        WHERE
+            payment_order_status = 3
+        AND WEEK (payment_date) = WEEK (NOW())
+        AND company_id = #{merchantId}
+
+    </select>
+    <select id="getMonthTradeById" resultMap="monthTradeVO">
+
+        SELECT IFNULL(SUM(IF(DAY(payment_date) = 1, real_money, 0)), 0) AS one_day_income, IFNULL(SUM(IF(DAY(payment_date) = 2, real_money, 0)), 0) AS two_day_income,
+        IFNULL(SUM(IF(DAY(payment_date) = 3, real_money, 0)), 0) AS three_day_income, IFNULL(SUM(IF(DAY(payment_date) = 4, real_money, 0)), 0) AS four_day_income,
+        IFNULL(SUM(IF(DAY(payment_date) = 5, real_money, 0)), 0) AS five_day_income, IFNULL(SUM(IF(DAY(payment_date) = 6, real_money, 0)), 0) AS six_day_income,
+        IFNULL(SUM(IF(DAY(payment_date) = 7, real_money, 0)), 0) AS seven_day_income, IFNULL(SUM(IF(DAY(payment_date) = 8, real_money, 0)), 0) AS eight_day_income,
+        IFNULL(SUM(IF(DAY(payment_date) = 9, real_money, 0)), 0) AS nine_day_income, IFNULL(SUM(IF(DAY(payment_date) = 10, real_money, 0)), 0) AS ten_day_income,
+        IFNULL(SUM(IF(DAY(payment_date) = 11, real_money, 0)), 0) AS eleven_day_income, IFNULL(SUM(IF(DAY(payment_date) = 12, real_money, 0)), 0) AS twelve_day_income,
+        IFNULL(SUM(IF(DAY(payment_date) = 13, real_money, 0)), 0) AS thirteen_day_income, IFNULL(SUM(IF(DAY(payment_date) = 14, real_money, 0)), 0) AS fourteen_day_income,
+        IFNULL(SUM(IF(DAY(payment_date) = 15, real_money, 0)), 0) AS fifteen_day_income, IFNULL(SUM(IF(DAY(payment_date) = 16, real_money, 0)), 0) AS sixteen_day_income,
+        IFNULL(SUM(IF(DAY(payment_date) = 17, real_money, 0)), 0) AS seventeen_day_income, IFNULL(SUM(IF(DAY(payment_date) = 18, real_money, 0)), 0) AS eighteen_day_income,
+        IFNULL(SUM(IF(DAY(payment_date) = 19, real_money, 0)), 0) AS nineteen_day_income, IFNULL(SUM(IF(DAY(payment_date) = 20, real_money, 0)), 0) AS twenty_day_income,
+        IFNULL(SUM(IF(DAY(payment_date) = 21, real_money, 0)), 0) AS twenty_one_day_income, IFNULL(SUM(IF(DAY(payment_date) = 22, real_money, 0)), 0) AS twenty_two_day_income,
+        IFNULL(SUM(IF(DAY(payment_date) = 23, real_money, 0)), 0) AS twenty_three_day_income, IFNULL(SUM(IF(DAY(payment_date) = 24, real_money, 0)), 0) AS twenty_four_day_income,
+		IFNULL(SUM(IF(DAY(payment_date) = 25, real_money, 0)), 0) AS twenty_five_day_income, IFNULL(SUM(IF(DAY(payment_date) = 26, real_money, 0)), 0) AS twenty_six_day_income,
+        IFNULL(SUM(IF(DAY(payment_date) = 27, real_money, 0)), 0) AS twenty_seven_day_income, IFNULL(SUM(IF(DAY(payment_date) = 28, real_money, 0)), 0) AS twenty_eight_day_income,
+        IF(DAY(LAST_DAY(NOW())) >= 29, IFNULL(SUM(IF(DAY(payment_date) = 29, real_money, 0)), 0), NULL) AS twenty_nine_day_income,
+        IF(DAY(LAST_DAY(NOW())) >= 30, IFNULL(SUM(IF(DAY(payment_date) = 30, real_money, 0)), 0), NULL) AS thirty_day_income,
+		IF(DAY(LAST_DAY(NOW())) >= 31, IFNULL(SUM(IF(DAY(payment_date) = 31, real_money, 0)), 0), NULL) AS thirty_one_day_income
+        FROM tb_payment_order_many WHERE payment_order_status=3 AND YEAR(payment_date) = YEAR(NOW())
+		AND MONTH(payment_date) = MONTH(NOW()) AND company_id = #{merchantId}
+
+    </select>
+    <select id="getYearTradeById" resultMap="yearTradeVO">
+
+        SELECT IFNULL(SUM(IF(MONTH(payment_date) = 1, real_money, 0)), 0) AS jan_income, IFNULL(SUM(IF(MONTH(payment_date) = 2, real_money, 0)), 0) AS feb_income,
+        IFNULL(SUM(IF(MONTH(payment_date) = 3, real_money, 0)), 0) AS mar_income, IFNULL(SUM(IF(MONTH(payment_date) = 4, real_money, 0)), 0) AS apr_income,
+        IFNULL(SUM(IF(MONTH(payment_date) = 5, real_money, 0)), 0) AS may_income, IFNULL(SUM(IF(MONTH(payment_date) = 6, real_money, 0)), 0) AS jun_income,
+        IFNULL(SUM(IF(MONTH(payment_date) = 7, real_money, 0)), 0) AS jul_income, IFNULL(SUM(IF(MONTH(payment_date) = 8, real_money, 0)), 0) AS aug_income,
+        IFNULL(SUM(IF(MONTH(payment_date) = 9, real_money, 0)), 0) AS sep_income, IFNULL(SUM(IF(MONTH(payment_date) = 10, real_money, 0)), 0) AS oct_income,
+        IFNULL(SUM(IF(MONTH(payment_date) = 11, real_money, 0)), 0) AS nov_income, IFNULL(SUM(IF(MONTH(payment_date) = 12, real_money, 0)), 0) AS dec_income
+        FROM tb_payment_order_many WHERE payment_order_status=3 AND YEAR(payment_date) = YEAR(NOW()) AND company_id =#{merchantId}
+
+
     </select>
 
 </mapper>
