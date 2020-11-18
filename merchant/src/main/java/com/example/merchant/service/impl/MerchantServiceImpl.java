@@ -145,7 +145,8 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
             throw new LockedAccountException("账号已被禁用");
         }
         CustomizedToken customizedToken = new CustomizedToken(username, encryptPWD, MERCHANT);
-        currentUser.login(customizedToken);//shiro验证身份
+        //shiro验证身份
+        currentUser.login(customizedToken);
         String token = jwtUtils.generateToken(me.getId());
         response.setHeader(TOKEN, token);
         redisDao.set(me.getId(), token);

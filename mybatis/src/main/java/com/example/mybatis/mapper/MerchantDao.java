@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.mybatis.entity.Merchant;
 import com.example.mybatis.po.MerchantInfoPo;
 import com.example.mybatis.po.MerchantPaymentListPO;
-import com.example.mybatis.vo.BuyerVo;
+import com.example.mybatis.vo.*;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -30,6 +30,35 @@ public interface MerchantDao extends BaseMapper<Merchant> {
 
     //购买方
     BuyerVo getBuyerById(String id);
+
+    /**
+     * 查询商户今日成交总额
+     * @param merchantId
+     * @return
+     */
+    TodayVo getTodayById(String merchantId);
+
+    /**
+     * 查询商户本周成交总额
+     * @param merchantId
+     * @return
+     */
+    WeekTradeVO getWeekTradeById(String merchantId);
+
+    /**
+     * 查询商户本月成交总额
+     * @param merchantId
+     * @return
+     */
+    MonthTradeVO getMonthTradeById(String merchantId);
+
+    /**
+     * 查询商户本年成交总额
+     * @param merchantId
+     * @return
+     */
+    YearTradeVO getYearTradeById(String merchantId);
+
 
 
     /*----------平台端-------------*/

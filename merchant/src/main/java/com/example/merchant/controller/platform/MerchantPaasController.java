@@ -4,6 +4,7 @@ package com.example.merchant.controller.platform;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.platform.CompanyDto;
 import com.example.merchant.exception.CommonException;
+import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.AddressService;
 import com.example.merchant.service.LinkmanService;
 import com.example.merchant.service.MerchantService;

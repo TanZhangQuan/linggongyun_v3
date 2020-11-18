@@ -40,28 +40,28 @@ public class HomePageMerchantController {
     @LoginRequired
     @ApiOperation(value = "获取总包+分包今天的支付额", notes = "获取总包+分包今天的支付额", httpMethod = "POST")
     public ReturnJson totalDayInfo(@RequestAttribute("userId") @ApiParam(hidden = true) String merchantId) {
-        return paymentOrderService.getDay(merchantId);
+        return homePageService.getTodayById(merchantId);
     }
 
     @PostMapping("/totalWeekInfo")
     @LoginRequired
     @ApiOperation(value = "获取总包+分包本周的支付额", notes = "获取总包+分包本周的支付额", httpMethod = "POST")
     public ReturnJson totalWeekInfo(@RequestAttribute("userId") @ApiParam(hidden = true) String merchantId) {
-        return paymentOrderService.getWeek(merchantId);
+        return homePageService.getWeekTradeById(merchantId);
     }
 
     @PostMapping("/totalMonthInfo")
     @LoginRequired
     @ApiOperation(value = "获取总包+分包本月的支付额", notes = "获取总包+分包本月的支付额", httpMethod = "POST")
     public ReturnJson totalMonthInfo(@RequestAttribute("userId") @ApiParam(hidden = true) String merchantId) {
-        return paymentOrderService.getMonth(merchantId);
+        return homePageService.getMonthTradeById(merchantId);
     }
 
     @PostMapping("/totalYearInfo")
     @LoginRequired
     @ApiOperation(value = "获取总包+分包全年的支付额", notes = "获取总包+分包全年的支付额", httpMethod = "POST")
     public ReturnJson totalYearInfo(@RequestAttribute("userId") @ApiParam(hidden = true) String merchantId) {
-        return paymentOrderService.getYear(merchantId);
+        return homePageService.getYearTradeById(merchantId);
     }
 
     @PostMapping("/manyDayInfo")
@@ -91,4 +91,5 @@ public class HomePageMerchantController {
     public ReturnJson manyYearInfo(@RequestAttribute("userId") @ApiParam(hidden = true) String merchantId) {
         return paymentOrderManyService.getYear(merchantId);
     }
+
 }

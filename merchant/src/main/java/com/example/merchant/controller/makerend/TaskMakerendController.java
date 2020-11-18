@@ -24,10 +24,10 @@ public class TaskMakerendController {
 
     @ApiOperation(value = "任务大厅")
     @GetMapping(value = "/missionHall")
-    public ReturnJson setTask(@ApiParam(value = "商户id", required = true) @RequestParam("merchantId") String merchantId,
-                              @ApiParam(value = "任务行业类型") @RequestParam("industryType") String industryType) {
+    public ReturnJson setTask(
+            @ApiParam(value = "任务行业类型") @RequestParam("industryType") String industryType) {
 
-        return taskService.setTask(merchantId, industryType);
+        return taskService.setTask(industryType);
     }
 
     @ApiOperation(value = "任务详情")
@@ -39,7 +39,7 @@ public class TaskMakerendController {
     @ApiOperation(value = "我的任务")
     @GetMapping(value = "/myTask")
     @LoginRequired
-    public ReturnJson myTask(@ApiParam(value = "创客id", hidden = true)@RequestAttribute(value = "userId") String workerId,
+    public ReturnJson myTask(@ApiParam(value = "创客id", hidden = true) @RequestAttribute(value = "userId") String workerId,
                              @ApiParam(value = "创客完成状态0进行中1已完成2已失效3已提交4已验收") @RequestParam(value = "status", required = false) String status) {
         return taskService.myTask(workerId, status);
     }
@@ -65,5 +65,11 @@ public class TaskMakerendController {
     public ReturnJson orderGrabbing(@ApiParam(value = "任务id", required = true) @RequestParam("taskId") String taskId,
                                     @ApiParam(value = "创客id", hidden = true) @RequestAttribute(value = "userId") String workerId) {
         return taskService.orderGrabbing(taskId, workerId);
+    }
+
+    @ApiOperation(value = "行业列表")
+    @GetMapping(value = "/queryIndustryType")
+    public ReturnJson queryIndustryType() {
+        return taskService.getindustryType();
     }
 }

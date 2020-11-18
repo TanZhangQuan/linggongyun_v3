@@ -25,7 +25,7 @@ public interface TaskService extends IService<Task> {
 
     ReturnJson delete (String id);
 
-    ReturnJson saveTask(TaskDto taskDto);
+    ReturnJson saveTask(TaskDto taskDto,String userId);
 
     ReturnJson setTaskById(String id);
 
@@ -41,12 +41,18 @@ public interface TaskService extends IService<Task> {
 
     ReturnJson updatePlatfromTask(TaskDto taskDto);
 
-    ReturnJson setTask(String merchantId,String industryType);
+    ReturnJson setTask(String industryType);
 
     ReturnJson taskDetails(String taskId);
 
     ReturnJson orderGrabbing(String taskId,String workerId);
 
     ReturnJson myTask(String workerId,String status);
+
+    /**
+     * 获取任务列表
+     * @return
+     */
+    ReturnJson getindustryType();
 
 }

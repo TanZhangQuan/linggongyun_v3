@@ -12,16 +12,10 @@ import com.example.merchant.service.WorkerTaskService;
 import com.example.mybatis.dto.PlatformTaskDto;
 import com.example.mybatis.dto.TaskDto;
 import com.example.mybatis.dto.TaskListDto;
-import com.example.mybatis.entity.Merchant;
-import com.example.mybatis.entity.Task;
-import com.example.mybatis.entity.Worker;
-import com.example.mybatis.entity.WorkerTask;
-import com.example.mybatis.mapper.MerchantDao;
-import com.example.mybatis.mapper.TaskDao;
+import com.example.mybatis.entity.*;
+import com.example.mybatis.mapper.*;
 import com.example.merchant.service.TaskService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.example.mybatis.mapper.WorkerDao;
-import com.example.mybatis.mapper.WorkerTaskDao;
 import com.example.mybatis.vo.WorkerTaskVo;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,7 +47,8 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
     private WorkerTaskDao workerTaskDao;
     @Resource
     private WorkerDao workerDao;
-
+    @Resource
+    private IndustryDao industryDao;
 
     @Override
     public int count(TaskListDto taskListDto) {
@@ -101,7 +96,8 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
      */
     @Override
     @Transactional
-    public ReturnJson saveTask(TaskDto taskDto) {
+    public ReturnJson saveTask(TaskDto taskDto, String userId) {
+        taskDto.setMerchantId(userId);
         if (taskDto.getTaskMode() == 0) {
             if (!VerificationCheck.isNull(taskDto.getMakerIds())) {
                 return new ReturnJson("必须指定创客", 300);
@@ -259,9 +255,9 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
      * @return
      */
     @Override
-    public ReturnJson setTask(String merchantId, String industryType) {
+    public ReturnJson setTask( String industryType) {
         ReturnJson returnJson = new ReturnJson("操作失败", 300);
-        List<Task> list = taskDao.setTask(merchantId, industryType);
+        List<Task> list = taskDao.setTask(industryType);
         if (list != null) {
             returnJson = new ReturnJson("操作成功", list, 200);
         }
@@ -297,16 +293,16 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
         ReturnJson returnJson = new ReturnJson("操作失败", 300);
         Worker worker = workerDao.selectOne(new QueryWrapper<Worker>().eq("id", workerId));
         if (worker.getAttestation() != 1 && worker.getAgreementSign() != 1) {
-            return returnJson.error("您还不是认证用户");
+            return ReturnJson.error("您还不是认证用户");
         }
         Task task = taskDao.selectById(taskId);
         int count = workerTaskDao.selectCount(new QueryWrapper<WorkerTask>().eq("task_id", taskId).eq("task_status", 0));
         int count1 = workerTaskDao.selectCount(new QueryWrapper<WorkerTask>().eq("task_id", taskId).eq("worker_id", workerId));//用户是否已经抢过这一单
         if (count1 > 0) {
-            return returnJson.error("您已经抢过这一单了");
+            return ReturnJson.error("您已经抢过这一单了");
         }
         if (count >= task.getUpperLimit()) {
-            return returnJson.error("任务所需人数已满");
+            return ReturnJson.error("任务所需人数已满");
         }
         WorkerTask workerTask = new WorkerTask();
         workerTask.setTaskId(taskId);
@@ -316,7 +312,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
         workerTask.setCreateDate(LocalDateTime.now());
         int num = workerTaskDao.insert(workerTask);
         if (num > 0) {
-            return returnJson.error("恭喜,抢单成功");
+            return ReturnJson.error("恭喜,抢单成功");
         }
 
         return returnJson;
@@ -337,6 +333,13 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
             returnJson = new ReturnJson("操作成功", workerTaskList, 200);
         }
         return returnJson;
+    }
+
+
+    @Override
+    public ReturnJson getindustryType() {
+        List<String> list =industryDao.getIndustryType();
+        return ReturnJson.success(list);
     }
 
 }

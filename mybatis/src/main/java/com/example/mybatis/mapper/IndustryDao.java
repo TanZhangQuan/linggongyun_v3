@@ -17,4 +17,10 @@ import java.util.List;
 public interface IndustryDao extends BaseMapper<Industry> {
 
     List<IndustryVo> getlist();
+
+    /**
+     * 查询行业列表
+     * @return
+     */
+    List<String> getIndustryType();
 }

@@ -89,8 +89,10 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
     @Override
     public ReturnJson getDay(String merchantId) {
         Merchant merchant = merchantDao.selectById(merchantId);
-        List<PaymentOrderMany> list = paymentOrderManyDao.selectDay(merchant.getCompanyId());
-        return ReturnJson.success(list);
+        if (merchant == null) {
+            return ReturnJson.error("您输入的信息有误！");
+        }
+        return ReturnJson.success((paymentOrderManyDao.getTodayById(merchant.getCompanyId())));
     }
 
     /**
@@ -102,8 +104,10 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
     @Override
     public ReturnJson getWeek(String merchantId) {
         Merchant merchant = merchantDao.selectById(merchantId);
-        List<PaymentOrderMany> list = paymentOrderManyDao.selectWeek(merchant.getCompanyId());
-        return ReturnJson.success(list);
+        if (merchant == null) {
+            return ReturnJson.error("您输入的信息有误！");
+        }
+        return ReturnJson.success((paymentOrderManyDao.getWeekTradeById(merchant.getCompanyId())));
     }
 
 
@@ -116,8 +120,10 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
     @Override
     public ReturnJson getMonth(String merchantId) {
         Merchant merchant = merchantDao.selectById(merchantId);
-        List<PaymentOrderMany> list = paymentOrderManyDao.selectMonth(merchant.getCompanyId());
-        return ReturnJson.success(list);
+        if (merchant == null) {
+            return ReturnJson.error("您输入的信息有误！");
+        }
+        return ReturnJson.success((paymentOrderManyDao.getMonthTradeById(merchant.getCompanyId())));
     }
 
     /**
@@ -129,8 +135,10 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
     @Override
     public ReturnJson getYear(String merchantId) {
         Merchant merchant = merchantDao.selectById(merchantId);
-        List<PaymentOrderMany> list = paymentOrderManyDao.selectYear(merchant.getCompanyId());
-        return ReturnJson.success(list);
+        if (merchant == null) {
+            return ReturnJson.error("您输入的信息有误！");
+        }
+        return ReturnJson.success((paymentOrderManyDao.getYearTradeById(merchant.getCompanyId())));
     }
 
     /**
