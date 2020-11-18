@@ -132,7 +132,7 @@ public class HomePageServiceImpl implements HomePageService {
         String managersId = userId;
         Managers managers = managersDao.selectById(managersId);
         HomePageVO homePageVO = null;
-        List<String> merchantIds = acquireID.getMerchantIds(managersId);
+        List<String> merchantIds = acquireID.getCompanyIds(managersId);
         if (merchantIds == null || merchantIds.size() == 0) {
             return ReturnJson.success(homePageVO);
         }
@@ -207,18 +207,6 @@ public class HomePageServiceImpl implements HomePageService {
         return ReturnJson.success((merchantDao.getYearTradeById(merchant.getCompanyId())));
     }
 
-
-    public ReturnJson getHomePageInfoById(String merchantId) {
-        Merchant merchant = merchantDao.selectById(merchantId);
-        if (merchant == null) {
-            return ReturnJson.error("您输入的信息有误！");
-        }
-        HomePageContentVo homePageContentVo = new HomePageContentVo();
-        homePageContentVo.setWeekTradeVO(merchantDao.getWeekTradeById(merchant.getCompanyId()));
-        homePageContentVo.setMonthTradeVO(merchantDao.getMonthTradeById(merchant.getCompanyId()));
-        homePageContentVo.setYearTradeVO(merchantDao.getYearTradeById(merchant.getCompanyId()));
-        return ReturnJson.success(homePageContentVo);
-    }
 
 
     private HomePageVO getHomePageOV(List<String> ids) {
