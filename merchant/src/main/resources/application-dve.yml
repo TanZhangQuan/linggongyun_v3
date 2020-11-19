@@ -29,7 +29,7 @@ spring:
   redis:
     host: 127.0.0.1  # Redis服务器地址
     port: 6379 # Redis服务器连接端口
-    password: #linggongyun_v3 # Redis服务器连接密码（默认为空）
+    password: linggongyun_v3 # Redis服务器连接密码（默认为空）
     jedis:
       pool:
         max-active: 8 # 连接池最大连接数（使用负值表示没有限制）
@@ -49,58 +49,6 @@ spring:
       # 上传文件总的最大值
       max-request-size: 100MB
 
-mybatis-plus:
-  configuration:
-    map-underscore-to-camel-case: true
-    auto-mapping-behavior: full
-#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
-  mapper-locations: classpath*:mapper/*Mapper.xml
-  type-aliases-package: classpath*:com.example.mybatis.entity
-
-  global-config:
-    # 逻辑删除配置
-    db-config:
-      # 删除前
-      logic-not-delete-value: 1
-      # 删除后
-      logic-delete-value: 0
-
-#微信Appid
-APPID: "wx3870ff35a721932e"
-
-SECRET: "cf6f1bcea8c984dc699d2e554f9b2bf6"
-
-#
-PWD_KEY: "esdafw"
-
-#初始化主帐号
-SMS:
-  AccountSid: "8a216da873b27ace0173b30bff5d0079"
-
-  #主帐号TOKEN
-  AccountToken: "b12a28072550438486f44fce85ad3fe6"
-
-  #初始化应用ID
-  AppId: "8a216da873b27ace0173b30c00620081"
-
-  #模板ID
-  TemplateId: "624431"
-
-  #初始化服务器地址,服务器地址不需要写https://
-  serverIP: "app.cloopen.com"
-
-  #初始化服务器端口
-  serverPort: "8883"
-
-
-TOKEN: token
-
-JWT:
-  secret: "yixi"
-
-  expire: "7"
-
-  header: "linggongyun_v3"
 
 #本地图片存储路径
 PathImage_KEY: "/root/linggongyun_v3/image/"
