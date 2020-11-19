@@ -37,7 +37,7 @@ public class WorkerTaskServiceImpl extends ServiceImpl<WorkerTaskDao, WorkerTask
      * @return
      */
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public ReturnJson seavWorkerTask(Map map) {
         String wid = map.get("workerId").toString();
         String[] workerIds = wid.split(",");

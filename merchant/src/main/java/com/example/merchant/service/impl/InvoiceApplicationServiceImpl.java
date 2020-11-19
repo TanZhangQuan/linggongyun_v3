@@ -34,7 +34,7 @@ public class InvoiceApplicationServiceImpl extends ServiceImpl<InvoiceApplicatio
      * @return
      */
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public ReturnJson addInvApplication(InvoiceApplicationDto invoiceApplicationDto) {
         ReturnJson returnJson = new ReturnJson("添加失败", 300);
 

@@ -43,7 +43,7 @@ public class MakerInvoiceServiceImpl extends ServiceImpl<MakerInvoiceDao, MakerI
      * @return
      */
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public ReturnJson getPaymentInventory(String invoiceId) {
         ReturnJson returnJson = new ReturnJson("操作失败", 300);
         Map<String, Object> map = new HashMap<>();

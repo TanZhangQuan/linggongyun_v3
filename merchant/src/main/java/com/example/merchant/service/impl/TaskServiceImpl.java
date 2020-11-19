@@ -98,7 +98,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
      * @return
      */
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public ReturnJson saveTask(TaskDto taskDto, String userId) {
         taskDto.setMerchantId(userId);
         if (taskDto.getTaskMode() == 0) {
@@ -246,7 +246,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
         if (task == null) {
             return ReturnJson.error("你选择的任务不存在，请选择正确的任务");
         }
-        BeanUtil.copyProperties(task,taskDto);
+        BeanUtil.copyProperties(task, taskDto);
         taskDao.updateById(task);
         return ReturnJson.success("编辑成功");
     }
@@ -292,7 +292,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
      * @return
      */
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public synchronized ReturnJson orderGrabbing(String taskId, String workerId) {
         ReturnJson returnJson = new ReturnJson("操作失败", 300);
         Worker worker = workerDao.selectOne(new QueryWrapper<Worker>().eq("id", workerId));
