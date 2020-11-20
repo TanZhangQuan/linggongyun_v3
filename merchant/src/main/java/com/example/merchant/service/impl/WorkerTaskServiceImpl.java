@@ -30,12 +30,6 @@ public class WorkerTaskServiceImpl extends ServiceImpl<WorkerTaskDao, WorkerTask
     @Resource
     private WorkerTaskDao workerTaskDao;
 
-    /**
-     * 派单给指定创客
-     *
-     * @param map
-     * @return
-     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ReturnJson seavWorkerTask(Map map) {
@@ -52,19 +46,13 @@ public class WorkerTaskServiceImpl extends ServiceImpl<WorkerTaskDao, WorkerTask
         return ReturnJson.success("添加成功");
     }
 
-    /**
-     * 剔除用户,判断任务是否为发布中或已接单,逻辑删除
-     *
-     * @param workerId
-     * @return
-     */
     @Override
-    public ReturnJson eliminateWorker(Integer state, String workerId,String taskId) {
+    public ReturnJson eliminateWorker(Integer state, String workerId, String taskId) {
         ReturnJson returnJson = new ReturnJson("剔除失败", 300);
         if (state == 0 && state == 1) {
             returnJson = new ReturnJson("必须在发布中或已接单才能剔除", 300);
         } else {
-            int num = workerTaskDao.eliminateWorker(workerId,taskId);
+            int num = workerTaskDao.eliminateWorker(workerId, taskId);
             if (num > 0) {
                 returnJson = new ReturnJson("剔除成功", 200);
             }
@@ -72,19 +60,13 @@ public class WorkerTaskServiceImpl extends ServiceImpl<WorkerTaskDao, WorkerTask
         return returnJson;
     }
 
-    /**
-     * 修改验收金额
-     *
-     * @param money
-     * @return
-     */
     @Override
     public ReturnJson updateCheckMoney(String taskId, Double money, String id) {
         ReturnJson returnJson = new ReturnJson("修改失败", 300);
         if (money == null) {
             returnJson = new ReturnJson("验收金额不能为空", 300);
         } else {
-            int num = workerTaskDao.updateCheckMoney(money,id,taskId);
+            int num = workerTaskDao.updateCheckMoney(money, id, taskId);
             if (num > 0) {
                 returnJson = new ReturnJson("修改成功", 200);
             }
@@ -98,21 +80,13 @@ public class WorkerTaskServiceImpl extends ServiceImpl<WorkerTaskDao, WorkerTask
         WorkerTask workerTask = new WorkerTask();
         workerTask.setWorkerId(id);
         workerTask.setTaskId(taskId);
-        int num = workerTaskDao.updateCheckMoney(null,id,taskId);
+        int num = workerTaskDao.updateCheckMoney(null, id, taskId);
         if (num > 0) {
             returnJson = new ReturnJson("修改成功", 200);
         }
         return returnJson;
     }
 
-    /**
-     * 提交工作成成果
-     *
-     * @param workerTaskId
-     * @param achievementDesc
-     * @param achievementFiles
-     * @return
-     */
     @Override
     public ReturnJson acceptanceResults(String workerTaskId, String achievementDesc, String achievementFiles) {
         WorkerTask workerTask = new WorkerTask();
@@ -130,12 +104,6 @@ public class WorkerTaskServiceImpl extends ServiceImpl<WorkerTaskDao, WorkerTask
         return ReturnJson.error("提交失败");
     }
 
-    /**
-     * 查询任务完成成果
-     *
-     * @param workerTaskId
-     * @return
-     */
     @Override
     public ReturnJson getWorkerTask(String workerTaskId) {
         ReturnJson returnJson = new ReturnJson("操作失败", 300);
