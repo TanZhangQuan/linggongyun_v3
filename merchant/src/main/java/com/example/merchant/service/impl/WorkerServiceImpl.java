@@ -77,7 +77,7 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
     private String APPID;
     @Value("${SECRET}")
     private String SECRET;
-    @Autowired
+    @Resource
     private WorkerBankDao workerBankDao;
 
 
