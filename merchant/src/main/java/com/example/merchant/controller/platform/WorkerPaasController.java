@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -117,9 +118,10 @@ public class WorkerPaasController {
     @PostMapping(value = "/eliminateWorker")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "state", value = "当前任务的状态", required = true),
             @ApiImplicitParam(name = "workerId", value = "创客Id", required = true)})
-    public ReturnJson eliminateWorker(@NotBlank(message = "当前任务的状态") @ApiParam(value = "任务状态") @RequestParam Integer state,
-                                      @ApiParam(value = "创客id") @RequestParam String workerId) {
-        return workerTaskService.eliminateWorker(state, workerId);
+    public ReturnJson eliminateWorker(@NotNull(message = "当前任务的状态") @ApiParam(value = "任务状态") @RequestParam Integer state,
+                                      @NotBlank(message = "创客id不能为空") @ApiParam(value = "创客id") @RequestParam String workerId,
+                                      @NotBlank(message = "任务Id不能为空") @ApiParam(value = "任务id") @RequestParam String taskId) {
+        return workerTaskService.eliminateWorker(state, workerId,taskId);
     }
 
     @ApiOperation("修改验收金额")
@@ -129,7 +131,7 @@ public class WorkerPaasController {
             @ApiImplicitParam(name = "money", value = "验收金额", required = true),
             @ApiImplicitParam(name = "workerId", value = "创客Id", required = true)})
     public ReturnJson updateCheckMoney(@NotBlank(message = "请选择任务") @ApiParam(value = "任务id") @RequestParam String taskId,
-                                       @NotBlank(message = "验收金额不能为空") @ApiParam(value = "验收金额") @RequestParam Double money,
+                                       @NotNull(message = "验收金额不能为空") @ApiParam(value = "验收金额") @RequestParam Double money,
                                        @ApiParam(value = "创客Id") @RequestParam String workerId) {
         return workerTaskService.updateCheckMoney(taskId, money, workerId);
     }

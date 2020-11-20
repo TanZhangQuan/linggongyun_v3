@@ -96,11 +96,14 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
             taxes = taxDao.selectList(new QueryWrapper<Tax>().in("id", ids).eq("tax_status", 0));
         }
         List<TaxBriefVO> taxBriefVOS = new ArrayList<>();
-        taxes.forEach(tax -> {
-            TaxBriefVO taxBriefVO = new TaxBriefVO();
-            BeanUtils.copyProperties(tax,taxBriefVO);
-            taxBriefVOS.add(taxBriefVO);
-        });
+        if (taxes != null) {
+            taxes.forEach(tax -> {
+                TaxBriefVO taxBriefVO = new TaxBriefVO();
+                BeanUtils.copyProperties(tax, taxBriefVO);
+                taxBriefVOS.add(taxBriefVO);
+            });
+        }
+        if (taxes == null) return ReturnJson.success("没有可用的平台服务商");
         return ReturnJson.success(taxBriefVOS);
     }
 
@@ -119,7 +122,7 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
         List<TaxBriefVO> taxBriefVOS = new ArrayList<>();
         taxes.forEach(tax -> {
             TaxBriefVO taxBriefVO = new TaxBriefVO();
-            BeanUtils.copyProperties(tax,taxBriefVO);
+            BeanUtils.copyProperties(tax, taxBriefVO);
             taxBriefVOS.add(taxBriefVO);
         });
         return ReturnJson.success(taxBriefVOS);

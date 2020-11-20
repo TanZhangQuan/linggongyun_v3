@@ -20,9 +20,11 @@ public interface WorkerTaskService extends IService<WorkerTask> {
 
     ReturnJson seavWorkerTask(Map map);
 
-    ReturnJson eliminateWorker(Integer state,String workerId);
+    ReturnJson eliminateWorker(Integer state,String workerId,String taskId);
 
     ReturnJson updateCheckMoney(String taskId,Double money,String id);
+
+    ReturnJson updateCheck(String taskId,String id);
 
     ReturnJson acceptanceResults(String workerTaskId,String achievementDesc,String achievementFiles);
 

@@ -59,12 +59,12 @@ public class WorkerTaskServiceImpl extends ServiceImpl<WorkerTaskDao, WorkerTask
      * @return
      */
     @Override
-    public ReturnJson eliminateWorker(Integer state, String workerId) {
+    public ReturnJson eliminateWorker(Integer state, String workerId,String taskId) {
         ReturnJson returnJson = new ReturnJson("剔除失败", 300);
         if (state == 0 && state == 1) {
             returnJson = new ReturnJson("必须在发布中或已接单才能剔除", 300);
         } else {
-            int num = workerTaskDao.eliminateWorker(workerId);
+            int num = workerTaskDao.eliminateWorker(workerId,taskId);
             if (num > 0) {
                 returnJson = new ReturnJson("剔除成功", 200);
             }
@@ -79,20 +79,28 @@ public class WorkerTaskServiceImpl extends ServiceImpl<WorkerTaskDao, WorkerTask
      * @return
      */
     @Override
-    public ReturnJson updateCheckMoney(String taskId,Double money, String id) {
+    public ReturnJson updateCheckMoney(String taskId, Double money, String id) {
         ReturnJson returnJson = new ReturnJson("修改失败", 300);
-        WorkerTask workerTask = new WorkerTask();
-        workerTask.setCheckMoney(money);
-        workerTask.setId(id);
-        workerTask.setTaskId(taskId);
-        workerTask.setStatus(4);
-        if (money != null) {
+        if (money == null) {
             returnJson = new ReturnJson("验收金额不能为空", 300);
         } else {
-            int num = workerTaskDao.updateById(workerTask);
+            int num = workerTaskDao.updateCheckMoney(money,id,taskId);
             if (num > 0) {
                 returnJson = new ReturnJson("修改成功", 200);
             }
+        }
+        return returnJson;
+    }
+
+    @Override
+    public ReturnJson updateCheck(String taskId, String id) {
+        ReturnJson returnJson = new ReturnJson("修改失败", 300);
+        WorkerTask workerTask = new WorkerTask();
+        workerTask.setWorkerId(id);
+        workerTask.setTaskId(taskId);
+        int num = workerTaskDao.updateCheckMoney(null,id,taskId);
+        if (num > 0) {
+            returnJson = new ReturnJson("修改成功", 200);
         }
         return returnJson;
     }
@@ -111,7 +119,8 @@ public class WorkerTaskServiceImpl extends ServiceImpl<WorkerTaskDao, WorkerTask
         workerTask.setId(workerTaskId);
         workerTask.setAchievementDesc(achievementDesc);
         workerTask.setAchievementFiles(achievementFiles);
-        workerTask.setAchievementDate(LocalDateTime.now());//获取系统当前时间
+        //获取系统当前时间
+        workerTask.setAchievementDate(LocalDateTime.now());
         workerTask.setUpdateDate(LocalDateTime.now());
         workerTask.setStatus(3);
         int num = workerTaskDao.updateById(workerTask);

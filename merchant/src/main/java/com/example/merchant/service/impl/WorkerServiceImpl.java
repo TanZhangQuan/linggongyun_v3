@@ -14,11 +14,9 @@ import com.example.merchant.exception.CommonException;
 import com.example.merchant.service.*;
 import com.example.merchant.util.AcquireID;
 import com.example.merchant.util.JwtUtils;
-import com.example.mybatis.entity.CompanyWorker;
-import com.example.mybatis.entity.Merchant;
-import com.example.mybatis.entity.Worker;
-import com.example.mybatis.entity.WorkerTask;
+import com.example.mybatis.entity.*;
 import com.example.mybatis.mapper.MerchantDao;
+import com.example.mybatis.mapper.WorkerBankDao;
 import com.example.mybatis.mapper.WorkerDao;
 import com.example.mybatis.po.WorekerPaymentListPo;
 import com.example.mybatis.po.WorkerPo;
@@ -26,6 +24,7 @@ import com.example.mybatis.vo.WorkerPassVo;
 import com.example.mybatis.vo.WorkerVo;
 import com.example.redis.dao.RedisDao;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,6 +33,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -77,6 +77,8 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
     private String APPID;
     @Value("${SECRET}")
     private String SECRET;
+    @Autowired
+    private WorkerBankDao workerBankDao;
 
 
     @Override

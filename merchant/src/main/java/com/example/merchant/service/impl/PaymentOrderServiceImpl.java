@@ -346,9 +346,9 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
     @Override
     public ReturnJson getDayPaas(String merchantId) throws CommonException {
         List<String> merchantIds = acquireID.getCompanyIds(merchantId);
-        List<PaymentOrder> list = null;
+        List<PaymentOrder> list;
         if (VerificationCheck.listIsNull(merchantIds)) {
-            return ReturnJson.success(list);
+            return ReturnJson.success((List) null);
         }
         list = paymentOrderDao.selectDaypaas(merchantIds);
         return ReturnJson.success(list);
@@ -363,9 +363,9 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
     @Override
     public ReturnJson getWeekPaas(String merchantId) throws CommonException {
         List<String> merchantIds = acquireID.getCompanyIds(merchantId);
-        List<PaymentOrder> list = null;
+        List<PaymentOrder> list;
         if (VerificationCheck.listIsNull(merchantIds)) {
-            return ReturnJson.success(list);
+            return ReturnJson.success((List) null);
         }
         list = paymentOrderDao.selectWeekpaas(merchantIds);
         return ReturnJson.success(list);
@@ -380,9 +380,9 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
     @Override
     public ReturnJson getMonthPaas(String merchantId) throws CommonException {
         List<String> merchantIds = acquireID.getCompanyIds(merchantId);
-        List<PaymentOrder> list = null;
+        List<PaymentOrder> list;
         if (VerificationCheck.listIsNull(merchantIds)) {
-            return ReturnJson.success(list);
+            return ReturnJson.success((List) null);
         }
         list = paymentOrderDao.selectMonthpaas(merchantIds);
         return ReturnJson.success(list);
@@ -397,9 +397,9 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
     @Override
     public ReturnJson getYearPaas(String merchantId) throws CommonException {
         List<String> merchantIds = acquireID.getCompanyIds(merchantId);
-        List<PaymentOrder> list = null;
+        List<PaymentOrder> list;
         if (VerificationCheck.listIsNull(merchantIds)) {
-            return ReturnJson.success(list);
+            return ReturnJson.success((List) null);
         }
         list = paymentOrderDao.selectYearpaas(merchantIds);
         return ReturnJson.success(list);
@@ -414,9 +414,9 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
     @Override
     public ReturnJson getPaymentOrderPaas(PaymentOrderDto paymentOrderDto, String managersId) throws CommonException {
         List<String> merchantIds = acquireID.getCompanyIds(managersId);
-        List<PaymentOrder> list = null;
+        List<PaymentOrder> list;
         if (VerificationCheck.listIsNull(merchantIds)) {
-            return ReturnJson.success(list);
+            return ReturnJson.success((List) null);
         }
         String merchantName = paymentOrderDto.getMerchantName();
         String paymentOrderId = paymentOrderDto.getPaymentOrderId();
@@ -480,9 +480,11 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
         Managers managers = managersDao.selectById(managersId);
         Integer userSign = managers.getUserSign();
         List<CompanyInfo> companyInfos = null;
-        if (userSign == 1) {//管理人员为代理商
+        //管理人员为代理商
+        if (userSign == 1) {
             companyInfos = companyInfoDao.selectList(new QueryWrapper<CompanyInfo>().eq("agent_id", managers.getId()));
-        } else if (userSign == 2) {//管理人员为业务员
+        } else if (userSign == 2) {
+            //管理人员为业务员
             companyInfos = companyInfoDao.selectList(new QueryWrapper<CompanyInfo>().eq("sales_man_id", managers.getId()));
         } else {
             companyInfos = companyInfoDao.selectList(new QueryWrapper<>());

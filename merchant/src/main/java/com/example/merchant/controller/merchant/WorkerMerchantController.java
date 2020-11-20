@@ -15,6 +15,7 @@ import javax.annotation.Resource;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -97,18 +98,18 @@ public class WorkerMerchantController {
 
     @ApiOperation("剔除创客信息")
     @PostMapping(value = "/eliminateWorker")
-    public ReturnJson eliminateWorker(@ApiParam(value = "任务状态") Integer state, @ApiParam(value = "创客id") String workerId) {
-        return workerTaskService.eliminateWorker(state, workerId);
+    public ReturnJson eliminateWorker(@NotNull(message = "任务状态不能为空") @ApiParam(value = "任务状态") @RequestParam Integer state,
+                                      @NotBlank(message = "创客Id不能为空") @ApiParam(value = "创客id") @RequestParam String workerId,
+                                      @NotBlank(message = "任务Id不能为空") @ApiParam(value = "任务id") @RequestParam String taskId) {
+        return workerTaskService.eliminateWorker(state, workerId,taskId);
     }
 
-    @ApiOperation("修改验收金额")
-    @PostMapping(value = "/updateCheckMoney")
-    @ApiImplicitParams(value = {@ApiImplicitParam(name = "money", value = "验收金额", required = true),
-            @ApiImplicitParam(name = "workerId", value = "创客Id", required = true)})
+    @ApiOperation("验收")
+    @PostMapping(value = "/updateCheck")
+    @ApiImplicitParams(value = {@ApiImplicitParam(name = "workerId", value = "创客Id", required = true)})
     public ReturnJson updateCheckMoney(@NotBlank(message = "请选择任务") @ApiParam(value = "任务id") @RequestParam String taskId,
-                                       @NotBlank(message = "验收金额不能为空") @ApiParam(value = "验收金额") @RequestParam Double money,
                                        @ApiParam(value = "创客Id") @RequestParam String workerId) {
-        return workerTaskService.updateCheckMoney(taskId, money, workerId);
+        return workerTaskService.updateCheck(taskId, workerId);
     }
 }
 

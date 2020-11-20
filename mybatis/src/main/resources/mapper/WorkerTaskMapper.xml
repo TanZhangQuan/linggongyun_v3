@@ -22,12 +22,15 @@
     </insert>
 
     <update id="eliminateWorker">
-        UPDATE tb_worker_task SET task_status='1' WHERE worker_id=#{workerId}
+        UPDATE tb_worker_task SET task_status='1' WHERE worker_id=#{param1} and task_id=#{param2}
     </update>
 
     <update id="updateCheckMoney">
-        UPDATE tb_worker_task SET check_money=#{money}
-        WHERE id=#{id}
+        UPDATE tb_worker_task SET status=4,update_date=now()
+        <if test="param1 != null">
+            ,check_money=#{param1}
+        </if>
+        WHERE worker_id=#{param2} and task_id=#{param3}
     </update>
 
     <resultMap id="workerTask" type="com.example.mybatis.vo.WorkerTaskVo">
@@ -49,7 +52,7 @@
         FROM tb_task t
         INNER JOIN tb_worker_task wt ON wt.task_id=t.id
         WHERE wt.worker_id=#{workerId}
-        <if test="status != null ">
+        <if test="status != null and status != ''">
             AND wt.`status`=#{status}
         </if>
     </select>
