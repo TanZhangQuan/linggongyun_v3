@@ -35,7 +35,7 @@ public class TaxMerchantController {
     @ApiImplicitParams(value={
             @ApiImplicitParam(name="packageStatus",value = "合作类型0为总包，1为众包",required = true)
     })
-    public ReturnJson getTaxAll(@ApiParam(hidden = true) @RequestAttribute("userId") String merchantId, @NotNull(message = "包的类型不能为空，0为总包，1为众包") @RequestParam(required = false) Integer packageStatus){
+    public ReturnJson getTaxAll(@ApiParam(hidden = true) @RequestAttribute(value = "userId") String merchantId, @NotNull(message = "包的类型不能为空，0为总包，1为众包") @RequestParam(required = false) Integer packageStatus){
         return taxService.getTaxAll(merchantId,packageStatus);
     }
 }

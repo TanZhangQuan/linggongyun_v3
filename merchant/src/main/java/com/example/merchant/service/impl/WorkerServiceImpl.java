@@ -14,11 +14,9 @@ import com.example.merchant.exception.CommonException;
 import com.example.merchant.service.*;
 import com.example.merchant.util.AcquireID;
 import com.example.merchant.util.JwtUtils;
-import com.example.mybatis.entity.CompanyWorker;
-import com.example.mybatis.entity.Merchant;
-import com.example.mybatis.entity.Worker;
-import com.example.mybatis.entity.WorkerTask;
+import com.example.mybatis.entity.*;
 import com.example.mybatis.mapper.MerchantDao;
+import com.example.mybatis.mapper.WorkerBankDao;
 import com.example.mybatis.mapper.WorkerDao;
 import com.example.mybatis.po.WorekerPaymentListPo;
 import com.example.mybatis.po.WorkerPo;
@@ -26,6 +24,7 @@ import com.example.mybatis.vo.WorkerPassVo;
 import com.example.mybatis.vo.WorkerVo;
 import com.example.redis.dao.RedisDao;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,6 +33,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -77,15 +77,10 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
     private String APPID;
     @Value("${SECRET}")
     private String SECRET;
+    @Resource
+    private WorkerBankDao workerBankDao;
 
-    /**
-     * 分页查询商户下的所以创客
-     *
-     * @param merchantId
-     * @param page
-     * @param pageSize
-     * @return
-     */
+
     @Override
     public ReturnJson getWorkerAll(String merchantId, Integer page, Integer pageSize) {
         Merchant merchant = merchantDao.selectById(merchantId);
@@ -105,12 +100,7 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
         return ReturnJson.success("");
     }
 
-    /**
-     * 按编号、姓名、手机号，查询该商户下的创客
-     *
-     * @param workerDto
-     * @return
-     */
+
     @Override
     public ReturnJson getByIdAndAccountNameAndMobile(String merchantId, WorkerDto workerDto) {
         Merchant merchant = merchantDao.selectById(merchantId);
@@ -119,12 +109,7 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
         return ReturnJson.success(workerIPage);
     }
 
-    /**
-     * 查询创客的基本信息
-     *
-     * @param id
-     * @return
-     */
+
     @Override
     public ReturnJson getWorkerInfo(String id) {
         Worker worker = workerDao.selectById(id);
@@ -141,13 +126,7 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
         return ReturnJson.success(worker, list);
     }
 
-    /**
-     * 导入创客，当创客没注册时先注册创客（创客登录账号为手机号码，密码为身份证后6为数）
-     *
-     * @param workers
-     * @param merchantId
-     * @return
-     */
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ReturnJson saveWorker(List<Worker> workers, String merchantId) throws Exception {
@@ -173,14 +152,6 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
     }
 
 
-    /**
-     * 查询任务对应创客
-     *
-     * @param taskId   任务id
-     * @param pageNo   第几页
-     * @param pageSize 页大小
-     * @return
-     */
     @Override
     public ReturnJson getWorkerByTaskId(String taskId, Integer pageNo, Integer pageSize) {
         ReturnJson returnJson = new ReturnJson("查询失败", 300);
@@ -192,14 +163,7 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
         return returnJson;
     }
 
-    /**
-     * 验收创客是否完成
-     *
-     * @param taskId
-     * @param pageNo
-     * @param pageSize
-     * @return
-     */
+
     @Override
     public ReturnJson getCheckByTaskId(String taskId, Integer pageNo, Integer pageSize) {
         ReturnJson returnJson = new ReturnJson("验收查询失败", 300);
@@ -212,14 +176,6 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
     }
 
 
-    /**
-     * 查询创客的收入列表
-     *
-     * @param id
-     * @param page
-     * @param pageSize
-     * @return
-     */
     @Override
     public ReturnJson getWorkerPaymentListPaas(String id, Integer page, Integer pageSize) {
         Page<WorekerPaymentListPo> worekerPaymentListPoPage = new Page<>(page, pageSize);
@@ -227,12 +183,7 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
         return ReturnJson.success(worekerPaymentListPoIPage);
     }
 
-    /**
-     * 编辑创客
-     *
-     * @param worker
-     * @return
-     */
+
     @Override
     public ReturnJson updateWorkerPaas(Worker worker) {
         boolean flag = this.updateById(worker);
@@ -242,14 +193,7 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
         return ReturnJson.error("编辑失败！");
     }
 
-    /**
-     * 创客登录
-     *
-     * @param username
-     * @param password
-     * @param response
-     * @return
-     */
+
     @Override
     public ReturnJson loginWorker(String username, String password, HttpServletResponse response) {
         String encryptPWD = PWD_KEY + MD5.md5(password);
@@ -266,12 +210,7 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
         return ReturnJson.error("你输入的用户名或密码有误！");
     }
 
-    /**
-     * 发送验证码
-     *
-     * @param mobileCode
-     * @return
-     */
+
     @Override
     public ReturnJson senSMS(String mobileCode, String isNot) {
         ReturnJson rj = new ReturnJson();
@@ -314,14 +253,7 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
         return rj;
     }
 
-    /**
-     * 手机号登录
-     *
-     * @param loginMobile
-     * @param checkCode
-     * @param resource
-     * @return
-     */
+
     @Override
     public ReturnJson loginMobile(String loginMobile, String checkCode, HttpServletResponse resource) {
         String redisCheckCode = redisDao.get(loginMobile);
@@ -340,20 +272,15 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
         }
     }
 
-    /**
-     * 修改密码忘记密码
-     *
-     * @param loginMobile
-     * @param checkCode
-     * @param newPassWord
-     * @return
-     */
     @Override
     public ReturnJson updataPassWord(String loginMobile, String checkCode, String newPassWord) {
         String redisCode = redisDao.get(loginMobile);
-        if (redisCode.equals(checkCode)) {
+        if (checkCode.equals(redisCode)) {
             Worker worker = workerDao.selectOne(new QueryWrapper<Worker>().eq("mobile_code", loginMobile));
-            if (worker == null) {
+            if (worker != null) {
+                if (worker.getUserPwd().equals(PWD_KEY + MD5.md5(newPassWord))) {
+                    return ReturnJson.error("旧密码与新密码一致！");
+                }
                 worker.setUserPwd(PWD_KEY + MD5.md5(newPassWord));
                 int flag = workerDao.updateById(worker);
                 if (flag > 0) {
@@ -369,12 +296,6 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
         return ReturnJson.error("你的验证码有误！");
     }
 
-    /**
-     * 微信登录
-     *
-     * @param code
-     * @return
-     */
     @Override
     public ReturnJson wxLogin(String code, String iv, String encryptedData) {
         ReturnJson returnJson = new ReturnJson("操作失败", 300);
@@ -454,11 +375,6 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
         return ReturnJson.error("信息错误请重新登录");
     }
 
-    /**
-     * 首页创客赚钱信息
-     *
-     * @return
-     */
     @Override
     public ReturnJson setWorkerMakeMoney() {
         ReturnJson returnJson = new ReturnJson("操作失败", 300);
@@ -484,24 +400,12 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
         return returnJson;
     }
 
-    /**
-     * 退出登录
-     *
-     * @param workerId
-     * @return
-     */
     @Override
     public ReturnJson logout(String workerId) {
         redisDao.remove(workerId);
         return ReturnJson.success("退出登录成功！");
     }
 
-    /**
-     * 根据token获取用户信息
-     *
-     * @param userId
-     * @return
-     */
     @Override
     public ReturnJson getWorkerInfoBytoken(String userId) {
         Worker worker = this.getById(userId);
@@ -509,14 +413,6 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
         return ReturnJson.success(worker);
     }
 
-    /**
-     * 平台端查询创客任务
-     *
-     * @param taskId
-     * @param pageNo
-     * @param pageSize
-     * @return
-     */
     @Override
     public ReturnJson getPaasWorkerByTaskId(String taskId, Integer pageNo, Integer pageSize) {
         Page page = new Page(pageNo, pageSize);
@@ -524,12 +420,6 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
         return ReturnJson.success(iPage);
     }
 
-    /**
-     * 注册创客
-     *
-     * @param addWorkerDto
-     * @return
-     */
     @Override
     public ReturnJson registerWorker(AddWorkerDto addWorkerDto) {
         Worker worker = workerDao.selectOne(new QueryWrapper<Worker>().eq("mobile_code", addWorkerDto.getMobileCode()));

@@ -29,6 +29,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * @author Jwei
+ */
 @Service
 public class CrowdSourcingInvoiceServiceImpl extends ServiceImpl<CrowdSourcingInvoiceDao, CrowdSourcingInvoice> implements CrowdSourcingInvoiceService {
 
@@ -124,10 +127,13 @@ public class CrowdSourcingInvoiceServiceImpl extends ServiceImpl<CrowdSourcingIn
             if (invoiceLadderPrice != null) {
                 for (InvoiceLadderPrice price : invoiceLadderPrice) {
                     if ((vo.getTaskMoney().compareTo(price.getStartMoney()) > -1) && (vo.getTaskMoney().compareTo(price.getEndMoney()) == -1)) {
-                        vo.setTaxRate(price.getRate());//纳税率
+                        //纳税率
+                        vo.setTaxRate(price.getRate());
                         BigDecimal bigDecimal = vo.getTaxRate().multiply(vo.getTaskMoney());
-                        vo.setPersonalServiceFee(bigDecimal.setScale(2, RoundingMode.HALF_UP));//个人服务费
-                        vo.setTaxAmount((vo.getTaskMoney().subtract(vo.getPersonalServiceFee())).divide((vo.getTaxRate().add(new BigDecimal("1.00"))).multiply(vo.getTaxRate()), 2, BigDecimal.ROUND_HALF_UP));//纳税金额
+                        //个人服务费
+                        vo.setPersonalServiceFee(bigDecimal.setScale(2, RoundingMode.HALF_UP));
+                        //纳税金额
+                        vo.setTaxAmount((vo.getTaskMoney().subtract(vo.getPersonalServiceFee())).divide((vo.getTaxRate().add(new BigDecimal("1.00"))).multiply(vo.getTaxRate()), 2, BigDecimal.ROUND_HALF_UP));
                     }
                 }
             }
@@ -179,7 +185,8 @@ public class CrowdSourcingInvoiceServiceImpl extends ServiceImpl<CrowdSourcingIn
     @Override
     public ReturnJson saveCrowdSourcingInvoice(CrowdSourcingInvoice crowdSourcingInvoice) {
         ReturnJson returnJson = new ReturnJson("操作失败", 300);
-        DateTimeFormatter dfd = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");//时间转换
+        //时间转换
+        DateTimeFormatter dfd = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         if (crowdSourcingInvoice.getApplicationId() == null) {
             returnJson = new ReturnJson("商户未申请，支付id不能为空", 300);
         }
@@ -200,7 +207,8 @@ public class CrowdSourcingInvoiceServiceImpl extends ServiceImpl<CrowdSourcingIn
             }
         }
         crowdSourcingInvoice.setInvoiceCode("FP" + codes);
-        crowdSourcingInvoice.setCreateDate(LocalDateTime.parse(DateUtil.getTime(), dfd));//创建时间
+        //创建时间
+        crowdSourcingInvoice.setCreateDate(LocalDateTime.parse(DateUtil.getTime(), dfd));
         int num = crowdSourcingInvoiceDao.insert(crowdSourcingInvoice);
         if (crowdSourcingInvoice.getApplicationId() != null) {
             CrowdSourcingApplication crowdSourcingApplication = new CrowdSourcingApplication();

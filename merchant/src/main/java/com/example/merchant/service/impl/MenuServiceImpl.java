@@ -90,7 +90,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
      * @return
      */
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public ReturnJson saveRole(MerchantDto merchantDto) {
         String token = redisDao.get(merchantDto.getMerchantId());
         if (token == null) {
@@ -138,7 +138,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
      * @return
      */
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public ReturnJson updateRole(MerchantDto merchantDto) {
         MerchantRole merchantRole = new MerchantRole();
         merchantRole.setId(merchantDto.getRoleId());
@@ -191,7 +191,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
      * @return
      */
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public ReturnJson daleteRole(String merchantId) {
         Merchant merchant = merchantDao.selectById(new QueryWrapper<Merchant>().eq("id", merchantId));
         merchantRoleMenuDao.delete(new QueryWrapper<MerchantRoleMenu>().eq("merchant_role_id", merchant.getRoleId()));
@@ -225,7 +225,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
      * @return
      */
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public ReturnJson savePlatRole(SaveManagersRoleDto saveManagersRoleDto,String managersId) {
         Managers managersOne = null;
         String token = redisDao.get(managersId);
@@ -319,7 +319,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
      * @return
      */
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public ReturnJson daletePassRole(String managersId) {
         Managers managers = managersDao.selectById(new QueryWrapper<Managers>().eq("id", managersId));
         merchantRoleMenuDao.delete(new QueryWrapper<MerchantRoleMenu>().eq("merchant_role_id", managers.getRoleId()));

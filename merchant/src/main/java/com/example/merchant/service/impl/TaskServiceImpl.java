@@ -53,18 +53,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
     @Resource
     private IndustryDao industryDao;
 
-    @Override
-    public int count(TaskListDto taskListDto) {
-        return taskDao.count(taskListDto);
-    }
 
-
-    /**
-     * 任务列表
-     *
-     * @param taskListDto
-     * @return
-     */
     @Override
     public ReturnJson selectList(TaskListDto taskListDto) {
         Page page = new Page(taskListDto.getPageNo(), taskListDto.getPageSize());
@@ -72,13 +61,6 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
         return ReturnJson.success(taskList);
     }
 
-
-    /**
-     * 删除
-     *
-     * @param id
-     * @return
-     */
     @Override
     public ReturnJson delete(String id) {
         Task task = taskDao.selectById(id);
@@ -90,15 +72,8 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
         return ReturnJson.success("操作成功");
     }
 
-
-    /**
-     * 添加任务
-     *
-     * @param taskDto
-     * @return
-     */
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public ReturnJson saveTask(TaskDto taskDto, String userId) {
         taskDto.setMerchantId(userId);
         if (taskDto.getTaskMode() == 0) {
@@ -127,12 +102,6 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
         return new ReturnJson("添加失败", 300);
     }
 
-    /**
-     * 查看任务详情
-     *
-     * @param id
-     * @return
-     */
     @Override
     public ReturnJson setTaskById(String id) {
         if (!VerificationCheck.isNull(id)) {
@@ -142,18 +111,11 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
         return ReturnJson.success(task);
     }
 
-
     @Override
     public String getTaskCode() {
         return taskDao.getTaskCode();
     }
 
-    /**
-     * 关单
-     *
-     * @param taskId
-     * @return
-     */
     @Override
     public ReturnJson close(String taskId) {
         Task task = taskDao.selectById(taskId);
@@ -165,13 +127,6 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
         }
     }
 
-
-    /**
-     * 重新开启任务
-     *
-     * @param taskId
-     * @return
-     */
     @Override
     public ReturnJson openTask(String taskId) {
         Task task = taskDao.selectById(taskId);
@@ -183,12 +138,6 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
         }
     }
 
-    /**
-     * 平台任务列表
-     *
-     * @param platformTaskDto
-     * @return
-     */
     @Override
     public ReturnJson getPlatformTaskList(PlatformTaskDto platformTaskDto) {
         Page page = new Page(platformTaskDto.getPageNo(), platformTaskDto.getPageSize());
@@ -196,12 +145,6 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
         return ReturnJson.success(taskList);
     }
 
-    /**
-     * 平台任务添加
-     *
-     * @param taskDto
-     * @return
-     */
     @Override
     public ReturnJson savePlatformTask(TaskDto taskDto) {
         if (taskDto.getTaskMode() == 0) {
@@ -231,12 +174,6 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
         return new ReturnJson("添加失败", 300);
     }
 
-    /**
-     * 编辑任务
-     *
-     * @param taskDto
-     * @return
-     */
     @Override
     public ReturnJson updatePlatfromTask(TaskDto taskDto) {
         if (taskDto.getId() == null) {
@@ -246,17 +183,11 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
         if (task == null) {
             return ReturnJson.error("你选择的任务不存在，请选择正确的任务");
         }
-        BeanUtil.copyProperties(task,taskDto);
+        BeanUtil.copyProperties(task, taskDto);
         taskDao.updateById(task);
         return ReturnJson.success("编辑成功");
     }
 
-    /**
-     * 小程序任务大厅
-     *
-     * @param queryMissionHall
-     * @return
-     */
     @Override
     public ReturnJson setTask(QueryMissionHall queryMissionHall) {
         ReturnJson returnJson = new ReturnJson("操作失败", 300);
@@ -268,12 +199,6 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
         return returnJson;
     }
 
-    /**
-     * 查询任务详情
-     *
-     * @param taskId
-     * @return
-     */
     @Override
     public ReturnJson taskDetails(String taskId) {
         ReturnJson returnJson = new ReturnJson("操作失败", 300);
@@ -284,15 +209,8 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
         return returnJson;
     }
 
-    /**
-     * 抢单
-     *
-     * @param taskId
-     * @param workerId
-     * @return
-     */
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public synchronized ReturnJson orderGrabbing(String taskId, String workerId) {
         ReturnJson returnJson = new ReturnJson("操作失败", 300);
         Worker worker = workerDao.selectOne(new QueryWrapper<Worker>().eq("id", workerId));
@@ -314,22 +232,16 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
         workerTask.setWorkerId(workerId);
         workerTask.setTaskStatus(0);
         workerTask.setGetType(0);
+        workerTask.setStatus(0);
         workerTask.setCreateDate(LocalDateTime.now());
         int num = workerTaskDao.insert(workerTask);
         if (num > 0) {
-            return ReturnJson.error("恭喜,抢单成功");
+            return ReturnJson.success("恭喜,抢单成功");
         }
 
         return returnJson;
     }
 
-    /**
-     * 我的任务,某个创客的所有任务
-     *
-     * @param workerId 创客id
-     * @param status   任务状态
-     * @return
-     */
     @Override
     public ReturnJson myTask(String workerId, String status) {
         ReturnJson returnJson = new ReturnJson("操作失败", 300);

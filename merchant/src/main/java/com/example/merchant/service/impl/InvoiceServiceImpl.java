@@ -116,7 +116,7 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public ReturnJson saveInvoice(AddInvoiceDto addInvoiceDto) {
         ReturnJson returnJson = new ReturnJson("添加失败", 300);
         DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");

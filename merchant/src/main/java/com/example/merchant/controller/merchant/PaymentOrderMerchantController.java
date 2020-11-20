@@ -4,6 +4,7 @@ package com.example.merchant.controller.merchant;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.merchant.AddPaymentOrderDto;
 import com.example.merchant.dto.merchant.PaymentOrderMerchantDto;
+import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.PaymentOrderService;
 import io.swagger.annotations.*;
 import org.springframework.validation.annotation.Validated;
@@ -36,6 +37,7 @@ public class PaymentOrderMerchantController {
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "paymentOrderMerchantDto", value = "查询条件", required = true, dataType = "PaymentOrderMerchantDto")
     })
+    @LoginRequired
     public ReturnJson getPaymentOrderAll(@ApiParam(hidden = true) @RequestAttribute("userId") String merchantId, @Valid @RequestBody PaymentOrderMerchantDto paymentOrderMerchantDto) {
         return paymentOrderService.getPaymentOrder(merchantId, paymentOrderMerchantDto);
     }
@@ -65,7 +67,8 @@ public class PaymentOrderMerchantController {
             @ApiImplicitParam(name = "paymentOrderId", value = "支付订单ID", required = true),
             @ApiImplicitParam(name = "turnkeyProjectPayment", value = "支付回单存储地址", required = true)
     })
-    public ReturnJson offlinePayment(@NotBlank @RequestParam(required = false) String paymentOrderId, @NotBlank @RequestParam(required = false) String turnkeyProjectPayment) {
+    public ReturnJson offlinePayment(@NotBlank @RequestParam(required = false) String paymentOrderId,
+                                     @NotBlank @RequestParam(required = false) String turnkeyProjectPayment) {
         return paymentOrderService.offlinePayment(paymentOrderId, turnkeyProjectPayment);
     }
 

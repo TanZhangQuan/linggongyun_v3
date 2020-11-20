@@ -70,7 +70,7 @@ public class FileOperationServiceImpl implements FileOperationService {
     @Override
     public ReturnJson getExcelWorker(MultipartFile workerExcel) {
         if (workerExcel.getSize() == 0) {
-            return ReturnJson.error("上传文件不能为空！");
+            return ReturnJson.error("上传文件内容不能为空！");
         }
         List<Map<String, Object>> maps = ExcelResponseUtils.workerExcel(workerExcel);
         List mobileCodes = new ArrayList();
@@ -110,7 +110,7 @@ public class FileOperationServiceImpl implements FileOperationService {
     @Override
     public ReturnJson uploadJpgOrPdf(MultipartFile uploadJpgOrPdf, HttpServletRequest request) throws IOException {
         if (uploadJpgOrPdf.getSize() == 0) {
-            return ReturnJson.error("上传文件不能为空！");
+            return ReturnJson.error("上传文件内容不能为空！");
         }
         String[] files = {"pdf", "jpg", "png", "rar", "zip", "7z", "arj"};
         String fileName = uploadJpgOrPdf.getOriginalFilename();
@@ -198,7 +198,7 @@ public class FileOperationServiceImpl implements FileOperationService {
     @Override
     public ReturnJson uploadInvoice(MultipartFile uploadInvoice, HttpServletRequest request) throws IOException {
         if (uploadInvoice.getSize() == 0) {
-            return ReturnJson.error("上传文件不能为空！");
+            return ReturnJson.error("上传文件内容不能为空！");
         }
         String[] files = {"xlsx", "xls"};
         String fileName = uploadInvoice.getOriginalFilename();
