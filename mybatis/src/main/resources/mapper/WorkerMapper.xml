@@ -26,6 +26,7 @@
         <result column="head_portraits" property="headPortraits"/>
         <result column="picture" property="picture"/>
         <result column="business_license" property="businessLicense"/>
+        <result column="credit_code" property="creditCode"/>
         <result column="create_date" property="createDate"/>
         <result column="update_date" property="updateDate"/>
     </resultMap>
@@ -64,6 +65,13 @@
         <result column="status" property="status"/>
     </resultMap>
 
+    <resultMap id="workerInfo" type="com.example.mybatis.vo.WorkerInfoVo">
+        <result column="task_number" property="taskNumber"/>
+        <result column="total_revenue" property="totalRevenue"/>
+        <result column="total_tax" property="totalTax"/>
+        <result column="invoice_number" property="invoiceNumber"/>
+    </resultMap>
+
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id, worker_status, worker_name, account_name, worker_sex, mobile_code, idcard_code, bank_code, attestation, idcardFront, idcardBack, attestation_video, user_name, user_pwd, skill, agreementSign, agreementUrl, head_portraits, picture, business_license, create_date, update_date
@@ -87,7 +95,12 @@
         from tb_worker a join tb_company_worker b on a.id = b.worker_id
         <where>
             b.company_id = #{merchantId}
-            <include refid="ByIdAndAccountNameAndMobile"></include>
+        <if test="accountName != null and accountName != ''">
+            and account_name like CONCAT('%',#{accountName},'%')
+        </if>
+        <if test="mobileCode != null and mobileCode != ''">
+            and mobile_code = #{mobileCode}
+        </if>
         </where>
     </select>
 
@@ -254,5 +267,55 @@
             tb_worker AS w
         INNER JOIN tb_worker_task wt ON wt.worker_id = w.id
         where wt.task_id=#{taskId}
+    </select>
+
+    <select id="queryWorkerInfo" resultMap="workerInfo">
+        SELECT
+            (
+                SELECT
+                    count(1)
+                FROM
+                    tb_worker_task
+                WHERE
+                    worker_id = w.id
+            ) AS task_number,
+            (
+                SELECT
+                    SUM(real_money)
+                FROM
+                    tb_payment_inventory
+                WHERE
+                    worker_id = w.id
+            ) AS total_revenue,
+            (
+                SELECT
+                    SUM(tax_amount)
+                FROM
+                    tb_payment_inventory
+                WHERE
+                    worker_id = w.id
+            ) AS total_tax,
+            (
+                SELECT
+                    COUNT(1)
+                FROM
+                    tb_payment_inventory pi
+                    INNER JOIN tb_payment_order po ON pi.payment_order_id=po.id AND po.is_not_invoice=1
+                WHERE
+                    pi.worker_id = w.id
+            ) +
+        (
+                SELECT
+                    COUNT(1)
+                FROM
+                    tb_payment_inventory pi
+                    INNER JOIN tb_payment_order_many pm ON pi.payment_order_id=pm.id AND pm.is_not_invoice=1
+                WHERE
+                    pi.worker_id = w.id
+            ) AS invoice_number
+        FROM
+            tb_worker w
+        WHERE
+            w.id = #{workerId}
     </select>
 </mapper>

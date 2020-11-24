@@ -27,7 +27,7 @@
         <freemarker.version>2.3.30</freemarker.version>
         <lombok.version>1.16.18</lombok.version>
         <generator.version>3.3.2</generator.version>
-        <fastjson.version>1.2.47</fastjson.version>
+        <fastjson.version>1.2.70</fastjson.version>
         <commons.lang3.version>3.9</commons.lang3.version>
         <commons.codec.version>1.11</commons.codec.version>
         <springfox.swagger2.version>2.9.2</springfox.swagger2.version>
@@ -37,6 +37,7 @@
         <validation.api.version>2.0.1.Final</validation.api.version>
         <poi.version>4.1.1</poi.version>
         <poi.ooxml.version>4.1.1</poi.ooxml.version>
+        <easyexcel.version>2.2.6</easyexcel.version>
     </properties>
 
     <dependencies>

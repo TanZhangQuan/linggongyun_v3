@@ -441,15 +441,6 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
         }
     }
 
-    /**
-     * 功能描述: 按条件查询已认证的创客
-     *
-     * @param managersId
-     * @param workerQueryDto
-     * @Return com.example.common.util.ReturnJson
-     * @Author 忆惜
-     * @Date 2020/11/10 10:50
-     */
     @Override
     public ReturnJson getWorkerQuery(String managersId, WorkerQueryDto workerQueryDto) throws CommonException {
         List<String> companyIds = acquireID.getCompanyIds(managersId);
@@ -457,20 +448,16 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
         return ReturnJson.success(workerIPage);
     }
 
-    /**
-     * 功能描述: 按条件查询未认证的创客
-     *
-     * @param managersId
-     * @param workerQueryDto
-     * @Return com.example.common.util.ReturnJson
-     * @Author 忆惜
-     * @Date 2020/11/10 11:53
-     */
     @Override
     public ReturnJson getWorkerQueryNot(String managersId, WorkerQueryDto workerQueryDto) throws CommonException {
         List<String> companyIds = acquireID.getCompanyIds(managersId);
         IPage<Worker> workerIPage = workerDao.selectWorkerQueryNot(new Page(workerQueryDto.getPage(), workerQueryDto.getPageSize()), companyIds, workerQueryDto.getWorkerId(), workerQueryDto.getAccountName(), workerQueryDto.getMobileCode());
         return ReturnJson.success(workerIPage);
+    }
+
+    @Override
+    public ReturnJson queryWorkerInfo(String workerId) {
+        return ReturnJson.success(workerDao.queryWorkerInfo(workerId));
     }
 }
 

@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.mybatis.entity.Worker;
 import com.example.mybatis.po.WorekerPaymentListPo;
 import com.example.mybatis.po.WorkerPo;
+import com.example.mybatis.vo.WorkerInfoVo;
 import com.example.mybatis.vo.WorkerPassVo;
 import com.example.mybatis.vo.WorkerVo;
 import org.apache.ibatis.annotations.Param;
@@ -51,4 +52,5 @@ public interface WorkerDao extends BaseMapper<Worker> {
 
     IPage<WorkerPassVo> getPaasCheckByTaskId(Page page, @Param("taskId") String taskId);
 
+    WorkerInfoVo queryWorkerInfo(String workerId);
 }

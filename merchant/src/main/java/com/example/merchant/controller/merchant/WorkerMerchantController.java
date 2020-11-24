@@ -55,7 +55,7 @@ public class WorkerMerchantController {
     @LoginRequired
     @ApiOperation(value = "按条件查询创客", notes = "按条件查询创客", httpMethod = "POST")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "workerDto", value = "查询条件", dataType = "WorkerDto", required = true)})
-    public ReturnJson getWorkerMany(@ApiParam(hidden = true) @RequestAttribute("userId") String merchantId, @Valid @RequestBody WorkerDto workerDto) {
+    public ReturnJson getWorkerMany(@Valid @RequestBody WorkerDto workerDto,@ApiParam(hidden = true) @RequestAttribute("userId") String merchantId) {
         return workerService.getByIdAndAccountNameAndMobile(merchantId, workerDto);
     }
 
@@ -98,10 +98,10 @@ public class WorkerMerchantController {
 
     @ApiOperation("剔除创客信息")
     @PostMapping(value = "/eliminateWorker")
-    public ReturnJson eliminateWorker(@NotNull(message = "任务状态不能为空") @ApiParam(value = "任务状态") @RequestParam Integer state,
-                                      @NotBlank(message = "创客Id不能为空") @ApiParam(value = "创客id") @RequestParam String workerId,
+    public ReturnJson eliminateWorker(
+            @NotBlank(message = "创客Id不能为空") @ApiParam(value = "创客id") @RequestParam String workerId,
                                       @NotBlank(message = "任务Id不能为空") @ApiParam(value = "任务id") @RequestParam String taskId) {
-        return workerTaskService.eliminateWorker(state, workerId,taskId);
+        return workerTaskService.eliminateWorker(null,workerId,taskId);
     }
 
     @ApiOperation("验收")
@@ -110,6 +110,21 @@ public class WorkerMerchantController {
     public ReturnJson updateCheckMoney(@NotBlank(message = "请选择任务") @ApiParam(value = "任务id") @RequestParam String taskId,
                                        @ApiParam(value = "创客Id") @RequestParam String workerId) {
         return workerTaskService.updateCheck(taskId, workerId);
+    }
+
+    @ApiOperation("创客详情统计")
+    @PostMapping(value = "/queryWorkerInfo")
+    @ApiImplicitParams(value = {@ApiImplicitParam(name = "workerId", value = "创客Id", required = true)})
+    public ReturnJson queryWorkerInfo(@ApiParam(value = "创客Id") @RequestParam String workerId) {
+        return workerService.queryWorkerInfo(workerId);
+    }
+
+    @ApiOperation("创客任务详细信息")
+    @PostMapping(value = "/queryWorkerTaskInfo")
+    public ReturnJson queryWorkerTaskInfo(@NotNull(message = "当前页不能为空") @ApiParam(value = "当前页") @RequestParam Integer pageNo,
+                                          @NotNull(message = "页大小不能为空")  @ApiParam(value = "页大小") @RequestParam Integer pageSize,
+                                          @NotBlank(message = "创客Id不能为空") @ApiParam(value = "创客Id") @RequestParam String workerId) {
+        return workerTaskService.queryWorkerTaskInfo(workerId,pageNo,pageSize);
     }
 }
 

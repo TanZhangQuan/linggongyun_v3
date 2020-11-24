@@ -118,7 +118,8 @@ public class FileOperationServiceImpl implements FileOperationService {
         if (Arrays.asList(files).contains(suffixName.toLowerCase())) {
             String newFileName = UuidUtil.get32UUID() + "." + suffixName;
             File fileMkdir = new File(PathImage_KEY);
-            if (!fileMkdir.exists()) {// 判断目录是否存在
+            // 判断目录是否存在
+            if (!fileMkdir.exists()) {
                 fileMkdir.mkdirs();
             }
             String filePath = PathImage_KEY + newFileName;
@@ -151,7 +152,8 @@ public class FileOperationServiceImpl implements FileOperationService {
         BufferedOutputStream out = null;
         File fileMkdir = new File(PathImage_KEY);
         String newFileName = UuidUtil.get32UUID() + ".pdf";
-        if (!fileMkdir.exists()) {// 判断目录是否存在
+        // 判断目录是否存在
+        if (!fileMkdir.exists()) {
             fileMkdir.mkdirs();
         }
         String fileName = PathImage_KEY + newFileName;
@@ -241,7 +243,8 @@ public class FileOperationServiceImpl implements FileOperationService {
             workerService.saveBatch(workers);
             String newFileName = UuidUtil.get32UUID() + "." + suffixName;
             File fileMkdir = new File(PathExcel_KEY);
-            if (!fileMkdir.exists()) {// 判断目录是否存在
+            // 判断目录是否存在
+            if (!fileMkdir.exists()) {
                 fileMkdir.mkdirs();
             }
             String filePath = PathExcel_KEY + newFileName;
@@ -268,7 +271,8 @@ public class FileOperationServiceImpl implements FileOperationService {
      */
     @Override
     public ReturnJson uploadInvoiceOrTaxReceipt(String state, MultipartFile uploadTaxReceipt, String paymentInventoryId, HttpServletRequest request) throws IOException {
-        DateTimeFormatter dfd = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");//时间转换
+        //时间转换
+        DateTimeFormatter dfd = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         if (uploadTaxReceipt.getSize() == 0) {
             return ReturnJson.error("上传文件不能为空！");
         }
@@ -278,7 +282,8 @@ public class FileOperationServiceImpl implements FileOperationService {
         if (Arrays.asList(files).contains(suffixName.toLowerCase())) {
             String newFileName = UuidUtil.get32UUID() + "." + suffixName;
             File fileMkdir = new File(PathImage_KEY);
-            if (!fileMkdir.exists()) {// 判断目录是否存在
+            // 判断目录是否存在
+            if (!fileMkdir.exists()) {
                 fileMkdir.mkdirs();
             }
             String filePath = PathImage_KEY + newFileName;
@@ -323,7 +328,8 @@ public class FileOperationServiceImpl implements FileOperationService {
             File fileMkdir = new File(PathVideo_KEY);
             String accessPath = null;
             try {
-                if (!fileMkdir.exists()) {// 判断目录是否存在
+                // 判断目录是否存在
+                if (!fileMkdir.exists()) {
                     fileMkdir.mkdirs();
                 }
                 String filePath = PathVideo_KEY + newFileName;

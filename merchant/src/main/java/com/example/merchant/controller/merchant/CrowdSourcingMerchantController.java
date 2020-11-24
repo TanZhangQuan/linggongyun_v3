@@ -8,16 +8,19 @@ import com.example.mybatis.entity.ApplicationCrowdSourcing;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import javax.validation.Valid;
 
 @Api(value = "商户端众包发票关操作接口", tags = {"商户端众包发票关操作接口"})
 @RestController
 @RequestMapping("/merchant/crowdSourcing")
+@Validated
 public class CrowdSourcingMerchantController {
 
     @Resource
@@ -54,7 +57,7 @@ public class CrowdSourcingMerchantController {
 
     @ApiOperation("众包支付信息,已开票页面")
     @GetMapping(value = "/getCrowdSourcingInfo")
-    public ReturnJson getCrowdSourcingInfo(TobeinvoicedDto tobeinvoicedDto) {
+    public ReturnJson getCrowdSourcingInfo(@Valid TobeinvoicedDto tobeinvoicedDto) {
         return crowdSourcingInvoiceService.getCrowdSourcingInfo(tobeinvoicedDto);
     }
 
