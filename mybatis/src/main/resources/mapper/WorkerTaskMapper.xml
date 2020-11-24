@@ -12,6 +12,17 @@
         <result column="update_date" property="updateDate" />
     </resultMap>
 
+    <resultMap id="workerTaskInfo" type="com.example.mybatis.vo.WorkerTaskInfoVo">
+        <result column="task_code" property="taskCode"/>
+        <result column="account_name" property="accountName"/>
+        <result column="companyName" property="companyName"/>
+        <result column="task_name" property="taskName"/>
+        <result column="task_amount" property="taskAmount"/>
+        <result column="task_status" property="taskStatus"/>
+        <result column="create_date" property="createDate"/>
+        <result column="check_date" property="checkDate"/>
+    </resultMap>
+
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id, worker_id, task_id, task_status, create_date, update_date
@@ -55,5 +66,63 @@
         <if test="status != null and status != ''">
             AND wt.`status`=#{status}
         </if>
+    </select>
+    <select id="queryWorkerTaskInfo" resultMap="workerTaskInfo">
+            SELECT
+        (
+            SELECT
+                task_code
+            FROM
+                tb_task
+            WHERE
+                wt.task_id = id
+        ) AS task_code,
+        w.account_name,
+        (
+            SELECT
+                company_name
+            FROM
+                tb_merchant
+            WHERE
+                id = (
+                    SELECT
+                        merchant_id
+                    FROM
+                        tb_task
+                    WHERE
+                        wt.task_id = id
+                )
+        ) AS companyName,
+        (
+            SELECT
+                task_name
+            FROM
+                tb_task
+            WHERE
+                wt.task_id = id
+        ) AS task_name,
+        (
+            SELECT
+                task_cost_max
+            FROM
+                tb_task
+            WHERE
+                wt.task_id = id
+        ) AS task_amount,
+        (
+            SELECT
+                state
+            FROM
+                tb_task
+            WHERE
+                wt.task_id = id
+        ) AS task_status,
+        wt.create_date,
+        wt.check_date
+    FROM
+        tb_worker w
+    INNER JOIN tb_worker_task wt ON w.id = wt.worker_id
+    WHERE
+        w.id =#{param2}
     </select>
 </mapper>

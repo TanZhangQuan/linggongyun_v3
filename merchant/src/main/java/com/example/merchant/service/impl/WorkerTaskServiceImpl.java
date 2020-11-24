@@ -1,13 +1,18 @@
 package com.example.merchant.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.common.util.ReturnJson;
 import com.example.mybatis.dto.WorkerTaskDto;
+import com.example.mybatis.entity.Task;
 import com.example.mybatis.entity.Worker;
 import com.example.mybatis.entity.WorkerTask;
+import com.example.mybatis.mapper.TaskDao;
 import com.example.mybatis.mapper.WorkerTaskDao;
 import com.example.merchant.service.WorkerTaskService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.example.mybatis.vo.WorkerTaskInfoVo;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +34,8 @@ public class WorkerTaskServiceImpl extends ServiceImpl<WorkerTaskDao, WorkerTask
 
     @Resource
     private WorkerTaskDao workerTaskDao;
+    @Resource
+    private TaskDao taskDao;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -49,12 +56,15 @@ public class WorkerTaskServiceImpl extends ServiceImpl<WorkerTaskDao, WorkerTask
     @Override
     public ReturnJson eliminateWorker(Integer state, String workerId, String taskId) {
         ReturnJson returnJson = new ReturnJson("剔除失败", 300);
-        if (state == 0 && state == 1) {
-            returnJson = new ReturnJson("必须在发布中或已接单才能剔除", 300);
-        } else {
-            int num = workerTaskDao.eliminateWorker(workerId, taskId);
-            if (num > 0) {
-                returnJson = new ReturnJson("剔除成功", 200);
+        Task task = taskDao.setTaskById(taskId);
+        if (task != null) {
+            if (task.getState() == 0 && task.getState() == 1) {
+                returnJson = new ReturnJson("必须在发布中或已接单才能剔除", 300);
+            } else {
+                int num = workerTaskDao.eliminateWorker(workerId, taskId);
+                if (num > 0) {
+                    returnJson = new ReturnJson("剔除成功", 200);
+                }
             }
         }
         return returnJson;
@@ -112,5 +122,12 @@ public class WorkerTaskServiceImpl extends ServiceImpl<WorkerTaskDao, WorkerTask
             returnJson = new ReturnJson("操作成果", workerTask, 200);
         }
         return returnJson;
+    }
+
+    @Override
+    public ReturnJson queryWorkerTaskInfo(String workerId,Integer pageNo,Integer pageSize) {
+        Page page=new Page(pageNo,pageSize);
+        IPage<WorkerTaskInfoVo> iPage=workerTaskDao.queryWorkerTaskInfo(page,workerId);
+        return ReturnJson.success(iPage);
     }
 }

@@ -15,8 +15,6 @@ import com.example.mybatis.mapper.CrowdSourcingApplicationDao;
 import com.example.mybatis.mapper.CrowdSourcingInvoiceDao;
 import com.example.mybatis.mapper.InvoiceLadderPriceDao;
 import com.example.mybatis.vo.*;
-import org.apache.ibatis.session.RowBounds;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

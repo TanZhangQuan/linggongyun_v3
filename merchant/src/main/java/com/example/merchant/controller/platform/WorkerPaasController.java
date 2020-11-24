@@ -116,12 +116,11 @@ public class WorkerPaasController {
 
     @ApiOperation("剔除创客信息")
     @PostMapping(value = "/eliminateWorker")
-    @ApiImplicitParams(value = {@ApiImplicitParam(name = "state", value = "当前任务的状态", required = true),
-            @ApiImplicitParam(name = "workerId", value = "创客Id", required = true)})
-    public ReturnJson eliminateWorker(@NotNull(message = "当前任务的状态") @ApiParam(value = "任务状态") @RequestParam Integer state,
-                                      @NotBlank(message = "创客id不能为空") @ApiParam(value = "创客id") @RequestParam String workerId,
+    @ApiImplicitParams(value = {@ApiImplicitParam(name = "workerId", value = "创客id", required = true),
+            @ApiImplicitParam(name = "taskId", value = "任务Id", required = true)})
+    public ReturnJson eliminateWorker(@NotBlank(message = "创客id不能为空") @ApiParam(value = "创客id") @RequestParam String workerId,
                                       @NotBlank(message = "任务Id不能为空") @ApiParam(value = "任务id") @RequestParam String taskId) {
-        return workerTaskService.eliminateWorker(state, workerId,taskId);
+        return workerTaskService.eliminateWorker(null, workerId,taskId);
     }
 
     @ApiOperation("修改验收金额")

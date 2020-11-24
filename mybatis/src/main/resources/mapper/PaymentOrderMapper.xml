@@ -16,6 +16,8 @@
         <result column="turnkey_project_payment" property="turnkeyProjectPayment"/>
         <result column="subpackage_payment" property="subpackagePayment"/>
         <result column="task_id" property="taskId"/>
+        <result column="task_name" property="taskName"/>
+        <result column="task_type" property="taskType"/>
         <result column="acceptance_certificate" property="acceptanceCertificate"/>
         <result column="tax_status" property="taxStatus"/>
         <result column="composite_tax" property="compositeTax"/>

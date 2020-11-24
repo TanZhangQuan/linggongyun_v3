@@ -161,6 +161,11 @@ public class Worker implements Serializable {
     private String businessLicense;
 
     /**
+     * 社会统一代码
+     */
+    private String creditCode;
+
+    /**
      * 修改时间
      */
     @TableField(fill = FieldFill.INSERT)

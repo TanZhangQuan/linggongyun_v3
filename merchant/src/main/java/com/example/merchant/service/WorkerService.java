@@ -201,4 +201,12 @@ public interface WorkerService extends IService<Worker> {
      * @Date 2020/11/10 10:56
      */
     ReturnJson getWorkerQueryNot(String managersId, WorkerQueryDto workerQueryDto) throws CommonException;
+
+    /**
+     * 查询创客统计信息
+     *
+     * @param workerId
+     * @return
+     */
+    ReturnJson queryWorkerInfo(String workerId);
 }
