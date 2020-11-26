@@ -298,7 +298,6 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
 
     @Override
     public ReturnJson wxLogin(String code, String iv, String encryptedData) {
-        ReturnJson returnJson = new ReturnJson("操作失败", 300);
         JSONObject result = new JSONObject();
         if (code.equals("")) {
             return ReturnJson.error("请输入微信授权码");

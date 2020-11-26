@@ -284,8 +284,6 @@ public class ExcelResponseUtils {
                         } catch (ParseException e) {
                             throw new RuntimeException("日期格式错误", e);
                         }
-//                        cellValue = sdf.format(date);
-//                        cellValue = formatter.formatCellValue(cell);
                     } else {
                         double value = cell.getNumericCellValue();
                         int intValue = (int) value;
