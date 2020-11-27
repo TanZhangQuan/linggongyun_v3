@@ -2,10 +2,11 @@ package com.example.mybatis.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -19,19 +20,12 @@ import java.time.LocalDateTime;
  * @since 2020-09-08
  */
 @Data
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
+@AllArgsConstructor
 @TableName("tb_payment_order_many")
-public class PaymentOrderMany implements Serializable {
-
+public class PaymentOrderMany extends BaseEntity {
     private static final long serialVersionUID = 1L;
-
-    /**
-     * 支付订单ID
-     */
-    @ApiModelProperty(notes = "众包订单ID", value = "众包订单ID", hidden = true)
-
-    @TableId(value = "id", type = IdType.ASSIGN_ID)
-    private String id;
 
     /**
      * 商户的公司ID
@@ -42,7 +36,7 @@ public class PaymentOrderMany implements Serializable {
     /**
      * 商户的公司简称
      */
-    @ApiModelProperty(notes = "商户的公司简称", value = "商户的公司简称" ,required = true)
+    @ApiModelProperty(notes = "商户的公司简称", value = "商户的公司简称", required = true)
     private String companySName;
 
     /**
@@ -54,7 +48,7 @@ public class PaymentOrderMany implements Serializable {
     /**
      * 平台服务商ID
      */
-    @ApiModelProperty(notes = "平台服务商ID", value = "平台服务商ID" ,required = true)
+    @ApiModelProperty(notes = "平台服务商ID", value = "平台服务商ID", required = true)
     private String taxId;
     /**
      * 平台服务商
@@ -65,13 +59,13 @@ public class PaymentOrderMany implements Serializable {
     /**
      * 项目合同（存储位置）
      */
-    @ApiModelProperty(notes = "项目合同（存储位置）", value = "项目合同（存储位置）",required = true)
+    @ApiModelProperty(notes = "项目合同（存储位置）", value = "项目合同（存储位置）", required = true)
     private String companyContract;
 
     /**
      * 支付清单（存储位置）
      */
-    @ApiModelProperty(notes = "支付清单（存储位置）", value = "支付清单（存储位置）",required = true)
+    @ApiModelProperty(notes = "支付清单（存储位置）", value = "支付清单（存储位置）", required = true)
     private String paymentInventory;
 
     /**
@@ -123,7 +117,7 @@ public class PaymentOrderMany implements Serializable {
     private Integer paymentOrderStatus;
 
     /**
-     *支付方式：0线下支付,1连连支付
+     * 支付方式：0线下支付,1连连支付
      */
     private Integer paymentMode;
 
@@ -137,20 +131,5 @@ public class PaymentOrderMany implements Serializable {
      */
     @ApiModelProperty(notes = "支付时间", value = "支付时间", hidden = true)
     private LocalDateTime paymentDate;
-
-    /**
-     * 支付订单的创建时间
-     */
-    @ApiModelProperty(notes = "支付订单的创建时间", value = "支付订单的创建时间", hidden = true)
-    @TableField(fill = FieldFill.INSERT)
-    private LocalDateTime createDate;
-
-    /**
-     * 支付订单的修改时间
-     */
-    @ApiModelProperty(notes = "支付订单的修改时间", value = "支付订单的修改时间", hidden = true)
-    @TableField(fill = FieldFill.INSERT_UPDATE)
-    private LocalDateTime updateDate;
-
 
 }

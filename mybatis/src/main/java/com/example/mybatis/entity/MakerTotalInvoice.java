@@ -1,27 +1,25 @@
 package com.example.mybatis.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 /**
  * tb_maker_total_invoice
  * @author 
  */
 @Data
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
+@AllArgsConstructor
 @TableName("tb_maker_total_invoice")
-public class MakerTotalInvoice implements Serializable {
-    /**
-     * 汇总代开id
-     */
-    @TableId(value = "id", type = IdType.ASSIGN_ID)
-    private String id;
+public class MakerTotalInvoice extends BaseEntity {
+    private static final long serialVersionUID = 1L;
 
     /**
      * 申请开票id
@@ -87,19 +85,5 @@ public class MakerTotalInvoice implements Serializable {
      * 发票上传日期
      */
     private LocalDateTime makerVoiceUploadDateTime;
-
-    /**
-     * 创建时间
-     */
-    @TableField(fill = FieldFill.INSERT)
-    private LocalDateTime createTime;
-
-    /**
-     * 修改时间
-     */
-    @TableField(fill = FieldFill.INSERT)
-    private LocalDateTime updateTime;
-
-    private static final long serialVersionUID = 1L;
 
 }

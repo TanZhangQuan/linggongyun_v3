@@ -1,36 +1,31 @@
 package com.example.mybatis.entity;
 
-import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
-import java.time.LocalDateTime;
 import java.util.List;
 
 /**
  * <p>
  * 商户角色信息
-
+ *
  * </p>
  *
  * @author hzp
  * @since 2020-09-07
  */
 @Data
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
+@AllArgsConstructor
 @TableName("tb_merchant_role")
-public class MerchantRole implements Serializable {
-
+public class MerchantRole extends BaseEntity {
     private static final long serialVersionUID = 1L;
-
-    /**
-     * 角色id
-     */
-    @TableId(value = "id", type = IdType.ASSIGN_ID)
-    private String id;
 
     /**
      * 角色名称
@@ -46,14 +41,5 @@ public class MerchantRole implements Serializable {
 
     @TableField(exist = false)
     private List<Menu> list;
-
-    @TableField(fill = FieldFill.INSERT)
-    private LocalDateTime createDate;
-
-    /**
-     * 用户修改时间
-     */
-    @TableField(fill = FieldFill.INSERT_UPDATE)
-    private LocalDateTime updateDate;
 
 }

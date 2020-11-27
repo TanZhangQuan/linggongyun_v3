@@ -1,12 +1,11 @@
 package com.example.mybatis.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 
 /**
@@ -18,14 +17,12 @@ import java.math.BigDecimal;
  * @since 2020-09-21
  */
 @Data
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
+@AllArgsConstructor
 @TableName("tb_invoice_ladder_price")
-public class InvoiceLadderPrice implements Serializable ,Comparable<InvoiceLadderPrice>{
-
+public class InvoiceLadderPrice extends BaseEntity{
     private static final long serialVersionUID = 1L;
-
-    @TableId(value = "id", type = IdType.ASSIGN_ID)
-    private String id;
 
     /**
      * 服务商ID
@@ -62,9 +59,4 @@ public class InvoiceLadderPrice implements Serializable ,Comparable<InvoiceLadde
      */
     private BigDecimal rate;
 
-
-    @Override
-    public int compareTo(InvoiceLadderPrice o) {
-        return this.startMoney.compareTo(o.getStartMoney());
-    }
 }

@@ -1,27 +1,25 @@
 package com.example.mybatis.entity;
 
-import java.io.Serializable;
-import java.util.Date;
-
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+
+import java.util.Date;
 
 /**
  * tb_crowd_sourcing_application
- * @author 
+ *
+ * @author
  */
 @Data
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
+@AllArgsConstructor
 @TableName("tb_crowd_sourcing_application")
-public class CrowdSourcingApplication implements Serializable {
-    /**
-     * 众包开票申请id
-     */
-    @TableId(value = "id", type = IdType.ASSIGN_ID)
-    private String id;
+public class CrowdSourcingApplication extends BaseEntity {
+    private static final long serialVersionUID = 1L;
 
     /**
      * 众包支付id
@@ -58,5 +56,4 @@ public class CrowdSourcingApplication implements Serializable {
      */
     private String auditDesc;
 
-    private static final long serialVersionUID = 1L;
 }
