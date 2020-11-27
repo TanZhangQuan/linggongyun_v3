@@ -12,14 +12,18 @@ import com.example.merchant.util.JwtUtils;
 import com.example.mybatis.entity.Managers;
 import com.example.mybatis.mapper.ManagersDao;
 import com.example.redis.dao.RedisDao;
+import io.jsonwebtoken.Claims;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import springfox.documentation.spring.web.json.Json;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -58,12 +62,11 @@ public class ManagersServiceImpl extends ServiceImpl<ManagersDao, Managers> impl
         if (managers != null) {
             CustomizedToken customizedToken = new CustomizedToken(userName, PWD_KEY+ MD5.md5(passWord), MANAGERS);
             String token = jwtUtils.generateToken(managers.getId());
-            managers.setPassWord("");
-            redisDao.set(managers.getId(), JsonUtils.objectToJson(managers));
+            redisDao.set(managers.getId(), token);
             response.setHeader(TOKEN,token);
             redisDao.setExpire(managers.getId(),7, TimeUnit.DAYS);
             currentUser.login(customizedToken);//shiro验证身份
-            return ReturnJson.success(managers);
+            return ReturnJson.success("登录成功",token);
         }
         return ReturnJson.error("你输入的用户名或密码有误！");
     }
@@ -111,4 +114,24 @@ public class ManagersServiceImpl extends ServiceImpl<ManagersDao, Managers> impl
             return ReturnJson.success(managers);
         }
     }
+
+    /**
+     * 通过token获取用户信息
+     * @param customizedId
+     * @return
+     */
+    @Override
+    public ReturnJson getCustomizedInfo(String customizedId) {
+        Managers managers=this.getById(customizedId);
+        managers.setPassWord("");
+        return ReturnJson.success(managers);
+    }
+
+    @Override
+    public ReturnJson logout(String manangerId) {
+        Claims c= jwtUtils.getClaimByToken(manangerId);
+        redisDao.remove(c.getSubject());
+        return ReturnJson.success("登出成功");
+    }
+
 }

@@ -1,25 +1,23 @@
 package com.example.merchant.controller.platform;
 
 import com.example.common.util.ReturnJson;
+import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.ManagersService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 import org.hibernate.validator.constraints.Length;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 @Api(value = "平台端登录接口", tags = {"平台端登录接口"})
 @RestController
 @RequestMapping("/platform/managers")
+@Validated
 public class ManagersPaasController {
 
     @Resource
@@ -31,7 +29,8 @@ public class ManagersPaasController {
             @ApiImplicitParam(name = "username", value = "登录账号", required = true),
             @ApiImplicitParam(name = "password", value = "登录密码", required = true)
     })
-    public ReturnJson managersLogin(@NotBlank(message = "用户名不能为空") @RequestParam String username, @NotBlank(message = "密码不能为空") @RequestParam String password, HttpServletResponse response) {
+    public ReturnJson managersLogin(@NotBlank(message = "用户名不能为空") @RequestParam(required = false) String username,
+                                    @NotBlank(message = "密码不能为空") @RequestParam(required = false) String password, HttpServletResponse response) {
         return managersService.managersLogin(username, password, response);
     }
 
@@ -41,7 +40,7 @@ public class ManagersPaasController {
             @ApiImplicitParam(name = "mobileCode", value = "手机号码", required = true)
     })
     public ReturnJson managersSenSMS(@NotBlank(message = "请输入手机号") @Length(min = 11, max = 11, message = "请输入11位手机号")
-                                     @Pattern(regexp = "[0-9]*", message = "请输入有效的手机号码") @RequestParam String mobileCode) {
+                                     @Pattern(regexp = "[0-9]*", message = "请输入有效的手机号码") @RequestParam(required = false) String mobileCode) {
 
         return managersService.senSMS(mobileCode);
     }
@@ -55,8 +54,22 @@ public class ManagersPaasController {
     public ReturnJson managersMobileLogin(@NotBlank(message = "请输入手机号")
                                           @Length(min = 11, max = 11, message = "请输入11位手机号")
                                           @Pattern(regexp = "[0-9]*", message = "请输入有效的手机号码")
-                                          @RequestParam String mobileCode, @NotBlank(message = "验证码不能为空！") @RequestParam String checkCode, HttpServletResponse resource) {
+                                          @RequestParam(required = false) String mobileCode, @NotBlank(message = "验证码不能为空！") @RequestParam(required = false) String checkCode, HttpServletResponse resource) {
 
         return managersService.loginMobile(mobileCode, checkCode, resource);
+    }
+
+    @PostMapping("/getCustomizedInfo")
+    @ApiOperation(value = "获取当前用用户信息", notes = "获取当前用用户信息", httpMethod = "POST")
+    @LoginRequired
+    public ReturnJson getCustomizedInfo(@RequestAttribute(value = "userId") @ApiParam(hidden = true) String merchantId) {
+        return managersService.getCustomizedInfo(merchantId);
+    }
+
+    @PostMapping("/managerLogout")
+    @ApiOperation(value = "登出", notes = "登出", httpMethod = "POST")
+    @LoginRequired
+    public ReturnJson managerLogout(@RequestAttribute(value = "userId") @ApiParam(hidden = true) String merchantId) {
+        return managersService.logout(merchantId);
     }
 }

@@ -1,18 +1,19 @@
 package com.example.merchant.service;
 
 import com.example.common.util.ReturnJson;
+import org.apache.ibatis.annotations.Param;
 
 public interface BillService {
 
-    ReturnJson getTotalMonthBill(Integer year, Integer month);
+    ReturnJson getTotalMonthBill(String workerId,Integer year, Integer month);
 
-    ReturnJson getTotalMonthBillInfo(Integer year, Integer month);
+    ReturnJson getTotalMonthBillInfo(String workerId,Integer year, Integer month);
 
-    ReturnJson getManyMonthBill(Integer year, Integer month);
+    ReturnJson getManyMonthBill(String workerId,Integer year, Integer month);
 
-    ReturnJson getManyMonthBillInfo(Integer year, Integer month);
+    ReturnJson getManyMonthBillInfo(String workerId,Integer year, Integer month);
 
-    ReturnJson getTotalYearBillCount(Integer year);
+    ReturnJson getTotalYearBillCount(String workerId,Integer year);
 
-    ReturnJson getManyYearBillCount(Integer year);
+    ReturnJson getManyYearBillCount(String workerId,Integer year);
 }

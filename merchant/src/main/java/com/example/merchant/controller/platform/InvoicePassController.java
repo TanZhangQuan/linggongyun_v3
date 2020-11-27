@@ -11,11 +11,14 @@ import com.example.mybatis.dto.AddInvoiceDto;
 import com.example.mybatis.dto.TobeinvoicedDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import javax.validation.Valid;
 
 /**
  * <p>
@@ -28,6 +31,7 @@ import javax.annotation.Resource;
 @Api(tags = "平台端总包+分包发票", value = "平台端总包+分包发票")
 @RestController
 @RequestMapping("/platform/invoice")
+@Validated
 public class InvoicePassController {
 
     @Resource
@@ -41,7 +45,7 @@ public class InvoicePassController {
 
     @ApiOperation("总包开票，待开票")
     @PostMapping("/getPlaInvoiceList")
-    public ReturnJson getPlaInvoiceList(TobeinvoicedDto tobeinvoicedDto) {
+    public ReturnJson getPlaInvoiceList(@Valid @RequestBody TobeinvoicedDto tobeinvoicedDto) {
         return invoiceService.getPlaInvoiceList(tobeinvoicedDto);
     }
 
@@ -53,19 +57,19 @@ public class InvoicePassController {
 
     @ApiOperation("总包开票")
     @PostMapping("/saveInvoice")
-    public ReturnJson saveInvoice(AddInvoiceDto addInvoiceDto) {
+    public ReturnJson saveInvoice(@Valid @RequestBody AddInvoiceDto addInvoiceDto) {
         return invoiceService.saveInvoice(addInvoiceDto);
     }
 
     @ApiOperation("总包开票，以开票")
     @PostMapping("/listInvoiceQuery")
-    public ReturnJson listInvoiceQuery(TobeinvoicedDto tobeinvoicedDto) {
+    public ReturnJson listInvoiceQuery(@Valid @RequestBody TobeinvoicedDto tobeinvoicedDto) {
         return invoiceService.getListInvoicequery(tobeinvoicedDto);
     }
 
     @ApiOperation("分包开票，待开票")
     @PostMapping("/listSubQuery")
-    public ReturnJson listSubQuery(TobeinvoicedDto tobeinvoicedDto) {
+    public ReturnJson listSubQuery(@Valid @RequestBody TobeinvoicedDto tobeinvoicedDto) {
         return invoiceService.getListSubQuery(tobeinvoicedDto);
     }
 
@@ -77,7 +81,7 @@ public class InvoicePassController {
 
     @ApiOperation("汇总代开")
     @PostMapping("/saveOrUpdateMakerTotalInvoice")
-    public ReturnJson saveOrUpdateMakerTotalInvoice(MakerTotalInvoiceDto makerTotalInvoiceDto) {
+    public ReturnJson saveOrUpdateMakerTotalInvoice(@Valid @RequestBody MakerTotalInvoiceDto makerTotalInvoiceDto) {
         return makerTotalInvoiceService.saveOrUpdateMakerTotalInvoice(makerTotalInvoiceDto);
     }
 
@@ -89,7 +93,7 @@ public class InvoicePassController {
 
     @ApiOperation("门征单开,开票如果未开票先上传发票进这里开一张发票")
     @PostMapping("/saveMakerInvoice")
-    public ReturnJson saveMakerInvoice(MakerInvoiceDto makerInvoiceDto) {
+    public ReturnJson saveMakerInvoice(@Valid @RequestBody MakerInvoiceDto makerInvoiceDto) {
         return makerInvoiceService.saveMakerInvoice(makerInvoiceDto);
     }
 

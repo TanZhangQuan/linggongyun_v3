@@ -21,7 +21,7 @@ public class CodeGenerator {
     private static final String author = "hzp";
     private static final String packageName = "com.example";
     private static final String moduleName = "merchant";
-    private static final String[] tableName = {"tb_worker_bank"};
+    private static final String[] tableName = {"tb_payment_history"};
     private static final String tablePrefix = "tb";
 
     public static void main(String[] args) {
@@ -75,7 +75,7 @@ public class CodeGenerator {
         String driverName = "com.mysql.cj.jdbc.Driver";
         dsc.setDriverName(driverName);
         dsc.setUsername("root");
-        dsc.setPassword("root");
+        dsc.setPassword("123456");
         return dsc;
     }
 

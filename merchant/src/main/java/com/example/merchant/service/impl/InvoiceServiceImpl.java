@@ -1,6 +1,8 @@
 package com.example.merchant.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.common.util.DateUtil;
 import com.example.common.util.ReturnJson;
@@ -55,38 +57,31 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
 
     @Override
     public ReturnJson selectTobeinvoiced(TobeinvoicedDto tobeinvoicedDto) {
-        ReturnJson returnJson = new ReturnJson("查询失败", 300);
-        RowBounds rowBounds=new RowBounds((tobeinvoicedDto.getPageNo()-1)*9,9);
-        List<TobeinvoicedVo> list = invoiceDao.selectTobeinvoiced(tobeinvoicedDto,rowBounds);
-        if (list!=null&& list.size()>0){
-            returnJson=new ReturnJson("查询成功",list,200);
-        }
-        return returnJson;
+        Page page = new Page(tobeinvoicedDto.getPageNo(), tobeinvoicedDto.getPageSize());
+        IPage<TobeinvoicedVo> list = invoiceDao.selectTobeinvoiced(page, tobeinvoicedDto);
+        return ReturnJson.success(list);
     }
 
     @Override
     public ReturnJson getInvoiceList(TobeinvoicedDto tobeinvoicedDto) {
-        ReturnJson returnJson = new ReturnJson("查询失败", 300);
-        RowBounds rowBounds=new RowBounds((tobeinvoicedDto.getPageNo()-1)*9,9);
-        List<InvoiceVo> list = invoiceDao.getInvoiceList(tobeinvoicedDto,rowBounds);
-        if (list!=null&& list.size()>0){
-            returnJson=new ReturnJson("查询成功",list,200);
-        }
-        return returnJson;
+        Page page = new Page(tobeinvoicedDto.getPageNo(), tobeinvoicedDto.getPageSize());
+        IPage<InvoiceVo> list = invoiceDao.getInvoiceList(page, tobeinvoicedDto);
+        return ReturnJson.success(list);
     }
 
     @Override
     public ReturnJson getInvInfoById(String invId) {
         ReturnJson returnJson = new ReturnJson("查询失败", 300);
         InvoiceInformationVo vo = invoiceDao.getInvInfoById(invId);
-        if ( vo != null ) {
-            returnJson = new ReturnJson("查询成功", vo,200);
+        if (vo != null) {
+            returnJson = new ReturnJson("查询成功", vo, 200);
         }
         return returnJson;
     }
 
     /**
      * 判断是否为同一服务商
+     *
      * @param serviceProviderNames
      * @return
      */
@@ -95,7 +90,7 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
         ReturnJson returnJson = new ReturnJson("操作失败", 300);
         String[] serviceProviderName = serviceProviderNames.split(",");
         for (int i = 0; i < serviceProviderName.length; i++) {
-            if (serviceProviderName[0].equals(serviceProviderName[i])){
+            if (serviceProviderName[0].equals(serviceProviderName[i])) {
                 returnJson = new ReturnJson("操作成功", 200);
             }
         }
@@ -105,13 +100,9 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
 
     @Override
     public ReturnJson getPlaInvoiceList(TobeinvoicedDto tobeinvoicedDto) {
-        ReturnJson returnJson = new ReturnJson("查询失败", 300);
-        RowBounds rowBounds = new RowBounds((tobeinvoicedDto.getPageNo() - 1) * 9, 9);
-        List<InvoiceVo> list = invoiceDao.getPlaInvoiceList(tobeinvoicedDto, rowBounds);
-        if (list != null) {
-            returnJson = new ReturnJson("查询成功", list, 200);
-        }
-        return returnJson;
+        Page page = new Page(tobeinvoicedDto.getPageNo(), tobeinvoicedDto.getPageSize());
+        IPage<InvoiceVo> list = invoiceDao.getPlaInvoiceList(page, tobeinvoicedDto);
+        return ReturnJson.success(list);
     }
 
     @Override
@@ -125,7 +116,7 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public ReturnJson saveInvoice(AddInvoiceDto addInvoiceDto) {
         ReturnJson returnJson = new ReturnJson("添加失败", 300);
         DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -175,13 +166,9 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
 
     @Override
     public ReturnJson getListInvoicequery(TobeinvoicedDto tobeinvoicedDto) {
-        ReturnJson returnJson = new ReturnJson("操作失败", 300);
-        RowBounds rowBounds = new RowBounds((tobeinvoicedDto.getPageNo() - 1) * 9, 9);
-        List<InvoiceVo> list = invoiceDao.getListInvoicequery(tobeinvoicedDto, rowBounds);
-        if (list != null) {
-            returnJson = new ReturnJson("查询成功", list, 200);
-        }
-        return returnJson;
+        Page page = new Page(tobeinvoicedDto.getPageNo(), tobeinvoicedDto.getPageSize());
+        IPage<InvoiceVo> list = invoiceDao.getListInvoicequery(page, tobeinvoicedDto);
+        return ReturnJson.success(list);
     }
 
     @Override
@@ -211,33 +198,31 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
 
     /**
      * 分包开票待开票
+     *
      * @param tobeinvoicedDto
      * @return
      */
     @Override
     public ReturnJson getListSubQuery(TobeinvoicedDto tobeinvoicedDto) {
-        ReturnJson returnJson = new ReturnJson("操作失败", 300);
-        RowBounds rowBounds = new RowBounds((tobeinvoicedDto.getPageNo() - 1) * 9, 9);
-        List<ToSubcontractInvoiceVo> list = invoiceDao.getListSubQuery(tobeinvoicedDto, rowBounds);
-        if (list != null) {
-            returnJson = new ReturnJson("查询成功", list, 200);
-        }
-        return returnJson;
+        Page page = new Page(tobeinvoicedDto.getPageNo(), tobeinvoicedDto.getPageSize());
+        IPage<ToSubcontractInvoiceVo> list = invoiceDao.getListSubQuery(page, tobeinvoicedDto);
+        return ReturnJson.success(list);
     }
 
     /**
      * 汇总开票详情数据
+     *
      * @param invoiceId
      * @param companySNames
      * @param platformServiceProviders
      * @return
      */
     @Override
-    public ReturnJson getInvoiceListQuery(String invoiceId,String companySNames,String platformServiceProviders) {
+    public ReturnJson getInvoiceListQuery(String invoiceId, String companySNames, String platformServiceProviders) {
         ReturnJson returnJson = new ReturnJson("操作失败", 300);
         DecimalFormat df = new DecimalFormat("0.00");
-        Map<String,Object> map=new HashMap();
-        BigDecimal totalTaxPrice=new BigDecimal("0.00");
+        Map<String, Object> map = new HashMap();
+        BigDecimal totalTaxPrice = new BigDecimal("0.00");
         String[] companySName = companySNames.split(",");
         for (int i = 0; i < companySName.length; i++) {
             if (!(companySName[0]).equals(companySName[i])) {
@@ -257,7 +242,7 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
         }
         List<InvoiceListVo> voList = invoiceDao.getInvoiceListQuery(list);
         for (InvoiceListVo vo : voList) {
-            PaymentInventory paymentInventory=new PaymentInventory();
+            PaymentInventory paymentInventory = new PaymentInventory();
             paymentInventory.setId(vo.getId());
             totalTaxPrice = totalTaxPrice.add(vo.getTaskMoney());
             List<InvoiceLadderPrice> invoiceLadderPrice = invoiceLadderPriceDao.selectList(new QueryWrapper<InvoiceLadderPrice>().eq("tax_id", vo.getTaxId()));
@@ -271,8 +256,8 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
                     }
                 }
             }
-            map.put("voList",voList);
-            map.put("税价合计",totalTaxPrice);
+            map.put("voList", voList);
+            map.put("税价合计", totalTaxPrice);
             returnJson = new ReturnJson("操作成功", map, 200);
         }
         return returnJson;

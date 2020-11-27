@@ -5,6 +5,8 @@ import com.example.merchant.dto.platform.AgentInfoDto;
 import com.example.merchant.dto.platform.ManagersDto;
 import com.example.merchant.exception.CommonException;
 
+import javax.servlet.http.HttpServletRequest;
+
 public interface StructureService {
     ReturnJson addSalesMan(ManagersDto managersDto);
 

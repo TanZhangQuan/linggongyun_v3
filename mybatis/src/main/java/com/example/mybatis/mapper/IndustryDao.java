@@ -2,6 +2,7 @@ package com.example.mybatis.mapper;
 
 import com.example.mybatis.entity.Industry;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.example.mybatis.vo.IndustryVo;
 
 import java.util.List;
 
@@ -15,5 +16,11 @@ import java.util.List;
  */
 public interface IndustryDao extends BaseMapper<Industry> {
 
-    List<Industry> getlist(String oneLevel);
+    List<IndustryVo> getlist();
+
+    /**
+     * 查询行业列表
+     * @return
+     */
+    List<String> getIndustryType();
 }

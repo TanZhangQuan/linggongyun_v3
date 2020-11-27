@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.example.common.util.ExpressLogisticsInfo;
+import com.example.common.util.KdniaoTrackQueryAPI;
 import com.example.common.util.ReturnJson;
 import com.example.common.util.VerificationCheck;
 import com.example.merchant.dto.merchant.AddPaymentOrderDto;
@@ -13,10 +15,18 @@ import com.example.merchant.exception.CommonException;
 import com.example.merchant.service.PaymentInventoryService;
 import com.example.merchant.service.PaymentOrderService;
 import com.example.merchant.util.AcquireID;
+import com.example.merchant.util.JwtUtils;
+import com.example.merchant.vo.ExpressInfoVO;
+import com.example.merchant.vo.PaymentOrderInfoVO;
+import com.example.merchant.vo.platform.CompanyBriefVO;
 import com.example.mybatis.entity.*;
 import com.example.mybatis.mapper.*;
+import com.example.mybatis.po.InvoiceInfoPO;
+import com.example.mybatis.po.PaymentOrderInfoPO;
 import com.example.mybatis.vo.BillingInfoVo;
 import com.example.mybatis.vo.PaymentOrderVo;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,9 +34,7 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * <p>
@@ -40,6 +48,9 @@ import java.util.Map;
 @Service
 public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, PaymentOrder> implements PaymentOrderService {
 
+    @Value("${TOKEN}")
+    private String TOKEN;
+
     @Resource
     private PaymentOrderDao paymentOrderDao;
 
@@ -48,12 +59,6 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
 
     @Resource
     private PaymentInventoryService paymentInventoryService;
-
-    @Resource
-    private PaymentOrderSubpackageDao paymentOrderSubpackageDao;
-
-    @Resource
-    private TaxDao taxDao;
 
     @Resource
     private ManagersDao managersDao;
@@ -68,8 +73,16 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
     private CompanyLadderServiceDao companyLadderServiceDao;
 
     @Resource
+    private InvoiceDao invoiceDao;
+
+    @Resource
     private AcquireID acquireID;
 
+    @Resource
+    private JwtUtils jwtUtils;
+
+    @Resource
+    private MerchantDao merchantDao;
 
     /**
      * 获取今天的支付总额
@@ -79,6 +92,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
      */
     @Override
     public ReturnJson getDay(String merchantId) {
+        Merchant merchant = merchantDao.selectById(merchantId);
         List<PaymentOrder> list = paymentOrderDao.selectDay(merchantId);
         return ReturnJson.success(list);
     }
@@ -91,7 +105,8 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
      */
     @Override
     public ReturnJson getWeek(String merchantId) {
-        List<PaymentOrder> list = paymentOrderDao.selectWeek(merchantId);
+        Merchant merchant = merchantDao.selectById(merchantId);
+        List<PaymentOrder> list = paymentOrderDao.selectWeek(merchant.getCompanyId());
         return ReturnJson.success(list);
     }
 
@@ -103,7 +118,8 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
      */
     @Override
     public ReturnJson getMonth(String merchantId) {
-        List<PaymentOrder> list = paymentOrderDao.selectMonth(merchantId);
+        Merchant merchant = merchantDao.selectById(merchantId);
+        List<PaymentOrder> list = paymentOrderDao.selectMonth(merchant.getCompanyId());
         return ReturnJson.success(list);
     }
 
@@ -115,7 +131,8 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
      */
     @Override
     public ReturnJson getYear(String merchantId) {
-        List<PaymentOrder> list = paymentOrderDao.selectYear(merchantId);
+        Merchant merchant = merchantDao.selectById(merchantId);
+        List<PaymentOrder> list = paymentOrderDao.selectYear(merchant.getCompanyId());
         return ReturnJson.success(list);
     }
 
@@ -126,14 +143,14 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
      * @return
      */
     @Override
-    public ReturnJson getPaymentOrder(PaymentOrderMerchantDto paymentOrderMerchantDto) {
+    public ReturnJson getPaymentOrder(String merchantId, PaymentOrderMerchantDto paymentOrderMerchantDto) {
+        Merchant merchant = merchantDao.selectById(merchantId);
         String paymentOrderId = paymentOrderMerchantDto.getPaymentOrderId();
         String taxId = paymentOrderMerchantDto.getTaxId();
         String beginDate = paymentOrderMerchantDto.getBeginDate();
         String endDate = paymentOrderMerchantDto.getEndDate();
         Page<PaymentOrder> paymentOrderPage = new Page<>(paymentOrderMerchantDto.getPage(), paymentOrderMerchantDto.getPageSize());
-
-        IPage<PaymentOrder> paymentOrderIPage = paymentOrderDao.selectMany(paymentOrderPage, paymentOrderMerchantDto.getCompanyId(), paymentOrderId, taxId, beginDate, endDate);
+        IPage<PaymentOrder> paymentOrderIPage = paymentOrderDao.selectMany(paymentOrderPage, merchant.getCompanyId(), paymentOrderId, taxId, beginDate, endDate);
         return ReturnJson.success(paymentOrderIPage);
     }
 
@@ -145,15 +162,28 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
      */
     @Override
     public ReturnJson getPaymentOrderInfo(String id) {
-        PaymentOrder paymentOrder = paymentOrderDao.selectById(id);
-        List<PaymentInventory> paymentInventories = paymentInventoryDao.selectList(new QueryWrapper<PaymentInventory>().eq("payment_order_id", id));
-        Tax tax = taxDao.selectById(paymentOrder.getTaxId());
-        List<Map<String, Object>> list = new ArrayList<>();
-        Map<String, Object> map = new HashMap<>();
-        map.put("paymentInventories", paymentInventories);
-        map.put("tax", tax);
-        list.add(map);
-        return ReturnJson.success(paymentOrder, list);
+        PaymentOrderInfoVO paymentOrderInfoVO = new PaymentOrderInfoVO();
+        ExpressInfoVO expressInfoVO = new ExpressInfoVO();
+        //为总包订单
+        PaymentOrderInfoPO paymentOrderInfoPO = paymentOrderDao.selectPaymentOrderInfo(id);
+        if (paymentOrderInfoPO == null) {
+            return ReturnJson.error("订单编号有误，请重新输入！");
+        }
+        InvoiceInfoPO invoiceInfoPO = invoiceDao.selectInvoiceInfoPO(id);
+        if (invoiceInfoPO != null) {
+            //总包发票信息
+            paymentOrderInfoVO.setInvoice(invoiceInfoPO.getInvoiceUrl());
+            paymentOrderInfoVO.setSubpackageInvoice(invoiceInfoPO.getMakerInvoiceUrl());
+            expressInfoVO.setExpressCompanyName(invoiceInfoPO.getExpressCompanyName());
+            expressInfoVO.setExpressCode(invoiceInfoPO.getExpressSheetNo());
+            List<ExpressLogisticsInfo> expressLogisticsInfos = KdniaoTrackQueryAPI.getExpressInfo(invoiceInfoPO.getExpressCompanyName(), invoiceInfoPO.getExpressSheetNo());
+            expressInfoVO.setExpressLogisticsInfos(expressLogisticsInfos);
+        }
+        List<PaymentInventory> paymentInventories = paymentInventoryDao.selectPaymentInventoryList(id, null);
+        paymentOrderInfoVO.setPaymentInventories(paymentInventories);
+        paymentOrderInfoVO.setPaymentOrderInfoPO(paymentOrderInfoPO);
+        paymentOrderInfoVO.setExpressInfoVO(expressInfoVO);
+        return ReturnJson.success(paymentOrderInfoVO);
     }
 
     /**
@@ -174,7 +204,6 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
             for (PaymentInventory paymentInventory : paymentInventoryList) {
                 ids.add(paymentInventory.getId());
             }
-            paymentOrderSubpackageDao.delete(new QueryWrapper<PaymentOrderSubpackage>().in("payment_inventory_id", ids));
             paymentInventoryDao.delete(new QueryWrapper<PaymentInventory>().eq("payment_order_id", id));
             this.removeById(id);
         }
@@ -246,14 +275,6 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
             //生成支付明细
             paymentInventory.setPackageStatus(0);
             paymentInventoryService.saveOrUpdate(paymentInventory);
-            //生成分包订单
-//            PaymentOrderSubpackage paymentOrderSubpackage = new PaymentOrderSubpackage();
-//            paymentOrderSubpackage.setCompanyId(paymentOrder.getCompanyId());
-//            paymentOrderSubpackage.setPaymentInventoryId(paymentInventory.getId());
-//            paymentOrderSubpackage.setRealMoney(paymentInventory.getRealMoney());
-//            paymentOrderSubpackage.setTaskId(paymentOrder.getTaskId());
-//            paymentOrderSubpackage.setTaxId(paymentOrder.getTaxId());
-//            paymentOrderSubpackageDao.insert(paymentOrderSubpackage);
         }
         return ReturnJson.success("支付订单创建成功！");
     }
@@ -324,10 +345,10 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
      */
     @Override
     public ReturnJson getDayPaas(String merchantId) throws CommonException {
-        List<String> merchantIds = acquireID.getMerchantIds(merchantId);
-        List<PaymentOrder> list = null;
+        List<String> merchantIds = acquireID.getCompanyIds(merchantId);
+        List<PaymentOrder> list;
         if (VerificationCheck.listIsNull(merchantIds)) {
-            return ReturnJson.success(list);
+            return ReturnJson.success((List) null);
         }
         list = paymentOrderDao.selectDaypaas(merchantIds);
         return ReturnJson.success(list);
@@ -341,10 +362,10 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
      */
     @Override
     public ReturnJson getWeekPaas(String merchantId) throws CommonException {
-        List<String> merchantIds = acquireID.getMerchantIds(merchantId);
-        List<PaymentOrder> list = null;
+        List<String> merchantIds = acquireID.getCompanyIds(merchantId);
+        List<PaymentOrder> list;
         if (VerificationCheck.listIsNull(merchantIds)) {
-            return ReturnJson.success(list);
+            return ReturnJson.success((List) null);
         }
         list = paymentOrderDao.selectWeekpaas(merchantIds);
         return ReturnJson.success(list);
@@ -358,10 +379,10 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
      */
     @Override
     public ReturnJson getMonthPaas(String merchantId) throws CommonException {
-        List<String> merchantIds = acquireID.getMerchantIds(merchantId);
-        List<PaymentOrder> list = null;
+        List<String> merchantIds = acquireID.getCompanyIds(merchantId);
+        List<PaymentOrder> list;
         if (VerificationCheck.listIsNull(merchantIds)) {
-            return ReturnJson.success(list);
+            return ReturnJson.success((List) null);
         }
         list = paymentOrderDao.selectMonthpaas(merchantIds);
         return ReturnJson.success(list);
@@ -375,10 +396,10 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
      */
     @Override
     public ReturnJson getYearPaas(String merchantId) throws CommonException {
-        List<String> merchantIds = acquireID.getMerchantIds(merchantId);
-        List<PaymentOrder> list = null;
+        List<String> merchantIds = acquireID.getCompanyIds(merchantId);
+        List<PaymentOrder> list;
         if (VerificationCheck.listIsNull(merchantIds)) {
-            return ReturnJson.success(list);
+            return ReturnJson.success((List) null);
         }
         list = paymentOrderDao.selectYearpaas(merchantIds);
         return ReturnJson.success(list);
@@ -391,11 +412,11 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
      * @return
      */
     @Override
-    public ReturnJson getPaymentOrderPaas(PaymentOrderDto paymentOrderDto) throws CommonException {
-        List<String> merchantIds = acquireID.getMerchantIds(paymentOrderDto.getManagersId());
-        List<PaymentOrder> list = null;
+    public ReturnJson getPaymentOrderPaas(PaymentOrderDto paymentOrderDto, String managersId) throws CommonException {
+        List<String> merchantIds = acquireID.getCompanyIds(managersId);
+        List<PaymentOrder> list;
         if (VerificationCheck.listIsNull(merchantIds)) {
-            return ReturnJson.success(list);
+            return ReturnJson.success((List) null);
         }
         String merchantName = paymentOrderDto.getMerchantName();
         String paymentOrderId = paymentOrderDto.getPaymentOrderId();
@@ -407,27 +428,6 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
         Page<PaymentOrder> paymentOrderPage = new Page<>(page, pageSize);
         IPage<PaymentOrder> paymentOrderIPage = paymentOrderDao.selectManyPaas(paymentOrderPage, merchantIds, merchantName, paymentOrderId, taxId, beginDate, endDate);
         return ReturnJson.success(paymentOrderIPage);
-    }
-
-    /**
-     * 查询支付订单详情
-     *
-     * @param id
-     * @return
-     */
-    @Override
-    public ReturnJson getPaymentOrderInfoPaas(String id) {
-        PaymentOrder paymentOrder = paymentOrderDao.selectById(id);
-        List<PaymentInventory> paymentInventories = paymentInventoryDao.selectList(new QueryWrapper<PaymentInventory>().eq("payment_order_id", id));
-        List<PaymentOrderSubpackage> paymentOrderSubpackages = paymentOrderSubpackageDao.selectList(new QueryWrapper<PaymentOrderSubpackage>().eq("payment_order_id", id));
-        Tax tax = taxDao.selectById(paymentOrder.getTaxId());
-        List<Map<String, Object>> list = new ArrayList<>();
-        Map<String, Object> map = new HashMap<>();
-        map.put("paymentInventories", paymentInventories);
-        map.put("paymentOrderSubpackages", paymentOrderSubpackages);
-        map.put("tax", tax);
-        list.add(map);
-        return ReturnJson.success(paymentOrder, list);
     }
 
     /**
@@ -480,14 +480,33 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
         Managers managers = managersDao.selectById(managersId);
         Integer userSign = managers.getUserSign();
         List<CompanyInfo> companyInfos = null;
-        if (userSign == 1) {//管理人员为代理商
+        //管理人员为代理商
+        if (userSign == 1) {
             companyInfos = companyInfoDao.selectList(new QueryWrapper<CompanyInfo>().eq("agent_id", managers.getId()));
-        } else if (userSign == 2) {//管理人员为业务员
+        } else if (userSign == 2) {
+            //管理人员为业务员
             companyInfos = companyInfoDao.selectList(new QueryWrapper<CompanyInfo>().eq("sales_man_id", managers.getId()));
         } else {
             companyInfos = companyInfoDao.selectList(new QueryWrapper<>());
         }
-        return ReturnJson.success(companyInfos);
+        List<CompanyBriefVO> companyBriefVOS = new ArrayList<>();
+        companyInfos.forEach(companyInfo -> {
+            CompanyBriefVO companyBriefVO = new CompanyBriefVO();
+            BeanUtils.copyProperties(companyInfo, companyBriefVO);
+            companyBriefVOS.add(companyBriefVO);
+        });
+        return ReturnJson.success(companyBriefVOS);
+    }
+
+    @Override
+    public ReturnJson subpackagePayPaas(String paymentOrderId, String subpackagePayment) {
+        PaymentOrder paymentOrder = this.getById(paymentOrderId);
+        if (paymentOrder == null) {
+            log.error("订单号不存在!");
+            return ReturnJson.error("你输入的订单号不存在！");
+        }
+        paymentOrder.setSubpackagePayment(subpackagePayment);
+        return null;
     }
 
 

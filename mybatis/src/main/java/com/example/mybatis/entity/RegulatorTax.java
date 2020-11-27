@@ -1,6 +1,8 @@
 package com.example.mybatis.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -23,7 +25,7 @@ public class RegulatorTax implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @TableId(value = "id", type = IdType.ASSIGN_ID)
-    private Long id;
+    private String id;
 
     /**
      * 服务商ID
@@ -33,6 +35,7 @@ public class RegulatorTax implements Serializable {
     /**
      * 监管部门ID
      */
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long regulatorId;
 
     /**

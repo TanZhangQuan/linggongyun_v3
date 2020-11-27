@@ -4,16 +4,13 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
+import org.springframework.web.bind.annotation.RequestAttribute;
 
 import javax.validation.constraints.NotBlank;
 
 @Data
 @ApiModel(description = "创客身份证信息")
 public class IdCardInfoDto {
-
-    @NotBlank(message = "创客ID不能为空！")
-    @ApiModelProperty(notes = "创客ID", value = "创客ID")
-    private String wokerId;
 
     @NotBlank(message = "创客真实姓名不能为空！")
     @ApiModelProperty(notes = "创客真实姓名", value = "创客真实姓名")

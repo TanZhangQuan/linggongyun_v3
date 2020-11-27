@@ -96,6 +96,16 @@ public class PaymentOrder implements Serializable {
     private String taskId;
 
     /**
+     * 任务名称
+     */
+    private String taskName;
+
+    /**
+     * 任务类型（行业类型）
+     */
+    private String taskType;
+
+    /**
      * 支付验收单（存储位置）
      */
     private String acceptanceCertificate;
@@ -124,6 +134,16 @@ public class PaymentOrder implements Serializable {
      * 支付订单的状态
      */
     private Integer paymentOrderStatus;
+
+    /**
+     *支付方式：0线下支付,1连连支付,2网商银行支付
+     */
+    private Integer paymentMode;
+
+    /**
+     * 支付人的ID
+     */
+    private String merchantId;
 
     /**
      * 支付时间

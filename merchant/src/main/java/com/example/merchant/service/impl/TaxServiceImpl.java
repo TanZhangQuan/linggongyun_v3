@@ -10,8 +10,11 @@ import com.example.merchant.dto.platform.TaxDto;
 import com.example.merchant.dto.platform.TaxListDto;
 import com.example.merchant.exception.CommonException;
 import com.example.merchant.service.InvoiceLadderPriceService;
+import com.example.merchant.service.MyBankService;
 import com.example.merchant.service.TaxService;
+import com.example.merchant.vo.TaxBriefVO;
 import com.example.merchant.vo.platform.HomePageVO;
+import com.example.merchant.vo.platform.TaxPlatformVO;
 import com.example.mybatis.entity.*;
 import com.example.mybatis.mapper.*;
 import com.example.mybatis.po.InvoicePO;
@@ -69,6 +72,9 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
     @Resource
     private MerchantDao merchantDao;
 
+    @Resource
+    private MyBankService myBankService;
+
 
     /**
      * 查询商户可用使用的平台服务商
@@ -78,8 +84,9 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
      */
     @Override
     public ReturnJson getTaxAll(String merchantId, Integer packageStatus) {
+        Merchant merchant = merchantDao.selectById(merchantId);
         List<CompanyTax> companyTaxes = companyTaxDao.selectList(new QueryWrapper<CompanyTax>()
-                .eq("company_id", merchantId).eq("package_status", packageStatus));
+                .eq("company_id", merchant.getCompanyId()).eq("package_status", packageStatus));
         List<String> ids = new LinkedList<>();
         for (CompanyTax companyTax : companyTaxes) {
             ids.add(companyTax.getTaxId());
@@ -88,7 +95,37 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
         if (!VerificationCheck.listIsNull(ids)) {
             taxes = taxDao.selectList(new QueryWrapper<Tax>().in("id", ids).eq("tax_status", 0));
         }
-        return ReturnJson.success(taxes);
+        List<TaxBriefVO> taxBriefVOS = new ArrayList<>();
+        if (taxes != null) {
+            taxes.forEach(tax -> {
+                TaxBriefVO taxBriefVO = new TaxBriefVO();
+                BeanUtils.copyProperties(tax, taxBriefVO);
+                taxBriefVOS.add(taxBriefVO);
+            });
+        }
+        if (taxes == null) return ReturnJson.success("没有可用的平台服务商");
+        return ReturnJson.success(taxBriefVOS);
+    }
+
+    @Override
+    public ReturnJson getTaxPaasAll(String companyId, Integer packageStatus) {
+        List<CompanyTax> companyTaxes = companyTaxDao.selectList(new QueryWrapper<CompanyTax>()
+                .eq("company_id", companyId).eq("package_status", packageStatus));
+        List<String> ids = new LinkedList<>();
+        for (CompanyTax companyTax : companyTaxes) {
+            ids.add(companyTax.getTaxId());
+        }
+        List<Tax> taxes = null;
+        if (!VerificationCheck.listIsNull(ids)) {
+            taxes = taxDao.selectList(new QueryWrapper<Tax>().in("id", ids).eq("tax_status", 0));
+        }
+        List<TaxBriefVO> taxBriefVOS = new ArrayList<>();
+        taxes.forEach(tax -> {
+            TaxBriefVO taxBriefVO = new TaxBriefVO();
+            BeanUtils.copyProperties(tax, taxBriefVO);
+            taxBriefVOS.add(taxBriefVO);
+        });
+        return ReturnJson.success(taxBriefVOS);
     }
 
     /**
@@ -125,7 +162,7 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ReturnJson saveTax(TaxDto taxDto) throws CommonException {
+    public ReturnJson saveTax(TaxDto taxDto) throws Exception {
         if (taxDto.getId() != null) {
             invoiceLadderPriceService.remove(new QueryWrapper<InvoiceLadderPrice>().eq("tax_id", taxDto.getId()));
             taxPackageDao.delete(new QueryWrapper<TaxPackage>().eq("tax_id", taxDto.getId()));
@@ -191,6 +228,7 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
                 invoiceLadderPriceService.saveBatch(manyLadders);
             }
         }
+
         return ReturnJson.success("添加成功！");
     }
 
@@ -216,21 +254,21 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
     @Override
     public ReturnJson getTaxInfo(String taxId) {
         Tax tax = taxDao.selectById(taxId);
-        TaxDto taxDto = new TaxDto();
-        BeanUtils.copyProperties(tax, taxDto);
+        TaxPlatformVO taxPlatformVO = new TaxPlatformVO();
+        BeanUtils.copyProperties(tax, taxPlatformVO);
         TaxPackage totalTaxPackage = taxPackageDao.selectOne(new QueryWrapper<TaxPackage>().eq("tax_id", taxId).eq("package_status", 0));
         if (totalTaxPackage != null) {
             List<InvoiceLadderPrice> totalLadder = invoiceLadderPriceService.list(new QueryWrapper<InvoiceLadderPrice>().eq("tax_package_id", totalTaxPackage.getId()));
-            taxDto.setTotalTaxPackage(totalTaxPackage);
-            taxDto.setTotalLadders(totalLadder);
+            taxPlatformVO.setTotalTaxPackage(totalTaxPackage);
+            taxPlatformVO.setTotalLadders(totalLadder);
         }
         TaxPackage manyTaxPackage = taxPackageDao.selectOne(new QueryWrapper<TaxPackage>().eq("tax_id", taxId).eq("package_status", 1));
         if (manyTaxPackage != null) {
             List<InvoiceLadderPrice> manyLadder = invoiceLadderPriceService.list(new QueryWrapper<InvoiceLadderPrice>().eq("tax_package_id", manyTaxPackage.getId()));
-            taxDto.setManyTaxPackage(manyTaxPackage);
-            taxDto.setManyLadders(manyLadder);
+            taxPlatformVO.setManyTaxPackage(manyTaxPackage);
+            taxPlatformVO.setManyLadders(manyLadder);
         }
-        return ReturnJson.success(taxDto);
+        return ReturnJson.success(taxPlatformVO);
     }
 
     /**

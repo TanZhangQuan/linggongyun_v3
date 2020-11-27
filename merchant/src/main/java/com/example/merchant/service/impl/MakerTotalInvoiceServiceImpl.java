@@ -33,7 +33,7 @@ public class MakerTotalInvoiceServiceImpl extends ServiceImpl<MakerTotalInvoiceD
     private PaymentOrderDao paymentOrderDao;
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public ReturnJson saveOrUpdateMakerTotalInvoice(MakerTotalInvoiceDto makerTotalInvoiceDto) {
         ReturnJson returnJson = new ReturnJson("操作失败", 200);
         DateTimeFormatter dfd = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");//时间转换

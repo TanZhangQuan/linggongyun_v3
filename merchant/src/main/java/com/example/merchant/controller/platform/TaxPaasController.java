@@ -5,6 +5,7 @@ import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.platform.TaxDto;
 import com.example.merchant.dto.platform.TaxListDto;
 import com.example.merchant.exception.CommonException;
+import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.TaxService;
 import com.example.mybatis.entity.InvoiceCatalog;
 import io.swagger.annotations.Api;
@@ -36,10 +37,10 @@ public class TaxPaasController {
     private TaxService taxService;
 
     @GetMapping("/getTaxAll")
-    @ApiOperation(value = "获取商户可用的平台服务商", notes = "获取商户可用的平台服务商", httpMethod = "GET")
-    @ApiImplicitParams(value={@ApiImplicitParam(name="merchantId",value = "商户ID",required = true)})
-    public ReturnJson getTaxAll(@NotBlank(message = "商户ID不能为空") @RequestParam(required = false) String merchantId, @NotBlank(message = "包的类型不能为空，0为总包，1为众包") @RequestParam(required = false) Integer packageStatus){
-        return taxService.getTaxAll(merchantId, packageStatus);
+    @ApiOperation(value = "获取商户可用的平台服务商(平台端帮助商户创建支付订单时，通过选择的商户获取商户的服务商)", notes = "获取商户可用的平台服务商(平台端帮助商户创建支付订单时，通过选择的商户获取商户的服务商)", httpMethod = "GET")
+    @ApiImplicitParams(value={@ApiImplicitParam(name="companyId",value = "商户的企业ID",required = true),@ApiImplicitParam(name="packageStatus",value = "合作类型不能为空，0为总包，1为众包（建立支付订单通过支付订单的类型自动获取,不是选择）",required = true)})
+    public ReturnJson getTaxAll(@NotBlank(message = "商户ID不能为空") @RequestParam(required = false) String companyId, @NotBlank(message = "合作类型不能为空，0为总包，1为众包") @RequestParam(required = false) Integer packageStatus){
+        return taxService.getTaxPaasAll(companyId, packageStatus);
     }
 
     @GetMapping("/getCatalogAll")
@@ -58,7 +59,7 @@ public class TaxPaasController {
     @PostMapping("/saveTax")
     @ApiOperation(value = "添加或修改平台服务商", notes = "添加或修改平台服务商", httpMethod = "POST")
     @ApiImplicitParams(value={@ApiImplicitParam(name="taxDto",value = "平台服务商的信息",required = true,dataType = "TaxDto")})
-    public ReturnJson saveTax(@RequestBody TaxDto taxDto)throws CommonException {
+    public ReturnJson saveTax(@RequestBody TaxDto taxDto) throws Exception {
         return taxService.saveTax(taxDto);
     }
 

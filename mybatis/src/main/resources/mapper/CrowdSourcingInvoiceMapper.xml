@@ -141,17 +141,17 @@
         LEFT JOIN tb_crowd_sourcing_application csa ON csa.id=csi.application_id
         LEFT JOIN tb_payment_order_many pom ON csa.payment_order_many_id=pom.id and csi.payment_order_many_id=pom.id
         WHERE csi.payment_order_many_id is NOT null OR csi.application_id is NOT null
-        <if test="merchantId != null and merchantId != ''">
-            AND pom.company_id=#{merchantId}
+        <if test="tobeinvoicedDto.merchantId != null and tobeinvoicedDto.merchantId != ''">
+            AND pom.company_id=#{tobeinvoicedDto.merchantId}
         </if>
-        <if test="platformServiceProvider != null and platformServiceProvider != ''">
-            AND pom.platform_service_provider=#{platformServiceProvider}
+        <if test="tobeinvoicedDto.platformServiceProvider != null and tobeinvoicedDto.platformServiceProvider != ''">
+            AND pom.platform_service_provider=#{tobeinvoicedDto.platformServiceProvider}
         </if>
-        <if test="applicationDateOne != null and applicationDateOne != ''">
-            AND csa.application_date>=#{applicationDateOne}
+        <if test="tobeinvoicedDto.applicationDateOne != null and tobeinvoicedDto.applicationDateOne != ''">
+            AND csa.application_date>=#{tobeinvoicedDto.applicationDateOne}
         </if>
-        <if test="applicationDateTwo != null and applicationDateTwo != ''">
-            AND csa.application_date <![CDATA[<=]]> #{applicationDateTwo}
+        <if test="tobeinvoicedDto.applicationDateTwo != null and tobeinvoicedDto.applicationDateTwo != ''">
+            AND csa.application_date <![CDATA[<=]]> #{tobeinvoicedDto.applicationDateTwo}
         </if>
     </select>
 
@@ -162,17 +162,17 @@
         LEFT JOIN tb_crowd_sourcing_application csa ON csa.id=csi.application_id
         LEFT JOIN tb_payment_order_many pom ON csa.payment_order_many_id=pom.id and csi.payment_order_many_id=pom.id
         WHERE csi.payment_order_many_id is NOT null OR csi.application_id is NOT null
-        <if test="merchantId != null and merchantId != ''">
-            AND pom.company_s_name=#{companySName}
+        <if test="tobeinvoicedDto.merchantId != null and tobeinvoicedDto.merchantId != ''">
+            AND pom.company_s_name=#{tobeinvoicedDto.companySName}
         </if>
-        <if test="platformServiceProvider != null and platformServiceProvider != ''">
-            AND pom.platform_service_provider=#{platformServiceProvider}
+        <if test="tobeinvoicedDto.platformServiceProvider != null and tobeinvoicedDto.platformServiceProvider != ''">
+            AND pom.platform_service_provider=#{tobeinvoicedDto.platformServiceProvider}
         </if>
-        <if test="applicationDateOne != null and applicationDateOne != ''">
-            AND csa.application_date>=#{applicationDateOne}
+        <if test="tobeinvoicedDto.applicationDateOne != null and tobeinvoicedDto.applicationDateOne != ''">
+            AND csa.application_date>=#{tobeinvoicedDto.applicationDateOne}
         </if>
-        <if test="applicationDateTwo != null and applicationDateTwo != ''">
-            AND csa.application_date <![CDATA[<=]]> #{applicationDateTwo}
+        <if test="tobeinvoicedDto.applicationDateTwo != null and tobeinvoicedDto.applicationDateTwo != ''">
+            AND csa.application_date <![CDATA[<=]]> #{tobeinvoicedDto.applicationDateTwo}
         </if>
     </select>
 
@@ -210,17 +210,17 @@
         LEFT JOIN tb_crowd_sourcing_application csa ON csa.payment_order_many_id=pom.id
         WHERE csa.application_state=1 or csa.application_state is null
         AND pom.payment_order_status=3
-        <if test="companySName != null and companySName != ''">
-            AND po.company_s_name like CONCAT('%',#{companySName},'%')
+        <if test="tobeinvoicedDto.companySName != null and tobeinvoicedDto.companySName != ''">
+            AND po.company_s_name like CONCAT('%',#{tobeinvoicedDto.companySName},'%')
         </if>
-        <if test="platformServiceProvider != null and platformServiceProvider != ''">
-            AND pom.platform_service_provider=#{platformServiceProvider}
+        <if test="tobeinvoicedDto.platformServiceProvider != null and tobeinvoicedDto.platformServiceProvider != ''">
+            AND pom.platform_service_provider=#{tobeinvoicedDto.platformServiceProvider}
         </if>
-        <if test="applicationDateOne != null and applicationDateOne != ''">
-            AND csa.application_date>=#{applicationDateOne}
+        <if test="tobeinvoicedDto.applicationDateOne != null and tobeinvoicedDto.applicationDateOne != ''">
+            AND csa.application_date>=#{tobeinvoicedDto.applicationDateOne}
         </if>
-        <if test="applicationDateTwo != null and applicationDateTwo != ''">
-            AND csa.application_date <![CDATA[<=]]> #{applicationDateTwo}
+        <if test="tobeinvoicedDto.applicationDateTwo != null and tobeinvoicedDto.applicationDateTwo != ''">
+            AND csa.application_date <![CDATA[<=]]> #{tobeinvoicedDto.applicationDateTwo}
         </if>
     </select>
     <!--平台查询支付信息-->
@@ -279,6 +279,23 @@
         LEFT JOIN tb_payment_inventory pi ON pi.payment_order_id=csi.payment_order_many_id
         LEFT JOIN tb_payment_order_many pom ON pom.id=csi.payment_order_many_id
         WHERE csi.id=#{invoiceId}
+    </select>
+
+    <resultMap id="InvoiceInfoPO" type="com.example.mybatis.po.InvoiceInfoPO">
+        <result column="invoice_url" property="invoiceUrl"/>
+        <result column="express_company_name" property="expressCompanyName"/>
+        <result column="express_sheet_no" property="expressSheetNo"/>
+    </resultMap>
+
+
+    <select id="selectInvoiceInfoPO" resultMap="InvoiceInfoPO">
+        SELECT csi.invoice_url,
+        csi.express_company_name,
+        csi.express_sheet_no
+        FROM tb_payment_order_many pom
+        JOIN tb_crowd_sourcing_invoice csi
+        ON pom.id = csi.payment_order_many_id
+        WHERE pom.id = #{paymentOrderId}
     </select>
 
 </mapper>

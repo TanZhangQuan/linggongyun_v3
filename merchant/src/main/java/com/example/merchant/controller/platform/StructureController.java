@@ -13,6 +13,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
@@ -44,7 +45,7 @@ public class StructureController {
     }
 
     @PostMapping("/findBySalesManId")
-    @ApiOperation(value = "按ID查找业务员(编辑业务员时用来获取业务员信息)", notes = "按ID查找业务员(编辑业务员时用来获取业务员信息)   ", httpMethod = "POST")
+    @ApiOperation(value = "按ID查找业务员(编辑业务员时用来获取业务员信息)", notes = "按ID查找业务员(编辑业务员时用来获取业务员信息)", httpMethod = "POST")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "managersId", value = "业务员的ID", required = true)
     })
@@ -67,7 +68,7 @@ public class StructureController {
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "salesManId", value = "业务员ID", required = true)
     })
-    public ReturnJson removeSalesMan(@NotBlank(message = "业务员ID不能为空！") @RequestParam String salesManId) throws CommonException {
+    public ReturnJson removeSalesMan(@NotBlank(message = "业务员ID不能为空！") @RequestParam String salesManId,HttpServletRequest request) throws CommonException {
         return structureService.removeSalesMan(salesManId);
     }
 
@@ -76,7 +77,7 @@ public class StructureController {
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "salesManId", value = "业务员ID", required = true)
     })
-    public ReturnJson getSalesManPaymentListCount(@NotBlank(message = "业务员ID不能为空！") @RequestParam String salesManId) throws CommonException {
+    public ReturnJson getSalesManPaymentListCount(@NotBlank(message = "业务员ID不能为空！") @RequestParam String salesManId, HttpServletRequest request) throws CommonException {
         return structureService.getSalesManPaymentListCount(salesManId);
     }
 
@@ -163,7 +164,7 @@ public class StructureController {
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "agentId", value = "代理商ID", required = true)
     })
-    public ReturnJson getAgentPaymentListCount(@NotBlank(message = "代理商ID不能为空！") @RequestParam String agentId) throws CommonException {
+    public ReturnJson getAgentPaymentListCount(@NotBlank(message = "代理商ID不能为空！") @RequestParam String agentId,HttpServletRequest request) throws CommonException {
         return structureService.getSalesManPaymentListCount(agentId);
     }
 

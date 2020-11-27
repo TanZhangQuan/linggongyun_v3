@@ -40,23 +40,23 @@
     <!--查询参数-->
     <sql id="query">
         WHERE 1=1
-        <if test="merchantId != null and merchantId != ''">
+        <if test="taskListDto.merchantId != null and taskListDto.merchantId != ''">
             AND merchant_id = #{merchantId}
         </if>
-        <if test="taskCode != null and taskCode != ''">
-            AND task_code LIKE CONCAT ('%',#{taskCode},'%')
+        <if test="taskListDto.taskCode != null and taskListDto.taskCode != ''">
+            AND task_code LIKE CONCAT ('%',#{taskListDto.taskCode},'%')
         </if>
-        <if test="taskName != null and taskName != ''">
-            AND task_name LIKE CONCAT ('%',#{taskName},'%')
+        <if test="taskListDto.taskName != null and taskListDto.taskName != ''">
+            AND task_name LIKE CONCAT ('%',#{taskListDto.taskName},'%')
         </if>
-        <if test="cooperateMode != null and cooperateMode != ''">
-            AND cooperate_mode=#{cooperateMode}
+        <if test="taskListDto.cooperateMode != null and taskListDto.cooperateMode != ''">
+            AND cooperate_mode=#{taskListDto.cooperateMode}
         </if>
-        <if test="releaseDate != null and releaseDate != ''">
-            AND release_date >= #{releaseDate}
+        <if test="taskListDto.releaseDate != null and taskListDto.releaseDate != ''">
+            AND release_date >= unix_timestamp(#{taskListDto.releaseDate})
         </if>
-        <if test="deadlineDate != null and deadlineDate != ''">
-            AND deadline_date <![CDATA[<=]]> #{deadlineDate}
+        <if test="taskListDto.deadlineDate != null and taskListDto.deadlineDate != ''">
+            AND deadline_date <![CDATA[<=]]> unix_timestamp(#{taskListDto.deadlineDate})
         </if>
     </sql>
 
@@ -80,10 +80,10 @@
 
     <!--添加任务详情-->
     <insert id="addTask" parameterType="com.example.mybatis.dto.TaskDto">
-        INSERT INTO tb_task (id,merchant_id,invoice_id,task_name,task_code,
+        INSERT INTO tb_task (id,merchant_id,task_name,task_code,
         release_date,deadline_date,task_desc,industry_type,task_cost_min,
         task_cost_max,task_skill,release_time,deadline_time,upper_limit,cooperate_mode,task_mode,state)
-        VALUES (#{id},#{merchantId},#{invoiceId},#{taskName},#{taskCode}
+        VALUES (#{id},#{merchantId},#{taskName},#{taskCode}
         ,#{releaseDate},#{deadlineDate},#{taskDesc},#{industryType},#{taskCostMin},
         #{taskCostMax},#{taskSkill},#{releaseTime},#{deadlineTime},#{upperLimit},#{cooperateMode},#{taskMode},#{state})
     </insert>
@@ -118,7 +118,7 @@
         <result column="task_code" property="taskCode"/>
         <result column="merchant_name" property="merchantName"/>
         <result column="task_name" property="taskName"/>
-        <result column="release_data" property="releaseDate"/>
+        <result column="release_date" property="releaseDate"/>
         <result column="industry_type" property="industryType"/>
         <result column="release_time" property="releaseTime"/>
         <result column="cooperate_mode" property="cooperateMode"/>
@@ -126,19 +126,33 @@
     </resultMap>
 
     <select id="getPlatformTaskList" resultMap="PlatformTaskList">
-        SELECT task_code,
+        SELECT id,task_code,
         (SELECT company_name FROM tb_merchant WHERE id=merchant_id) as merchant_name,
         task_name,release_date,industry_type,release_time,cooperate_mode,task_mode,state
         FROM tb_task
-        <include refid="query"/>
+        WHERE 1=1
+        <if test="platformTaskDto.merchantName != null and platformTaskDto.merchantName != ''">
+           and (SELECT id FROM tb_merchant WHERE company_name like CONCAT('%',#{platformTaskDto.merchantName},'%'))
+        </if>
+        <if test="platformTaskDto.taskName != null and platformTaskDto.taskName != ''">
+            AND task_name LIKE CONCAT ('%',#{platformTaskDto.taskName},'%')
+        </if>
+        <if test="platformTaskDto.cooperateMode != null and platformTaskDto.cooperateMode != ''">
+            AND cooperate_mode=#{platformTaskDto.cooperateMode}
+        </if>
+        <if test="platformTaskDto.releaseDate != null and platformTaskDto.releaseDate != ''">
+            AND release_date >= unix_timestamp(#{platformTaskDto.releaseDate})
+        </if>
+        <if test="platformTaskDto.deadlineDate != null and platformTaskDto.deadlineDate != ''">
+            AND deadline_date <![CDATA[<=]]> unix_timestamp(#{platformTaskDto.deadlineDate})
+        </if>
     </select>
 
     <insert id="addPlatformTask" parameterType="com.example.mybatis.dto.TaskDto">
-
-        INSERT INTO tb_task (id,merchant_id,invoice_id,task_name,task_code,
+        INSERT INTO tb_task (id,merchant_id,task_name,task_code,
         release_date,deadline_date,task_desc,industry_type,task_cost_min,
         task_cost_max,task_skill,release_time,deadline_time,upper_limit,cooperate_mode,task_mode,state)
-        VALUES (#{id},#{merchantId},#{invoiceId},#{taskName},#{taskCode}
+        VALUES (#{id},#{merchantId},#{taskName},#{taskCode}
         ,#{releaseDate},#{deadlineDate},#{taskDesc},#{industryType},#{taskCostMin},
         #{taskCostMax},#{taskSkill},#{releaseTime},#{deadlineTime},#{upperLimit},#{cooperateMode},#{taskMode},#{state})
     </insert>
@@ -151,9 +165,6 @@
         task_mode != 0
         AND state = 0
         AND deadline_date > NOW()
-        <if test="merchantId !=null and merchantId != '' ">
-            AND merchant_id=#{merchantId}
-        </if>
         <if test="industryType != null and industryType != '' ">
             AND SUBSTRING_INDEX(industry_type, '/',1)=#{industryType}
         </if>

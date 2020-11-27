@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.common.sms.SenSMS;
-import com.example.common.util.JsonUtils;
 import com.example.common.util.MD5;
 import com.example.common.util.ReturnJson;
 import com.example.common.util.VerificationCheck;
@@ -13,10 +12,7 @@ import com.example.merchant.config.shiro.CustomizedToken;
 import com.example.merchant.dto.platform.CompanyDto;
 import com.example.merchant.dto.platform.CompanyTaxDto;
 import com.example.merchant.exception.CommonException;
-import com.example.merchant.service.CompanyLadderServiceService;
-import com.example.merchant.service.HomePageService;
-import com.example.merchant.service.MerchantService;
-import com.example.merchant.service.TaskService;
+import com.example.merchant.service.*;
 import com.example.merchant.util.AcquireID;
 import com.example.merchant.util.JwtUtils;
 import com.example.merchant.vo.merchant.HomePageMerchantVO;
@@ -30,12 +26,10 @@ import com.example.mybatis.po.MerchantPaymentListPO;
 import com.example.mybatis.po.TaxPO;
 import com.example.mybatis.vo.BuyerVo;
 import com.example.redis.dao.RedisDao;
-import io.jsonwebtoken.Claims;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.LockedAccountException;
-import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -43,12 +37,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * <p>
@@ -126,7 +120,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
     @Value("${TOKEN}")
     private String TOKEN;
 
-    private static final String MERCHANT= "merchant";
+    private static final String MERCHANT = "merchant";
 
     /**
      * 根据用户名和密码进行登录
@@ -150,26 +144,13 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
             throw new LockedAccountException("账号已被禁用");
         }
         CustomizedToken customizedToken = new CustomizedToken(username, encryptPWD, MERCHANT);
-        currentUser.login(customizedToken);//shiro验证身份
+        //shiro验证身份
+        currentUser.login(customizedToken);
         String token = jwtUtils.generateToken(me.getId());
         response.setHeader(TOKEN, token);
-        redisDao.set(me.getId(), JsonUtils.objectToJson(me));
-        redisDao.setExpire(me.getId(), 60 * 60 * 24 * 7);
-        me.setPassWord("");
-        return ReturnJson.success(me);
-    }
-
-    /**
-     * 根据TOKEN获取登录用户的ID
-     *
-     * @param request
-     * @return
-     */
-    @Override
-    public String getId(HttpServletRequest request) {
-        String token = request.getHeader(TOKEN);
-        Claims claim = jwtUtils.getClaimByToken(token);
-        return claim.getSubject();
+        redisDao.set(me.getId(), token);
+        redisDao.setExpire(me.getId(), 7, TimeUnit.DAYS);
+        return ReturnJson.success("登录成功", token);
     }
 
     /**
@@ -182,7 +163,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
     public ReturnJson senSMS(String mobileCode) {
         ReturnJson rj = new ReturnJson();
         Merchant merchant = this.getOne(new QueryWrapper<Merchant>().eq("login_mobile", mobileCode));
-        if (merchant == null || merchant.equals(null)) {
+        if (merchant == null) {
             rj.setCode(401);
             rj.setMessage("你还未注册，请先去注册！");
             return rj;
@@ -222,16 +203,21 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         } else {
             redisDao.remove(loginMobile);
             Merchant merchant = this.getOne(new QueryWrapper<Merchant>().eq("login_mobile", loginMobile).eq("status", 0));
-            merchant.setPassWord("");
-            merchant.setPayPwd("");
             String token = jwtUtils.generateToken(merchant.getId());
             resource.setHeader(TOKEN, token);
-            redisDao.set(merchant.getId(), JsonUtils.objectToJson(merchant));
-            redisDao.setExpire(merchant.getId(), 60 * 60 * 24 * 7);
+            redisDao.set(merchant.getId(), token);
+            redisDao.setExpire(merchant.getId(), 7, TimeUnit.DAYS);
             CustomizedToken customizedToken = new CustomizedToken(merchant.getUserName(), merchant.getPassWord(), MERCHANT);
             currentUser.login(customizedToken);//shiro验证身份
-            return ReturnJson.success(merchant);
+            return ReturnJson.success("登录成功", token);
         }
+    }
+
+    @Override
+    public ReturnJson getmerchantCustomizedInfo(String merchantId) {
+        Merchant merchant=merchantDao.selectById(merchantId);
+        merchant.setPassWord("");
+        return ReturnJson.success(merchant);
     }
 
     /**
@@ -372,18 +358,10 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
      */
     @Override
     public ReturnJson getMerchantList(String managersId, String merchantId, String merchantName, String linkMobile, Integer auditStatus, Integer page, Integer pageSize) throws CommonException {
-        List<String> merchantIds = acquireID.getMerchantIds(managersId);
+        List<String> merchantIds = acquireID.getCompanyIds(managersId);
         Page<MerchantInfoPo> merchantPage = new Page<>(page, pageSize);
         IPage<MerchantInfoPo> merchantInfoPoIPage = merchantDao.selectMerchantInfoPo(merchantPage, merchantIds, merchantId, merchantName, linkMobile, auditStatus);
-        ReturnJson returnJson = new ReturnJson();
-        returnJson.setCode(200);
-        returnJson.setState("success");
-        returnJson.setFinished(true);
-        returnJson.setPageSize(pageSize);
-        returnJson.setItemsCount((int) merchantInfoPoIPage.getTotal());
-        returnJson.setPageCount((int) merchantInfoPoIPage.getPages());
-        returnJson.setData(merchantInfoPoIPage.getRecords());
-        return returnJson;
+        return ReturnJson.success(merchantInfoPoIPage);
     }
 
     /**
@@ -439,7 +417,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         ReturnJson returnJson = homePageService.getHomePageInof(merchantId);
         HomePageVO homePageVO = new HomePageVO();
         HomePageMerchantVO homePageMerchantVO = (HomePageMerchantVO) returnJson.getObj();
-        BeanUtils.copyProperties(homePageMerchantVO,homePageVO);
+        BeanUtils.copyProperties(homePageMerchantVO, homePageVO);
         Merchant merchant = merchantDao.selectById(merchantId);
         Integer taxTotal = companyTaxDao.selectCount(new QueryWrapper<CompanyTax>().eq("company_id", merchant.getCompanyId()));
         homePageVO.setTaxTotal(taxTotal);
@@ -459,10 +437,18 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
      */
     @Override
     public ReturnJson getMerchantPaymentList(String merchantId, Integer page, Integer pageSize) {
+        Merchant merchant = merchantDao.selectById(merchantId);
         Page<MerchantPaymentListPO> paymentListPage = new Page(page, pageSize);
-        IPage<MerchantPaymentListPO> merchantPaymentListIPage = merchantDao.selectMerchantPaymentList(paymentListPage, merchantId);
+        IPage<MerchantPaymentListPO> merchantPaymentListIPage = merchantDao.selectMerchantPaymentList(paymentListPage, merchant.getCompanyId());
         return ReturnJson.success(merchantPaymentListIPage);
     }
+
+
+    @Resource
+    private PaymentOrderService paymentOrderService;
+
+    @Resource
+    private PaymentOrderManyService paymentOrderManyService;
 
     /**
      * 获取支付详情
@@ -475,11 +461,11 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
     public ReturnJson getMerchantPaymentInfo(String paymentOrderId, Integer packgeStatus) {
         ReturnJson returnJson = this.getMerchantPaymentInventory(paymentOrderId, 1, 10);
         if (packgeStatus == 0) {
-            PaymentOrder paymentOrder = paymentOrderDao.selectById(paymentOrderId);
-            returnJson.setObj(paymentOrder);
+            ReturnJson paymentOrderInfo = paymentOrderService.getPaymentOrderInfo(paymentOrderId);
+            returnJson.setObj(paymentOrderInfo);
         } else {
-            PaymentOrderMany paymentOrderMany = paymentOrderManyDao.selectById(paymentOrderId);
-            returnJson.setObj(paymentOrderMany);
+            ReturnJson paymentOrderManyInfo = paymentOrderManyService.getPaymentOrderManyInfo(paymentOrderId);
+            returnJson.setObj(paymentOrderManyInfo);
         }
         return returnJson;
     }
@@ -508,7 +494,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ReturnJson addMerchant(CompanyDto companyDto) throws CommonException {
+    public ReturnJson addMerchant(CompanyDto companyDto) throws Exception {
         CompanyInfo companyInfo = new CompanyInfo();
         BeanUtils.copyProperties(companyDto, companyInfo);
 
@@ -556,7 +542,6 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         BeanUtils.copyProperties(companyDto.getAddress(), address);
         address.setCompanyId(companyInfo.getId());
         addressDao.insert(address);
-
         return ReturnJson.success("添加商户成功！");
     }
 

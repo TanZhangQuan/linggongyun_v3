@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.example.common;
+package com.example.common.mybank.util;
 
 /**
  * <p>注释</p>

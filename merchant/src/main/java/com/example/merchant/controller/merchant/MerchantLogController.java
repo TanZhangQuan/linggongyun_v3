@@ -1,15 +1,11 @@
 package com.example.merchant.controller.merchant;
 
 import com.example.common.util.ReturnJson;
+import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.MerchantService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import io.swagger.annotations.*;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
@@ -19,6 +15,7 @@ import javax.validation.constraints.NotNull;
 @Api(value = "商户端登录接口", tags = {"商户端登录接口"})
 @RestController
 @RequestMapping("/merchant/login")
+@Validated
 public class MerchantLogController {
     @Resource
     private MerchantService merchantService;
@@ -54,5 +51,25 @@ public class MerchantLogController {
                                      @NotBlank(message = "验证码不能为空") @RequestParam(required = false) String checkCode,
                                      @NotBlank(message = "新密码不能为空") @RequestParam(required = false) String newPassWord) {
         return merchantService.updataPassWord(loginMobile, checkCode, newPassWord);
+    }
+
+    @PostMapping("/loginMobile")
+    @ApiOperation(value = "手机号登录", notes = "手机号登录", httpMethod = "POST")
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(name = "loginMobile", value = "登录用的手机号码", required = true),
+            @ApiImplicitParam(name = "checkCode", value = "验证码", required = true)
+    })
+    public ReturnJson loginMobile(@NotBlank(message = "手机号不能为空") @RequestParam(required = false) String loginMobile,
+                                  @NotBlank(message = "验证码不能为空") @RequestParam(required = false) String checkCode, HttpServletResponse resource) {
+
+        return merchantService.loginMobile(loginMobile, checkCode, resource);
+    }
+
+
+    @PostMapping("/getmerchantCustomizedInfo")
+    @ApiOperation(value = "获取当前用用户信息", notes = "获取当前用用户信息", httpMethod = "POST")
+    @LoginRequired
+    public ReturnJson getmerchantCustomizedInfo(@RequestAttribute(value = "userId") @ApiParam(hidden = true) String merchantId) {
+        return merchantService.getmerchantCustomizedInfo(merchantId);
     }
 }

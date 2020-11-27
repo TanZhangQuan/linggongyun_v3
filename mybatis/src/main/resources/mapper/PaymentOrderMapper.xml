@@ -16,6 +16,8 @@
         <result column="turnkey_project_payment" property="turnkeyProjectPayment"/>
         <result column="subpackage_payment" property="subpackagePayment"/>
         <result column="task_id" property="taskId"/>
+        <result column="task_name" property="taskName"/>
+        <result column="task_type" property="taskType"/>
         <result column="acceptance_certificate" property="acceptanceCertificate"/>
         <result column="tax_status" property="taxStatus"/>
         <result column="composite_tax" property="compositeTax"/>
@@ -48,7 +50,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, payment_order_id, company_id, company_s_name, real_money, tax_id, platform_service_provider, company_contract, payment_inventory, turnkey_project_payment, subpackage_payment, task_id, acceptance_certificate, tax_status, composite_tax, merchant_tax, recevice_tax, package_status,payment_order_status, payment_date, create_date, update_date
+        id, company_id, company_s_name, real_money, tax_id, platform_service_provider, company_contract, payment_inventory, turnkey_project_payment, subpackage_payment, task_id, acceptance_certificate, tax_status, composite_tax, merchant_tax, recevice_tax,payment_order_status, payment_date, create_date, update_date
     </sql>
 
     <!--    查询最近30天-->
@@ -174,8 +176,7 @@
     <!--多条件查询-->
     <select id="selectManyPaas" resultMap="BaseResultMap" parameterType="list">
         select
-        id,company_s_name, tax_id, platform_service_provider, company_contract, payment_inventory,
-        turnkey_project_payment, subpackage_payment, task_id, acceptance_certificate,payment_order_status, create_date
+        <include refid="Base_Column_List" />
         from tb_payment_order
         <where>
             company_id in
@@ -278,7 +279,7 @@
     </resultMap>
 
     <!--查询账单详情-->
-    <select id="selectMonthBill" resultMap="billPO" parameterType="int">
+    <select id="selectMonthBill" resultMap="billPO">
         SELECT
         b.company_s_name,
         b.platform_service_provider,
@@ -292,8 +293,9 @@
         FROM tb_payment_inventory a
         JOIN tb_payment_order b
         ON a.payment_order_id = b.id
-        WHERE YEAR(b.payment_date) = #{year}
-        AND MONTH(b.payment_date) = #{month}
+        WHERE YEAR(a.create_date) = #{year}
+        AND MONTH(a.create_date) = #{month}
+        AND a.worker_id = #{workerId}
     </select>
 
     <resultMap id="billCountPO" type="com.example.mybatis.po.BillCountPO">
@@ -302,14 +304,13 @@
     </resultMap>
 
     <!--账单统计-->
-    <select id="selectYearCount" resultMap="billCountPO" parameterType="int">
+    <select id="selectYearCount" resultMap="billCountPO">
         SELECT
         COUNT(1) as 'order_count',
         SUM(a.real_money) as 'bill_money'
         FROM tb_payment_inventory a
-        JOIN tb_payment_order b
-        ON a.payment_order_id = b.id
-        WHERE YEAR(b.payment_date) = #{year}
+        WHERE YEAR(a.create_date) = #{year}
+        AND a.worker_id = #{workerId}
     </select>
 
     <resultMap id="PaymentOrderInfoPOResultMap" type="com.example.mybatis.po.PaymentOrderInfoPO">

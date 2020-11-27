@@ -168,10 +168,10 @@
                 AND e.idcard_code like CONCAR('%',#{idCardCode},'%')
             </if>
             <if test="startDate != null and startDate != '' ">
-                AND e.create_date &gt;= #{startDate}
+                AND e.create_date &gt;= #{startDate} + ' 00:00:00'
             </if>
             <if test="endDate != null and endDate != '' ">
-                AND e.create_date &lt;= #{endDate}
+                AND e.create_date &lt;= #{endDate} + ' 23:59:59'
             </if>
         </where>
     </select>

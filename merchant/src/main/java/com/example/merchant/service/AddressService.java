@@ -13,8 +13,33 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @since 2020-09-07
  */
 public interface AddressService extends IService<Address> {
+
+    /**
+     * 获取商户的所以收货地址
+     * @param merchantId
+     * @return
+     */
     ReturnJson getAddressAll(String merchantId);
+
+    /**
+     * 添加或修改地址
+     * @param address
+     * @return
+     */
     ReturnJson addOrUpdataAddress(Address address);
+
+    /**
+     * 停用或启用地址
+     * @param addressId
+     * @param status
+     * @return
+     */
     ReturnJson updataAddressStatus(String addressId, Integer status);
+
+    /**
+     * 删除地址
+     * @param addressId
+     * @return
+     */
     ReturnJson removeAddressById(String addressId);
 }

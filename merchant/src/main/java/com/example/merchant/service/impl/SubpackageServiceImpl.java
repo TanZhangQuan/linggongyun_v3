@@ -1,6 +1,8 @@
 package com.example.merchant.service.impl;
 
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.service.SubpackageService;
 import com.example.mybatis.dto.TobeinvoicedDto;
@@ -20,17 +22,25 @@ public class SubpackageServiceImpl implements SubpackageService {
     @Resource
     private SubpackageDao subpackageDao;
 
+    /**
+     * 汇总代开已开票
+     *
+     * @param tobeinvoicedDto
+     * @return
+     */
     @Override
     public ReturnJson getSummaryList(TobeinvoicedDto tobeinvoicedDto) {
-        ReturnJson returnJson = new ReturnJson("查询失败", 300);
-        RowBounds rowBounds = new RowBounds((tobeinvoicedDto.getPageNo() - 1) * 9, 9);
-        List<SubpackageVo> list = subpackageDao.getSummaryList(tobeinvoicedDto, rowBounds);
-        if (list != null && list.size() > 0) {
-            returnJson = new ReturnJson("查询成功", list, 200);
-        }
-        return returnJson;
+        Page page = new Page(tobeinvoicedDto.getPageNo(), tobeinvoicedDto.getPageSize());
+        IPage<SubpackageVo> list = subpackageDao.getSummaryList(page, tobeinvoicedDto);
+        return ReturnJson.success(list);
     }
 
+    /**
+     * 汇总代开,支付信息，税价总和
+     *
+     * @param invoiceId
+     * @return
+     */
     @Override
     public ReturnJson getSummary(String invoiceId) {
         ReturnJson returnJson = new ReturnJson("查询失败", 300);
@@ -41,6 +51,12 @@ public class SubpackageServiceImpl implements SubpackageService {
         return returnJson;
     }
 
+    /**
+     * 汇总代开,发票信息
+     *
+     * @param invoiceId
+     * @return
+     */
     @Override
     public ReturnJson getSubpackageInfoById(String invoiceId) {
         ReturnJson returnJson = new ReturnJson("查询失败", 300);
@@ -51,15 +67,19 @@ public class SubpackageServiceImpl implements SubpackageService {
         return returnJson;
     }
 
+    /**
+     * 汇总代开,发票信息,创客到手明细
+     *
+     * @param invoiceId
+     * @param pageNo
+     * @param pageSize
+     * @return
+     */
     @Override
-    public ReturnJson getListByInvoiceId(String invoiceId, Integer pageNo) {
-        ReturnJson returnJson = new ReturnJson("查询失败", 300);
-        RowBounds rowBounds = new RowBounds((pageNo - 1) * 3, 3);
-        List<InvoiceDetailsVo> list = subpackageDao.getListById(invoiceId, rowBounds);
-        if (list != null && list.size() > 0) {
-            returnJson = new ReturnJson("查询成功", list, 200);
-        }
-        return returnJson;
+    public ReturnJson getListByInvoiceId(String invoiceId, Integer pageNo, Integer pageSize) {
+        Page page = new Page(pageNo, pageSize);
+        IPage<InvoiceDetailsVo> list = subpackageDao.getListById(page, invoiceId);
+        return ReturnJson.success(list);
 
     }
 }

@@ -28,11 +28,11 @@ public interface MerchantService extends IService<Merchant> {
 
     ReturnJson merchantLogin(String username, String password, HttpServletResponse response);
 
-    String getId(HttpServletRequest request);
-
     ReturnJson senSMS(String mobileCode);
 
     ReturnJson loginMobile(String loginMobile, String checkCode, HttpServletResponse resource);
+
+    ReturnJson getmerchantCustomizedInfo(String merchantId);
 
     ReturnJson merchantInfo(String merchantId);
 
@@ -56,7 +56,7 @@ public interface MerchantService extends IService<Merchant> {
 
     ReturnJson getMerchantPaymentInventory(String paymentOrderId, Integer page, Integer pageSize);
 
-    ReturnJson addMerchant(CompanyDto companyDto) throws CommonException;
+    ReturnJson addMerchant(CompanyDto companyDto) throws Exception;
 
     ReturnJson logout(String merchantId);
 }

@@ -73,7 +73,8 @@ public class KdniaoTrackQueryAPI {
                 expressInfo.setAcceptStation("暂时没有快递信息");
                 expressInfo.setAcceptTime(LocalDateTime.now().toString());
                 expressLogisticsInfos.add(expressInfo);
-                log.error("物流公司编号不正确");
+                String Reason = jsonObject.getString("Reason");
+                log.error(Reason);
                 return expressLogisticsInfos;
             }
             String State = jsonObject.getString("State");

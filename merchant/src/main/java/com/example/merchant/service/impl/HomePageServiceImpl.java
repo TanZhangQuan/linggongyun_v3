@@ -2,21 +2,28 @@ package com.example.merchant.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.example.common.util.ReturnJson;
+import com.example.common.util.VerificationCheck;
 import com.example.merchant.exception.CommonException;
 import com.example.merchant.service.HomePageService;
 import com.example.merchant.util.AcquireID;
+import com.example.merchant.util.JwtUtils;
 import com.example.merchant.vo.merchant.HomePageMerchantVO;
 import com.example.merchant.vo.platform.HomePageVO;
 import com.example.mybatis.entity.Agent;
 import com.example.mybatis.entity.CompanyWorker;
 import com.example.mybatis.entity.Managers;
+import com.example.mybatis.entity.Merchant;
 import com.example.mybatis.mapper.*;
 import com.example.mybatis.po.InvoicePO;
+import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
+import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -25,6 +32,8 @@ import java.util.Set;
 @Service
 public class HomePageServiceImpl implements HomePageService {
 
+    @Value("${TOKEN}")
+    private String TOKEN;
 
     @Resource
     private PaymentOrderDao paymentOrderDao;
@@ -59,6 +68,9 @@ public class HomePageServiceImpl implements HomePageService {
     @Resource
     private CrowdSourcingInvoiceDao crowdSourcingInvoiceDao;
 
+    @Resource
+    private JwtUtils jwtUtils;
+
     /**
      * 获取首页基本信息
      *
@@ -67,7 +79,8 @@ public class HomePageServiceImpl implements HomePageService {
      */
     @Override
     public ReturnJson getHomePageInof(String merchantId) {
-        String companyId = merchantId;
+        Merchant merchant = merchantDao.selectById(merchantId);
+        String companyId = merchant.getCompanyId();
         HomePageMerchantVO homePageMerchantVO = new HomePageMerchantVO();
         BigDecimal payment30TotalMoney = paymentOrderDao.selectBy30Day(companyId);
         homePageMerchantVO.setPayment30TotalMoney(payment30TotalMoney);
@@ -115,10 +128,11 @@ public class HomePageServiceImpl implements HomePageService {
     }
 
     @Override
-    public ReturnJson getHomePageInofpaas(String managersId) throws CommonException {
+    public ReturnJson getHomePageInofpaas(String userId) throws CommonException {
+        String managersId = userId;
         Managers managers = managersDao.selectById(managersId);
         HomePageVO homePageVO = null;
-        List<String> merchantIds = acquireID.getMerchantIds(managersId);
+        List<String> merchantIds = acquireID.getCompanyIds(managersId);
         if (merchantIds == null || merchantIds.size() == 0) {
             return ReturnJson.success(homePageVO);
         }
@@ -157,8 +171,49 @@ public class HomePageServiceImpl implements HomePageService {
         }
     }
 
+    @Override
+    public ReturnJson getTodayById(String merchantId) {
+        Merchant merchant = merchantDao.selectById(merchantId);
+        if (merchant == null) {
+            return ReturnJson.error("您输入的信息有误！");
+        }
+        return ReturnJson.success((merchantDao.getTodayById(merchant.getCompanyId())));
+    }
+
+    @Override
+    public ReturnJson getWeekTradeById(String merchantId) {
+        Merchant merchant = merchantDao.selectById(merchantId);
+        if (merchant == null) {
+            return ReturnJson.error("您输入的信息有误！");
+        }
+        return ReturnJson.success((merchantDao.getWeekTradeById(merchant.getCompanyId())));
+    }
+
+    @Override
+    public ReturnJson getMonthTradeById(String merchantId) {
+        Merchant merchant = merchantDao.selectById(merchantId);
+        if (merchant == null) {
+            return ReturnJson.error("您输入的信息有误！");
+        }
+        return ReturnJson.success((merchantDao.getMonthTradeById(merchant.getCompanyId())));
+    }
+
+    @Override
+    public ReturnJson getYearTradeById(String merchantId) {
+        Merchant merchant = merchantDao.selectById(merchantId);
+        if (merchant == null) {
+            return ReturnJson.error("您输入的信息有误！");
+        }
+        return ReturnJson.success((merchantDao.getYearTradeById(merchant.getCompanyId())));
+    }
+
+
+
     private HomePageVO getHomePageOV(List<String> ids) {
         HomePageVO homePageVO = new HomePageVO();
+        if (VerificationCheck.listIsNull(ids)) {
+            return homePageVO;
+        }
         BigDecimal pay30Total = paymentOrderDao.selectBy30Daypaas(ids);
         BigDecimal pay30Many = paymentOrderManyDao.selectBy30Daypaas(ids);
 

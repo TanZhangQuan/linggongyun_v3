@@ -10,6 +10,7 @@ import com.example.mybatis.po.PaymentOrderInfoPO;
 import com.example.mybatis.vo.BillingInfoVo;
 import com.example.mybatis.vo.PaymentOrderVo;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -54,8 +55,8 @@ public interface PaymentOrderDao extends BaseMapper<PaymentOrder> {
 
     BillingInfoVo getBillingInfo(String id);
 
-    List<BillPO> selectMonthBill(@Param("year") Integer year,@Param("month")Integer month);
-    BillCountPO selectYearCount(@Param("year") Integer year);
+    List<BillPO> selectMonthBill(@Param("workerId") String workerId, @Param("year") Integer year, @Param("month")Integer month);
+    BillCountPO selectYearCount(@Param("workerId") String workerId,@Param("year") Integer year);
 
     PaymentOrderInfoPO selectPaymentOrderInfo(String paymentOrderId);
 }

@@ -72,9 +72,29 @@ public class Worker implements Serializable {
     private String idcardCode;
 
     /**
+     * 开户行
+     */
+    private String bankName;
+
+    /**
      * 银行卡号
      */
     private String bankCode;
+
+    /**
+     *  网商银行会员号。
+     */
+    @TableField("member_id")
+    private String memberId;
+
+    /**
+     * 子账户（智能识别码）
+     */
+    @TableField("sub_account_no")
+    private String subAccountNo;
+
+    @TableField("bank_id")
+    private String bankId;
 
     /**
      * 实名认证状态（0未认证，1已认证）
@@ -139,6 +159,11 @@ public class Worker implements Serializable {
      * 营业执照
      */
     private String businessLicense;
+
+    /**
+     * 社会统一代码
+     */
+    private String creditCode;
 
     /**
      * 修改时间

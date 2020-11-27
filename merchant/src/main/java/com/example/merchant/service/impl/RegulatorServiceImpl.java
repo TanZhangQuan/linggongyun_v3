@@ -4,9 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.example.common.sms.SenSMS;
 import com.example.common.util.*;
-import com.example.merchant.config.shiro.CustomizedToken;
 import com.example.merchant.dto.platform.RegulatorDto;
 import com.example.merchant.dto.platform.RegulatorQueryDto;
 import com.example.merchant.dto.platform.RegulatorTaxDto;
@@ -19,24 +17,20 @@ import com.example.merchant.service.RegulatorService;
 import com.example.merchant.service.RegulatorTaxService;
 import com.example.merchant.service.TaxService;
 import com.example.merchant.util.JwtUtils;
+import com.example.merchant.vo.ExpressInfoVO;
 import com.example.merchant.vo.PaymentOrderInfoVO;
+import com.example.merchant.vo.TaxBriefVO;
 import com.example.merchant.vo.platform.HomePageVO;
 import com.example.merchant.vo.platform.RegulatorTaxVO;
 import com.example.merchant.vo.regulator.*;
 import com.example.mybatis.entity.*;
 import com.example.mybatis.mapper.*;
-import com.example.mybatis.po.InvoicePO;
-import com.example.mybatis.po.PaymentOrderInfoPO;
-import com.example.mybatis.po.RegulatorWorkerPO;
-import com.example.mybatis.po.WorekerPaymentListPo;
-import com.example.redis.dao.RedisDao;
 import com.example.mybatis.po.*;
+import com.example.redis.dao.RedisDao;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.LockedAccountException;
-import org.apache.shiro.subject.Subject;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -187,8 +181,16 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
      */
     @Override
     public ReturnJson getTaxAll(Integer page, Integer pageSize) {
-        Page<Tax> taxPage = new Page<>(page, pageSize);
+        Page taxPage = new Page<>(page, pageSize);
         taxPage = taxDao.selectPage(taxPage, new QueryWrapper<Tax>().eq("tax_status", 0));
+        List<Tax> records = taxPage.getRecords();
+        List<TaxBriefVO> taxBriefVOS = new ArrayList<>();
+        records.forEach(tax -> {
+            TaxBriefVO taxBriefVO = new TaxBriefVO();
+            BeanUtils.copyProperties(tax,taxBriefVO);
+            taxBriefVOS.add(taxBriefVO);
+        });
+        taxPage.setRecords(taxBriefVOS);
         return ReturnJson.success(taxPage);
     }
 
@@ -340,8 +342,8 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
      * @return
      */
     @Override
-    public ReturnJson getRegulatorWorker(RegulatorWorkerDto regulatorWorkerDto) {
-        ReturnJson result = this.getPaymentOrderIds(regulatorWorkerDto.getRegulatorId());
+    public ReturnJson getRegulatorWorker(RegulatorWorkerDto regulatorWorkerDto, String regulatorId) {
+        ReturnJson result = this.getPaymentOrderIds(regulatorId);
         if (result.getCode() == 300) {
             return result;
         }
@@ -491,8 +493,8 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
      * @return
      */
     @Override
-    public ReturnJson getRegulatorWorkerPaymentInfo(RegulatorWorkerPaymentDto regulatorWorkerPaymentDto) {
-        ReturnJson result = this.getPaymentOrderIds(regulatorWorkerPaymentDto.getRegulatorId());
+    public ReturnJson getRegulatorWorkerPaymentInfo(RegulatorWorkerPaymentDto regulatorWorkerPaymentDto, String regulatorId) {
+        ReturnJson result = this.getPaymentOrderIds(regulatorId);
         if (result.getCode() == 300) {
             return result;
         }
@@ -560,15 +562,44 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
     @Override
     public ReturnJson getPaymentOrderInfo(String workerId, String paymentId, Integer packageStatus) {
         PaymentOrderInfoPO paymentOrderInfoPO = null;
+        PaymentOrderInfoVO paymentOrderInfoVO = new PaymentOrderInfoVO();
+        ExpressInfoVO expressInfoVO = new ExpressInfoVO();
         if (packageStatus == 0) {
+            //为总包订单
             paymentOrderInfoPO = paymentOrderDao.selectPaymentOrderInfo(paymentId);
+            if (paymentOrderInfoPO == null) {
+                return ReturnJson.error("订单编号有误，请重新输入！");
+            }
+            InvoiceInfoPO invoiceInfoPO = invoiceDao.selectInvoiceInfoPO(paymentId);
+            if (invoiceInfoPO != null) {
+                //总包发票信息
+                paymentOrderInfoVO.setInvoice(invoiceInfoPO.getInvoiceUrl());
+                paymentOrderInfoVO.setSubpackageInvoice(invoiceInfoPO.getMakerInvoiceUrl());
+                expressInfoVO.setExpressCompanyName(invoiceInfoPO.getExpressCompanyName());
+                expressInfoVO.setExpressCode(invoiceInfoPO.getExpressSheetNo());
+                List<ExpressLogisticsInfo> expressLogisticsInfos = KdniaoTrackQueryAPI.getExpressInfo(invoiceInfoPO.getExpressCompanyName(), invoiceInfoPO.getExpressSheetNo());
+                expressInfoVO.setExpressLogisticsInfos(expressLogisticsInfos);
+            }
         } else {
+            //为众包订单
             paymentOrderInfoPO = paymentOrderManyDao.selectPaymentOrderInfo(paymentId);
+            if (paymentOrderInfoPO == null) {
+                return ReturnJson.error("订单编号有误，请重新输入！");
+            }
+            InvoiceInfoPO invoiceInfoPO = crowdSourcingInvoiceDao.selectInvoiceInfoPO(paymentId);
+            if (invoiceInfoPO != null) {
+                //众包发票信息
+                paymentOrderInfoVO.setInvoice(invoiceInfoPO.getInvoiceUrl());
+                expressInfoVO.setExpressCompanyName(invoiceInfoPO.getExpressCompanyName());
+                expressInfoVO.setExpressCode(invoiceInfoPO.getExpressSheetNo());
+                List<ExpressLogisticsInfo> expressLogisticsInfos = KdniaoTrackQueryAPI.getExpressInfo(invoiceInfoPO.getExpressCompanyName(), invoiceInfoPO.getExpressSheetNo());
+                expressInfoVO.setExpressLogisticsInfos(expressLogisticsInfos);
+            }
         }
         List<PaymentInventory> paymentInventories = paymentInventoryDao.selectPaymentInventoryList(paymentId, workerId);
-        PaymentOrderInfoVO paymentOrderInfoVO = new PaymentOrderInfoVO();
         paymentOrderInfoVO.setPaymentInventories(paymentInventories);
         paymentOrderInfoVO.setPaymentOrderInfoPO(paymentOrderInfoPO);
+        paymentOrderInfoVO.setExpressInfoVO(expressInfoVO);
         return ReturnJson.success(paymentOrderInfoVO);
     }
 
@@ -594,8 +625,8 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
      * @return
      */
     @Override
-    public ReturnJson getRegulatorMerchant(RegulatorMerchantDto regulatorMerchantDto) {
-        ReturnJson returnJson = this.getTaxIds(regulatorMerchantDto.getRegulatorId());
+    public ReturnJson getRegulatorMerchant(RegulatorMerchantDto regulatorMerchantDto, String regulatorId) {
+        ReturnJson returnJson = this.getTaxIds(regulatorId);
         if (returnJson.getCode() == 300) {
             return returnJson;
         }
@@ -711,7 +742,6 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
     }
 
 
-
     @Resource
     private CompanyInfoDao companyInfoDao;
 
@@ -794,8 +824,8 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
      * @return
      */
     @Override
-    public ReturnJson getRegulatorMerchantPaymentOrder(RegulatorMerchantPaymentOrderDto regulatorMerchantPaymentOrderDto) {
-        ReturnJson returnJson = this.getTaxIds(regulatorMerchantPaymentOrderDto.getRegulatorId());
+    public ReturnJson getRegulatorMerchantPaymentOrder(RegulatorMerchantPaymentOrderDto regulatorMerchantPaymentOrderDto, String regulatorId) {
+        ReturnJson returnJson = this.getTaxIds(regulatorId);
         if (returnJson.getCode() == 300) {
             return returnJson;
         }
@@ -843,9 +873,9 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
             regulatorMerchantPaymentOrderVOS.add(regulatorMerchantPaymentOrderVO);
         }
         try {
-            ExcelUtils.exportExcel(regulatorMerchantPaymentOrderVOS,"商户支付订单","订单信息",RegulatorMerchantPaymentOrderVO.class,"MerchantPaymentOrder",true,response);
+            ExcelUtils.exportExcel(regulatorMerchantPaymentOrderVOS, "商户支付订单", "订单信息", RegulatorMerchantPaymentOrderVO.class, "MerchantPaymentOrder", true, response);
         } catch (IOException e) {
-            log.error(e+":"+e.getMessage());
+            log.error(e + ":" + e.getMessage());
             ReturnJson.error("导出失败，请重试！");
         }
         return null;
@@ -853,6 +883,7 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
 
     /**
      * 登录
+     *
      * @param username 用户名
      * @param password 密码
      * @param response
@@ -875,14 +906,14 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
 //        currentUser.login(customizedToken);//shiro验证身份
         String token = jwtUtils.generateToken(re.getId());
         response.setHeader(TOKEN, token);
-        redisDao.set(re.getId(), JsonUtils.objectToJson(re));
+        redisDao.set(re.getId(), token);
         redisDao.setExpire(re.getId(), 60 * 60 * 24 * 7);
-        re.setPassWord("");
-        return ReturnJson.success(re);
+        return ReturnJson.success("登录成功！",token);
     }
 
     /**
      * 登出
+     *
      * @param regulatorId 监督用户Id
      * @return
      */

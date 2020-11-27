@@ -8,6 +8,8 @@ import com.example.merchant.dto.merchant.PaymentOrderMerchantDto;
 import com.example.merchant.exception.CommonException;
 import com.example.mybatis.entity.PaymentOrder;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * <p>
  * 支付单信息
@@ -26,7 +28,7 @@ public interface PaymentOrderService extends IService<PaymentOrder> {
 
     ReturnJson getYear(String merchantId);
 
-    ReturnJson getPaymentOrder(PaymentOrderMerchantDto paymentOrderMerchantDto);
+    ReturnJson getPaymentOrder(String merchantId, PaymentOrderMerchantDto paymentOrderMerchantDto);
 
     ReturnJson getPaymentOrderInfo(String id);
 
@@ -46,13 +48,13 @@ public interface PaymentOrderService extends IService<PaymentOrder> {
 
     ReturnJson getYearPaas(String merchantId) throws CommonException;
 
-    ReturnJson getPaymentOrderPaas(PaymentOrderDto paymentOrderDto) throws CommonException;
-
-    ReturnJson getPaymentOrderInfoPaas(String id);
+    ReturnJson getPaymentOrderPaas(PaymentOrderDto paymentOrderDto,String managersId) throws CommonException;
 
     ReturnJson offlinePaymentPaas(String paymentOrderId, String turnkeyProjectPayment);
 
     ReturnJson confirmReceiptPaas(String paymentOrderId);
 
     ReturnJson findMerchantPaas(String managersId);
+
+    ReturnJson subpackagePayPaas(String paymentOrderId, String subpackagePayment);
 }

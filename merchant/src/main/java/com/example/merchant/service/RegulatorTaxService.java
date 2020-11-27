@@ -21,7 +21,7 @@ public interface RegulatorTaxService extends IService<RegulatorTax> {
 
     ReturnJson homeFourData(String regulatorId);
 
-    ReturnJson listTax(RegulatorTaxDto regulatorTaxDto);
+    ReturnJson listTax(RegulatorTaxDto regulatorTaxDto, String regulatorId);
 
     ReturnJson getTax(String taxId);
 
@@ -32,4 +32,6 @@ public interface RegulatorTaxService extends IService<RegulatorTax> {
     ReturnJson batchExportPayInfo(String paymentOrderIds, HttpServletResponse response);
 
     ReturnJson getPaymentInventoryInfo(String paymentOrderId,Integer page,Integer pageSize);
+
+    ReturnJson getPaymentOrderInfo(String paymentOrderId,Integer type);
 }

@@ -153,7 +153,6 @@ public class HttpClientUtils {
     }
 
     public static CloseableHttpResponse urlGet(String url) {
-        InputStream inputStream = null;
         // get请求返回结果
         CloseableHttpClient client = HttpClients.createDefault();
         // 发送get请求

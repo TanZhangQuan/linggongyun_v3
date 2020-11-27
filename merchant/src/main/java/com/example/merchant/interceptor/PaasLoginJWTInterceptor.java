@@ -41,9 +41,7 @@ public class PaasLoginJWTInterceptor implements HandlerInterceptor {
             String token = null;
             try {
                 token = request.getHeader(TOKEN);
-            } catch (Exception e) {
-                throw new CommonException(403, "请求格式错误！");
-            }
+            } catch (Exception e) {}
             String userId = "";
             if (!loginRequired.required()) {
                 return true;
@@ -53,16 +51,17 @@ public class PaasLoginJWTInterceptor implements HandlerInterceptor {
                 }
                 Claims claim = jwtUtils.getClaimByToken(token);
                 if (claim == null) {
-                    throw new CommonException(402, "你的登录以过期请重新登录！");
+                    throw new CommonException(403, "请求格式错误！");
                 }
                 if (jwtUtils.isTokenExpired(claim.getExpiration())) {
                     throw new CommonException(402, "你的登录以过期请重新登录！");
                 }
                 userId = claim.getSubject();
-                String managers = redisDao.get(userId);
-                if (StringUtils.isBlank(managers)) {
+                String user = redisDao.get(userId);
+                if (StringUtils.isBlank(user)) {
                     throw new CommonException(402, "你的登录以过期请重新登录！");
                 }
+                request.setAttribute("userId",userId);
                 return true;
             }
         }

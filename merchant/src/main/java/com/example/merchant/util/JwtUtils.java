@@ -14,13 +14,13 @@ import java.util.Date;
 public class JwtUtils {
     private Logger logger = LoggerFactory.getLogger(getClass());
 
-    @Value("${secret}")
+    @Value("${JWT.secret}")
     private String secret;
 
-    @Value("${expire}")
+    @Value("${JWT.expire}")
     private long expire;
 
-    @Value("${header}")
+    @Value("${JWT.header}")
     private String header;
 
     /**

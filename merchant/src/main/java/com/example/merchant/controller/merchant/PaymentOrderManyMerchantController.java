@@ -3,11 +3,10 @@ package com.example.merchant.controller.merchant;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.merchant.AddPaymentOrderManyDto;
 import com.example.merchant.dto.merchant.PaymentOrderMerchantDto;
+import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.PaymentOrderManyService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -26,18 +25,20 @@ import javax.validation.constraints.NotBlank;
 @Api(value = "商户端众包支付管理", tags = "商户端众包支付管理")
 @RestController
 @RequestMapping("/merchant/paymentOrderMany")
+@Validated
 public class PaymentOrderManyMerchantController {
 
     @Resource
     private PaymentOrderManyService paymentOrderManyService;
 
     @PostMapping("/getPaymentOrderManyAll")
+    @LoginRequired
     @ApiOperation(value = "查询众包订单", notes = "查询众包订单", httpMethod = "POST")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "paymentOrderMerchantDto", value = "查询条件", required = true, dataType = "PaymentOrderMerchantDto")
     })
-    public ReturnJson getPaymentOrderManyAll(@Valid @RequestBody PaymentOrderMerchantDto paymentOrderMerchantDto) {
-        return paymentOrderManyService.getPaymentOrderMany(paymentOrderMerchantDto);
+    public ReturnJson getPaymentOrderManyAll(@ApiParam(hidden = true) @RequestAttribute("userId") String merchantId, @Valid @RequestBody PaymentOrderMerchantDto paymentOrderMerchantDto) {
+        return paymentOrderManyService.getPaymentOrderMany(merchantId,paymentOrderMerchantDto);
     }
 
     @GetMapping("/getPaymentOrderManyInfo")

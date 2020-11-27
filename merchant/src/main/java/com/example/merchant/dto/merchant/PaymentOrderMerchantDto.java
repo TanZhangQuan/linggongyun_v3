@@ -10,14 +10,6 @@ import javax.validation.constraints.NotNull;
 @Data
 @ApiModel(description = "查询订单参数")
 public class PaymentOrderMerchantDto {
-
-    /**
-     * 商户的公司ID
-     */
-    @NotBlank(message = "商户的公司ID不能为空！")
-    @ApiModelProperty("商户的公司ID")
-    private String companyId;
-
     /**
      * 支付订单ID
      */

@@ -15,6 +15,8 @@
         <result column="attestation" property="attestation"/>
         <result column="idcardFront" property="idcardFront"/>
         <result column="idcardBack" property="idcardBack"/>
+        <result column="member_id" property="memberId"/>
+        <result column="sub_account_no" property="subAccountNo"/>
         <result column="attestation_video" property="attestationVideo"/>
         <result column="user_name" property="userName"/>
         <result column="user_pwd" property="userPwd"/>
@@ -24,6 +26,7 @@
         <result column="head_portraits" property="headPortraits"/>
         <result column="picture" property="picture"/>
         <result column="business_license" property="businessLicense"/>
+        <result column="credit_code" property="creditCode"/>
         <result column="create_date" property="createDate"/>
         <result column="update_date" property="updateDate"/>
     </resultMap>
@@ -49,20 +52,40 @@
         <result column="create_date" property="createDate"/>
     </resultMap>
 
+    <resultMap id="workerPassVo" type="com.example.mybatis.vo.WorkerPassVo">
+        <id column="id" property="wId"/>
+        <result column="worker_name" property="workerName"/>
+        <result column="mobile_code" property="mobileCode"/>
+        <result column="idcard_code" property="idcardCode"/>
+        <result column="attestation" property="attestation"/>
+        <result column="agreementUrl" property="agreementUrl"/>
+        <result column="create_date" property="createDate"/>
+        <result column="is_deliver" property="isDeliver"/>
+        <result column="acceptance_amount" property="acceptanceAmount"/>
+        <result column="status" property="status"/>
+    </resultMap>
+
+    <resultMap id="workerInfo" type="com.example.mybatis.vo.WorkerInfoVo">
+        <result column="task_number" property="taskNumber"/>
+        <result column="total_revenue" property="totalRevenue"/>
+        <result column="total_tax" property="totalTax"/>
+        <result column="invoice_number" property="invoiceNumber"/>
+    </resultMap>
+
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id, worker_status, worker_name, account_name, worker_sex, mobile_code, idcard_code, bank_code, attestation, idcardFront, idcardBack, attestation_video, user_name, user_pwd, skill, agreementSign, agreementUrl, head_portraits, picture, business_license, create_date, update_date
     </sql>
 
     <sql id="ByIdAndAccountNameAndMobile">
-        <if test="id != null and id != ''">
-            and a.id like CONCAT('%',#{id},'%')
+        <if test="workerId != null and workerId != ''">
+            and a.id = #{workerId}
         </if>
         <if test="accountName != null and accountName != ''">
             and account_name like CONCAT('%',#{accountName},'%')
         </if>
         <if test="mobileCode != null and mobileCode != ''">
-            and mobile_code like CONCAT('%',#{mobileCode},'%')
+            and mobile_code = #{mobileCode}
         </if>
     </sql>
 
@@ -72,69 +95,44 @@
         from tb_worker a join tb_company_worker b on a.id = b.worker_id
         <where>
             b.company_id = #{merchantId}
-            <include refid="ByIdAndAccountNameAndMobile"></include>
+        <if test="accountName != null and accountName != ''">
+            and account_name like CONCAT('%',#{accountName},'%')
+        </if>
+        <if test="mobileCode != null and mobileCode != ''">
+            and mobile_code = #{mobileCode}
+        </if>
         </where>
     </select>
 
-    <select id="selectByIdAndAccountNameAndMobilePaas" resultMap="BaseResultMap" parameterType="list">
+    <select id="selectWorkerQueryNot" resultMap="BaseResultMap" parameterType="list">
         select
         a.id, account_name, mobile_code, idcard_code, bank_code, attestation, agreementSign ,a.create_date
         from tb_worker a join tb_company_worker b on a.id = b.worker_id
         <where>
             b.company_id in
-            <foreach collection="merchantIds" index="index" item="merchantIds" open="(" separator="," close=")">
-                #{merchantIds}
-            </foreach>
-            and attestation = 1
-            and agreementSign = 1
-            <include refid="ByIdAndAccountNameAndMobile"></include>
-        </where>
-    </select>
-
-    <select id="selectByIdAndAccountNameAndMobilePaasNot" resultMap="BaseResultMap" parameterType="list">
-        select
-        a.id, account_name, mobile_code, idcard_code, bank_code, attestation, agreementSign ,a.create_date
-        from tb_worker a join tb_company_worker b on a.id = b.worker_id
-        <where>
-            b.company_id in
-            <foreach collection="merchantIds" index="index" item="merchantIds" open="(" separator="," close=")">
-                #{merchantIds}
+            <foreach collection="companyIds" index="index" item="item" open="(" separator="," close=")">
+                #{item}
             </foreach>
             <include refid="ByIdAndAccountNameAndMobile"></include>
             and (attestation = 0
             or agreementSign = 0)
         </where>
-        limit 0,10
     </select>
 
-    <select id="selectWorkerAll" resultMap="BaseResultMap" parameterType="list">
+    <select id="selectWorkerQuery" resultMap="BaseResultMap" parameterType="list">
         select
         a.id, account_name, mobile_code, idcard_code, bank_code, attestation, agreementSign ,a.create_date
         from tb_worker a join tb_company_worker b on a.id = b.worker_id
         <where>
             b.company_id in
-            <foreach collection="merchantIds" index="index" item="merchantIds" open="(" separator="," close=")">
-                #{merchantIds}
+            <foreach collection="companyIds" index="index" item="item" open="(" separator="," close=")">
+                #{item}
             </foreach>
+            <include refid="ByIdAndAccountNameAndMobile"></include>
             and attestation = 1
             and agreementSign = 1
         </where>
     </select>
-
-    <select id="selectWorkerAllNot" resultMap="BaseResultMap" parameterType="list">
-        select
-        a.id, account_name, mobile_code, idcard_code, bank_code, attestation, agreementSign ,a.create_date
-        from tb_worker a join tb_company_worker b on a.id = b.worker_id
-        <where>
-            b.company_id in
-            <foreach collection="merchantIds" index="index" item="merchantIds" open="(" separator="," close=")">
-                #{merchantIds}
-            </foreach>
-            and (attestation = 0
-            or agreementSign = 0)
-        </where>
-    </select>
-
 
     <select id="getWorkerByTaskId" resultMap="WorkerPo">
         SELECT w.id,w.worker_name,w.mobile_code,w.idcard_code,w.attestation,w.agreementUrl,wt.create_date FROM tb_worker_task as wt,tb_worker as w
@@ -247,5 +245,77 @@
         FROM tb_payment_inventory pi
         INNER JOIN tb_worker w ON w.id=pi.worker_id
         GROUP BY w.id
+    </select>
+
+
+    <select id="getPaasCheckByTaskId" resultMap="workerPassVo">
+        SELECT
+            w.id,
+            w.worker_name,
+            w.mobile_code,
+            w.idcard_code,
+            w.attestation,
+            w.agreementUrl,
+            wt.achievement_date,
+            wt.achievement_desc,
+            wt.achievement_files,
+            wt.create_date,
+            wt.`status`,
+            IF( ISNULL(achievement_date),0,1) as is_deliver,
+            wt.check_money as acceptance_amount
+        FROM
+            tb_worker AS w
+        INNER JOIN tb_worker_task wt ON wt.worker_id = w.id
+        where wt.task_id=#{taskId}
+    </select>
+
+    <select id="queryWorkerInfo" resultMap="workerInfo">
+        SELECT
+            (
+                SELECT
+                    count(1)
+                FROM
+                    tb_worker_task
+                WHERE
+                    worker_id = w.id
+            ) AS task_number,
+            (
+                SELECT
+                    SUM(real_money)
+                FROM
+                    tb_payment_inventory
+                WHERE
+                    worker_id = w.id
+            ) AS total_revenue,
+            (
+                SELECT
+                    SUM(tax_amount)
+                FROM
+                    tb_payment_inventory
+                WHERE
+                    worker_id = w.id
+            ) AS total_tax,
+            (
+                SELECT
+                    COUNT(1)
+                FROM
+                    tb_payment_inventory pi
+                    INNER JOIN tb_payment_order po ON pi.payment_order_id=po.id AND po.is_not_invoice=1
+                WHERE
+                    pi.worker_id = w.id
+            ) +
+        (
+                SELECT
+                    COUNT(1)
+                FROM
+                    tb_payment_inventory pi
+                    INNER JOIN tb_payment_order_many pm ON pi.payment_order_id=pm.id AND pm.is_not_invoice=1
+                WHERE
+                    pi.worker_id = w.id
+            ) AS invoice_number
+        FROM
+            tb_worker w
+        WHERE
+            w.id = #{workerId}
     </select>
 </mapper>

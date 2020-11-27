@@ -14,7 +14,17 @@ public class PaymentOrderInfoVO {
 
     @ApiModelProperty("支付订单信息")
     private PaymentOrderInfoPO paymentOrderInfoPO;
+
     @ApiModelProperty("支付明细")
     private List<PaymentInventory> paymentInventories;
+
+    @ApiModelProperty("总包或众包发票")
+    private String invoice;
+
+    @ApiModelProperty("分包发票，当订单为众包时分包发票为空！")
+    private String SubpackageInvoice;
+
+    @ApiModelProperty("发票的快递信息")
+    private ExpressInfoVO expressInfoVO;
 
 }

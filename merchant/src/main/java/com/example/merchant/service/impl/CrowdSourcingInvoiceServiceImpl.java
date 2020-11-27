@@ -3,6 +3,8 @@ package com.example.merchant.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.incrementer.DefaultIdentifierGenerator;
 import com.baomidou.mybatisplus.core.incrementer.IdentifierGenerator;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.common.util.DateUtil;
 import com.example.common.util.ReturnJson;
@@ -13,8 +15,6 @@ import com.example.mybatis.mapper.CrowdSourcingApplicationDao;
 import com.example.mybatis.mapper.CrowdSourcingInvoiceDao;
 import com.example.mybatis.mapper.InvoiceLadderPriceDao;
 import com.example.mybatis.vo.*;
-import org.apache.ibatis.session.RowBounds;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -27,6 +27,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * @author Jwei
+ */
 @Service
 public class CrowdSourcingInvoiceServiceImpl extends ServiceImpl<CrowdSourcingInvoiceDao, CrowdSourcingInvoice> implements CrowdSourcingInvoiceService {
 
@@ -63,13 +66,9 @@ public class CrowdSourcingInvoiceServiceImpl extends ServiceImpl<CrowdSourcingIn
      */
     @Override
     public ReturnJson getCrowdSourcingInfo(TobeinvoicedDto tobeinvoicedDto) {
-        ReturnJson returnJson = new ReturnJson("操作失败", 300);
-        RowBounds rowBounds = new RowBounds((tobeinvoicedDto.getPageNo() - 1) * 9, 9);
-        List<CrowdSourcingInfoVo> vos = crowdSourcingInvoiceDao.getCrowdSourcingInfo(tobeinvoicedDto, rowBounds);
-        if (vos != null) {
-            returnJson = new ReturnJson("操作成功", vos, 200);
-        }
-        return returnJson;
+        Page page = new Page(tobeinvoicedDto.getPageNo(), tobeinvoicedDto.getPageSize());
+        IPage<CrowdSourcingInfoVo> vos = crowdSourcingInvoiceDao.getCrowdSourcingInfo(page, tobeinvoicedDto);
+        return ReturnJson.success(vos);
     }
 
     /**
@@ -96,14 +95,9 @@ public class CrowdSourcingInvoiceServiceImpl extends ServiceImpl<CrowdSourcingIn
      */
     @Override
     public ReturnJson getTobeCrowdSourcingInvoice(TobeinvoicedDto tobeinvoicedDto) {
-        ReturnJson returnJson = new ReturnJson("操作失败", 300);
-        RowBounds rowBounds = new RowBounds((tobeinvoicedDto.getPageNo() - 1) * 9, 9);
-        List<CrowdSourcingInvoiceVo> list = crowdSourcingInvoiceDao.getCrowdSourcingInvoicePass(tobeinvoicedDto, rowBounds);
-
-        if (list != null) {
-            returnJson = new ReturnJson("操作成功", list, 200);
-        }
-        return returnJson;
+        Page page = new Page(tobeinvoicedDto.getPageNo(), tobeinvoicedDto.getPageSize());
+        IPage<CrowdSourcingInvoiceVo> list = crowdSourcingInvoiceDao.getCrowdSourcingInvoicePass(page, tobeinvoicedDto);
+        return ReturnJson.success(list);
     }
 
     @Override
@@ -131,10 +125,13 @@ public class CrowdSourcingInvoiceServiceImpl extends ServiceImpl<CrowdSourcingIn
             if (invoiceLadderPrice != null) {
                 for (InvoiceLadderPrice price : invoiceLadderPrice) {
                     if ((vo.getTaskMoney().compareTo(price.getStartMoney()) > -1) && (vo.getTaskMoney().compareTo(price.getEndMoney()) == -1)) {
-                        vo.setTaxRate(price.getRate());//纳税率
+                        //纳税率
+                        vo.setTaxRate(price.getRate());
                         BigDecimal bigDecimal = vo.getTaxRate().multiply(vo.getTaskMoney());
-                        vo.setPersonalServiceFee(bigDecimal.setScale(2, RoundingMode.HALF_UP));//个人服务费
-                        vo.setTaxAmount((vo.getTaskMoney().subtract(vo.getPersonalServiceFee())).divide((vo.getTaxRate().add(new BigDecimal("1.00"))).multiply(vo.getTaxRate()), 2, BigDecimal.ROUND_HALF_UP));//纳税金额
+                        //个人服务费
+                        vo.setPersonalServiceFee(bigDecimal.setScale(2, RoundingMode.HALF_UP));
+                        //纳税金额
+                        vo.setTaxAmount((vo.getTaskMoney().subtract(vo.getPersonalServiceFee())).divide((vo.getTaxRate().add(new BigDecimal("1.00"))).multiply(vo.getTaxRate()), 2, BigDecimal.ROUND_HALF_UP));
                     }
                 }
             }
@@ -186,7 +183,8 @@ public class CrowdSourcingInvoiceServiceImpl extends ServiceImpl<CrowdSourcingIn
     @Override
     public ReturnJson saveCrowdSourcingInvoice(CrowdSourcingInvoice crowdSourcingInvoice) {
         ReturnJson returnJson = new ReturnJson("操作失败", 300);
-        DateTimeFormatter dfd = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");//时间转换
+        //时间转换
+        DateTimeFormatter dfd = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         if (crowdSourcingInvoice.getApplicationId() == null) {
             returnJson = new ReturnJson("商户未申请，支付id不能为空", 300);
         }
@@ -207,7 +205,8 @@ public class CrowdSourcingInvoiceServiceImpl extends ServiceImpl<CrowdSourcingIn
             }
         }
         crowdSourcingInvoice.setInvoiceCode("FP" + codes);
-        crowdSourcingInvoice.setCreateDate(LocalDateTime.parse(DateUtil.getTime(), dfd));//创建时间
+        //创建时间
+        crowdSourcingInvoice.setCreateDate(LocalDateTime.parse(DateUtil.getTime(), dfd));
         int num = crowdSourcingInvoiceDao.insert(crowdSourcingInvoice);
         if (crowdSourcingInvoice.getApplicationId() != null) {
             CrowdSourcingApplication crowdSourcingApplication = new CrowdSourcingApplication();
@@ -229,13 +228,9 @@ public class CrowdSourcingInvoiceServiceImpl extends ServiceImpl<CrowdSourcingIn
      */
     @Override
     public ReturnJson getCrowdSourcingInfoPass(TobeinvoicedDto tobeinvoicedDto) {
-        ReturnJson returnJson = new ReturnJson("操作失败", 300);
-        RowBounds rowBounds = new RowBounds((tobeinvoicedDto.getPageNo() - 1) * 9, 9);
-        List<CrowdSourcingInfoVo> vos = crowdSourcingInvoiceDao.getCrowdSourcingInfoPass(tobeinvoicedDto, rowBounds);
-        if (vos != null) {
-            returnJson = new ReturnJson("操作成功", vos, 200);
-        }
-        return returnJson;
+        Page page = new Page(tobeinvoicedDto.getPageNo(), tobeinvoicedDto.getPageSize());
+        IPage<CrowdSourcingInfoVo> vos = crowdSourcingInvoiceDao.getCrowdSourcingInfoPass(page, tobeinvoicedDto);
+        return ReturnJson.success(vos);
     }
 
     @Override

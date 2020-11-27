@@ -9,6 +9,8 @@ import com.example.merchant.exception.CommonException;
 import com.example.mybatis.dto.TobeinvoicedDto;
 import com.example.mybatis.entity.PaymentOrderMany;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * <p>
  * 众包支付单信息
@@ -33,9 +35,9 @@ public interface PaymentOrderManyService extends IService<PaymentOrderMany> {
     //根据支付id查询众包支付信息
     ReturnJson getPayOrderManyById(String id);
 
-    ReturnJson getInvoiceDetailsByPayId(String id, Integer pageNo);
+    ReturnJson getInvoiceDetailsByPayId(String id, Integer pageNo,Integer pageSize);
 
-    ReturnJson getPaymentOrderMany(PaymentOrderMerchantDto paymentOrderMerchantDto);
+    ReturnJson getPaymentOrderMany(String merchantId,PaymentOrderMerchantDto paymentOrderMerchantDto);
 
     ReturnJson getPaymentOrderManyInfo(String id);
 
@@ -53,7 +55,5 @@ public interface PaymentOrderManyService extends IService<PaymentOrderMany> {
 
     ReturnJson confirmPaymentManyPaas(String id);
 
-    ReturnJson getPaymentOrderManyPaas(PaymentOrderDto paymentOrderDto) throws CommonException;
-
-    ReturnJson getPaymentOrderManyInfoPaas(String id);
+    ReturnJson getPaymentOrderManyPaas(PaymentOrderDto paymentOrderDto,String managersId) throws CommonException;
 }

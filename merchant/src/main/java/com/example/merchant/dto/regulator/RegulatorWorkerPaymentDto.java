@@ -9,9 +9,6 @@ import javax.validation.constraints.NotBlank;
 @Data
 @ApiModel(description = "监管部门查询所监管创客的支付明细查询参数")
 public class RegulatorWorkerPaymentDto {
-    @NotBlank(message = "监管部门ID不能为空！")
-    @ApiModelProperty(notes = "监管部门ID", value = "监管部门ID", required = true)
-    private String regulatorId;
 
     @NotBlank(message = "创客ID不能为空！")
     @ApiModelProperty(notes = "创客ID", value = "创客ID", required = true)

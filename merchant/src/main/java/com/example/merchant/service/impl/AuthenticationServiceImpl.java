@@ -3,7 +3,9 @@ package com.example.merchant.service.impl;
 import com.example.common.contract.SignAContractUtils;
 import com.example.common.contract.exception.DefineException;
 import com.example.common.contract.helper.SignHelper;
-import com.example.common.util.HttpClientUtils;
+import com.example.common.enums.IdCardSide;
+import com.example.common.enums.MessageStatus;
+import com.example.common.enums.UserType;
 import com.example.common.util.IdCardUtils;
 import com.example.common.util.JsonUtils;
 import com.example.common.util.ReturnJson;
@@ -12,22 +14,21 @@ import com.example.merchant.dto.makerend.WorkerBankDto;
 import com.example.merchant.service.AuthenticationService;
 import com.example.merchant.service.FileOperationService;
 import com.example.merchant.util.RealnameVerifyUtil;
+import com.example.merchant.websocket.WebsocketServer;
+import com.example.mybatis.entity.CommonMessage;
 import com.example.mybatis.entity.Worker;
 import com.example.mybatis.entity.WorkerBank;
 import com.example.mybatis.mapper.WorkerBankDao;
 import com.example.mybatis.mapper.WorkerDao;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.client.methods.CloseableHttpResponse;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -42,14 +43,17 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Value("${PathImage_KEY}")
     private String PathImage_KEY;
 
-    @Value("${PathContractFile_KEY}")
-    private String PathContractFile_KEY;
+    @Value("${TemplateFile.Contract}")
+    private String contract;
 
     @Value("${appSecret}")
     private String appSecret;
 
     @Resource
     private FileOperationService fileOperationService;
+
+    @Resource
+    private WebsocketServer websocketServer;
 
     /**
      * 识别身份证获取信息
@@ -58,10 +62,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
      * @return
      */
     @Override
-    public ReturnJson getIdCardInfo(String filePath) {
-        String realFilePath = PathImage_KEY + filePath.substring(filePath.lastIndexOf("/") + 1);
-        log.info(realFilePath);
-        Map<String, String> idCardInfo = IdCardUtils.getIdCardInfo(realFilePath);
+    public ReturnJson getIdCardInfo(String filePath, IdCardSide idCardSide) throws Exception {
+        String[] fileFormats = {"jpg", "png", "bmp"};
+        String fileFormat = filePath.substring(filePath.lastIndexOf(".") + 1);
+        log.info(fileFormat);
+        if (!Arrays.asList(fileFormats).contains(fileFormat.toLowerCase())) {
+            return ReturnJson.error("现在只支持jpg、png、bmp，格式的图片");
+        }
+        Map<String, String> idCardInfo = IdCardUtils.getIdCardInfo(filePath, idCardSide);
         return ReturnJson.success(idCardInfo);
     }
 
@@ -72,8 +80,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
      * @return
      */
     @Override
-    public ReturnJson saveIdCardinfo(IdCardInfoDto idCardInfoDto) {
-        Worker worker = workerDao.selectById(idCardInfoDto.getWokerId());
+    public ReturnJson saveIdCardinfo(IdCardInfoDto idCardInfoDto, String workerId) throws Exception {
+        Worker worker = workerDao.selectById(workerId);
         if (worker == null) {
             return ReturnJson.error("该创客不存在！");
         }
@@ -95,14 +103,27 @@ public class AuthenticationServiceImpl implements AuthenticationService {
      * @return
      */
     @Override
-    public ReturnJson saveBankInfo(WorkerBankDto workerBankDto) {
+    public ReturnJson saveBankInfo(WorkerBankDto workerBankDto, String workerId) throws Exception {
+        Worker worker = workerDao.selectById(workerId);
+        if (worker == null) {
+            return ReturnJson.error("您输入的用户不存在！");
+        }
+//        if (worker.getAttestation() != 1) {
+//            return ReturnJson.error("请您先完成实名认证！");
+//        }
+//        //银行卡3要素验证
+//        Map<String, Object> map = SignAContractUtils.bank3Factors(workerBankDto.getRealName(), worker.getIdcardCode(), workerBankDto.getBankCode());
+//        if (!"0".equals(map.get("code"))) {
+//            throw new CommonException(Integer.valueOf(map.get("code").toString()),map.get("message").toString());
+//        }
         WorkerBank workerBank = new WorkerBank();
         BeanUtils.copyProperties(workerBankDto, workerBank);
+        workerBank.setWorkerId(worker.getId());
         int insert = workerBankDao.insert(workerBank);
         if (insert == 1) {
             return ReturnJson.success("银行卡绑定成功！");
         }
-        return ReturnJson.success("银行卡绑定失败！");
+        return ReturnJson.error("银行卡绑定失败！");
     }
 
     /**
@@ -139,8 +160,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         if (worker == null) {
             return ReturnJson.error("该用户不存在！");
         }
-        if (worker.getAgreementSign() == 0 || worker.getAgreementSign() == 3) {
-            ReturnJson returnJson = SignAContractUtils.signAContract(PathContractFile_KEY, worker.getId(), worker.getAccountName(), worker.getIdcardCode(),
+        if (worker.getAttestation() != 1) {
+            return ReturnJson.error("请您先完成实名认证！");
+        }
+        if (worker.getAgreementSign() == 0 || worker.getAgreementSign() == -1) {
+            ReturnJson returnJson = SignAContractUtils.signAContract(contract, worker.getId(), worker.getAccountName(), worker.getIdcardCode(),
                     worker.getMobileCode());
             worker.setAgreementSign(1);
             workerDao.updateById(worker);
@@ -158,16 +182,17 @@ public class AuthenticationServiceImpl implements AuthenticationService {
      * @return
      */
     @Override
-    public synchronized ReturnJson callBackSignAContract(HttpServletRequest request){
+    public synchronized ReturnJson callBackSignAContract(HttpServletRequest request) {
         //查询body的数据进行验签
         Map map = null;
+        Worker worker = null;
         boolean res = false;
         try {
             String rbody = RealnameVerifyUtil.getRequestBody(request, "UTF-8");
             map = JsonUtils.jsonToPojo(rbody, Map.class);
             res = RealnameVerifyUtil.checkPass(request, rbody, appSecret);
         } catch (Exception e) {
-            log.error(e.toString()+":"+e.getMessage());
+            log.error(e.toString() + ":" + e.getMessage());
             return null;
         }
         if (!res) {
@@ -180,22 +205,27 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             return null;
         }
         if (!StringUtils.isBlank(thirdPartyUserId)) {
-            Worker worker = workerDao.selectById(thirdPartyUserId);
+            worker = workerDao.selectById(thirdPartyUserId);
             if (worker != null) {
                 if (worker.getAgreementSign() == 2) {
                     log.info("该创客加盟合同已签署完成！");
                     return ReturnJson.error("该创客加盟合同已签署完成!");
                 }
+            } else {
+                log.error("用户不存在");
+                return ReturnJson.error("用户不存在！");
             }
+        } else {
+            log.error("用户ID为空!");
+            return ReturnJson.error("用户ID为空！");
         }
         if (signResult != null && signResult == 2 && !StringUtils.isBlank(flowId)) {
             log.info("---------------------签署完成后，通知回调，平台方进行签署流程归档 start-----------------------------");
             try {
                 SignHelper.archiveSignFlow(flowId);
             } catch (DefineException e) {
-                log.error(e.toString()+":"+e.getMessage());
-                Worker worker = workerDao.selectById(thirdPartyUserId);
-                worker.setAgreementSign(3);
+                log.error(e.toString() + ":" + e.getMessage());
+                worker.setAgreementSign(-1);
                 workerDao.updateById(worker);
                 return null;
             }
@@ -204,39 +234,33 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             try {
                 jsonHelper = (Map<String, List<Map<String, Object>>>) SignHelper.downloadFlowDoc(flowId);
             } catch (DefineException e) {
-                log.error(e.toString()+":"+e.getMessage());
-                Worker worker = workerDao.selectById(thirdPartyUserId);
-                worker.setAgreementSign(3);
+                log.error(e.toString() + ":" + e.getMessage());
+                worker.setAgreementSign(-1);
                 workerDao.updateById(worker);
                 return null;
             }
             List<Map<String, Object>> list = jsonHelper.get("docs");
             Map<String, Object> flowInfo = list.get(0);
-            Worker worker = workerDao.selectById(thirdPartyUserId);
-            if (worker != null) {
-                String fileUrl = String.valueOf(flowInfo.get("fileUrl"));
-                CloseableHttpResponse closeableHttpResponse = HttpClientUtils.urlGet(fileUrl);
-                String url = fileOperationService.uploadJpgOrPdf(closeableHttpResponse, request);
-                if (StringUtils.isBlank(url)) {
-                    worker.setAgreementSign(3);
-                    workerDao.updateById(worker);
-                    return ReturnJson.success("签署加盟合同失败！");
-                }
-                worker.setAgreementSign(2);
-                worker.setAgreementUrl(url);
+            String fileUrl = String.valueOf(flowInfo.get("fileUrl"));
+            String url = fileOperationService.uploadJpgOrPdf(fileUrl, request);
+            if (StringUtils.isBlank(url)) {
+                worker.setAgreementSign(-1);
                 workerDao.updateById(worker);
-                return ReturnJson.success("签署加盟合同成功！");
+                this.senMsg("签署加盟合同失败!", "", "0", UserType.ADMIN, worker.getId(), UserType.WORKER);
+                return ReturnJson.success("签署加盟合同失败！");
             }
+            worker.setAgreementSign(2);
+            worker.setAgreementUrl(url);
+            workerDao.updateById(worker);
+            this.senMsg("签署加盟合同成功!", "", "0", UserType.ADMIN, worker.getId(), UserType.WORKER);
+            return ReturnJson.success("签署加盟合同成功！");
         }
 
         if (signResult != null && signResult == 3 && !StringUtils.isBlank(thirdPartyUserId)) {
-            Worker worker = workerDao.selectById(thirdPartyUserId);
-            if (worker != null) {
-                worker.setAgreementSign(3);
-                workerDao.updateById(worker);
-                String resultDescription = (String) map.get("resultDescription");
-                return ReturnJson.success(resultDescription);
-            }
+            worker.setAgreementSign(-1);
+            workerDao.updateById(worker);
+            String resultDescription = (String) map.get("resultDescription");
+            return ReturnJson.success(resultDescription);
         }
         return ReturnJson.success("签署流程开启！");
     }
@@ -256,5 +280,20 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         Map<String, Integer> map = new HashMap<>();
         map.put("status", worker.getAgreementSign());
         return ReturnJson.success(map);
+    }
+
+    private ReturnJson senMsg(String msg, String NoOrder, String sendUserId, UserType sendUserType, String receiveUserId, UserType receiveUserType) {
+        List<CommonMessage> commonMessageList = new ArrayList<>();
+        CommonMessage commonMessage = new CommonMessage();
+        commonMessage.setMessageStatus(MessageStatus.UNREADE);
+        commonMessage.setNoOrder(NoOrder);
+        commonMessage.setMessage(msg);
+        commonMessage.setSendUserId(sendUserId);
+        commonMessage.setSendUserType(sendUserType);
+        commonMessage.setReceiveUserId(receiveUserId);
+        commonMessage.setReceiveUserType(receiveUserType);
+        commonMessageList.add(commonMessage);
+        websocketServer.onMessage(JsonUtils.objectToJson(commonMessageList));
+        return ReturnJson.success("发送成功！");
     }
 }

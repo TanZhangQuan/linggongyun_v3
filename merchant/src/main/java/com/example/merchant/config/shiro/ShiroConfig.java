@@ -63,9 +63,14 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/common/**", "anon");
         filterChainDefinitionMap.put("/static/image/**", "anon");
         filterChainDefinitionMap.put("/merchant/login", "anon");
-        //放行监管部门中心（测试完后可以删除）
+        //放行所有模板的下载
+        filterChainDefinitionMap.put("/templateFile/**", "anon");
+
+        //放行所以功能（测试完后删除）
         filterChainDefinitionMap.put("/regulator/**", "anon");
-        filterChainDefinitionMap.put("/platform/managers/**", "anon");
+        filterChainDefinitionMap.put("/platform/**", "anon");
+        filterChainDefinitionMap.put("/makerend/**", "anon");
+        filterChainDefinitionMap.put("/merchant/**", "anon");
 
         filterChainDefinitionMap.put("/**", "anon");
         shiroFilterFactoryBean.setSuccessUrl("/index");

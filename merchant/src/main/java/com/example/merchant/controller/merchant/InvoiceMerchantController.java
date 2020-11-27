@@ -21,7 +21,7 @@ import javax.annotation.Resource;
  * @author hzp
  * @since 2020-09-07
  */
-@Api(value = "商户总包操作接口", tags = {"商户总包操作接口"})
+@Api(value = "商户总包发票操作接口", tags = {"商户总包发票操作接口"})
 @RestController
 @RequestMapping("/merchant/invoice")
 public class InvoiceMerchantController {

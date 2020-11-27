@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 /**
  * <p>
  * 公司信息
-
+ *
  * </p>
  *
  * @author hzp
@@ -110,6 +110,21 @@ public class CompanyInfo implements Serializable {
      * 银行账号
      */
     private String bankCode;
+
+    /**
+     * 网商银行会员号
+     */
+    private String memberId;
+
+    /**
+     * 网商银行子账户(智能试别码)
+     */
+    private String subAccountNo;
+
+    /**
+     * 网商银行绑定银行卡
+     */
+    private String bankId;
 
     /**
      * 公司电话(对外公共)

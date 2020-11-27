@@ -1,0 +1,126 @@
+server:
+  port: 8081
+
+spring:
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/linggongyun_v3?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=GMT%2B8
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    initial-size: 10
+    max-active: 10000
+    min-idle: 2
+    max-wait: 100000
+    timeBetweenEvictionRunsMillis: 60000
+    minEvictableIdleTimeMillis: 300000
+    #  是否缓存preparedStatement，也就是PSCache。PSCache对支持游标的数据库性能提升巨大，比如说oracle。在mysql下建议关闭。
+    pool-prepared-statements: true
+    # 要启用PSCache，必须配置大于0，当大于0时，poolPreparedStatements自动触发修改为true。在Druid中，不会存在Oracle下PSCache占用内存过多的问题，可以把这个数值配置大一些，比如说100
+    max-open-prepared-statements: 100
+    validation-query: select 1 from dual
+    validation-query-timeout: 100000
+    # 申请连接时执行validationQuery检测连接是否有效，做了这个配置会降低性能。 建议false
+    test-on-borrow: false
+    # 归还连接时执行validationQuery检测连接是否有效，做了这个配置会降低性能 ，建议false
+    test-on-return: false
+    test-while-idle: true
+    max-pool-prepared-statement-per-connection-size: 20
+    filters: stat,wall
+  redis:
+    host: 127.0.0.1  # Redis服务器地址
+    port: 6379 # Redis服务器连接端口
+    password: linggongyun_v3 # Redis服务器连接密码（默认为空）
+    jedis:
+      pool:
+        max-active: 8 # 连接池最大连接数（使用负值表示没有限制）
+        max-wait: -1 # 连接池最大阻塞等待时间（使用负值表示没有限制）
+        max-idle: 8 # 连接池中的最大空闲连接数
+        min-idle: 0 # 连接池中的最小空闲连接
+    timeout: 3000 # 连接超时时间（毫秒）
+  data:
+    redis:
+      repositories:
+        enabled: false
+
+  servlet:
+    multipart:
+      # 单个文件的最大值
+      max-file-size: 40MB
+      # 上传文件总的最大值
+      max-request-size: 100MB
+
+
+#本地图片存储路径
+PathImage_KEY: "/root/linggongyun_v3/image/"
+
+#本地excel存储路径
+PathExcel_KEY: "/root/linggongyun_v3/excel/"
+
+#本地视频存储路径
+PathVideo_KEY: "/root/linggongyun_v3/video/"
+
+#图片的访问路径
+fileStaticAccesspathImage: "/static/image/"
+
+#excel的访问路径
+fileStaticAccesspathExcel: "/static/excel/"
+
+#视频的访问路径
+fileStaticAccesspathVideo: "/static/Video/"
+
+#模板文件
+TemplateFile:
+  #  合同模板
+  Contract: "/root/linggongyun_v3/TemplateFile/test.pdf"
+  #  总包+分包支付明细模板
+  TotalPayInventory: "/root/linggongyun_v3/TemplateFile/inventory.xlsx"
+  #  众包支付明细模板
+  ManyPayInventory: "/root/linggongyun_v3/TemplateFile/inventory.xlsx"
+  #  总包+分包交付支付验收单
+  TotalAcceptanceCertificate: "/root/linggongyun_v3/TemplateFile/acceptanceCertificate.xlsx"
+  #  众包交付支付验收单
+  ManyAcceptanceCertificate: "/root/linggongyun_v3/TemplateFile/acceptanceCertificate.xlsx"
+  #  导入创客的模板
+  ImportWorker: "/root/linggongyun_v3/TemplateFile/importWorker.xlsx"
+  #  模板文件夹路径
+  Path: "/root/linggongyun_v3/TemplateFile/"
+  #  模板访问路径
+  StaticAccesspath: "/static/TemplateFile/"
+
+#发送签署合同应用的密钥
+appSecret: "872614e259eded522417c76ad0fb06f0"
+
+salary:
+  #连连银通公钥（不需替换，这是连连公钥，用于报文加密和连连返回响应报文时验签，不是商户生成的公钥.
+  PUBLIC_KEY_ONLINE: MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCSS/DiwdCf/aZsxxcacDnooGph3d2JOj5GXWi+q3gznZauZjkNP8SKl3J2liP0O6rU/Y/29+IUe+GTMhMOFJuZm1htAtKiu5ekW0GlBMWxf4FPkYlQkPE0FtaoMP3gYfh+OwI+fIRrpW3ySn3mScnc6Z700nU/VYrRkfcSCbSnRwIDAQAB
+  #接收商户总包付款的连薪回调通知地址
+  merchantNotifyUrl: http://2181s627z8.qicp.vip/merchant/lianlianpay/merchantNotifyUrl
+  #接收商户众包付款的连薪回调通知地址
+  merchantManyNotifyUrl: http://2181s627z8.qicp.vip/merchant/lianlianpay/merchantManyNotifyUrl
+  #接收付款给创客的连薪回调通知地址
+  workerNotifyUrl: http://2181s627z8.qicp.vip/platform/lianlianpay/workerNotifyUrl
+  url:
+    #实时付款
+    paymentapi: https://test.lianlianpay-inc.com/paymentapi/payment.htm
+    #付款确认接口
+    confirmPayment: https://test.lianlianpay-inc.com/paymentapi/confirmPayment.htm
+    #查询商户余额接口
+    selectRemainingSum: https://traderapi.lianlianpay.com/traderAcctQuery.htm
+      #付款结果查询
+    queryPayment: https://test.lianlianpay-inc.com/paymentapi/queryPayment.htm
+
+
+myBank:
+  merchant-private-key: MIICdwIBADANBgkqhkiG9w0BAQEFAASCAmEwggJdAgEAAoGBAO/6rPCvyCC+IMalLzTy3cVBz/+wamCFNiq9qKEilEBDTttP7Rd/GAS51lsfCrsISbg5td/w25+wulDfuMbjjlW9Afh0p7Jscmbo1skqIOIUPYfVQEL687B0EmJufMlljfu52b2efVAyWZF9QBG1vx/AJz1EVyfskMaYVqPiTesZAgMBAAECgYEAtVnkk0bjoArOTg/KquLWQRlJDFrPKP3CP25wHsU4749t6kJuU5FSH1Ao81d0Dn9m5neGQCOOdRFi23cV9gdFKYMhwPE6+nTAloxI3vb8K9NNMe0zcFksva9c9bUaMGH2p40szMoOpO6TrSHO9Hx4GJ6UfsUUqkFFlN76XprwE+ECQQD9rXwfbr9GKh9QMNvnwo9xxyVl4kI88iq0X6G4qVXo1Tv6/DBDJNkX1mbXKFYL5NOW1waZzR+Z/XcKWAmUT8J9AkEA8i0WT/ieNsF3IuFvrIYG4WUadbUqObcYP4Y7Vt836zggRbu0qvYiqAv92Leruaq3ZN1khxp6gZKl/OJHXc5xzQJACqr1AU1i9cxnrLOhS8m+xoYdaH9vUajNavBqmJ1mY3g0IYXhcbFm/72gbYPgundQ/pLkUCt0HMGv89tn67i+8QJBALV6UgkVnsIbkkKCOyRGv2syT3S7kOv1J+eamGcOGSJcSdrXwZiHoArcCZrYcIhOxOWB/m47ymfE1Dw/+QjzxlUCQCmnGFUO9zN862mKYjEkjDN65n1IUB9Fmc1msHkIZAQaQknmxmCIOHC75u4W0PGRyVzq8KkxpNBq62ICl7xmsPM=
+  md5-key: lewistest
+  wallet-public-key: MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCOHbhWR6xlk16O+fxtMemnJ0uKxUIfstNnS8nVYg6NwAnHhZlpGI0suERovvX9WsWCZ9lG9OD6ieakAaU4PW1BS31TMckr5u1ed+aZIQ7qHE/LqXwF7gE0fDcWNh5OWn/6rETbOwGRVTe5xgufgnEc7YAKuMPChLxChmYuZGGX2QIDAQAB
+  partner-id: 200030853255
+  gop-tpu-url: https://tc.mybank.cn/gop/gateway.do
+  gop-mag-url: https://tc.mybank.cn/gop/gateway.do
+  notify-url: http://zhenghuang.vipgz4.idcfengye.com/gop/mag/syncNotify.htm
+  # \u5f02\u6b65\u901a\u77e5\u5730\u5740
+  async-notify-url: https://hdtzdz.lgyun.com.cn/huidiaojieshou/apis/MyBank/AsyncNotify
+  settlement-account: 8888888194111389
+  key-json: "@activatedProperties@"
+  #渠道编码
+  channel-code: MYBANK00307

@@ -12,10 +12,6 @@ import javax.validation.constraints.Pattern;
 @ApiModel(description = "创客的银行卡信息")
 public class WorkerBankDto {
 
-    @NotBlank(message = "创客ID不能为空！")
-    @ApiModelProperty(notes = "创客ID", value = "创客ID", required = true)
-    private String workerId;
-
     @NotBlank(message = "户名不能为空！")
     @ApiModelProperty(notes = "户名", value = "户名", required = true)
     private String realName;

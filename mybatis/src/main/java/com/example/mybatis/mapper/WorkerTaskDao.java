@@ -1,8 +1,11 @@
 package com.example.mybatis.mapper;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.mybatis.dto.WorkerTaskDto;
 import com.example.mybatis.entity.WorkerTask;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.example.mybatis.vo.WorkerTaskInfoVo;
 import com.example.mybatis.vo.WorkerTaskVo;
 import org.apache.ibatis.annotations.Param;
 
@@ -18,15 +21,39 @@ import java.util.List;
  */
 public interface WorkerTaskDao extends BaseMapper<WorkerTask> {
 
-    //派单给指定的创客
+    /**
+     * 派单给指定的创客
+     * @param workerTask
+     * @return
+     */
     int addWorkerTask(WorkerTask workerTask);
 
-    //剔除创客
-    int eliminateWorker(String workerId);
+    /**
+     * 剔除创客
+     * @param workerId
+     * @param taskId
+     * @return
+     */
+    int eliminateWorker(@Param("workerId")String workerId,@Param("taskId")String taskId);
 
-    //修改验收金额
-    int updateCheckMoney(@Param("money") Double money,@Param("id") String id);
+    /**
+     * 修改验收金额
+     * @param money
+     * @param wid
+     * @param tid
+     * @return
+     */
+    int updateCheckMoney(@Param("money") Double money,@Param("wid") String wid,@Param("tid")String tid);
 
-    //我的任务
+    /**
+     * 我的任务
+     * @param workerId
+     * @param status
+     * @return
+     */
     List<WorkerTaskVo> myTask(@Param("workerId") String workerId, @Param("status") String status);
+
+
+    IPage<WorkerTaskInfoVo> queryWorkerTaskInfo(Page page, String workerId);
+
 }

@@ -18,11 +18,12 @@ import com.example.mybatis.entity.Tax;
  */
 public interface TaxService extends IService<Tax> {
     ReturnJson getTaxAll(String merchantId, Integer packageStatus);
+    ReturnJson getTaxPaasAll(String companyId, Integer packageStatus);
 
     ReturnJson getCatalogAll();
 
     ReturnJson saveCatalog(InvoiceCatalog invoiceCatalog);
-    ReturnJson saveTax(TaxDto taxDto)throws CommonException;
+    ReturnJson saveTax(TaxDto taxDto) throws Exception;
 
     ReturnJson getTaxList(TaxListDto taxListDto);
 

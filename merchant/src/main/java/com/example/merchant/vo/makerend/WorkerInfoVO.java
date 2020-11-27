@@ -84,8 +84,14 @@ public class WorkerInfoVO {
     private String attestationVideo;
 
     /**
-     * 认证视频
+     * 营业执照
      */
     @ApiModelProperty(notes = "营业执照", value = "营业执照")
     private String businessLicense;
+
+    /**
+     * 社会统一代码
+     */
+    @ApiModelProperty(notes = "社会统一代码", value = "社会统一代码")
+    private String creditCode;
 }

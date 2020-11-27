@@ -20,9 +20,9 @@ public class TaxListDto {
 
     @ApiModelProperty(notes = "当前页数", value = "当前页数",required = true)
     @Min(value = 1,message = "必须是大于0的整数")
-    private Integer page;
+    private Integer page = 1;
 
     @ApiModelProperty(notes = "一页的条数", value = "一页的条数",required = true)
     @Min(value = 1, message = "必须是大于0的整数")
-    private Integer pageSize;
+    private Integer pageSize = 10;
 }

@@ -1,5 +1,7 @@
 package com.example.common.util;
 
+import org.apache.http.client.methods.CloseableHttpResponse;
+
 import java.io.*;
 
 /**
@@ -66,6 +68,48 @@ public class FileUtil {
                 }
 
                 bos.close();
+            }
+        }
+    }
+
+
+    public static byte[] readFileUrlByBytes(String fileUrl) throws IOException {
+        CloseableHttpResponse closeableHttpResponse = HttpClientUtils.urlGet(fileUrl);
+        if (closeableHttpResponse == null) {
+            throw new FileNotFoundException(fileUrl);
+        }
+        InputStream inputStream = closeableHttpResponse.getEntity().getContent();
+        if (inputStream == null) {
+            throw new FileNotFoundException(fileUrl);
+        } else {
+            int count = 0;
+            while (count == 0) {
+                count = inputStream.available();
+            }
+            ByteArrayOutputStream bos = new ByteArrayOutputStream(count);
+            BufferedInputStream in = null;
+
+            try {
+                in = new BufferedInputStream(inputStream);
+                short bufSize = 1024;
+                byte[] buffer = new byte[bufSize];
+                int len1;
+                while (-1 != (len1 = in.read(buffer, 0, bufSize))) {
+                    bos.write(buffer, 0, len1);
+                }
+
+                byte[] var7 = bos.toByteArray();
+                return var7;
+            } finally {
+                try {
+                    if (in != null) {
+                        in.close();
+                    }
+                } catch (IOException var14) {
+                    var14.printStackTrace();
+                }
+                bos.close();
+                closeableHttpResponse.close();
             }
         }
     }

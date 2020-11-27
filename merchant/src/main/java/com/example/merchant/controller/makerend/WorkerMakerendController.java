@@ -1,20 +1,18 @@
 package com.example.merchant.controller.makerend;
 
 import com.example.common.util.ReturnJson;
+import com.example.merchant.dto.makerend.AddWorkerDto;
+import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.WorkerService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
@@ -37,13 +35,15 @@ public class WorkerMakerendController {
 
     @PostMapping("/woekerSenSMS")
     @ApiOperation(value = "发送手机验证码", notes = "发送手机验证码", httpMethod = "POST")
-    @ApiImplicitParams(value = {@ApiImplicitParam(name = "mobileCode", value = "手机号码", required = true)})
+    @ApiImplicitParams(value = {@ApiImplicitParam(name = "mobileCode", value = "手机号码", required = true),
+            @ApiImplicitParam(name = "isNot", value = "判断登录or注册,T=登录，其他等于注册", required = true)})
     public ReturnJson workerSenSMS(@NotBlank(message = "请输入手机号")
                                    @Length(min = 11, max = 11, message = "请输入11位手机号")
                                    @Pattern(regexp = "[0-9]*", message = "请输入有效的手机号码")
-                                   @RequestParam String mobileCode) {
+                                   @RequestParam String mobileCode,
+                                   @NotBlank(message = "isNot不能为空") @RequestParam String isNot) {
 
-        return workerService.senSMS(mobileCode);
+        return workerService.senSMS(mobileCode, isNot);
     }
 
     @PostMapping("/workerMobileLogin")
@@ -74,10 +74,23 @@ public class WorkerMakerendController {
         return workerService.wxLogin(code, vi, encryptedData);
     }
 
+    @LoginRequired
     @PostMapping("/logout")
     @ApiOperation(value = "退出登录", notes = "退出登录", httpMethod = "POST")
-    @ApiImplicitParams(value = {@ApiImplicitParam(name = "workerId", value = "创客ID", required = true)})
-    public ReturnJson logout(@NotBlank(message = "手机号不能为空") @RequestParam String workerId) {
+    public ReturnJson logout(@RequestAttribute(value = "userId") @ApiParam(hidden = true) String workerId) {
         return workerService.logout(workerId);
+    }
+
+    @PostMapping("/getWorkerInfoBytoken")
+    @ApiOperation(value = "根据token获取用户信息", notes = "根据token获取用户信息", httpMethod = "POST")
+    @LoginRequired
+    public ReturnJson getWorkerInfoBytoken(@RequestAttribute(value = "userId") @ApiParam(hidden=true) String userId) {
+        return workerService.getWorkerInfoBytoken(userId);
+    }
+
+    @PostMapping("/registerWorker")
+    @ApiOperation(value = "注册创客", notes = "注册创客", httpMethod = "POST")
+    public ReturnJson registerWorker(@RequestBody @Valid AddWorkerDto addWorkerDto) {
+        return workerService.registerWorker(addWorkerDto);
     }
 }
