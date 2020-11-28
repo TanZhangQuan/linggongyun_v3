@@ -1,14 +1,11 @@
 package com.example.mybatis.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 
 /**
@@ -20,15 +17,13 @@ import java.math.BigDecimal;
  * @since 2020-09-23
  */
 @Data
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
+@AllArgsConstructor
 @TableName("tb_company_ladder_service")
-public class CompanyLadderService implements Serializable {
-
+public class CompanyLadderService extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
-    @TableId(value = "id", type = IdType.ASSIGN_ID)
-    @JsonSerialize(using = ToStringSerializer.class)
-    private Long id;
     /**
      * 商户公司ID
      */
@@ -48,6 +43,5 @@ public class CompanyLadderService implements Serializable {
      * 服务费（如7.5，不需把百分数换算成小数）
      */
     private BigDecimal serviceCharge;
-
 
 }

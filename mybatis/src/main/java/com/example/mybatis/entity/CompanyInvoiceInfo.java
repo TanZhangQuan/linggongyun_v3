@@ -1,12 +1,10 @@
 package com.example.mybatis.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-
-import java.io.Serializable;
+import lombok.NoArgsConstructor;
 
 /**
  * <p>
@@ -17,14 +15,12 @@ import java.io.Serializable;
  * @since 2020-09-23
  */
 @Data
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
+@AllArgsConstructor
 @TableName("tb_company_invoice_info")
-public class CompanyInvoiceInfo implements Serializable {
-
+public class CompanyInvoiceInfo extends BaseEntity {
     private static final long serialVersionUID = 1L;
-
-    @TableId(value = "id", type = IdType.ASSIGN_ID)
-    private Long id;
 
     /**
      * 公司ID
@@ -60,6 +56,5 @@ public class CompanyInvoiceInfo implements Serializable {
      * 电话
      */
     private String mobile;
-
 
 }

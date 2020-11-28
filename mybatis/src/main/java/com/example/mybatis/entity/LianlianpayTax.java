@@ -1,13 +1,10 @@
 package com.example.mybatis.entity;
 
-import com.baomidou.mybatisplus.annotation.*;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
-import io.swagger.annotations.ApiModelProperty;
+import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-
-import java.time.LocalDateTime;
+import lombok.NoArgsConstructor;
 
 /**
  * Entity
@@ -16,18 +13,12 @@ import java.time.LocalDateTime;
  * @since 2020-10-27 15:46:36
  */
 @Data
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
+@AllArgsConstructor
 @TableName("tb_lianlianpay_tax")
-public class LianlianpayTax {
+public class LianlianpayTax extends BaseEntity {
     private static final long serialVersionUID = 1L;
-
-    /**
-     *
-     */
-    @ApiModelProperty(value = "主键")
-    @TableId(type = IdType.ASSIGN_ID)
-    @JsonSerialize(using = ToStringSerializer.class)
-    private Long id;
 
     /**
      * 服务商ID
@@ -44,15 +35,4 @@ public class LianlianpayTax {
      */
     private String privateKey;
 
-    /**
-     * 创建时间
-     */
-    @TableField(fill = FieldFill.INSERT)
-    private LocalDateTime createDate;
-
-    /**
-     * 修改时间
-     */
-    @TableField(fill = FieldFill.INSERT_UPDATE)
-    private LocalDateTime updateDate;
 }

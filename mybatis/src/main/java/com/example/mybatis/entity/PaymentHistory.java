@@ -1,15 +1,14 @@
 package com.example.mybatis.entity;
 
-import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.example.common.enums.OrderType;
 import com.example.common.enums.PaymentType;
 import com.example.common.enums.UserType;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -22,15 +21,12 @@ import java.time.LocalDateTime;
  * @since 2020-11-04
  */
 @Data
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
+@AllArgsConstructor
 @TableName("tb_payment_history")
-public class PaymentHistory implements Serializable {
-
+public class PaymentHistory extends BaseEntity {
     private static final long serialVersionUID = 1L;
-
-    @TableId(value = "id", type = IdType.ASSIGN_ID)
-    @JsonSerialize(using = ToStringSerializer.class)
-    private Long id;
 
     /**
      * 支付订单号
@@ -76,18 +72,5 @@ public class PaymentHistory implements Serializable {
      * 支付时间
      */
     private LocalDateTime payDate;
-
-    /**
-     * 创建时间
-     */
-    @TableField(fill = FieldFill.INSERT)
-    private LocalDateTime createDate;
-
-    /**
-     * 修改时间
-     */
-    @TableField(fill = FieldFill.INSERT_UPDATE)
-    private LocalDateTime updateDate;
-
 
 }

@@ -1,24 +1,23 @@
 package com.example.mybatis.entity;
 
-import java.io.Serializable;
-
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 /**
  * tb_invoice_list
- * @author 
+ *
+ * @author
  */
 @Data
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
+@AllArgsConstructor
 @TableName("tb_invoice_list")
-public class InvoiceList implements Serializable {
-
-    @TableId(value = "id", type = IdType.ASSIGN_ID)
-    private String id;
+public class InvoiceList extends BaseEntity {
+    private static final long serialVersionUID = 1L;
 
     /**
      * 总包发票
@@ -30,5 +29,4 @@ public class InvoiceList implements Serializable {
      */
     private String makerTotalInvoiceId;
 
-    private static final long serialVersionUID = 1L;
 }

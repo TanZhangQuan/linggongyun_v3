@@ -1,34 +1,30 @@
 package com.example.mybatis.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
  * <p>
  * 支付单信息
-
+ *
  * </p>
  *
  * @author hzp
  * @since 2020-09-08
  */
 @Data
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
+@AllArgsConstructor
 @TableName("tb_payment_order")
-public class PaymentOrder implements Serializable {
-
+public class PaymentOrder extends BaseEntity {
     private static final long serialVersionUID = 1L;
-
-    /**
-     * 支付订单ID
-     */
-    @TableId(value = "id", type = IdType.ASSIGN_ID)
-    private String id;
 
     /**
      * 商户的公司ID
@@ -136,7 +132,7 @@ public class PaymentOrder implements Serializable {
     private Integer paymentOrderStatus;
 
     /**
-     *支付方式：0线下支付,1连连支付,2网商银行支付
+     * 支付方式：0线下支付,1连连支付,2网商银行支付
      */
     private Integer paymentMode;
 
@@ -149,18 +145,5 @@ public class PaymentOrder implements Serializable {
      * 支付时间
      */
     private LocalDateTime paymentDate;
-
-    /**
-     * 支付订单的创建时间
-     */
-    @TableField(fill = FieldFill.INSERT)
-    private LocalDateTime createDate;
-
-    /**
-     * 支付订单的修改时间
-     */
-    @TableField(fill = FieldFill.INSERT_UPDATE)
-    private LocalDateTime updateDate;
-
 
 }

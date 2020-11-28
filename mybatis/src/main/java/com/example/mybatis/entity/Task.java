@@ -1,14 +1,13 @@
 package com.example.mybatis.entity;
 
-import com.baomidou.mybatisplus.annotation.*;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
-import io.swagger.annotations.ApiModel;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -23,20 +22,12 @@ import java.time.LocalTime;
  * @since 2020-09-07
  */
 @Data
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
+@AllArgsConstructor
 @TableName("tb_task")
-@ApiModel("任务信息")
-public class Task implements Serializable {
-
+public class Task extends BaseEntity {
     private static final long serialVersionUID = 1L;
-
-    /**
-     * 任务id
-     */
-    @ApiModelProperty("任务id")
-    @TableId(value = "id", type = IdType.ASSIGN_ID)
-    @JsonSerialize(using = ToStringSerializer.class)
-    private String id;
 
     /**
      * 商户ID(用来判断是哪个商户发布的任务)
@@ -143,26 +134,9 @@ public class Task implements Serializable {
     private String taskMode;
 
     /**
-     * 修改时间
-     */
-
-    @ApiModelProperty("创建时间")
-
-    @TableField(fill = FieldFill.INSERT)
-    private LocalDateTime createDate;
-
-    /**
-     * 修改时间
-     */
-    @ApiModelProperty("修改时间")
-    @TableField(fill = FieldFill.INSERT_UPDATE)
-    private LocalDateTime updateDate;
-    /**
      * 任务状态:0发布中,1已接单,2交付中,3已完毕,4已关闭
      */
     @ApiModelProperty("任务状态")
     private Integer state;
-
-
 
 }

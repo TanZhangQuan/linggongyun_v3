@@ -1,10 +1,11 @@
 package com.example.mybatis.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -18,14 +19,13 @@ import java.time.LocalDateTime;
  * @since 2020-09-07
  */
 @Data
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
+@AllArgsConstructor
 @TableName("tb_company_info")
-public class CompanyInfo implements Serializable {
-
+public class CompanyInfo extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
-    @TableId(value = "id", type = IdType.ASSIGN_ID)
-    private String id;
     /**
      * 业务员ID(必填)
      */
@@ -160,14 +160,5 @@ public class CompanyInfo implements Serializable {
      * 公司状态
      */
     private Integer companyStatus;
-
-    @TableField(fill = FieldFill.INSERT)
-    private LocalDateTime createDate;
-
-    /**
-     * 用户修改时间
-     */
-    @TableField(fill = FieldFill.INSERT_UPDATE)
-    private LocalDateTime updateDate;
 
 }

@@ -1,33 +1,27 @@
 package com.example.mybatis.entity;
 
-import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-
-import java.io.Serializable;
-import java.time.LocalDateTime;
+import lombok.NoArgsConstructor;
 
 /**
  * <p>
  * 商户信息
-
+ *
  * </p>
  *
  * @author hzp
  * @since 2020-09-07
  */
 @Data
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
+@AllArgsConstructor
 @TableName("tb_merchant")
-public class Merchant implements Serializable {
-
+public class Merchant extends BaseEntity {
     private static final long serialVersionUID = 1L;
-
-    /**
-     * 商户ID
-     */
-    @TableId(value = "id", type = IdType.ASSIGN_ID)
-    private String id;
 
     /**
      * 主账号的ID(当为主账号是为0)
@@ -78,18 +72,5 @@ public class Merchant implements Serializable {
      * 商户状态
      */
     private Integer status;
-
-    /**
-     * 用户创建时间
-     */
-    @TableField(fill = FieldFill.INSERT)
-    private LocalDateTime createDate;
-
-    /**
-     * 用户修改时间
-     */
-    @TableField(fill = FieldFill.INSERT_UPDATE)
-    private LocalDateTime updateDate;
-
 
 }

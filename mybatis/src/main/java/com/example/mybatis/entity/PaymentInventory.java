@@ -1,37 +1,30 @@
 package com.example.mybatis.entity;
 
-import com.baomidou.mybatisplus.annotation.*;
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 /**
  * <p>
  * 支付清单明细
-
+ *
  * </p>
  *
  * @author hzp
  * @since 2020-09-07
  */
 @Data
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
+@AllArgsConstructor
 @TableName("tb_payment_inventory")
-public class PaymentInventory implements Serializable {
-
+public class PaymentInventory extends BaseEntity {
     private static final long serialVersionUID = 1L;
-
-    /**
-     * 支付清单ID
-     */
-    @ApiModelProperty("支付清单ID")
-    @TableId(value = "id", type = IdType.ASSIGN_ID)
-    private String id;
 
     /**
      * 支付单ID
@@ -132,16 +125,5 @@ public class PaymentInventory implements Serializable {
      * 合作类型0总包，1众包
      */
     private Integer packageStatus;
-
-    @TableField(fill = FieldFill.INSERT)
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime createDate;
-
-    /**
-     * 用户修改时间
-     */
-    @TableField(fill = FieldFill.INSERT_UPDATE)
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime updateDate;
 
 }

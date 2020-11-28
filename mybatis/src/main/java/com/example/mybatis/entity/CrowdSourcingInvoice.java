@@ -1,38 +1,33 @@
 package com.example.mybatis.entity;
 
-import com.baomidou.mybatisplus.annotation.*;
-import io.swagger.annotations.ApiModel;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author hzp
  * @since 2020-09-21
  */
 @Data
-@ApiModel
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
+@AllArgsConstructor
 @TableName("tb_crowd_sourcing_invoice")
-public class CrowdSourcingInvoice implements Serializable {
-
+public class CrowdSourcingInvoice extends BaseEntity {
     private static final long serialVersionUID = 1L;
-
-    /**
-     * 众包开票主键
-     */
-    @TableId(value = "id", type = IdType.ASSIGN_ID)
-    private String id;
 
     /**
      * 众包支付id
@@ -58,7 +53,7 @@ public class CrowdSourcingInvoice implements Serializable {
     /**
      * 发票数字
      */
-    @Pattern(regexp = "^[0-9]*$",message = "必须为数字")
+    @Pattern(regexp = "^[0-9]*$", message = "必须为数字")
     @ApiModelProperty("发票数字")
     @NotNull(message = "发票数字不能为空")
     private String invoiceNumber;
@@ -67,7 +62,7 @@ public class CrowdSourcingInvoice implements Serializable {
      * 发票代码
      */
     @ApiModelProperty("发票代码")
-    @Pattern(regexp = "^[0-9]*$",message = "必须为数字")
+    @Pattern(regexp = "^[0-9]*$", message = "必须为数字")
     @NotNull(message = "发票代码不能为空")
     @TableField("invoice_codeNo")
     private String invoiceCodeno;
@@ -144,19 +139,5 @@ public class CrowdSourcingInvoice implements Serializable {
      */
     @ApiModelProperty("开票说明")
     private String invoiceDesc;
-
-    /**
-     * 创建时间
-     */
-    @TableField(fill = FieldFill.INSERT)
-    private LocalDateTime createDate;
-
-    /**
-     * 修改时间
-     */
-    @TableField(fill = FieldFill.INSERT_UPDATE)
-    private LocalDateTime updateDate;
-
-
 
 }

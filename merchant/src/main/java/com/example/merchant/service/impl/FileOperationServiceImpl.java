@@ -294,12 +294,12 @@ public class FileOperationServiceImpl implements FileOperationService {
             MakerInvoice makerInvoice = new MakerInvoice();
             if (state.equals("0")) {
                 makerInvoice.setMakerVoiceUrl(fileName);
-                makerInvoice.setUpdateTime(LocalDateTime.parse(DateUtil.getTime(), dfd));
+                makerInvoice.setUpdateDate(LocalDateTime.parse(DateUtil.getTime(), dfd));
                 makerInvoiceDao.update(makerInvoice, new QueryWrapper<MakerInvoice>().eq("payment_inventory_id", paymentInventoryId));
                 return ReturnJson.success("发票上传成功", accessPath);
             } else {
                 makerInvoice.setMakerTaxUrl(fileName);
-                makerInvoice.setUpdateTime(LocalDateTime.parse(DateUtil.getTime(), dfd));
+                makerInvoice.setUpdateDate(LocalDateTime.parse(DateUtil.getTime(), dfd));
                 makerInvoiceDao.update(makerInvoice, new QueryWrapper<MakerInvoice>().eq("payment_inventory_id", paymentInventoryId));
                 return ReturnJson.success("税票上传成功", accessPath);
             }

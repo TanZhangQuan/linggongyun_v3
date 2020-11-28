@@ -100,7 +100,7 @@ public class MakerInvoiceServiceImpl extends ServiceImpl<MakerInvoiceDao, MakerI
         if (makerInvoiceDto.getMakerVoiceUrl() != null) {
             makerInvoice.setMakerVoiceUrl(makerInvoiceDto.getMakerVoiceUrl());
             makerInvoice.setMakerVoiceUploadDateTime(LocalDateTime.parse(DateUtil.getTime(), df));
-            makerInvoice.setCreateTime(LocalDateTime.parse(DateUtil.getTime(), df));
+            makerInvoice.setCreateDate(LocalDateTime.parse(DateUtil.getTime(), df));
         }
         makerInvoice.setMakerTaxUrl(makerInvoiceDto.getMakerTaxUrl());
         int num = makerInvoiceDao.insert(makerInvoice);

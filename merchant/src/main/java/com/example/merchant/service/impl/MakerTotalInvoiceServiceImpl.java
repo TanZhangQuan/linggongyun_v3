@@ -61,7 +61,7 @@ public class MakerTotalInvoiceServiceImpl extends ServiceImpl<MakerTotalInvoiceD
         makerTotalInvoice.setMakerVoiceUploadDateTime(makerTotalInvoiceDto.getMakerVoiceUploadDateTime());
         if (makerTotalInvoice.getId() == null) {
             if (makerTotalInvoiceDto.getCreateTime() == null) {
-                makerTotalInvoice.setCreateTime(LocalDateTime.parse(DateUtil.getTime(), dfd));
+                makerTotalInvoice.setCreateDate(LocalDateTime.parse(DateUtil.getTime(), dfd));
             }
             int num = makerTotalInvoiceDao.insert(makerTotalInvoice);
             if (num > 0) {
@@ -87,7 +87,7 @@ public class MakerTotalInvoiceServiceImpl extends ServiceImpl<MakerTotalInvoiceD
         }
         if (makerTotalInvoice.getId() != null) {
             if (makerTotalInvoiceDto.getUpdateTime() == null) {
-                makerTotalInvoice.setUpdateTime(LocalDateTime.parse(DateUtil.getTime(), dfd));
+                makerTotalInvoice.setCreateDate(LocalDateTime.parse(DateUtil.getTime(), dfd));
             }
             int num = makerTotalInvoiceDao.updateById(makerTotalInvoice);
             if (num > 0) {

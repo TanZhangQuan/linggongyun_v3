@@ -1,14 +1,10 @@
 package com.example.mybatis.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-
-import java.io.Serializable;
+import lombok.NoArgsConstructor;
 
 /**
  * <p>
@@ -19,15 +15,12 @@ import java.io.Serializable;
  * @since 2020-09-26
  */
 @Data
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
+@AllArgsConstructor
 @TableName("tb_worker_bank")
-public class WorkerBank implements Serializable {
-
+public class WorkerBank extends BaseEntity {
     private static final long serialVersionUID = 1L;
-
-    @TableId(value = "id", type = IdType.ASSIGN_ID)
-    @JsonSerialize(using = ToStringSerializer.class)
-    private Long id;
 
     /**
      * 创客ID
@@ -53,6 +46,5 @@ public class WorkerBank implements Serializable {
      * 优先度（越小越先）
      */
     private Integer sort;
-
 
 }

@@ -1,33 +1,26 @@
 package com.example.mybatis.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-
-import java.io.Serializable;
+import lombok.NoArgsConstructor;
 
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author hzp
  * @since 2020-09-07
  */
 @Data
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
+@AllArgsConstructor
 @TableName("tb_merchant_role_menu")
-public class MerchantRoleMenu implements Serializable {
-
+public class MerchantRoleMenu extends BaseEntity {
     private static final long serialVersionUID = 1L;
-
-    /**
-     * 权限id
-     */
-    @TableId(value = "id", type = IdType.ASSIGN_ID)
-    private String id;
 
     /**
      * 菜单ID
@@ -38,6 +31,5 @@ public class MerchantRoleMenu implements Serializable {
      * 角色ID
      */
     private String merchantRoleId;
-
 
 }

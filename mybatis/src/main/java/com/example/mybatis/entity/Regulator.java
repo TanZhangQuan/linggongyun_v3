@@ -1,11 +1,10 @@
 package com.example.mybatis.entity;
 
-import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-
-import java.io.Serializable;
-import java.time.LocalDateTime;
+import lombok.NoArgsConstructor;
 
 /**
  * <p>
@@ -16,17 +15,12 @@ import java.time.LocalDateTime;
  * @since 2020-09-25
  */
 @Data
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
+@AllArgsConstructor
 @TableName("tb_regulator")
-public class Regulator implements Serializable {
-
+public class Regulator extends BaseEntity {
     private static final long serialVersionUID = 1L;
-
-    /**
-     * 监管部门ID
-     */
-    @TableId(value = "id", type = IdType.ASSIGN_ID)
-    private String id;
 
     /**
      * 监管部门名称
@@ -62,18 +56,5 @@ public class Regulator implements Serializable {
      * 状态0启用，1停用
      */
     private Integer status;
-
-    /**
-     * 创建时间
-     */
-    @TableField(fill = FieldFill.INSERT)
-    private LocalDateTime createDate;
-
-    /**
-     * 修改时间
-     */
-    @TableField(fill = FieldFill.INSERT_UPDATE)
-    private LocalDateTime updateDate;
-
 
 }
