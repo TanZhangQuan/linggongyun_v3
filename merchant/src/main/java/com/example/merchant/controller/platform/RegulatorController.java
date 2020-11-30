@@ -67,9 +67,9 @@ public class RegulatorController {
 
     @GetMapping("/getTaxAll")
     @ApiOperation(value = "查询所以服务商", notes = "查询所以服务商", httpMethod = "GET")
-    @ApiImplicitParams(value = {@ApiImplicitParam(name = "page", value = "当前页数", required = true), @ApiImplicitParam(name = "pageSize", value = "一页的条数", required = true)})
-    public ReturnJson getTaxAll(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer pageSize) {
-        return regulatorService.getTaxAll(page, pageSize);
+    @ApiImplicitParams(value = {@ApiImplicitParam(name = "pageNo", value = "当前页数", required = true), @ApiImplicitParam(name = "pageSize", value = "一页的条数", required = true)})
+    public ReturnJson getTaxAll(@RequestParam(defaultValue = "1") Integer pageNo, @RequestParam(defaultValue = "10") Integer pageSize) {
+        return regulatorService.getTaxAll(pageNo, pageSize);
     }
 
     @PostMapping("/addRegulatorTax")
@@ -88,16 +88,16 @@ public class RegulatorController {
 
     @PostMapping("/getRegulatorTaxAll")
     @ApiOperation(value = "查看监管服务商", notes = "查看监管服务商", httpMethod = "POST")
-    @ApiImplicitParams(value = {@ApiImplicitParam(name = "regulatorId", value = "监管部门ID", required = true), @ApiImplicitParam(name = "page", value = "当前页数", required = true), @ApiImplicitParam(name = "pageSize", value = "一页的条数", required = true)})
-    public ReturnJson getRegulatorTaxAll(@NotBlank(message = "监管部门ID不能为空！") @RequestParam(required = false) String regulatorId, @RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer pageSize) {
-        return regulatorService.getRegulatorTaxAll(regulatorId, page, pageSize);
+    @ApiImplicitParams(value = {@ApiImplicitParam(name = "regulatorId", value = "监管部门ID", required = true), @ApiImplicitParam(name = "pageNo", value = "当前页数", required = true), @ApiImplicitParam(name = "pageSize", value = "一页的条数", required = true)})
+    public ReturnJson getRegulatorTaxAll(@NotBlank(message = "监管部门ID不能为空！") @RequestParam(required = false) String regulatorId, @RequestParam(defaultValue = "1") Integer pageNo, @RequestParam(defaultValue = "10") Integer pageSize) {
+        return regulatorService.getRegulatorTaxAll(regulatorId, pageNo, pageSize);
     }
 
     @PostMapping("/getRegulatorTaxPaymentList")
     @ApiOperation(value = "查看监管服务商的成交明细", notes = "查看监管服务商的成交明细", httpMethod = "POST")
-    @ApiImplicitParams(value = {@ApiImplicitParam(name = "taxId", value = "监管服务商ID", required = true), @ApiImplicitParam(name = "page", value = "当前页数", required = true), @ApiImplicitParam(name = "pageSize", value = "一页的条数", required = true)})
-    public ReturnJson getRegulatorTaxPaymentList(@NotBlank(message = "监管服务商ID不能为空！") @RequestParam(required = false) String taxId, @RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer pageSize) {
-        return regulatorService.getRegulatorTaxPaymentList(taxId, page, pageSize);
+    @ApiImplicitParams(value = {@ApiImplicitParam(name = "taxId", value = "监管服务商ID", required = true), @ApiImplicitParam(name = "pageNo", value = "当前页数", required = true), @ApiImplicitParam(name = "pageSize", value = "一页的条数", required = true)})
+    public ReturnJson getRegulatorTaxPaymentList(@NotBlank(message = "监管服务商ID不能为空！") @RequestParam(required = false) String taxId, @RequestParam(defaultValue = "1") Integer pageNo, @RequestParam(defaultValue = "10") Integer pageSize) {
+        return regulatorService.getRegulatorTaxPaymentList(taxId, pageNo, pageSize);
     }
 
     @PostMapping("/getPaymentInfo")
@@ -109,9 +109,9 @@ public class RegulatorController {
 
     @PostMapping("/getPaymentInventoryInfo")
     @ApiOperation(value = "查看支付清单", notes = "查看支付清单", httpMethod = "POST")
-    @ApiImplicitParams(value = {@ApiImplicitParam(name = "paymentOrderId", value = "成交订单ID", required = true), @ApiImplicitParam(name = "page", value = "当前页数", required = true), @ApiImplicitParam(name = "pageSize", value = "一页的条数", required = true)})
-    public ReturnJson getPaymentInventoryInfo(@NotBlank(message = "成交订单ID不能为空！") @RequestParam(required = false) String paymentOrderId, @RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer pageSize) {
-        return regulatorService.getPaymentInventoryInfo(paymentOrderId, page, pageSize);
+    @ApiImplicitParams(value = {@ApiImplicitParam(name = "paymentOrderId", value = "成交订单ID", required = true), @ApiImplicitParam(name = "pageNo", value = "当前页数", required = true), @ApiImplicitParam(name = "pageSize", value = "一页的条数", required = true)})
+    public ReturnJson getPaymentInventoryInfo(@NotBlank(message = "成交订单ID不能为空！") @RequestParam(required = false) String paymentOrderId, @RequestParam(defaultValue = "1") Integer pageNo, @RequestParam(defaultValue = "10") Integer pageSize) {
+        return regulatorService.getPaymentInventoryInfo(paymentOrderId, pageNo, pageSize);
     }
 
 }

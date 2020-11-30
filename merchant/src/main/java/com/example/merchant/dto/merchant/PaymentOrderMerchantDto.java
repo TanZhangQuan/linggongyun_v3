@@ -27,7 +27,7 @@ public class PaymentOrderMerchantDto {
      */
     @ApiModelProperty("页数")
     @NotNull(message = "页数不能为空")
-    private Integer page = 1;
+    private Integer pageNo = 1;
 
     /**
      * 一页多少条数据

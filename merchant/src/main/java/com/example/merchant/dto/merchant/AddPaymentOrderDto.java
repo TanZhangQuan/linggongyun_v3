@@ -14,9 +14,8 @@ import java.util.List;
 @ApiModel(description = "添加总包订单")
 public class AddPaymentOrderDto {
 
-    @NotNull(message = "总包订单内容不能为空！")
     @ApiModelProperty(notes = "总包订单内容", value = "总包订单内容")
-    private PaymentOrder paymentOrder;
+    private PaymentDto paymentDto;
 
     @NotEmpty(message = "支付清单订单内容不能为空！")
     @ApiModelProperty(notes = "支付清单订单内容", value = "支付清单订单内容")

@@ -188,7 +188,7 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
         String paymentOrderId = paymentOrderMerchantDto.getPaymentOrderId();
         String taxId = paymentOrderMerchantDto.getTaxId();
         Integer pageSize = paymentOrderMerchantDto.getPageSize();
-        Integer page = paymentOrderMerchantDto.getPage();
+        Integer page = paymentOrderMerchantDto.getPageNo();
         String beginDate = paymentOrderMerchantDto.getBeginDate();
         String endDate = paymentOrderMerchantDto.getEndDate();
         Page<PaymentOrderMany> paymentOrderManyPage = new Page<>(page, pageSize);
@@ -420,7 +420,7 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
         String paymentOrderId = paymentOrderDto.getPaymentOrderId();
         String taxId = paymentOrderDto.getTaxId();
         Integer pageSize = paymentOrderDto.getPageSize();
-        Integer page = paymentOrderDto.getPage();
+        Integer page = paymentOrderDto.getPageNo();
         String beginDate = paymentOrderDto.getBeginDate();
         String endDate = paymentOrderDto.getEndDate();
         Page<PaymentOrderMany> paymentOrderManyPage = new Page<>(page, pageSize);

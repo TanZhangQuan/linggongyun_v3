@@ -9,6 +9,7 @@ import com.example.common.util.KdniaoTrackQueryAPI;
 import com.example.common.util.ReturnJson;
 import com.example.common.util.VerificationCheck;
 import com.example.merchant.dto.merchant.AddPaymentOrderDto;
+import com.example.merchant.dto.merchant.PaymentDto;
 import com.example.merchant.dto.merchant.PaymentOrderMerchantDto;
 import com.example.merchant.dto.platform.PaymentOrderDto;
 import com.example.merchant.exception.CommonException;
@@ -149,7 +150,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
         String taxId = paymentOrderMerchantDto.getTaxId();
         String beginDate = paymentOrderMerchantDto.getBeginDate();
         String endDate = paymentOrderMerchantDto.getEndDate();
-        Page<PaymentOrder> paymentOrderPage = new Page<>(paymentOrderMerchantDto.getPage(), paymentOrderMerchantDto.getPageSize());
+        Page<PaymentOrder> paymentOrderPage = new Page<>(paymentOrderMerchantDto.getPageNo(), paymentOrderMerchantDto.getPageSize());
         IPage<PaymentOrder> paymentOrderIPage = paymentOrderDao.selectMany(paymentOrderPage, merchant.getCompanyId(), paymentOrderId, taxId, beginDate, endDate);
         return ReturnJson.success(paymentOrderIPage);
     }
@@ -195,7 +196,9 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ReturnJson saveOrUpdataPaymentOrder(AddPaymentOrderDto addPaymentOrderDto) {
-        PaymentOrder paymentOrder = addPaymentOrderDto.getPaymentOrder();
+        PaymentDto paymentDto = addPaymentOrderDto.getPaymentDto();
+        PaymentOrder paymentOrder = new PaymentOrder();
+        BeanUtils.copyProperties(paymentDto, paymentOrder);
         List<PaymentInventory> paymentInventories = addPaymentOrderDto.getPaymentInventories();
         String id = paymentOrder.getId();
         if (id != null && paymentOrder.getPaymentOrderStatus() == 0) {
@@ -422,7 +425,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
         String paymentOrderId = paymentOrderDto.getPaymentOrderId();
         String taxId = paymentOrderDto.getTaxId();
         Integer pageSize = paymentOrderDto.getPageSize();
-        Integer page = paymentOrderDto.getPage();
+        Integer page = paymentOrderDto.getPageNo();
         String beginDate = paymentOrderDto.getBeginDate();
         String endDate = paymentOrderDto.getEndDate();
         Page<PaymentOrder> paymentOrderPage = new Page<>(page, pageSize);

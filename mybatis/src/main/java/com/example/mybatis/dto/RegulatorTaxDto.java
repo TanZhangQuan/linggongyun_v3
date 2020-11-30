@@ -23,7 +23,7 @@ public class RegulatorTaxDto {
     private String endDate;
 
     @ApiModelProperty(notes = "当前页数", value = "当前页数")
-    private Integer page = 1;
+    private Integer pageNo = 1;
 
     @ApiModelProperty(notes = "每页的条数", value = "每页的条数")
     private Integer pageSize = 10;

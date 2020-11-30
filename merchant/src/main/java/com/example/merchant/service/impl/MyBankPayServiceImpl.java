@@ -270,7 +270,7 @@ public class MyBankPayServiceImpl implements MyBankPayService {
     }
 
     @Override
-    public ReturnJson enterpriseRegister(Enterprise enterprise, String userId) throws Exception {
+        public ReturnJson enterpriseRegister(Enterprise enterprise, String userId) throws Exception {
         enterprise.setUid(userId);
         CompanyInfo companyInfo = companyInfoDao.selectById(userId);
         if (companyInfo == null) {
