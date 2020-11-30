@@ -45,35 +45,36 @@ public class MyBankController {
 
     @RequestMapping("/merchantNotifyUrl")
     @ApiOperation(value = "商户总包支付回调接口", notes = "商户总包支付回调接口", hidden = true, httpMethod = "POST")
-    public Map<String,String> merchantNotifyUrl(HttpServletRequest request) {
+    public Map<String, String> merchantNotifyUrl(HttpServletRequest request) {
         myBankPayService.myBankPayNotifyUrl(request);
-        Map<String,String> map = new HashMap<>();
-        map.put("ret_code","0000");
-        map.put("ret_msg","交易成功");
+        Map<String, String> map = new HashMap<>();
+        map.put("ret_code", "0000");
+        map.put("ret_msg", "交易成功");
         return map;
     }
+
     @RequestMapping("/merchantManyNotifyUrl")
     @ApiOperation(value = "商户众包支付回调接口", notes = "商户众包支付回调接口", hidden = true, httpMethod = "POST")
-    public Map<String,String> merchantManyNotifyUrl(HttpServletRequest request) {
+    public Map<String, String> merchantManyNotifyUrl(HttpServletRequest request) {
         myBankPayService.myBankPayManyNotifyUrl(request);
-        Map<String,String> map = new HashMap<>();
-        map.put("ret_code","0000");
-        map.put("ret_msg","交易成功");
+        Map<String, String> map = new HashMap<>();
+        map.put("ret_code", "0000");
+        map.put("ret_msg", "交易成功");
         return map;
     }
 
     @LoginRequired
     @RequestMapping("/enterpriseRegister")
-    @ApiOperation(value = "商户注册企业会员信息", notes = "商户注册企业会员信息", hidden = true, httpMethod = "POST")
-    public ReturnJson enterpriseRegister(Enterprise enterprise, @RequestAttribute("userId")String userId) throws Exception {
+    @ApiOperation(value = "商户注册企业会员信息", notes = "商户注册企业会员信息", httpMethod = "POST")
+    public ReturnJson enterpriseRegister(Enterprise enterprise, @RequestAttribute("userId") String userId) throws Exception {
         return myBankPayService.enterpriseRegister(enterprise, userId);
     }
 
 
     @LoginRequired
     @RequestMapping("/enterpriseInfoModify")
-    @ApiOperation(value = "商户修改企业会员信息", notes = "商户修改企业会员信息", hidden = true, httpMethod = "POST")
-    public ReturnJson enterpriseInfoModify(Enterprise enterprise, @RequestAttribute("userId")String userId) throws Exception {
+    @ApiOperation(value = "商户修改企业会员信息", notes = "商户修改企业会员信息", httpMethod = "POST")
+    public ReturnJson enterpriseInfoModify(Enterprise enterprise, @RequestAttribute("userId") String userId) throws Exception {
         return myBankPayService.enterpriseInfoModify(enterprise, userId);
     }
 }

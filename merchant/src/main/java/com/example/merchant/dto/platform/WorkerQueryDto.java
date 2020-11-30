@@ -17,7 +17,7 @@ public class WorkerQueryDto {
     @ApiModelProperty("创客手机号")
     private String mobileCode;
 
-    private Integer page = 1;
+    private Integer pageNo = 1;
 
     private Integer pageSize = 10;
 }

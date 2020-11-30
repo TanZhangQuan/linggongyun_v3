@@ -17,7 +17,7 @@ public class RegulatorQueryDto {
     private String endDate;
 
     @ApiModelProperty(notes = "当前页数", value = "当前页数", required = true)
-    private Integer page = 0;
+    private Integer pageNo = 0;
 
     @ApiModelProperty(notes = "一页的显示的条数", value = "一页的显示的条数", required = true)
     private Integer pageSize = 10;

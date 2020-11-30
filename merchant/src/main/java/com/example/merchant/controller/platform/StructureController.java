@@ -56,11 +56,11 @@ public class StructureController {
     @PostMapping("/getSalesManAll")
     @ApiOperation(value = "查询所以业务员", notes = "查询所以业务员", httpMethod = "POST")
     @ApiImplicitParams(value = {
-            @ApiImplicitParam(name = "page", value = "当前页数", required = true),
+            @ApiImplicitParam(name = "pageNo", value = "当前页数", required = true),
             @ApiImplicitParam(name = "pageSize", value = "一页的条数", required = true)
     })
-    public ReturnJson getSalesManAll(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "1") Integer pageSize) {
-        return structureService.getSalesManAll(page, pageSize);
+    public ReturnJson getSalesManAll(@RequestParam(defaultValue = "1") Integer pageNo, @RequestParam(defaultValue = "1") Integer pageSize) {
+        return structureService.getSalesManAll(pageNo, pageSize);
     }
 
     @PostMapping("/removeSalesMan")
@@ -68,7 +68,7 @@ public class StructureController {
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "salesManId", value = "业务员ID", required = true)
     })
-    public ReturnJson removeSalesMan(@NotBlank(message = "业务员ID不能为空！") @RequestParam String salesManId,HttpServletRequest request) throws CommonException {
+    public ReturnJson removeSalesMan(@NotBlank(message = "业务员ID不能为空！") @RequestParam String salesManId, HttpServletRequest request) throws CommonException {
         return structureService.removeSalesMan(salesManId);
     }
 
@@ -85,11 +85,11 @@ public class StructureController {
     @ApiOperation(value = "业务员的流水", notes = "业务员的流水", httpMethod = "POST")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "salesManId", value = "业务员ID", required = true),
-            @ApiImplicitParam(name = "page", value = "当前页数", required = true),
+            @ApiImplicitParam(name = "pageNo", value = "当前页数", required = true),
             @ApiImplicitParam(name = "pageSize", value = "一页的条数", required = true)
     })
-    public ReturnJson getSalesManPaymentList(@NotBlank(message = "业务员ID不能为空！") @RequestParam String salesManId, @RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "1") Integer pageSize) throws CommonException {
-        return structureService.getSalesManPaymentList(salesManId, page, pageSize);
+    public ReturnJson getSalesManPaymentList(@NotBlank(message = "业务员ID不能为空！") @RequestParam String salesManId, @RequestParam(defaultValue = "1") Integer pageNo, @RequestParam(defaultValue = "1") Integer pageSize) throws CommonException {
+        return structureService.getSalesManPaymentList(salesManId, pageNo, pageSize);
     }
 
     @PostMapping("/getSalesManPaymentInfo")
@@ -106,11 +106,11 @@ public class StructureController {
     @ApiOperation(value = "获取支付清单列表", notes = "获取支付清单列表", httpMethod = "POST")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "paymentOrderId", value = "支付订单ID", required = true),
-            @ApiImplicitParam(name = "page", value = "当前页数", required = true),
+            @ApiImplicitParam(name = "pageNo", value = "当前页数", required = true),
             @ApiImplicitParam(name = "pageSize", value = "每页的条数", required = true)
     })
-    public ReturnJson getPaymentInventory(@NotBlank(message = "支付订单ID不能为空！") @RequestParam String paymentOrderId, @RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer pageSize) {
-        return structureService.getPaymentInventory(paymentOrderId, page, pageSize);
+    public ReturnJson getPaymentInventory(@NotBlank(message = "支付订单ID不能为空！") @RequestParam String paymentOrderId, @RequestParam(defaultValue = "1") Integer pageNo, @RequestParam(defaultValue = "10") Integer pageSize) {
+        return structureService.getPaymentInventory(paymentOrderId, pageNo, pageSize);
     }
 
     @PostMapping("/addAgent")
@@ -134,11 +134,11 @@ public class StructureController {
     @PostMapping("/getAgentAll")
     @ApiOperation(value = "查询所以代理商", notes = "查询所以代理商", httpMethod = "POST")
     @ApiImplicitParams(value = {
-            @ApiImplicitParam(name = "page", value = "当前页数", required = true),
+            @ApiImplicitParam(name = "pageNo", value = "当前页数", required = true),
             @ApiImplicitParam(name = "pageSize", value = "一页的条数", required = true)
     })
-    public ReturnJson getAgentAll(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "1") Integer pageSize) {
-        return structureService.getAgentAll(page, pageSize);
+    public ReturnJson getAgentAll(@RequestParam(defaultValue = "1") Integer pageNo, @RequestParam(defaultValue = "1") Integer pageSize) {
+        return structureService.getAgentAll(pageNo, pageSize);
     }
 
     @PostMapping("/findByAgentId")
@@ -164,7 +164,7 @@ public class StructureController {
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "agentId", value = "代理商ID", required = true)
     })
-    public ReturnJson getAgentPaymentListCount(@NotBlank(message = "代理商ID不能为空！") @RequestParam String agentId,HttpServletRequest request) throws CommonException {
+    public ReturnJson getAgentPaymentListCount(@NotBlank(message = "代理商ID不能为空！") @RequestParam String agentId, HttpServletRequest request) throws CommonException {
         return structureService.getSalesManPaymentListCount(agentId);
     }
 
@@ -172,9 +172,9 @@ public class StructureController {
     @ApiOperation(value = "代理商的流水", notes = "代理商的流水", httpMethod = "POST")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "agentId", value = "代理商ID", required = true),
-            @ApiImplicitParam(name = "page", value = "当前页数", required = true), @ApiImplicitParam(name = "pageSize", value = "一页的条数", required = true)
+            @ApiImplicitParam(name = "pageNo", value = "当前页数", required = true), @ApiImplicitParam(name = "pageSize", value = "一页的条数", required = true)
     })
-    public ReturnJson getAgentPaymentList(@NotBlank(message = "代理商ID不能为空！") @RequestParam String agentId, @RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "1") Integer pageSize) throws CommonException {
-        return structureService.getSalesManPaymentList(agentId, page, pageSize);
+    public ReturnJson getAgentPaymentList(@NotBlank(message = "代理商ID不能为空！") @RequestParam String agentId, @RequestParam(defaultValue = "1") Integer pageNo, @RequestParam(defaultValue = "1") Integer pageSize) throws CommonException {
+        return structureService.getSalesManPaymentList(agentId, pageNo, pageSize);
     }
 }

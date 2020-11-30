@@ -86,8 +86,8 @@ public class TaxPaasController {
 
     @PostMapping("/transactionRecord")
     @ApiOperation(value = "查询服务商交易流水", notes = "查询服务商交易流水", httpMethod = "POST")
-    @ApiImplicitParams(value={@ApiImplicitParam(name="taxId",value = "服务商ID"),@ApiImplicitParam(name="page",value = "页数"),@ApiImplicitParam(name="pageSize",value = "一页的条数")})
-    public ReturnJson transactionRecord(@NotBlank(message = "服务商ID不能为空！") @RequestParam String taxId,@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer pageSize){
-        return taxService.transactionRecord(taxId,page,pageSize);
+    @ApiImplicitParams(value={@ApiImplicitParam(name="taxId",value = "服务商ID"),@ApiImplicitParam(name="pageNo",value = "页数"),@ApiImplicitParam(name="pageSize",value = "一页的条数")})
+    public ReturnJson transactionRecord(@NotBlank(message = "服务商ID不能为空！") @RequestParam String taxId,@RequestParam(defaultValue = "1") Integer pageNo, @RequestParam(defaultValue = "10") Integer pageSize){
+        return taxService.transactionRecord(taxId,pageNo,pageSize);
     }
 }

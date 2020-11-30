@@ -427,7 +427,7 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
             if (StringUtils.isBlank(redisCheckCode)) {
                 return ReturnJson.error("验证码以过期，请重新获取！");
             } else if (!redisCheckCode.equals(addWorkerDto.getCheckCode())) {
-                return ReturnJson.error("输入的验证码有误!");
+                return ReturnJson.error("输入的验证码有误！");
             }
             worker = new Worker();
             worker.setUserName(addWorkerDto.getUserName());
@@ -436,21 +436,21 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
             workerDao.insert(worker);
             return ReturnJson.success("注册成功");
         } else {
-            return ReturnJson.success("该手机号已经注册过，请直接登录");
+            return ReturnJson.success("该手机号已经注册过，请直接登录！");
         }
     }
 
     @Override
     public ReturnJson getWorkerQuery(String managersId, WorkerQueryDto workerQueryDto) throws CommonException {
         List<String> companyIds = acquireID.getCompanyIds(managersId);
-        IPage<Worker> workerIPage = workerDao.selectWorkerQuery(new Page(workerQueryDto.getPage(), workerQueryDto.getPageSize()), companyIds, workerQueryDto.getWorkerId(), workerQueryDto.getAccountName(), workerQueryDto.getMobileCode());
+        IPage<Worker> workerIPage = workerDao.selectWorkerQuery(new Page(workerQueryDto.getPageNo(), workerQueryDto.getPageSize()), companyIds, workerQueryDto.getWorkerId(), workerQueryDto.getAccountName(), workerQueryDto.getMobileCode());
         return ReturnJson.success(workerIPage);
     }
 
     @Override
     public ReturnJson getWorkerQueryNot(String managersId, WorkerQueryDto workerQueryDto) throws CommonException {
         List<String> companyIds = acquireID.getCompanyIds(managersId);
-        IPage<Worker> workerIPage = workerDao.selectWorkerQueryNot(new Page(workerQueryDto.getPage(), workerQueryDto.getPageSize()), companyIds, workerQueryDto.getWorkerId(), workerQueryDto.getAccountName(), workerQueryDto.getMobileCode());
+        IPage<Worker> workerIPage = workerDao.selectWorkerQueryNot(new Page(workerQueryDto.getPageNo(), workerQueryDto.getPageSize()), companyIds, workerQueryDto.getWorkerId(), workerQueryDto.getAccountName(), workerQueryDto.getMobileCode());
         return ReturnJson.success(workerIPage);
     }
 

@@ -74,9 +74,9 @@ public class WorkerPaasController {
     @ApiOperation(value = "查询创客的收入列表", notes = "查询创客的收入列表", httpMethod = "POST")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "id", value = "创客ID", required = true)})
     public ReturnJson getWorkerPaymentList(@NotBlank(message = "创客ID不能为空") @RequestParam(required = false) String id,
-                                           @RequestParam(defaultValue = "1") Integer page,
+                                           @RequestParam(defaultValue = "1") Integer pageNo,
                                            @RequestParam(defaultValue = "10") Integer pageSize) {
-        return workerService.getWorkerPaymentListPaas(id, page, pageSize);
+        return workerService.getWorkerPaymentListPaas(id, pageNo, pageSize);
     }
 
     @PostMapping("/saveWorker")

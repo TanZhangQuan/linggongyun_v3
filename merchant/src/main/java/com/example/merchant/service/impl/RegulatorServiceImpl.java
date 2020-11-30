@@ -94,6 +94,12 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
 
     @Value("${TOKEN}")
     private String TOKEN;
+    @Resource
+    private WorkerDao workerDao;
+    @Resource
+    private CompanyTaxDao companyTaxDao;
+    @Resource
+    private CompanyInfoDao companyInfoDao;
 
     /**
      * 添加监管部门
@@ -167,7 +173,7 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
      */
     @Override
     public ReturnJson getRegulatorQuery(RegulatorQueryDto regulatorQueryDto) {
-        Page<Regulator> regulatorPage = new Page<>(regulatorQueryDto.getPage(), regulatorQueryDto.getPageSize());
+        Page<Regulator> regulatorPage = new Page<>(regulatorQueryDto.getPageNo(), regulatorQueryDto.getPageSize());
         IPage<Regulator> regulatorIPage = regulatorDao.selectRegulator(regulatorPage, regulatorQueryDto.getRegulatorName(), regulatorQueryDto.getStartDate(), regulatorQueryDto.getEndDate());
         return ReturnJson.success(regulatorIPage);
     }
@@ -187,7 +193,7 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
         List<TaxBriefVO> taxBriefVOS = new ArrayList<>();
         records.forEach(tax -> {
             TaxBriefVO taxBriefVO = new TaxBriefVO();
-            BeanUtils.copyProperties(tax,taxBriefVO);
+            BeanUtils.copyProperties(tax, taxBriefVO);
             taxBriefVOS.add(taxBriefVO);
         });
         taxPage.setRecords(taxBriefVOS);
@@ -351,7 +357,7 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
         if (VerificationCheck.listIsNull(paymentOrderIds)) {
             return ReturnJson.error("您所监管的服务商还没产生过流水！");
         }
-        Page<RegulatorWorkerPO> regulatorWorkerPOPage = new Page<>(regulatorWorkerDto.getPage(), regulatorWorkerDto.getPageSize());
+        Page<RegulatorWorkerPO> regulatorWorkerPOPage = new Page<>(regulatorWorkerDto.getPageNo(), regulatorWorkerDto.getPageSize());
         IPage<RegulatorWorkerPO> regulatorWorkerPOIPage = regulatorDao.selectRegulatorWorker(regulatorWorkerPOPage,
                 regulatorWorkerDto.getWorkerId(), regulatorWorkerDto.getWorkerName(), regulatorWorkerDto.getIdCardCode(),
                 paymentOrderIds, regulatorWorkerDto.getStartDate(), regulatorWorkerDto.getEndDate());
@@ -446,9 +452,6 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
         return ReturnJson.success(countRegulatorWorkerVO);
     }
 
-    @Resource
-    private WorkerDao workerDao;
-
     /**
      * 获取所监管的创客的详情
      *
@@ -502,7 +505,7 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
         if (VerificationCheck.listIsNull(paymentOrderIds)) {
             return ReturnJson.error("您所监管的服务商还没产生过流水！");
         }
-        Page<WorekerPaymentListPo> paymentListPoPage = new Page<>(regulatorWorkerPaymentDto.getPage(), regulatorWorkerPaymentDto.getPageSize());
+        Page<WorekerPaymentListPo> paymentListPoPage = new Page<>(regulatorWorkerPaymentDto.getPageNo(), regulatorWorkerPaymentDto.getPageSize());
         IPage<WorekerPaymentListPo> worekerPaymentListPoIPage = workerDao.selectRegulatorWorkerPaymentInfo(paymentListPoPage,
                 paymentOrderIds, regulatorWorkerPaymentDto.getWorkerId(), regulatorWorkerPaymentDto.getCompanyName(),
                 regulatorWorkerPaymentDto.getTaxName(), regulatorWorkerPaymentDto.getStartDate(), regulatorWorkerPaymentDto.getEndDate());
@@ -631,7 +634,7 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
             return returnJson;
         }
         List<String> taxIds = (List<String>) returnJson.getData();
-        Page<RegulatorMerchantInfoPO> regulatorMerchantInfoPOPage = new Page<>(regulatorMerchantDto.getPage(), regulatorMerchantDto.getPageSize());
+        Page<RegulatorMerchantInfoPO> regulatorMerchantInfoPOPage = new Page<>(regulatorMerchantDto.getPageNo(), regulatorMerchantDto.getPageSize());
         IPage<RegulatorMerchantInfoPO> regulatorMerchantInfoPOIPage = regulatorDao.selectRegulatorMerchant(regulatorMerchantInfoPOPage, taxIds, regulatorMerchantDto.getCompanyId(),
                 regulatorMerchantDto.getCompanyName(), regulatorMerchantDto.getStartDate(), regulatorMerchantDto.getEndDate());
         List<RegulatorMerchantInfoPO> records = regulatorMerchantInfoPOIPage.getRecords();
@@ -685,9 +688,6 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
         return ReturnJson.success("");
     }
 
-    @Resource
-    private CompanyTaxDao companyTaxDao;
-
     /**
      * 统计所监管的商户的流水
      *
@@ -740,10 +740,6 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
         CountRegulatorMerchantVO countRegulatorMerchantVO = new CountRegulatorMerchantVO(countMerchant, totalOrderCount, totalMoney, totalTaxMoney, manyOrderCount, manyMoney, manyTaxMoney);
         return ReturnJson.success(countRegulatorMerchantVO);
     }
-
-
-    @Resource
-    private CompanyInfoDao companyInfoDao;
 
     /**
      * 查询所监管的公司详情
@@ -830,7 +826,7 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
             return returnJson;
         }
         List<String> taxIds = (List<String>) returnJson.getData();
-        Page<CompanyPaymentOrderPO> page = new Page(regulatorMerchantPaymentOrderDto.getPage(), regulatorMerchantPaymentOrderDto.getPageSize());
+        Page<CompanyPaymentOrderPO> page = new Page(regulatorMerchantPaymentOrderDto.getPageNo(), regulatorMerchantPaymentOrderDto.getPageSize());
         IPage<CompanyPaymentOrderPO> companyPaymentOrderPOIPage = companyInfoDao.selectCompanyPaymentOrder(page, taxIds, regulatorMerchantPaymentOrderDto.getCompanyId(),
                 regulatorMerchantPaymentOrderDto.getTaxName(), regulatorMerchantPaymentOrderDto.getStartDate(), regulatorMerchantPaymentOrderDto.getEndDate());
 
@@ -908,7 +904,7 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
         response.setHeader(TOKEN, token);
         redisDao.set(re.getId(), token);
         redisDao.setExpire(re.getId(), 60 * 60 * 24 * 7);
-        return ReturnJson.success("登录成功！",token);
+        return ReturnJson.success("登录成功！", token);
     }
 
     /**

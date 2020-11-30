@@ -42,13 +42,13 @@ public class WorkerMerchantController {
     @LoginRequired
     @ApiOperation(value = "获取商户的所以创客", notes = "获取商户的所以创客", httpMethod = "POST")
     @ApiImplicitParams(value = {
-            @ApiImplicitParam(name = "page", value = "页数", required = true),
+            @ApiImplicitParam(name = "pageNo", value = "页数", required = true),
             @ApiImplicitParam(name = "pageSize", value = "每页的条数", required = true)
     })
     public ReturnJson getWorkerAll(@ApiParam(hidden = true) @RequestAttribute("userId") String merchantId,
-                                   @RequestParam(defaultValue = "1") Integer page,
+                                   @RequestParam(defaultValue = "1") Integer pageNo,
                                    @RequestParam(defaultValue = "10") Integer pageSize) {
-        return workerService.getWorkerAll(merchantId, page, pageSize);
+        return workerService.getWorkerAll(merchantId, pageNo, pageSize);
     }
 
     @PostMapping("/getWorkerMany")

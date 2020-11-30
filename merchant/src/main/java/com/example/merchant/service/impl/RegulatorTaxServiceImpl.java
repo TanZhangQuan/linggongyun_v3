@@ -134,7 +134,7 @@ public class RegulatorTaxServiceImpl extends ServiceImpl<RegulatorTaxDao, Regula
      */
     @Override
     public ReturnJson listTax(RegulatorTaxDto regulatorTaxDto, String regulatorId) {
-        Page page = new Page(regulatorTaxDto.getPage(), regulatorTaxDto.getPageSize());
+        Page page = new Page(regulatorTaxDto.getPageNo(), regulatorTaxDto.getPageSize());
         IPage<TaxVo> taxIPage = regulatorTaxDao.selServiceProviders(page, regulatorTaxDto,regulatorId);
         List<TaxVo> voList = taxIPage.getRecords();
         for (int i = 0; i < voList.size(); i++) {
@@ -231,7 +231,7 @@ public class RegulatorTaxServiceImpl extends ServiceImpl<RegulatorTaxDao, Regula
      */
     @Override
     public ReturnJson getPayInfo(PayInfoDto payInfoDto) {
-        Page page = new Page(payInfoDto.getPage(), payInfoDto.getPageSize());
+        Page page = new Page(payInfoDto.getPageNo(), payInfoDto.getPageSize());
         IPage<RegulatorTaxPayInfoPo> infoPoIPage = taxDao.selectPayInfo(page, payInfoDto.getTaxId(), payInfoDto.getCompanySName(), payInfoDto.getStartDate(), payInfoDto.getEndDate());
         List<RegulatorTaxPayInfoPo> list = infoPoIPage.getRecords();
         for (int i = 0; i < list.size(); i++) {
