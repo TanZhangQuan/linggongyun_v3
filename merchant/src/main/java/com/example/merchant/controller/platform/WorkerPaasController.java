@@ -42,11 +42,6 @@ public class WorkerPaasController {
     @PostMapping("/getWorkerQuery")
     @LoginRequired
     @ApiOperation(value = "按条件获取已认证的创客", notes = "按条件获取已认证的创客", httpMethod = "POST")
-    @ApiImplicitParams(value = {
-            @ApiImplicitParam(name = "id", value = "创客ID"),
-            @ApiImplicitParam(name = "accountName", value = "创客的真实姓名"),
-            @ApiImplicitParam(name = "mobileCode", value = "创客的手机号")
-    })
     public ReturnJson getWorkerQuery(@ApiParam(hidden = true) @RequestAttribute("userId") String managersId, @RequestBody WorkerQueryDto workerQueryDto) throws CommonException {
         return workerService.getWorkerQuery(managersId, workerQueryDto);
     }
@@ -54,11 +49,6 @@ public class WorkerPaasController {
     @PostMapping("/getWorkerQueryNot")
     @LoginRequired
     @ApiOperation(value = "按条件获取所以未认证的创客", notes = "按条件获取所以未认证的创客", httpMethod = "POST")
-    @ApiImplicitParams(value = {
-            @ApiImplicitParam(name = "id", value = "创客ID"),
-            @ApiImplicitParam(name = "accountName", value = "创客的真实姓名"),
-            @ApiImplicitParam(name = "mobileCode", value = "创客的手机号")
-    })
     public ReturnJson getWorkerQueryNot(@ApiParam(hidden = true) @RequestAttribute("userId") String managersId, @RequestBody WorkerQueryDto workerQueryDto) throws CommonException {
         return workerService.getWorkerQueryNot(managersId, workerQueryDto);
     }
