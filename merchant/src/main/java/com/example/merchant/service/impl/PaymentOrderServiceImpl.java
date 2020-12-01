@@ -195,12 +195,16 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ReturnJson saveOrUpdataPaymentOrder(AddPaymentOrderDto addPaymentOrderDto) {
+    public ReturnJson saveOrUpdataPaymentOrder(AddPaymentOrderDto addPaymentOrderDto,String merchantId) {
         PaymentDto paymentDto = addPaymentOrderDto.getPaymentDto();
         PaymentOrder paymentOrder = new PaymentOrder();
         BeanUtils.copyProperties(paymentDto, paymentOrder);
         List<PaymentInventory> paymentInventories = addPaymentOrderDto.getPaymentInventories();
         String id = paymentOrder.getId();
+        if (merchantId!=null){
+            Merchant merchant=merchantDao.selectById(merchantId);
+            paymentOrder.setCompanyId(merchant.getCompanyId());
+        }
         if (id != null && paymentOrder.getPaymentOrderStatus() == 0) {
             List<PaymentInventory> paymentInventoryList = paymentInventoryDao.selectList(new QueryWrapper<PaymentInventory>().eq("payment_order_id", id));
             List<String> ids = new ArrayList<>();

@@ -20,9 +20,9 @@ public interface MenuService extends IService<Menu> {
 
     ReturnJson getPlatformMenuList();
 
-    ReturnJson saveRole(MerchantDto merchantDto);
+    ReturnJson saveRole(MerchantDto merchantDto,String merchantId);
 
-    ReturnJson updateRole(MerchantDto merchantDto);
+    ReturnJson updateRole(MerchantDto merchantDto,String merchantId);
 
     ReturnJson getAllRole(String merchantId);
 

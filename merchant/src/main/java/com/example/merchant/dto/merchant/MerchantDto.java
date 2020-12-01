@@ -11,7 +11,7 @@ import javax.validation.constraints.NotNull;
 @Data
 public class MerchantDto {
 
-    private String merchantId;
+    private String id;
 
     private String roleId;
 

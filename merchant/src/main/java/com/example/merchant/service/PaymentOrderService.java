@@ -32,7 +32,7 @@ public interface PaymentOrderService extends IService<PaymentOrder> {
 
     ReturnJson getPaymentOrderInfo(String id);
 
-    ReturnJson saveOrUpdataPaymentOrder(AddPaymentOrderDto addPaymentOrderDto);
+    ReturnJson saveOrUpdataPaymentOrder(AddPaymentOrderDto addPaymentOrderDto,String merchantId);
 
     ReturnJson offlinePayment(String paymentOrderId, String turnkeyProjectPayment);
 

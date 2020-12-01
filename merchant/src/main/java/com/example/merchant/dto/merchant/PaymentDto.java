@@ -3,6 +3,8 @@ package com.example.merchant.dto.merchant;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
 /**
@@ -12,6 +14,8 @@ import java.math.BigDecimal;
  */
 @Data
 public class PaymentDto {
+
+    private String id;
 
     /**
      * 任务名称
@@ -26,26 +30,31 @@ public class PaymentDto {
     /**
      * 商户的公司简称
      */
+    @NotNull(message = "商户名称不能为空")
     private String companySName;
 
     /**
      * 平台服务商ID
      */
+    @NotNull(message = "平台服务商ID不能为空")
     private String taxId;
 
     /**
      * 平台服务商
      */
+    @NotNull(message = "平台服务商不能为空")
     private String platformServiceProvider;
 
     /**
      * 项目合同（存储位置）
      */
+    @NotNull(message = "平台服务商不能为空")
     private String companyContract;
 
     /**
      * 支付清单（存储位置）
      */
+    @NotNull(message = "平台服务商不能为空")
     private String paymentInventory;
 
     /**
@@ -56,11 +65,13 @@ public class PaymentDto {
     /**
      * 支付验收单（存储位置）
      */
+    @NotNull(message = "平台服务商不能为空")
     private String acceptanceCertificate;
 
     /**
      * 0商户承担，1创客承担，2商户创客共同承担
      */
+    @NotBlank(message = "请选择服务费率承担者")
     private Integer taxStatus;
 
     /**
