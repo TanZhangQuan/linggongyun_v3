@@ -91,12 +91,12 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ReturnJson saveRole(MerchantDto merchantDto) {
-        String token = redisDao.get(merchantDto.getMerchantId());
+    public ReturnJson saveRole(MerchantDto merchantDto,String merchantId) {
+        String token = redisDao.get(merchantId);
         if (token == null) {
             return ReturnJson.error("请先登录");
         }
-        int count = merchantDao.selectCount(new QueryWrapper<Merchant>().eq("parent_id", merchantDto.getMerchantId()));
+        int count = merchantDao.selectCount(new QueryWrapper<Merchant>().eq("parent_id", merchantId));
         if (count == 3) {
             return ReturnJson.error("子账户达到上限");
         }
@@ -115,10 +115,10 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
             }
         }
         if (ins > 0) {
-            Merchant merchantParent = merchantDao.selectById(merchantDto.getMerchantId());
+            Merchant merchantParent = merchantDao.selectById(merchantId);
             Merchant merchant = new Merchant();
             merchant.setRealName(merchantDto.getRealName());
-            merchant.setParentId(merchantDto.getMerchantId());
+            merchant.setParentId(merchantId);
             merchant.setLoginMobile(merchantDto.getMobileCode());
             merchant.setPassWord(PWD_KEY + MD5.md5(merchantDto.getPassWord()));
             merchant.setRoleId(merchantRole.getId());
@@ -139,7 +139,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ReturnJson updateRole(MerchantDto merchantDto) {
+    public ReturnJson updateRole(MerchantDto merchantDto,String merchantId) {
         MerchantRole merchantRole = new MerchantRole();
         merchantRole.setId(merchantDto.getRoleId());
         merchantRole.setRoleName(merchantDto.getRoleNmae());
@@ -156,10 +156,12 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
                 merchantRoleMenuDao.insert(roleMenu);
             }
 
-            Merchant merchant = new Merchant();
-            merchant.setId(merchantDto.getMerchantId());
+            Merchant merchant = merchantDao.selectById(merchantDto.getId());
+            if (merchant==null){
+                return ReturnJson.error("不存在此子账户！");
+            }
             merchant.setRealName(merchantDto.getRealName());
-            merchant.setParentId(merchantDto.getMerchantId());
+            merchant.setParentId(merchantId);
             merchant.setLoginMobile(merchantDto.getMobileCode());
             merchant.setPassWord(PWD_KEY + MD5.md5(merchantDto.getPassWord()));
             merchant.setUpdateDate(LocalDateTime.now());

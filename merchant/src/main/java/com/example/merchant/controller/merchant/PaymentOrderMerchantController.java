@@ -56,8 +56,9 @@ public class PaymentOrderMerchantController {
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "addPaymentOrderDto", value = "新建或修改的支付订单", required = true, dataType = "AddPaymentOrderDto")
     })
-    public ReturnJson saveOrUpdataPaymentOrder(@Valid @RequestBody AddPaymentOrderDto addPaymentOrderDto) {
-        return paymentOrderService.saveOrUpdataPaymentOrder(addPaymentOrderDto);
+    @LoginRequired
+    public ReturnJson saveOrUpdataPaymentOrder(@Valid @RequestBody AddPaymentOrderDto addPaymentOrderDto,@RequestAttribute(value = "userId") String merchantId) {
+        return paymentOrderService.saveOrUpdataPaymentOrder(addPaymentOrderDto,merchantId);
     }
 
 
