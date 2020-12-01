@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.extension.api.R;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.common.util.*;
 import com.example.merchant.dto.makerend.QueryMissionHall;
+import com.example.merchant.dto.merchant.AddTaskDto;
 import com.example.merchant.service.MerchantService;
 import com.example.merchant.service.WorkerTaskService;
 import com.example.mybatis.dto.PlatformTaskDto;
@@ -20,6 +21,7 @@ import com.example.merchant.service.TaskService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.mybatis.vo.WorkerTaskVo;
 import org.apache.ibatis.session.RowBounds;
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -74,29 +76,40 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ReturnJson saveTask(TaskDto taskDto, String userId) {
-        taskDto.setMerchantId(userId);
-        if (taskDto.getTaskMode() == 0) {
-            if (!VerificationCheck.isNull(taskDto.getMakerIds())) {
-                return new ReturnJson("必须指定创客", 300);
+    public ReturnJson saveTask(AddTaskDto addTaskDto, String userId) {
+        Merchant merchant = merchantDao.selectById(userId);
+        if (merchant == null) {
+            return ReturnJson.error("商户不存在！");
+        }
+        Task task = taskDao.selectById(addTaskDto.getId());
+        if (task != null) {
+            BeanUtils.copyProperties(addTaskDto, task);
+            taskDao.updateById(task);
+            return ReturnJson.success("修改成功");
+        } else {
+            BeanUtils.copyProperties(addTaskDto, task);
+            task.setMerchantId(merchant.getId());
+            task.setMerchantName(merchant.getCompanyName());
+            if (addTaskDto.getTaskMode() == 0) {
+                if (!VerificationCheck.isNull(addTaskDto.getMakerIds())) {
+                    return new ReturnJson("必须指定创客", 300);
+                }
             }
-        }
-        if (Tools.str2Date(taskDto.getReleaseDate()) == null) {
-            taskDto.setReleaseDate(DateUtil.getDay());
-        }
-        String taskCode = this.getTaskCode();
-        int code = Integer.valueOf(taskCode.substring(2)) + 1;
-        taskDto.setTaskCode("RW" + String.valueOf(code));
-        IdentifierGenerator identifierGenerator = new DefaultIdentifierGenerator();
-        taskDto.setId(identifierGenerator.nextId(new Object()).toString());
-        int i = taskDao.addTask(taskDto);
-        if (i > 0) {
-            if (taskDto.getTaskMode() != 1) {
-                Map<String, String> map = new HashMap<String, String>();
-                map.put("workerId", taskDto.getMakerIds());
-                map.put("taskId", taskDto.getId());
-                map.put("arrangePerson", merchantDao.getNameById(taskDto.getMerchantId()));
-                return workerTaskService.seavWorkerTask(map);
+            if (Tools.str2Date(addTaskDto.getReleaseDate()) == null) {
+                task.setReleaseDate(LocalDateTime.now());
+            }
+            String taskCode = this.getTaskCode();
+            int code = Integer.valueOf(taskCode.substring(2)) + 1;
+            task.setTaskCode("RW" + String.valueOf(code));
+            int i = taskDao.insert(task);
+            if (i > 0) {
+                if (addTaskDto.getTaskMode() != 1) {
+                    Map<String, String> map = new HashMap<String, String>();
+                    map.put("workerId", addTaskDto.getMakerIds());
+                    map.put("taskId", task.getId());
+                    map.put("arrangePerson", merchantDao.getNameById(merchant.getId()));
+                    return workerTaskService.seavWorkerTask(map);
+                }
             }
         }
         return new ReturnJson("添加失败", 300);
@@ -147,25 +160,29 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
 
     @Override
     public ReturnJson savePlatformTask(TaskDto taskDto) {
+        Merchant merchant = merchantDao.selectById(taskDto.getMerchantId());
+        Task task=new Task();
+        if (merchant == null) {
+            return ReturnJson.error("商户不存在！");
+        }
         if (taskDto.getTaskMode() == 0) {
             if (!VerificationCheck.isNull(taskDto.getMakerIds())) {
                 return new ReturnJson("必须指定创客", 300);
             }
         }
+        BeanUtils.copyProperties(taskDto,task);
         if (Tools.str2Date(taskDto.getReleaseDate()) == null) {
-            taskDto.setReleaseDate(DateUtil.getDay());
+            task.setReleaseDate(LocalDateTime.now());
         }
         String taskCode = this.getTaskCode();
         int code = Integer.valueOf(taskCode.substring(2)) + 1;
-        taskDto.setTaskCode("RW" + String.valueOf(code));
-        IdentifierGenerator identifierGenerator = new DefaultIdentifierGenerator();
-        taskDto.setId(identifierGenerator.nextId(new Object()).toString());
-        int i = taskDao.addPlatformTask(taskDto);
+        task.setTaskCode("RW" + String.valueOf(code));
+        int i = taskDao.insert(task);
         if (i > 0) {
             if (taskDto.getTaskMode() != 1) {
                 Map<String, String> map = new HashMap<String, String>();
                 map.put("workerId", taskDto.getMakerIds());
-                map.put("taskId", taskDto.getId());
+                map.put("taskId", task.getId());
                 map.put("arrangePerson", merchantDao.getNameById(taskDto.getMerchantId()));
                 return workerTaskService.seavWorkerTask(map);
             }

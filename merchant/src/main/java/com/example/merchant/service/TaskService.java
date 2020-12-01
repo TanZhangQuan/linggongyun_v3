@@ -3,6 +3,7 @@ package com.example.merchant.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.makerend.QueryMissionHall;
+import com.example.merchant.dto.merchant.AddTaskDto;
 import com.example.mybatis.dto.PlatformTaskDto;
 import com.example.mybatis.dto.TaskDto;
 import com.example.mybatis.dto.TaskListDto;
@@ -38,11 +39,11 @@ public interface TaskService extends IService<Task> {
 
     /**
      * 添加任务
-     * @param taskDto
+     * @param addTaskDto
      * @param userId
      * @return
      */
-    ReturnJson saveTask(TaskDto taskDto, String userId);
+    ReturnJson saveTask(AddTaskDto addTaskDto, String userId);
 
     /**
      * 查看任务详情

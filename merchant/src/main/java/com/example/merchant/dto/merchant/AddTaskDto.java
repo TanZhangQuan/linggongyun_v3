@@ -1,10 +1,5 @@
-package com.example.mybatis.dto;
+package com.example.merchant.dto.merchant;
 
-
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -15,14 +10,13 @@ import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
 /**
- * @author xiong.
- * @date 2020/9/8.
- * @time 11:10.
- * 添加任务信息dto
+ * @Description
+ * @Author JWei <jwei0401@163.com>
+ * @Date 2020/12/1
  */
 @Data
 @ApiModel(value = "添加修改任务")
-public class TaskDto {
+public class AddTaskDto {
 
     //任务id
     @ApiModelProperty(notes = "任务id",value = "任务id")
@@ -35,10 +29,6 @@ public class TaskDto {
 
     @ApiModelProperty(notes = "任务编码",value = "任务编码")
     private String taskCode;
-
-    //商户id
-    @ApiModelProperty(notes = "商户id",value = "商户id")
-    private String merchantId;
 
     //任务说明文字
     @ApiModelProperty(notes = "任务说明文字",value = "任务说明文字")
