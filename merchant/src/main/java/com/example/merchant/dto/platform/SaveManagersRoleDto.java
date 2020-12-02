@@ -14,7 +14,7 @@ public class SaveManagersRoleDto {
     private String realName;
 
     @NotNull(message = "角色不能为空")
-    private String roleNmae;
+    private String roleName;
 
     private String mobileCode;
 

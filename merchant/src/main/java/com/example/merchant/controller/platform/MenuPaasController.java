@@ -38,6 +38,7 @@ public class MenuPaasController {
 
     @ApiOperation("添加子用户or编辑")
     @PostMapping(value = "/addManagers")
+    @LoginRequired
     public ReturnJson addMerchant(@Valid @RequestBody SaveManagersRoleDto saveManagersRoleDto, @RequestAttribute(value = "userId") @ApiParam(hidden = true) String managersId) {
         return menuService.savePlatRole(saveManagersRoleDto, managersId);
     }

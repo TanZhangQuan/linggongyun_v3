@@ -28,7 +28,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 /**
@@ -78,15 +81,22 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
     @Transactional(rollbackFor = Exception.class)
     public ReturnJson saveTask(AddTaskDto addTaskDto, String userId) {
         Merchant merchant = merchantDao.selectById(userId);
+        DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        DateTimeFormatter df1 = DateTimeFormatter.ofPattern("HH:mm:ss");
         if (merchant == null) {
             return ReturnJson.error("商户不存在！");
         }
         Task task = taskDao.selectById(addTaskDto.getId());
         if (task != null) {
             BeanUtils.copyProperties(addTaskDto, task);
+            task.setReleaseDate(LocalDate.parse(addTaskDto.getReleaseDate(), df));
+            task.setReleaseTime(LocalTime.parse(addTaskDto.getReleaseTime(), df1));
+            task.setDeadlineDate(LocalDate.parse(addTaskDto.getDeadlineDate(), df));
+            task.setDeadlineTime(LocalTime.parse(addTaskDto.getDeadlineTime(), df1));
             taskDao.updateById(task);
             return ReturnJson.success("修改成功");
         } else {
+            task = new Task();
             BeanUtils.copyProperties(addTaskDto, task);
             task.setMerchantId(merchant.getId());
             task.setMerchantName(merchant.getCompanyName());
@@ -95,9 +105,10 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
                     return new ReturnJson("必须指定创客", 300);
                 }
             }
-            if (Tools.str2Date(addTaskDto.getReleaseDate()) == null) {
-                task.setReleaseDate(LocalDateTime.now());
-            }
+            task.setReleaseDate(LocalDate.parse(addTaskDto.getReleaseDate(), df));
+            task.setReleaseTime(LocalTime.parse(addTaskDto.getReleaseTime(), df1));
+            task.setDeadlineDate(LocalDate.parse(addTaskDto.getDeadlineDate(), df));
+            task.setDeadlineTime(LocalTime.parse(addTaskDto.getDeadlineTime(), df1));
             String taskCode = this.getTaskCode();
             int code = Integer.valueOf(taskCode.substring(2)) + 1;
             task.setTaskCode("RW" + String.valueOf(code));
@@ -161,7 +172,9 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
     @Override
     public ReturnJson savePlatformTask(TaskDto taskDto) {
         Merchant merchant = merchantDao.selectById(taskDto.getMerchantId());
-        Task task=new Task();
+        DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        DateTimeFormatter df1 = DateTimeFormatter.ofPattern("HH:mm:ss");
+        Task task = new Task();
         if (merchant == null) {
             return ReturnJson.error("商户不存在！");
         }
@@ -170,10 +183,11 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
                 return new ReturnJson("必须指定创客", 300);
             }
         }
-        BeanUtils.copyProperties(taskDto,task);
-        if (Tools.str2Date(taskDto.getReleaseDate()) == null) {
-            task.setReleaseDate(LocalDateTime.now());
-        }
+        BeanUtils.copyProperties(taskDto, task);
+        task.setReleaseDate(LocalDate.parse(taskDto.getReleaseDate(), df));
+        task.setReleaseTime(LocalTime.parse(taskDto.getReleaseTime(), df1));
+        task.setDeadlineDate(LocalDate.parse(taskDto.getDeadlineDate(), df));
+        task.setDeadlineTime(LocalTime.parse(taskDto.getDeadlineTime(), df1));
         String taskCode = this.getTaskCode();
         int code = Integer.valueOf(taskCode.substring(2)) + 1;
         task.setTaskCode("RW" + String.valueOf(code));

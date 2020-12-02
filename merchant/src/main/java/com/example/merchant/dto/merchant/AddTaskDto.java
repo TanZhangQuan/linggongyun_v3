@@ -27,9 +27,6 @@ public class AddTaskDto {
     @NotNull(message = "任务名字不能为空")
     private String taskName;
 
-    @ApiModelProperty(notes = "任务编码",value = "任务编码")
-    private String taskCode;
-
     //任务说明文字
     @ApiModelProperty(notes = "任务说明文字",value = "任务说明文字")
     @NotNull(message = "任务说明文字不能为空")

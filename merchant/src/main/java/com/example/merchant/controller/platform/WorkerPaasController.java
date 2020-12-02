@@ -125,5 +125,28 @@ public class WorkerPaasController {
         return workerTaskService.updateCheckMoney(taskId, money, workerId);
     }
 
+    @ApiOperation("创客详情统计")
+    @PostMapping(value = "/queryPassWorkerInfo")
+    @ApiImplicitParams(value = {@ApiImplicitParam(name = "workerId", value = "创客Id", required = true)})
+    public ReturnJson queryPassWorkerInfo(@ApiParam(value = "创客Id") @RequestParam String workerId) {
+        return workerService.queryWorkerInfo(workerId);
+    }
+
+    @ApiOperation("创客任务详细信息")
+    @PostMapping(value = "/queryPassWorkerTaskInfo")
+    public ReturnJson queryPassWorkerTaskInfo(@NotNull(message = "当前页不能为空") @ApiParam(value = "当前页") @RequestParam Integer pageNo,
+                                          @NotNull(message = "页大小不能为空")  @ApiParam(value = "页大小") @RequestParam Integer pageSize,
+                                          @NotBlank(message = "创客Id不能为空") @ApiParam(value = "创客Id") @RequestParam String workerId) {
+        return workerTaskService.queryWorkerTaskInfo(workerId,pageNo,pageSize);
+    }
+
+    @ApiOperation("创客支付列表信息")
+    @PostMapping(value = "/queryWorkerPayInfo")
+    public ReturnJson queryWorkerPayInfo(@NotNull(message = "当前页不能为空") @ApiParam(value = "当前页") @RequestParam Integer pageNo,
+                                              @NotNull(message = "页大小不能为空")  @ApiParam(value = "页大小") @RequestParam Integer pageSize,
+                                              @NotBlank(message = "创客Id不能为空") @ApiParam(value = "创客Id") @RequestParam String workerId) {
+        return workerTaskService.queryWorkerPayInfo(workerId,pageNo,pageSize);
+    }
+
 }
 

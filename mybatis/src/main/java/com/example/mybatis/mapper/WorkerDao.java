@@ -8,6 +8,7 @@ import com.example.mybatis.po.WorekerPaymentListPo;
 import com.example.mybatis.po.WorkerPo;
 import com.example.mybatis.vo.WorkerInfoVo;
 import com.example.mybatis.vo.WorkerPassVo;
+import com.example.mybatis.vo.WorkerPayInfoVo;
 import com.example.mybatis.vo.WorkerVo;
 import org.apache.ibatis.annotations.Param;
 
@@ -53,4 +54,13 @@ public interface WorkerDao extends BaseMapper<Worker> {
     IPage<WorkerPassVo> getPaasCheckByTaskId(Page page, @Param("taskId") String taskId);
 
     WorkerInfoVo queryWorkerInfo(String workerId);
+
+    /**
+     * 创客支付列表明细
+     *
+     * @param page
+     * @param workerId
+     * @return
+     */
+    IPage<WorkerPayInfoVo> queryWorkerPayInfo(Page page, String workerId);
 }

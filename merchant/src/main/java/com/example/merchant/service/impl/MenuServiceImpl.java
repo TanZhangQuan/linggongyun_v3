@@ -194,7 +194,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
             managers.setMobileCode(managersOne.getMobileCode());
         }
         managers.setPassWord(PWD_KEY + MD5.md5(saveManagersRoleDto.getPassWord()));
-        if (saveManagersRoleDto.getId() == null) {
+        if (saveManagersRoleDto.getId().trim() == null) {
             managersDao.insert(managers);
             String[] menuId = saveManagersRoleDto.getMenuIds().split(",");
             for (int i = 0; i < menuId.length; i++) {
@@ -203,7 +203,11 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
                 roleMenu.setMenuId(menuId[i]);
                 objectMenuDao.insert(roleMenu);
             }
+            return ReturnJson.success("添加成功");
         } else {
+            if (managers.getId().trim() == null || managers.getId().trim() == "") {
+                return ReturnJson.success("不存在此管理员");
+            }
             managersDao.updateById(managers);
             objectMenuDao.delete(new QueryWrapper<ObjectMenu>().eq("object_user_id", managers.getId()));
             String[] menuId = saveManagersRoleDto.getMenuIds().split(",");
@@ -213,9 +217,8 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
                 roleMenu.setMenuId(menuId[i]);
                 objectMenuDao.insert(roleMenu);
             }
+            return ReturnJson.success("修改成功");
         }
-
-        return ReturnJson.error("操作失败");
     }
 
     /**
