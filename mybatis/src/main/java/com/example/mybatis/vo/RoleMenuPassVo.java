@@ -7,8 +7,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
-public class RoleMenuVo {
-    private String merchantId;
+public class RoleMenuPassVo {
+    private String managersId;
 
     private String parentId;
 

@@ -9,6 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.math.BigDecimal;
 import java.util.List;
 
+/**
+ * @author yixi
+ */
 @Data
 public class CompanyTaxDto {
     @ApiModelProperty(notes = "公司ID", value = "公司ID")
@@ -30,6 +33,6 @@ public class CompanyTaxDto {
     private String contract;
 
     @ApiModelProperty(notes = "梯度价", value = "总包信息")
-    private List<CompanyLadderService> companyLadderServices;
+    private List<AddCompanyLadderServiceDto> addCompanyLadderServiceDtoList;
 
 }

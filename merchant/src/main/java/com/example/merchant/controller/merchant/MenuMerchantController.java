@@ -40,7 +40,7 @@ public class MenuMerchantController {
         return menuService.getMenuList();
     }
 
-    @ApiOperation("添加子用户")
+    @ApiOperation("添加子用户or编辑")
     @PostMapping(value = "/addMerchant")
     @LoginRequired
     public ReturnJson addMerchant(@Valid @RequestBody MerchantDto merchantDto, @RequestAttribute(value = "userId") @ApiParam(hidden = true) String merchantId) {
@@ -52,13 +52,6 @@ public class MenuMerchantController {
     @LoginRequired
     public ReturnJson getAllRole(@RequestAttribute(value = "userId") @ApiParam(hidden = true) String merchantId) {
         return menuService.getAllRole(merchantId);
-    }
-
-    @ApiOperation("权限管理，编辑子账户")
-    @PostMapping(value = "/updateRole")
-    @LoginRequired
-    public ReturnJson updateRole(@Valid @RequestBody MerchantDto merchantDto,@RequestAttribute(value = "userId") @ApiParam(hidden = true) String merchantId) {
-        return menuService.updateRole(merchantDto,merchantId);
     }
 
     @ApiOperation("权限管理，删除子账户")

@@ -7,7 +7,7 @@
         <id column="id" property="id"/>
         <result column="company_id" property="companyId"/>
         <result column="company_name" property="companyName"/>
-        <result column="role_id" property="roleId"/>
+        <result column="role_name" property="roleName"/>
         <result column="user_name" property="userName"/>
         <result column="pay_pwd" property="payPwd"/>
         <result column="real_name" property="realName"/>
