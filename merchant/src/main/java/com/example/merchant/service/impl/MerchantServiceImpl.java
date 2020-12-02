@@ -9,6 +9,7 @@ import com.example.common.util.MD5;
 import com.example.common.util.ReturnJson;
 import com.example.common.util.VerificationCheck;
 import com.example.merchant.config.shiro.CustomizedToken;
+import com.example.merchant.dto.platform.AddCompanyLadderServiceDto;
 import com.example.merchant.dto.platform.CompanyDto;
 import com.example.merchant.dto.platform.CompanyTaxDto;
 import com.example.merchant.exception.CommonException;
@@ -25,6 +26,7 @@ import com.example.mybatis.po.MerchantInfoPo;
 import com.example.mybatis.po.MerchantPaymentListPO;
 import com.example.mybatis.po.TaxPO;
 import com.example.mybatis.vo.BuyerVo;
+import com.example.mybatis.vo.MenuListVo;
 import com.example.redis.dao.RedisDao;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
@@ -56,71 +58,55 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> implements MerchantService {
 
-    @Resource
-    private MerchantDao merchantDao;
-
-    @Resource
-    private MerchantRoleDao merchantRoleDao;
-
-    @Resource
-    private RedisDao redisDao;
-
-    @Resource
-    private CompanyInfoDao companyInfoDao;
-
-    @Resource
-    private TaxDao taxDao;
-
-    @Resource
-    private CompanyTaxDao companyTaxDao;
-
-    @Resource
-    private CompanyInvoiceInfoDao companyInvoiceInfoDao;
-
-    @Resource
-    private LinkmanDao linkmanDao;
-
-    @Resource
-    private AddressDao addressDao;
-
-    @Resource
-    private TaskService taskService;
-
-    @Resource
-    private PaymentOrderDao paymentOrderDao;
-
-    @Resource
-    private PaymentOrderManyDao paymentOrderManyDao;
-
-    @Resource
-    private AcquireID acquireID;
-
-    @Resource
-    private JwtUtils jwtUtils;
-
-    @Resource
-    private SenSMS senSMS;
-
-    @Resource
-    private HomePageService homePageService;
-
-    @Resource
-    private CompanyLadderServiceService companyLadderServiceService;
-
-    @Resource
-    private PaymentInventoryDao paymentInventoryDao;
-
-    @Resource
-    private ManagersDao managersDao;
-
-
+    private static final String MERCHANT = "merchant";
     @Value("${PWD_KEY}")
     String PWD_KEY;
-
+    @Resource
+    private MerchantDao merchantDao;
+    @Resource
+    private RedisDao redisDao;
+    @Resource
+    private CompanyInfoDao companyInfoDao;
+    @Resource
+    private TaxDao taxDao;
+    @Resource
+    private CompanyTaxDao companyTaxDao;
+    @Resource
+    private CompanyInvoiceInfoDao companyInvoiceInfoDao;
+    @Resource
+    private LinkmanDao linkmanDao;
+    @Resource
+    private AddressDao addressDao;
+    @Resource
+    private TaskService taskService;
+    @Resource
+    private PaymentOrderDao paymentOrderDao;
+    @Resource
+    private PaymentOrderManyDao paymentOrderManyDao;
+    @Resource
+    private AcquireID acquireID;
+    @Resource
+    private JwtUtils jwtUtils;
+    @Resource
+    private SenSMS senSMS;
+    @Resource
+    private HomePageService homePageService;
+    @Resource
+    private CompanyLadderServiceService companyLadderServiceService;
+    @Resource
+    private PaymentInventoryDao paymentInventoryDao;
+    @Resource
+    private ManagersDao managersDao;
     @Value("${TOKEN}")
     private String TOKEN;
-
-    private static final String MERCHANT = "merchant";
+    @Resource
+    private PaymentOrderService paymentOrderService;
+    @Resource
+    private PaymentOrderManyService paymentOrderManyService;
+    @Resource
+    private MenuDao menuDao;
+    @Resource
+    private ObjectMenuDao objectMenuDao;
 
     /**
      * 根据用户名和密码进行登录
@@ -215,7 +201,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
 
     @Override
     public ReturnJson getmerchantCustomizedInfo(String merchantId) {
-        Merchant merchant=merchantDao.selectById(merchantId);
+        Merchant merchant = merchantDao.selectById(merchantId);
         merchant.setPassWord("");
         return ReturnJson.success(merchant);
     }
@@ -313,18 +299,6 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         return returnJson;
     }
 
-    /**
-     * 根据merchantId获取权限信息
-     *
-     * @param merchantId
-     * @return
-     */
-    private MerchantRole getMerchantRole(String merchantId) {
-        QueryWrapper<MerchantRole> merchantRoleQueryWrapper = new QueryWrapper<MerchantRole>();
-        merchantRoleQueryWrapper.eq("merchant_id", merchantId);
-        return merchantRoleDao.selectOne(merchantRoleQueryWrapper);
-    }
-
     @Override
     public Merchant findByID(String id) {
         return merchantDao.findByID(id);
@@ -344,7 +318,6 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
     public String getNameById(String id) {
         return merchantDao.getNameById(id);
     }
-
 
     /**
      * 获取的商户
@@ -386,7 +359,6 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         }
         return ReturnJson.error("该商户做过业务，只能停用该用户！");
     }
-
 
     /**
      * 审核商户
@@ -443,13 +415,6 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         return ReturnJson.success(merchantPaymentListIPage);
     }
 
-
-    @Resource
-    private PaymentOrderService paymentOrderService;
-
-    @Resource
-    private PaymentOrderManyService paymentOrderManyService;
-
     /**
      * 获取支付详情
      *
@@ -499,7 +464,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         BeanUtils.copyProperties(companyDto, companyInfo);
 
         CompanyInvoiceInfo companyInvoiceInfo = new CompanyInvoiceInfo();
-        BeanUtils.copyProperties(companyDto.getCompanyInvoiceInfo(), companyInvoiceInfo);
+        BeanUtils.copyProperties(companyDto.getAddCompanyInvoiceInfoDto(), companyInvoiceInfo);
 
         companyInfo.setBankName(companyInvoiceInfo.getBankName());
         companyInfo.setBankCode(companyInvoiceInfo.getBankCode());
@@ -515,7 +480,13 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
             BeanUtils.copyProperties(companyTaxDto, companyTax);
             companyTax.setCompanyId(companyInfo.getId());
             companyTaxDao.insert(companyTax);
-            List<CompanyLadderService> companyLadderServices = companyTaxDto.getCompanyLadderServices();
+            List<AddCompanyLadderServiceDto> companyLadderServiceDtoList = companyTaxDto.getAddCompanyLadderServiceDtoList();
+            List<CompanyLadderService> companyLadderServices = new ArrayList<>();
+            for (int i = 0; i < companyLadderServiceDtoList.size(); i++) {
+                CompanyLadderService companyLadderService = new CompanyLadderService();
+                BeanUtils.copyProperties(companyLadderServiceDtoList.get(i), companyLadderService);
+                companyLadderServices.add(companyLadderService);
+            }
             if (companyLadderServices != null) {
                 for (int i = 0; i < companyLadderServices.size(); i++) {
                     if (i != companyLadderServices.size() - 1) {
@@ -534,14 +505,31 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
             }
         }
         Linkman linkman = new Linkman();
-        BeanUtils.copyProperties(companyDto.getLinkman(), linkman);
+        BeanUtils.copyProperties(companyDto.getAddLinkmanDto(), linkman);
         linkman.setCompanyId(companyInfo.getId());
+        linkman.setStatus(0);
         linkmanDao.insert(linkman);
 
         Address address = new Address();
-        BeanUtils.copyProperties(companyDto.getAddress(), address);
+        BeanUtils.copyProperties(companyDto.getAddressDto(), address);
         address.setCompanyId(companyInfo.getId());
+        address.setStatus(0);
         addressDao.insert(address);
+
+        Merchant merchant = new Merchant();
+        BeanUtils.copyProperties(companyDto.getAddMerchantDto(), merchant);
+        merchant.setPayPwd(PWD_KEY + MD5.md5(companyDto.getAddMerchantDto().getPayPwd()));
+        merchant.setPassWord(PWD_KEY + MD5.md5(companyDto.getAddMerchantDto().getPassWord()));
+        merchant.setCompanyId(companyInfo.getId());
+        merchant.setCompanyName(companyInfo.getCompanyName());
+        merchantDao.insert(merchant);
+        List<MenuListVo> listVos = menuDao.getMenuList();
+        for (int i = 0; i < listVos.size(); i++) {
+            ObjectMenu objectMenu = new ObjectMenu();
+            objectMenu.setMenuId(listVos.get(i).getId());
+            objectMenu.setObjectUserId(merchant.getId());
+            objectMenuDao.insert(objectMenu);
+        }
         return ReturnJson.success("添加商户成功！");
     }
 

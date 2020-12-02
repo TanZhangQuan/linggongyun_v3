@@ -18,8 +18,8 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
-@TableName("tb_merchant_role_menu")
-public class MerchantRoleMenu extends BaseEntity {
+@TableName("tb_object_role_menu")
+public class ObjectMenu extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
     /**
@@ -30,6 +30,6 @@ public class MerchantRoleMenu extends BaseEntity {
     /**
      * 角色ID
      */
-    private String merchantRoleId;
+    private String objectUserId;
 
 }

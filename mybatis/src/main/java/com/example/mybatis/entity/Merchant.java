@@ -39,9 +39,9 @@ public class Merchant extends BaseEntity {
     private String companyName;
 
     /**
-     * 角色ID（获取权限信息）
+     * 角色名称（获取权限信息）
      */
-    private String roleId;
+    private String roleName;
 
     /**
      * 用户名

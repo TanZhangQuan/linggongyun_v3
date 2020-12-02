@@ -30,7 +30,7 @@ public class Managers extends BaseEntity {
     /**
      * 角色ID
      */
-    private String roleId;
+    private String roleName;
 
     /**
      * 真实姓名

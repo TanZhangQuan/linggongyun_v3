@@ -1,13 +1,9 @@
 package com.example.merchant.config.shiro;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.example.common.util.UserUtils;
 import com.example.mybatis.entity.Managers;
-import com.example.mybatis.entity.Menu;
-import com.example.mybatis.entity.Merchant;
-import com.example.mybatis.entity.MerchantRole;
 import com.example.mybatis.mapper.ManagersDao;
-import com.example.mybatis.mapper.MerchantRoleDao;
+import com.example.mybatis.mapper.ObjectMenuDao;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.*;
@@ -18,8 +14,6 @@ import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 
 import javax.annotation.Resource;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Slf4j
@@ -35,7 +29,7 @@ public class ManagersRealm extends AuthorizingRealm {
     private ManagersDao managersDao;
 
     @Resource
-    private MerchantRoleDao merchantRoleDao;
+    private ObjectMenuDao objectMenuDao;
 
     /**
      * 授权逻辑
@@ -55,9 +49,7 @@ public class ManagersRealm extends AuthorizingRealm {
 
         Managers managers = managersDao.selectOne(new QueryWrapper<Managers>().eq("user_name", loginName));//查询登录用户的角色
 
-        MerchantRole merchantRole = merchantRoleDao.selectById(managers.getRoleId());
-        Set<String> permissions =  merchantRoleDao.getMenuById(merchantRole.getId());
-        authorizationInfo.addRole(merchantRole.getRoleName());//添加角色
+        Set<String> permissions =  objectMenuDao.getMenuById(managers.getId());
         authorizationInfo.setStringPermissions(permissions);
         return authorizationInfo;
     }

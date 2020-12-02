@@ -74,15 +74,15 @@ public class CompanyDto {
     List<CompanyTaxDto> companyTaxDtos;
 
     @ApiModelProperty(notes = "商户公司的开票信息", value = "商户公司的开票信息")
-    private CompanyInvoiceInfo companyInvoiceInfo;
+    private AddCompanyInvoiceInfoDto addCompanyInvoiceInfoDto;
 
     @ApiModelProperty(notes = "商户公司的联系人", value = "商户公司的联系人")
-    private Linkman linkman;
+    private AddLinkmanDto addLinkmanDto;
 
     @ApiModelProperty(notes = "商户公司的收货地址", value = "商户公司的收货地址")
-    private Address address;
+    private AddressDto addressDto;
 
     @ApiModelProperty(notes = "商户的登录信息", value = "商户的登录信息")
-    private Merchant merchant;
+    private AddMerchantDto addMerchantDto;
 
 }

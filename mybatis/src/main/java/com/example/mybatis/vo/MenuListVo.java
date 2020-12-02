@@ -8,16 +8,24 @@ import java.util.List;
 @Data
 public class MenuListVo {
 
-    //id
-    private int id;
+    /**
+     * id
+     */
+    private String id;
 
-    //菜单英文名
+    /**
+     * 菜单英文名
+     */
     private String menuName;
 
-    //菜单中文名
+    /**
+     * 菜单中文名
+     */
     private String menuZhname;
 
-    //子菜单集合
+    /**
+     * 子菜单集合
+     */
     private List<Menu> list;
 
 }

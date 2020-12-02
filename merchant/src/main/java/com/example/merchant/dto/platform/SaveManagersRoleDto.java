@@ -8,16 +8,13 @@ import javax.validation.constraints.NotNull;
 @Data
 public class SaveManagersRoleDto {
 
-    private String roleId;
+    private String id;
 
     @NotNull(message = "姓名不能为空")
     private String realName;
 
     @NotNull(message = "角色不能为空")
     private String roleNmae;
-
-    @NotNull(message = "职位不能为空")
-    private String rolePosition;
 
     private String mobileCode;
 

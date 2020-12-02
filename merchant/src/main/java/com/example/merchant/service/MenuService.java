@@ -22,8 +22,6 @@ public interface MenuService extends IService<Menu> {
 
     ReturnJson saveRole(MerchantDto merchantDto,String merchantId);
 
-    ReturnJson updateRole(MerchantDto merchantDto,String merchantId);
-
     ReturnJson getAllRole(String merchantId);
 
     ReturnJson daleteRole(String merchantId);
@@ -33,8 +31,6 @@ public interface MenuService extends IService<Menu> {
     ReturnJson savePlatRole(SaveManagersRoleDto saveManagersRoleDto,String managersId);
 
     ReturnJson getPassAllRole(String managersId);
-
-    ReturnJson updatePassRole(SaveManagersRoleDto saveManagersRoleDto,String managersId);
 
     ReturnJson daletePassRole(String managersId);
 
