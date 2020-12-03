@@ -98,7 +98,7 @@
     <!--商户端查询条件-->
     <sql id="que">
         <if test="tobeinvoicedDto.merchantId != null and tobeinvoicedDto.merchantId != ''">
-            AND po.company_s_name=#{tobeinvoicedDto.companySName}
+            AND po.company_s_name=#{tobeinvoicedDto.merchantId}
         </if>
         <if test="tobeinvoicedDto.platformServiceProvider != null and tobeinvoicedDto.platformServiceProvider != ''">
             AND po.platform_service_provider=#{tobeinvoicedDto.platformServiceProvider}
@@ -180,28 +180,37 @@
         <result column="is_invoice" property="isInvoice"/>
         <result column="application_date" property="applicationDate"/>
         <collection property="list" ofType="com.example.mybatis.vo.OrderSubpackageVo">
-            <result column="id" property="id"/>
+            <result column="pid" property="id"/>
             <result column="payment_inventory" property="paymentInventory"/>
             <result column="subpackage_payment" property="subpackagePayment"/>
         </collection>
     </resultMap>
     <select id="selectTobeinvoiced" resultMap="TobeInvoiced">
         SELECT
-        i.application_id,
+        invapp.id,
         po.company_s_name,
         po.platform_service_provider,
         invapp.application_desc,
         po.is_invoice,
         invapp.application_date,
-        po.id,
+        po.id as pid,
         po.payment_inventory,
         po.subpackage_payment
         FROM tb_payment_order AS po
-        LEFT JOIN tb_application_payment AS app ON app.payment_order_id = po.id
-        LEFT JOIN tb_invoice_application as invapp ON invapp.id=app.invoice_application_id
+        INNER JOIN tb_application_payment AS app ON app.payment_order_id = po.id
+        INNER JOIN tb_invoice_application as invapp ON invapp.id=app.invoice_application_id
         LEFT JOIN tb_invoice as i ON i.application_id=invapp.id
         WHERE po.payment_order_status = 3
-        <include refid="que"/>
+        AND po.company_id=#{param3}
+        <if test="param2.platformServiceProvider != null and param2.platformServiceProvider != ''">
+            AND po.platform_service_provider=#{param2.platformServiceProvider}
+        </if>
+        <if test="param2.applicationDateOne != null and param2.applicationDateOne != ''">
+            AND ia.invapp.application_date>=#{param2.applicationDateOne}
+        </if>
+        <if test="param2.applicationDateTwo != null and param2.applicationDateTwo != ''">
+            AND ia.invapp.application_date <![CDATA[<=]]> #{param2.applicationDateTwo}
+        </if>
     </select>
 
     <select id="getInvoiceList" resultMap="InvoiceVo">
@@ -225,7 +234,16 @@
         LEFT JOIN tb_invoice_application as invapp ON invapp.id=app.invoice_application_id
         LEFT JOIN tb_invoice as i ON i.application_id=invapp.id
         WHERE po.payment_order_status = 3 and invapp.application_state=3
-        <include refid="que"/>
+         AND po.company_id=#{param3}
+        <if test="param2.platformServiceProvider != null and param2.platformServiceProvider != ''">
+            AND po.platform_service_provider=#{param2.platformServiceProvider}
+        </if>
+        <if test="param2.applicationDateOne != null and param2.applicationDateOne != ''">
+            AND ia.invapp.application_date>=#{param2.applicationDateOne}
+        </if>
+        <if test="param2.applicationDateTwo != null and param2.applicationDateTwo != ''">
+            AND ia.invapp.application_date <![CDATA[<=]]> #{param2.applicationDateTwo}
+        </if>
     </select>
 
     <select id="getInvInfoById" resultMap="InvInfo">

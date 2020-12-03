@@ -72,6 +72,17 @@
         <result column="invoice_number" property="invoiceNumber"/>
     </resultMap>
 
+    <resultMap id="workerPayInfo" type="com.example.mybatis.vo.WorkerPayInfoVo">
+        <result column="payment_order_id" property="paymentOrderId"/>
+        <result column="company_s_name" property="companySName"/>
+        <result column="platform_service_provider" property="platformServiceProvider"/>
+        <result column="worker_name" property="workerName"/>
+        <result column="package_status" property="packageStatus"/>
+        <result column="payment_status" property="paymentStatus"/>
+        <result column="task_money" property="taskMoney"/>
+        <result column="create_date" property="createDate"/>
+    </resultMap>
+
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id, worker_status, worker_name, account_name, worker_sex, mobile_code, idcard_code, bank_code, attestation, idcardFront, idcardBack, attestation_video, user_name, user_pwd, skill, agreementSign, agreementUrl, head_portraits, picture, business_license, create_date, update_date
@@ -317,5 +328,53 @@
             tb_worker w
         WHERE
             w.id = #{workerId}
+    </select>
+
+    <select id="queryWorkerPayInfo" resultMap="workerPayInfo">
+        SELECT
+            payment_order_id,
+        IF (
+            package_status = 0,
+            (
+                SELECT
+                    company_s_name
+                FROM
+                    tb_payment_order
+                WHERE
+                    pi.payment_order_id = id
+            ),
+            (
+                SELECT
+                    company_s_name
+                FROM
+                    tb_payment_order_many
+                WHERE
+                    pi.payment_order_id = id
+            )
+        ) AS company_s_name,
+        IF (
+            package_status = 0,
+            (
+                SELECT
+                    platform_service_provider
+                FROM
+                    tb_payment_order
+                WHERE
+                    pi.payment_order_id = id
+            ),
+            (
+                SELECT
+                    platform_service_provider
+                FROM
+                    tb_payment_order_many
+                WHERE
+                    pi.payment_order_id = id
+            )
+        ) AS platform_service_provider,
+        pi.worker_name,pi.package_status,pi.task_money,pi.payment_status,pi.create_date
+        FROM
+            tb_payment_inventory pi
+        WHERE
+            pi.worker_id =#{param2}
     </select>
 </mapper>

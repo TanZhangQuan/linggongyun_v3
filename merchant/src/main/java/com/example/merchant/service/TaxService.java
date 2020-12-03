@@ -2,6 +2,7 @@ package com.example.merchant.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.common.util.ReturnJson;
+import com.example.merchant.dto.platform.AddInvoiceCatalogDto;
 import com.example.merchant.dto.platform.TaxDto;
 import com.example.merchant.dto.platform.TaxListDto;
 import com.example.merchant.exception.CommonException;
@@ -22,7 +23,7 @@ public interface TaxService extends IService<Tax> {
 
     ReturnJson getCatalogAll();
 
-    ReturnJson saveCatalog(InvoiceCatalog invoiceCatalog);
+    ReturnJson saveCatalog(AddInvoiceCatalogDto addInvoiceCatalogDto);
     ReturnJson saveTax(TaxDto taxDto) throws Exception;
 
     ReturnJson getTaxList(TaxListDto taxListDto);
@@ -33,5 +34,7 @@ public interface TaxService extends IService<Tax> {
     ReturnJson transactionRecord(String taxId, Integer page, Integer pageSize);
 
     ReturnJson getSellerById(String id);
+
+    ReturnJson getTaxPaasList();
 
 }

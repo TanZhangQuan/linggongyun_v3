@@ -2,6 +2,7 @@ package com.example.merchant.controller.platform;
 
 
 import com.example.common.util.ReturnJson;
+import com.example.merchant.dto.platform.AddInvoiceCatalogDto;
 import com.example.merchant.dto.platform.TaxDto;
 import com.example.merchant.dto.platform.TaxListDto;
 import com.example.merchant.exception.CommonException;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 /**
  * <p>
@@ -39,7 +41,7 @@ public class TaxPaasController {
     @GetMapping("/getTaxAll")
     @ApiOperation(value = "获取商户可用的平台服务商(平台端帮助商户创建支付订单时，通过选择的商户获取商户的服务商)", notes = "获取商户可用的平台服务商(平台端帮助商户创建支付订单时，通过选择的商户获取商户的服务商)", httpMethod = "GET")
     @ApiImplicitParams(value={@ApiImplicitParam(name="companyId",value = "商户的企业ID",required = true),@ApiImplicitParam(name="packageStatus",value = "合作类型不能为空，0为总包，1为众包（建立支付订单通过支付订单的类型自动获取,不是选择）",required = true)})
-    public ReturnJson getTaxAll(@NotBlank(message = "商户ID不能为空") @RequestParam(required = false) String companyId, @NotBlank(message = "合作类型不能为空，0为总包，1为众包") @RequestParam(required = false) Integer packageStatus){
+    public ReturnJson getTaxAll(@NotNull(message = "商户ID不能为空") @RequestParam(required = false) String companyId, @NotBlank(message = "合作类型不能为空，0为总包，1为众包") @RequestParam(required = false) Integer packageStatus){
         return taxService.getTaxPaasAll(companyId, packageStatus);
     }
 
@@ -52,8 +54,8 @@ public class TaxPaasController {
     @PostMapping("/saveCatalog")
     @ApiOperation(value = "添加开票类目", notes = "添加开票类目", httpMethod = "POST")
     @ApiImplicitParams(value={@ApiImplicitParam(name="invoiceCatalog",value = "开票类目的信息",required = true, dataType = "InvoiceCatalog")})
-    public ReturnJson saveCatalog(@RequestBody InvoiceCatalog invoiceCatalog){
-        return taxService.saveCatalog(invoiceCatalog);
+    public ReturnJson saveCatalog(@RequestBody AddInvoiceCatalogDto addInvoiceCatalogDto){
+        return taxService.saveCatalog(addInvoiceCatalogDto);
     }
 
     @PostMapping("/saveTax")
@@ -89,5 +91,11 @@ public class TaxPaasController {
     @ApiImplicitParams(value={@ApiImplicitParam(name="taxId",value = "服务商ID"),@ApiImplicitParam(name="pageNo",value = "页数"),@ApiImplicitParam(name="pageSize",value = "一页的条数")})
     public ReturnJson transactionRecord(@NotBlank(message = "服务商ID不能为空！") @RequestParam String taxId,@RequestParam(defaultValue = "1") Integer pageNo, @RequestParam(defaultValue = "10") Integer pageSize){
         return taxService.transactionRecord(taxId,pageNo,pageSize);
+    }
+
+    @GetMapping("/queryTaxPaasList")
+    @ApiOperation(value = "查询服务商列表（添加商户）", notes = "查询服务商列表（添加商户）", httpMethod = "GET")
+    public ReturnJson getTaxPaasList() {
+        return taxService.getTaxPaasList();
     }
 }

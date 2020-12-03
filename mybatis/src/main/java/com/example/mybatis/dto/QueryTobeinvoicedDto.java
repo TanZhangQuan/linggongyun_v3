@@ -1,23 +1,18 @@
 package com.example.mybatis.dto;
 
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.springframework.web.bind.annotation.RequestAttribute;
 
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
 
+/**
+ * @Description
+ * @Author JWei <jwei0401@163.com>
+ * @Date 2020/12/2
+ */
 @Data
-@ApiModel(value = "开票列表查询")
-public class TobeinvoicedDto {
-
-    @ApiModelProperty(notes = "商户id",value = "商户id")
-    private String merchantId;
-
-    @ApiModelProperty(notes = "商户名称，平台端使用",value = "商户名称，平台端使用")
-    private String companySName;
-
+public class QueryTobeinvoicedDto {
     @ApiModelProperty(notes = "平台服务商",value = "平台服务商")
     private String platformServiceProvider;
 

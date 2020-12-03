@@ -59,8 +59,8 @@ public class PaymentOrderPaasController {
     @PostMapping("/saveOrUpdata")
     @ApiOperation(value = "创建或修改总包+分包支付订单", notes = "创建或修改总包+分包支付订单", httpMethod = "POST")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "addPaymentOrderDto", value = "新建或修改的支付订单", required = true, dataType = "AddPaymentOrderDto")})
-    public ReturnJson saveOrUpdataPaymentOrder(@NotEmpty(message = "订单内容不能为空") @RequestBody AddPaymentOrderDto addPaymentOrderDto) {
-        return paymentOrderService.saveOrUpdataPaymentOrder(addPaymentOrderDto,null);
+    public ReturnJson saveOrUpdataPaymentOrder(@RequestBody AddPaymentOrderDto addPaymentOrderDto,@RequestParam String merchantId) {
+        return paymentOrderService.saveOrUpdataPaymentOrder(addPaymentOrderDto,merchantId);
     }
 
     @PostMapping("/offlinePayment")

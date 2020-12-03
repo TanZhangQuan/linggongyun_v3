@@ -4,7 +4,7 @@ import com.example.mybatis.entity.ObjectMenu;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.example.mybatis.vo.RoleMenuPassVo;
 import com.example.mybatis.vo.RoleMenuVo;
-import org.apache.ibatis.annotations.Mapper;
+import com.example.mybatis.vo.QueryPassRolemenuVo;
 
 import java.util.List;
 import java.util.Set;
@@ -24,4 +24,8 @@ public interface ObjectMenuDao extends BaseMapper<ObjectMenu> {
     List<RoleMenuVo> getRolemenu(String userId);
 
     List<RoleMenuPassVo> getPassRolemenu(String userId);
+
+    QueryPassRolemenuVo queryPassRolemenu(String userId);
+
+    Integer deleteMenu(String managerId);
 }

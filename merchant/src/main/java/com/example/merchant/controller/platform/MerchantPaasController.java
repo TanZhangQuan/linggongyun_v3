@@ -8,6 +8,7 @@ import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.AddressService;
 import com.example.merchant.service.LinkmanService;
 import com.example.merchant.service.MerchantService;
+import com.example.merchant.service.TaxService;
 import com.example.mybatis.entity.Address;
 import com.example.mybatis.entity.Linkman;
 import io.swagger.annotations.*;
@@ -200,8 +201,8 @@ public class MerchantPaasController {
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "address", value = "快递地址信息", required = true, dataType = "Address")
     })
-    public ReturnJson addOrUpdataAddress(@RequestBody Address address) {
-        return addressService.addOrUpdataAddress(address);
+    public ReturnJson addOrUpdataAddress(@RequestBody Address address,String merchantId) {
+        return addressService.addOrUpdataAddress(address,merchantId);
     }
 
     @PostMapping("/updataAddressStatus")

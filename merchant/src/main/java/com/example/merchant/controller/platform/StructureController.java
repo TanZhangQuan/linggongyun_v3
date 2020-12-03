@@ -27,7 +27,7 @@ public class StructureController {
     private StructureService structureService;
 
     @PostMapping("/addSalesMan")
-    @ApiOperation(value = "添加业务员", notes = "添加或修改业务员", httpMethod = "POST")
+    @ApiOperation(value = "添加业务员or编辑业务员", notes = "添加或修改业务员", httpMethod = "POST")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "managersDto", value = "业务员的信息", required = true, dataType = "ManagersDto")
     })
@@ -114,7 +114,7 @@ public class StructureController {
     }
 
     @PostMapping("/addAgent")
-    @ApiOperation(value = "添加代理商", notes = "添加代理商", httpMethod = "POST")
+    @ApiOperation(value = "添加代理商or编辑代理商", notes = "添加代理商or编辑代理商", httpMethod = "POST")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "agentInfoDto", value = "代理商的信息", required = true, dataType = "AgentInfoDto")
     })
@@ -176,5 +176,11 @@ public class StructureController {
     })
     public ReturnJson getAgentPaymentList(@NotBlank(message = "代理商ID不能为空！") @RequestParam String agentId, @RequestParam(defaultValue = "1") Integer pageNo, @RequestParam(defaultValue = "1") Integer pageSize) throws CommonException {
         return structureService.getSalesManPaymentList(agentId, pageNo, pageSize);
+    }
+
+    @GetMapping("querySalesman")
+    @ApiOperation(value = "查询平台业务专员", notes = "查询平台业务专员", httpMethod = "GET")
+    public ReturnJson querySalesman() {
+        return null;
     }
 }

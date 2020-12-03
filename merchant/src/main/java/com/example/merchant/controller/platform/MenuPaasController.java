@@ -38,6 +38,7 @@ public class MenuPaasController {
 
     @ApiOperation("添加子用户or编辑")
     @PostMapping(value = "/addManagers")
+    @LoginRequired
     public ReturnJson addMerchant(@Valid @RequestBody SaveManagersRoleDto saveManagersRoleDto, @RequestAttribute(value = "userId") @ApiParam(hidden = true) String managersId) {
         return menuService.savePlatRole(saveManagersRoleDto, managersId);
     }
@@ -65,4 +66,13 @@ public class MenuPaasController {
     public ReturnJson updataRoleStatus(@NotNull(message = "子账户Id不能为空") @RequestParam String managersId, @NotNull(message = "status不能为空") @RequestParam Integer status) {
         return menuService.updataPassRoleStatus(managersId, status);
     }
+
+    @ApiOperation("权限管理，子账户详情")
+    @PostMapping(value = "/getManagersInfo")
+    @ApiImplicitParams(value = {@ApiImplicitParam(name = "managersId", value = "子账户Id", required = true)})
+    public ReturnJson getManagersInfo(@NotNull(message = "子账户Id不能为空") @RequestParam String managersId) {
+        return menuService.getManagersInfo(managersId);
+    }
+
+
 }

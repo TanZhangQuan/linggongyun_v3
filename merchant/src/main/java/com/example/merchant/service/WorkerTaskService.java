@@ -83,4 +83,14 @@ public interface WorkerTaskService extends IService<WorkerTask> {
      */
     ReturnJson queryWorkerTaskInfo(String workerId, Integer pageNo, Integer pageSize);
 
+    /**
+     * 创客支付列表明细
+     *
+     * @param workerId
+     * @param pageNo
+     * @param pageSize
+     * @return
+     */
+    ReturnJson queryWorkerPayInfo(String workerId, Integer pageNo, Integer pageSize);
+
 }

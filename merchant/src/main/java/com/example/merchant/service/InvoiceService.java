@@ -1,12 +1,11 @@
 package com.example.merchant.service;
 
 import com.example.common.util.ReturnJson;
+import com.example.mybatis.dto.QueryTobeinvoicedDto;
 import com.example.mybatis.dto.AddInvoiceDto;
 import com.example.mybatis.dto.TobeinvoicedDto;
 import com.example.mybatis.entity.Invoice;
 import com.baomidou.mybatisplus.extension.service.IService;
-
-import java.util.List;
 
 /**
  * <p>
@@ -18,9 +17,9 @@ import java.util.List;
  */
 public interface InvoiceService extends IService<Invoice> {
 
-    ReturnJson selectTobeinvoiced(TobeinvoicedDto tobeinvoicedDto);
+    ReturnJson selectTobeinvoiced(QueryTobeinvoicedDto queryTobeinvoicedDto,String merchantId);
 
-    ReturnJson  getInvoiceList(TobeinvoicedDto tobeinvoicedDto);
+    ReturnJson  getInvoiceList(QueryTobeinvoicedDto queryTobeinvoicedDto,String merchantId);
 
     ReturnJson  getInvInfoById(String invId);
 

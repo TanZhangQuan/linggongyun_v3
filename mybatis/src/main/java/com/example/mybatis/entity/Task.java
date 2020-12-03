@@ -9,6 +9,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
@@ -64,13 +65,13 @@ public class Task extends BaseEntity {
      * 发布时间
      */
     @ApiModelProperty("发布时间")
-    private LocalDateTime releaseDate;
+    private LocalDate releaseDate;
 
     /**
      * 截止时间
      */
     @ApiModelProperty("截止时间")
-    private LocalDateTime deadlineDate;
+    private LocalDate deadlineDate;
 
 
     /**
@@ -125,13 +126,13 @@ public class Task extends BaseEntity {
      * 合作类型
      */
     @ApiModelProperty("合作类型")
-    private String cooperateMode;
+    private Integer cooperateMode;
 
     /**
      * 任务模式
      */
     @ApiModelProperty("任务模式")
-    private String taskMode;
+    private Integer taskMode;
 
     /**
      * 任务状态:0发布中,1已接单,2交付中,3已完毕,4已关闭

@@ -10,7 +10,7 @@ public class SellerVo {
     //税源地名称
     private String taxName;
     //纳税人识别号
-    private String invoiceTaxno;
+    private String creditCode;
     //地址
     private String taxAddress;
     //电话

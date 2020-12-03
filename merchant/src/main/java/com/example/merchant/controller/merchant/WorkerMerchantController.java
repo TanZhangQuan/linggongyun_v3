@@ -40,7 +40,7 @@ public class WorkerMerchantController {
 
     @PostMapping("/getWorkerAll")
     @LoginRequired
-    @ApiOperation(value = "获取商户的所以创客", notes = "获取商户的所以创客", httpMethod = "POST")
+    @ApiOperation(value = "获取商户的所有创客", notes = "获取商户的所有创客", httpMethod = "POST")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "pageNo", value = "页数", required = true),
             @ApiImplicitParam(name = "pageSize", value = "每页的条数", required = true)

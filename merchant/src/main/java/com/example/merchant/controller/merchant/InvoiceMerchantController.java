@@ -1,17 +1,18 @@
 package com.example.merchant.controller.merchant;
 
 import com.example.common.util.ReturnJson;
+import com.example.mybatis.dto.QueryTobeinvoicedDto;
+import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.*;
 import com.example.mybatis.dto.InvoiceApplicationDto;
 import com.example.mybatis.dto.TobeinvoicedDto;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import io.swagger.annotations.*;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 
 /**
  * <p>
@@ -24,6 +25,7 @@ import javax.annotation.Resource;
 @Api(value = "商户总包发票操作接口", tags = {"商户总包发票操作接口"})
 @RestController
 @RequestMapping("/merchant/invoice")
+@Validated
 public class InvoiceMerchantController {
 
     @Resource
@@ -46,14 +48,17 @@ public class InvoiceMerchantController {
 
     @ApiOperation("总包发票列表,待开票")
     @PostMapping(value = "/gettobeinvoiced")
-    public ReturnJson gettobeinvoiced(TobeinvoicedDto tobeinvoicedDto) {
-        return invoiceService.selectTobeinvoiced(tobeinvoicedDto);
+    @LoginRequired
+    public ReturnJson gettobeinvoiced(@Valid @RequestBody QueryTobeinvoicedDto queryTobeinvoicedDto,
+                                      @RequestAttribute(value = "userId") @ApiParam(hidden = true) String merchantId) {
+        return invoiceService.selectTobeinvoiced(queryTobeinvoicedDto,merchantId);
     }
 
     @ApiOperation("总包发票列表,已开票")
     @PostMapping(value = "/getInvoiceList")
-    public ReturnJson getInvoiceList(TobeinvoicedDto tobeinvoicedDto) {
-        return invoiceService.getInvoiceList(tobeinvoicedDto);
+    public ReturnJson getInvoiceList(@RequestBody QueryTobeinvoicedDto queryTobeinvoicedDto,
+                                     @RequestAttribute(value = "userId") @ApiParam(hidden = true) String merchantId) {
+        return invoiceService.getInvoiceList(queryTobeinvoicedDto,merchantId);
     }
 
     @ApiOperation("总包发票列表已开票,发票信息")
@@ -89,7 +94,8 @@ public class InvoiceMerchantController {
 
     @ApiOperation("开票类目")
     @GetMapping(value = "/getListInv")
-    public ReturnJson getListInv(String id) {
+    @LoginRequired
+    public ReturnJson getListInv(@RequestAttribute(value = "userId") @ApiParam(hidden = true) String id) {
         return invoiceCatalogService.getListInv(id);
     }
 
@@ -104,5 +110,17 @@ public class InvoiceMerchantController {
     public ReturnJson addInvApplication(InvoiceApplicationDto invoiceApplicationDto) {
         return invoiceApplicationService.addInvApplication(invoiceApplicationDto);
     }
+
+    @ApiOperation("去申请开票")
+    @PostMapping(value = "/goInvApplication")
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(name = "payIds", value = "支付订单ID,多个以,隔开", required = true)
+    })
+    @LoginRequired
+    public ReturnJson goInvApplication(@NotBlank(message = "支付订单ID不能为空") @RequestParam String payIds, @RequestAttribute("userId") @ApiParam(hidden = true) String merchantId) {
+        return invoiceApplicationService.goInvApplication(payIds,merchantId);
+    }
+
+
 
 }

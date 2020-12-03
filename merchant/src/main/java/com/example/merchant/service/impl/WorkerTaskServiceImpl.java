@@ -9,9 +9,11 @@ import com.example.mybatis.entity.Task;
 import com.example.mybatis.entity.Worker;
 import com.example.mybatis.entity.WorkerTask;
 import com.example.mybatis.mapper.TaskDao;
+import com.example.mybatis.mapper.WorkerDao;
 import com.example.mybatis.mapper.WorkerTaskDao;
 import com.example.merchant.service.WorkerTaskService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.example.mybatis.vo.WorkerPayInfoVo;
 import com.example.mybatis.vo.WorkerTaskInfoVo;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,6 +38,8 @@ public class WorkerTaskServiceImpl extends ServiceImpl<WorkerTaskDao, WorkerTask
     private WorkerTaskDao workerTaskDao;
     @Resource
     private TaskDao taskDao;
+    @Resource
+    private WorkerDao workerDao;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -130,4 +134,12 @@ public class WorkerTaskServiceImpl extends ServiceImpl<WorkerTaskDao, WorkerTask
         IPage<WorkerTaskInfoVo> iPage=workerTaskDao.queryWorkerTaskInfo(page,workerId);
         return ReturnJson.success(iPage);
     }
+
+    @Override
+    public ReturnJson queryWorkerPayInfo(String workerId, Integer pageNo, Integer pageSize) {
+        Page page=new Page(pageNo,pageSize);
+        IPage<WorkerPayInfoVo> iPage=workerDao.queryWorkerPayInfo(page,workerId);
+        return ReturnJson.success(iPage);
+    }
+
 }

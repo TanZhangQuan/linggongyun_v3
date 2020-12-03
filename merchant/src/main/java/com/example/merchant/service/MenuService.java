@@ -35,4 +35,6 @@ public interface MenuService extends IService<Menu> {
     ReturnJson daletePassRole(String managersId);
 
     ReturnJson updataPassRoleStatus(String managersId, Integer status);
+
+    ReturnJson getManagersInfo(String managersId);
 }

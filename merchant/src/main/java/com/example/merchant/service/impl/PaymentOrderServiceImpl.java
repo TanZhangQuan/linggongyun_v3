@@ -195,15 +195,19 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ReturnJson saveOrUpdataPaymentOrder(AddPaymentOrderDto addPaymentOrderDto,String merchantId) {
+    public ReturnJson saveOrUpdataPaymentOrder(AddPaymentOrderDto addPaymentOrderDto, String merchantId) {
+        if (addPaymentOrderDto.getPaymentInventories() == null) {
+            return ReturnJson.error("支付清单不能为空！");
+        }
         PaymentDto paymentDto = addPaymentOrderDto.getPaymentDto();
         PaymentOrder paymentOrder = new PaymentOrder();
         BeanUtils.copyProperties(paymentDto, paymentOrder);
         List<PaymentInventory> paymentInventories = addPaymentOrderDto.getPaymentInventories();
         String id = paymentOrder.getId();
-        if (merchantId!=null){
-            Merchant merchant=merchantDao.selectById(merchantId);
-            paymentOrder.setCompanyId(merchant.getCompanyId());
+        if (merchantId != null) {
+            CompanyInfo companyInfo = companyInfoDao.selectById(merchantId);
+            paymentOrder.setCompanyId(companyInfo.getId());
+            paymentOrder.setCompanySName(companyInfo.getCompanyName());
         }
         if (id != null && paymentOrder.getPaymentOrderStatus() == 0) {
             List<PaymentInventory> paymentInventoryList = paymentInventoryDao.selectList(new QueryWrapper<PaymentInventory>().eq("payment_order_id", id));
