@@ -7,19 +7,20 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.common.util.DateUtil;
 import com.example.common.util.ReturnJson;
 import com.example.common.util.Tools;
+import com.example.mybatis.dto.QueryTobeinvoicedDto;
 import com.example.merchant.service.InvoiceApplicationService;
 import com.example.merchant.service.InvoiceService;
 import com.example.mybatis.dto.AddInvoiceDto;
 import com.example.mybatis.dto.TobeinvoicedDto;
 import com.example.mybatis.entity.Invoice;
 import com.example.mybatis.entity.InvoiceLadderPrice;
+import com.example.mybatis.entity.Merchant;
 import com.example.mybatis.entity.PaymentInventory;
 import com.example.mybatis.mapper.InvoiceDao;
 import com.example.mybatis.mapper.InvoiceLadderPriceDao;
+import com.example.mybatis.mapper.MerchantDao;
 import com.example.mybatis.mapper.PaymentInventoryDao;
 import com.example.mybatis.vo.*;
-import org.apache.ibatis.session.RowBounds;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -53,19 +54,23 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
     private InvoiceLadderPriceDao invoiceLadderPriceDao;
     @Resource
     private PaymentInventoryDao paymentInventoryDao;
+    @Resource
+    private MerchantDao merchantDao;
 
 
     @Override
-    public ReturnJson selectTobeinvoiced(TobeinvoicedDto tobeinvoicedDto) {
-        Page page = new Page(tobeinvoicedDto.getPageNo(), tobeinvoicedDto.getPageSize());
-        IPage<TobeinvoicedVo> list = invoiceDao.selectTobeinvoiced(page, tobeinvoicedDto);
+    public ReturnJson selectTobeinvoiced(QueryTobeinvoicedDto queryTobeinvoicedDto,String merchantId) {
+        Merchant merchant=merchantDao.selectById(merchantId);
+        Page page = new Page(queryTobeinvoicedDto.getPageNo(), queryTobeinvoicedDto.getPageSize());
+        IPage<TobeinvoicedVo> list = invoiceDao.selectTobeinvoiced(page, queryTobeinvoicedDto,merchant.getCompanyId());
         return ReturnJson.success(list);
     }
 
     @Override
-    public ReturnJson getInvoiceList(TobeinvoicedDto tobeinvoicedDto) {
-        Page page = new Page(tobeinvoicedDto.getPageNo(), tobeinvoicedDto.getPageSize());
-        IPage<InvoiceVo> list = invoiceDao.getInvoiceList(page, tobeinvoicedDto);
+    public ReturnJson getInvoiceList(QueryTobeinvoicedDto queryTobeinvoicedDto,String merchantId) {
+        Merchant merchant=merchantDao.selectById(merchantId);
+        Page page = new Page(queryTobeinvoicedDto.getPageNo(), queryTobeinvoicedDto.getPageSize());
+        IPage<InvoiceVo> list = invoiceDao.getInvoiceList(page, queryTobeinvoicedDto,merchant.getCompanyId());
         return ReturnJson.success(list);
     }
 

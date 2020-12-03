@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.common.util.ReturnJson;
 import com.example.common.util.VerificationCheck;
+import com.example.merchant.dto.platform.AddInvoiceCatalogDto;
 import com.example.merchant.dto.platform.TaxDto;
 import com.example.merchant.dto.platform.TaxListDto;
 import com.example.merchant.exception.CommonException;
@@ -14,6 +15,7 @@ import com.example.merchant.service.MyBankService;
 import com.example.merchant.service.TaxService;
 import com.example.merchant.vo.TaxBriefVO;
 import com.example.merchant.vo.platform.HomePageVO;
+import com.example.merchant.vo.platform.TaxListVo;
 import com.example.merchant.vo.platform.TaxPlatformVO;
 import com.example.mybatis.entity.*;
 import com.example.mybatis.mapper.*;
@@ -142,11 +144,13 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
     /**
      * 添加开票类目
      *
-     * @param invoiceCatalog
+     * @param addInvoiceCatalogDto
      * @return
      */
     @Override
-    public ReturnJson saveCatalog(InvoiceCatalog invoiceCatalog) {
+    public ReturnJson saveCatalog(AddInvoiceCatalogDto addInvoiceCatalogDto) {
+        InvoiceCatalog invoiceCatalog = new InvoiceCatalog();
+        BeanUtils.copyProperties(addInvoiceCatalogDto, invoiceCatalog);
         int i = invoiceCatalogDao.insert(invoiceCatalog);
         if (i == 1) {
             return ReturnJson.success("添加类目成功！");
@@ -291,8 +295,10 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
         homePageVO.setPaymentManyMoney(manyMoney);
 
         InvoicePO totalInvoice = invoiceDao.selectInvoiceMoneyPaasTax(taxId);
-        homePageVO.setInvoiceTotalCount(totalInvoice.getCount());
-        homePageVO.setInvoiceTotalMoney(totalInvoice.getTotalMoney());
+        if (totalInvoice != null) {
+            homePageVO.setInvoiceTotalCount(totalInvoice.getCount());
+            homePageVO.setInvoiceTotalMoney(totalInvoice.getTotalMoney());
+        }
 
         InvoicePO manyInvoice = crowdSourcingInvoiceDao.selectCrowdInvoiceMoneyPaasTax(taxId);
         homePageVO.setInvoiceManyCount(manyInvoice.getCount());
@@ -345,6 +351,18 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
             returnJson = new ReturnJson("查询成功", sellerVo, 200);
         }
         return returnJson;
+    }
+
+    @Override
+    public ReturnJson getTaxPaasList() {
+        List<Tax> taxList = taxDao.selectList(new QueryWrapper<Tax>().eq("tax_status", 0));
+        List<TaxListVo> taxListVos = new ArrayList<>();
+        for (int i = 0; i < taxList.size(); i++) {
+            TaxListVo taxListVo = new TaxListVo();
+            BeanUtils.copyProperties(taxList.get(i), taxListVo);
+            taxListVos.add(taxListVo);
+        }
+        return ReturnJson.success(taxListVos);
     }
 
 }

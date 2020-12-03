@@ -48,16 +48,19 @@
     </sql>
 
     <resultMap id="SellerById" type="com.example.mybatis.vo.SellerVo">
-        <result column="tax_name" property="taxName"/>
+        <result column="tax_s_name" property="taxName"/>
         <result column="tax_address" property="taxAddress"/>
-        <result column="phone" property="phone"/>
+        <result column="link_mobile" property="phone"/>
         <result column="bank_name" property="bankName"/>
         <result column="bank_code" property="bankCode"/>
+        <result column="credit_code" property="creditCode"/>
     </resultMap>
 
     <select id="getSellerById" resultMap="SellerById">
-        SELECT tax_name,invoice_taxno,tax_address,phone,bank_name,bank_code
-        FROM tb_tax WHERE id=#{id}
+        SELECT t.tax_s_name,t.credit_code,t.tax_address,t.link_mobile,tp.bank_code,tp.bank_name
+        FROM tb_tax t
+        LEFT JOIN tb_tax_package tp ON tp.tax_id=t.id AND tp.package_status=0
+        WHERE t.id=#{id}
     </select>
 
     <resultMap id="taxPO" type="com.example.mybatis.po.TaxPO">

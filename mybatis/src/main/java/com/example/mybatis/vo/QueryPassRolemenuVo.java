@@ -1,16 +1,17 @@
 package com.example.mybatis.vo;
 
-import com.example.mybatis.entity.Menu;
 import lombok.Data;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * @Description
+ * @Author JWei <jwei0401@163.com>
+ * @Date 2020/12/2
+ */
 @Data
-public class RoleMenuPassVo {
+public class QueryPassRolemenuVo {
     private String managersId;
-
-    private String parentId;
 
     private String realNmae;
 
@@ -20,9 +21,5 @@ public class RoleMenuPassVo {
 
     private String loginMoblie;
 
-    private Integer statue;
-
-    private LocalDateTime createDate;
-
-    private List<Menu> list;
+    private List<MenuVo> list;
 }

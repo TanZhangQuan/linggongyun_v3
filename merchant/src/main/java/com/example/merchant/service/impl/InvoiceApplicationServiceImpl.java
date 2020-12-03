@@ -4,15 +4,28 @@ import com.baomidou.mybatisplus.core.incrementer.DefaultIdentifierGenerator;
 import com.baomidou.mybatisplus.core.incrementer.IdentifierGenerator;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.common.util.ReturnJson;
+import com.example.merchant.dto.merchant.UpdateApplication;
 import com.example.merchant.service.InvoiceApplicationService;
+import com.example.merchant.vo.merchant.GoApplicationInvoiceVo;
 import com.example.mybatis.dto.ApplicationPaymentDto;
 import com.example.mybatis.dto.InvoiceApplicationDto;
 import com.example.mybatis.entity.InvoiceApplication;
+import com.example.mybatis.entity.PaymentOrder;
 import com.example.mybatis.mapper.InvoiceApplicationDao;
+import com.example.mybatis.mapper.MerchantDao;
+import com.example.mybatis.mapper.PaymentOrderDao;
+import com.example.mybatis.mapper.TaxDao;
+import com.example.mybatis.vo.BillingInfoVo;
+import com.example.mybatis.vo.BuyerVo;
+import com.example.mybatis.vo.PaymentOrderVo;
+import com.example.mybatis.vo.SellerVo;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class InvoiceApplicationServiceImpl extends ServiceImpl<InvoiceApplicationDao, InvoiceApplication> implements InvoiceApplicationService {
@@ -20,9 +33,18 @@ public class InvoiceApplicationServiceImpl extends ServiceImpl<InvoiceApplicatio
     @Resource
     private InvoiceApplicationDao invoiceApplicationDao;
 
+    @Resource
+    private PaymentOrderDao paymentOrderDao;
+
+    @Resource
+    private MerchantDao merchantDao;
+
+    @Resource
+    private TaxDao taxDao;
+
     @Override
     public int updateById(String applicationId, Integer state) {
-        InvoiceApplication invoiceApplication=new InvoiceApplication();
+        InvoiceApplication invoiceApplication = new InvoiceApplication();
         invoiceApplication.setApplicationState(state);
         invoiceApplication.setId(applicationId);
         return invoiceApplicationDao.updateById(invoiceApplication);
@@ -30,6 +52,7 @@ public class InvoiceApplicationServiceImpl extends ServiceImpl<InvoiceApplicatio
 
     /**
      * 添加开票申请
+     *
      * @param invoiceApplicationDto
      * @return
      */
@@ -37,33 +60,69 @@ public class InvoiceApplicationServiceImpl extends ServiceImpl<InvoiceApplicatio
     @Transactional(rollbackFor = Exception.class)
     public ReturnJson addInvApplication(InvoiceApplicationDto invoiceApplicationDto) {
         ReturnJson returnJson = new ReturnJson("添加失败", 300);
-
+        InvoiceApplication invoiceApplication = new InvoiceApplication();
         IdentifierGenerator identifierGenerator = new DefaultIdentifierGenerator();
-        invoiceApplicationDto.setId(identifierGenerator.nextId(new Object()).toString());
-        int num = invoiceApplicationDao.addInvApplication(invoiceApplicationDto);
+        BeanUtils.copyProperties(invoiceApplicationDto, invoiceApplication);
+        int num = invoiceApplicationDao.insert(invoiceApplication);
         if (num > 0) {
             String[] paymentOrderIds = invoiceApplicationDto.getPaymentOrderId().split(",");
             for (int i = 0; i < paymentOrderIds.length; i++) {
                 ApplicationPaymentDto applicationPaymentDto = new ApplicationPaymentDto();
                 applicationPaymentDto.setId(identifierGenerator.nextId(new Object()).toString());
-                applicationPaymentDto.setInvoiceApplicationId(invoiceApplicationDto.getId());
+                applicationPaymentDto.setInvoiceApplicationId(invoiceApplication.getId());
                 applicationPaymentDto.setPaymentOrderId(paymentOrderIds[i]);
-                int nums = this.addApplicationPay(applicationPaymentDto);
-                if (nums > 0) {
-                    returnJson = new ReturnJson("添加成功", 200);
-                }
+                this.addApplicationPay(applicationPaymentDto);
+                PaymentOrder paymentOrder=paymentOrderDao.selectById(paymentOrderIds[i]);
+                paymentOrder.setIsInvoice(1);
+                paymentOrderDao.updateById(paymentOrder);
             }
+
+            return ReturnJson.success("添加成功", 200);
         }
         return returnJson;
     }
 
-    /**
-     * 支付&申请对应
-     * @param applicationPaymentDto
-     * @return
-     */
     @Override
     public int addApplicationPay(ApplicationPaymentDto applicationPaymentDto) {
         return invoiceApplicationDao.addApplicationPay(applicationPaymentDto);
+    }
+
+    @Override
+    public ReturnJson goInvApplication(String payIds, String merchantId) {
+        GoApplicationInvoiceVo goApplicationInvoiceVo = new GoApplicationInvoiceVo();
+        String[] paymentOrderIds = payIds.split(",");
+        PaymentOrder paymentOrderOne = paymentOrderDao.selectById(paymentOrderIds[0]);
+        List<PaymentOrderVo> paymentOrderVoList = new ArrayList<>();
+        for (int i = 0; i < paymentOrderIds.length; i++) {
+            PaymentOrderVo paymentOrder = paymentOrderDao.getPaymentOrderById(paymentOrderIds[i]);
+            paymentOrderVoList.add(paymentOrder);
+        }
+        for (int i = 0; i < paymentOrderVoList.size(); i++) {
+            if (!paymentOrderVoList.get(0).getPlatformServiceProvider().equals(paymentOrderVoList.get(i).getPlatformServiceProvider())) {
+                return ReturnJson.error("合并开票失败，合并开票必须选择同一个服务商");
+            }
+        }
+        goApplicationInvoiceVo.setPaymentOrderVoList(paymentOrderVoList);
+        List<BillingInfoVo> billingInfoVoList = new ArrayList<>();
+        for (int i = 0; i < paymentOrderIds.length; i++) {
+            BillingInfoVo billingInfo = paymentOrderDao.getBillingInfo(paymentOrderIds[i]);
+            billingInfoVoList.add(billingInfo);
+        }
+        goApplicationInvoiceVo.setBillingInfoVoList(billingInfoVoList);
+        goApplicationInvoiceVo.setBuyerVo(merchantDao.getBuyerById(merchantId));
+        goApplicationInvoiceVo.setSellerVo(taxDao.getSellerById(paymentOrderOne.getTaxId()));
+        return ReturnJson.success(goApplicationInvoiceVo);
+    }
+
+    @Override
+    public ReturnJson updateApplication(UpdateApplication updateApplication, String userId) {
+        InvoiceApplication invoiceApplication = invoiceApplicationDao.selectById(updateApplication.getId());
+        if (invoiceApplication != null) {
+            BeanUtils.copyProperties(updateApplication, invoiceApplication);
+            invoiceApplication.setApplicationPerson(userId);
+            invoiceApplicationDao.updateById(invoiceApplication);
+            return ReturnJson.success("修改成功");
+        }
+        return ReturnJson.error("没有对应的开票申请！");
     }
 }

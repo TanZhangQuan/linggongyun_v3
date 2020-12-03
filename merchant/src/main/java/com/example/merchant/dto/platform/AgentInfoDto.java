@@ -17,7 +17,6 @@ public class AgentInfoDto {
     /**
      * 代理商ID
      */
-    @Autowired
     @ApiModelProperty(notes = "代理商ID", value = "代理商ID")
     private String agentId;
 
@@ -70,11 +69,6 @@ public class AgentInfoDto {
     @ApiModelProperty(notes = "初始密码", value = "初始密码", required = true)
     private String initPassWord;
 
-    /**
-     * 确认密码
-     */
-    @ApiModelProperty(notes = "确认密码", value = "确认密码", required = true)
-    private String confirmPassWord;
     /**
      * 0可以用1禁用
      */

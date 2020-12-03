@@ -36,4 +36,5 @@ public interface StructureService {
 
     ReturnJson removeAgent(String agentId);
 
+    ReturnJson querySalesman();
 }

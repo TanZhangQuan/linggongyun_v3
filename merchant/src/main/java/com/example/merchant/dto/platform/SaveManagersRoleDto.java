@@ -16,6 +16,7 @@ public class SaveManagersRoleDto {
     @NotNull(message = "角色不能为空")
     private String roleName;
 
+    @NotNull(message = "手机号码不能为空")
     private String mobileCode;
 
     @NotNull(message = "登录账号不能为空")

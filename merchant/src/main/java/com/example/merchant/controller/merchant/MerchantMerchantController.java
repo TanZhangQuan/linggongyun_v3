@@ -100,8 +100,9 @@ public class MerchantMerchantController {
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "address", value = "快递地址信息", required = true, dataType = "Address")
     })
-    public ReturnJson addOrUpdataAddress(@RequestBody Address address) {
-        return addressService.addOrUpdataAddress(address);
+    @LoginRequired
+    public ReturnJson addOrUpdataAddress(@RequestBody Address address,@ApiParam(hidden = true) @RequestAttribute("userId") String merchantId) {
+        return addressService.addOrUpdataAddress(address,merchantId);
     }
 
     @PostMapping("/updataAddressStatus")

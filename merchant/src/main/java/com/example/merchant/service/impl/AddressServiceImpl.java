@@ -35,7 +35,9 @@ public class AddressServiceImpl extends ServiceImpl<AddressDao, Address> impleme
     }
 
     @Override
-    public ReturnJson addOrUpdataAddress(Address address) {
+    public ReturnJson addOrUpdataAddress(Address address,String merchantId) {
+        Merchant merchant=merchantDao.selectById(merchantId);
+        address.setCompanyId(merchant.getCompanyId());
         if (address.getIsNot() == 0) {
             Address addressOne = this.getOne(new QueryWrapper<Address>().eq("company_id", address.getCompanyId()).eq("is_not", 0));
             if (addressOne != null) {

@@ -72,4 +72,14 @@ public class ManagersPaasController {
     public ReturnJson managerLogout(@RequestAttribute(value = "userId") @ApiParam(hidden = true) String merchantId) {
         return managersService.logout(merchantId);
     }
+
+    @PostMapping("/updataPassWord")
+    @ApiOperation(value = "修改或忘记密码", notes = "修改或忘记密码", httpMethod = "POST")
+    @ApiImplicitParams(value = {@ApiImplicitParam(name = "loginMobile", value = "登录用的手机号码", required = true),
+            @ApiImplicitParam(name = "checkCode", value = "验证码", required = true), @ApiImplicitParam(name = "newPassWord", value = "新密码", required = true)})
+    public ReturnJson updataPassWord(@NotBlank(message = "手机号不能为空") @RequestParam(required = false) String loginMobile,
+                                     @NotBlank(message = "验证码不能为空") @RequestParam(required = false) String checkCode,
+                                     @NotBlank(message = "新密码不能为空") @RequestParam(required = false) String newPassWord) {
+        return managersService.updataPassWord(loginMobile, checkCode, newPassWord);
+    }
 }

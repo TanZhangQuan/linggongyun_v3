@@ -16,4 +16,6 @@ public interface ManagersService extends IService<Managers>{
     ReturnJson getCustomizedInfo(String CustomizedId);
 
     ReturnJson logout(String manangerId);
+
+    ReturnJson updataPassWord(String loginMobile,String checkCode,String newPassWord);
 }

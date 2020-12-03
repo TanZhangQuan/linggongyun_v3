@@ -10,6 +10,7 @@ import com.example.mybatis.mapper.*;
 import com.example.merchant.service.MenuService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.mybatis.vo.MenuListVo;
+import com.example.mybatis.vo.QueryPassRolemenuVo;
 import com.example.mybatis.vo.RoleMenuPassVo;
 import com.example.mybatis.vo.RoleMenuVo;
 import com.example.redis.dao.RedisDao;
@@ -186,15 +187,17 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ReturnJson savePlatRole(SaveManagersRoleDto saveManagersRoleDto, String managersId) {
-        Managers managersOne;
+
+        Managers managersOne = managersDao.selectOne(new QueryWrapper<Managers>().eq("mobile_code", saveManagersRoleDto.getMobileCode()));
+        if (managersOne != null) {
+            return ReturnJson.error("此手机号码已近注册过！");
+        }
         Managers managers = new Managers();
         BeanUtils.copyProperties(saveManagersRoleDto, managers);
-        if (saveManagersRoleDto.getMobileCode() == null) {
-            managersOne = managersDao.selectById(managersId);
-            managers.setMobileCode(managersOne.getMobileCode());
-        }
+        managers.setParentId(managersId);
+        managers.setUserSign(3);
         managers.setPassWord(PWD_KEY + MD5.md5(saveManagersRoleDto.getPassWord()));
-        if (saveManagersRoleDto.getId().trim() == null) {
+        if ("".equals(saveManagersRoleDto.getId())) {
             managersDao.insert(managers);
             String[] menuId = saveManagersRoleDto.getMenuIds().split(",");
             for (int i = 0; i < menuId.length; i++) {
@@ -205,9 +208,6 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
             }
             return ReturnJson.success("添加成功");
         } else {
-            if (managers.getId().trim() == null || managers.getId().trim() == "") {
-                return ReturnJson.success("不存在此管理员");
-            }
             managersDao.updateById(managers);
             objectMenuDao.delete(new QueryWrapper<ObjectMenu>().eq("object_user_id", managers.getId()));
             String[] menuId = saveManagersRoleDto.getMenuIds().split(",");
@@ -245,10 +245,9 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ReturnJson daletePassRole(String managersId) {
-        Managers managers = managersDao.selectById(new QueryWrapper<Managers>().eq("id", managersId));
-        objectMenuDao.delete(new QueryWrapper<ObjectMenu>().eq("merchant_role_id", managers.getId()));
+        objectMenuDao.deleteMenu(managersId);
         managersDao.deleteById(managersId);
-        return ReturnJson.error("操作成功");
+        return ReturnJson.success("操作成功");
     }
 
     /**
@@ -268,6 +267,12 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
             return ReturnJson.success("操作成功");
         }
         return ReturnJson.error("操作失败");
+    }
+
+    @Override
+    public ReturnJson getManagersInfo(String managersId) {
+        QueryPassRolemenuVo roleMenuPassVo = objectMenuDao.queryPassRolemenu(managersId);
+        return ReturnJson.success(roleMenuPassVo);
     }
 
 
