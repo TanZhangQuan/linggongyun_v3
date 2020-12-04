@@ -134,10 +134,13 @@ public class ManagersServiceImpl extends ServiceImpl<ManagersDao, Managers> impl
     @Override
     public ReturnJson updataPassWord(String loginMobile, String checkCode, String newPassWord) {
         String redisCode = redisDao.get(loginMobile);
+        if (redisCode == null) {
+            return ReturnJson.error("你的验证码已过期请重新发送！");
+        }
         if (redisCode.equals(checkCode)) {
             Managers managers = new Managers();
             managers.setPassWord(PWD_KEY + MD5.md5(newPassWord));
-            boolean flag = this.update(managers, new QueryWrapper<Managers>().eq("login_mobile", loginMobile));
+            boolean flag = this.update(managers, new QueryWrapper<Managers>().eq("mobile_code", loginMobile));
             if (flag) {
                 redisDao.remove(loginMobile);
                 return ReturnJson.success("密码修改成功！");

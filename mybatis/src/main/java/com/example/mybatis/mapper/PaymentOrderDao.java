@@ -59,4 +59,6 @@ public interface PaymentOrderDao extends BaseMapper<PaymentOrder> {
     BillCountPO selectYearCount(@Param("workerId") String workerId,@Param("year") Integer year);
 
     PaymentOrderInfoPO selectPaymentOrderInfo(String paymentOrderId);
+
+    List<PaymentOrderVo> queryPaymentOrderInfo(String invoiceAppcationId);
 }

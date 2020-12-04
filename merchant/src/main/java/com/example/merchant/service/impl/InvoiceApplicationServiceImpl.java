@@ -7,6 +7,8 @@ import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.merchant.UpdateApplication;
 import com.example.merchant.service.InvoiceApplicationService;
 import com.example.merchant.vo.merchant.GoApplicationInvoiceVo;
+import com.example.merchant.vo.merchant.InvoiceApplicationVo;
+import com.example.merchant.vo.merchant.QueryApplicationInvoiceVo;
 import com.example.mybatis.dto.ApplicationPaymentDto;
 import com.example.mybatis.dto.InvoiceApplicationDto;
 import com.example.mybatis.entity.InvoiceApplication;
@@ -63,6 +65,7 @@ public class InvoiceApplicationServiceImpl extends ServiceImpl<InvoiceApplicatio
         InvoiceApplication invoiceApplication = new InvoiceApplication();
         IdentifierGenerator identifierGenerator = new DefaultIdentifierGenerator();
         BeanUtils.copyProperties(invoiceApplicationDto, invoiceApplication);
+        invoiceApplication.setApplicationState(1);
         int num = invoiceApplicationDao.insert(invoiceApplication);
         if (num > 0) {
             String[] paymentOrderIds = invoiceApplicationDto.getPaymentOrderId().split(",");
@@ -72,7 +75,7 @@ public class InvoiceApplicationServiceImpl extends ServiceImpl<InvoiceApplicatio
                 applicationPaymentDto.setInvoiceApplicationId(invoiceApplication.getId());
                 applicationPaymentDto.setPaymentOrderId(paymentOrderIds[i]);
                 this.addApplicationPay(applicationPaymentDto);
-                PaymentOrder paymentOrder=paymentOrderDao.selectById(paymentOrderIds[i]);
+                PaymentOrder paymentOrder = paymentOrderDao.selectById(paymentOrderIds[i]);
                 paymentOrder.setIsInvoice(1);
                 paymentOrderDao.updateById(paymentOrder);
             }
@@ -124,5 +127,32 @@ public class InvoiceApplicationServiceImpl extends ServiceImpl<InvoiceApplicatio
             return ReturnJson.success("修改成功");
         }
         return ReturnJson.error("没有对应的开票申请！");
+    }
+
+    @Override
+    public ReturnJson queryApplicationInfo(String applicationId, String userId) {
+        QueryApplicationInvoiceVo queryApplicationInvoiceVo = new QueryApplicationInvoiceVo();
+        List<PaymentOrderVo> paymentOrderVoList = paymentOrderDao.queryPaymentOrderInfo(applicationId);
+        queryApplicationInvoiceVo.setPaymentOrderVoList(paymentOrderVoList);
+        List<BillingInfoVo> billingInfoVoList = new ArrayList<>();
+        for (int i = 0; i < paymentOrderVoList.size(); i++) {
+            BillingInfoVo billingInfo = paymentOrderDao.getBillingInfo(paymentOrderVoList.get(i).getId());
+            billingInfoVoList.add(billingInfo);
+        }
+        queryApplicationInvoiceVo.setBillingInfoVoList(billingInfoVoList);
+        queryApplicationInvoiceVo.setBuyerVo(merchantDao.getBuyerById(userId));
+        PaymentOrder paymentOrderOne = paymentOrderDao.selectById(paymentOrderVoList.get(0).getId());
+        queryApplicationInvoiceVo.setSellerVo(taxDao.getSellerById(paymentOrderOne.getTaxId()));
+        InvoiceApplication invoiceApplication=invoiceApplicationDao.selectById(applicationId);
+        InvoiceApplicationVo invoiceApplicationVo=new InvoiceApplicationVo();
+        BeanUtils.copyProperties(invoiceApplication,invoiceApplicationVo);
+        queryApplicationInvoiceVo.setInvoiceApplicationVo(invoiceApplicationVo);
+        return ReturnJson.success(queryApplicationInvoiceVo);
+    }
+
+    @Override
+    public ReturnJson queryInvoiceInfo(String invoiceId) {
+
+        return null;
     }
 }

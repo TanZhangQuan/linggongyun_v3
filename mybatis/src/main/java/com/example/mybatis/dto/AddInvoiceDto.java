@@ -76,10 +76,4 @@ public class AddInvoiceDto {
     @ApiModelProperty(value = "开票说明")
     private String invoiceDesc;
 
-    @ApiModelProperty(value = "创建时间")
-    private String createDate;
-
-    @ApiModelProperty(value = "更新时间")
-    private String updateDate;
-
 }

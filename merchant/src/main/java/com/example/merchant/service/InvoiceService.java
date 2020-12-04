@@ -21,7 +21,7 @@ public interface InvoiceService extends IService<Invoice> {
 
     ReturnJson  getInvoiceList(QueryTobeinvoicedDto queryTobeinvoicedDto,String merchantId);
 
-    ReturnJson  getInvInfoById(String invId);
+    ReturnJson  getInvInfoById(String invId,String merchantId);
 
     ReturnJson isServiceProvider(String serviceProviderNames);
     /**

@@ -1,6 +1,7 @@
 package com.example.merchant.controller.merchant;
 
 import com.example.common.util.ReturnJson;
+import com.example.merchant.dto.merchant.UpdateApplication;
 import com.example.mybatis.dto.QueryTobeinvoicedDto;
 import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.*;
@@ -51,20 +52,23 @@ public class InvoiceMerchantController {
     @LoginRequired
     public ReturnJson gettobeinvoiced(@Valid @RequestBody QueryTobeinvoicedDto queryTobeinvoicedDto,
                                       @RequestAttribute(value = "userId") @ApiParam(hidden = true) String merchantId) {
-        return invoiceService.selectTobeinvoiced(queryTobeinvoicedDto,merchantId);
+        return invoiceService.selectTobeinvoiced(queryTobeinvoicedDto, merchantId);
     }
 
     @ApiOperation("总包发票列表,已开票")
     @PostMapping(value = "/getInvoiceList")
+    @LoginRequired
     public ReturnJson getInvoiceList(@RequestBody QueryTobeinvoicedDto queryTobeinvoicedDto,
                                      @RequestAttribute(value = "userId") @ApiParam(hidden = true) String merchantId) {
-        return invoiceService.getInvoiceList(queryTobeinvoicedDto,merchantId);
+        return invoiceService.getInvoiceList(queryTobeinvoicedDto, merchantId);
     }
+
 
     @ApiOperation("总包发票列表已开票,发票信息")
     @PostMapping(value = "/getInvInfoById")
-    public ReturnJson getInvInfoById(String InvId) {
-        return invoiceService.getInvInfoById(InvId);
+    @LoginRequired
+    public ReturnJson getInvInfoById(String InvId,@RequestAttribute("userId")@ApiParam(hidden = true) String merchantId) {
+        return invoiceService.getInvInfoById(InvId,merchantId);
     }
 
     @ApiOperation("支付信息,对应多个支付支付id用逗号隔开")
@@ -118,9 +122,22 @@ public class InvoiceMerchantController {
     })
     @LoginRequired
     public ReturnJson goInvApplication(@NotBlank(message = "支付订单ID不能为空") @RequestParam String payIds, @RequestAttribute("userId") @ApiParam(hidden = true) String merchantId) {
-        return invoiceApplicationService.goInvApplication(payIds,merchantId);
+        return invoiceApplicationService.goInvApplication(payIds, merchantId);
     }
 
 
+    @ApiOperation("修改开票申请")
+    @PostMapping(value = "/updateApplication")
+    @LoginRequired
+    public ReturnJson updateApplication(@Valid @RequestBody UpdateApplication updateApplication, @RequestAttribute("userId") @ApiParam(hidden = true) String merchantId) {
+        return invoiceApplicationService.updateApplication(updateApplication, merchantId);
+    }
+
+    @ApiOperation("去编辑开票信息")
+    @PostMapping(value = "/queryApplicationInfo")
+    @LoginRequired
+    public ReturnJson queryApplicationInfo(@NotBlank(message = "申请ID不能为空！") @RequestParam String applicationId, @RequestAttribute("userId") @ApiParam(hidden = true) String merchantId) {
+        return invoiceApplicationService.queryApplicationInfo(applicationId, merchantId);
+    }
 
 }

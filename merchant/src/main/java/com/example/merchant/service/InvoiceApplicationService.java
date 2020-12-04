@@ -44,4 +44,20 @@ public interface InvoiceApplicationService extends IService<InvoiceApplication> 
      * @return
      */
     ReturnJson updateApplication(UpdateApplication updateApplication,String userId);
+
+    /**
+     * 查询开票申请
+     *
+     * @param applicationId
+     * @return
+     */
+    ReturnJson queryApplicationInfo(String applicationId,String userId);
+
+    /**
+     * 已开票查看
+     *
+     * @param invoiceId
+     * @return
+     */
+    ReturnJson queryInvoiceInfo(String invoiceId);
 }

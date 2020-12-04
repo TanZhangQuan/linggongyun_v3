@@ -12,8 +12,11 @@ import java.time.LocalDateTime;
 @ApiModel(description = "总包支付订单的信息")
 public class PaymentOrderInfoPO {
 
+
     @ApiModelProperty("支付订单编号")
     private String paymentOrderId;
+
+    private String companyId;
 
     @ApiModelProperty("服务商名称")
     private String taxName;
@@ -72,4 +75,13 @@ public class PaymentOrderInfoPO {
 
     @ApiModelProperty("收款的银行卡号（也是分包支付的银行卡号）")
     private String payeeBankCode;
+
+    @ApiModelProperty("创客承担的税率的百分比（如50，不需要把百分比换算成小数）")
+    private BigDecimal receviceTax;
+
+    @ApiModelProperty("商户承担的税率的百分比（如50，不需要把百分比换算成小数）")
+    private BigDecimal merchantTax;
+
+    @ApiModelProperty("0商户承担，1创客承担，2商户创客共同承担")
+    private Integer taxStatus;
 }

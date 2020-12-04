@@ -40,13 +40,14 @@
         <result column="tax_receipt_url" property="taxReceiptUrl"/>
         <result column="is_invoice" property="isInvoice"/>
         <collection property="list" ofType="com.example.mybatis.vo.OrderSubpackageVo">
-            <result column="id" property="id"/>
+            <result column="pid" property="id"/>
             <result column="payment_inventory" property="paymentInventory"/>
             <result column="subpackage_payment" property="subpackagePayment"/>
         </collection>
     </resultMap>
 
     <resultMap id="InvInfo" type="com.example.mybatis.vo.InvoiceInformationVo">
+        <result column="id" property="invAppId"/>
         <result column="invoice_catalog_type" property="invoiceCatalogType"/>
         <result column="application_desc" property="applicationDesc"/>
         <result column="application_address" property="applicationAddress"/>
@@ -173,7 +174,7 @@
 
 
     <resultMap id="TobeInvoiced" type="com.example.mybatis.vo.TobeinvoicedVo">
-        <id column="invoice_application_id" property="invoiceApplicationId"/>
+        <id column="id" property="invoiceApplicationId"/>
         <result column="company_s_name" property="companySName"/>
         <result column="platform_service_provider" property="platformServiceProvider"/>
         <result column="application_desc" property="applicationDesc"/>
@@ -226,7 +227,7 @@
         i.invoice_url,
         i.tax_receipt_url,
         po.is_invoice,
-        po.id,
+        po.id as pid,
         po.payment_inventory,
         po.turnkey_project_payment
         FROM tb_payment_order AS po
@@ -247,7 +248,7 @@
     </select>
 
     <select id="getInvInfoById" resultMap="InvInfo">
-        SELECT invapp.invoice_catalog_type,invapp.application_desc,invapp.application_address,i.invoice_url,i.tax_receipt_url,i.express_company_name,i.express_sheet_no
+        SELECT invapp.invoice_catalog_type,	invapp.id,invapp.application_desc,invapp.application_address,i.invoice_url,i.tax_receipt_url,i.express_company_name,i.express_sheet_no
         FROM tb_invoice as i
         INNER JOIN tb_invoice_application as invapp ON i.application_id=invapp.id
         WHERE i.id=#{invId}
@@ -263,7 +264,7 @@
         invapp.application_state,
         invapp.application_date,
         po.is_invoice,
-        po.id,
+        po.id as pid,
         po.payment_inventory,
         po.subpackage_payment
         FROM tb_payment_order AS po
@@ -289,7 +290,7 @@
 
     <select id="getListInvoicequery" resultMap="InvoiceVo">
         SELECT i.id,i.application_id,i.invoice_code,po.company_s_name,po.platform_service_provider,po.is_invoice,ia.application_desc,i.invoice_url,
-        i.tax_receipt_url,ia.application_state,i.invoice_print_date,po.id,po.payment_inventory,po.turnkey_project_payment
+        i.tax_receipt_url,ia.application_state,i.invoice_print_date,po.id as pid,po.payment_inventory,po.turnkey_project_payment
         FROM tb_invoice as i
         INNER JOIN tb_invoice_application as ia ON i.application_id=ia.id
         INNER JOIN tb_application_payment as ap ON ia.id = ap.invoice_application_id

@@ -237,8 +237,7 @@ public class StructureServiceImpl implements StructureService {
             managers.setMobileCode(agentInfoDto.getLinkMobile());
             managers.setStatus(agentInfoDto.getAgentStatus());
             managersService.updateById(managers);
-            Agent agentOne = agentService.getOne(new QueryWrapper<Agent>().eq("id", agentInfoDto.getAgentId()));
-
+            Agent agentOne = agentService.getOne(new QueryWrapper<Agent>().eq("managers_id", agentInfoDto.getAgentId()));
             BeanUtils.copyProperties(agentInfoDto, agent);
             agent.setManagersId(managers.getId());
             agent.setId(agentOne.getId());
