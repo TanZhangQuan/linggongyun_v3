@@ -75,7 +75,8 @@ public class PaymentOrderPaasController {
     @ApiOperation(value = "分包线下支付", notes = "分包线下支付", httpMethod = "POST")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "paymentOrderId", value = "总包支付订单ID", required = true),
             @ApiImplicitParam(name = "subpackagePayment", value = "分包支付回单存储地址", required = true)})
-    public ReturnJson subpackagePay(@NotBlank(message = "支付订单不能为空！") @RequestParam(required = false) String paymentOrderId, @NotBlank(message = "分包支付回单URL不能为空！") @RequestParam(required = false) String subpackagePayment) {
+    public ReturnJson subpackagePay(@NotBlank(message = "支付订单不能为空！") @RequestParam(required = false) String paymentOrderId,
+                                    @NotBlank(message = "分包支付回单URL不能为空！") @RequestParam(required = false) String subpackagePayment) {
         return paymentOrderService.subpackagePayPaas(paymentOrderId, subpackagePayment);
     }
 

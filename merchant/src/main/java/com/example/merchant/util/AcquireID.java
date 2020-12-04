@@ -51,7 +51,7 @@ public class AcquireID {
             }
         }
         if (VerificationCheck.listIsNull(companyIds)) {
-            throw new CommonException(200, "该管理人员没有关联的商户！");
+            throw new CommonException(220, "该管理人员没有关联的商户！");
         }
         return companyIds;
     }

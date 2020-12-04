@@ -315,6 +315,7 @@
 
     <resultMap id="PaymentOrderInfoPOResultMap" type="com.example.mybatis.po.PaymentOrderInfoPO">
         <result column="id" property="paymentOrderId"/>
+        <result column="company_id" property="companyId"/>
         <result column="tax_name" property="taxName"/>
         <result column="worker_money" property="workerMoney"/>
         <result column="company_contract" property="companyContract"/>
@@ -333,36 +334,66 @@
         <result column="payee" property="payee"/>
         <result column="payee_bank_name" property="payeeBankName"/>
         <result column="payee_bank_code" property="payeeBankCode"/>
+        <result column="recevice_tax" property="receviceTax"/>
+        <result column="merchant_tax" property="merchantTax"/>
+        <result column="tax_status" property="merchantTax"/>
     </resultMap>
 
     <!--查询总包订单信息-->
     <select id="selectPaymentOrderInfo" parameterType="string" resultMap="PaymentOrderInfoPOResultMap">
-        SELECT
-        po.id,
-        po.platform_service_provider AS 'tax_name',
-        po.worker_money,
-        po.company_contract,
-        po.payment_inventory,
-        po.task_id,
-        po.acceptance_certificate,
-        po.payment_order_status,
-        po.payment_mode,
-        po.real_money,
-        po.create_date,
-        po.subpackage_payment,
-        po.turnkey_project_payment,
-        ci.company_name,
-        ci.bank_name AS 'payment_bank_name',
-        ci.bank_code AS 'payment_bank_code',
-        tp.payee,
-        tp.bank_name AS 'payee_bank_name',
-        tp.bank_code AS 'payee_bank_code'
-        FROM tb_payment_order po
-        LEFT JOIN tb_tax_package tp
-        ON po.tax_id = tp.tax_id
+            SELECT
+            po.id,
+            po.company_id,
+            po.platform_service_provider AS tax_name,
+            po.worker_money,
+            po.company_contract,
+            po.payment_inventory,
+            po.task_id,
+            po.acceptance_certificate,
+            po.payment_order_status,
+            po.payment_mode,
+            po.real_money,
+            po.create_date,
+            po.subpackage_payment,
+            po.turnkey_project_payment,
+            po.recevice_tax,
+            po.merchant_tax,
+            po.tax_status,
+            ci.company_name,
+            ci.bank_name AS payment_bank_name,
+            ci.bank_code AS payment_bank_code,
+            tp.payee,
+            tp.bank_name AS payee_bank_name,
+            tp.bank_code AS payee_bank_code
+        FROM
+            tb_payment_order po
+        LEFT JOIN tb_tax_package tp ON po.tax_id = tp.tax_id
         AND tp.package_status = 0
-        LEFT JOIN tb_company_info ci
-        ON po.company_id = ci.id
+        LEFT JOIN tb_company_info ci ON po.company_id = ci.id
         WHERE po.id = #{paymentOrderId}
+    </select>
+
+    <select id="queryPaymentOrderInfo" resultMap="PaymentOrderById">
+        SELECT
+            po.id,
+            po.company_s_name,
+            po.platform_service_provider,
+            po.acceptance_certificate,
+            po.payment_order_status,
+            po.payment_inventory,
+            po.payment_date,
+            po.subpackage_payment,
+            t.task_code,
+            t.task_name,
+            t.release_date,
+            t.deadline_date,
+            t.industry_type
+        FROM
+            tb_invoice_application ia
+        INNER JOIN tb_application_payment ap ON ap.invoice_application_id = ia.id
+        INNER JOIN tb_payment_order po ON po.id = ap.payment_order_id
+        LEFT JOIN tb_task t ON t.id = po.task_id
+        WHERE
+            ia.id =#{invoiceAppcationId}
     </select>
 </mapper>

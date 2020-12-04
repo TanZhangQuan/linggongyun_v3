@@ -7,6 +7,11 @@ import lombok.Data;
  */
 @Data
 public class InvoiceInformationVo {
+
+    /**
+     * 申请开票ID
+     */
+    private String invAppId;
     /**
      * 开票类目
      */

@@ -181,6 +181,6 @@ public class StructureController {
     @GetMapping("querySalesman")
     @ApiOperation(value = "查询平台业务专员", notes = "查询平台业务专员", httpMethod = "GET")
     public ReturnJson querySalesman() {
-        return null;
+        return structureService.querySalesman();
     }
 }
