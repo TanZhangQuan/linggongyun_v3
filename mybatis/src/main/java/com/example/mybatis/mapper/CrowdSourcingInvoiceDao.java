@@ -2,6 +2,7 @@ package com.example.mybatis.mapper;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.example.mybatis.dto.QueryCrowdSourcingDto;
 import com.example.mybatis.dto.TobeinvoicedDto;
 import com.example.mybatis.entity.ApplicationCrowdSourcing;
 import com.example.mybatis.entity.CrowdSourcingInvoice;
@@ -27,7 +28,7 @@ public interface CrowdSourcingInvoiceDao extends BaseMapper<CrowdSourcingInvoice
     InvoicePO selectCrowdInvoiceMoneyPaas(List<String> merchantId);
     int addCrowdSourcingInvoice(ApplicationCrowdSourcing applicationCrowdSourcing);
 
-    IPage<CrowdSourcingInfoVo> getCrowdSourcingInfo(Page page, @Param("tobeinvoicedDto") TobeinvoicedDto tobeinvoicedDto);
+    IPage<CrowdSourcingInfoVo> getCrowdSourcingInfo(Page page, QueryCrowdSourcingDto queryCrowdSourcingDto, String userId);
 
     //众包发票id
     InvoiceInformationVo getInvoiceById(String csiId);

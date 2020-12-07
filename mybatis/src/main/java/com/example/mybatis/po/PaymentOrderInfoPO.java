@@ -16,10 +16,20 @@ public class PaymentOrderInfoPO {
     @ApiModelProperty("支付订单编号")
     private String paymentOrderId;
 
-    private String companyId;
+    @ApiModelProperty("商户ID")
+    private String merchantId;
+
+    @ApiModelProperty("任务名称")
+    private String taskName;
+
+    @ApiModelProperty("任务类型")
+    private String taskType;
+
+    @ApiModelProperty("服务商ID")
+    private String taxId;
 
     @ApiModelProperty("服务商名称")
-    private String taxName;
+    private String platformServiceProvider;
 
     @ApiModelProperty("分包支付金额")
     private BigDecimal workerMoney;
@@ -84,4 +94,7 @@ public class PaymentOrderInfoPO {
 
     @ApiModelProperty("0商户承担，1创客承担，2商户创客共同承担")
     private Integer taxStatus;
+
+    @ApiModelProperty("综合税率")
+    private BigDecimal compositeTax;
 }

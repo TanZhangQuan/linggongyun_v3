@@ -100,9 +100,14 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
             return ReturnJson.error("子账户达到上限");
         }
         Merchant merchant = merchantDao.selectById(merchantDto.getId());
-        BeanUtils.copyProperties(merchantDto, merchant);
-        if (merchant.getId() == null) {
+
+        if ("".equals(merchantDto.getId())) {
+            Merchant merchant1=merchantDao.selectById(merchantId);
+            merchant = new Merchant();
+            BeanUtils.copyProperties(merchantDto, merchant);
             merchant.setParentId(merchantId);
+            merchant.setCompanyId(merchant1.getCompanyId());
+            merchant.setCompanyName(merchant1.getCompanyName());
             merchant.setPassWord(PWD_KEY + MD5.md5(merchantDto.getPassWord()));
             int m = merchantDao.insert(merchant);
             if (m > 0) {
@@ -114,7 +119,9 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
                     objectMenuDao.insert(roleMenu);
                 }
             }
+            return ReturnJson.success("添加成功");
         } else {
+            BeanUtils.copyProperties(merchantDto, merchant);
             merchant.setParentId(merchantId);
             merchant.setPassWord(PWD_KEY + MD5.md5(merchantDto.getPassWord()));
             merchantDao.updateById(merchant);
@@ -126,8 +133,8 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
                 roleMenu.setMenuId(meunId[i]);
                 objectMenuDao.insert(roleMenu);
             }
+            return ReturnJson.success("修改成功");
         }
-        return ReturnJson.error("操作失败");
     }
 
     /**
@@ -154,10 +161,9 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ReturnJson daleteRole(String merchantId) {
-        Merchant merchant = merchantDao.selectById(new QueryWrapper<Merchant>().eq("id", merchantId));
-        objectMenuDao.delete(new QueryWrapper<ObjectMenu>().eq("object_user_id", merchant.getId()));
+        objectMenuDao.deleteMenu(merchantId);
         merchantDao.deleteById(merchantId);
-        return ReturnJson.error("操作成功");
+        return ReturnJson.success("操作成功");
     }
 
     /**
@@ -273,6 +279,16 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
     public ReturnJson getManagersInfo(String managersId) {
         QueryPassRolemenuVo roleMenuPassVo = objectMenuDao.queryPassRolemenu(managersId);
         return ReturnJson.success(roleMenuPassVo);
+    }
+
+    @Override
+    public ReturnJson queryMerchantMeun(String userId) {
+        if (userId == null) {
+            return ReturnJson.error("merchantId不能为空");
+        }
+        List<RoleMenuVo> list = objectMenuDao.getRolemenu(userId);
+        RoleMenuVo roleMenuVo=list.get(0);
+        return ReturnJson.success(roleMenuVo);
     }
 
 

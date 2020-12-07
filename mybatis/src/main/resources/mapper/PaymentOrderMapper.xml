@@ -315,8 +315,8 @@
 
     <resultMap id="PaymentOrderInfoPOResultMap" type="com.example.mybatis.po.PaymentOrderInfoPO">
         <result column="id" property="paymentOrderId"/>
-        <result column="company_id" property="companyId"/>
-        <result column="tax_name" property="taxName"/>
+        <result column="company_id" property="merchantId"/>
+        <result column="platform_service_provider" property="platformServiceProvider"/>
         <result column="worker_money" property="workerMoney"/>
         <result column="company_contract" property="companyContract"/>
         <result column="payment_inventory" property="paymentInventory"/>
@@ -337,6 +337,10 @@
         <result column="recevice_tax" property="receviceTax"/>
         <result column="merchant_tax" property="merchantTax"/>
         <result column="tax_status" property="merchantTax"/>
+        <result column="composite_tax" property="compositeTax"/>
+        <result column="tax_id" property="taxId"/>
+        <result column="task_name" property="taskName"/>
+        <result column="task_type" property="taskType"/>
     </resultMap>
 
     <!--查询总包订单信息-->
@@ -344,7 +348,10 @@
             SELECT
             po.id,
             po.company_id,
-            po.platform_service_provider AS tax_name,
+            po.tax_id,
+            po.task_name,
+            po.task_type,
+            po.platform_service_provider,
             po.worker_money,
             po.company_contract,
             po.payment_inventory,
@@ -359,6 +366,7 @@
             po.recevice_tax,
             po.merchant_tax,
             po.tax_status,
+            po.composite_tax,
             ci.company_name,
             ci.bank_name AS payment_bank_name,
             ci.bank_code AS payment_bank_code,

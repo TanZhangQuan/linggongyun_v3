@@ -1,5 +1,6 @@
 package com.example.mybatis.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -41,6 +42,7 @@ public class PaymentOrderManyVo {
     /**
      * 支付时间
      */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private LocalDateTime paymentDate;
     /**
      * 价税总和

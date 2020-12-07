@@ -235,4 +235,9 @@ public class MerchantPaasController {
         return merchantService.updataPassWord(loginMobile, checkCode, newPassWord);
     }
 
+    @GetMapping("/queryAgent")
+    @ApiOperation(value = "代理商列表", notes = "代理商列表", httpMethod = "GET")
+    public ReturnJson queryAgent() {
+        return merchantService.queryAgent();
+    }
 }

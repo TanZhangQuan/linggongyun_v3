@@ -17,7 +17,7 @@ public class MerchantDto {
     private String realName;
 
     @NotNull(message = "角色不能为空")
-    private String roleNmae;
+    private String roleName;
 
     @NotBlank(message = "手机号不能为空")
     private String mobileCode;

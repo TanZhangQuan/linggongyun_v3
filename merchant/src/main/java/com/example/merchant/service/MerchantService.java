@@ -59,4 +59,6 @@ public interface MerchantService extends IService<Merchant> {
     ReturnJson addMerchant(CompanyDto companyDto) throws Exception;
 
     ReturnJson logout(String merchantId);
+
+    ReturnJson queryAgent();
 }

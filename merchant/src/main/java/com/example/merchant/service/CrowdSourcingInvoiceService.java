@@ -1,6 +1,7 @@
 package com.example.merchant.service;
 
 import com.example.common.util.ReturnJson;
+import com.example.mybatis.dto.QueryCrowdSourcingDto;
 import com.example.mybatis.dto.TobeinvoicedDto;
 import com.example.mybatis.entity.ApplicationCrowdSourcing;
 import com.example.mybatis.entity.CrowdSourcingInvoice;
@@ -8,7 +9,7 @@ import com.example.mybatis.entity.CrowdSourcingInvoice;
 public interface CrowdSourcingInvoiceService {
     ReturnJson addCrowdSourcingInvoice(ApplicationCrowdSourcing applicationCrowdSourcing);
 
-    ReturnJson getCrowdSourcingInfo(TobeinvoicedDto tobeinvoicedDto);
+    ReturnJson getCrowdSourcingInfo(QueryCrowdSourcingDto queryCrowdSourcingDto,String userId);
 
     ReturnJson getInvoiceById(String csiId);
 

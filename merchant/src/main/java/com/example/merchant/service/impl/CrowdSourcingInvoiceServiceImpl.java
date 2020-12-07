@@ -9,11 +9,13 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.common.util.DateUtil;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.service.CrowdSourcingInvoiceService;
+import com.example.mybatis.dto.QueryCrowdSourcingDto;
 import com.example.mybatis.dto.TobeinvoicedDto;
 import com.example.mybatis.entity.*;
 import com.example.mybatis.mapper.CrowdSourcingApplicationDao;
 import com.example.mybatis.mapper.CrowdSourcingInvoiceDao;
 import com.example.mybatis.mapper.InvoiceLadderPriceDao;
+import com.example.mybatis.mapper.MerchantDao;
 import com.example.mybatis.vo.*;
 import org.springframework.stereotype.Service;
 
@@ -39,6 +41,8 @@ public class CrowdSourcingInvoiceServiceImpl extends ServiceImpl<CrowdSourcingIn
     private InvoiceLadderPriceDao invoiceLadderPriceDao;
     @Resource
     private CrowdSourcingApplicationDao crowdSourcingApplicationDao;
+    @Resource
+    private MerchantDao merchantDao;
 
     /**
      * 众包开票申请
@@ -61,13 +65,15 @@ public class CrowdSourcingInvoiceServiceImpl extends ServiceImpl<CrowdSourcingIn
     /**
      * 众包发票详情信息
      *
-     * @param tobeinvoicedDto
+     * @param queryCrowdSourcingDto
+     * @param userId
      * @return
      */
     @Override
-    public ReturnJson getCrowdSourcingInfo(TobeinvoicedDto tobeinvoicedDto) {
-        Page page = new Page(tobeinvoicedDto.getPageNo(), tobeinvoicedDto.getPageSize());
-        IPage<CrowdSourcingInfoVo> vos = crowdSourcingInvoiceDao.getCrowdSourcingInfo(page, tobeinvoicedDto);
+    public ReturnJson getCrowdSourcingInfo(QueryCrowdSourcingDto queryCrowdSourcingDto, String userId) {
+        Page page = new Page(queryCrowdSourcingDto.getPageNo(), queryCrowdSourcingDto.getPageSize());
+        Merchant merchant=merchantDao.selectById(userId);
+        IPage<CrowdSourcingInfoVo> vos = crowdSourcingInvoiceDao.getCrowdSourcingInfo(page, queryCrowdSourcingDto,merchant.getCompanyId());
         return ReturnJson.success(vos);
     }
 

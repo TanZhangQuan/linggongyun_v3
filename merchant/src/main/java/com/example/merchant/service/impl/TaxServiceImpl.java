@@ -6,9 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.common.util.ReturnJson;
 import com.example.common.util.VerificationCheck;
-import com.example.merchant.dto.platform.AddInvoiceCatalogDto;
-import com.example.merchant.dto.platform.TaxDto;
-import com.example.merchant.dto.platform.TaxListDto;
+import com.example.merchant.dto.platform.*;
 import com.example.merchant.exception.CommonException;
 import com.example.merchant.service.InvoiceLadderPriceService;
 import com.example.merchant.service.MyBankService;
@@ -176,12 +174,20 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
         BeanUtils.copyProperties(taxDto, tax);
         log.error(tax.toString());
         taxDao.insert(tax);
-        TaxPackage totalTaxPackage = taxDto.getTotalTaxPackage();
+        TaxPackageDto totalTaxPackageDto = taxDto.getTotalTaxPackage();
+        TaxPackage totalTaxPackage = new TaxPackage();
+        BeanUtils.copyProperties(totalTaxPackageDto, totalTaxPackage);
         //判断是否有总包，有总包就添加
         if (totalTaxPackage != null) {
             totalTaxPackage.setTaxId(tax.getId());
             taxPackageDao.insert(totalTaxPackage);
-            List<InvoiceLadderPrice> totalLadders = taxDto.getTotalLadders();
+            List<InvoiceLadderPriceDto> totalLaddersDto = taxDto.getTotalLadders();
+            List<InvoiceLadderPrice> totalLadders = new ArrayList<>();
+            for (int i = 0; i < totalLaddersDto.size(); i++) {
+                InvoiceLadderPrice invoiceLadderPrice = new InvoiceLadderPrice();
+                BeanUtils.copyProperties(totalLaddersDto.get(i), invoiceLadderPrice);
+                totalLadders.add(invoiceLadderPrice);
+            }
             //判断是否有梯度价
             if (!VerificationCheck.listIsNull(totalLadders)) {
                 //判断梯度价是否合理
@@ -204,13 +210,20 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
             }
 
         }
-
-        TaxPackage manyTaxPackage = taxDto.getManyTaxPackage();
+        TaxPackageDto manyTaxPackageDto = taxDto.getManyTaxPackage();
+        TaxPackage manyTaxPackage = new TaxPackage();
+        BeanUtils.copyProperties(manyTaxPackageDto, manyTaxPackage);
         //判断是否有众包，有众包就添加
         if (manyTaxPackage != null) {
             manyTaxPackage.setTaxId(tax.getId());
             taxPackageDao.insert(manyTaxPackage);
-            List<InvoiceLadderPrice> manyLadders = taxDto.getManyLadders();
+            List<InvoiceLadderPriceDto> manyLaddersDto = taxDto.getManyLadders();
+            List<InvoiceLadderPrice> manyLadders = new ArrayList<>();
+            for (int i = 0; i < manyLaddersDto.size(); i++) {
+                InvoiceLadderPrice invoiceLadderPrice = new InvoiceLadderPrice();
+                BeanUtils.copyProperties(manyLaddersDto.get(i), invoiceLadderPrice);
+                manyLadders.add(invoiceLadderPrice);
+            }
             //判断是否有梯度价
             if (!VerificationCheck.listIsNull(manyLadders)) {
                 //判断梯度价是否合理
@@ -232,7 +245,6 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
                 invoiceLadderPriceService.saveBatch(manyLadders);
             }
         }
-
         return ReturnJson.success("添加成功！");
     }
 

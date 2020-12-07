@@ -89,17 +89,15 @@
         FROM tb_payment_order_many as pom
         LEFT JOIN tb_crowd_sourcing_application as csi ON csi.payment_order_many_id=pom.id
         WHERE pom.payment_order_status=3
-        <if test="tobeinvoicedDto.merchantId != null and tobeinvoicedDto.merchantId != ''">
-            AND pom.merchant_id=#{tobeinvoicedDto.merchantId}
+        and pom.company_id=#{param3}
+        <if test="param2.platformServiceProvider != null and param2.platformServiceProvider != ''">
+            AND pom.platform_service_provider=#{param2.platformServiceProvider}
         </if>
-        <if test="tobeinvoicedDto.platformServiceProvider != null and tobeinvoicedDto.platformServiceProvider != ''">
-            AND pom.platform_service_provider=#{tobeinvoicedDto.platformServiceProvider}
+        <if test="param2.applicationDateOne != null and param2.applicationDateOne != ''">
+            AND csi.invapp.application_date>={param2.applicationDate}
         </if>
-        <if test="tobeinvoicedDto.applicationDateOne != null and tobeinvoicedDto.applicationDateOne != ''">
-            AND csi.invapp.application_date>={tobeinvoicedDto.applicationDate}
-        </if>
-        <if test="tobeinvoicedDto.applicationDateTwo != null and tobeinvoicedDto.applicationDateTwo != ''">
-            AND csi.invapp.application_date <![CDATA[<=]]> {tobeinvoicedDto.applicationDate}
+        <if test="param2.applicationDateTwo != null and param2.applicationDateTwo != ''">
+            AND csi.invapp.application_date <![CDATA[<=]]> {param2.applicationDate}
         </if>
     </select>
 
@@ -320,7 +318,7 @@
 
     <resultMap id="PaymentOrderInfoPOResultMap" type="com.example.mybatis.po.PaymentOrderInfoPO">
         <result column="id" property="paymentOrderId"/>
-        <result column="tax_name" property="taxName"/>
+        <result column="platform_service_provider" property="platformServiceProvider"/>
         <result column="company_contract" property="companyContract"/>
         <result column="payment_inventory" property="paymentInventory"/>
         <result column="task_id" property="taskId"/>
@@ -429,7 +427,7 @@
     <select id="selectPaymentOrderInfo" parameterType="string" resultMap="PaymentOrderInfoPOResultMap">
         SELECT
         pom.id,
-        pom.platform_service_provider AS 'tax_name',
+        pom.platform_service_provider,
         pom.company_contract,
         pom.payment_inventory,
         pom.task_id,
@@ -439,12 +437,14 @@
         pom.real_money,
         pom.create_date,
         pom.many_payment,
+        pom.task_name,
+        pom.task_type,
         ci.company_name,
-        ci.bank_name AS 'payment_bank_name',
-        ci.bank_code AS 'payment_bank_code',
+        ci.bank_name AS payment_bank_name,
+        ci.bank_code AS payment_bank_code,
         tp.payee,
-        tp.bank_name AS 'payee_bank_name',
-        tp.bank_code AS 'payee_bank_code'
+        tp.bank_name AS payee_bank_name,
+        tp.bank_code AS payee_bank_code
         FROM tb_payment_order_many pom
         LEFT JOIN tb_tax_package tp
         ON pom.tax_id = tp.tax_id

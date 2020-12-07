@@ -62,8 +62,13 @@ public class MenuMerchantController {
 
     @ApiOperation("权限管理，修改子用户状态")
     @PostMapping(value = "/updataRoleStatus")
-    @LoginRequired
-    public ReturnJson updataRoleStatus(@NotNull(message = "子用户Id不能为空") @RequestParam String merchantId, @NotBlank(message = "status不能为空") @RequestParam Integer status) {
+    public ReturnJson updataRoleStatus(@NotBlank(message = "子用户Id不能为空") @RequestParam String merchantId, @NotNull(message = "status不能为空") @RequestParam Integer status) {
         return menuService.updataRoleStatus(merchantId, status);
+    }
+
+    @ApiOperation("权限管理，用户详情")
+    @PostMapping(value = "/getRole")
+    public ReturnJson getRole(@RequestParam String merchantId) {
+        return menuService.queryMerchantMeun(merchantId);
     }
 }
