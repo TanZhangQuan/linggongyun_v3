@@ -55,7 +55,7 @@ public class BillServiceImpl implements BillService {
      */
     @Override
     public ReturnJson getTotalMonthBillInfo(String workerId, Integer year, Integer month) {
-        List<BillPO> billPOS = paymentOrderDao.selectMonthBill(workerId, year, month);
+        List<BillPO> billPOS = paymentOrderDao.selectMonthBill(workerId, year, month, null);
         return ReturnJson.success(billPOS);
     }
 
@@ -116,5 +116,16 @@ public class BillServiceImpl implements BillService {
     public ReturnJson getManyYearBillCount(String workerId, Integer year) {
         BillCountPO billCountPO = paymentOrderManyDao.selectYearCount(workerId, year);
         return ReturnJson.success(billCountPO);
+    }
+
+    @Override
+    public ReturnJson queryBillInfo(String workerId, String id, Integer isNot) {
+        BillPO billPO;
+        if (isNot == 0) {
+            billPO = paymentOrderDao.queryBillInfo(workerId, id);
+        } else {
+            billPO = paymentOrderManyDao.queryBillInfo(workerId, id);
+        }
+        return ReturnJson.success(billPO);
     }
 }

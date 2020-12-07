@@ -558,7 +558,8 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         List<AgentVo> agentVoList = new ArrayList<>();
         for (int i = 0; i < list.size(); i++) {
             AgentVo agentVo = new AgentVo();
-            BeanUtils.copyProperties(list.get(i), agentVo);
+            agentVo.setAgentName(list.get(i).getAgentName());
+            agentVo.setId(list.get(i).getManagersId());
             agentVoList.add(agentVo);
         }
         return ReturnJson.success(agentVoList);

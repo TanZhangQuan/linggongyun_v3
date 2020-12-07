@@ -1,23 +1,23 @@
 package com.example.merchant.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.incrementer.DefaultIdentifierGenerator;
-import com.baomidou.mybatisplus.core.incrementer.IdentifierGenerator;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.common.util.DateUtil;
 import com.example.common.util.ReturnJson;
+import com.example.merchant.dto.merchant.AddApplicationCrowdSourcingDto;
 import com.example.merchant.service.CrowdSourcingInvoiceService;
+import com.example.merchant.vo.merchant.*;
+import com.example.merchant.vo.merchant.InvoiceVo;
 import com.example.mybatis.dto.QueryCrowdSourcingDto;
 import com.example.mybatis.dto.TobeinvoicedDto;
 import com.example.mybatis.entity.*;
-import com.example.mybatis.mapper.CrowdSourcingApplicationDao;
-import com.example.mybatis.mapper.CrowdSourcingInvoiceDao;
-import com.example.mybatis.mapper.InvoiceLadderPriceDao;
-import com.example.mybatis.mapper.MerchantDao;
+import com.example.mybatis.mapper.*;
 import com.example.mybatis.vo.*;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
@@ -25,6 +25,7 @@ import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,23 +44,43 @@ public class CrowdSourcingInvoiceServiceImpl extends ServiceImpl<CrowdSourcingIn
     private CrowdSourcingApplicationDao crowdSourcingApplicationDao;
     @Resource
     private MerchantDao merchantDao;
+    @Resource
+    private PaymentOrderManyDao paymentOrderManyDao;
+    @Resource
+    private AddressDao addressDao;
+    @Resource
+    private TaxDao taxDao;
+    @Resource
+    private InvoiceCatalogDao invoiceCatalogDao;
+
 
     /**
      * 众包开票申请
      *
-     * @param applicationCrowdSourcing
+     * @param addApplicationCrowdSourcingDto
      * @return
      */
     @Override
-    public ReturnJson addCrowdSourcingInvoice(ApplicationCrowdSourcing applicationCrowdSourcing) {
-        ReturnJson returnJson = new ReturnJson("操作失败", 300);
-        IdentifierGenerator identifierGenerator = new DefaultIdentifierGenerator();
-        applicationCrowdSourcing.setId(identifierGenerator.nextId(new Object()).toString());
-        int num = crowdSourcingInvoiceDao.addCrowdSourcingInvoice(applicationCrowdSourcing);
-        if (num > 0) {
-            returnJson = new ReturnJson("操作成功", 200);
+    @Transactional(rollbackFor = Exception.class)
+    public ReturnJson addCrowdSourcingInvoice(AddApplicationCrowdSourcingDto addApplicationCrowdSourcingDto) {
+        CrowdSourcingApplication applicationCrowdSourcing = new CrowdSourcingApplication();
+        BeanUtils.copyProperties(addApplicationCrowdSourcingDto, applicationCrowdSourcing);
+        if (applicationCrowdSourcing.getId() == null) {
+            PaymentOrderMany paymentOrderMany = paymentOrderManyDao.selectById(addApplicationCrowdSourcingDto.getPaymentOrderManyId());
+            if (paymentOrderMany == null) {
+                return ReturnJson.error("不存在此众包订单");
+            }
+            applicationCrowdSourcing.setApplicationState(1);
+            applicationCrowdSourcing.setApplicationDate(new Date());
+            crowdSourcingApplicationDao.insert(applicationCrowdSourcing);
+            paymentOrderMany.setIsApplication(1);
+            paymentOrderManyDao.updateById(paymentOrderMany);
+            return ReturnJson.success("操作成功");
+        } else {
+            crowdSourcingApplicationDao.updateById(applicationCrowdSourcing);
+            return ReturnJson.success("操作成功");
         }
-        return returnJson;
+
     }
 
     /**
@@ -72,8 +93,8 @@ public class CrowdSourcingInvoiceServiceImpl extends ServiceImpl<CrowdSourcingIn
     @Override
     public ReturnJson getCrowdSourcingInfo(QueryCrowdSourcingDto queryCrowdSourcingDto, String userId) {
         Page page = new Page(queryCrowdSourcingDto.getPageNo(), queryCrowdSourcingDto.getPageSize());
-        Merchant merchant=merchantDao.selectById(userId);
-        IPage<CrowdSourcingInfoVo> vos = crowdSourcingInvoiceDao.getCrowdSourcingInfo(page, queryCrowdSourcingDto,merchant.getCompanyId());
+        Merchant merchant = merchantDao.selectById(userId);
+        IPage<CrowdSourcingInfoVo> vos = crowdSourcingInvoiceDao.getCrowdSourcingInfo(page, queryCrowdSourcingDto, merchant.getCompanyId());
         return ReturnJson.success(vos);
     }
 
@@ -248,5 +269,62 @@ public class CrowdSourcingInvoiceServiceImpl extends ServiceImpl<CrowdSourcingIn
             returnJson.setPageSize(9);
         }
         return returnJson;
+    }
+
+    @Override
+    public ReturnJson queryApplicationInfo(String applicationId, String merchantId) {
+        QueryApplicationInfoVo queryApplicationInfo = new QueryApplicationInfoVo();
+        CrowdSourcingApplication crowdSourcingApplication = crowdSourcingApplicationDao.selectById(applicationId);
+        if (crowdSourcingApplication == null) {
+            return ReturnJson.error("此申请不存在！");
+        }
+        PaymentOrderManyVo paymentOrderManyVo = paymentOrderManyDao.getPayOrderManyById(crowdSourcingApplication.getPaymentOrderManyId());
+        queryApplicationInfo.setPaymentOrderManyVo(paymentOrderManyVo);
+        BuyerVo buyerVo = merchantDao.getBuyerById(merchantId);
+        queryApplicationInfo.setBuyerVo(buyerVo);
+        InvoiceApplicationVo invoiceApplicationVo = new InvoiceApplicationVo();
+        BeanUtils.copyProperties(crowdSourcingApplication, invoiceApplicationVo);
+        queryApplicationInfo.setInvoiceApplicationVo(invoiceApplicationVo);
+        return ReturnJson.success(queryApplicationInfo);
+    }
+
+    @Override
+    public ReturnJson queryInvoiceInfo(String invoiceId, String merchantId) {
+        QueryInvoiceInfoVo queryInvoiceInfoVo = new QueryInvoiceInfoVo();
+        CrowdSourcingInvoice crowdSourcingInvoice = crowdSourcingInvoiceDao.selectById(invoiceId);
+        if (crowdSourcingInvoice == null) {
+            return ReturnJson.error("不存在此发票！");
+        }
+
+        CrowdSourcingApplication crowdSourcingApplication = crowdSourcingApplicationDao.selectById(crowdSourcingInvoice.getApplicationId());
+        PaymentOrderManyVo paymentOrderManyVo = paymentOrderManyDao.getPayOrderManyById(crowdSourcingApplication.getPaymentOrderManyId());
+        queryInvoiceInfoVo.setPaymentOrderManyVo(paymentOrderManyVo);
+        PaymentOrderMany paymentOrderMany = paymentOrderManyDao.selectById(crowdSourcingApplication.getPaymentOrderManyId());
+        BuyerVo buyerVo = merchantDao.getBuyerById(merchantId);
+        queryInvoiceInfoVo.setBuyerVo(buyerVo);
+        InvoiceApplicationVo invoiceApplicationVo = new InvoiceApplicationVo();
+        BeanUtils.copyProperties(crowdSourcingApplication, invoiceApplicationVo);
+        invoiceApplicationVo.setApplicationAddress(crowdSourcingApplication.getApplicationAddressId());
+        queryInvoiceInfoVo.setInvoiceApplicationVo(invoiceApplicationVo);
+        InvoiceVo invoiceVo = new InvoiceVo();
+        BeanUtils.copyProperties(crowdSourcingInvoice, invoiceVo);
+        queryInvoiceInfoVo.setInvoiceVo(invoiceVo);
+        Tax tax = taxDao.selectById(paymentOrderMany.getTaxId());
+        SendAndReceiveVo sendAndReceiveVo = new SendAndReceiveVo();
+        sendAndReceiveVo.setLogisticsCompany(crowdSourcingInvoice.getExpressCompanyName());
+        sendAndReceiveVo.setLogisticsOrderNo(crowdSourcingInvoice.getExpressSheetNo());
+        Address address = addressDao.selectById(invoiceApplicationVo.getApplicationAddress());
+        sendAndReceiveVo.setFrom(tax.getTaxName());
+        sendAndReceiveVo.setFromTelephone(tax.getLinkMobile());
+        sendAndReceiveVo.setSendingAddress(tax.getTaxAddress());
+        sendAndReceiveVo.setToAddress(address.getAddressName());
+        sendAndReceiveVo.setAddressee(address.getLinkName());
+        sendAndReceiveVo.setAddresseeTelephone(address.getLinkMobile());
+        queryInvoiceInfoVo.setSendAndReceiveVo(sendAndReceiveVo);
+        InvoiceCatalog invoiceCatalog = invoiceCatalogDao.selectById(invoiceApplicationVo.getInvoiceCatalogType());
+        InvoiceCatalogVo invoiceCatalogVo = new InvoiceCatalogVo();
+        BeanUtils.copyProperties(invoiceCatalog, invoiceCatalogVo);
+        queryInvoiceInfoVo.setInvoiceCatalogVo(invoiceCatalogVo);
+        return ReturnJson.success(queryInvoiceInfoVo);
     }
 }

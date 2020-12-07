@@ -16,4 +16,6 @@ public interface BillService {
     ReturnJson getTotalYearBillCount(String workerId,Integer year);
 
     ReturnJson getManyYearBillCount(String workerId,Integer year);
+
+    ReturnJson queryBillInfo(String workerId,String id,Integer isNot);
 }

@@ -74,6 +74,7 @@
     </select>
 
     <resultMap id="ListCSIByID" type="com.example.mybatis.vo.CrowdSourcingInvoiceVo">
+        <result column="application_id" property="applicationId"/>
         <result column="company_s_name" property="companySName"/>
         <result column="platform_service_provider" property="platformServiceProvider"/>
         <result column="id" property="id"/>
@@ -85,7 +86,7 @@
 
     <select id="getListCSIByID" resultMap="ListCSIByID">
         SELECT pom.company_s_name,pom.platform_service_provider,
-        pom.id,pom.payment_inventory,pom.many_payment,csi.application_date,pom.is_application
+        pom.id,pom.payment_inventory,pom.many_payment,csi.id as application_id,csi.application_date,pom.is_application
         FROM tb_payment_order_many as pom
         LEFT JOIN tb_crowd_sourcing_application as csi ON csi.payment_order_many_id=pom.id
         WHERE pom.payment_order_status=3
@@ -270,6 +271,7 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="billPO" type="com.example.mybatis.po.BillPO">
+        <result column="id" property="id"/>
         <result column="company_s_name" property="merchantName"/>
         <result column="platform_service_provider" property="taxName"/>
         <result column="company_contract" property="contract"/>
@@ -284,6 +286,7 @@
     <!--查询账单详情-->
     <select id="selectMonthBill" resultMap="billPO">
         SELECT
+        a.id,
         b.company_s_name,
         b.platform_service_provider,
         b.company_contract,
@@ -851,6 +854,24 @@
         FROM tb_payment_order_many WHERE payment_order_status=3 AND YEAR(payment_date) = YEAR(NOW()) AND company_id =#{merchantId}
 
 
+    </select>
+
+    <select id="queryBillInfo" resultMap="billPO">
+        SELECT
+        a.id,
+        b.company_s_name,
+        b.platform_service_provider,
+        b.company_contract,
+        b.payment_inventory,
+        b.task_id,
+        b.acceptance_certificate,
+        b.many_payment,
+        b.payment_date,
+        a.real_money
+        FROM tb_payment_inventory a
+        JOIN tb_payment_order_many b
+        ON a.payment_order_id = b.id
+        WHERE a.worker_id = #{param1} and a.id=#{param2}
     </select>
 
 </mapper>
