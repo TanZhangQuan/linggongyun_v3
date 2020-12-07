@@ -19,6 +19,7 @@ import com.example.merchant.util.JwtUtils;
 import com.example.merchant.vo.merchant.HomePageMerchantVO;
 import com.example.merchant.vo.merchant.MerchantInfoVO;
 import com.example.merchant.vo.merchant.TaxVO;
+import com.example.merchant.vo.platform.AgentVo;
 import com.example.merchant.vo.platform.HomePageVO;
 import com.example.mybatis.entity.*;
 import com.example.mybatis.mapper.*;
@@ -107,6 +108,8 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
     private MenuDao menuDao;
     @Resource
     private ObjectMenuDao objectMenuDao;
+    @Resource
+    private AgentDao agentDao;
 
     /**
      * 根据用户名和密码进行登录
@@ -269,6 +272,9 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
     @Override
     public ReturnJson updataPassWord(String loginMobile, String checkCode, String newPassWord) {
         String redisCode = redisDao.get(loginMobile);
+        if (redisCode == null) {
+            return ReturnJson.error("你的验证码已过期请重新发送！");
+        }
         if (redisCode.equals(checkCode)) {
             Merchant merchant = new Merchant();
             merchant.setPassWord(PWD_KEY + MD5.md5(newPassWord));
@@ -544,5 +550,18 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         redisDao.remove(merchantId);
         SecurityUtils.getSubject().logout();
         return ReturnJson.success("退出登录成功！");
+    }
+
+    @Override
+    public ReturnJson queryAgent() {
+        List<Agent> list = agentDao.selectList(new QueryWrapper<Agent>().eq("agent_status", 0));
+        List<AgentVo> agentVoList = new ArrayList<>();
+        for (int i = 0; i < list.size(); i++) {
+            AgentVo agentVo = new AgentVo();
+            agentVo.setAgentName(list.get(i).getAgentName());
+            agentVo.setId(list.get(i).getManagersId());
+            agentVoList.add(agentVo);
+        }
+        return ReturnJson.success(agentVoList);
     }
 }

@@ -10,15 +10,15 @@ import com.example.common.util.ReturnJson;
 import com.example.common.util.VerificationCheck;
 import com.example.merchant.dto.merchant.AddPaymentOrderManyDto;
 import com.example.merchant.dto.merchant.PaymentOrderMerchantDto;
+import com.example.mybatis.dto.QueryCrowdSourcingDto;
 import com.example.merchant.dto.platform.PaymentOrderDto;
+import com.example.merchant.dto.platform.PaymentOrderManyDto;
 import com.example.merchant.exception.CommonException;
 import com.example.merchant.service.PaymentInventoryService;
 import com.example.merchant.service.PaymentOrderManyService;
 import com.example.merchant.util.AcquireID;
-import com.example.merchant.util.JwtUtils;
 import com.example.merchant.vo.ExpressInfoVO;
 import com.example.merchant.vo.PaymentOrderInfoVO;
-import com.example.mybatis.dto.TobeinvoicedDto;
 import com.example.mybatis.entity.*;
 import com.example.mybatis.mapper.*;
 import com.example.mybatis.po.InvoiceInfoPO;
@@ -26,6 +26,7 @@ import com.example.mybatis.po.PaymentOrderInfoPO;
 import com.example.mybatis.vo.CrowdSourcingInvoiceVo;
 import com.example.mybatis.vo.InvoiceDetailsVo;
 import com.example.mybatis.vo.PaymentOrderManyVo;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -70,10 +71,15 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
     private AcquireID acquireID;
 
     @Resource
-    private JwtUtils jwtUtils;
+    private TaxDao taxDao;
 
     @Resource
     private MerchantDao merchantDao;
+    @Resource
+    private CrowdSourcingInvoiceDao crowdSourcingInvoiceDao;
+
+    @Resource
+    private CompanyInfoDao companyInfoDao;
 
     /**
      * 众包今天的支付金额
@@ -104,7 +110,6 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
         }
         return ReturnJson.success((paymentOrderManyDao.getWeekTradeById(merchant.getCompanyId())));
     }
-
 
     /**
      * 众包本月的支付金额
@@ -139,13 +144,15 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
     /**
      * 根据商户id查众包待开票数据
      *
-     * @param tobeinvoicedDto
+     * @param queryCrowdSourcingDto
+     * @param userId
      * @return
      */
     @Override
-    public ReturnJson getListCSIByID(TobeinvoicedDto tobeinvoicedDto) {
-        Page page = new Page(tobeinvoicedDto.getPageNo(), tobeinvoicedDto.getPageSize());
-        IPage<CrowdSourcingInvoiceVo> list = paymentOrderManyDao.getListCSIByID(page, tobeinvoicedDto);
+    public ReturnJson getListCSIByID(QueryCrowdSourcingDto queryCrowdSourcingDto, String userId) {
+        Page page = new Page(queryCrowdSourcingDto.getPageNo(), queryCrowdSourcingDto.getPageSize());
+        Merchant merchant = merchantDao.selectById(userId);
+        IPage<CrowdSourcingInvoiceVo> list = paymentOrderManyDao.getListCSIByID(page, queryCrowdSourcingDto, merchant.getCompanyId());
         return ReturnJson.success(list);
     }
 
@@ -170,8 +177,8 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
      */
     @Override
     public ReturnJson getInvoiceDetailsByPayId(String id, Integer pageNo, Integer pageSize) {
-        Page page=new Page(pageNo,pageSize);
-        IPage<InvoiceDetailsVo> list = paymentOrderManyDao.getInvoiceDetailsByPayId(page,id);
+        Page page = new Page(pageNo, pageSize);
+        IPage<InvoiceDetailsVo> list = paymentOrderManyDao.getInvoiceDetailsByPayId(page, id);
         return ReturnJson.success(list);
     }
 
@@ -182,7 +189,7 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
      * @return
      */
     @Override
-    public ReturnJson getPaymentOrderMany(String merchantId,PaymentOrderMerchantDto paymentOrderMerchantDto) {
+    public ReturnJson getPaymentOrderMany(String merchantId, PaymentOrderMerchantDto paymentOrderMerchantDto) {
         Merchant merchant = merchantDao.selectById(merchantId);
         String companyId = merchant.getCompanyId();
         String paymentOrderId = paymentOrderMerchantDto.getPaymentOrderId();
@@ -195,9 +202,6 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
         IPage<PaymentOrderMany> paymentOrderManyIPage = paymentOrderManyDao.selectMany(paymentOrderManyPage, companyId, paymentOrderId, taxId, beginDate, endDate);
         return ReturnJson.success(paymentOrderManyIPage);
     }
-
-    @Resource
-    private CrowdSourcingInvoiceDao crowdSourcingInvoiceDao;
 
     /**
      * 众包支付订单详情
@@ -239,11 +243,24 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ReturnJson saveOrUpdataPaymentOrderMany(AddPaymentOrderManyDto addPaymentOrderManyDto) {
-        PaymentOrderMany paymentOrderMany = addPaymentOrderManyDto.getPaymentOrderMany();
+    public ReturnJson saveOrUpdataPaymentOrderMany(AddPaymentOrderManyDto addPaymentOrderManyDto, String merchantId) {
+        PaymentOrderMany paymentOrderMany = new PaymentOrderMany();
+        PaymentOrderManyDto paymentOrderManyDto = addPaymentOrderManyDto.getPaymentOrderManyDto();
+        BeanUtils.copyProperties(paymentOrderManyDto, paymentOrderMany);
+        Tax tax = taxDao.selectById(paymentOrderMany.getTaxId());
+        paymentOrderMany.setPlatformServiceProvider(tax.getTaxName());
+        Merchant merchant = merchantDao.selectById(merchantId);
+        if (merchant != null) {
+            paymentOrderMany.setCompanyId(merchant.getCompanyId());
+            paymentOrderMany.setCompanySName(merchant.getCompanyName());
+        }else{
+            CompanyInfo companyInfo=companyInfoDao.selectById(merchantId);
+            paymentOrderMany.setCompanyId(companyInfo.getId());
+            paymentOrderMany.setCompanySName(companyInfo.getCompanyName());
+        }
         List<PaymentInventory> paymentInventories = addPaymentOrderManyDto.getPaymentInventories();
         String id = paymentOrderMany.getId();
-        if (id != null && paymentOrderMany.getPaymentOrderStatus() == 0) {
+        if (id != "" && paymentOrderMany.getPaymentOrderStatus() == 0) {
             List<PaymentInventory> paymentInventoryList = paymentInventoryDao.selectList(new QueryWrapper<PaymentInventory>().eq("payment_order_id", id));
             List<String> ids = new ArrayList<>();
             for (PaymentInventory paymentInventory : paymentInventoryList) {
@@ -253,8 +270,8 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
             this.removeById(id);
         }
 
-        BigDecimal receviceTax = paymentOrderMany.getReceviceTax().divide(BigDecimal.valueOf(100));
-        BigDecimal merchantTax = paymentOrderMany.getMerchantTax().divide(BigDecimal.valueOf(100));
+        BigDecimal receviceTax = new BigDecimal("0.00").divide(BigDecimal.valueOf(100));
+        BigDecimal merchantTax = new BigDecimal("0.00").divide(BigDecimal.valueOf(100));
         BigDecimal compositeTax = new BigDecimal("0");
         BigDecimal countMoney = new BigDecimal("0");
         Integer taxStatus = paymentOrderMany.getTaxStatus();
@@ -411,7 +428,7 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
      * @return
      */
     @Override
-    public ReturnJson getPaymentOrderManyPaas(PaymentOrderDto paymentOrderDto,String managersId) throws CommonException {
+    public ReturnJson getPaymentOrderManyPaas(PaymentOrderDto paymentOrderDto, String managersId) throws CommonException {
         List<String> merchantIds = acquireID.getCompanyIds(managersId);
         if (VerificationCheck.listIsNull(merchantIds)) {
             return ReturnJson.success("");

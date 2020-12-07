@@ -1,14 +1,16 @@
 package com.example.merchant.service;
 
 import com.example.common.util.ReturnJson;
+import com.example.merchant.dto.merchant.AddApplicationCrowdSourcingDto;
+import com.example.mybatis.dto.QueryCrowdSourcingDto;
 import com.example.mybatis.dto.TobeinvoicedDto;
 import com.example.mybatis.entity.ApplicationCrowdSourcing;
 import com.example.mybatis.entity.CrowdSourcingInvoice;
 
 public interface CrowdSourcingInvoiceService {
-    ReturnJson addCrowdSourcingInvoice(ApplicationCrowdSourcing applicationCrowdSourcing);
+    ReturnJson addCrowdSourcingInvoice(AddApplicationCrowdSourcingDto addApplicationCrowdSourcingDto);
 
-    ReturnJson getCrowdSourcingInfo(TobeinvoicedDto tobeinvoicedDto);
+    ReturnJson getCrowdSourcingInfo(QueryCrowdSourcingDto queryCrowdSourcingDto, String userId);
 
     ReturnJson getInvoiceById(String csiId);
 
@@ -27,4 +29,20 @@ public interface CrowdSourcingInvoiceService {
     ReturnJson getCrowdSourcingInfoPass(TobeinvoicedDto tobeinvoicedDto);
 
     ReturnJson getPaymentInventoryInfoPass(String invoiceId);
+
+    /**
+     * 查看申请开票详情信息
+     *
+     * @param applicationId
+     * @return
+     */
+    ReturnJson queryApplicationInfo(String applicationId, String merchantId);
+
+    /**
+     * 查看已开票的发票信息
+     *
+     * @param invoiceId
+     * @return
+     */
+    ReturnJson queryInvoiceInfo(String invoiceId, String merchantId);
 }

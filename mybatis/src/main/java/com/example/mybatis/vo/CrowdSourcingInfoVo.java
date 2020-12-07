@@ -1,5 +1,6 @@
 package com.example.mybatis.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -35,6 +36,7 @@ public class CrowdSourcingInfoVo {
     //开票状态已开票，未开票
     private String applicationState;
     //开票时间
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private LocalDateTime invoicePrintDate;
 
 }

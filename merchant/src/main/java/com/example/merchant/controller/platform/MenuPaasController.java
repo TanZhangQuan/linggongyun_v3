@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -54,7 +55,7 @@ public class MenuPaasController {
     @ApiOperation("权限管理，删除子账户")
     @PostMapping(value = "/daleteRole")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "managersId", value = "子账户Id", required = true)})
-    public ReturnJson daleteRole(@NotNull(message = "子账户Id不能为空") @RequestParam String managersId) {
+    public ReturnJson daleteRole(@NotBlank(message = "子账户Id不能为空") @RequestParam String managersId) {
         return menuService.daletePassRole(managersId);
     }
 

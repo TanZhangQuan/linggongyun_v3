@@ -53,7 +53,6 @@ public class TaxPaasController {
 
     @PostMapping("/saveCatalog")
     @ApiOperation(value = "添加开票类目", notes = "添加开票类目", httpMethod = "POST")
-    @ApiImplicitParams(value={@ApiImplicitParam(name="invoiceCatalog",value = "开票类目的信息",required = true, dataType = "InvoiceCatalog")})
     public ReturnJson saveCatalog(@RequestBody AddInvoiceCatalogDto addInvoiceCatalogDto){
         return taxService.saveCatalog(addInvoiceCatalogDto);
     }

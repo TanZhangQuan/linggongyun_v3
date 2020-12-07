@@ -3,6 +3,7 @@ package com.example.mybatis.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.example.mybatis.dto.QueryCrowdSourcingDto;
 import com.example.mybatis.dto.TobeinvoicedDto;
 import com.example.mybatis.entity.PaymentOrderMany;
 import com.example.mybatis.po.BillCountPO;
@@ -58,7 +59,7 @@ public interface PaymentOrderManyDao extends BaseMapper<PaymentOrderMany> {
 
 
     //根据商户id查众包待开票数据
-    IPage<CrowdSourcingInvoiceVo> getListCSIByID(Page page,@Param("tobeinvoicedDto") TobeinvoicedDto tobeinvoicedDto);
+    IPage<CrowdSourcingInvoiceVo> getListCSIByID(Page page, QueryCrowdSourcingDto queryCrowdSourcingDto, String userId);
 
     //根据支付id查询众包支付信息
     PaymentOrderManyVo getPayOrderManyById(String id);
@@ -87,6 +88,7 @@ public interface PaymentOrderManyDao extends BaseMapper<PaymentOrderMany> {
 
     List<BillPO> selectMonthBill(@Param("workerId") String workerId,@Param("year") Integer year, @Param("month")Integer month);
     BillCountPO selectYearCount(@Param("workerId") String workerId,@Param("year") Integer year);
+    BillPO queryBillInfo(String workerId,String id);
 
     PaymentOrderInfoPO selectPaymentOrderInfo(String paymentOrderId);
 }

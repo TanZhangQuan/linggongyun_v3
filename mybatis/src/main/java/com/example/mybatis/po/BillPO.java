@@ -12,6 +12,9 @@ import java.time.LocalDateTime;
 @ApiModel(description = "支付订单详情")
 public class BillPO {
 
+    @ApiModelProperty(notes = "支付明细ID",value = "支付明细ID")
+    private String id;
+
     @ApiModelProperty(notes = "商户名称",value = "商户名称")
     private String merchantName;
 

@@ -135,29 +135,39 @@
     </resultMap>
 
     <select id="getCrowdSourcingInfo" resultMap="CrowdSourcingInfo">
-        SELECT csi.id,pom.company_id,csi.invoice_code,pom.company_s_name,pom.platform_service_provider,pom.id,pom.payment_inventory,pom.many_payment,
-        pom.is_application,csi.invoice_url,csi.tax_receipt_url,csi.invoice_print_date,if(csi.id is not null,'已开','未开')as invoice_stute
-        FROM tb_crowd_sourcing_invoice csi
-        LEFT JOIN tb_crowd_sourcing_application csa ON csa.id=csi.application_id
-        LEFT JOIN tb_payment_order_many pom ON csa.payment_order_many_id=pom.id and csi.payment_order_many_id=pom.id
-        WHERE csi.payment_order_many_id is NOT null OR csi.application_id is NOT null
-        <if test="tobeinvoicedDto.merchantId != null and tobeinvoicedDto.merchantId != ''">
-            AND pom.company_id=#{tobeinvoicedDto.merchantId}
+        SELECT
+        csi.id,
+        pom.company_id,
+        csi.invoice_code,
+        pom.company_s_name,
+        pom.platform_service_provider,
+        pom.id as pom_id,
+        pom.payment_inventory,
+        pom.many_payment,
+        pom.is_application,
+        csi.invoice_url,
+        csi.tax_receipt_url,
+        csi.invoice_print_date,
+        IF (csi.id IS NOT NULL, '0', '1') AS invoice_stute
+        FROM
+            tb_crowd_sourcing_invoice csi
+        INNER JOIN tb_crowd_sourcing_application csa ON csa.id = csi.application_id
+        INNER JOIN tb_payment_order_many pom ON pom.id = csa.payment_order_many_id
+        AND pom.company_id=#{param3}
+        <if test="param2.platformServiceProvider != null and param2.platformServiceProvider != ''">
+            AND pom.platform_service_provider=#{param2.platformServiceProvider}
         </if>
-        <if test="tobeinvoicedDto.platformServiceProvider != null and tobeinvoicedDto.platformServiceProvider != ''">
-            AND pom.platform_service_provider=#{tobeinvoicedDto.platformServiceProvider}
+        <if test="param2.applicationDateOne != null and param2.applicationDateOne != ''">
+            AND csa.application_date>=#{param2.applicationDateOne}
         </if>
-        <if test="tobeinvoicedDto.applicationDateOne != null and tobeinvoicedDto.applicationDateOne != ''">
-            AND csa.application_date>=#{tobeinvoicedDto.applicationDateOne}
-        </if>
-        <if test="tobeinvoicedDto.applicationDateTwo != null and tobeinvoicedDto.applicationDateTwo != ''">
-            AND csa.application_date <![CDATA[<=]]> #{tobeinvoicedDto.applicationDateTwo}
+        <if test="param2.applicationDateTwo != null and param2.applicationDateTwo != ''">
+            AND csa.application_date <![CDATA[<=]]> #{param2.applicationDateTwo}
         </if>
     </select>
 
     <select id="getCrowdSourcingInfoPass" resultMap="CrowdSourcingInfo">
-        SELECT csi.id,pom.company_id,csi.invoice_code,pom.company_s_name,pom.platform_service_provider,pom.id,pom.payment_inventory,pom.many_payment,
-        pom.is_application,csi.invoice_url,csi.tax_receipt_url,csi.invoice_print_date,if(csi.id is not null,'已开','未开')as invoice_stute
+        SELECT csi.id,pom.company_id,csi.invoice_code,pom.company_s_name,pom.platform_service_provider,pom.id as pid,pom.payment_inventory,pom.many_payment,
+        pom.is_application,csi.invoice_url,csi.tax_receipt_url,csi.invoice_print_date,if(csi.id is not null,'0','1')as invoice_stute
         FROM tb_crowd_sourcing_invoice csi
         LEFT JOIN tb_crowd_sourcing_application csa ON csa.id=csi.application_id
         LEFT JOIN tb_payment_order_many pom ON csa.payment_order_many_id=pom.id and csi.payment_order_many_id=pom.id

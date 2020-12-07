@@ -73,9 +73,9 @@
     <select id="getRolemenu" resultMap="Rolemenu">
         SELECT m.id,m.parent_id,m.real_name,m.user_name,m.login_mobile,m.status,m.create_date,me.id as mid,me.menu_name,me.menu_zhname,me.create_date as mcreate_date,me.update_date as mupdate_date
         FROM tb_merchant m
-        LEFT JOIN tb_object_menu om ON om.object_user_id=m.id OR om.object_user_id=m.parent_id
+        LEFT JOIN tb_object_menu om ON om.object_user_id=m.id
         LEFT JOIN tb_menu me ON om.menu_id=me.id
-        where m.id=#{userId}
+        where m.id=#{userId} or m.parent_id=#{userId}
     </select>
 
     <select id="getPassRolemenu" resultMap="RolemenuPass">
@@ -115,12 +115,11 @@
             FROM
                 tb_managers m
             LEFT JOIN tb_object_menu om ON om.object_user_id = m.id
-            OR om.object_user_id = m.parent_id
             LEFT JOIN tb_menu me ON om.menu_id = me.id
             where m.id=#{userId}
     </select>
     <delete id="deleteMenu">
-                DELETE
+           DELETE
         FROM
             tb_object_menu
         WHERE

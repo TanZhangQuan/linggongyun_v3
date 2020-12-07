@@ -81,14 +81,14 @@ public class TaxDto {
 
 
     @ApiModelProperty(notes = "总包信息", value = "总包信息")
-    private TaxPackage totalTaxPackage;
+    private TaxPackageDto totalTaxPackage;
 
     @ApiModelProperty(notes = "众包信息", value = "众包信息")
-    private TaxPackage manyTaxPackage;
+    private TaxPackageDto manyTaxPackage;
 
     @ApiModelProperty(notes = "总包税率梯度价", value = "总包税率梯度价")
-    private List<InvoiceLadderPrice> totalLadders;
+    private List<InvoiceLadderPriceDto> totalLadders;
 
     @ApiModelProperty(notes = "众包税率梯度价", value = "众包税率梯度价")
-    private List<InvoiceLadderPrice> manyLadders;
+    private List<InvoiceLadderPriceDto> manyLadders;
 }

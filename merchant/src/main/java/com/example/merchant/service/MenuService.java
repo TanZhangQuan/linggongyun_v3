@@ -37,4 +37,6 @@ public interface MenuService extends IService<Menu> {
     ReturnJson updataPassRoleStatus(String managersId, Integer status);
 
     ReturnJson getManagersInfo(String managersId);
+
+    ReturnJson queryMerchantMeun(String userId);
 }

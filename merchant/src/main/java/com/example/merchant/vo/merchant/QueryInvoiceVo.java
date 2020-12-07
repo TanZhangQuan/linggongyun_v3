@@ -37,6 +37,11 @@ public class QueryInvoiceVo {
     private SellerVo sellerVo;
 
     /**
+     * 开票类目
+     */
+    private InvoiceCatalogVo invoiceCatalogVo;
+
+    /**
      * 发票信息
      */
     private InvoiceApplicationVo invoiceApplicationVo;

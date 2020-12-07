@@ -63,8 +63,8 @@ public class PaymentOrderManyPaasController {
     @PostMapping("/saveOrUpdata")
     @ApiOperation(value = "创建或修改众包支付订单", notes = "创建或修改众包支付订单", httpMethod = "POST")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "addPaymentOrderManyDto", value = "添加众包支付订单", required = true, dataType = "AddPaymentOrderManyDto")})
-    public ReturnJson saveOrUpdataPaymentOrderMany(@NotEmpty(message = "订单内容不能为空") @RequestBody AddPaymentOrderManyDto addPaymentOrderManyDto) {
-        return paymentOrderManyService.saveOrUpdataPaymentOrderMany(addPaymentOrderManyDto);
+    public ReturnJson saveOrUpdataPaymentOrderMany(@RequestBody AddPaymentOrderManyDto addPaymentOrderManyDto,@RequestParam String merchantId) {
+        return paymentOrderManyService.saveOrUpdataPaymentOrderMany(addPaymentOrderManyDto,merchantId);
     }
 
     @PostMapping("/confirmPayment")

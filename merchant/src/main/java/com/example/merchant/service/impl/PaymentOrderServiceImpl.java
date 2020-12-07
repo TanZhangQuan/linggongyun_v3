@@ -80,10 +80,11 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
     private AcquireID acquireID;
 
     @Resource
-    private JwtUtils jwtUtils;
+    private TaxDao taxDao;
 
     @Resource
     private MerchantDao merchantDao;
+
 
     /**
      * 获取今天的支付总额
@@ -202,12 +203,21 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
         PaymentDto paymentDto = addPaymentOrderDto.getPaymentDto();
         PaymentOrder paymentOrder = new PaymentOrder();
         BeanUtils.copyProperties(paymentDto, paymentOrder);
+        Tax tax = taxDao.selectById(paymentDto.getTaxId());
+        paymentOrder.setPlatformServiceProvider(tax.getTaxName());
         List<PaymentInventory> paymentInventories = addPaymentOrderDto.getPaymentInventories();
         String id = paymentOrder.getId();
         if (merchantId != null) {
             CompanyInfo companyInfo = companyInfoDao.selectById(merchantId);
-            paymentOrder.setCompanyId(companyInfo.getId());
-            paymentOrder.setCompanySName(companyInfo.getCompanyName());
+            if (companyInfo == null) {
+                Merchant merchant = merchantDao.selectById(merchantId);
+                paymentOrder.setCompanyId(merchant.getCompanyId());
+                paymentOrder.setCompanySName(merchant.getCompanyName());
+            }
+            if (companyInfo != null) {
+                paymentOrder.setCompanyId(companyInfo.getId());
+                paymentOrder.setCompanySName(companyInfo.getCompanyName());
+            }
         }
         if (id != null && paymentOrder.getPaymentOrderStatus() == 0) {
             List<PaymentInventory> paymentInventoryList = paymentInventoryDao.selectList(new QueryWrapper<PaymentInventory>().eq("payment_order_id", id));
@@ -519,7 +529,6 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
         paymentOrder.setSubpackagePayment(subpackagePayment);
         return ReturnJson.success(paymentOrder);
     }
-
 
     /**
      * 获取综合费率

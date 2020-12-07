@@ -30,7 +30,7 @@ public class PaymentDto {
     /**
      * 商户的公司简称
      */
-    @NotBlank(message = "商户名称不能为空")
+    @ApiParam(hidden = true)
     private String companySName;
 
     /**
@@ -38,12 +38,6 @@ public class PaymentDto {
      */
     @NotBlank(message = "平台服务商ID不能为空")
     private String taxId;
-
-    /**
-     * 平台服务商
-     */
-    @NotBlank(message = "平台服务商不能为空")
-    private String platformServiceProvider;
 
     /**
      * 项目合同（存储位置）

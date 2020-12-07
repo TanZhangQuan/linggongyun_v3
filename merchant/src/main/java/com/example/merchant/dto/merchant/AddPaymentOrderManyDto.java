@@ -1,5 +1,6 @@
 package com.example.merchant.dto.merchant;
 
+import com.example.merchant.dto.platform.PaymentOrderManyDto;
 import com.example.mybatis.entity.PaymentInventory;
 import com.example.mybatis.entity.PaymentOrderMany;
 import io.swagger.annotations.ApiModel;
@@ -16,7 +17,7 @@ public class AddPaymentOrderManyDto {
 
     @NotNull(message = "众包订单内容不能为空！")
     @ApiModelProperty(notes = "众包订单内容", value = "众包订单内容")
-    private PaymentOrderMany paymentOrderMany;
+    private PaymentOrderManyDto paymentOrderManyDto;
 
     @NotEmpty(message = "支付清单订单内容不能为空！")
     @ApiModelProperty(notes = "支付清单订单内容", value = "支付清单订单内容")

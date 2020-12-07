@@ -67,8 +67,8 @@ public class InvoiceMerchantController {
     @ApiOperation("总包发票列表已开票,发票信息")
     @PostMapping(value = "/getInvInfoById")
     @LoginRequired
-    public ReturnJson getInvInfoById(String InvId,@RequestAttribute("userId")@ApiParam(hidden = true) String merchantId) {
-        return invoiceService.getInvInfoById(InvId,merchantId);
+    public ReturnJson getInvInfoById(String InvId, @RequestAttribute("userId") @ApiParam(hidden = true) String merchantId) {
+        return invoiceService.getInvInfoById(InvId, merchantId);
     }
 
     @ApiOperation("支付信息,对应多个支付支付id用逗号隔开")
@@ -86,7 +86,8 @@ public class InvoiceMerchantController {
 
     @ApiOperation("开票信息，购买方,商户id")
     @GetMapping(value = "/getBuyerById")
-    public ReturnJson getBuyerById(String id) {
+    @LoginRequired
+    public ReturnJson getBuyerById(@RequestAttribute("userId") @ApiParam(hidden = true) String id) {
         return merchantService.getBuyerById(id);
     }
 

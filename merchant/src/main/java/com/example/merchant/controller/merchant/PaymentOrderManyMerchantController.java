@@ -38,7 +38,7 @@ public class PaymentOrderManyMerchantController {
             @ApiImplicitParam(name = "paymentOrderMerchantDto", value = "查询条件", required = true, dataType = "PaymentOrderMerchantDto")
     })
     public ReturnJson getPaymentOrderManyAll(@ApiParam(hidden = true) @RequestAttribute("userId") String merchantId, @Valid @RequestBody PaymentOrderMerchantDto paymentOrderMerchantDto) {
-        return paymentOrderManyService.getPaymentOrderMany(merchantId,paymentOrderMerchantDto);
+        return paymentOrderManyService.getPaymentOrderMany(merchantId, paymentOrderMerchantDto);
     }
 
     @GetMapping("/getPaymentOrderManyInfo")
@@ -55,8 +55,9 @@ public class PaymentOrderManyMerchantController {
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "addPaymentOrderManyDto", value = "添加众包支付订单的内容", required = true, dataType = "AddPaymentOrderManyDto")
     })
-    public ReturnJson saveOrUpdataPaymentOrderMany(@Valid @RequestBody AddPaymentOrderManyDto addPaymentOrderManyDto) {
-        return paymentOrderManyService.saveOrUpdataPaymentOrderMany(addPaymentOrderManyDto);
+    @LoginRequired
+    public ReturnJson saveOrUpdataPaymentOrderMany(@Valid @RequestBody AddPaymentOrderManyDto addPaymentOrderManyDto, @ApiParam(hidden = true) @RequestAttribute("userId") String merchantId) {
+        return paymentOrderManyService.saveOrUpdataPaymentOrderMany(addPaymentOrderManyDto, merchantId);
     }
 
     @PostMapping("/offlinePayment")
