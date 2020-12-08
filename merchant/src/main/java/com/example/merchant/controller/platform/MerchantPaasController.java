@@ -3,12 +3,14 @@ package com.example.merchant.controller.platform;
 
 import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.platform.CompanyDto;
+import com.example.merchant.dto.platform.UpdateCompanyInfoDto;
+import com.example.merchant.dto.platform.UpdateMerchantInfDto;
+import com.example.merchant.dto.platform.UpdetaInvoiceInfoDto;
 import com.example.merchant.exception.CommonException;
 import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.AddressService;
 import com.example.merchant.service.LinkmanService;
 import com.example.merchant.service.MerchantService;
-import com.example.merchant.service.TaxService;
 import com.example.mybatis.entity.Address;
 import com.example.mybatis.entity.Linkman;
 import io.swagger.annotations.*;
@@ -16,7 +18,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -239,5 +240,47 @@ public class MerchantPaasController {
     @ApiOperation(value = "代理商列表", notes = "代理商列表", httpMethod = "GET")
     public ReturnJson queryAgent() {
         return merchantService.queryAgent();
+    }
+
+    @GetMapping("/queryCompanyInfo")
+    @ApiOperation(value = "公司的基本信息", notes = "公司的基本信息", httpMethod = "GET")
+    public ReturnJson queryCompanyInfo(String companyInfoId) {
+        return merchantService.queryCompanyInfo(companyInfoId);
+    }
+
+    @PostMapping("/updateCompanyInfo")
+    @ApiOperation(value = "公司的基本信息修改", notes = "公司的基本信息修改", httpMethod = "POST")
+    public ReturnJson updateCompanyInfo(@RequestBody UpdateCompanyInfoDto updateCompanyInfoDto) {
+        return merchantService.updateCompanyInfo(updateCompanyInfoDto);
+    }
+
+    @GetMapping("/queryInvoiceInfo")
+    @ApiOperation(value = "公司的开票信息", notes = "公司的开票信息", httpMethod = "GET")
+    public ReturnJson queryInvoiceInfo(String companyInfoId) {
+        return merchantService.queryInvoiceInfo(companyInfoId);
+    }
+
+    @PostMapping("/updetaInvoiceInfo")
+    @ApiOperation(value = "公司的开票信息修改", notes = "公司的基本信息修改", httpMethod = "POST")
+    public ReturnJson updetaInvoiceInfo(@RequestBody UpdetaInvoiceInfoDto updetaInvoiceInfoDto) {
+        return merchantService.updateInvoiceInfo(updetaInvoiceInfoDto);
+    }
+
+    @GetMapping("/queryMerchantInfo")
+    @ApiOperation(value = "公司的账户信息", notes = "公司的账户信息", httpMethod = "GET")
+    public ReturnJson queryMerchantInfo(String companyInfoId) {
+        return merchantService.queryMerchantInfo(companyInfoId);
+    }
+
+    @PostMapping("/updateMerchantInfo")
+    @ApiOperation(value = "公司的账户信息修改", notes = "公司的基本信息修改", httpMethod = "POST")
+    public ReturnJson updateMerchantInfo(@RequestBody UpdateMerchantInfDto updateMerchantInfDto) {
+        return merchantService.updateMerchantInfo(updateMerchantInfDto);
+    }
+
+    @GetMapping("/queryCooperationInfo")
+    @ApiOperation(value = "公司的合作信息", notes = "公司的账户信息", httpMethod = "GET")
+    public ReturnJson queryCooperationInfo(String companyInfoId) {
+        return merchantService.queryCooperationInfo(companyInfoId);
     }
 }

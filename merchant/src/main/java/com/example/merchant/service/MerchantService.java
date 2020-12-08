@@ -3,10 +3,12 @@ package com.example.merchant.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.platform.CompanyDto;
+import com.example.merchant.dto.platform.UpdateCompanyInfoDto;
+import com.example.merchant.dto.platform.UpdateMerchantInfDto;
+import com.example.merchant.dto.platform.UpdetaInvoiceInfoDto;
 import com.example.merchant.exception.CommonException;
 import com.example.mybatis.entity.Merchant;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
@@ -61,4 +63,63 @@ public interface MerchantService extends IService<Merchant> {
     ReturnJson logout(String merchantId);
 
     ReturnJson queryAgent();
+
+    /**
+     * 公司基本信息查询
+     *
+     * @param companyId
+     * @return
+     */
+    ReturnJson queryCompanyInfo(String companyId);
+
+    /**
+     * 修改公司基本信息
+     *
+     * @param updateCompanyInfoDto
+     * @return
+     */
+    ReturnJson updateCompanyInfo(UpdateCompanyInfoDto updateCompanyInfoDto);
+
+    /**
+     * 公司的开票信息
+     *
+     * @param companyId
+     * @return
+     */
+    ReturnJson queryInvoiceInfo(String companyId);
+
+    /**
+     * 修改公司开票信息
+     *
+     * @param updetaInvoiceInfoDto
+     * @return
+     */
+    ReturnJson updateInvoiceInfo(UpdetaInvoiceInfoDto updetaInvoiceInfoDto);
+
+    /**
+     * 公司的账户信息
+     *
+     * @param companyId
+     * @return
+     */
+    ReturnJson queryMerchantInfo(String companyId);
+
+    /**
+     * 修改公司的账户信息
+     *
+     * @param updateMerchantInfDto
+     * @return
+     */
+    ReturnJson updateMerchantInfo(UpdateMerchantInfDto updateMerchantInfDto);
+
+    /**
+     * 公司的合作信息
+     *
+     * @param companyId
+     * @return
+     */
+    ReturnJson queryCooperationInfo(String companyId);
+
+
+    ReturnJson updateCooperationInfo(String companyId);
 }

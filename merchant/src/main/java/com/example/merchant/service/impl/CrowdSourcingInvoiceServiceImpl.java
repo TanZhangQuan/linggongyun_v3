@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.common.util.DateUtil;
+import com.example.common.util.KdniaoTrackQueryAPI;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.merchant.AddApplicationCrowdSourcingDto;
 import com.example.merchant.service.CrowdSourcingInvoiceService;
@@ -77,6 +78,8 @@ public class CrowdSourcingInvoiceServiceImpl extends ServiceImpl<CrowdSourcingIn
             paymentOrderManyDao.updateById(paymentOrderMany);
             return ReturnJson.success("操作成功");
         } else {
+            applicationCrowdSourcing = crowdSourcingApplicationDao.selectById(applicationCrowdSourcing.getId());
+            BeanUtils.copyProperties(addApplicationCrowdSourcingDto, applicationCrowdSourcing);
             crowdSourcingApplicationDao.updateById(applicationCrowdSourcing);
             return ReturnJson.success("操作成功");
         }
@@ -284,6 +287,7 @@ public class CrowdSourcingInvoiceServiceImpl extends ServiceImpl<CrowdSourcingIn
         queryApplicationInfo.setBuyerVo(buyerVo);
         InvoiceApplicationVo invoiceApplicationVo = new InvoiceApplicationVo();
         BeanUtils.copyProperties(crowdSourcingApplication, invoiceApplicationVo);
+        invoiceApplicationVo.setApplicationAddress(crowdSourcingApplication.getApplicationAddressId());
         queryApplicationInfo.setInvoiceApplicationVo(invoiceApplicationVo);
         return ReturnJson.success(queryApplicationInfo);
     }
@@ -325,6 +329,7 @@ public class CrowdSourcingInvoiceServiceImpl extends ServiceImpl<CrowdSourcingIn
         InvoiceCatalogVo invoiceCatalogVo = new InvoiceCatalogVo();
         BeanUtils.copyProperties(invoiceCatalog, invoiceCatalogVo);
         queryInvoiceInfoVo.setInvoiceCatalogVo(invoiceCatalogVo);
+        queryInvoiceInfoVo.setExpressLogisticsInfoList(KdniaoTrackQueryAPI.getExpressInfo(crowdSourcingInvoice.getExpressCompanyName(), crowdSourcingInvoice.getExpressSheetNo()));
         return ReturnJson.success(queryInvoiceInfoVo);
     }
 }

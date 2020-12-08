@@ -42,7 +42,7 @@ public interface InvoiceDao extends BaseMapper<Invoice> {
      */
     InvoiceInformationVo getInvInfoById(String invId);
 
-    IPage<InvoiceVo> getPlaInvoiceList(Page page,@Param("tobeinvoicedDto") TobeinvoicedDto tobeinvoicedDto);
+    IPage<PlaInvoiceListVo> getPlaInvoiceList(Page page,@Param("tobeinvoicedDto") TobeinvoicedDto tobeinvoicedDto);
 
     //更具申请id查询信息
     PlaInvoiceInfoVo getPlaInvoiceInfo(String applicationId);

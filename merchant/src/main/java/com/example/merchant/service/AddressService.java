@@ -16,6 +16,7 @@ public interface AddressService extends IService<Address> {
 
     /**
      * 获取商户的所以收货地址
+     *
      * @param merchantId
      * @return
      */
@@ -23,13 +24,15 @@ public interface AddressService extends IService<Address> {
 
     /**
      * 添加或修改地址
+     *
      * @param address
      * @return
      */
-    ReturnJson addOrUpdataAddress(Address address,String merchantId);
+    ReturnJson addOrUpdataAddress(Address address, String merchantId);
 
     /**
      * 停用或启用地址
+     *
      * @param addressId
      * @param status
      * @return
@@ -38,6 +41,7 @@ public interface AddressService extends IService<Address> {
 
     /**
      * 删除地址
+     *
      * @param addressId
      * @return
      */

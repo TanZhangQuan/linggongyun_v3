@@ -2,6 +2,7 @@ package com.example.mybatis.dto;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.ApiParam;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
@@ -18,6 +19,7 @@ public class AddInvoiceDto {
     @ApiModelProperty(value = "申请开票id")
     private String applicationId;
 
+    @ApiParam(hidden = true)
     @ApiModelProperty(value = "开票时间,默认当前系统时间")
     private String invoicePrintDate;
 
@@ -64,12 +66,15 @@ public class AddInvoiceDto {
     @ApiModelProperty(value = "快递公司名称")
     private String expressCompanyName;
 
+    @ApiParam(hidden = true)
     @ApiModelProperty(value = "快递更新时间")
     private String expressUpdateDatetime;
 
+    @ApiParam(hidden = true)
     @ApiModelProperty(value = "快递更新人员")
     private String expressUpdatePerson;
 
+    @ApiParam(hidden = true)
     @ApiModelProperty(value = "快递更新人员电话")
     private String expressUpdatePersonTel;
 
