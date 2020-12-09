@@ -198,6 +198,7 @@ public class CrowdSourcingInvoiceServiceImpl extends ServiceImpl<CrowdSourcingIn
     @Override
     public ReturnJson getApplicationInfo(String applicationId) {
         CrowdSourcingApplication crowdSourcingApplication = crowdSourcingApplicationDao.selectById(applicationId);
+
         return ReturnJson.success("操作成功", crowdSourcingApplication);
     }
 
@@ -230,7 +231,7 @@ public class CrowdSourcingInvoiceServiceImpl extends ServiceImpl<CrowdSourcingIn
             crowdSourcingInvoice.setInvoiceCode("FP" + codes);
             //创建时间
             crowdSourcingInvoice.setCreateDate(LocalDateTime.parse(DateUtil.getTime(), dfd));
-            int num = crowdSourcingInvoiceDao.insert(crowdSourcingInvoice);
+            crowdSourcingInvoiceDao.insert(crowdSourcingInvoice);
             if (crowdSourcingInvoice.getApplicationId() != null) {
                 CrowdSourcingApplication crowdSourcingApplication = new CrowdSourcingApplication();
                 crowdSourcingApplication.setId(crowdSourcingInvoice.getApplicationId());

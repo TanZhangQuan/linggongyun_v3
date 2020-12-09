@@ -280,11 +280,12 @@
     <resultMap id="TaxBriefVO" type="com.example.mybatis.vo.TaxBriefVO">
         <result column="id" property="id"/>
         <result column="tax_name" property="taxName"/>
+        <result column="tax_status" property="taxStatus"/>
     </resultMap>
 
     <select id="selectTaxBrief" resultMap="TaxBriefVO">
                 SELECT
-            t.id,t.tax_name
+            t.id,t.tax_name,t.tax_status
         FROM
             tb_tax t
         WHERE

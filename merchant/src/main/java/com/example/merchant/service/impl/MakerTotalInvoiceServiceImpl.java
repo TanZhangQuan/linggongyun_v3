@@ -45,10 +45,12 @@ public class MakerTotalInvoiceServiceImpl extends ServiceImpl<MakerTotalInvoiceD
     private InvoiceCatalogDao invoiceCatalogDao;
     @Resource
     private TaxPackageDao taxPackageDao;
+    @Resource
+    private ManagersDao managersDao;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ReturnJson saveOrUpdateMakerTotalInvoice(MakerTotalInvoiceDto makerTotalInvoiceDto) {
+    public ReturnJson saveOrUpdateMakerTotalInvoice(MakerTotalInvoiceDto makerTotalInvoiceDto, String managerId) {
         ReturnJson returnJson = new ReturnJson("操作失败", 200);
         DateTimeFormatter dfd = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");//时间转换
         DecimalFormat dfb = new DecimalFormat("0.00");//金额转换
@@ -56,9 +58,7 @@ public class MakerTotalInvoiceServiceImpl extends ServiceImpl<MakerTotalInvoiceD
         makerTotalInvoice.setId(makerTotalInvoiceDto.getId());
         makerTotalInvoice.setInvoiceTypeNo(makerTotalInvoiceDto.getInvoiceTypeNo());
         makerTotalInvoice.setInvoiceSerialNo(makerTotalInvoiceDto.getInvoiceSerialNo());
-        if (makerTotalInvoiceDto.getInvoiceDate() == null) {
-            makerTotalInvoice.setInvoiceDate(LocalDateTime.parse(DateUtil.getTime(), dfd));
-        }
+        makerTotalInvoice.setInvoiceDate(LocalDateTime.parse(DateUtil.getTime(), dfd));
         makerTotalInvoice.setInvoiceCategory(makerTotalInvoiceDto.getInvoiceCategory());
         makerTotalInvoice.setTotalAmount(makerTotalInvoiceDto.getTotalAmount());
         String[] taxAmounts = makerTotalInvoiceDto.getTaxAmount().split(",");
@@ -67,16 +67,14 @@ public class MakerTotalInvoiceServiceImpl extends ServiceImpl<MakerTotalInvoiceD
             taxAmount.add(new BigDecimal(taxAmounts[i]));
         }
         makerTotalInvoice.setTaxAmount(taxAmount);
-        makerTotalInvoice.setInvoicePerson(makerTotalInvoiceDto.getInvoicePerson());
+        makerTotalInvoice.setInvoicePerson(managersDao.selectById(managerId).getRealName());
         makerTotalInvoice.setSaleCompany(makerTotalInvoiceDto.getSaleCompany());
         makerTotalInvoice.setMakerInvoiceDesc(makerTotalInvoiceDto.getMakerInvoiceDesc());
         makerTotalInvoice.setMakerInvoiceUrl(makerTotalInvoiceDto.getMakerInvoiceUrl());
         makerTotalInvoice.setMakerTaxUrl(makerTotalInvoiceDto.getMakerTaxUrl());
-        makerTotalInvoice.setMakerVoiceUploadDateTime(makerTotalInvoiceDto.getMakerVoiceUploadDateTime());
+        makerTotalInvoice.setMakerVoiceUploadDateTime(LocalDateTime.now());
         if (makerTotalInvoice.getId() == null) {
-            if (makerTotalInvoiceDto.getCreateTime() == null) {
-                makerTotalInvoice.setCreateDate(LocalDateTime.parse(DateUtil.getTime(), dfd));
-            }
+            makerTotalInvoice.setCreateDate(LocalDateTime.parse(DateUtil.getTime(), dfd));
             int num = makerTotalInvoiceDao.insert(makerTotalInvoice);
             if (num > 0) {
                 String[] paymentOrderId = makerTotalInvoiceDto.getPaymentOrderId().split(",");
@@ -100,9 +98,7 @@ public class MakerTotalInvoiceServiceImpl extends ServiceImpl<MakerTotalInvoiceD
             }
         }
         if (makerTotalInvoice.getId() != null) {
-            if (makerTotalInvoiceDto.getUpdateTime() == null) {
-                makerTotalInvoice.setCreateDate(LocalDateTime.parse(DateUtil.getTime(), dfd));
-            }
+            makerTotalInvoice.setCreateDate(LocalDateTime.parse(DateUtil.getTime(), dfd));
             int num = makerTotalInvoiceDao.updateById(makerTotalInvoice);
             if (num > 0) {
                 returnJson = new ReturnJson("操作成功", 200);
@@ -121,9 +117,15 @@ public class MakerTotalInvoiceServiceImpl extends ServiceImpl<MakerTotalInvoiceD
             if (invoice == null) {
                 return ReturnJson.error("不存在此发票");
             }
+            InvoiceCatalog invoiceCatalog = invoiceCatalogDao.selectById(invoice.getInvoiceCatalog());
+            if (invoiceCatalog != null) {
+                InvoiceCatalogVo invoiceCatalogVo = new InvoiceCatalogVo();
+                BeanUtils.copyProperties(invoiceCatalog, invoiceCatalogVo);
+                makerTotalInvoiceInfoVo.setInvoiceCatalogVo(invoiceCatalogVo);
+            }
         }
         List<PaymentOrderVo> paymentOrderVoList = paymentOrderDao.queryPaymentOrderInfoByIds(invoiceId);
-        if (paymentOrderVoList == null) {
+        if (paymentOrderVoList.size() == 0) {
             return ReturnJson.error("支付信息有误！");
         }
         makerTotalInvoiceInfoVo.setPaymentOrderVoList(paymentOrderVoList);

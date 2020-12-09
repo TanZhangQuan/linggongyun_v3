@@ -9,6 +9,11 @@ import lombok.Data;
  */
 @Data
 public class InvoiceCatalogVo {
+
+    /**
+     * 开票类目ID
+     */
+    private String id;
     /**
      * 服务类型
      */

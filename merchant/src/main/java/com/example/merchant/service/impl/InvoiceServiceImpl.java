@@ -272,28 +272,14 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
      * 汇总开票详情数据
      *
      * @param invoiceId
-     * @param companySNames
-     * @param platformServiceProviders
      * @return
      */
     @Override
-    public ReturnJson getInvoiceListQuery(String invoiceId, String companySNames, String platformServiceProviders) {
+    public ReturnJson getInvoiceListQuery(String invoiceId) {
         ReturnJson returnJson = new ReturnJson("操作失败", 300);
         DecimalFormat df = new DecimalFormat("0.00");
         Map<String, Object> map = new HashMap();
         BigDecimal totalTaxPrice = new BigDecimal("0.00");
-        String[] companySName = companySNames.split(",");
-        for (int i = 0; i < companySName.length; i++) {
-            if (!(companySName[0]).equals(companySName[i])) {
-                return new ReturnJson("商户必须为同一个", 300);
-            }
-        }
-        String[] platformServiceProvider = platformServiceProviders.split(",");
-        for (int i = 0; i < platformServiceProvider.length; i++) {
-            if (!(platformServiceProvider[0]).equals(platformServiceProvider[i])) {
-                return new ReturnJson("服务商必须为同一个", 300);
-            }
-        }
         String[] id = invoiceId.split(",");
         List<String> list = new ArrayList<>();
         for (int i = 0; i < id.length; i++) {
@@ -316,7 +302,7 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
                 }
             }
             map.put("voList", voList);
-            map.put("税价合计", totalTaxPrice);
+            map.put("totalTaxPrice", totalTaxPrice);
             returnJson = new ReturnJson("操作成功", map, 200);
         }
         return returnJson;

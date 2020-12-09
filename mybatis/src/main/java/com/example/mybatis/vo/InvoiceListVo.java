@@ -15,6 +15,10 @@ public class InvoiceListVo {
      */
     private String id;
     /**
+     * 创客ID
+     */
+    private String workerId;
+    /**
      * 创客名称
      */
     private String workerName;
