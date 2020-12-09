@@ -1,15 +1,13 @@
 package com.example.merchant.controller.platform;
 
 import com.example.common.util.ReturnJson;
+import com.example.merchant.dto.platform.AddCrowdSourcingInvoiceDto;
 import com.example.merchant.service.CrowdSourcingInvoiceService;
 import com.example.mybatis.dto.TobeinvoicedDto;
 import com.example.mybatis.entity.CrowdSourcingInvoice;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
@@ -53,8 +51,8 @@ public class CrowdSourcingPassController {
 
     @PostMapping("/saveCrowdSourcingInvoice")
     @ApiOperation(value = "众包开票详情页，开票")
-    public ReturnJson saveCrowdSourcingInvoice(CrowdSourcingInvoice crowdSourcingInvoice) {
-        return crowdSourcingInvoiceService.saveCrowdSourcingInvoice(crowdSourcingInvoice);
+    public ReturnJson saveCrowdSourcingInvoice(@RequestBody AddCrowdSourcingInvoiceDto addCrowdSourcingInvoiceDto) {
+        return crowdSourcingInvoiceService.saveCrowdSourcingInvoice(addCrowdSourcingInvoiceDto);
     }
 
     @PostMapping("/getCrowdSourcingInfo")

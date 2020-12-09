@@ -103,5 +103,12 @@ public class InvoicePassController {
         return makerInvoiceService.saveMakerInvoice(makerInvoiceDto);
     }
 
+    @ApiOperation("汇总代开详情")
+    @PostMapping("/queryMakerTotalInvoiceInfo")
+    public ReturnJson queryMakerTotalInvoiceInfo(String invoiceIds) {
+        return makerTotalInvoiceService.queryMakerTotalInvoiceInfo(invoiceIds);
+    }
+
+
 
 }

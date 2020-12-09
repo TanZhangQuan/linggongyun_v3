@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.mybatis.dto.QuerySubpackageDto;
 import com.example.mybatis.dto.TobeinvoicedDto;
 import com.example.mybatis.vo.InvoiceDetailsVo;
+import com.example.mybatis.vo.PaymentOrderVo;
 import com.example.mybatis.vo.SubpackageInfoVo;
 import com.example.mybatis.vo.SubpackageVo;
 import org.apache.ibatis.annotations.Param;
@@ -26,4 +27,6 @@ public interface SubpackageDao {
     SubpackageInfoVo getSubpackageInfoById(String invoiceId);
 
     IPage<InvoiceDetailsVo> getListById(Page page, @Param("invoiceId") String invoiceId);
+
+    List<PaymentOrderVo> queryPaymentOrderInfo(String invoiceId);
 }

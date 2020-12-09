@@ -8,6 +8,7 @@ import com.example.common.util.DateUtil;
 import com.example.common.util.KdniaoTrackQueryAPI;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.merchant.AddApplicationCrowdSourcingDto;
+import com.example.merchant.dto.platform.AddCrowdSourcingInvoiceDto;
 import com.example.merchant.service.CrowdSourcingInvoiceService;
 import com.example.merchant.vo.merchant.*;
 import com.example.merchant.vo.merchant.InvoiceVo;
@@ -196,58 +197,51 @@ public class CrowdSourcingInvoiceServiceImpl extends ServiceImpl<CrowdSourcingIn
      */
     @Override
     public ReturnJson getApplicationInfo(String applicationId) {
-        ReturnJson returnJson = new ReturnJson("操作失败", 300);
         CrowdSourcingApplication crowdSourcingApplication = crowdSourcingApplicationDao.selectById(applicationId);
-        if (crowdSourcingApplication != null) {
-            returnJson = new ReturnJson("操作成功", crowdSourcingApplication, 200);
-        }
-        return returnJson;
+        return ReturnJson.success("操作成功", crowdSourcingApplication);
     }
 
-    /**
-     * 众包开票
-     *
-     * @param crowdSourcingInvoice
-     * @return
-     */
     @Override
-    public ReturnJson saveCrowdSourcingInvoice(CrowdSourcingInvoice crowdSourcingInvoice) {
-        ReturnJson returnJson = new ReturnJson("操作失败", 300);
+    public ReturnJson saveCrowdSourcingInvoice(AddCrowdSourcingInvoiceDto addCrowdSourcingInvoiceDto) {
         //时间转换
         DateTimeFormatter dfd = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        if (crowdSourcingInvoice.getApplicationId() == null) {
-            returnJson = new ReturnJson("商户未申请，支付id不能为空", 300);
-        }
-        if (crowdSourcingInvoice.getInvoicePrintDate() == null) {
-            //开票时间给系统默认时间
-            crowdSourcingInvoice.setInvoicePrintDate(LocalDateTime.parse(DateUtil.getTime(), dfd));
-        }
-        String invoiceCode = crowdSourcingInvoiceDao.getCrowdInvoiceCode();
-        int code = Integer.valueOf(invoiceCode.substring(2)) + 1;
-        String codes = String.valueOf(code);
-        if (codes.length() < 4) {
-            if (codes.length() == 1) {
-                codes = "000" + code;
-            } else if (codes.length() == 2) {
-                codes = "00" + code;
-            } else {
-                codes = "0" + code;
+        CrowdSourcingInvoice crowdSourcingInvoice = new CrowdSourcingInvoice();
+        BeanUtils.copyProperties(addCrowdSourcingInvoiceDto, crowdSourcingInvoice);
+        if (addCrowdSourcingInvoiceDto.getId() == null) {
+            if (addCrowdSourcingInvoiceDto.getApplicationId() == null) {
+                return ReturnJson.error("商户未申请，支付id不能为空", 300);
             }
+            if (crowdSourcingInvoice.getInvoicePrintDate() == null) {
+                //开票时间给系统默认时间
+                crowdSourcingInvoice.setInvoicePrintDate(LocalDateTime.parse(DateUtil.getTime(), dfd));
+            }
+            String invoiceCode = crowdSourcingInvoiceDao.getCrowdInvoiceCode();
+            int code = Integer.valueOf(invoiceCode.substring(2)) + 1;
+            String codes = String.valueOf(code);
+            if (codes.length() < 4) {
+                if (codes.length() == 1) {
+                    codes = "000" + code;
+                } else if (codes.length() == 2) {
+                    codes = "00" + code;
+                } else {
+                    codes = "0" + code;
+                }
+            }
+            crowdSourcingInvoice.setInvoiceCode("FP" + codes);
+            //创建时间
+            crowdSourcingInvoice.setCreateDate(LocalDateTime.parse(DateUtil.getTime(), dfd));
+            int num = crowdSourcingInvoiceDao.insert(crowdSourcingInvoice);
+            if (crowdSourcingInvoice.getApplicationId() != null) {
+                CrowdSourcingApplication crowdSourcingApplication = new CrowdSourcingApplication();
+                crowdSourcingApplication.setId(crowdSourcingInvoice.getApplicationId());
+                crowdSourcingApplication.setApplicationState(3);
+                crowdSourcingApplicationDao.updateById(crowdSourcingApplication);
+            }
+            return ReturnJson.success("添加成功");
+        } else {
+            crowdSourcingInvoiceDao.updateById(crowdSourcingInvoice);
+            return ReturnJson.success("修改成功");
         }
-        crowdSourcingInvoice.setInvoiceCode("FP" + codes);
-        //创建时间
-        crowdSourcingInvoice.setCreateDate(LocalDateTime.parse(DateUtil.getTime(), dfd));
-        int num = crowdSourcingInvoiceDao.insert(crowdSourcingInvoice);
-        if (crowdSourcingInvoice.getApplicationId() != null) {
-            CrowdSourcingApplication crowdSourcingApplication = new CrowdSourcingApplication();
-            crowdSourcingApplication.setId(crowdSourcingInvoice.getApplicationId());
-            crowdSourcingApplication.setApplicationState(3);
-            crowdSourcingApplicationDao.updateById(crowdSourcingApplication);
-        }
-        if (num > 0) {
-            returnJson = new ReturnJson("操作成功", 200);
-        }
-        return returnJson;
     }
 
     /**

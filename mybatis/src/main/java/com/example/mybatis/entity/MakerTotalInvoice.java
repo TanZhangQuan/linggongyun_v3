@@ -22,11 +22,6 @@ public class MakerTotalInvoice extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 申请开票id
-     */
-    private String invoiceApplicationId;
-
-    /**
      * 发票代码
      */
     private String invoiceTypeNo;
