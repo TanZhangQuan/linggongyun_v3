@@ -43,8 +43,15 @@ public class SubpackageMerchantController {
 
     @ApiOperation("汇总代开,发票信息,创客到手明细")
     @PostMapping(value = "/getListByInvoiceId")
-    public ReturnJson getListByInvoiceId(String invoicedId, Integer PageNo, Integer pageSize) {
-        return subpackageService.getListByInvoiceId(invoicedId, PageNo, pageSize);
+    public ReturnJson getListByInvoiceId(String invoicedId, Integer pageNo, Integer pageSize) {
+        return subpackageService.getListByInvoiceId(invoicedId, pageNo, pageSize);
+    }
+
+    @ApiOperation("汇总代开,详细信息")
+    @PostMapping(value = "/getSummaryInfo")
+    @LoginRequired
+    public ReturnJson getSummaryInfo(@RequestParam String invoicedId, @RequestAttribute("userId") @ApiParam(hidden = true) String merchantId) {
+        return subpackageService.getSummaryInfo(invoicedId, merchantId);
     }
 
 

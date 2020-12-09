@@ -5,18 +5,18 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.service.SubpackageService;
+import com.example.merchant.vo.merchant.InvoiceCatalogVo;
+import com.example.merchant.vo.merchant.InvoiceInfoVo;
 import com.example.merchant.vo.merchant.QuerySubInfoVo;
 import com.example.mybatis.dto.QuerySubpackageDto;
 import com.example.mybatis.dto.TobeinvoicedDto;
+import com.example.mybatis.entity.InvoiceCatalog;
+import com.example.mybatis.entity.MakerTotalInvoice;
 import com.example.mybatis.entity.Merchant;
-import com.example.mybatis.mapper.MerchantDao;
-import com.example.mybatis.mapper.PaymentOrderDao;
-import com.example.mybatis.mapper.SubpackageDao;
-import com.example.mybatis.vo.InvoiceDetailsVo;
-import com.example.mybatis.vo.PaymentOrderVo;
-import com.example.mybatis.vo.SubpackageInfoVo;
-import com.example.mybatis.vo.SubpackageVo;
+import com.example.mybatis.mapper.*;
+import com.example.mybatis.vo.*;
 import org.apache.ibatis.session.RowBounds;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -30,13 +30,27 @@ public class SubpackageServiceImpl implements SubpackageService {
     @Resource
     private MerchantDao merchantDao;
     @Resource
-    private PaymentOrderDao paymentOrderDao;
+    private InvoiceCatalogDao invoiceCatalogDao;
+    @Resource
+    private MakerTotalInvoiceDao makerTotalInvoiceDao;
 
     @Override
-    public ReturnJson getSummaryInfo(String id) {
-        QuerySubInfoVo querySubInfoVo=new QuerySubInfoVo();
-        List<PaymentOrderVo> paymentOrderVoList = paymentOrderDao.queryPaymentOrderInfo("");
-
+    public ReturnJson getSummaryInfo(String id, String merchantId) {
+        QuerySubInfoVo querySubInfoVo = new QuerySubInfoVo();
+        List<PaymentOrderVo> paymentOrderVoList = subpackageDao.queryPaymentOrderInfo(id);
+        querySubInfoVo.setPaymentOrderVos(paymentOrderVoList);
+        BuyerVo buyerVo = merchantDao.getBuyerById(id);
+        querySubInfoVo.setBuyerVo(buyerVo);
+        MakerTotalInvoice makerTotalInvoice = makerTotalInvoiceDao.selectById(id);
+        InvoiceInfoVo invoiceInfoVo = new InvoiceInfoVo();
+        invoiceInfoVo.setInvoiceUrl(makerTotalInvoice.getMakerInvoiceUrl());
+        invoiceInfoVo.setTaxReceiptUrl(makerTotalInvoice.getMakerTaxUrl());
+        querySubInfoVo.setInvoiceInfoVo(invoiceInfoVo);
+        InvoiceCatalog invoiceCatalog = invoiceCatalogDao.selectById(makerTotalInvoice.getInvoiceCategory());
+        InvoiceCatalogVo invoiceCatalogVo = new InvoiceCatalogVo();
+        BeanUtils.copyProperties(invoiceCatalog, invoiceCatalogVo);
+        querySubInfoVo.setInvoiceCatalogVo(invoiceCatalogVo);
+        querySubInfoVo.setRemarks(makerTotalInvoice.getMakerInvoiceDesc());
         return ReturnJson.success(querySubInfoVo);
     }
 

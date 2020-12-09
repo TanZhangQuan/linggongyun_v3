@@ -110,11 +110,57 @@
     <select id="getListById" resultMap="InvoiceDetailsByPayId">
         SELECT pi.worker_id,pi.worker_name,pi.mobile_code,pi.id_card_code,pi.bank_code,pi.real_money
         FROM tb_maker_total_invoice as mti
-        INNER JOIN tb_invoice_application as ia ON ia.id=mti.invoice_application_id
-        INNER JOIN tb_application_payment as ap ON ap.invoice_application_id=ia.id
-        INNER JOIN tb_payment_order as po ON po.id=ap.payment_order_id
-        INNER JOIN tb_payment_inventory as pi ON pi.payment_order_id=po.id
+        INNER JOIN tb_invoice_list il ON il.maker_total_invoice_id=mti.id
+        INNER JOIN tb_invoice i ON i.id=il.invoice_id
+        INNER JOIN tb_invoice_application AS ia ON ia.id = i.application_id
+        INNER JOIN tb_application_payment AS ap ON ap.invoice_application_id = ia.id
+        INNER JOIN tb_payment_order AS po ON po.id = ap.payment_order_id
+        INNER JOIN tb_payment_inventory AS pi ON pi.payment_order_id = po.id
         WHERE mti.id=#{invoiceId}
+    </select>
+
+    <resultMap id="PaymentOrderById" type="com.example.mybatis.vo.PaymentOrderVo">
+        <result column="id" property="id"/>
+        <result column="company_s_name" property="companySName"/>
+        <result column="platform_service_provider" property="platformServiceProvider"/>
+        <result column="acceptance_certificate" property="acceptanceCertificate"/>
+        <result column="payment_order_status" property="paymentOrderStatus"/>
+        <result column="payment_inventory" property="paymentInventory"/>
+        <result column="payment_date" property="paymentDate"/>
+        <result column="subpackage_payment" property="subpackagePayment"/>
+        <association property="taskVo" javaType="com.example.mybatis.vo.TaskVo">
+            <result column="task_code" property="taskCode"/>
+            <result column="task_name" property="taskName"/>
+            <result column="release_date" property="releaseDate"/>
+            <result column="deadline_date" property="deadlineDate"/>
+            <result column="industry_type" property="industryType"/>
+        </association>
+    </resultMap>
+
+    <select id="queryPaymentOrderInfo" resultMap="PaymentOrderById">
+        SELECT
+            po.id,
+            po.company_s_name,
+            po.platform_service_provider,
+            po.acceptance_certificate,
+            po.payment_order_status,
+            po.payment_inventory,
+            po.payment_date,
+            po.subpackage_payment,
+            t.task_code,
+            t.task_name,
+            t.release_date,
+            t.deadline_date,
+            t.industry_type
+        FROM
+            tb_maker_total_invoice mti
+        INNER JOIN tb_invoice_list il ON il.maker_total_invoice_id = mti.id
+        INNER JOIN tb_invoice i ON i.id = il.invoice_id
+        INNER JOIN tb_invoice_application ia ON ia.id = i.application_id
+        INNER JOIN tb_application_payment ap ON ap.invoice_application_id = ia.id
+        INNER JOIN tb_payment_order po ON po.id = ap.payment_order_id
+        LEFT JOIN tb_task t ON t.id = po.task_id
+        where mti.id=#{invoiceId}
     </select>
 
 </mapper>

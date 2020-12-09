@@ -6,7 +6,7 @@ import com.example.mybatis.dto.TobeinvoicedDto;
 
 public interface SubpackageService {
 
-    ReturnJson getSummaryInfo(String id);
+    ReturnJson getSummaryInfo(String id,String merchantId);
 
     ReturnJson getSummaryList(QuerySubpackageDto querySubpackageDto, String merchantId);
 

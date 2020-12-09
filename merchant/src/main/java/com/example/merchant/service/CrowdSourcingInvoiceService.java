@@ -2,6 +2,7 @@ package com.example.merchant.service;
 
 import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.merchant.AddApplicationCrowdSourcingDto;
+import com.example.merchant.dto.platform.AddCrowdSourcingInvoiceDto;
 import com.example.mybatis.dto.QueryCrowdSourcingDto;
 import com.example.mybatis.dto.TobeinvoicedDto;
 import com.example.mybatis.entity.ApplicationCrowdSourcing;
@@ -24,7 +25,13 @@ public interface CrowdSourcingInvoiceService {
 
     ReturnJson getApplicationInfo(String applicationId);
 
-    ReturnJson saveCrowdSourcingInvoice(CrowdSourcingInvoice crowdSourcingInvoice);
+    /**
+     * 众包开票
+     *
+     * @param addCrowdSourcingInvoiceDto
+     * @return
+     */
+    ReturnJson saveCrowdSourcingInvoice(AddCrowdSourcingInvoiceDto addCrowdSourcingInvoiceDto);
 
     ReturnJson getCrowdSourcingInfoPass(TobeinvoicedDto tobeinvoicedDto);
 

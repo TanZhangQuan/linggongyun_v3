@@ -2,7 +2,10 @@ package com.example.merchant.vo.merchant;
 
 import com.example.mybatis.vo.BuyerVo;
 import com.example.mybatis.vo.PaymentOrderManyVo;
+import com.example.mybatis.vo.PaymentOrderVo;
 import lombok.Data;
+
+import java.util.List;
 
 /**
  * @Description
@@ -14,17 +17,12 @@ public class QuerySubInfoVo {
     /**
      * 支付信息
      */
-    private PaymentOrderManyVo paymentOrderManyVo;
+    private List<PaymentOrderVo> paymentOrderVos;
 
     /**
      * 销售方信息
      */
     private BuyerVo buyerVo;
-
-    /**
-     * 申请开票信息
-     */
-    private InvoiceApplicationVo invoiceApplicationVo;
 
     /**
      * 开票类目信息
@@ -35,4 +33,9 @@ public class QuerySubInfoVo {
      * 发票信息
      */
     private InvoiceInfoVo invoiceInfoVo;
+
+    /**
+     * 备注说明
+     */
+    private String remarks;
 }

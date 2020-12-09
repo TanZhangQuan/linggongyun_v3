@@ -8,4 +8,11 @@ import com.example.mybatis.entity.MakerTotalInvoice;
 public interface MakerTotalInvoiceService  extends IService<MakerTotalInvoice> {
 
     ReturnJson saveOrUpdateMakerTotalInvoice(MakerTotalInvoiceDto makerTotalInvoiceDto);
+
+    /**
+     * 查询汇总代开显示详情
+     * @param invoiceIds
+     * @return
+     */
+    ReturnJson queryMakerTotalInvoiceInfo(String invoiceIds);
 }
