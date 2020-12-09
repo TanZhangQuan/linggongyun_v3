@@ -32,9 +32,6 @@ public class MakerTotalInvoiceDto {
     @ApiModelProperty(value = "发票号码")
     private String invoiceSerialNo;
 
-    @ApiModelProperty(value = "开票日期")
-    private LocalDateTime invoiceDate;
-
     @NotNull(message = "服务类型不能为空")
     @ApiModelProperty(value = "服务类型")
     private String invoiceCategory;
@@ -65,13 +62,4 @@ public class MakerTotalInvoiceDto {
     @NotNull(message = "分包完税证明URL不能为空")
     @ApiModelProperty(value = "分包完税证明URL")
     private String makerTaxUrl;
-
-    @ApiModelProperty(value = "发票上传日期")
-    private LocalDateTime makerVoiceUploadDateTime;
-
-    @ApiModelProperty(value = "创建时间")
-    private LocalDateTime createTime;
-
-    @ApiModelProperty(value = "修改时间")
-    private LocalDateTime updateTime;
 }

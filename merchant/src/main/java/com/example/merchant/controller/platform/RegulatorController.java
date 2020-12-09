@@ -66,7 +66,7 @@ public class RegulatorController {
     }
 
     @GetMapping("/getTaxAll")
-    @ApiOperation(value = "查询所以服务商", notes = "查询所以服务商", httpMethod = "GET")
+    @ApiOperation(value = "查询所有服务商", notes = "查询所有服务商", httpMethod = "GET")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "pageNo", value = "当前页数", required = true),
             @ApiImplicitParam(name = "pageSize", value = "一页的条数", required = true),
             @ApiImplicitParam(name = "regulatorId", value = "监管人员ID", required = true)})
@@ -120,7 +120,7 @@ public class RegulatorController {
     @ApiOperation(value = "编辑监管状态", notes = "编辑监管状态", httpMethod = "POST")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "taxId", value = "服务商ID", required = true),
             @ApiImplicitParam(name = "regulatorId", value = "监管人员ID", required = true),
-            @ApiImplicitParam(name = "status", value = "监管状态 0开启监管，1关闭监管", required = true)})
+            @ApiImplicitParam(name = "status", value = "监管状态 0开启监管，1关闭监管，2撤销", required = true)})
     public ReturnJson updateRegulatorTaxStatus(@NotBlank(message = "服务商Id不能为空！") @RequestParam String taxId, @NotBlank(message = "监管人员Id不能为空！") @RequestParam String regulatorId, @RequestParam Integer status) {
         return regulatorService.updateRegulatorTaxStatus(taxId, regulatorId, status);
     }

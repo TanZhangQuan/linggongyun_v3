@@ -52,4 +52,6 @@ public interface CrowdSourcingInvoiceService {
      * @return
      */
     ReturnJson queryInvoiceInfo(String invoiceId, String merchantId);
+
+
 }

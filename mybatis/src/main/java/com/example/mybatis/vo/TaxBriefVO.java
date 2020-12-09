@@ -6,4 +6,5 @@ import lombok.Data;
 public class TaxBriefVO {
     private String id;
     private String taxName;
+    private Integer taxStatus;
 }

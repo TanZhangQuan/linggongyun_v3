@@ -4,6 +4,7 @@ package com.example.merchant.controller.platform;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.MakerInvoiceDto;
 import com.example.merchant.dto.MakerTotalInvoiceDto;
+import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.InvoiceService;
 import com.example.merchant.service.MakerInvoiceService;
 import com.example.merchant.service.MakerTotalInvoiceService;
@@ -11,11 +12,9 @@ import com.example.mybatis.dto.AddInvoiceDto;
 import com.example.mybatis.dto.TobeinvoicedDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
@@ -81,14 +80,15 @@ public class InvoicePassController {
 
     @ApiOperation("分包开票，开票清单明细信息")
     @PostMapping("/invoiceListQuery")
-    public ReturnJson invoiceListQuery(String invoiceId, String companySNames, String platformServiceProviders) {
-        return invoiceService.getInvoiceListQuery(invoiceId, companySNames, platformServiceProviders);
+    public ReturnJson invoiceListQuery(String invoiceId) {
+        return invoiceService.getInvoiceListQuery(invoiceId);
     }
 
     @ApiOperation("汇总代开")
     @PostMapping("/saveOrUpdateMakerTotalInvoice")
-    public ReturnJson saveOrUpdateMakerTotalInvoice(@Valid @RequestBody MakerTotalInvoiceDto makerTotalInvoiceDto) {
-        return makerTotalInvoiceService.saveOrUpdateMakerTotalInvoice(makerTotalInvoiceDto);
+    @LoginRequired
+    public ReturnJson saveOrUpdateMakerTotalInvoice(@Valid @RequestBody MakerTotalInvoiceDto makerTotalInvoiceDto,@RequestAttribute("userId") @ApiParam(hidden = true) String managerId) {
+        return makerTotalInvoiceService.saveOrUpdateMakerTotalInvoice(makerTotalInvoiceDto,managerId);
     }
 
     @ApiOperation("门征单开,开票清单明细信息")

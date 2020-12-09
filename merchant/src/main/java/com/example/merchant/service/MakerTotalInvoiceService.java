@@ -7,7 +7,7 @@ import com.example.mybatis.entity.MakerTotalInvoice;
 
 public interface MakerTotalInvoiceService  extends IService<MakerTotalInvoice> {
 
-    ReturnJson saveOrUpdateMakerTotalInvoice(MakerTotalInvoiceDto makerTotalInvoiceDto);
+    ReturnJson saveOrUpdateMakerTotalInvoice(MakerTotalInvoiceDto makerTotalInvoiceDto,String managerId);
 
     /**
      * 查询汇总代开显示详情
