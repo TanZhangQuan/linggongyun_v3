@@ -5,10 +5,10 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.common.util.*;
-import com.example.merchant.service.ObjectMenuService;
 import com.example.merchant.vo.merchant.*;
 import com.example.merchant.vo.platform.AddressVo;
 import com.example.merchant.vo.platform.QueryApplicationVo;
+import com.example.merchant.vo.platform.QueryPlaInvoiceVo;
 import com.example.mybatis.dto.QueryTobeinvoicedDto;
 import com.example.merchant.service.InvoiceApplicationService;
 import com.example.merchant.service.InvoiceService;
@@ -163,9 +163,9 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
         InvoiceApplicationVo invoiceApplicationVo = new InvoiceApplicationVo();
         BeanUtils.copyProperties(invoiceApplication, invoiceApplicationVo);
         queryApplicationInvoiceVo.setInvoiceApplicationVo(invoiceApplicationVo);
-        Address address=addressDao.selectById(invoiceApplication.getApplicationAddress());
-        AddressVo addressVo=new AddressVo();
-        BeanUtils.copyProperties(address,addressVo);
+        Address address = addressDao.selectById(invoiceApplication.getApplicationAddress());
+        AddressVo addressVo = new AddressVo();
+        BeanUtils.copyProperties(address, addressVo);
         queryApplicationInvoiceVo.setAddressVo(addressVo);
         InvoiceCatalog invoiceCatalog = invoiceCatalogDao.selectById(invoiceApplication.getInvoiceCatalogType());
         InvoiceCatalogVo invoiceCatalogVo = new InvoiceCatalogVo();
@@ -180,7 +180,11 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
         ReturnJson returnJson = new ReturnJson("添加失败", 300);
         DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         Invoice invoice = new Invoice();
-        if (addInvoiceDto.getId()==null){
+        if (addInvoiceDto.getId() == null) {
+            InvoiceApplication invoiceApplication = invoiceApplicationDao.selectById(addInvoiceDto.getApplicationId());
+            if (invoiceApplication.getApplicationState() == 3) {
+                return ReturnJson.error("已近开过票了，请勿重复提交");
+            }
             invoice.setApplicationId(addInvoiceDto.getApplicationId());
             String invoiceCode = this.getInvoiceCode();
             if (invoiceCode != null) {
@@ -189,10 +193,8 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
             } else {
                 invoice.setInvoiceCode("FP" + String.valueOf(0000));
             }
-            if (Tools.str2Date(addInvoiceDto.getInvoicePrintDate()) == null) {
-                //输入时间不正确给系统当前默认时间
-                invoice.setInvoicePrintDate(LocalDateTime.parse(DateUtil.getTime(), df));
-            }
+            //输入时间不正确给系统当前默认时间
+            invoice.setInvoicePrintDate(LocalDateTime.parse(DateUtil.getTime(), df));
             invoice.setInvoiceNumber(addInvoiceDto.getInvoiceNumber());
             invoice.setInvoiceCodeNo(addInvoiceDto.getInvoiceCodeNo());
             invoice.setInvoicePrintPerson(addInvoiceDto.getInvoicePrintPerson());
@@ -214,7 +216,7 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
                 }
             }
             return returnJson;
-        }else{
+        } else {
             invoice.setId(addInvoiceDto.getId());
             invoice.setInvoiceNumber(addInvoiceDto.getInvoiceNumber());
             invoice.setInvoiceCodeNo(addInvoiceDto.getInvoiceCodeNo());
@@ -318,5 +320,38 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
             returnJson = new ReturnJson("操作成功", map, 200);
         }
         return returnJson;
+    }
+
+    @Override
+    public ReturnJson queryInvoice(String invoiceId) {
+        Invoice invoice = invoiceDao.selectById(invoiceId);
+        if (invoice == null) {
+            return ReturnJson.error("不存在此发票");
+        }
+        QueryPlaInvoiceVo queryApplicationInvoiceVo = new QueryPlaInvoiceVo();
+        List<PaymentOrderVo> paymentOrderVoList = paymentOrderDao.queryPaymentOrderInfo(invoice.getApplicationId());
+        queryApplicationInvoiceVo.setPaymentOrderVoList(paymentOrderVoList);
+        List<BillingInfoVo> billingInfoVoList = new ArrayList<>();
+        for (int i = 0; i < paymentOrderVoList.size(); i++) {
+            BillingInfoVo billingInfo = paymentOrderDao.getBillingInfo(paymentOrderVoList.get(i).getId());
+            billingInfoVoList.add(billingInfo);
+        }
+        queryApplicationInvoiceVo.setBillingInfoVoList(billingInfoVoList);
+        PaymentOrder paymentOrderOne = paymentOrderDao.selectById(paymentOrderVoList.get(0).getId());
+        queryApplicationInvoiceVo.setBuyerVo(merchantDao.getBuyerById(paymentOrderOne.getMerchantId()));
+        queryApplicationInvoiceVo.setSellerVo(taxDao.getSellerById(paymentOrderOne.getTaxId()));
+        InvoiceApplication invoiceApplication = invoiceApplicationDao.selectById(invoice.getApplicationId());
+        Address address = addressDao.selectById(invoiceApplication.getApplicationAddress());
+        AddressVo addressVo = new AddressVo();
+        BeanUtils.copyProperties(address, addressVo);
+        queryApplicationInvoiceVo.setAddressVo(addressVo);
+        InvoiceCatalog invoiceCatalog = invoiceCatalogDao.selectById(invoiceApplication.getInvoiceCatalogType());
+        InvoiceCatalogVo invoiceCatalogVo = new InvoiceCatalogVo();
+        BeanUtils.copyProperties(invoiceCatalog, invoiceCatalogVo);
+        queryApplicationInvoiceVo.setInvoiceCatalogVo(invoiceCatalogVo);
+        com.example.merchant.vo.platform.PlaInvoiceInfoVo invoiceInfoVo= new com.example.merchant.vo.platform.PlaInvoiceInfoVo();
+        BeanUtils.copyProperties(invoice,invoiceInfoVo);
+        queryApplicationInvoiceVo.setPlaInvoiceInfoVo(invoiceInfoVo);
+        return ReturnJson.success(queryApplicationInvoiceVo);
     }
 }

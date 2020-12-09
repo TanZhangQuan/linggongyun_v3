@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.mybatis.entity.Regulator;
 import com.example.mybatis.po.RegulatorMerchantInfoPO;
 import com.example.mybatis.po.RegulatorWorkerPO;
+import com.example.mybatis.vo.TaxBriefVO;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -32,4 +33,6 @@ public interface RegulatorDao extends BaseMapper<Regulator> {
                                                            @Param("endDate")String endDate);
 
     List<RegulatorMerchantInfoPO> selectExportRegulatorMerchant(@Param("companyIds") List<String> companyIds, @Param("taxIds") List<String> taxIds);
+
+    IPage<TaxBriefVO> selectTaxBrief(Page page,String regulatorId);
 }

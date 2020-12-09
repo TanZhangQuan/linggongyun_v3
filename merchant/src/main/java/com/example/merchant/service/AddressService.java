@@ -1,6 +1,7 @@
 package com.example.merchant.service;
 
 import com.example.common.util.ReturnJson;
+import com.example.merchant.dto.platform.AddressDto;
 import com.example.mybatis.entity.Address;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -25,10 +26,10 @@ public interface AddressService extends IService<Address> {
     /**
      * 添加或修改地址
      *
-     * @param address
+     * @param addressDto
      * @return
      */
-    ReturnJson addOrUpdataAddress(Address address, String merchantId);
+    ReturnJson addOrUpdataAddress(AddressDto addressDto, String merchantId);
 
     /**
      * 停用或启用地址

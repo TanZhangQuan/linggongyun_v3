@@ -45,4 +45,12 @@ public interface InvoiceService extends IService<Invoice> {
     ReturnJson getListSubQuery(TobeinvoicedDto tobeinvoicedDto);
 
     ReturnJson getInvoiceListQuery(String invoiceId,String companySNames,String platformServiceProviders);
+
+    /**
+     * 总包开票编辑详情
+     *
+     * @param invoiceId
+     * @return
+     */
+    ReturnJson queryInvoice(String invoiceId);
 }

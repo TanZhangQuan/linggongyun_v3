@@ -63,4 +63,6 @@ public interface PaymentOrderDao extends BaseMapper<PaymentOrder> {
     List<PaymentOrderVo> queryPaymentOrderInfo(String invoiceAppcationId);
 
     BillPO queryBillInfo(String workerId,String id);
+
+    List<PaymentOrderVo> querySubInfo(String invoiceId);
 }

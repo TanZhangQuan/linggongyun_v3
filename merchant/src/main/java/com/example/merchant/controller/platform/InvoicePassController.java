@@ -55,6 +55,12 @@ public class InvoicePassController {
         return invoiceService.getPlaInvoiceInfo(applicationID);
     }
 
+    @ApiOperation("总包开票，编辑详情数据")
+    @PostMapping("/queryInvoice")
+    public ReturnJson queryInvoice(String invoiceId) {
+        return invoiceService.queryInvoice(invoiceId);
+    }
+
     @ApiOperation("总包开票")
     @PostMapping("/saveInvoice")
     public ReturnJson saveInvoice(@Valid @RequestBody AddInvoiceDto addInvoiceDto) {
@@ -96,5 +102,6 @@ public class InvoicePassController {
     public ReturnJson saveMakerInvoice(@Valid @RequestBody MakerInvoiceDto makerInvoiceDto) {
         return makerInvoiceService.saveMakerInvoice(makerInvoiceDto);
     }
+
 
 }

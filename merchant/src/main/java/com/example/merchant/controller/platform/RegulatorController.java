@@ -4,7 +4,7 @@ package com.example.merchant.controller.platform;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.platform.RegulatorDto;
 import com.example.merchant.dto.platform.RegulatorQueryDto;
-import com.example.merchant.dto.platform.RegulatorTaxDto;
+import com.example.merchant.dto.platform.AddRegulatorTaxDto;
 import com.example.merchant.service.RegulatorService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -67,16 +67,18 @@ public class RegulatorController {
 
     @GetMapping("/getTaxAll")
     @ApiOperation(value = "查询所以服务商", notes = "查询所以服务商", httpMethod = "GET")
-    @ApiImplicitParams(value = {@ApiImplicitParam(name = "pageNo", value = "当前页数", required = true), @ApiImplicitParam(name = "pageSize", value = "一页的条数", required = true)})
-    public ReturnJson getTaxAll(@RequestParam(defaultValue = "1") Integer pageNo, @RequestParam(defaultValue = "10") Integer pageSize) {
-        return regulatorService.getTaxAll(pageNo, pageSize);
+    @ApiImplicitParams(value = {@ApiImplicitParam(name = "pageNo", value = "当前页数", required = true),
+            @ApiImplicitParam(name = "pageSize", value = "一页的条数", required = true),
+            @ApiImplicitParam(name = "regulatorId", value = "监管人员ID", required = true)})
+    public ReturnJson getTaxAll(@RequestParam(defaultValue = "1") Integer pageNo, @RequestParam(defaultValue = "10") Integer pageSize, @RequestParam String regulatorId) {
+        return regulatorService.getTaxAll(pageNo, pageSize, regulatorId);
     }
 
     @PostMapping("/addRegulatorTax")
     @ApiOperation(value = "添加监管服务商", notes = "添加监管服务商", httpMethod = "POST")
-    @ApiImplicitParams(value = {@ApiImplicitParam(name = "regulatorTaxDtos", value = "监管服务商的信息", required = true, allowMultiple = true, dataType = "RegulatorTaxDto")})
-    public ReturnJson addReulatorTax(@Valid @RequestBody List<RegulatorTaxDto> regulatorTaxDtos) {
-        return regulatorService.addRegulatorTax(regulatorTaxDtos);
+    @ApiImplicitParams(value = {@ApiImplicitParam(name = "addRegulatorTaxDtos", value = "监管服务商的信息", required = true, allowMultiple = true, dataType = "AddRegulatorTaxDto")})
+    public ReturnJson addReulatorTax(@Valid @RequestBody List<AddRegulatorTaxDto> addRegulatorTaxDtos) {
+        return regulatorService.addRegulatorTax(addRegulatorTaxDtos);
     }
 
     @PostMapping("/getRegulatorPaymentCount")
@@ -104,7 +106,7 @@ public class RegulatorController {
     @ApiOperation(value = "查看成交订单", notes = "查看成交订单", httpMethod = "POST")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "paymentOrderId", value = "成交订单ID", required = true), @ApiImplicitParam(name = "packageStatus", value = "合作类型", required = true)})
     public ReturnJson getPaymentInfo(@NotBlank(message = "成交订单ID不能为空！") @RequestParam(required = false) String paymentOrderId, @NotNull(message = "合作类型不能为空！") @RequestParam(required = false) Integer packageStatus) {
-        return regulatorService.getPaymentOrderInfo(null,paymentOrderId, packageStatus);
+        return regulatorService.getPaymentOrderInfo(null, paymentOrderId, packageStatus);
     }
 
     @PostMapping("/getPaymentInventoryInfo")
@@ -114,4 +116,12 @@ public class RegulatorController {
         return regulatorService.getPaymentInventoryInfo(paymentOrderId, pageNo, pageSize);
     }
 
+    @PostMapping("/updateRegulatorTaxStatus")
+    @ApiOperation(value = "编辑监管状态", notes = "编辑监管状态", httpMethod = "POST")
+    @ApiImplicitParams(value = {@ApiImplicitParam(name = "taxId", value = "服务商ID", required = true),
+            @ApiImplicitParam(name = "regulatorId", value = "监管人员ID", required = true),
+            @ApiImplicitParam(name = "status", value = "监管状态 0开启监管，1关闭监管", required = true)})
+    public ReturnJson updateRegulatorTaxStatus(@NotBlank(message = "服务商Id不能为空！") @RequestParam String taxId, @NotBlank(message = "监管人员Id不能为空！") @RequestParam String regulatorId, @RequestParam Integer status) {
+        return regulatorService.updateRegulatorTaxStatus(taxId, regulatorId, status);
+    }
 }

@@ -390,11 +390,11 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
      */
     @Override
     public ReturnJson merchantInfoPaas(String merchantId) {
-        ReturnJson returnJson = homePageService.getHomePageInof(merchantId);
+        Merchant merchant = merchantDao.selectOne(new QueryWrapper<Merchant>().eq("company_id", merchantId).eq("parent_id", 0));
+        ReturnJson returnJson = homePageService.getHomePageInof(merchant.getId());
         HomePageVO homePageVO = new HomePageVO();
         HomePageMerchantVO homePageMerchantVO = (HomePageMerchantVO) returnJson.getObj();
         BeanUtils.copyProperties(homePageMerchantVO, homePageVO);
-        Merchant merchant = merchantDao.selectById(merchantId);
         Integer taxTotal = companyTaxDao.selectCount(new QueryWrapper<CompanyTax>().eq("company_id", merchant.getCompanyId()));
         homePageVO.setTaxTotal(taxTotal);
         ReturnJson merchantPaymentList = this.getMerchantPaymentList(merchantId, 1, 10);
@@ -414,6 +414,10 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
     @Override
     public ReturnJson getMerchantPaymentList(String merchantId, Integer page, Integer pageSize) {
         Merchant merchant = merchantDao.selectById(merchantId);
+        if (merchant == null) {
+            merchant = new Merchant();
+            merchant.setCompanyId(merchantId);
+        }
         Page<MerchantPaymentListPO> paymentListPage = new Page(page, pageSize);
         IPage<MerchantPaymentListPO> merchantPaymentListIPage = merchantDao.selectMerchantPaymentList(paymentListPage, merchant.getCompanyId());
         return ReturnJson.success(merchantPaymentListIPage);
@@ -637,6 +641,34 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
     @Override
     public ReturnJson updateCooperationInfo(String companyId) {
         return null;
+    }
+
+    @Override
+    public ReturnJson queryCompanyInfoById(String companyId) {
+        CompanyVo companyVo = new CompanyVo();
+        CompanyInfoVo companyInfoVo = new CompanyInfoVo();
+        CompanyInfo companyInfo = companyInfoDao.selectById(companyId);
+        BeanUtils.copyProperties(companyInfo, companyInfoVo);
+        companyVo.setCompanyInfoVo(companyInfoVo);
+        QueryInvoiceInfoVo queryInvoiceInfoVo = new QueryInvoiceInfoVo();
+        CompanyInvoiceInfo companyInvoiceInfo = companyInvoiceInfoDao.selectOne(new QueryWrapper<CompanyInvoiceInfo>().eq("company_id", companyId));
+        BeanUtils.copyProperties(companyInvoiceInfo, queryInvoiceInfoVo);
+        companyVo.setQueryInvoiceInfoVo(queryInvoiceInfoVo);
+        Merchant merchant = merchantDao.selectOne(new QueryWrapper<Merchant>().eq("company_id", companyId).eq("parent_id", 0));
+        QueryMerchantInfoVo queryMerchantInfoVo = new QueryMerchantInfoVo();
+        BeanUtils.copyProperties(merchant, queryMerchantInfoVo);
+        companyVo.setQueryMerchantInfoVo(queryMerchantInfoVo);
+        QueryCooperationInfoVo queryCooperationInfoVo = new QueryCooperationInfoVo();
+        queryCooperationInfoVo.setSalesManId(companyInfo.getSalesManId());
+        queryCooperationInfoVo.setAgentId(companyInfo.getAgentId());
+        Managers managers = managersDao.selectById(companyInfo.getSalesManId());
+        queryCooperationInfoVo.setSalesManName(managers.getRealName());
+        managers = managersDao.selectById(companyInfo.getAgentId());
+        queryCooperationInfoVo.setAgentName(managers.getRealName());
+        queryCooperationInfoVo.setCompanyInfoId(companyId);
+        companyVo.setQueryCooperationInfoVo(queryCooperationInfoVo);
+
+        return ReturnJson.success(companyVo);
     }
 
 

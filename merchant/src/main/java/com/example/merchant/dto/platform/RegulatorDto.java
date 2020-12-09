@@ -66,7 +66,7 @@ public class RegulatorDto  {
     /**
      * 确认密码
      */
-    @ApiModelProperty(notes = "确认密码", value = "确认密码",required = true)
+    @ApiModelProperty(notes = "确认密码", value = "确认密码")
     private String confirmPassWord;
 
     /**

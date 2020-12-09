@@ -72,7 +72,7 @@
         <result column="is_subpackage" property="isSubpackage"/>
         <result column="payment_date" property="paymentDate"/>
         <collection property="list" ofType="com.example.mybatis.vo.OrderSubpackageVo">
-            <result column="id" property="id"/>
+            <result column="pid" property="id"/>
             <result column="payment_inventory" property="paymentInventory"/>
             <result column="subpackage_payment" property="subpackagePayment"/>
         </collection>
@@ -328,7 +328,7 @@
     </select>
 
     <select id="getListSubQuery" resultMap="SubList">
-        SELECT i.id,po.company_s_name,po.platform_service_provider,i.invoice_url,i.tax_receipt_url,po.is_subpackage,po.payment_date,po.id,po.payment_inventory,po.turnkey_project_payment
+        SELECT i.id,po.company_s_name,po.platform_service_provider,i.invoice_url,i.tax_receipt_url,po.is_subpackage,po.payment_date,po.id as pid,po.payment_inventory,po.turnkey_project_payment
         FROM tb_invoice as i
         INNER JOIN tb_invoice_application as ia ON i.application_id=ia.id
         INNER JOIN tb_application_payment as ap ON ap.invoice_application_id=ia.id

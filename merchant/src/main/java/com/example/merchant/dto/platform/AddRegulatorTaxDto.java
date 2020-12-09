@@ -10,7 +10,7 @@ import lombok.Data;
 
 @Data
 @ApiModel(description = "监管服务商")
-public class RegulatorTaxDto {
+public class AddRegulatorTaxDto {
     /**
      * 服务商ID
      */

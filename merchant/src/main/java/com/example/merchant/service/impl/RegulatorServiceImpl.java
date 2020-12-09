@@ -7,7 +7,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.common.util.*;
 import com.example.merchant.dto.platform.RegulatorDto;
 import com.example.merchant.dto.platform.RegulatorQueryDto;
-import com.example.merchant.dto.platform.RegulatorTaxDto;
+import com.example.merchant.dto.platform.AddRegulatorTaxDto;
 import com.example.merchant.dto.regulator.RegulatorMerchantDto;
 import com.example.merchant.dto.regulator.RegulatorMerchantPaymentOrderDto;
 import com.example.merchant.dto.regulator.RegulatorWorkerDto;
@@ -19,7 +19,7 @@ import com.example.merchant.service.TaxService;
 import com.example.merchant.util.JwtUtils;
 import com.example.merchant.vo.ExpressInfoVO;
 import com.example.merchant.vo.PaymentOrderInfoVO;
-import com.example.merchant.vo.TaxBriefVO;
+import com.example.mybatis.vo.TaxBriefVO;
 import com.example.merchant.vo.platform.HomePageVO;
 import com.example.merchant.vo.platform.RegulatorTaxVO;
 import com.example.merchant.vo.regulator.*;
@@ -130,19 +130,13 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
      */
     @Override
     public ReturnJson updateRegulator(RegulatorDto regulatorDto) {
-        Regulator regulator = new Regulator();
-        BeanUtils.copyProperties(regulatorDto, regulator);
-        if (!StringUtils.isBlank(regulatorDto.getPassWord())) {
-            if (!regulatorDto.getPassWord().equals(regulatorDto.getConfirmPassWord())) {
-                return ReturnJson.error("输入的2次密码不一样，请重新输入！");
-            }
-            regulator.setPassWord(PWD_KEY + MD5.md5(regulatorDto.getPassWord()));
+        Regulator regulator = regulatorDao.selectById(regulatorDto.getId());
+        if (regulator == null) {
+            return ReturnJson.error("错误的监管信息，请重新输入");
         }
-        if (!StringUtils.isBlank(regulatorDto.getConfirmPassWord())) {
-            if (!regulatorDto.getConfirmPassWord().equals(regulatorDto.getPassWord())) {
-                return ReturnJson.error("输入的2次密码不一样，请重新输入！");
-            }
-            regulator.setPassWord(PWD_KEY + MD5.md5(regulatorDto.getConfirmPassWord()));
+        BeanUtils.copyProperties(regulatorDto, regulator);
+        if (regulatorDto.getPassWord() != null) {
+            regulator.setPassWord(PWD_KEY + MD5.md5(regulatorDto.getPassWord()));
         }
         boolean flag = this.updateById(regulator);
         if (flag) {
@@ -186,32 +180,24 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
      * @return
      */
     @Override
-    public ReturnJson getTaxAll(Integer page, Integer pageSize) {
+    public ReturnJson getTaxAll(Integer page, Integer pageSize, String regulatorId) {
         Page taxPage = new Page<>(page, pageSize);
-        taxPage = taxDao.selectPage(taxPage, new QueryWrapper<Tax>().eq("tax_status", 0));
-        List<Tax> records = taxPage.getRecords();
-        List<TaxBriefVO> taxBriefVOS = new ArrayList<>();
-        records.forEach(tax -> {
-            TaxBriefVO taxBriefVO = new TaxBriefVO();
-            BeanUtils.copyProperties(tax, taxBriefVO);
-            taxBriefVOS.add(taxBriefVO);
-        });
-        taxPage.setRecords(taxBriefVOS);
-        return ReturnJson.success(taxPage);
+        IPage<TaxBriefVO> taxBriefVOS = regulatorDao.selectTaxBrief(taxPage, regulatorId);
+        return ReturnJson.success(taxBriefVOS);
     }
 
     /**
      * 添加监管服务商
      *
-     * @param regulatorTaxDtos
+     * @param addRegulatorTaxDtos
      * @return
      */
     @Override
-    public ReturnJson addRegulatorTax(List<RegulatorTaxDto> regulatorTaxDtos) {
+    public ReturnJson addRegulatorTax(List<AddRegulatorTaxDto> addRegulatorTaxDtos) {
         List<RegulatorTax> regulatorTaxes = new ArrayList<>();
-        for (RegulatorTaxDto regulatorTaxDto : regulatorTaxDtos) {
+        for (AddRegulatorTaxDto addRegulatorTaxDto : addRegulatorTaxDtos) {
             RegulatorTax regulatorTax = new RegulatorTax();
-            BeanUtils.copyProperties(regulatorTaxDto, regulatorTax);
+            BeanUtils.copyProperties(addRegulatorTaxDto, regulatorTax);
             regulatorTaxes.add(regulatorTax);
         }
         boolean flag = regulatorTaxService.saveBatch(regulatorTaxes);
@@ -917,6 +903,18 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
     public ReturnJson regulatorLogout(String regulatorId) {
         redisDao.remove(regulatorId);
         return ReturnJson.success("登出成功");
+    }
+
+    @Override
+    public ReturnJson updateRegulatorTaxStatus(String taxId, String regulatorId, Integer status) {
+        RegulatorTax regulatorTax = regulatorTaxService.getOne(new QueryWrapper<RegulatorTax>().eq("tax_id", taxId).
+                eq("regulator_id", regulatorId));
+        if (regulatorTax == null) {
+            return ReturnJson.error("此服务商不在监管范围");
+        }
+        regulatorTax.setStatus(status);
+        regulatorTaxService.updateById(regulatorTax);
+        return ReturnJson.success("操作成功！");
     }
 
 

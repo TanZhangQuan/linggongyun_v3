@@ -11,7 +11,7 @@ import com.example.merchant.exception.CommonException;
 import com.example.merchant.service.InvoiceLadderPriceService;
 import com.example.merchant.service.MyBankService;
 import com.example.merchant.service.TaxService;
-import com.example.merchant.vo.TaxBriefVO;
+import com.example.mybatis.vo.TaxBriefVO;
 import com.example.merchant.vo.platform.HomePageVO;
 import com.example.merchant.vo.platform.TaxListVo;
 import com.example.merchant.vo.platform.TaxPlatformVO;

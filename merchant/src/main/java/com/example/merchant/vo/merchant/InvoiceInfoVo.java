@@ -8,11 +8,10 @@ import javax.validation.constraints.NotNull;
 /**
  * @Description
  * @Author JWei <jwei0401@163.com>
- * @Date 2020/12/7
+ * @Date 2020/12/8
  */
 @Data
-public class InvoiceVo {
-
+public class InvoiceInfoVo {
     /**
      * 发票Url
      */
@@ -24,16 +23,4 @@ public class InvoiceVo {
      */
     @ApiModelProperty("税票Url")
     private String taxReceiptUrl;
-
-    /**
-     * 快递单号
-     */
-    @ApiModelProperty("快递单号")
-    private String expressSheetNo;
-
-    /**
-     * 快递公司
-     */
-    @ApiModelProperty("快递公司")
-    private String expressCompanyName;
 }

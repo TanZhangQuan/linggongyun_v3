@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.platform.RegulatorDto;
 import com.example.merchant.dto.platform.RegulatorQueryDto;
-import com.example.merchant.dto.platform.RegulatorTaxDto;
+import com.example.merchant.dto.platform.AddRegulatorTaxDto;
 import com.example.merchant.dto.regulator.RegulatorMerchantDto;
 import com.example.merchant.dto.regulator.RegulatorMerchantPaymentOrderDto;
 import com.example.merchant.dto.regulator.RegulatorWorkerDto;
@@ -32,9 +32,9 @@ public interface RegulatorService extends IService<Regulator> {
 
     ReturnJson getRegulatorQuery(RegulatorQueryDto regulatorQueryDto);
 
-    ReturnJson getTaxAll(Integer page, Integer pageSize);
+    ReturnJson getTaxAll(Integer page, Integer pageSize, String regulatorId);
 
-    ReturnJson addRegulatorTax(List<RegulatorTaxDto> regulatorTaxDtos);
+    ReturnJson addRegulatorTax(List<AddRegulatorTaxDto> addRegulatorTaxDtos);
 
     ReturnJson getRegultorPaymentCount(String regulatorId);
 
@@ -77,4 +77,14 @@ public interface RegulatorService extends IService<Regulator> {
     ReturnJson regulatorLogin(String username, String password, HttpServletResponse response);
 
     ReturnJson regulatorLogout(String regulatorId);
+
+    /**
+     * 修改监管状态
+     *
+     * @param taxId
+     * @param regulatorId
+     * @param status
+     * @return
+     */
+    ReturnJson updateRegulatorTaxStatus(String taxId, String regulatorId, Integer status);
 }

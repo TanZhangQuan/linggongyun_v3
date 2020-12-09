@@ -3,11 +3,13 @@ package com.example.merchant.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.common.util.ReturnJson;
+import com.example.merchant.dto.platform.AddressDto;
 import com.example.mybatis.entity.Address;
 import com.example.mybatis.entity.Merchant;
 import com.example.mybatis.mapper.AddressDao;
 import com.example.merchant.service.AddressService;
 import com.example.mybatis.mapper.MerchantDao;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -35,8 +37,14 @@ public class AddressServiceImpl extends ServiceImpl<AddressDao, Address> impleme
     }
 
     @Override
-    public ReturnJson addOrUpdataAddress(Address address,String merchantId) {
-        Merchant merchant=merchantDao.selectById(merchantId);
+    public ReturnJson addOrUpdataAddress(AddressDto addressDto, String merchantId) {
+        Merchant merchant = merchantDao.selectById(merchantId);
+        if (merchant == null) {
+            merchant = new Merchant();
+            merchant.setCompanyId(merchantId);
+        }
+        Address address = new Address();
+        BeanUtils.copyProperties(addressDto, address);
         address.setCompanyId(merchant.getCompanyId());
         if (address.getIsNot() == 0) {
             Address addressOne = this.getOne(new QueryWrapper<Address>().eq("company_id", address.getCompanyId()).eq("is_not", 0));

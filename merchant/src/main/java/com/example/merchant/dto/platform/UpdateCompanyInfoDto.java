@@ -47,4 +47,9 @@ public class UpdateCompanyInfoDto {
      * 公司的营业执照
      */
     private String businessLicense;
+
+    /**
+     * 加盟合同地址
+     */
+    private String contract;
 }

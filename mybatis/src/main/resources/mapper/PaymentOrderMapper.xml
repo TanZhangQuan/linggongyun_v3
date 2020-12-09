@@ -431,4 +431,8 @@
             and a.id=#{param2}
         </if>
     </select>
+
+    <select id="querySubInfo" resultMap="PaymentOrderById">
+
+    </select>
 </mapper>

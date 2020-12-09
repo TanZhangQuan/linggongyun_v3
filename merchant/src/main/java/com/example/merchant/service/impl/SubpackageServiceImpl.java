@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.service.SubpackageService;
+import com.example.merchant.vo.merchant.QuerySubInfoVo;
 import com.example.mybatis.dto.QuerySubpackageDto;
 import com.example.mybatis.dto.TobeinvoicedDto;
 import com.example.mybatis.entity.Merchant;
@@ -12,6 +13,7 @@ import com.example.mybatis.mapper.MerchantDao;
 import com.example.mybatis.mapper.PaymentOrderDao;
 import com.example.mybatis.mapper.SubpackageDao;
 import com.example.mybatis.vo.InvoiceDetailsVo;
+import com.example.mybatis.vo.PaymentOrderVo;
 import com.example.mybatis.vo.SubpackageInfoVo;
 import com.example.mybatis.vo.SubpackageVo;
 import org.apache.ibatis.session.RowBounds;
@@ -32,8 +34,10 @@ public class SubpackageServiceImpl implements SubpackageService {
 
     @Override
     public ReturnJson getSummaryInfo(String id) {
+        QuerySubInfoVo querySubInfoVo=new QuerySubInfoVo();
+        List<PaymentOrderVo> paymentOrderVoList = paymentOrderDao.queryPaymentOrderInfo("");
 
-        return null;
+        return ReturnJson.success(querySubInfoVo);
     }
 
     /**

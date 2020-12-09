@@ -122,4 +122,6 @@ public interface MerchantService extends IService<Merchant> {
 
 
     ReturnJson updateCooperationInfo(String companyId);
+
+    ReturnJson queryCompanyInfoById(String companyId);
 }

@@ -11,6 +11,11 @@ import lombok.Data;
 public class AddressDto {
 
     /**
+     * id
+     */
+    private String id;
+
+    /**
      * 联系人
      */
     private String linkName;
