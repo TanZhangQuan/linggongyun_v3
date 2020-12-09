@@ -1,4 +1,4 @@
-package com.example.merchant.vo;
+package com.example.mybatis.vo;
 
 import lombok.Data;
 

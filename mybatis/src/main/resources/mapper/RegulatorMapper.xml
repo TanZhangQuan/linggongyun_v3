@@ -277,5 +277,25 @@
             </foreach>
         </where>
     </select>
+    <resultMap id="TaxBriefVO" type="com.example.mybatis.vo.TaxBriefVO">
+        <result column="id" property="id"/>
+        <result column="tax_name" property="taxName"/>
+    </resultMap>
+
+    <select id="selectTaxBrief" resultMap="TaxBriefVO">
+                SELECT
+            t.id,t.tax_name
+        FROM
+            tb_tax t
+        WHERE
+            t.id NOT IN (
+                SELECT
+                    rt.tax_id
+                FROM
+                    tb_regulator_tax rt
+                INNER JOIN tb_tax a ON a.id=rt.tax_id
+                WHERE rt.regulator_id=#{param2}
+            )
+    </select>
 
 </mapper>

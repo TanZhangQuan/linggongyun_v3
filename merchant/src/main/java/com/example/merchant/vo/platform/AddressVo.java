@@ -1,20 +1,14 @@
-package com.example.merchant.dto.platform;
+package com.example.merchant.vo.platform;
 
 import lombok.Data;
 
 /**
  * @Description
  * @Author JWei <jwei0401@163.com>
- * @Date 2020/12/2
+ * @Date 2020/12/8
  */
 @Data
-public class AddressDto {
-
-    /**
-     * id
-     */
-    private String id;
-
+public class AddressVo {
     /**
      * 联系人
      */
@@ -29,9 +23,4 @@ public class AddressDto {
      * 详细地址
      */
     private String addressName;
-
-    /**
-     * 是否默认：0为默认，1为不默认
-     */
-    private Integer isNot;
 }

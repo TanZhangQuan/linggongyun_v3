@@ -2,13 +2,14 @@ package com.example.merchant.controller.merchant;
 
 
 import com.example.common.util.ReturnJson;
+import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.SubpackageService;
+import com.example.mybatis.dto.QuerySubpackageDto;
 import com.example.mybatis.dto.TobeinvoicedDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import io.swagger.annotations.ApiParam;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
@@ -22,8 +23,10 @@ public class SubpackageMerchantController {
 
     @ApiOperation("汇总代开已开票")
     @PostMapping(value = "/getSummaryList")
-    public ReturnJson getSummaryList(TobeinvoicedDto tobeinvoicedDto) {
-        return subpackageService.getSummaryList(tobeinvoicedDto);
+    @LoginRequired
+    public ReturnJson getSummaryList(@RequestBody QuerySubpackageDto querySubpackageDto,
+                                     @RequestAttribute("userId") @ApiParam(hidden = true) String merchantId) {
+        return subpackageService.getSummaryList(querySubpackageDto, merchantId);
     }
 
     @ApiOperation("汇总代开,支付信息，税价总和")
@@ -40,8 +43,8 @@ public class SubpackageMerchantController {
 
     @ApiOperation("汇总代开,发票信息,创客到手明细")
     @PostMapping(value = "/getListByInvoiceId")
-    public ReturnJson getListByInvoiceId(String invoicedId, Integer PageNo,Integer pageSize) {
-        return subpackageService.getListByInvoiceId(invoicedId, PageNo,pageSize);
+    public ReturnJson getListByInvoiceId(String invoicedId, Integer PageNo, Integer pageSize) {
+        return subpackageService.getListByInvoiceId(invoicedId, PageNo, pageSize);
     }
 
 

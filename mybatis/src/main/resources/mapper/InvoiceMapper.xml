@@ -72,7 +72,7 @@
         <result column="is_subpackage" property="isSubpackage"/>
         <result column="payment_date" property="paymentDate"/>
         <collection property="list" ofType="com.example.mybatis.vo.OrderSubpackageVo">
-            <result column="id" property="id"/>
+            <result column="pid" property="id"/>
             <result column="payment_inventory" property="paymentInventory"/>
             <result column="subpackage_payment" property="subpackagePayment"/>
         </collection>
@@ -255,7 +255,23 @@
     </select>
 
 
-    <select id="getPlaInvoiceList" resultMap="InvoiceVo">
+    <resultMap id="invoiceListVo" type="com.example.mybatis.vo.PlaInvoiceListVo">
+        <result column="invoice_application_id" property="invoiceApplicationId"/>
+        <result column="company_s_name" property="companySName"/>
+        <result column="platform_service_provider" property="platformServiceProvider"/>
+        <result column="application_desc" property="applicationDesc"/>
+        <result column="application_state" property="applicationState"/>
+        <result column="application_date" property="applicationDate"/>
+        <result column="is_invoice" property="isInvoice"/>
+        <collection property="payVo" ofType="com.example.mybatis.vo.PayVo">
+            <id column="pid" property="pId"/>
+            <result column="payment_inventory" property="paymentTnventory"/>
+            <result column="subpackage_payment" property="subpackagePayment"/>
+        </collection>
+
+    </resultMap>
+
+    <select id="getPlaInvoiceList" resultMap="invoiceListVo">
         SELECT
         app.invoice_application_id,
         po.company_s_name,
@@ -267,11 +283,23 @@
         po.id as pid,
         po.payment_inventory,
         po.subpackage_payment
-        FROM tb_payment_order AS po
-        LEFT JOIN tb_application_payment AS app ON app.payment_order_id = po.id
-        LEFT JOIN tb_invoice_application as invapp ON invapp.id=app.invoice_application_id
-        WHERE invapp.application_state = 1 or invapp.application_state is null AND po.payment_order_status = 3
-        <include refid="que2"/>
+        FROM
+	    tb_invoice_application invapp
+        INNER JOIN tb_application_payment app ON app.invoice_application_id = invapp.id
+        INNER JOIN tb_payment_order po ON po.id = app.payment_order_id
+        WHERE invapp.application_state!=3
+        <if test="tobeinvoicedDto.companySName != null and tobeinvoicedDto.companySName != ''">
+            AND po.company_s_name like CONCAT('%',#{tobeinvoicedDto.companySName},'%')
+        </if>
+        <if test="tobeinvoicedDto.platformServiceProvider != null and tobeinvoicedDto.platformServiceProvider != ''">
+            AND po.platform_service_provider=#{tobeinvoicedDto.platformServiceProvider}
+        </if>
+        <if test="tobeinvoicedDto.applicationDateOne != null and tobeinvoicedDto.applicationDateOne != ''">
+            AND invapp.invapp.application_date>=#{tobeinvoicedDto.applicationDateOne}
+        </if>
+        <if test="tobeinvoicedDto.applicationDateTwo != null and tobeinvoicedDto.applicationDateTwo != ''">
+            AND invapp.invapp.application_date <![CDATA[<=]]> #{tobeinvoicedDto.applicationDateTwo}
+        </if>
     </select>
 
 
@@ -300,7 +328,7 @@
     </select>
 
     <select id="getListSubQuery" resultMap="SubList">
-        SELECT i.id,po.company_s_name,po.platform_service_provider,i.invoice_url,i.tax_receipt_url,po.is_subpackage,po.payment_date,po.id,po.payment_inventory,po.turnkey_project_payment
+        SELECT i.id,po.company_s_name,po.platform_service_provider,i.invoice_url,i.tax_receipt_url,po.is_subpackage,po.payment_date,po.id as pid,po.payment_inventory,po.turnkey_project_payment
         FROM tb_invoice as i
         INNER JOIN tb_invoice_application as ia ON i.application_id=ia.id
         INNER JOIN tb_application_payment as ap ON ap.invoice_application_id=ia.id
