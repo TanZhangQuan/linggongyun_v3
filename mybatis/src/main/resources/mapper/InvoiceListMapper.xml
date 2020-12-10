@@ -9,55 +9,5 @@
   <sql id="Base_Column_List">
     id, invoice_id, maker_total_invoice_id
   </sql>
-  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
-    select 
-    <include refid="Base_Column_List" />
-    from tb_invoice_list
-    where id = #{id,jdbcType=VARCHAR}
-  </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
-    delete from tb_invoice_list
-    where id = #{id,jdbcType=VARCHAR}
-  </delete>
-  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.example.mybatis.entity.InvoiceList" useGeneratedKeys="true">
-    insert into tb_invoice_list (invoice_id, maker_total_invoice_id)
-    values (#{invoiceId,jdbcType=VARCHAR}, #{makerTotalInvoiceId,jdbcType=VARCHAR})
-  </insert>
-  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.example.mybatis.entity.InvoiceList" useGeneratedKeys="true">
-    insert into tb_invoice_list
-    <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="invoiceId != null">
-        invoice_id,
-      </if>
-      <if test="makerTotalInvoiceId != null">
-        maker_total_invoice_id,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="invoiceId != null">
-        #{invoiceId,jdbcType=VARCHAR},
-      </if>
-      <if test="makerTotalInvoiceId != null">
-        #{makerTotalInvoiceId,jdbcType=VARCHAR},
-      </if>
-    </trim>
-  </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.example.mybatis.entity.InvoiceList">
-    update tb_invoice_list
-    <set>
-      <if test="invoiceId != null">
-        invoice_id = #{invoiceId,jdbcType=VARCHAR},
-      </if>
-      <if test="makerTotalInvoiceId != null">
-        maker_total_invoice_id = #{makerTotalInvoiceId,jdbcType=VARCHAR},
-      </if>
-    </set>
-    where id = #{id,jdbcType=VARCHAR}
-  </update>
-  <update id="updateByPrimaryKey" parameterType="com.example.mybatis.entity.InvoiceList">
-    update tb_invoice_list
-    set invoice_id = #{invoiceId,jdbcType=VARCHAR},
-      maker_total_invoice_id = #{makerTotalInvoiceId,jdbcType=VARCHAR}
-    where id = #{id,jdbcType=VARCHAR}
-  </update>
+
 </mapper>

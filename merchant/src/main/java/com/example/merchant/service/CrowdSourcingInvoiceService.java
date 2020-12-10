@@ -53,5 +53,13 @@ public interface CrowdSourcingInvoiceService {
      */
     ReturnJson queryInvoiceInfo(String invoiceId, String merchantId);
 
+    /**
+     * 未开票信息
+     *
+     * @param applicationId
+     * @return
+     */
+    ReturnJson queryNotInvoiced(String applicationId);
 
+    ReturnJson queryInvoiced(String invoiceId);
 }

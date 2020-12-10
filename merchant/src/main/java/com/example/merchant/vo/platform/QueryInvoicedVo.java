@@ -1,9 +1,11 @@
-package com.example.merchant.vo.merchant;
+package com.example.merchant.vo.platform;
 
 import com.example.common.util.ExpressLogisticsInfo;
+import com.example.merchant.vo.merchant.InvoiceCatalogVo;
+import com.example.mybatis.vo.CrowdSourcingInvoiceInfoVo;
+import com.example.mybatis.vo.SendAndReceiveVo;
 import com.example.mybatis.vo.BuyerVo;
 import com.example.mybatis.vo.PaymentOrderManyVo;
-import com.example.mybatis.vo.SendAndReceiveVo;
 import lombok.Data;
 
 import java.util.List;
@@ -11,24 +13,20 @@ import java.util.List;
 /**
  * @Description
  * @Author JWei <jwei0401@163.com>
- * @Date 2020/12/7
+ * @Date 2020/12/10
  */
 @Data
-public class QueryInvoiceInfoVo {
+public class QueryInvoicedVo {
+
     /**
-     * 支付信息
+     * 众包支付信息
      */
     private PaymentOrderManyVo paymentOrderManyVo;
 
     /**
-     * 销售方信息
+     * 购买方
      */
     private BuyerVo buyerVo;
-
-    /**
-     * 申请开票信息
-     */
-    private InvoiceApplicationVo invoiceApplicationVo;
 
     /**
      * 开票类目
@@ -36,9 +34,19 @@ public class QueryInvoiceInfoVo {
     private InvoiceCatalogVo invoiceCatalogVo;
 
     /**
-     * 发票信息
+     * 地址信息
      */
-    private InvoiceVo invoiceVo;
+    private AddressVo addressVo;
+
+    /**
+     * 备注
+     */
+    private String remarks;
+
+    /**
+     * 众包发票信息
+     */
+    private CrowdSourcingInvoiceInfoVo crowdSourcingInvoiceInfoVo;
 
     /**
      * 发收件信息

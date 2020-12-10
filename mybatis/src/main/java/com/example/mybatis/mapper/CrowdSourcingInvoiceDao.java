@@ -11,7 +11,6 @@ import com.example.mybatis.po.InvoiceInfoPO;
 import com.example.mybatis.po.InvoicePO;
 import com.example.mybatis.vo.*;
 import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.session.RowBounds;
 
 import java.util.List;
 
@@ -41,9 +40,9 @@ public interface CrowdSourcingInvoiceDao extends BaseMapper<CrowdSourcingInvoice
     BuyerVo getBuyer(String id);
 
     /** ----平台端---- **/
-    IPage<CrowdSourcingInvoiceVo> getCrowdSourcingInvoicePass(Page page,@Param("tobeinvoicedDto") TobeinvoicedDto tobeinvoicedDto);
+    IPage<CrowdSourcingInvoiceInfoVo> getCrowdSourcingInvoicePass(Page page, @Param("tobeinvoicedDto") TobeinvoicedDto tobeinvoicedDto);
 
-    PaymentOrderManyVo getPaymentOrderManyPass(String payId);
+    PaymentOrderManyVo getPaymentOrderManyPass(String appcationId);
 
     List<InvoiceDetailsVo> getPaymentInventoryPass(String payId);
 
@@ -55,4 +54,8 @@ public interface CrowdSourcingInvoiceDao extends BaseMapper<CrowdSourcingInvoice
 
     //根据支付订单ID查找发票信息
     InvoiceInfoPO selectInvoiceInfoPO(String paymentOrderId);
+
+    PaymentOrderManyVo getPaymentOrderManySPass(String invoiceId);
+
+    SendAndReceiveVo querySendAndReceive(String invoiceId);
 }

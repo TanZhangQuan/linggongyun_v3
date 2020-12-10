@@ -35,7 +35,7 @@
         <result column="express_sheet_no" property="expressSheetNo"/>
     </resultMap>
 
-    <resultMap id="CrowdSourcingInvoicePass" type="com.example.mybatis.vo.CrowdSourcingInvoiceVo">
+    <resultMap id="CrowdSourcingInvoicePass" type="com.example.mybatis.vo.CrowdSourcingInvoiceInfoVo">
         <result column="application_id" property="applicationId"/>
         <result column="company_id" property="companyId"/>
         <result column="company_s_name" property="companySName"/>
@@ -215,11 +215,25 @@
 
 
     <select id="getCrowdSourcingInvoicePass" resultMap="CrowdSourcingInvoicePass">
-        SELECT  csa.id as application_id,pom.company_id,pom.company_s_name,pom.platform_service_provider,pom.id,pom.payment_inventory,pom.many_payment,pom.is_application,csa.application_state,csa.application_date
-        FROM tb_payment_order_many pom
-        LEFT JOIN tb_crowd_sourcing_application csa ON csa.payment_order_many_id=pom.id
-        WHERE csa.application_state=1 or csa.application_state is null
-        AND pom.payment_order_status=3
+        SELECT
+            csa.id AS application_id,
+            pom.company_id,
+            pom.company_s_name,
+            pom.platform_service_provider,
+            pom.id,
+            pom.payment_inventory,
+            pom.many_payment,
+            pom.is_application,
+            csa.application_state,
+            csa.application_date
+        FROM
+            tb_payment_order_many pom
+        LEFT JOIN tb_crowd_sourcing_application csa ON csa.payment_order_many_id = pom.id
+        WHERE
+            csa.application_state = 1
+        OR csa.application_state IS NULL
+        AND pom.payment_order_status = 3
+        AND pom.is_application = 1
         <if test="tobeinvoicedDto.companySName != null and tobeinvoicedDto.companySName != ''">
             AND po.company_s_name like CONCAT('%',#{tobeinvoicedDto.companySName},'%')
         </if>
@@ -235,11 +249,26 @@
     </select>
     <!--平台查询支付信息-->
     <select id="getPaymentOrderManyPass" resultMap="PayOrderManyById">
-        SELECT pom.id,pom.company_s_name,pom.platform_service_provider,pom.payment_inventory,pom.acceptance_certificate,
-        pom.many_payment,pom.payment_order_status,pom.payment_date,t.task_code,t.task_name,t.release_date,t.deadline_date,t.industry_type
-        from tb_payment_order_many pom
-        LEFT JOIN tb_task t ON t.id=pom.task_id
-        WHERE pom.id=#{payId}
+        SELECT
+            pom.id,
+            pom.company_s_name,
+            pom.platform_service_provider,
+            pom.payment_inventory,
+            pom.acceptance_certificate,
+            pom.many_payment,
+            pom.payment_order_status,
+            pom.payment_date,
+            t.task_code,
+            t.task_name,
+            t.release_date,
+            t.deadline_date,
+            t.industry_type
+        FROM
+            tb_crowd_sourcing_application csa
+        INNER JOIN tb_payment_order_many pom ON pom.id = csa.payment_order_many_id
+        LEFT JOIN tb_task t ON t.id = pom.task_id
+        WHERE
+            csa.id =#{appcationId}
     </select>
     <!--平台端查询开票清单明细-->
     <resultMap id="InvoiceListQuery" type="com.example.mybatis.vo.InvoiceDetailsVo">
@@ -272,10 +301,19 @@
         <result column="bank_code" property="bankCode"/>
     </resultMap>
     <select id="getBuyer" resultType="com.example.mybatis.vo.BuyerVo">
-        SELECT m.company_name,ci.credit_code,ci.company_address,ci.telephones,ci.bank_name,ci.bank_code
-        FROM tb_merchant as m
-        LEFT JOIN tb_company_info as ci ON m.company_id=ci.id
-        WHERE m.id=#{id}
+        SELECT
+        m.company_name,
+        ci.credit_code,
+        ci.company_address,
+        ci.telephones,
+        ci.bank_name,
+        ci.bank_code
+        FROM
+            tb_merchant AS m
+        LEFT JOIN tb_company_info AS ci ON m.company_id = ci.id
+        INNER JOIN tb_payment_order_many pom ON pom.company_id=ci.id
+        INNER JOIN tb_crowd_sourcing_application csa ON csa.payment_order_many_id =pom.id
+        WHERE csa.id=#{id} LIMIT 0,1
     </select>
     <select id="getCrowdInvoiceCode" resultType="java.lang.String">
         select invoice_code from tb_crowd_sourcing_invoice
@@ -306,6 +344,59 @@
         JOIN tb_crowd_sourcing_invoice csi
         ON pom.id = csi.payment_order_many_id
         WHERE pom.id = #{paymentOrderId}
+    </select>
+    <select id="getPaymentOrderManySPass" resultMap="PayOrderManyById">
+        SELECT
+            pom.id,
+            pom.company_s_name,
+            pom.platform_service_provider,
+            pom.payment_inventory,
+            pom.acceptance_certificate,
+            pom.many_payment,
+            pom.payment_order_status,
+            pom.payment_date,
+            t.task_code,
+            t.task_name,
+            t.release_date,
+            t.deadline_date,
+            t.industry_type
+        FROM
+            tb_crowd_sourcing_invoice csi
+        INNER JOIN tb_crowd_sourcing_application csa ON csa.id = csi.application_id
+        INNER JOIN tb_payment_order_many pom ON pom.id = csa.payment_order_many_id
+        LEFT JOIN tb_task t ON t.id = pom.task_id
+        where csi.id=#{invoiceId}
+    </select>
+    
+    <resultMap id="sendAndReceiveVo" type="com.example.mybatis.vo.SendAndReceiveVo">
+        <result column="express_sheet_no" property="logisticsOrderNo"/>
+        <result column="express_company_name" property="logisticsCompany"/>
+        <result column="link_name" property="addressee"/>
+        <result column="link_mobile" property="addresseeTelephone"/>
+        <result column="address_name" property="toAddress"/>
+        <result column="tax_address" property="sendingAddress"/>
+        <result column="link_man" property="from"/>
+        <result column="tax_mobile" property="fromTelephone"/>
+    </resultMap>
+    
+    <select id="querySendAndReceive" resultMap="sendAndReceiveVo">
+        SELECT
+            csi.express_sheet_no,
+            csi.express_company_name,
+            a.address_name,
+            a.link_mobile,
+            a.link_name,
+            t.tax_address,
+            t.link_man,
+            t.link_mobile as tax_mobile
+        FROM
+            tb_crowd_sourcing_invoice csi
+        INNER JOIN tb_crowd_sourcing_application csa ON csi.application_id = csa.id
+        INNER JOIN tb_payment_order_many pom ON pom.id = csa.payment_order_many_id
+        INNER JOIN tb_company_info ci ON ci.id = pom.company_id
+        INNER JOIN tb_tax t ON t.id = pom.tax_id
+        INNER JOIN tb_address a ON a.id = csa.application_address_id
+        where csi.id=#{invoiceId}
     </select>
 
 </mapper>

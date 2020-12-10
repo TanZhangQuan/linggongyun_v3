@@ -2,10 +2,7 @@ package com.example.merchant.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.common.util.ReturnJson;
-import com.example.merchant.dto.platform.CompanyDto;
-import com.example.merchant.dto.platform.UpdateCompanyInfoDto;
-import com.example.merchant.dto.platform.UpdateMerchantInfDto;
-import com.example.merchant.dto.platform.UpdetaInvoiceInfoDto;
+import com.example.merchant.dto.platform.*;
 import com.example.merchant.exception.CommonException;
 import com.example.mybatis.entity.Merchant;
 
@@ -120,8 +117,27 @@ public interface MerchantService extends IService<Merchant> {
      */
     ReturnJson queryCooperationInfo(String companyId);
 
-
+    /**
+     * 修改商户合作信息
+     *
+     * @param companyId
+     * @return
+     */
     ReturnJson updateCooperationInfo(String companyId);
 
+    /**
+     * 查看商户信息
+     *
+     * @param companyId
+     * @return
+     */
     ReturnJson queryCompanyInfoById(String companyId);
+
+    /**
+     * 修改商户信息
+     *
+     * @param updateCompanyDto
+     * @return
+     */
+    ReturnJson updateCompanyInfo(UpdateCompanyDto updateCompanyDto);
 }

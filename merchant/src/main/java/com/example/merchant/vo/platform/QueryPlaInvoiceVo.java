@@ -2,7 +2,7 @@ package com.example.merchant.vo.platform;
 
 import com.example.common.util.ExpressLogisticsInfo;
 import com.example.merchant.vo.merchant.InvoiceCatalogVo;
-import com.example.merchant.vo.merchant.SendAndReceiveVo;
+import com.example.mybatis.vo.SendAndReceiveVo;
 import com.example.mybatis.vo.BillingInfoVo;
 import com.example.mybatis.vo.BuyerVo;
 import com.example.mybatis.vo.PaymentOrderVo;

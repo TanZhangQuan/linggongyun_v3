@@ -4,14 +4,12 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.mybatis.dto.QueryCrowdSourcingDto;
-import com.example.mybatis.dto.TobeinvoicedDto;
 import com.example.mybatis.entity.PaymentOrderMany;
 import com.example.mybatis.po.BillCountPO;
 import com.example.mybatis.po.BillPO;
 import com.example.mybatis.po.PaymentOrderInfoPO;
 import com.example.mybatis.vo.*;
 import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.session.RowBounds;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -59,7 +57,7 @@ public interface PaymentOrderManyDao extends BaseMapper<PaymentOrderMany> {
 
 
     //根据商户id查众包待开票数据
-    IPage<CrowdSourcingInvoiceVo> getListCSIByID(Page page, QueryCrowdSourcingDto queryCrowdSourcingDto, String userId);
+    IPage<CrowdSourcingInvoiceInfoVo> getListCSIByID(Page page, QueryCrowdSourcingDto queryCrowdSourcingDto, String userId);
 
     //根据支付id查询众包支付信息
     PaymentOrderManyVo getPayOrderManyById(String id);

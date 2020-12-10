@@ -239,52 +239,15 @@ public class MerchantPaasController {
         return merchantService.queryAgent();
     }
 
-    @GetMapping("/queryCompanyInfo")
-    @ApiOperation(value = "公司的基本信息", notes = "公司的基本信息", httpMethod = "GET")
-    public ReturnJson queryCompanyInfo(String merchantId) {
-        return merchantService.queryCompanyInfo(merchantId);
-    }
-
-    @PostMapping("/updateCompanyInfo")
-    @ApiOperation(value = "公司的基本信息修改", notes = "公司的基本信息修改", httpMethod = "POST")
-    public ReturnJson updateCompanyInfo(@RequestBody UpdateCompanyInfoDto updateCompanyInfoDto) {
-        return merchantService.updateCompanyInfo(updateCompanyInfoDto);
-    }
-
-    @GetMapping("/queryInvoiceInfo")
-    @ApiOperation(value = "公司的开票信息", notes = "公司的开票信息", httpMethod = "GET")
-    public ReturnJson queryInvoiceInfo(String merchantId) {
-        return merchantService.queryInvoiceInfo(merchantId);
-    }
-
-    @PostMapping("/updetaInvoiceInfo")
-    @ApiOperation(value = "公司的开票信息修改", notes = "公司的基本信息修改", httpMethod = "POST")
-    public ReturnJson updetaInvoiceInfo(@RequestBody UpdetaInvoiceInfoDto updetaInvoiceInfoDto) {
-        return merchantService.updateInvoiceInfo(updetaInvoiceInfoDto);
-    }
-
-    @GetMapping("/queryMerchantInfo")
-    @ApiOperation(value = "公司的账户信息", notes = "公司的账户信息", httpMethod = "GET")
-    public ReturnJson queryMerchantInfo(String merchantId) {
-        return merchantService.queryMerchantInfo(merchantId);
-    }
-
-    @PostMapping("/updateMerchantInfo")
-    @ApiOperation(value = "公司的账户信息修改", notes = "公司的基本信息修改", httpMethod = "POST")
-    public ReturnJson updateMerchantInfo(@RequestBody UpdateMerchantInfDto updateMerchantInfDto) {
-        return merchantService.updateMerchantInfo(updateMerchantInfDto);
-    }
-
-    @GetMapping("/queryCooperationInfo")
-    @ApiOperation(value = "公司的合作信息", notes = "公司的账户信息", httpMethod = "GET")
-    public ReturnJson queryCooperationInfo(String merchantId) {
-        return merchantService.queryCooperationInfo(merchantId);
-    }
-
     @GetMapping("/queryCompanyInfoById")
     @ApiOperation(value = "公司的信息", notes = "公司的信息", httpMethod = "GET")
     public ReturnJson queryCompanyInfoById(String merchantId) {
         return merchantService.queryCompanyInfoById(merchantId);
     }
 
+    @PostMapping("/updateCompanyInfo")
+    @ApiOperation(value = "修改公司的信息", notes = "修改或忘记密码", httpMethod = "POST")
+    public ReturnJson updateCompanyInfo(@RequestBody UpdateCompanyDto updateCompanyDto) {
+        return merchantService.updateCompanyInfo(updateCompanyDto);
+    }
 }

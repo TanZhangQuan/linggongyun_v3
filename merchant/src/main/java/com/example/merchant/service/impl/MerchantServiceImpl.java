@@ -25,6 +25,7 @@ import com.example.mybatis.po.MerchantInfoPo;
 import com.example.mybatis.po.MerchantPaymentListPO;
 import com.example.mybatis.po.TaxPO;
 import com.example.mybatis.vo.BuyerVo;
+import com.example.mybatis.vo.CooperationInfoVO;
 import com.example.mybatis.vo.MenuListVo;
 import com.example.redis.dao.RedisDao;
 import org.apache.commons.lang3.StringUtils;
@@ -657,6 +658,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         Merchant merchant = merchantDao.selectOne(new QueryWrapper<Merchant>().eq("company_id", companyId).eq("parent_id", 0));
         QueryMerchantInfoVo queryMerchantInfoVo = new QueryMerchantInfoVo();
         BeanUtils.copyProperties(merchant, queryMerchantInfoVo);
+        queryMerchantInfoVo.setPassWord("");
         companyVo.setQueryMerchantInfoVo(queryMerchantInfoVo);
         QueryCooperationInfoVo queryCooperationInfoVo = new QueryCooperationInfoVo();
         queryCooperationInfoVo.setSalesManId(companyInfo.getSalesManId());
@@ -667,8 +669,73 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         queryCooperationInfoVo.setAgentName(managers.getRealName());
         queryCooperationInfoVo.setCompanyInfoId(companyId);
         companyVo.setQueryCooperationInfoVo(queryCooperationInfoVo);
-
+        List<CooperationInfoVO> cooperationInfoVOList = taxDao.queryCooper(companyId);
+        companyVo.setCooperationInfoVOList(cooperationInfoVOList);
         return ReturnJson.success(companyVo);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public ReturnJson updateCompanyInfo(UpdateCompanyDto updateCompanyDto) {
+        CompanyInfo companyInfo = companyInfoDao.selectById(updateCompanyDto.getUpdateCompanyInfoDto().getId());
+        if (companyInfo == null) {
+            return ReturnJson.error("商户信息不正确！");
+        }
+        BeanUtils.copyProperties(updateCompanyDto.getUpdateCompanyInfoDto(), companyInfo);
+        companyInfo.setAgentId(updateCompanyDto.getUpdateCooperationDto().getAgentId());
+        companyInfo.setSalesManId(updateCompanyDto.getUpdateCooperationDto().getSalesManId());
+        companyInfoDao.updateById(companyInfo);
+        CompanyInvoiceInfo companyInvoiceInfo = companyInvoiceInfoDao.selectById(updateCompanyDto.getUpdetaInvoiceInfoDto().getId());
+        BeanUtils.copyProperties(updateCompanyDto.getUpdetaInvoiceInfoDto(), companyInvoiceInfo);
+        companyInvoiceInfoDao.updateById(companyInvoiceInfo);
+        Merchant merchant = merchantDao.selectById(updateCompanyDto.getUpdateMerchantInfDto().getId());
+        if (merchant == null) {
+            return ReturnJson.error("商户账户信息不正确！");
+        }
+        BeanUtils.copyProperties(updateCompanyDto.getUpdateMerchantInfDto(), merchant);
+        merchantDao.updateById(merchant);
+        List<UpdateCompanyTaxDto> updateCompanyTaxDtoList = updateCompanyDto.getUpdateCompanyTaxDtoList();
+        for (int i = 0; i < updateCompanyTaxDtoList.size(); i++) {
+            CompanyTax companyTax;
+            if (updateCompanyTaxDtoList.get(i).getId() != null) {
+                companyTax = companyTaxDao.selectById(updateCompanyTaxDtoList.get(i).getId());
+                if (companyTax == null) {
+                    return ReturnJson.error("信息错误");
+                }
+                BeanUtils.copyProperties(updateCompanyTaxDtoList.get(i), companyTax);
+                companyTax.setCompanyId(updateCompanyDto.getUpdateCompanyInfoDto().getId());
+                companyTaxDao.updateById(companyTax);
+                List<UpdateCompanyLadderServiceDto> updateCompanyLadderServiceDtoList = updateCompanyTaxDtoList.get(i).getUpdateCompanyLadderServiceDtoList();
+                for (UpdateCompanyLadderServiceDto updateCompanyLadderServiceDto : updateCompanyLadderServiceDtoList) {
+                    if (updateCompanyLadderServiceDto.getId() != null) {
+                        CompanyLadderService companyLadderService = new CompanyLadderService();
+                        BeanUtils.copyProperties(updateCompanyLadderServiceDto, companyLadderService);
+                        companyLadderService.setCompanyTaxId(companyTax.getId());
+                        companyLadderServiceService.updateById(companyLadderService);
+                    }
+                    if (updateCompanyLadderServiceDto.getId() == null) {
+                        CompanyLadderService companyLadderService = new CompanyLadderService();
+                        companyLadderService.setCompanyTaxId(companyTax.getId());
+                        BeanUtils.copyProperties(updateCompanyLadderServiceDto, companyLadderService);
+                        companyLadderServiceService.save(companyLadderService);
+                    }
+                }
+            }
+            if (updateCompanyTaxDtoList.get(i).getId() == null) {
+                companyTax = companyTaxDao.selectById(updateCompanyTaxDtoList.get(i).getId());
+                companyTaxDao.insert(companyTax);
+                List<UpdateCompanyLadderServiceDto> updateCompanyLadderServiceDtoList = updateCompanyTaxDtoList.get(i).getUpdateCompanyLadderServiceDtoList();
+                if (updateCompanyLadderServiceDtoList != null) {
+                    for (UpdateCompanyLadderServiceDto updateCompanyLadderServiceDto : updateCompanyLadderServiceDtoList) {
+                        CompanyLadderService companyLadderService=new CompanyLadderService();
+                        BeanUtils.copyProperties(updateCompanyLadderServiceDto, companyLadderService);
+                        companyLadderService.setCompanyTaxId(companyTax.getId());
+                        companyLadderServiceService.save(companyLadderService);
+                    }
+                }
+            }
+        }
+        return ReturnJson.success("操作成功");
     }
 
 

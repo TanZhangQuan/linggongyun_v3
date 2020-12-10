@@ -11,7 +11,7 @@ import java.util.Date;
  * 众包发票待开票视图
  */
 @Data
-public class CrowdSourcingInvoiceVo {
+public class CrowdSourcingInvoiceInfoVo {
 
     /**
      * 申请id
