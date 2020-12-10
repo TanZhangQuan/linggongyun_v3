@@ -33,8 +33,8 @@ public class CrowdSourcingPassController {
 
     @PostMapping("/getPaymentInventory")
     @ApiOperation(value = "众包开票详情页，支付清单信息")
-    public ReturnJson getPaymentInventory(String payId) {
-        return crowdSourcingInvoiceService.getPaymentInventoryPass(payId);
+    public ReturnJson getPaymentInventory(@RequestParam String invoiceId,@RequestParam(defaultValue = "1") Integer pageNo,@RequestParam(defaultValue = "10") Integer pageSize) {
+        return crowdSourcingInvoiceService.getPaymentInventoryPass(invoiceId,pageNo,pageSize);
     }
 
     @PostMapping("/getBuyer")
@@ -63,8 +63,8 @@ public class CrowdSourcingPassController {
 
     @PostMapping("/getPaymentInventoryInfo")
     @ApiOperation(value = "众包开票详情页，已开票支付清单详情")
-    public ReturnJson getPaymentInventoryInfo(String invoiceId) {
-        return crowdSourcingInvoiceService.getPaymentInventoryInfoPass(invoiceId);
+    public ReturnJson getPaymentInventoryInfo(@RequestParam String invoiceId,@RequestParam(defaultValue = "1") Integer pageNo,@RequestParam(defaultValue = "10") Integer pageSize) {
+        return crowdSourcingInvoiceService.getPaymentInventoryInfoPass(invoiceId,pageNo,pageSize);
     }
 
 

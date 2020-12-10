@@ -19,7 +19,7 @@ public interface CrowdSourcingInvoiceService {
 
     ReturnJson getPaymentOrderMany(String payId);
 
-    ReturnJson getPaymentInventoryPass(String payId);
+    ReturnJson getPaymentInventoryPass(String invoiceId,Integer pageNo,Integer pageSize);
 
     ReturnJson getBuyer(String id);
 
@@ -35,7 +35,7 @@ public interface CrowdSourcingInvoiceService {
 
     ReturnJson getCrowdSourcingInfoPass(TobeinvoicedDto tobeinvoicedDto);
 
-    ReturnJson getPaymentInventoryInfoPass(String invoiceId);
+    ReturnJson getPaymentInventoryInfoPass(String invoiceId,Integer pageNo,Integer pageSize);
 
     /**
      * 查看申请开票详情信息
@@ -61,5 +61,11 @@ public interface CrowdSourcingInvoiceService {
      */
     ReturnJson queryNotInvoiced(String applicationId);
 
+    /**
+     * 已开票信息
+     *
+     * @param invoiceId
+     * @return
+     */
     ReturnJson queryInvoiced(String invoiceId);
 }
