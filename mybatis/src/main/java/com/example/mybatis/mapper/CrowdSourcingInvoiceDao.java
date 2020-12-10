@@ -50,7 +50,7 @@ public interface CrowdSourcingInvoiceDao extends BaseMapper<CrowdSourcingInvoice
 
     IPage<CrowdSourcingInfoVo> getCrowdSourcingInfoPass(Page page,@Param("tobeinvoicedDto") TobeinvoicedDto tobeinvoicedDto);
 
-    List<InvoiceDetailsVo> getPaymentInventoryInfoPass(String invoiceId);
+    IPage<InvoiceDetailsVo> getPaymentInventoryInfoPass(Page page,String invoiceId);
 
     //根据支付订单ID查找发票信息
     InvoiceInfoPO selectInvoiceInfoPO(String paymentOrderId);

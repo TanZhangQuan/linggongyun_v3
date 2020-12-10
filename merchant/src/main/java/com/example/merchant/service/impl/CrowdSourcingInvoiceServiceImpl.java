@@ -145,12 +145,11 @@ public class CrowdSourcingInvoiceServiceImpl extends ServiceImpl<CrowdSourcingIn
     }
 
     @Override
-    public ReturnJson getPaymentInventoryPass(String payId) {
+    public ReturnJson getPaymentInventoryPass(String invoiceId, Integer pageNo, Integer pageSize) {
         ReturnJson returnJson = new ReturnJson("操作失败", 300);
         BigDecimal totalTaxPrice = new BigDecimal("0.00");
-        DecimalFormat df = new DecimalFormat("0.00");
         Map<String, Object> map = new HashMap();
-        List<InvoiceDetailsVo> list = crowdSourcingInvoiceDao.getPaymentInventoryPass(payId);
+        List<InvoiceDetailsVo> list = crowdSourcingInvoiceDao.getPaymentInventoryPass(invoiceId);
         for (InvoiceDetailsVo vo : list) {
             totalTaxPrice = totalTaxPrice.add(vo.getTaskMoney());
             PaymentInventory paymentInventory = new PaymentInventory();
@@ -170,7 +169,7 @@ public class CrowdSourcingInvoiceServiceImpl extends ServiceImpl<CrowdSourcingIn
                 }
             }
             map.put("list", list);
-            map.put("税价合计", totalTaxPrice);
+            map.put("totalTaxPrice", totalTaxPrice);
             returnJson = new ReturnJson("操作成功", map, 200);
         }
         return returnJson;
@@ -262,14 +261,10 @@ public class CrowdSourcingInvoiceServiceImpl extends ServiceImpl<CrowdSourcingIn
     }
 
     @Override
-    public ReturnJson getPaymentInventoryInfoPass(String invoiceId) {
-        ReturnJson returnJson = new ReturnJson("操作失败", 300);
-        List<InvoiceDetailsVo> list = crowdSourcingInvoiceDao.getPaymentInventoryInfoPass(invoiceId);
-        if (list != null) {
-            returnJson = new ReturnJson("操作成功", list, 300);
-            returnJson.setPageSize(9);
-        }
-        return returnJson;
+    public ReturnJson getPaymentInventoryInfoPass(String invoiceId, Integer pageNo, Integer pageSize) {
+        Page page = new Page(pageNo, pageSize);
+        IPage<InvoiceDetailsVo> list = crowdSourcingInvoiceDao.getPaymentInventoryInfoPass(page, invoiceId);
+        return ReturnJson.success(list);
     }
 
     @Override
@@ -375,8 +370,8 @@ public class CrowdSourcingInvoiceServiceImpl extends ServiceImpl<CrowdSourcingIn
         SendAndReceiveVo sendAndReceiveVo = crowdSourcingInvoiceDao.querySendAndReceive(invoiceId);
         queryInvoicedVo.setSendAndReceiveVo(sendAndReceiveVo);
         queryInvoicedVo.setExpressLogisticsInfoList(KdniaoTrackQueryAPI.getExpressInfo(sendAndReceiveVo.getLogisticsCompany(), sendAndReceiveVo.getLogisticsOrderNo()));
-        CrowdSourcingInvoiceInfoVo crowdSourcingInvoiceVo=new CrowdSourcingInvoiceInfoVo();
-        BeanUtils.copyProperties(crowdSourcingInvoice,crowdSourcingInvoiceVo);
+        CrowdSourcingInvoiceInfoVo crowdSourcingInvoiceVo = new CrowdSourcingInvoiceInfoVo();
+        BeanUtils.copyProperties(crowdSourcingInvoice, crowdSourcingInvoiceVo);
         queryInvoicedVo.setCrowdSourcingInvoiceInfoVo(crowdSourcingInvoiceVo);
         return ReturnJson.success(queryInvoicedVo);
     }

@@ -286,9 +286,21 @@
         <result column="recevice_tax" property="receviceTax"/>
     </resultMap>
     <select id="getPaymentInventoryPass" resultMap="InvoiceListQuery">
-        SELECT pi.id,pi.worker_name,pi.mobile_code,pi.id_card_code,pi.bank_code,pi.real_money,pi.task_money,pom.tax_id,pom.recevice_tax
-        FROM tb_payment_order_many pom
-        LEFT JOIN tb_payment_inventory pi ON pi.payment_order_id=pom.id
+        SELECT
+            pi.id,
+            pi.worker_name,
+            pi.mobile_code,
+            pi.id_card_code,
+            pi.bank_code,
+            pi.real_money,
+            pi.task_money,
+            pom.tax_id,
+            pom.recevice_tax
+        FROM
+        tb_crowd_sourcing_invoice csi
+        INNER JOIN tb_crowd_sourcing_application csa ON csa.id = csi.application_id
+        INNER JOIN tb_payment_order_many pom ON pom.id = csa.payment_order_many_id
+        INNER JOIN tb_payment_inventory pi ON pi.payment_order_id = pom.id
         WHERE pom.id=#{payId}
     </select>
 
@@ -324,9 +336,9 @@
     <select id="getPaymentInventoryInfoPass" resultMap="InvoiceListQuery">
         SELECT pi.id,pi.worker_id,pi.worker_name,pi.mobile_code,pi.id_card_code,pi.bank_code,pi.real_money,pi.task_money,pi.tax_rate,pi.tax_amount,pom.recevice_tax
         from tb_crowd_sourcing_invoice csi
-        LEFT JOIN tb_payment_inventory pi ON pi.payment_order_id=csi.payment_order_many_id
-        LEFT JOIN tb_payment_order_many pom ON pom.id=csi.payment_order_many_id
-        WHERE csi.id=#{invoiceId}
+        inner JOIN tb_payment_inventory pi ON pi.payment_order_id=csi.payment_order_many_id
+        inner JOIN tb_payment_order_many pom ON pom.id=csi.payment_order_many_id
+        WHERE csi.id=#{param2}
     </select>
 
     <resultMap id="InvoiceInfoPO" type="com.example.mybatis.po.InvoiceInfoPO">
