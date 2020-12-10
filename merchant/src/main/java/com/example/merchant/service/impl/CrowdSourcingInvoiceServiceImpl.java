@@ -9,9 +9,12 @@ import com.example.common.util.KdniaoTrackQueryAPI;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.merchant.AddApplicationCrowdSourcingDto;
 import com.example.merchant.dto.platform.AddCrowdSourcingInvoiceDto;
+import com.example.merchant.vo.platform.QueryInvoicedVo;
 import com.example.merchant.service.CrowdSourcingInvoiceService;
 import com.example.merchant.vo.merchant.*;
 import com.example.merchant.vo.merchant.InvoiceVo;
+import com.example.merchant.vo.platform.AddressVo;
+import com.example.merchant.vo.platform.QueryNotInvoicedVo;
 import com.example.mybatis.dto.QueryCrowdSourcingDto;
 import com.example.mybatis.dto.TobeinvoicedDto;
 import com.example.mybatis.entity.*;
@@ -127,7 +130,7 @@ public class CrowdSourcingInvoiceServiceImpl extends ServiceImpl<CrowdSourcingIn
     @Override
     public ReturnJson getTobeCrowdSourcingInvoice(TobeinvoicedDto tobeinvoicedDto) {
         Page page = new Page(tobeinvoicedDto.getPageNo(), tobeinvoicedDto.getPageSize());
-        IPage<CrowdSourcingInvoiceVo> list = crowdSourcingInvoiceDao.getCrowdSourcingInvoicePass(page, tobeinvoicedDto);
+        IPage<CrowdSourcingInvoiceInfoVo> list = crowdSourcingInvoiceDao.getCrowdSourcingInvoicePass(page, tobeinvoicedDto);
         return ReturnJson.success(list);
     }
 
@@ -326,5 +329,55 @@ public class CrowdSourcingInvoiceServiceImpl extends ServiceImpl<CrowdSourcingIn
         queryInvoiceInfoVo.setInvoiceCatalogVo(invoiceCatalogVo);
         queryInvoiceInfoVo.setExpressLogisticsInfoList(KdniaoTrackQueryAPI.getExpressInfo(crowdSourcingInvoice.getExpressCompanyName(), crowdSourcingInvoice.getExpressSheetNo()));
         return ReturnJson.success(queryInvoiceInfoVo);
+    }
+
+    @Override
+    public ReturnJson queryNotInvoiced(String applicationId) {
+        QueryNotInvoicedVo queryNotInvoicedVo = new QueryNotInvoicedVo();
+        PaymentOrderManyVo vo = crowdSourcingInvoiceDao.getPaymentOrderManyPass(applicationId);
+        queryNotInvoicedVo.setPaymentOrderManyVo(vo);
+        CrowdSourcingApplication crowdSourcingApplication = crowdSourcingApplicationDao.selectById(applicationId);
+        BuyerVo buyerVo = crowdSourcingInvoiceDao.getBuyer(applicationId);
+        queryNotInvoicedVo.setBuyerVo(buyerVo);
+        InvoiceCatalog invoiceCatalog = invoiceCatalogDao.selectById(crowdSourcingApplication.getInvoiceCatalogType());
+        InvoiceCatalogVo invoiceCatalogVo = new InvoiceCatalogVo();
+        BeanUtils.copyProperties(invoiceCatalog, invoiceCatalogVo);
+        queryNotInvoicedVo.setInvoiceCatalogVo(invoiceCatalogVo);
+        queryNotInvoicedVo.setRemarks(crowdSourcingApplication.getApplicationDesc());
+        Address address = addressDao.selectById(crowdSourcingApplication.getApplicationAddressId());
+        AddressVo addressVo = new AddressVo();
+        BeanUtils.copyProperties(address, addressVo);
+        queryNotInvoicedVo.setAddressVo(addressVo);
+        return ReturnJson.success(queryNotInvoicedVo);
+    }
+
+    @Override
+    public ReturnJson queryInvoiced(String invoiceId) {
+        CrowdSourcingInvoice crowdSourcingInvoice = crowdSourcingInvoiceDao.selectById(invoiceId);
+        if (crowdSourcingInvoice == null) {
+            return ReturnJson.error("不存在此发票信息");
+        }
+        QueryInvoicedVo queryInvoicedVo = new QueryInvoicedVo();
+        PaymentOrderManyVo vo = crowdSourcingInvoiceDao.getPaymentOrderManySPass(invoiceId);
+        queryInvoicedVo.setPaymentOrderManyVo(vo);
+        CrowdSourcingApplication crowdSourcingApplication = crowdSourcingApplicationDao.selectById(crowdSourcingInvoice.getApplicationId());
+        BuyerVo buyerVo = crowdSourcingInvoiceDao.getBuyer(crowdSourcingInvoice.getApplicationId());
+        queryInvoicedVo.setBuyerVo(buyerVo);
+        InvoiceCatalog invoiceCatalog = invoiceCatalogDao.selectById(crowdSourcingApplication.getInvoiceCatalogType());
+        InvoiceCatalogVo invoiceCatalogVo = new InvoiceCatalogVo();
+        BeanUtils.copyProperties(invoiceCatalog, invoiceCatalogVo);
+        queryInvoicedVo.setInvoiceCatalogVo(invoiceCatalogVo);
+        queryInvoicedVo.setRemarks(crowdSourcingApplication.getApplicationDesc());
+        Address address = addressDao.selectById(crowdSourcingApplication.getApplicationAddressId());
+        AddressVo addressVo = new AddressVo();
+        BeanUtils.copyProperties(address, addressVo);
+        queryInvoicedVo.setAddressVo(addressVo);
+        SendAndReceiveVo sendAndReceiveVo = crowdSourcingInvoiceDao.querySendAndReceive(invoiceId);
+        queryInvoicedVo.setSendAndReceiveVo(sendAndReceiveVo);
+        queryInvoicedVo.setExpressLogisticsInfoList(KdniaoTrackQueryAPI.getExpressInfo(sendAndReceiveVo.getLogisticsCompany(), sendAndReceiveVo.getLogisticsOrderNo()));
+        CrowdSourcingInvoiceInfoVo crowdSourcingInvoiceVo=new CrowdSourcingInvoiceInfoVo();
+        BeanUtils.copyProperties(crowdSourcingInvoice,crowdSourcingInvoiceVo);
+        queryInvoicedVo.setCrowdSourcingInvoiceInfoVo(crowdSourcingInvoiceVo);
+        return ReturnJson.success(queryInvoicedVo);
     }
 }

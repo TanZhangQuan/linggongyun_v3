@@ -53,7 +53,6 @@ public class CrowdSourcingInvoice extends BaseEntity {
     /**
      * 发票数字
      */
-    @Pattern(regexp = "^[0-9]*$", message = "必须为数字")
     @ApiModelProperty("发票数字")
     @NotNull(message = "发票数字不能为空")
     private String invoiceNumber;
@@ -62,7 +61,6 @@ public class CrowdSourcingInvoice extends BaseEntity {
      * 发票代码
      */
     @ApiModelProperty("发票代码")
-    @Pattern(regexp = "^[0-9]*$", message = "必须为数字")
     @NotNull(message = "发票代码不能为空")
     @TableField("invoice_codeNo")
     private String invoiceCodeno;

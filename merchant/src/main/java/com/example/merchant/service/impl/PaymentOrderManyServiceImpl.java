@@ -23,7 +23,7 @@ import com.example.mybatis.entity.*;
 import com.example.mybatis.mapper.*;
 import com.example.mybatis.po.InvoiceInfoPO;
 import com.example.mybatis.po.PaymentOrderInfoPO;
-import com.example.mybatis.vo.CrowdSourcingInvoiceVo;
+import com.example.mybatis.vo.CrowdSourcingInvoiceInfoVo;
 import com.example.mybatis.vo.InvoiceDetailsVo;
 import com.example.mybatis.vo.PaymentOrderManyVo;
 import org.springframework.beans.BeanUtils;
@@ -152,7 +152,7 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
     public ReturnJson getListCSIByID(QueryCrowdSourcingDto queryCrowdSourcingDto, String userId) {
         Page page = new Page(queryCrowdSourcingDto.getPageNo(), queryCrowdSourcingDto.getPageSize());
         Merchant merchant = merchantDao.selectById(userId);
-        IPage<CrowdSourcingInvoiceVo> list = paymentOrderManyDao.getListCSIByID(page, queryCrowdSourcingDto, merchant.getCompanyId());
+        IPage<CrowdSourcingInvoiceInfoVo> list = paymentOrderManyDao.getListCSIByID(page, queryCrowdSourcingDto, merchant.getCompanyId());
         return ReturnJson.success(list);
     }
 

@@ -1,10 +1,7 @@
 package com.example.merchant.vo.merchant;
 
 import com.example.common.util.ExpressLogisticsInfo;
-import com.example.mybatis.vo.BillingInfoVo;
-import com.example.mybatis.vo.BuyerVo;
-import com.example.mybatis.vo.PaymentOrderVo;
-import com.example.mybatis.vo.SellerVo;
+import com.example.mybatis.vo.*;
 import lombok.Data;
 
 import java.util.List;

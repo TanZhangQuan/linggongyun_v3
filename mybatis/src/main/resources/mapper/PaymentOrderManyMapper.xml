@@ -73,7 +73,7 @@
         </where>
     </select>
 
-    <resultMap id="ListCSIByID" type="com.example.mybatis.vo.CrowdSourcingInvoiceVo">
+    <resultMap id="ListCSIByID" type="com.example.mybatis.vo.CrowdSourcingInvoiceInfoVo">
         <result column="application_id" property="applicationId"/>
         <result column="company_s_name" property="companySName"/>
         <result column="platform_service_provider" property="platformServiceProvider"/>

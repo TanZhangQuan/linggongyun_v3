@@ -8,6 +8,7 @@ import com.example.mybatis.po.MerchantPaymentListPO;
 import com.example.mybatis.po.RegulatorTaxPayInfoPo;
 import com.example.mybatis.po.TaxListPO;
 import com.example.mybatis.po.TaxPO;
+import com.example.mybatis.vo.CooperationInfoVO;
 import com.example.mybatis.vo.SellerVo;
 import org.apache.ibatis.annotations.Param;
 
@@ -34,4 +35,6 @@ public interface TaxDao extends BaseMapper<Tax> {
     IPage<RegulatorTaxPayInfoPo> selectPayInfo(Page page,@Param("taxId")String taxId,@Param("companySName") String companySName, @Param("startDate") String startDate, @Param("endDate") String endDate);
 
     List<RegulatorTaxPayInfoPo> getPayInfoByIds(@Param("payIds") List<String> payIds);
+
+    List<CooperationInfoVO> queryCooper(String companyId);
 }

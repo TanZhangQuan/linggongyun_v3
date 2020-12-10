@@ -10,6 +10,10 @@ import lombok.Data;
 @Data
 public class AddressVo {
     /**
+     * 地址ID
+     */
+    private String id;
+    /**
      * 联系人
      */
     private String linkName;

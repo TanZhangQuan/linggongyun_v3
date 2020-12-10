@@ -44,10 +44,6 @@ public class MakerTotalInvoiceDto {
     @ApiModelProperty(value = "税额,所有税额以','隔开")
     private String taxAmount;
 
-    @NotNull(message = "开票人不能为空")
-    @ApiModelProperty(value = "开票人")
-    private String invoicePerson;
-
     @NotNull(message = "销售方名称不能为空")
     @ApiModelProperty(value = "销售方名称,税务局")
     private String saleCompany;

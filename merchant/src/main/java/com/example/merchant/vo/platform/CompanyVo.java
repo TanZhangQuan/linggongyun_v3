@@ -1,5 +1,6 @@
 package com.example.merchant.vo.platform;
 
+import com.example.mybatis.vo.CooperationInfoVO;
 import lombok.Data;
 
 import java.util.List;
@@ -35,5 +36,5 @@ public class CompanyVo {
     /**
      * 服务商合作信息
      */
-    private List<CompanyTaxVo> companyTaxVoList;
+    private List<CooperationInfoVO> cooperationInfoVOList;
 }

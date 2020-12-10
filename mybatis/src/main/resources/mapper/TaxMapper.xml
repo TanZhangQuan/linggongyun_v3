@@ -185,5 +185,48 @@
         </foreach>
     </select>
 
+    <resultMap id="cooperationInfoVO" type="com.example.mybatis.vo.CooperationInfoVO">
+        <id column="id" property="id"/>
+        <result column="package_status" property="packageStatus"/>
+        <result column="tax_name" property="taxName"/>
+        <result column="charge_status" property="chargeStatus"/>
+        <result column="payee" property="payee"/>
+        <result column="bank_code" property="bankCode"/>
+        <result column="bank_name" property="bankName"/>
+        <collection property="companyLadderServiceVos" ofType="com.example.mybatis.vo.CompanyLadderServiceVo">
+            <id column="cls_id" property="companyLadderServiceId"/>
+            <result column="start_money" property="startMoney"/>
+            <result column="end_money" property="endMoney"/>
+            <result column="service_charge" property="serviceCharge"/>
+        </collection>
+    </resultMap>
+
+    <select id="queryCooper" resultMap="cooperationInfoVO">
+        SELECT
+            ct.id,
+            ct.package_status,
+            t.tax_name,
+            ct.charge_status,
+            ct.contract,
+            tp.payee,
+            tp.bank_code,
+            tp.bank_name,
+            cls.id as cls_id,
+            cls.start_money,
+            cls.end_money,
+            cls.service_charge
+        FROM
+            tb_company_info ci
+        INNER JOIN tb_company_tax ct ON ct.company_id = ci.id
+        INNER JOIN tb_tax t ON t.id = ct.tax_id
+        INNER JOIN tb_company_ladder_service cls ON cls.company_tax_id = ct.id
+        INNER JOIN tb_tax_package tp ON tp.tax_id = t.id
+        AND tp.package_status = (
+
+            IF (ct.package_status = 0, 0, 1)
+        )
+        where ci.id=#{companyId}
+    </select>
+
 
 </mapper>

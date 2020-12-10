@@ -7,12 +7,9 @@ import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.MakerTotalInvoiceDto;
 import com.example.merchant.service.MakerTotalInvoiceService;
 import com.example.merchant.vo.merchant.InvoiceCatalogVo;
-import com.example.merchant.vo.platform.AddressVo;
 import com.example.merchant.vo.platform.MakerTotalInvoiceInfoVo;
-import com.example.merchant.vo.platform.QueryPlaInvoiceVo;
 import com.example.mybatis.entity.*;
 import com.example.mybatis.mapper.*;
-import com.example.mybatis.vo.BillingInfoVo;
 import com.example.mybatis.vo.BuyerVo;
 import com.example.mybatis.vo.PaymentOrderVo;
 import org.springframework.beans.BeanUtils;
@@ -21,10 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -53,7 +48,6 @@ public class MakerTotalInvoiceServiceImpl extends ServiceImpl<MakerTotalInvoiceD
     public ReturnJson saveOrUpdateMakerTotalInvoice(MakerTotalInvoiceDto makerTotalInvoiceDto, String managerId) {
         ReturnJson returnJson = new ReturnJson("操作失败", 200);
         DateTimeFormatter dfd = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");//时间转换
-        DecimalFormat dfb = new DecimalFormat("0.00");//金额转换
         MakerTotalInvoice makerTotalInvoice = new MakerTotalInvoice();
         makerTotalInvoice.setId(makerTotalInvoiceDto.getId());
         makerTotalInvoice.setInvoiceTypeNo(makerTotalInvoiceDto.getInvoiceTypeNo());
@@ -92,7 +86,7 @@ public class MakerTotalInvoiceServiceImpl extends ServiceImpl<MakerTotalInvoiceD
                     invoiceList.setMakerTotalInvoiceId(makerTotalInvoice.getId());
                     int num2 = invoiceListDao.insert(invoiceList);
                     if (num2 > 0) {
-                        returnJson = new ReturnJson("操作成功", 200);
+                        return ReturnJson.success("操作成功");
                     }
                 }
             }
@@ -101,7 +95,7 @@ public class MakerTotalInvoiceServiceImpl extends ServiceImpl<MakerTotalInvoiceD
             makerTotalInvoice.setCreateDate(LocalDateTime.parse(DateUtil.getTime(), dfd));
             int num = makerTotalInvoiceDao.updateById(makerTotalInvoice);
             if (num > 0) {
-                returnJson = new ReturnJson("操作成功", 200);
+                return ReturnJson.success("操作成功");
             }
         }
 

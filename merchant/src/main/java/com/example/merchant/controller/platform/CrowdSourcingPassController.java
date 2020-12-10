@@ -66,4 +66,18 @@ public class CrowdSourcingPassController {
     public ReturnJson getPaymentInventoryInfo(String invoiceId) {
         return crowdSourcingInvoiceService.getPaymentInventoryInfoPass(invoiceId);
     }
+
+
+    @PostMapping("/queryNotInvoiced")
+    @ApiOperation(value = "众包未开票详情")
+    public ReturnJson queryNotInvoiced(String invoiceId) {
+        return crowdSourcingInvoiceService.queryNotInvoiced(invoiceId);
+    }
+
+    @PostMapping("/queryInvoiced")
+    @ApiOperation(value = "众包以开票详情")
+    public ReturnJson queryInvoiced(String invoiceId) {
+        return crowdSourcingInvoiceService.queryInvoiced(invoiceId);
+    }
+
 }
