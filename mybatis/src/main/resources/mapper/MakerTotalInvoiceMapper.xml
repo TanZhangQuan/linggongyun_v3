@@ -23,4 +23,61 @@
     total_amount, sales_amount, tax_amount, invoice_person, sale_company, maker_invoice_desc,
     maker_invoice_url, maker_tax_url, maker_voice_upload_date_time, create_time, update_time
   </sql>
+
+  <resultMap id="MakerTotalInvoiceVo" type="com.example.mybatis.vo.MakerTotalInvoiceVo">
+        <id property="id" column="id"/>
+        <result property="companyId" column="company_id"/>
+        <result property="companySName" column="company_s_name"/>
+        <result property="taxId" column="tax_id"/>
+        <result property="platformServiceProvider" column="platform_service_provider"/>
+        <result property="invoiceUrl" column="invoice_url"/>
+        <result property="taxReceiptUrl" column="tax_receipt_url"/>
+        <result property="makerInvoiceUrl" column="maker_invoice_url"/>
+        <result property="makerTaxUrl" column="maker_tax_url"/>
+        <result property="isSubpackage" column="is_subpackage"/>
+        <result property="createDate" column="create_date"/>
+      <collection property="payVoList" ofType="com.example.mybatis.vo.PayVo">
+            <id property="pId" column="pid"/>
+            <result property="paymentTnventory" column="payment_inventory"/>
+            <result property="subpackagePayment" column="turnkey_project_payment"/>
+       </collection>
+   </resultMap>
+
+  <select id="queryMakerTotalInvoice" resultMap="MakerTotalInvoiceVo">
+    SELECT
+        mti.id,
+        po.company_id,
+        po.company_s_name,
+        po.tax_id,
+        po.platform_service_provider,
+        i.invoice_url,
+        i.tax_receipt_url,
+        mti.maker_invoice_url,
+        mti.maker_tax_url,
+        po.is_subpackage,
+        mti.create_date,
+        po.id AS pid,
+        po.payment_inventory,
+        po.turnkey_project_payment
+    FROM
+        tb_maker_total_invoice mti
+    INNER JOIN tb_invoice_list il ON il.maker_total_invoice_id = mti.id
+    INNER JOIN tb_invoice i ON i.id = il.invoice_id
+    INNER JOIN tb_invoice_application ia ON ia.id = i.application_id
+    INNER JOIN tb_application_payment ap ON ap.invoice_application_id = ia.id
+    INNER JOIN tb_payment_order po ON po.id = ap.payment_order_id
+    where 1=1
+    <if test="param2.companyId != null and param2.companyId != ''">
+        AND po.company_id=#{param2.companyId}
+    </if>
+    <if test="param2.taxId != null and param2.taxId != ''">
+        AND po.tax_id=#{param2.taxId}
+    </if>
+    <if test="param2.applicationDateOne != null and param2.applicationDateOne != ''">
+        AND mti.invoice_date>=#{param2.applicationDateOne}
+    </if>
+    <if test="param2.applicationDateTwo != null and param2.applicationDateTwo != ''">
+        AND mti.invoice_date <![CDATA[<=]]> #{param2.applicationDateTwo}
+    </if>
+  </select>
 </mapper>

@@ -33,11 +33,6 @@ public class AddCrowdSourcingInvoiceDto {
     @ApiModelProperty("申请id:可以为空，为空则说明商户未申请")
     private String applicationId;
     /**
-     * 开票时间
-     */
-    private LocalDateTime invoicePrintDate;
-
-    /**
      * 发票数字
      */
     @Pattern(regexp = "^[0-9]*$", message = "必须为数字")
@@ -102,4 +97,6 @@ public class AddCrowdSourcingInvoiceDto {
     @ApiModelProperty("快递公司")
     @NotNull(message = "快递公司不能为空")
     private String expressCompanyName;
+
+    private String invoiceDesc;
 }

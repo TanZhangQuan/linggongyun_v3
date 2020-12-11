@@ -38,12 +38,6 @@ public class MakerInvoiceDto {
     private String invoiceSerialNo;
 
     /**
-     * 发票开具日期
-     */
-    @ApiModelProperty(value = "发票开具日期")
-    private LocalDateTime makerVoiceGetDateTime;
-
-    /**
      * 服务名称
      */
     @NotNull(message = "服务名称不能为空")
@@ -78,26 +72,6 @@ public class MakerInvoiceDto {
     @ApiModelProperty(value = "销售方名称")
     private String saleCompany;
 
-    /**
-     * 代开机关名称
-     */
-    @NotNull(message = "代开机关名称不能为空")
-    @ApiModelProperty(value = "代开机关名称")
-    private String helpMakeOrganationName;
-
-    /**
-     * 代开企业名称
-     */
-    @NotNull(message = "代开企业名称不能为空")
-    @ApiModelProperty(value = "代开企业名称")
-    private String helpMakeCompany;
-
-    /**
-     * 代开企业税号
-     */
-    @NotNull(message = "代开企业税号不能为空")
-    @ApiModelProperty(value = "代开企业税号")
-    private String helpMakeTaxNo;
 
     /**
      * 发票URL
@@ -111,19 +85,4 @@ public class MakerInvoiceDto {
     @ApiModelProperty(value = "税票URL")
     private String makerTaxUrl;
 
-    /**
-     * 发票上传日期
-     */
-    @ApiModelProperty(value = "发票上传日期")
-    private LocalDateTime makerVoiceUploadDateTime;
-
-    /**
-     * 创建时间
-     */
-    private LocalDateTime createTime;
-
-    /**
-     * 更新时间
-     */
-    private LocalDateTime updateTime;
 }

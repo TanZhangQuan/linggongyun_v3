@@ -8,6 +8,8 @@ import com.example.mybatis.po.BillCountPO;
 import com.example.mybatis.po.BillPO;
 import com.example.mybatis.po.PaymentOrderInfoPO;
 import com.example.mybatis.vo.BillingInfoVo;
+import com.example.mybatis.vo.BuyerVo;
+import com.example.mybatis.vo.InvoiceListVo;
 import com.example.mybatis.vo.PaymentOrderVo;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.util.StringUtils;
@@ -67,4 +69,10 @@ public interface PaymentOrderDao extends BaseMapper<PaymentOrder> {
     List<PaymentOrderVo> querySubInfo(String invoiceId);
 
     List<PaymentOrderVo> queryPaymentOrderInfoByIds(@Param("invoiceId")List<String> invoiceId);
+
+    List<PaymentOrderVo> queryPaymentOrderInfoById(String invoiceId);
+
+    BuyerVo queryBuyer(String invoiceId);
+
+    IPage<InvoiceListVo> queryMakerPaymentInventory(Page page,String invoiceId);
 }

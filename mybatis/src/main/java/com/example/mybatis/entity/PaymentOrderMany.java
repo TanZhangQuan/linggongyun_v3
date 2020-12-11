@@ -132,6 +132,11 @@ public class PaymentOrderMany extends BaseEntity {
     private Integer isApplication;
 
     /**
+     * 是否开票
+     */
+    private Integer isNotInvoice;
+
+    /**
      * 支付时间
      */
     @ApiModelProperty(notes = "支付时间", value = "支付时间", hidden = true)

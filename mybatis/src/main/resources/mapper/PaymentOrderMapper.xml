@@ -348,6 +348,19 @@
         <result column="task_type" property="taskType"/>
     </resultMap>
 
+    <resultMap id="InvoiceListQuery" type="com.example.mybatis.vo.InvoiceListVo">
+        <id column="id" property="id"/>
+        <result column="worker_id" property="workerId"/>
+        <result column="worker_name" property="workerName"/>
+        <result column="mobile_code" property="mobileCode"/>
+        <result column="id_card_code" property="idCardCode"/>
+        <result column="bank_code" property="bankCode"/>
+        <result column="real_money" property="realMoney"/>
+        <result column="task_money" property="taskMoney"/>
+        <result column="tax_id" property="taxId"/>
+        <result column="recevice_tax" property="receviceTax"/>
+    </resultMap>
+
     <!--查询总包订单信息-->
     <select id="selectPaymentOrderInfo" parameterType="string" resultMap="PaymentOrderInfoPOResultMap">
             SELECT
@@ -461,5 +474,86 @@
         <foreach collection="invoiceId" index="index" item="item" open="(" separator="," close=")">
             #{item}
         </foreach>
+    </select>
+    <select id="queryPaymentOrderInfoById" resultMap="PaymentOrderById">
+        SELECT
+            po.id,
+            po.company_s_name,
+            po.platform_service_provider,
+            po.acceptance_certificate,
+            po.payment_order_status,
+            po.payment_inventory,
+            po.payment_date,
+            po.subpackage_payment,
+            t.task_code,
+            t.task_name,
+            t.release_date,
+            t.deadline_date,
+            t.industry_type
+        FROM
+            tb_maker_total_invoice mti
+        INNER JOIN tb_invoice_list il ON il.maker_total_invoice_id = mti.id
+        INNER JOIN tb_invoice i ON i.id = il.invoice_id
+        INNER JOIN tb_invoice_application ia ON ia.id = i.application_id
+        INNER JOIN tb_application_payment ap ON ap.invoice_application_id = ia.id
+        INNER JOIN tb_payment_order po ON po.id = ap.payment_order_id
+        LEFT JOIN tb_task t ON t.id = po.task_id
+        WHERE
+            mti.id =#{invoiceId}
+    </select>
+
+     <resultMap id="BuyerById" type="com.example.mybatis.vo.BuyerVo">
+        <result column="tax_name" property="companyName"/>
+        <result column="credit_code" property="creditCode"/>
+        <result column="tax_address" property="companyAddress"/>
+        <result column="link_mobile" property="telephones"/>
+        <result column="bank_name" property="bankName"/>
+        <result column="bank_code" property="bankCode"/>
+    </resultMap>
+
+    <select id="queryBuyer" resultMap="BuyerById">
+        SELECT
+            t.tax_name,
+            t.credit_code,
+            t.tax_address,
+            t.link_mobile,
+            tp.bank_name,
+            tp.bank_code
+        FROM
+            tb_maker_total_invoice mti
+        INNER JOIN tb_invoice_list il ON il.maker_total_invoice_id = mti.id
+        INNER JOIN tb_invoice i ON i.id = il.invoice_id
+        INNER JOIN tb_invoice_application ia ON ia.id = i.application_id
+        INNER JOIN tb_application_payment ap ON ap.invoice_application_id = ia.id
+        INNER JOIN tb_payment_order po ON po.id = ap.payment_order_id
+        INNER JOIN tb_tax t ON t.id = po.tax_id
+        INNER JOIN tb_tax_package tp ON tp.tax_id = t.id
+        AND tp.package_status = 0
+        WHERE
+            mti.id = #{invoiceId}
+        LIMIT 0,1
+    </select>
+
+    <select id="queryMakerPaymentInventory" resultMap="InvoiceListQuery">
+        SELECT
+            pi.id,
+            pi.worker_id,
+            pi.worker_name,
+            pi.mobile_code,
+            pi.id_card_code,
+            pi.bank_code,
+            pi.real_money,
+            pi.task_money,
+            po.tax_id,
+            po.recevice_tax
+        FROM
+            tb_maker_total_invoice mti
+        INNER JOIN tb_invoice_list il ON il.maker_total_invoice_id = mti.id
+        INNER JOIN tb_invoice i ON i.id = il.invoice_id
+        INNER JOIN tb_invoice_application ia ON ia.id = i.application_id
+        INNER JOIN tb_application_payment ap ON ap.invoice_application_id = ia.id
+        INNER JOIN tb_payment_order po ON po.id = ap.payment_order_id
+        INNER JOIN tb_payment_inventory pi ON pi.payment_order_id = po.id
+        WHERE mti.id=#{param2}
     </select>
 </mapper>

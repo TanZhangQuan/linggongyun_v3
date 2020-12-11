@@ -3,7 +3,7 @@ package com.example.merchant.vo.platform;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import java.math.BigDecimal;
+import javax.validation.constraints.NotNull;
 
 /**
  * @Description
@@ -27,6 +27,12 @@ public class CrowdSourcingInvoiceVo {
 
     @ApiModelProperty(value = "税票存放url")
     private String taxReceiptUrl;
+
+    @ApiModelProperty("快递单号")
+    private String expressSheetNo;
+
+    @ApiModelProperty("快递公司")
+    private String expressCompanyName;
 
     @ApiModelProperty(value = "开票说明")
     private String invoiceDesc;

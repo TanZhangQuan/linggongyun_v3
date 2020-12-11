@@ -9,6 +9,7 @@ import com.example.merchant.service.InvoiceService;
 import com.example.merchant.service.MakerInvoiceService;
 import com.example.merchant.service.MakerTotalInvoiceService;
 import com.example.mybatis.dto.AddInvoiceDto;
+import com.example.mybatis.dto.QueryMakerTotalInvoiceDto;
 import com.example.mybatis.dto.TobeinvoicedDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 /**
  * <p>
@@ -87,8 +89,8 @@ public class InvoicePassController {
     @ApiOperation("汇总代开")
     @PostMapping("/saveOrUpdateMakerTotalInvoice")
     @LoginRequired
-    public ReturnJson saveOrUpdateMakerTotalInvoice(@Valid @RequestBody MakerTotalInvoiceDto makerTotalInvoiceDto,@RequestAttribute("userId") @ApiParam(hidden = true) String managerId) {
-        return makerTotalInvoiceService.saveOrUpdateMakerTotalInvoice(makerTotalInvoiceDto,managerId);
+    public ReturnJson saveOrUpdateMakerTotalInvoice(@Valid @RequestBody MakerTotalInvoiceDto makerTotalInvoiceDto, @RequestAttribute("userId") @ApiParam(hidden = true) String managerId) {
+        return makerTotalInvoiceService.saveOrUpdateMakerTotalInvoice(makerTotalInvoiceDto, managerId);
     }
 
     @ApiOperation("门征单开,开票清单明细信息")
@@ -109,6 +111,24 @@ public class InvoicePassController {
         return makerTotalInvoiceService.queryMakerTotalInvoiceInfo(invoiceIds);
     }
 
+
+    @ApiOperation("分包已开票，汇总代开列表")
+    @PostMapping("/queryMakerTotalInvoice")
+    public ReturnJson queryMakerTotalInvoice(@RequestBody QueryMakerTotalInvoiceDto queryMakerTotalInvoiceDto) {
+        return makerTotalInvoiceService.queryMakerTotalInvoice(queryMakerTotalInvoiceDto);
+    }
+
+    @ApiOperation("分包已开票，汇总代开详情")
+    @PostMapping("/queryMakerTotalInvoiceDetails")
+    public ReturnJson queryMakerTotalInvoiceDetails(String invoiceId) {
+        return makerTotalInvoiceService.queryMakerTotalInvoiceDetails(invoiceId);
+    }
+
+    @ApiOperation("分包已开票，汇总代开支付lie详情")
+    @PostMapping("/getMakerTotalInvoicePayList")
+    public ReturnJson getMakerTotalInvoicePayList(@RequestParam @NotNull(message = "发票ID不能为空") String invoiceId, @RequestParam(defaultValue = "1") Integer pageNo, @RequestParam(defaultValue = "10") Integer pageSize) {
+        return makerTotalInvoiceService.getMakerTotalInvoicePayList(invoiceId, pageNo, pageSize);
+    }
 
 
 }

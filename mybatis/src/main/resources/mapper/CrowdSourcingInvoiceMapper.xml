@@ -166,8 +166,8 @@
     </select>
 
     <select id="getCrowdSourcingInfoPass" resultMap="CrowdSourcingInfo">
-        SELECT csi.id,pom.company_id,csi.invoice_code,pom.company_s_name,pom.platform_service_provider,pom.id as pid,pom.payment_inventory,pom.many_payment,
-        pom.is_application,csi.invoice_url,csi.tax_receipt_url,csi.invoice_print_date,if(csi.id is not null,'0','1')as invoice_stute
+        SELECT csi.id,pom.company_id,csi.invoice_code,pom.company_s_name,pom.platform_service_provider,pom.id as pom_id,pom.payment_inventory,pom.many_payment,
+        pom.is_application,csi.invoice_url,csi.tax_receipt_url,csi.invoice_print_date,if(csi.id is not null,'1','0')as invoice_stute
         FROM tb_crowd_sourcing_invoice csi
         LEFT JOIN tb_crowd_sourcing_application csa ON csa.id=csi.application_id
         LEFT JOIN tb_payment_order_many pom ON csa.payment_order_many_id=pom.id and csi.payment_order_many_id=pom.id
@@ -288,6 +288,7 @@
     <select id="getPaymentInventoryPass" resultMap="InvoiceListQuery">
         SELECT
             pi.id,
+            pi.worker_id,
             pi.worker_name,
             pi.mobile_code,
             pi.id_card_code,
@@ -296,12 +297,10 @@
             pi.task_money,
             pom.tax_id,
             pom.recevice_tax
-        FROM
-        tb_crowd_sourcing_invoice csi
-        INNER JOIN tb_crowd_sourcing_application csa ON csa.id = csi.application_id
+        FROM tb_crowd_sourcing_application csa
         INNER JOIN tb_payment_order_many pom ON pom.id = csa.payment_order_many_id
         INNER JOIN tb_payment_inventory pi ON pi.payment_order_id = pom.id
-        WHERE pom.id=#{payId}
+        WHERE csa.id=#{payId}
     </select>
 
     <resultMap id="BuyerById" type="com.example.mybatis.vo.BuyerVo">

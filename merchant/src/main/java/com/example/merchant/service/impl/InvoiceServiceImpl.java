@@ -188,10 +188,10 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
             invoice.setApplicationId(addInvoiceDto.getApplicationId());
             String invoiceCode = this.getInvoiceCode();
             if (invoiceCode != null) {
-                int code = Integer.valueOf(invoiceCode.substring(2)) + 1;
-                invoice.setInvoiceCode("FP" + String.valueOf(code));
+                int code = Integer.parseInt(invoiceCode.substring(2)) + 1;
+                invoice.setInvoiceCode("FP" + code);
             } else {
-                invoice.setInvoiceCode("FP" + String.valueOf(0000));
+                invoice.setInvoiceCode("FP" + 0000);
             }
             //输入时间不正确给系统当前默认时间
             invoice.setInvoicePrintDate(LocalDateTime.parse(DateUtil.getTime(), df));
