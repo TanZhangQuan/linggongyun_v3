@@ -10,6 +10,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.security.MessageDigest;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,6 +32,22 @@ import java.util.Map;
 @Slf4j
 public class KdniaoTrackQueryAPI {
 
+    private static char[] base64EncodeChars = new char[]{
+            'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
+            'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
+            'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
+            'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f',
+            'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n',
+            'o', 'p', 'q', 'r', 's', 't', 'u', 'v',
+            'w', 'x', 'y', 'z', '0', '1', '2', '3',
+            '4', '5', '6', '7', '8', '9', '+', '/'};
+    //电商ID
+    private String EBusinessID = "1613650";
+    //电商加密私钥，快递鸟提供，注意保管，不要泄漏
+    private String AppKey = "a24f5b98-9d7a-4ef9-8672-8cdc3587fed1";
+    //请求url
+    private String ReqURL = "http://api.kdniao.com/Ebusiness/EbusinessOrderHandle.aspx";
+
     //DEMO
     public static void main(String[] args) {
         KdniaoTrackQueryAPI api = new KdniaoTrackQueryAPI();
@@ -44,14 +61,6 @@ public class KdniaoTrackQueryAPI {
         }
     }
 
-    //电商ID
-    private String EBusinessID = "1613650";
-    //电商加密私钥，快递鸟提供，注意保管，不要泄漏
-    private String AppKey = "a24f5b98-9d7a-4ef9-8672-8cdc3587fed1";
-    //请求url
-    private String ReqURL = "http://api.kdniao.com/Ebusiness/EbusinessOrderHandle.aspx";
-
-
     /**
      * 获取快递单号
      *
@@ -60,6 +69,7 @@ public class KdniaoTrackQueryAPI {
      * @return
      */
     public static List<ExpressLogisticsInfo> getExpressInfo(String expressCompanyName, String expressCode) {
+        DateTimeFormatter dfd = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         List<ExpressLogisticsInfo> expressLogisticsInfos = new ArrayList<>();
         try {
             KdniaoTrackQueryAPI api = new KdniaoTrackQueryAPI();
@@ -71,7 +81,7 @@ public class KdniaoTrackQueryAPI {
             if ("false".equals(Success)) {
                 ExpressLogisticsInfo expressInfo = new ExpressLogisticsInfo();
                 expressInfo.setAcceptStation("暂时没有快递信息");
-                expressInfo.setAcceptTime(LocalDateTime.now().toString());
+                expressInfo.setAcceptTime(LocalDateTime.now());
                 expressLogisticsInfos.add(expressInfo);
                 String Reason = jsonObject.getString("Reason");
                 log.error(Reason);
@@ -81,7 +91,7 @@ public class KdniaoTrackQueryAPI {
             if ("0".equals(State)) {
                 ExpressLogisticsInfo expressInfo = new ExpressLogisticsInfo();
                 expressInfo.setAcceptStation("暂时没有快递信息");
-                expressInfo.setAcceptTime(LocalDateTime.now().toString());
+                expressInfo.setAcceptTime(LocalDateTime.now());
                 expressLogisticsInfos.add(expressInfo);
             }
             JSONArray Traces = jsonObject.getJSONArray("Traces");
@@ -89,7 +99,7 @@ public class KdniaoTrackQueryAPI {
                 JSONObject object = (JSONObject) Traces.get(i);
                 ExpressLogisticsInfo expressInfo = new ExpressLogisticsInfo();
                 expressInfo.setAcceptStation(object.getString("AcceptStation"));
-                expressInfo.setAcceptTime(object.getString("AcceptTime"));
+                expressInfo.setAcceptTime(LocalDateTime.parse(object.getString("AcceptTime"), dfd));
                 expressLogisticsInfos.add(expressInfo);
             }
             return expressLogisticsInfos;
@@ -99,6 +109,87 @@ public class KdniaoTrackQueryAPI {
         return expressLogisticsInfos;
     }
 
+    public static String base64Encode(byte[] data) {
+        StringBuffer sb = new StringBuffer();
+        int len = data.length;
+        int i = 0;
+        int b1, b2, b3;
+        while (i < len) {
+            b1 = data[i++] & 0xff;
+            if (i == len) {
+                sb.append(base64EncodeChars[b1 >>> 2]);
+                sb.append(base64EncodeChars[(b1 & 0x3) << 4]);
+                sb.append("==");
+                break;
+            }
+            b2 = data[i++] & 0xff;
+            if (i == len) {
+                sb.append(base64EncodeChars[b1 >>> 2]);
+                sb.append(base64EncodeChars[((b1 & 0x03) << 4) | ((b2 & 0xf0) >>> 4)]);
+                sb.append(base64EncodeChars[(b2 & 0x0f) << 2]);
+                sb.append("=");
+                break;
+            }
+            b3 = data[i++] & 0xff;
+            sb.append(base64EncodeChars[b1 >>> 2]);
+            sb.append(base64EncodeChars[((b1 & 0x03) << 4) | ((b2 & 0xf0) >>> 4)]);
+            sb.append(base64EncodeChars[((b2 & 0x0f) << 2) | ((b3 & 0xc0) >>> 6)]);
+            sb.append(base64EncodeChars[b3 & 0x3f]);
+        }
+        return sb.toString();
+    }
+
+    /**
+     * 获取快递公司编号
+     *
+     * @param expressCompanyName 快递公司名称
+     * @return
+     */
+    private static String getExpressCompanyCode(String expressCompanyName) {
+        String expressCompanyCode = "";
+        switch (expressCompanyName) {
+            case "顺丰速运":
+                expressCompanyCode = "SF";
+                break;
+            case "百世快递":
+                expressCompanyCode = "HTKY";
+                break;
+            case "中通快递":
+                expressCompanyCode = "ZTO";
+                break;
+            case "申通快递":
+                expressCompanyCode = "STO";
+                break;
+            case "圆通速递":
+                expressCompanyCode = "YTO";
+                break;
+            case "韵达速递":
+                expressCompanyCode = "YD";
+                break;
+            case "邮政快递":
+                expressCompanyCode = "YZPY";
+                break;
+            case "EMS":
+                expressCompanyCode = "EMS";
+                break;
+            case "天天快递":
+                expressCompanyCode = "HHTT";
+                break;
+            case "优速快递":
+                expressCompanyCode = "UC";
+                break;
+            case "德邦快递":
+                expressCompanyCode = "DBL";
+                break;
+            case "宅急送":
+                expressCompanyCode = "ZJS";
+                break;
+            case "京东快递":
+                expressCompanyCode = "JD";
+                break;
+        }
+        return expressCompanyCode;
+    }
 
     /**
      * Json方式 查询订单物流轨迹
@@ -210,7 +301,7 @@ public class KdniaoTrackQueryAPI {
             conn.connect();
             // 获取URLConnection对象对应的输出流
             out = new OutputStreamWriter(conn.getOutputStream(), "UTF-8");
-            // 发送请求参数            
+            // 发送请求参数
             if (params != null) {
                 StringBuilder param = new StringBuilder();
                 for (Map.Entry<String, String> entry : params.entrySet()) {
@@ -251,99 +342,6 @@ public class KdniaoTrackQueryAPI {
             }
         }
         return result.toString();
-    }
-
-
-    private static char[] base64EncodeChars = new char[]{
-            'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
-            'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
-            'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
-            'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f',
-            'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n',
-            'o', 'p', 'q', 'r', 's', 't', 'u', 'v',
-            'w', 'x', 'y', 'z', '0', '1', '2', '3',
-            '4', '5', '6', '7', '8', '9', '+', '/'};
-
-    public static String base64Encode(byte[] data) {
-        StringBuffer sb = new StringBuffer();
-        int len = data.length;
-        int i = 0;
-        int b1, b2, b3;
-        while (i < len) {
-            b1 = data[i++] & 0xff;
-            if (i == len) {
-                sb.append(base64EncodeChars[b1 >>> 2]);
-                sb.append(base64EncodeChars[(b1 & 0x3) << 4]);
-                sb.append("==");
-                break;
-            }
-            b2 = data[i++] & 0xff;
-            if (i == len) {
-                sb.append(base64EncodeChars[b1 >>> 2]);
-                sb.append(base64EncodeChars[((b1 & 0x03) << 4) | ((b2 & 0xf0) >>> 4)]);
-                sb.append(base64EncodeChars[(b2 & 0x0f) << 2]);
-                sb.append("=");
-                break;
-            }
-            b3 = data[i++] & 0xff;
-            sb.append(base64EncodeChars[b1 >>> 2]);
-            sb.append(base64EncodeChars[((b1 & 0x03) << 4) | ((b2 & 0xf0) >>> 4)]);
-            sb.append(base64EncodeChars[((b2 & 0x0f) << 2) | ((b3 & 0xc0) >>> 6)]);
-            sb.append(base64EncodeChars[b3 & 0x3f]);
-        }
-        return sb.toString();
-    }
-
-    /**
-     * 获取快递公司编号
-     *
-     * @param expressCompanyName 快递公司名称
-     * @return
-     */
-    private static String getExpressCompanyCode(String expressCompanyName) {
-        String expressCompanyCode = "";
-        switch (expressCompanyName) {
-            case "顺丰速运":
-                expressCompanyCode = "SF";
-                break;
-            case "百世快递":
-                expressCompanyCode = "HTKY";
-                break;
-            case "中通快递":
-                expressCompanyCode = "ZTO";
-                break;
-            case "申通快递":
-                expressCompanyCode = "STO";
-                break;
-            case "圆通速递":
-                expressCompanyCode = "YTO";
-                break;
-            case "韵达速递":
-                expressCompanyCode = "YD";
-                break;
-            case "邮政快递":
-                expressCompanyCode = "YZPY";
-                break;
-            case "EMS":
-                expressCompanyCode = "EMS";
-                break;
-            case "天天快递":
-                expressCompanyCode = "HHTT";
-                break;
-            case "优速快递":
-                expressCompanyCode = "UC";
-                break;
-            case "德邦快递":
-                expressCompanyCode = "DBL";
-                break;
-            case "宅急送":
-                expressCompanyCode = "ZJS";
-                break;
-            case "京东快递":
-                expressCompanyCode = "JD";
-                break;
-        }
-        return expressCompanyCode;
     }
 
 }

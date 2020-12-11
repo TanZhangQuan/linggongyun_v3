@@ -86,6 +86,11 @@ public class Invoice extends BaseEntity {
     private String taxReceiptUrl;
 
     /**
+     * 是否分包，0汇总代开，1门征单开
+     */
+    private Integer isNotTotal;
+
+    /**
      * 快递单号
      */
     private String expressSheetNo;

@@ -9,7 +9,16 @@ import lombok.Data;
  */
 @Data
 public class PayVo {
+    /**
+     * 支付ID
+     */
     private String pId;
+    /**
+     * 支付清单
+     */
     private String paymentTnventory;
+    /**
+     * 支付回单
+     */
     private String subpackagePayment;
 }

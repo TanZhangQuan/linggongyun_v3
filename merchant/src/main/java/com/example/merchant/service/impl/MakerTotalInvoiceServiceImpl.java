@@ -1,16 +1,23 @@
 package com.example.merchant.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.common.util.DateUtil;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.MakerTotalInvoiceDto;
+import com.example.merchant.vo.platform.MakerTotalInvoiceDetailsVo;
+import com.example.merchant.vo.platform.QueryMakerTotalInvoiceDetailVo;
 import com.example.merchant.service.MakerTotalInvoiceService;
 import com.example.merchant.vo.merchant.InvoiceCatalogVo;
 import com.example.merchant.vo.platform.MakerTotalInvoiceInfoVo;
+import com.example.mybatis.dto.QueryMakerTotalInvoiceDto;
 import com.example.mybatis.entity.*;
 import com.example.mybatis.mapper.*;
 import com.example.mybatis.vo.BuyerVo;
+import com.example.mybatis.vo.InvoiceListVo;
+import com.example.mybatis.vo.MakerTotalInvoiceVo;
 import com.example.mybatis.vo.PaymentOrderVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -73,8 +80,7 @@ public class MakerTotalInvoiceServiceImpl extends ServiceImpl<MakerTotalInvoiceD
             if (num > 0) {
                 String[] paymentOrderId = makerTotalInvoiceDto.getPaymentOrderId().split(",");
                 for (int i = 0; i < paymentOrderId.length; i++) {
-                    PaymentOrder paymentOrder = new PaymentOrder();
-                    paymentOrder.setId(makerTotalInvoiceDto.getInvoiceId());
+                    PaymentOrder paymentOrder = paymentOrderDao.selectById(paymentOrderId[i]);
                     paymentOrder.setIsSubpackage(1);
                     paymentOrder.setUpdateDate(LocalDateTime.parse(DateUtil.getTime(), dfd));
                     paymentOrderDao.updateById(paymentOrder);
@@ -84,11 +90,12 @@ public class MakerTotalInvoiceServiceImpl extends ServiceImpl<MakerTotalInvoiceD
                     InvoiceList invoiceList = new InvoiceList();
                     invoiceList.setInvoiceId(invoiceId[i]);
                     invoiceList.setMakerTotalInvoiceId(makerTotalInvoice.getId());
-                    int num2 = invoiceListDao.insert(invoiceList);
-                    if (num2 > 0) {
-                        return ReturnJson.success("操作成功");
-                    }
+                    invoiceListDao.insert(invoiceList);
+                    Invoice invoice = invoiceDao.selectById(invoiceId[i]);
+                    invoice.setIsNotTotal(0);
+                    invoiceDao.updateById(invoice);
                 }
+                return ReturnJson.success("操作成功");
             }
         }
         if (makerTotalInvoice.getId() != null) {
@@ -136,4 +143,37 @@ public class MakerTotalInvoiceServiceImpl extends ServiceImpl<MakerTotalInvoiceD
         makerTotalInvoiceInfoVo.setBuyerVo(buyerVo);
         return ReturnJson.success(makerTotalInvoiceInfoVo);
     }
+
+    @Override
+    public ReturnJson queryMakerTotalInvoice(QueryMakerTotalInvoiceDto queryMakerTotalInvoiceDto) {
+        Page page = new Page(queryMakerTotalInvoiceDto.getPageNo(), queryMakerTotalInvoiceDto.getPageSize());
+        IPage<MakerTotalInvoiceVo> makerTotalInvoiceVoIPage = makerTotalInvoiceDao.queryMakerTotalInvoice(page, queryMakerTotalInvoiceDto);
+        return ReturnJson.success(makerTotalInvoiceVoIPage);
+    }
+
+    @Override
+    public ReturnJson queryMakerTotalInvoiceDetails(String invoiceId) {
+        List<PaymentOrderVo> paymentOrderVoList = paymentOrderDao.queryPaymentOrderInfoById(invoiceId);
+        BuyerVo queryBuyer = paymentOrderDao.queryBuyer(invoiceId);
+        MakerTotalInvoice makerTotalInvoice = makerTotalInvoiceDao.selectById(invoiceId);
+        QueryMakerTotalInvoiceDetailVo queryMakerTotalInvoiceDetail = new QueryMakerTotalInvoiceDetailVo();
+        queryMakerTotalInvoiceDetail.setPaymentOrderVoList(paymentOrderVoList);
+        queryMakerTotalInvoiceDetail.setQueryBuyer(queryBuyer);
+        MakerTotalInvoiceDetailsVo makerTotalInvoiceDetails = new MakerTotalInvoiceDetailsVo();
+        BeanUtils.copyProperties(makerTotalInvoice, makerTotalInvoiceDetails);
+        queryMakerTotalInvoiceDetail.setMakerTotalInvoiceDetails(makerTotalInvoiceDetails);
+        InvoiceCatalog invoiceCatalog = invoiceCatalogDao.selectById(makerTotalInvoice.getInvoiceCategory());
+        InvoiceCatalogVo invoiceCatalogVo = new InvoiceCatalogVo();
+        BeanUtils.copyProperties(invoiceCatalog, invoiceCatalogVo);
+        queryMakerTotalInvoiceDetail.setInvoiceCatalogVo(invoiceCatalogVo);
+        return ReturnJson.success(queryMakerTotalInvoiceDetail);
+    }
+
+    @Override
+    public ReturnJson getMakerTotalInvoicePayList(String invoiceId, Integer pageNo, Integer pageSize) {
+        Page page=new Page(pageNo,pageSize);
+        IPage<InvoiceListVo> invoiceListVoIPage = paymentOrderDao.queryMakerPaymentInventory(page,invoiceId);
+        return ReturnJson.success(invoiceListVoIPage);
+    }
+
 }

@@ -39,6 +39,7 @@ public class MakerInvoiceServiceImpl extends ServiceImpl<MakerInvoiceDao, MakerI
 
     /**
      * 查询所有对应发票id的支付清单并给发票明细表赋值
+     *
      * @param invoiceId
      * @return
      */
@@ -49,7 +50,7 @@ public class MakerInvoiceServiceImpl extends ServiceImpl<MakerInvoiceDao, MakerI
         Map<String, Object> map = new HashMap<>();
         List<InvoiceListVo> listVos = makerInvoiceDao.getInvoiceListQuery(invoiceId);
         for (InvoiceListVo vo : listVos) {
-            PaymentInventory paymentInventory=new PaymentInventory();
+            PaymentInventory paymentInventory = new PaymentInventory();
             paymentInventory.setId(vo.getId());
             List<InvoiceLadderPrice> invoiceLadderPrice = invoiceLadderPriceDao.selectList(new QueryWrapper<InvoiceLadderPrice>().eq("tax_id", vo.getTaxId()));
             if (invoiceLadderPrice != null) {
@@ -65,7 +66,7 @@ public class MakerInvoiceServiceImpl extends ServiceImpl<MakerInvoiceDao, MakerI
                 }
             }
             paymentInventoryDao.updateById(paymentInventory);//修改支付清单的信息
-            map.put("voList",listVos);
+            map.put("voList", listVos);
             returnJson = new ReturnJson("操作成功", listVos, 200);
         }
         return returnJson;
@@ -73,6 +74,7 @@ public class MakerInvoiceServiceImpl extends ServiceImpl<MakerInvoiceDao, MakerI
 
     /**
      * 创建或修改发票
+     *
      * @param makerInvoiceDto
      * @return
      */
@@ -85,18 +87,13 @@ public class MakerInvoiceServiceImpl extends ServiceImpl<MakerInvoiceDao, MakerI
         makerInvoice.setPaymentInventoryId(makerInvoiceDto.getPaymentInventoryId());
         makerInvoice.setInvoiceTypeNo(makerInvoiceDto.getInvoiceTypeNo());
         makerInvoice.setInvoiceSerialNo(makerInvoiceDto.getInvoiceSerialNo());
-        if (makerInvoiceDto.getMakerVoiceGetDateTime() == null) {
-            //开发票时间为空则给系统当前时间
-            makerInvoice.setMakerVoiceGetDateTime(LocalDateTime.parse(DateUtil.getTime(), df));
-        }
+        //开发票时间为空则给系统当前时间
+        makerInvoice.setMakerVoiceGetDateTime(LocalDateTime.parse(DateUtil.getTime(), df));
         makerInvoice.setInvoiceCategory(makerInvoiceDto.getInvoiceCategory());
         makerInvoice.setTotalAmount(makerInvoiceDto.getTotalAmount());
         makerInvoice.setTaxAmount(makerInvoiceDto.getTaxAmount());
         makerInvoice.setIvoicePerson(makerInvoiceDto.getIvoicePerson());
         makerInvoice.setSaleCompany(makerInvoiceDto.getSaleCompany());
-        makerInvoice.setHelpMakeOrganationName(makerInvoiceDto.getHelpMakeOrganationName());
-        makerInvoice.setHelpMakeCompany(makerInvoiceDto.getHelpMakeCompany());
-        makerInvoice.setHelpMakeTaxNo(makerInvoice.getHelpMakeTaxNo());
         if (makerInvoiceDto.getMakerVoiceUrl() != null) {
             makerInvoice.setMakerVoiceUrl(makerInvoiceDto.getMakerVoiceUrl());
             makerInvoice.setMakerVoiceUploadDateTime(LocalDateTime.parse(DateUtil.getTime(), df));

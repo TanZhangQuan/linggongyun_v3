@@ -103,6 +103,7 @@ public class CrowdSourcingInvoice extends BaseEntity {
     /**
      * 快递单号
      */
+
     @ApiModelProperty("快递单号")
     @NotNull(message = "快递单号不能为空")
     private String expressSheetNo;
@@ -113,7 +114,6 @@ public class CrowdSourcingInvoice extends BaseEntity {
     @ApiModelProperty("快递公司")
     @NotNull(message = "快递公司不能为空")
     private String expressCompanyName;
-
     /**
      * 快递更新时间
      */

@@ -8,6 +8,7 @@ import com.example.mybatis.vo.BuyerVo;
 import com.example.mybatis.vo.PaymentOrderManyVo;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -44,9 +45,13 @@ public class QueryInvoicedVo {
     private String remarks;
 
     /**
+     * 税价总和
+     */
+    private BigDecimal totalTaxPrice;
+    /**
      * 众包发票信息
      */
-    private CrowdSourcingInvoiceInfoVo crowdSourcingInvoiceInfoVo;
+    private CrowdSourcingInvoiceVo crowdSourcingInvoiceVo;
 
     /**
      * 发收件信息
