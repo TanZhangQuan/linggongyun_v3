@@ -28,10 +28,7 @@ import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * <p>
@@ -280,11 +277,7 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
         DecimalFormat df = new DecimalFormat("0.00");
         Map<String, Object> map = new HashMap();
         BigDecimal totalTaxPrice = new BigDecimal("0.00");
-        String[] id = invoiceId.split(",");
-        List<String> list = new ArrayList<>();
-        for (int i = 0; i < id.length; i++) {
-            list.add(id[i]);
-        }
+        List<String> list = Arrays.asList(invoiceId.split(","));
         List<InvoiceListVo> voList = invoiceDao.getInvoiceListQuery(list);
         for (InvoiceListVo vo : voList) {
             PaymentInventory paymentInventory = new PaymentInventory();

@@ -89,7 +89,8 @@ public class InvoicePassController {
     @ApiOperation("汇总代开")
     @PostMapping("/saveOrUpdateMakerTotalInvoice")
     @LoginRequired
-    public ReturnJson saveOrUpdateMakerTotalInvoice(@Valid @RequestBody MakerTotalInvoiceDto makerTotalInvoiceDto, @RequestAttribute("userId") @ApiParam(hidden = true) String managerId) {
+    public ReturnJson saveOrUpdateMakerTotalInvoice(@Valid @RequestBody MakerTotalInvoiceDto makerTotalInvoiceDto,
+                                                    @RequestAttribute("userId") @ApiParam(hidden = true) String managerId) {
         return makerTotalInvoiceService.saveOrUpdateMakerTotalInvoice(makerTotalInvoiceDto, managerId);
     }
 
@@ -111,7 +112,6 @@ public class InvoicePassController {
         return makerTotalInvoiceService.queryMakerTotalInvoiceInfo(invoiceIds);
     }
 
-
     @ApiOperation("分包已开票，汇总代开列表")
     @PostMapping("/queryMakerTotalInvoice")
     public ReturnJson queryMakerTotalInvoice(@RequestBody QueryMakerTotalInvoiceDto queryMakerTotalInvoiceDto) {
@@ -124,11 +124,12 @@ public class InvoicePassController {
         return makerTotalInvoiceService.queryMakerTotalInvoiceDetails(invoiceId);
     }
 
-    @ApiOperation("分包已开票，汇总代开支付lie详情")
+    @ApiOperation("分包已开票，汇总代开支付清单详情")
     @PostMapping("/getMakerTotalInvoicePayList")
-    public ReturnJson getMakerTotalInvoicePayList(@RequestParam @NotNull(message = "发票ID不能为空") String invoiceId, @RequestParam(defaultValue = "1") Integer pageNo, @RequestParam(defaultValue = "10") Integer pageSize) {
+    public ReturnJson getMakerTotalInvoicePayList(@RequestParam @NotNull(message = "发票ID不能为空") String invoiceId,
+                                                  @RequestParam(defaultValue = "1") Integer pageNo,
+                                                  @RequestParam(defaultValue = "10") Integer pageSize) {
         return makerTotalInvoiceService.getMakerTotalInvoicePayList(invoiceId, pageNo, pageSize);
     }
-
 
 }

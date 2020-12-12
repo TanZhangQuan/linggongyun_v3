@@ -28,7 +28,9 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class MakerTotalInvoiceServiceImpl extends ServiceImpl<MakerTotalInvoiceDao, MakerTotalInvoice> implements MakerTotalInvoiceService {
@@ -171,8 +173,15 @@ public class MakerTotalInvoiceServiceImpl extends ServiceImpl<MakerTotalInvoiceD
 
     @Override
     public ReturnJson getMakerTotalInvoicePayList(String invoiceId, Integer pageNo, Integer pageSize) {
-        Page page=new Page(pageNo,pageSize);
-        IPage<InvoiceListVo> invoiceListVoIPage = paymentOrderDao.queryMakerPaymentInventory(page,invoiceId);
+        Page page = new Page(pageNo, pageSize);
+        List<InvoiceListVo> invoiceListVoIPage = paymentOrderDao.queryMakerPaymentInventory(page, invoiceId);
+        Map<String, Object> map = new HashMap<>(0);
+        BigDecimal totalTaxPrice = new BigDecimal("0.00");
+        for (InvoiceListVo invoiceListVo : invoiceListVoIPage) {
+            totalTaxPrice = totalTaxPrice.add(invoiceListVo.getTaskMoney());
+        }
+        map.put("invoiceListVoIPage", invoiceListVoIPage);
+        map.put("totalTaxPrice", totalTaxPrice);
         return ReturnJson.success(invoiceListVoIPage);
     }
 
