@@ -21,35 +21,33 @@ import java.io.IOException;
 @Slf4j
 public class BaseExceptionHandler {
 
-//    //处理shiro没有登陆时抛出的异常UnauthorizedException
-//    @ResponseBody
-//    @ExceptionHandler(UnauthenticatedException.class)
-//    public ResponseData unauthenticatedHandler() {
-//        return ResponseData.responseData(ResponseCode.TOKENFAILURE);
-//    }
-//
-//    //处理shiro没有授权时抛出的异常UnauthorizedException
-//    @ResponseBody
-//    @ExceptionHandler(UnauthorizedException.class)
-//    public ResponseData unauthorizedHandler() {
-//        return ResponseData.responseData(ResponseCode.ACCESSFORBIDDEN);
-//    }
-
-    //处理DTO参数判断抛出的异常ConstraintViolationException
+    /**
+     * 处理DTO参数判断抛出的异常ConstraintViolationException
+     * @param e
+     * @return
+     */
     @ResponseBody
     @ExceptionHandler(ConstraintViolationException.class)
     public ReturnJson exceptionHandler(ConstraintViolationException e) {
         return ReturnJson.error(e.getMessage().replaceAll("[^\\u4e00-\\u9fa5]",""));
     }
 
-    //处理DTO参数判断抛出的异常MethodArgumentNotValidException
+    /**
+     * 处理DTO参数判断抛出的异常MethodArgumentNotValidException
+     * @param e
+     * @return
+     */
     @ResponseBody
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ReturnJson exceptionHandler(MethodArgumentNotValidException e) {
         return ReturnJson.error(e.getBindingResult().getFieldError().getDefaultMessage());
     }
 
-    //处理开发者主动抛出的异常CommonException
+    /**
+     * 处理开发者主动抛出的异常CommonException
+     * @param e
+     * @return
+     */
     @ResponseBody
     @ExceptionHandler(CommonException.class)
     public ReturnJson exceptionHandler(CommonException e) {
@@ -62,7 +60,11 @@ public class BaseExceptionHandler {
         return ReturnJson.error("请求异常被拦截");
     }
 
-    //处理非以上异常问题
+    /**
+     * 处理非以上异常问题
+     * @param e
+     * @return
+     */
     @ResponseBody
     @ExceptionHandler(value = Exception.class)
     public ReturnJson exceptionHandler(Exception e) {
@@ -70,7 +72,11 @@ public class BaseExceptionHandler {
         return ReturnJson.error("服务异常，请稍后重试");
     }
 
-    //处理e签包的异常信息
+    /**
+     * 处理e签包的异常信息
+     * @param e
+     * @return
+     */
     @ResponseBody
     @ExceptionHandler(value = DefineException.class)
     public ReturnJson signAContractException(DefineException e) {

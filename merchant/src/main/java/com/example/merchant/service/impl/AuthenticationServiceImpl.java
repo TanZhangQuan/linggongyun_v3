@@ -90,14 +90,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         if (worker == null) {
             return ReturnJson.error("您输入的用户不存在！");
         }
-//        if (worker.getAttestation() != 1) {
-//            return ReturnJson.error("请您先完成实名认证！");
-//        }
-//        //银行卡3要素验证
-//        Map<String, Object> map = SignAContractUtils.bank3Factors(workerBankDto.getRealName(), worker.getIdcardCode(), workerBankDto.getBankCode());
-//        if (!"0".equals(map.get("code"))) {
-//            throw new CommonException(Integer.valueOf(map.get("code").toString()),map.get("message").toString());
-//        }
         WorkerBank workerBank = new WorkerBank();
         BeanUtils.copyProperties(workerBankDto, workerBank);
         workerBank.setWorkerId(worker.getId());

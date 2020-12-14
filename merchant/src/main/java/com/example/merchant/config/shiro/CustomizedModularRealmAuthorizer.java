@@ -19,14 +19,16 @@ public class CustomizedModularRealmAuthorizer extends ModularRealmAuthorizer {
         //获取realm的名字
         String realmName = realmNames.iterator().next();
         for (Realm realm : getRealms()) {
-            if (!(realm instanceof Authorizer)) continue;
+            if (!(realm instanceof Authorizer)) {
+                continue;
+            }
             //匹配名字
-            if(realmName.equals("manager")) {
+            if ("manager".equals(realmName)) {
                 if (realm instanceof ManagersRealm) {
                     return ((ManagersRealm) realm).isPermitted(principals, permission);
                 }
             }
-            if(realmName.equals("merchant")) {
+            if ("merchant".equals(realmName)) {
                 if (realm instanceof MerchantRealm) {
                     return ((MerchantRealm) realm).isPermitted(principals, permission);
                 }
@@ -42,21 +44,24 @@ public class CustomizedModularRealmAuthorizer extends ModularRealmAuthorizer {
         //获取realm的名字
         String realmName = realmNames.iterator().next();
         for (Realm realm : getRealms()) {
-            if (!(realm instanceof Authorizer)) continue;
+            if (!(realm instanceof Authorizer)) {
+                continue;
+            }
             //匹配名字
-            if(realmName.equals("manager")) {
+            if ("manager".equals(realmName)) {
                 if (realm instanceof ManagersRealm) {
                     return ((ManagersRealm) realm).isPermitted(principals, permission);
                 }
             }
             //匹配名字
-            if(realmName.equals("merchant")) {
+            if ("merchant".equals(realmName)) {
                 if (realm instanceof MerchantRealm) {
                     return ((MerchantRealm) realm).isPermitted(principals, permission);
                 }
             }
         }
-        return false;    }
+        return false;
+    }
 
     @Override
     public boolean hasRole(PrincipalCollection principals, String roleIdentifier) {
@@ -65,15 +70,17 @@ public class CustomizedModularRealmAuthorizer extends ModularRealmAuthorizer {
         //获取realm的名字
         String realmName = realmNames.iterator().next();
         for (Realm realm : getRealms()) {
-            if (!(realm instanceof Authorizer)) continue;
+            if (!(realm instanceof Authorizer)) {
+                continue;
+            }
             //匹配名字
-            if(realmName.equals("manager")) {
+            if ("manager".equals(realmName)) {
                 if (realm instanceof ManagersRealm) {
                     return ((ManagersRealm) realm).hasRole(principals, roleIdentifier);
                 }
             }
             //匹配名字
-            if(realmName.equals("merchant")) {
+            if ("merchant".equals(realmName)) {
                 if (realm instanceof MerchantRealm) {
                     return ((MerchantRealm) realm).hasRole(principals, roleIdentifier);
                 }
@@ -81,7 +88,6 @@ public class CustomizedModularRealmAuthorizer extends ModularRealmAuthorizer {
         }
         return false;
     }
-
 
 
 }

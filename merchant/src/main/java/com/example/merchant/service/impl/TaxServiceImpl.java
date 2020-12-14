@@ -94,7 +94,9 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
                 taxBriefVOS.add(taxBriefVO);
             });
         }
-        if (taxes == null) return ReturnJson.success("没有可用的平台服务商");
+        if (taxes == null) {
+            return ReturnJson.success("没有可用的平台服务商");
+        }
         return ReturnJson.success(taxBriefVOS);
     }
 

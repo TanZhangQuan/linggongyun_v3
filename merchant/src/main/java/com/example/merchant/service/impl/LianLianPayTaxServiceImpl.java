@@ -229,25 +229,6 @@ public class LianLianPayTaxServiceImpl extends ServiceImpl<LianlianpayTaxDao, Li
                 continue;
             }
 
-//            //查询余额
-//            Map<String, Object> selectRemainingSumResult = this.selectRemainingSum(lianlianpayTax.getOidPartner(), lianlianpayTax.getPrivateKey());
-//            String ret_code = selectRemainingSumResult.get("ret_code") == null ? "" : String.valueOf(selectRemainingSumResult.get("ret_code"));
-//            BigDecimal money = null;
-//            if ("0000".equals(ret_code)) {
-//                money = selectRemainingSumResult.get("ret_code") == null ? new BigDecimal(0) : new BigDecimal(String.valueOf(selectRemainingSumResult.get("amt_balance")));
-//            } else {
-//                log.error(String.valueOf(selectRemainingSumResult.get("ret_msg")));
-//            }
-//            if (paymentInventory.getRealMoney().compareTo(money) < 0) {
-//                log.error("余额不足" + "\t总包ID:" + paymentOrder.getId() + "\t支付清单ID:" + paymentInventory.getId() + "\t创客姓名:" + worker.getAccountName());
-//                paymentInventory.setPaymentStatus(-1);
-//                paymentInventoryDao.updateById(paymentInventory);Map map = new HashMap();
-//                map.put("paymentInventoryId", paymentInventory.getId());
-//                map.put("msg", "余额不足");
-//                errorList.add(map);
-//                continue;
-//            }
-
             if (paymentInventory.getPaymentStatus() == 1) {
                 log.error("订单已支付！");
                 Map map = new HashMap();

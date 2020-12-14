@@ -262,7 +262,7 @@ public class FileOperationServiceImpl implements FileOperationService {
                     request.getContextPath() + fileStaticAccesspathImage + newFileName;
             uploadTaxReceipt.transferTo(file);
             MakerInvoice makerInvoice = new MakerInvoice();
-            if (state.equals("0")) {
+            if ("0".equals(state)) {
                 makerInvoice.setMakerVoiceUrl(fileName);
                 makerInvoice.setUpdateDate(LocalDateTime.parse(DateUtil.getTime(), dfd));
                 makerInvoiceDao.update(makerInvoice, new QueryWrapper<MakerInvoice>().eq("payment_inventory_id", paymentInventoryId));

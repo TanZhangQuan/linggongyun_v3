@@ -27,6 +27,7 @@ public interface AddressService extends IService<Address> {
      * 添加或修改地址
      *
      * @param addressDto
+     * @param merchantId
      * @return
      */
     ReturnJson addOrUpdataAddress(AddressDto addressDto, String merchantId);

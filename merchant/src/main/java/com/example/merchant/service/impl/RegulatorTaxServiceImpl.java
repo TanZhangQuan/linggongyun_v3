@@ -219,6 +219,8 @@ public class RegulatorTaxServiceImpl extends ServiceImpl<RegulatorTaxDao, Regula
                 case 4:
                     list.get(i).setPaymentOrderZNameStatus("已确认收款");
                     break;
+                default:
+                    return ReturnJson.error("支付状态有误");
             }
         }
         infoPoIPage.setRecords(list);
@@ -242,6 +244,8 @@ public class RegulatorTaxServiceImpl extends ServiceImpl<RegulatorTaxDao, Regula
                 case 4:
                     voList.get(i).setPaymentOrderZNameStatus("已确认收款");
                     break;
+                default:
+                    return ReturnJson.error("支付状态有误");
             }
         }
         if (!VerificationCheck.listIsNull(voList)) {

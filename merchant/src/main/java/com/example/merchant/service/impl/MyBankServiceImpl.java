@@ -226,7 +226,7 @@ public class MyBankServiceImpl implements MyBankService {
             String url;
             BankService byServiceName = BankService.getByServiceName(service);
             if (byServiceName != null) {
-                if (byServiceName.getServiceUrl().equals("tpu")) {
+                if ("tpu".equals(byServiceName.getServiceUrl())) {
                     //调用gop
                     url = myBankConfig.getGopTpuUrl();
                 } else {
