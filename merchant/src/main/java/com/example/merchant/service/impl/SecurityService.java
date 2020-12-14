@@ -75,9 +75,9 @@ public class SecurityService {
     public boolean verify(Map<String, String> map, String charset, String sign,String signType) {
         Map<String, String> tmp = MagCore.paraFilter(map);
         String str = MagCore.createLinkString(tmp, false);
-        if (signType.equalsIgnoreCase("MD5")) {
+        if ("MD5".equalsIgnoreCase(signType)) {
             return verifyMd5(str, sign, charset);
-        } else if (signType.equalsIgnoreCase("RSA")) {
+        } else if ("RSA".equalsIgnoreCase(signType)) {
             return verifyRSA(str, sign, charset);
         }
         return false;

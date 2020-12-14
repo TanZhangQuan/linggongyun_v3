@@ -165,22 +165,6 @@ public class LianLianPayServiceImpl extends ServiceImpl<LianlianpayDao, Lianlian
             log.error("服务商不存在！");
             return ReturnJson.error("您输入的服务商不存在，请联系客服！");
         }
-
-//        Map<String, Object> map = this.selectRemainingSum(lianlianpay.getOidPartner(), lianlianpay.getPrivateKey());
-//        String ret_code = map.get("ret_code") == null ? "" : String.valueOf(map.get("ret_code"));
-//        BigDecimal money = null;
-//        if ("0000".equals(ret_code)) {
-//            money = map.get("ret_code") == null ? new BigDecimal(0) : new BigDecimal(String.valueOf(map.get("amt_balance")));
-//        } else {
-//            log.error(String.valueOf(map.get("ret_msg")));
-//            throw new CommonException(Integer.valueOf(ret_code), map.get("ret_msg").toString());
-//        }
-//
-//        if (paymentOrder.getRealMoney().compareTo(money) < 0) {
-//            log.error("余额不足！");
-//            return ReturnJson.error("余额不足，请先充值！");
-//        }
-
         //当支付订单ID相同时加锁,防止订单重复支付提交
         synchronized (paymentOrderId) {
             log.info(paymentOrderId + "进入同步代码块。。。。。。。。。。。。。。");
@@ -400,20 +384,6 @@ public class LianLianPayServiceImpl extends ServiceImpl<LianlianpayDao, Lianlian
                 senMsg("订单" + paymentOrder.getId() + "支付成功！", result.get("no_order"), "0", UserType.ADMIN, paymentOrder.getMerchantId(), UserType.MERCHANT);
                 LianlianpayTax lianlianpayTax = lianlianpayTaxDao.selectOne(new QueryWrapper<LianlianpayTax>().lambda().eq(LianlianpayTax::getTaxId, paymentOrder.getTaxId()));
                 List<PaymentInventory> paymentInventories = paymentInventoryDao.selectList(new QueryWrapper<PaymentInventory>().lambda().eq(PaymentInventory::getPaymentOrderId, panymentOrderId));
-
-//                //查询余额
-//                Map<String, Object> map = this.selectRemainingSum(lianlianpayTax.getOidPartner(), lianlianpayTax.getPrivateKey());
-//                String ret_code = map.get("ret_code") == null ? "" : String.valueOf(map.get("ret_code"));
-//                BigDecimal money = null;
-//                if ("0000".equals(ret_code)) {
-//                    money = map.get("ret_code") == null ? new BigDecimal(0) : new BigDecimal(String.valueOf(map.get("amt_balance")));
-//                } else {
-//                    log.error(String.valueOf(map.get("ret_msg")));
-//                }
-//                if (paymentOrder.getWorkerMoney().compareTo(money) < 0) {
-//                    log.error("余额不足！");
-//                    return;
-//                }
                 //给创客付款
                 List<CommonMessage> commonMessageList = new ArrayList<>();
                 for (PaymentInventory paymentInventory : paymentInventories) {
@@ -561,22 +531,6 @@ public class LianLianPayServiceImpl extends ServiceImpl<LianlianpayDao, Lianlian
             log.error("服务商不存在！");
             return ReturnJson.error("您输入的服务商不存在，请联系客服！");
         }
-
-//        //查询账户余额
-//        Map<String, Object> map = this.selectRemainingSum(lianlianpay.getOidPartner(), lianlianpay.getPrivateKey());
-//        String ret_code = map.get("ret_code") == null ? "" : String.valueOf(map.get("ret_code"));
-//        BigDecimal money = null;
-//        if ("0000".equals(ret_code)) {
-//            money = map.get("ret_code") == null ? new BigDecimal(0) : new BigDecimal(String.valueOf(map.get("amt_balance")));
-//        } else {
-//            log.error(String.valueOf(map.get("ret_msg")));
-//            throw new CommonException(Integer.valueOf(ret_code), map.get("ret_msg").toString());
-//        }
-//
-//        if (!(paymentOrderMany.getRealMoney().compareTo(money) < 0)) {
-//            log.error("余额不足！");
-//            return ReturnJson.error("余额不足，请先充值！");
-//        }
 
         //当支付订单ID相同时加锁,防止订单重复支付提交
         synchronized (paymentOrderId) {

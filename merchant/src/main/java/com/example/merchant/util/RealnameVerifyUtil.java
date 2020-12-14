@@ -58,8 +58,6 @@ public class RealnameVerifyUtil {
         hmacSha256.init(new SecretKeySpec(keyBytes, 0, keyBytes.length, algorithm));
         // 使用HmacSHA256对二进制数据消息Bytes计算摘要
         byte[] digestBytes = hmacSha256.doFinal(messageBytes);
-        // 把摘要后的结果digestBytes转换成十六进制的字符串
-        // String digestBase64 = Hex.encodeHexString(digestBytes);
         // 把摘要后的结果digestBytes使用Base64进行编码
         digestBase64 = new String(Base64.encodeBase64(digestBytes), "UTF-8");
 
@@ -113,7 +111,7 @@ public class RealnameVerifyUtil {
         if (contentLength < 0) {
             return null;
         }
-        byte buffer[] = new byte[contentLength];
+        byte[] buffer = new byte[contentLength];
 
         for (int i = 0; i < contentLength; ) {
             int readlen = request.getInputStream().read(buffer, i, contentLength - i);
@@ -185,8 +183,9 @@ public class RealnameVerifyUtil {
         String stmp;
         for (int n = 0; data != null && n < data.length; n++) {
             stmp = Integer.toHexString(data[n] & 0XFF);
-            if (stmp.length() == 1)
+            if (stmp.length() == 1) {
                 hash.append('0');
+            }
             hash.append(stmp);
         }
         return hash.toString();

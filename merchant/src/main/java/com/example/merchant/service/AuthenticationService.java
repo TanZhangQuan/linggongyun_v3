@@ -13,7 +13,9 @@ public interface AuthenticationService {
      * 识别身份证获取信息
      *
      * @param filePath
+     * @param idCardSide
      * @return
+     * @throws Exception
      */
     ReturnJson getIdCardInfo(String filePath, IdCardSide idCardSide) throws Exception;
 
@@ -21,7 +23,9 @@ public interface AuthenticationService {
      * 保存创客的身份证信息
      *
      * @param idCardInfoDto
+     * @param workerId
      * @return
+     * @throws Exception
      */
     ReturnJson saveIdCardinfo(IdCardInfoDto idCardInfoDto, String workerId) throws Exception;
 
@@ -29,7 +33,9 @@ public interface AuthenticationService {
      * 绑定银行卡号
      *
      * @param workerBankDto
+     * @param workerId
      * @return
+     * @throws Exception
      */
     ReturnJson saveBankInfo(WorkerBankDto workerBankDto, String workerId) throws Exception;
 

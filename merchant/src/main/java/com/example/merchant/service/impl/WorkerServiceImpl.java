@@ -295,7 +295,7 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
     @Override
     public ReturnJson wxLogin(String code, String iv, String encryptedData) {
         JSONObject result = new JSONObject();
-        if (code.equals("")) {
+        if ("".equals(code)) {
             return ReturnJson.error("请输入微信授权码");
         }
         //通过code换取网页授权access_token
@@ -385,7 +385,7 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
                     case 2:
                         workerVos.get(i).setAccountName(name + "**");
                         break;
-                    case 3:
+                    default:
                         workerVos.get(i).setAccountName(name + "***");
                         break;
                 }
