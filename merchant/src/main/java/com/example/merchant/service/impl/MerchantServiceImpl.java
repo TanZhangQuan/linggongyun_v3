@@ -110,14 +110,6 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
     @Resource
     private AgentDao agentDao;
 
-    /**
-     * 根据用户名和密码进行登录
-     *
-     * @param username 用户名
-     * @param password 密码
-     * @param response
-     * @return
-     */
     @Override
     public ReturnJson merchantLogin(String username, String password, HttpServletResponse response) {
         String encryptPWD = PWD_KEY + MD5.md5(password);
@@ -141,12 +133,6 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         return ReturnJson.success("登录成功", token);
     }
 
-    /**
-     * 发送验证码码
-     *
-     * @param mobileCode
-     * @return
-     */
     @Override
     public ReturnJson senSMS(String mobileCode) {
         ReturnJson rj = new ReturnJson();
@@ -172,14 +158,6 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         return rj;
     }
 
-    /**
-     * 根据手机号和验证码进行登录
-     *
-     * @param loginMobile 手机号码
-     * @param checkCode   验证码
-     * @param resource
-     * @return
-     */
     @Override
     public ReturnJson loginMobile(String loginMobile, String checkCode, HttpServletResponse resource) {
         String redisCheckCode = redisDao.get(loginMobile);
@@ -208,12 +186,6 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         return ReturnJson.success(merchant);
     }
 
-    /**
-     * 获取商户信息
-     *
-     * @param merchantId
-     * @return
-     */
     @Override
     public ReturnJson merchantInfo(String merchantId) {
         Merchant merchant = merchantDao.selectById(merchantId);
@@ -260,14 +232,6 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         return ReturnJson.success(merchantInfoVO);
     }
 
-    /**
-     * 修改密码或忘记密码
-     *
-     * @param loginMobile
-     * @param checkCode
-     * @param newPassWord
-     * @return
-     */
     @Override
     public ReturnJson updataPassWord(String loginMobile, String checkCode, String newPassWord) {
         String redisCode = redisDao.get(loginMobile);
@@ -288,12 +252,6 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         return ReturnJson.error("你的验证码有误！");
     }
 
-    /**
-     * 购买方信息
-     *
-     * @param id
-     * @return
-     */
     @Override
     public ReturnJson getBuyerById(String id) {
         ReturnJson returnJson = new ReturnJson("查询失败", 300);
@@ -324,16 +282,6 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         return merchantDao.getNameById(id);
     }
 
-    /**
-     * 获取的商户
-     *
-     * @param managersId
-     * @param merchantId
-     * @param merchantName
-     * @param linkMobile
-     * @param auditStatus
-     * @return
-     */
     @Override
     public ReturnJson getMerchantList(String managersId, String merchantId, String merchantName, String linkMobile, Integer auditStatus, Integer page, Integer pageSize) throws CommonException {
         List<String> merchantIds = acquireID.getCompanyIds(managersId);
@@ -342,12 +290,6 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         return ReturnJson.success(merchantInfoPoIPage);
     }
 
-    /**
-     * 删除商户
-     *
-     * @param merchantId
-     * @return
-     */
     @Override
     public ReturnJson removeMerchant(String merchantId) {
         CompanyInfo companyInfo = companyInfoDao.selectById(merchantId);
@@ -365,12 +307,6 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         return ReturnJson.error("该商户做过业务，只能停用该用户！");
     }
 
-    /**
-     * 审核商户
-     *
-     * @param merchantId
-     * @return
-     */
     @Override
     public ReturnJson auditMerchant(String merchantId) {
         CompanyInfo companyInfo = new CompanyInfo();
@@ -383,12 +319,6 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         return ReturnJson.error("审核失败！");
     }
 
-    /**
-     * 获取商户的支付流水
-     *
-     * @param merchantId
-     * @return
-     */
     @Override
     public ReturnJson merchantInfoPaas(String merchantId) {
         Merchant merchant = merchantDao.selectOne(new QueryWrapper<Merchant>().eq("company_id", merchantId).eq("parent_id", 0));
@@ -404,14 +334,6 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         return returnJson;
     }
 
-    /**
-     * 获取商户的支付列表
-     *
-     * @param merchantId
-     * @param page
-     * @param pageSize
-     * @return
-     */
     @Override
     public ReturnJson getMerchantPaymentList(String merchantId, Integer page, Integer pageSize) {
         Merchant merchant = merchantDao.selectById(merchantId);
@@ -424,13 +346,6 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         return ReturnJson.success(merchantPaymentListIPage);
     }
 
-    /**
-     * 获取支付详情
-     *
-     * @param paymentOrderId
-     * @param packgeStatus
-     * @return
-     */
     @Override
     public ReturnJson getMerchantPaymentInfo(String paymentOrderId, Integer packgeStatus) {
         ReturnJson returnJson = this.getMerchantPaymentInventory(paymentOrderId, 1, 10);
@@ -444,14 +359,6 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         return returnJson;
     }
 
-    /**
-     * 获取支付清单
-     *
-     * @param paymentOrderId
-     * @param page
-     * @param pageSize
-     * @return
-     */
     @Override
     public ReturnJson getMerchantPaymentInventory(String paymentOrderId, Integer page, Integer pageSize) {
         Page<PaymentInventory> paymentInventoryPage = new Page<>(page, pageSize);
@@ -459,13 +366,6 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         return ReturnJson.success(paymentInventoryPages);
     }
 
-    /**
-     * 添加商户
-     *
-     * @param companyDto
-     * @return
-     * @throws CommonException
-     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ReturnJson addMerchant(CompanyDto companyDto) throws Exception {
@@ -542,12 +442,6 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         return ReturnJson.success("添加商户成功！");
     }
 
-    /**
-     * 退出登录
-     *
-     * @param merchantId
-     * @return
-     */
     @Override
     public ReturnJson logout(String merchantId) {
         redisDao.remove(merchantId);

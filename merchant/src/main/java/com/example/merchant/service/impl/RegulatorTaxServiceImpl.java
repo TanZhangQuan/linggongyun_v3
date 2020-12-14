@@ -56,12 +56,6 @@ public class RegulatorTaxServiceImpl extends ServiceImpl<RegulatorTaxDao, Regula
     @Resource
     private PaymentOrderManyDao paymentOrderManyDao;
 
-    /**
-     * 监管服务商上方的四个数据
-     *
-     * @param regulatorId
-     * @return
-     */
     @Override
     public ReturnJson homeFourData(String regulatorId) {
         Map<String, Object> map = new HashMap<>();
@@ -126,12 +120,6 @@ public class RegulatorTaxServiceImpl extends ServiceImpl<RegulatorTaxDao, Regula
         return ReturnJson.success("没有签约平台服务商");
     }
 
-    /**
-     * 查询服务商列表
-     *
-     * @param regulatorTaxDto
-     * @return
-     */
     @Override
     public ReturnJson listTax(RegulatorTaxDto regulatorTaxDto, String regulatorId) {
         Page page = new Page(regulatorTaxDto.getPageNo(), regulatorTaxDto.getPageSize());
@@ -145,12 +133,6 @@ public class RegulatorTaxServiceImpl extends ServiceImpl<RegulatorTaxDao, Regula
         return ReturnJson.success(taxIPage);
     }
 
-    /**
-     * 查询服务商信息
-     *
-     * @param taxId
-     * @return
-     */
     @Override
     public ReturnJson getTax(String taxId) {
         Tax tax = taxDao.selectById(taxId);
@@ -199,12 +181,6 @@ public class RegulatorTaxServiceImpl extends ServiceImpl<RegulatorTaxDao, Regula
         return ReturnJson.success(map);
     }
 
-    /**
-     * 批量导出服务商信息
-     *
-     * @param taxIds 服务商id
-     * @return
-     */
     @Override
     public ReturnJson batchExportTax(String taxIds, HttpServletResponse response) {
         List list = Arrays.asList(taxIds.split(","));
@@ -224,11 +200,6 @@ public class RegulatorTaxServiceImpl extends ServiceImpl<RegulatorTaxDao, Regula
         return ReturnJson.error("创客导出失败！");
     }
 
-    /**
-     * 支付订单信息
-     *
-     * @return
-     */
     @Override
     public ReturnJson getPayInfo(PayInfoDto payInfoDto) {
         Page page = new Page(payInfoDto.getPageNo(), payInfoDto.getPageSize());
@@ -254,13 +225,6 @@ public class RegulatorTaxServiceImpl extends ServiceImpl<RegulatorTaxDao, Regula
         return ReturnJson.success(infoPoIPage);
     }
 
-    /**
-     * 导出支付订单信息
-     *
-     * @param paymentOrderIds
-     * @param response
-     * @return
-     */
     @Override
     public ReturnJson batchExportPayInfo(@NotNull String paymentOrderIds, HttpServletResponse response) {
         List<RegulatorTaxPayInfoPo> voList = taxDao.getPayInfoByIds(Arrays.asList(paymentOrderIds.split(",")));
@@ -291,12 +255,6 @@ public class RegulatorTaxServiceImpl extends ServiceImpl<RegulatorTaxDao, Regula
         return ReturnJson.error("创客导出失败！");
     }
 
-    /**
-     * 支付清单明细查询
-     *
-     * @param paymentOrderId
-     * @return
-     */
     @Override
     public ReturnJson getPaymentInventoryInfo(String paymentOrderId, Integer page, Integer pageSize) {
         Page<PaymentInventory> paymentInventoryPage = new Page<>(page, pageSize);
@@ -304,13 +262,6 @@ public class RegulatorTaxServiceImpl extends ServiceImpl<RegulatorTaxDao, Regula
         return ReturnJson.success(paymentInventoryPage);
     }
 
-    /**
-     * 支付信息  以及  支付方信息
-     *
-     * @param paymentOrderId 支付id
-     * @param type           合作类型
-     * @return
-     */
     @Override
     public ReturnJson getPaymentOrderInfo(String paymentOrderId, Integer type) {
         Map<String, Object> map = new HashMap();

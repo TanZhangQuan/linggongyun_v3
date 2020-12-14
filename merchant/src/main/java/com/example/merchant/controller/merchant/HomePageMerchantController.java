@@ -24,9 +24,6 @@ public class HomePageMerchantController {
     private HomePageService homePageService;
 
     @Resource
-    private PaymentOrderService paymentOrderService;
-
-    @Resource
     private PaymentOrderManyService paymentOrderManyService;
 
     @PostMapping("/homePageInfo")

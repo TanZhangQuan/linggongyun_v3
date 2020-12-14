@@ -265,12 +265,6 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
         return ReturnJson.success(list);
     }
 
-    /**
-     * 汇总开票详情数据
-     *
-     * @param invoiceId
-     * @return
-     */
     @Override
     public ReturnJson getInvoiceListQuery(String invoiceId) {
         ReturnJson returnJson = new ReturnJson("操作失败", 300);

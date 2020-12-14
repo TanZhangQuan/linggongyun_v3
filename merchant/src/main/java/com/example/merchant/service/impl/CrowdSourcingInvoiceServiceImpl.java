@@ -62,12 +62,6 @@ public class CrowdSourcingInvoiceServiceImpl extends ServiceImpl<CrowdSourcingIn
     private PaymentInventoryDao paymentInventoryDao;
 
 
-    /**
-     * 众包开票申请
-     *
-     * @param addApplicationCrowdSourcingDto
-     * @return
-     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ReturnJson addCrowdSourcingInvoice(AddApplicationCrowdSourcingDto addApplicationCrowdSourcingDto) {
@@ -94,13 +88,6 @@ public class CrowdSourcingInvoiceServiceImpl extends ServiceImpl<CrowdSourcingIn
 
     }
 
-    /**
-     * 众包发票详情信息
-     *
-     * @param queryCrowdSourcingDto
-     * @param userId
-     * @return
-     */
     @Override
     public ReturnJson getCrowdSourcingInfo(QueryCrowdSourcingDto queryCrowdSourcingDto, String userId) {
         Page page = new Page(queryCrowdSourcingDto.getPageNo(), queryCrowdSourcingDto.getPageSize());
@@ -110,12 +97,6 @@ public class CrowdSourcingInvoiceServiceImpl extends ServiceImpl<CrowdSourcingIn
         return ReturnJson.success(vos);
     }
 
-    /**
-     * 查询单条众包信息
-     *
-     * @param csiId
-     * @return
-     */
     @Override
     public ReturnJson getInvoiceById(String csiId) {
         ReturnJson returnJson = new ReturnJson("操作失败", 300);
@@ -126,12 +107,6 @@ public class CrowdSourcingInvoiceServiceImpl extends ServiceImpl<CrowdSourcingIn
         return returnJson;
     }
 
-    /**
-     * 平台端查询众包待开票
-     *
-     * @param tobeinvoicedDto
-     * @return
-     */
     @Override
     public ReturnJson getTobeCrowdSourcingInvoice(TobeinvoicedDto tobeinvoicedDto) {
         Page page = new Page(tobeinvoicedDto.getPageNo(), tobeinvoicedDto.getPageSize());
@@ -201,12 +176,6 @@ public class CrowdSourcingInvoiceServiceImpl extends ServiceImpl<CrowdSourcingIn
         return returnJson;
     }
 
-    /**
-     * 众包申请开票信息查询
-     *
-     * @param applicationId
-     * @return
-     */
     @Override
     public ReturnJson getApplicationInfo(String applicationId) {
         CrowdSourcingApplication crowdSourcingApplication = crowdSourcingApplicationDao.selectById(applicationId);
@@ -263,12 +232,6 @@ public class CrowdSourcingInvoiceServiceImpl extends ServiceImpl<CrowdSourcingIn
         }
     }
 
-    /**
-     * 平台端查询众包已开票
-     *
-     * @param tobeinvoicedDto
-     * @return
-     */
     @Override
     public ReturnJson getCrowdSourcingInfoPass(TobeinvoicedDto tobeinvoicedDto) {
         Page page = new Page(tobeinvoicedDto.getPageNo(), tobeinvoicedDto.getPageSize());

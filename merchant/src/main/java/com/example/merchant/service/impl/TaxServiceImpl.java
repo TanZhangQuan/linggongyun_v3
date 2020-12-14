@@ -72,16 +72,7 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
     @Resource
     private MerchantDao merchantDao;
 
-    @Resource
-    private MyBankService myBankService;
 
-
-    /**
-     * 查询商户可用使用的平台服务商
-     *
-     * @param merchantId
-     * @return
-     */
     @Override
     public ReturnJson getTaxAll(String merchantId, Integer packageStatus) {
         Merchant merchant = merchantDao.selectById(merchantId);
@@ -128,23 +119,12 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
         return ReturnJson.success(taxBriefVOS);
     }
 
-    /**
-     * 查询所以开票类目
-     *
-     * @return
-     */
     @Override
     public ReturnJson getCatalogAll() {
         List<InvoiceCatalog> invoiceCatalogs = invoiceCatalogDao.selectList(new QueryWrapper<>());
         return ReturnJson.success(invoiceCatalogs);
     }
 
-    /**
-     * 添加开票类目
-     *
-     * @param addInvoiceCatalogDto
-     * @return
-     */
     @Override
     public ReturnJson saveCatalog(AddInvoiceCatalogDto addInvoiceCatalogDto) {
         InvoiceCatalog invoiceCatalog = new InvoiceCatalog();
@@ -156,12 +136,6 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
         return ReturnJson.error("添加类目失败！");
     }
 
-    /**
-     * 添加服务商
-     *
-     * @param taxDto
-     * @return
-     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ReturnJson saveTax(TaxDto taxDto) throws Exception {
@@ -248,12 +222,6 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
         return ReturnJson.success("添加成功！");
     }
 
-    /**
-     * 查询服务商列表
-     *
-     * @param taxListDto
-     * @return
-     */
     @Override
     public ReturnJson getTaxList(TaxListDto taxListDto) {
         Page<TaxListPO> taxListPOPage = new Page<>(taxListDto.getPage(), taxListDto.getPageSize());
@@ -261,12 +229,6 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
         return ReturnJson.success(taxListPage);
     }
 
-    /**
-     * 查询服务商详情
-     *
-     * @param taxId
-     * @return
-     */
     @Override
     public ReturnJson getTaxInfo(String taxId) {
         Tax tax = taxDao.selectById(taxId);
@@ -287,12 +249,6 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
         return ReturnJson.success(taxPlatformVO);
     }
 
-    /**
-     * 查询交易流水统计
-     *
-     * @param taxId
-     * @return
-     */
     @Override
     public ReturnJson transactionRecordCount(String taxId) {
         HomePageVO homePageVO = new HomePageVO();
@@ -321,14 +277,6 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
         return returnJson;
     }
 
-    /**
-     * 查询具体的交易流水
-     *
-     * @param taxId
-     * @param page
-     * @param pageSize
-     * @return
-     */
     @Override
     public ReturnJson transactionRecord(String taxId, Integer page, Integer pageSize) {
         List<String> ids = new ArrayList<>();
@@ -349,12 +297,6 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
         return ReturnJson.success(taxPaymentListPage);
     }
 
-    /**
-     * 销售方信息
-     *
-     * @param id
-     * @return
-     */
     @Override
     public ReturnJson getSellerById(String id) {
         ReturnJson returnJson = new ReturnJson("查询失败", 300);

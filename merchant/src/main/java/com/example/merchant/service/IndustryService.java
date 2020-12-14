@@ -16,5 +16,10 @@ import java.util.List;
  */
 public interface IndustryService extends IService<Industry> {
 
+    /**
+     * 获取所有的行业列表
+     *
+     * @return
+     */
     ReturnJson getlist();
 }

@@ -24,11 +24,6 @@ public class PersonalCenterServiceImpl implements PersonalCenterService {
     @Resource
     private WorkerBankDao workerBankDao;
 
-    /**
-     * 个人信息
-     * @param workerId
-     * @return
-     */
     @Override
     public ReturnJson personageInfo(String workerId) {
         Worker worker = workerDao.selectById(workerId);

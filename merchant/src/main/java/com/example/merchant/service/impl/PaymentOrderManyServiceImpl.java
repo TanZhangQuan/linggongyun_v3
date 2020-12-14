@@ -168,13 +168,6 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
         return ReturnJson.success(paymentOrderManyVo);
     }
 
-    /**
-     * 根据支付id查找发票信息详情
-     *
-     * @param id
-     * @param pageNo
-     * @return
-     */
     @Override
     public ReturnJson getInvoiceDetailsByPayId(String id, Integer pageNo, Integer pageSize) {
         Page page = new Page(pageNo, pageSize);
@@ -182,12 +175,6 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
         return ReturnJson.success(list);
     }
 
-    /**
-     * 查询众包的支付订单
-     *
-     * @param paymentOrderMerchantDto
-     * @return
-     */
     @Override
     public ReturnJson getPaymentOrderMany(String merchantId, PaymentOrderMerchantDto paymentOrderMerchantDto) {
         Merchant merchant = merchantDao.selectById(merchantId);
@@ -203,12 +190,6 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
         return ReturnJson.success(paymentOrderManyIPage);
     }
 
-    /**
-     * 众包支付订单详情
-     *
-     * @param id
-     * @return
-     */
     @Override
     public ReturnJson getPaymentOrderManyInfo(String id) {
         PaymentOrderInfoVO paymentOrderInfoVO = new PaymentOrderInfoVO();
@@ -235,12 +216,6 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
         return ReturnJson.success(paymentOrderInfoVO);
     }
 
-    /**
-     * 创建或修改众包支付订单
-     *
-     * @param addPaymentOrderManyDto
-     * @return
-     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ReturnJson saveOrUpdataPaymentOrderMany(AddPaymentOrderManyDto addPaymentOrderManyDto, String merchantId) {
@@ -331,13 +306,6 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
         return ReturnJson.success("支付订单创建成功！");
     }
 
-    /**
-     * 众包线下支付
-     *
-     * @param id
-     * @param manyPayment
-     * @return
-     */
     @Override
     public ReturnJson offlinePayment(String id, String manyPayment) {
         PaymentOrderMany paymentOrder = new PaymentOrderMany();
@@ -353,12 +321,6 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
     }
 
 
-    /**
-     * 众包今天的支付金额
-     *
-     * @param merchantId
-     * @return
-     */
     @Override
     public ReturnJson getDayPaas(String merchantId) throws CommonException {
         List<String> merchantIds = acquireID.getCompanyIds(merchantId);
@@ -366,12 +328,6 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
         return ReturnJson.success(list);
     }
 
-    /**
-     * 众包本周的支付金额
-     *
-     * @param merchantId
-     * @return
-     */
     @Override
     public ReturnJson getWeekPaas(String merchantId) throws CommonException {
         List<String> merchantIds = acquireID.getCompanyIds(merchantId);
@@ -380,12 +336,6 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
     }
 
 
-    /**
-     * 众包本月的支付金额
-     *
-     * @param merchantId
-     * @return
-     */
     @Override
     public ReturnJson getMonthPaas(String merchantId) throws CommonException {
         List<String> merchantIds = acquireID.getCompanyIds(merchantId);
@@ -393,12 +343,6 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
         return ReturnJson.success(list);
     }
 
-    /**
-     * 众包今年的支付金额
-     *
-     * @param merchantId
-     * @return
-     */
     @Override
     public ReturnJson getYearPaas(String merchantId) throws CommonException {
         List<String> merchantIds = acquireID.getCompanyIds(merchantId);
@@ -406,12 +350,6 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
         return ReturnJson.success(list);
     }
 
-    /**
-     * 众包确认收款
-     *
-     * @param id
-     * @return
-     */
     @Override
     public ReturnJson confirmPaymentManyPaas(String id) {
         PaymentOrderMany paymentOrderMany = new PaymentOrderMany();
@@ -421,12 +359,6 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
         return ReturnJson.success("已成功确认收款");
     }
 
-    /**
-     * 查询众包的支付订单
-     *
-     * @param paymentOrderDto
-     * @return
-     */
     @Override
     public ReturnJson getPaymentOrderManyPaas(PaymentOrderDto paymentOrderDto, String managersId) throws CommonException {
         List<String> merchantIds = acquireID.getCompanyIds(managersId);

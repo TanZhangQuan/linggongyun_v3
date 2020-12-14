@@ -18,24 +18,94 @@ import com.example.mybatis.entity.Tax;
  * @since 2020-09-07
  */
 public interface TaxService extends IService<Tax> {
+    /**
+     * 查询商户可用使用的平台服务商
+     *
+     * @param merchantId
+     * @param packageStatus
+     * @return
+     */
     ReturnJson getTaxAll(String merchantId, Integer packageStatus);
+
+    /**
+     * 查询所有的平台服务商
+     *
+     * @param companyId
+     * @param packageStatus
+     * @return
+     */
     ReturnJson getTaxPaasAll(String companyId, Integer packageStatus);
 
+    /**
+     * 查询所有开票类目
+     *
+     * @return
+     */
     ReturnJson getCatalogAll();
 
+    /**
+     * 添加开票类目
+     *
+     * @param addInvoiceCatalogDto
+     * @return
+     */
     ReturnJson saveCatalog(AddInvoiceCatalogDto addInvoiceCatalogDto);
+
+    /**
+     * 添加服务商
+     *
+     * @param taxDto
+     * @return
+     */
     ReturnJson saveTax(TaxDto taxDto) throws Exception;
 
+    /**
+     * 查询服务商列表
+     *
+     * @param taxListDto
+     * @return
+     */
     ReturnJson getTaxList(TaxListDto taxListDto);
 
+    /**
+     * 查询服务商详情
+     *
+     * @param taxId
+     * @return
+     */
     ReturnJson getTaxInfo(String taxId);
 
+    /**
+     * 查询交易流水统计
+     *
+     * @param taxId
+     * @return
+     */
     ReturnJson transactionRecordCount(String taxId);
 
+    /**
+     * 查询具体的交易流水
+     *
+     * @param taxId
+     * @param page
+     * @param pageSize
+     * @return
+     */
     ReturnJson transactionRecord(String taxId, Integer page, Integer pageSize);
 
+    /**
+     * 销售方信息
+     *
+     * @param id
+     * @return
+     */
     ReturnJson getSellerById(String id);
 
+    /**
+     * 查询所有可用的服务商
+     *
+     * @return
+     */
     ReturnJson getTaxPaasList();
 
 }
