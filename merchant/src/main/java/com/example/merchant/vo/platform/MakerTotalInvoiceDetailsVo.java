@@ -18,7 +18,7 @@ public class MakerTotalInvoiceDetailsVo {
     /**
      * 备注
      */
-    private String remarks;
+    private String makerInvoiceDesc;
 
     /**
      * 分包发票url

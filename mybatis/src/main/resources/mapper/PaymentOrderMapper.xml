@@ -462,10 +462,7 @@
             t.release_date,
             t.deadline_date,
             t.industry_type
-        FROM
-            tb_maker_total_invoice mti
-        INNER JOIN tb_invoice_list il ON il.maker_total_invoice_id = mti.id
-        INNER JOIN tb_invoice i ON i.id = il.invoice_id
+        FROM tb_invoice i
         INNER JOIN tb_invoice_application ia ON ia.id = i.application_id
         INNER JOIN tb_application_payment ap ON ia.id = ap.invoice_application_id
         INNER JOIN tb_payment_order po ON po.id = ap.payment_order_id

@@ -49,7 +49,7 @@ public class CrowdSourcingInvoiceInfoVo {
     /**
      * 开票状态为空则为未申请
      */
-    private String applicationState;
+    private String isInvoice;
 
     /**
      * 0.未申请；1.申请中；2.已拒绝；3.已开票，4未开票

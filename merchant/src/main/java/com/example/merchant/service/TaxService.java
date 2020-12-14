@@ -31,6 +31,7 @@ public interface TaxService extends IService<Tax> {
     ReturnJson getTaxInfo(String taxId);
 
     ReturnJson transactionRecordCount(String taxId);
+
     ReturnJson transactionRecord(String taxId, Integer page, Integer pageSize);
 
     ReturnJson getSellerById(String id);

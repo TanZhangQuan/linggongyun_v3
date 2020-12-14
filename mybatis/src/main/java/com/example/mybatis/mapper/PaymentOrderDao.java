@@ -58,6 +58,7 @@ public interface PaymentOrderDao extends BaseMapper<PaymentOrder> {
     BillingInfoVo getBillingInfo(String id);
 
     List<BillPO> selectMonthBill(@Param("workerId") String workerId, @Param("year") Integer year, @Param("month")Integer month,@Param("id") String id);
+
     BillCountPO selectYearCount(@Param("workerId") String workerId,@Param("year") Integer year);
 
     PaymentOrderInfoPO selectPaymentOrderInfo(String paymentOrderId);
@@ -74,5 +75,5 @@ public interface PaymentOrderDao extends BaseMapper<PaymentOrder> {
 
     BuyerVo queryBuyer(String invoiceId);
 
-    List<InvoiceListVo> queryMakerPaymentInventory(Page page,String invoiceId);
+    IPage<InvoiceListVo> queryMakerPaymentInventory(Page page,String invoiceId);
 }

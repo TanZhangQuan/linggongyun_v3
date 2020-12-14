@@ -58,25 +58,25 @@ public class MakerTotalInvoiceServiceImpl extends ServiceImpl<MakerTotalInvoiceD
         ReturnJson returnJson = new ReturnJson("操作失败", 200);
         DateTimeFormatter dfd = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");//时间转换
         MakerTotalInvoice makerTotalInvoice = new MakerTotalInvoice();
-        makerTotalInvoice.setId(makerTotalInvoiceDto.getId());
-        makerTotalInvoice.setInvoiceTypeNo(makerTotalInvoiceDto.getInvoiceTypeNo());
-        makerTotalInvoice.setInvoiceSerialNo(makerTotalInvoiceDto.getInvoiceSerialNo());
-        makerTotalInvoice.setInvoiceDate(LocalDateTime.parse(DateUtil.getTime(), dfd));
-        makerTotalInvoice.setInvoiceCategory(makerTotalInvoiceDto.getInvoiceCategory());
-        makerTotalInvoice.setTotalAmount(makerTotalInvoiceDto.getTotalAmount());
-        String[] taxAmounts = makerTotalInvoiceDto.getTaxAmount().split(",");
-        BigDecimal taxAmount = new BigDecimal("0.00");
-        for (int i = 0; i < taxAmounts.length; i++) {
-            taxAmount.add(new BigDecimal(taxAmounts[i]));
-        }
-        makerTotalInvoice.setTaxAmount(taxAmount);
-        makerTotalInvoice.setInvoicePerson(managersDao.selectById(managerId).getRealName());
-        makerTotalInvoice.setSaleCompany(makerTotalInvoiceDto.getSaleCompany());
-        makerTotalInvoice.setMakerInvoiceDesc(makerTotalInvoiceDto.getMakerInvoiceDesc());
-        makerTotalInvoice.setMakerInvoiceUrl(makerTotalInvoiceDto.getMakerInvoiceUrl());
-        makerTotalInvoice.setMakerTaxUrl(makerTotalInvoiceDto.getMakerTaxUrl());
-        makerTotalInvoice.setMakerVoiceUploadDateTime(LocalDateTime.now());
-        if (makerTotalInvoice.getId() == null) {
+        if (makerTotalInvoiceDto.getId() == null) {
+            makerTotalInvoice.setId(makerTotalInvoiceDto.getId());
+            makerTotalInvoice.setInvoiceTypeNo(makerTotalInvoiceDto.getInvoiceTypeNo());
+            makerTotalInvoice.setInvoiceSerialNo(makerTotalInvoiceDto.getInvoiceSerialNo());
+            makerTotalInvoice.setInvoiceDate(LocalDateTime.parse(DateUtil.getTime(), dfd));
+            makerTotalInvoice.setInvoiceCategory(makerTotalInvoiceDto.getInvoiceCategory());
+            makerTotalInvoice.setTotalAmount(makerTotalInvoiceDto.getTotalAmount());
+            String[] taxAmounts = makerTotalInvoiceDto.getTaxAmount().split(",");
+            BigDecimal taxAmount = new BigDecimal("0.00");
+            for (int i = 0; i < taxAmounts.length; i++) {
+                taxAmount.add(new BigDecimal(taxAmounts[i]));
+            }
+            makerTotalInvoice.setTaxAmount(taxAmount);
+            makerTotalInvoice.setInvoicePerson(managersDao.selectById(managerId).getRealName());
+            makerTotalInvoice.setSaleCompany(makerTotalInvoiceDto.getSaleCompany());
+            makerTotalInvoice.setMakerInvoiceDesc(makerTotalInvoiceDto.getMakerInvoiceDesc());
+            makerTotalInvoice.setMakerInvoiceUrl(makerTotalInvoiceDto.getMakerInvoiceUrl());
+            makerTotalInvoice.setMakerTaxUrl(makerTotalInvoiceDto.getMakerTaxUrl());
+            makerTotalInvoice.setMakerVoiceUploadDateTime(LocalDateTime.now());
             makerTotalInvoice.setCreateDate(LocalDateTime.parse(DateUtil.getTime(), dfd));
             int num = makerTotalInvoiceDao.insert(makerTotalInvoice);
             if (num > 0) {
@@ -100,7 +100,8 @@ public class MakerTotalInvoiceServiceImpl extends ServiceImpl<MakerTotalInvoiceD
                 return ReturnJson.success("操作成功");
             }
         }
-        if (makerTotalInvoice.getId() != null) {
+        if (makerTotalInvoiceDto.getId() != null) {
+            BeanUtils.copyProperties(makerTotalInvoiceDto,makerTotalInvoice);
             makerTotalInvoice.setCreateDate(LocalDateTime.parse(DateUtil.getTime(), dfd));
             int num = makerTotalInvoiceDao.updateById(makerTotalInvoice);
             if (num > 0) {
@@ -174,15 +175,15 @@ public class MakerTotalInvoiceServiceImpl extends ServiceImpl<MakerTotalInvoiceD
     @Override
     public ReturnJson getMakerTotalInvoicePayList(String invoiceId, Integer pageNo, Integer pageSize) {
         Page page = new Page(pageNo, pageSize);
-        List<InvoiceListVo> invoiceListVoIPage = paymentOrderDao.queryMakerPaymentInventory(page, invoiceId);
+        IPage<InvoiceListVo> invoiceListVoIPage = paymentOrderDao.queryMakerPaymentInventory(page, invoiceId);
         Map<String, Object> map = new HashMap<>(0);
         BigDecimal totalTaxPrice = new BigDecimal("0.00");
-        for (InvoiceListVo invoiceListVo : invoiceListVoIPage) {
+        for (InvoiceListVo invoiceListVo : invoiceListVoIPage.getRecords()) {
             totalTaxPrice = totalTaxPrice.add(invoiceListVo.getTaskMoney());
         }
-        map.put("invoiceListVoIPage", invoiceListVoIPage);
+        map.put("invoiceListVoIPage", invoiceListVoIPage.getRecords());
         map.put("totalTaxPrice", totalTaxPrice);
-        return ReturnJson.success(invoiceListVoIPage);
+        return ReturnJson.success(map);
     }
 
 }

@@ -44,7 +44,7 @@
         <result column="payment_inventory" property="paymentInventory"/>
         <result column="many_payment" property="manyPayment"/>
         <result column="is_application" property="isApplication"/>
-        <result column="application_state" property="applicationState"/>
+        <result column="application_state" property="isInvoice"/>
         <result column="application_date" property="applicationDate"/>
     </resultMap>
 
@@ -97,7 +97,8 @@
         select COUNT(1) 'count', SUM(d.invoice_money) 'total_money' from tb_company_info a RIGHT JOIN tb_payment_order_many b on a.id = b.company_id
         join tb_crowd_sourcing_application c on b.id = c.payment_order_many_id
         join tb_crowd_sourcing_invoice d on c.id = d.application_id
-        where a.id = #{merchant_id}
+        where a.id = #{merchant_id}`
+        `
     </select>
 
     <select id="selectCrowdInvoiceMoneyPaas" parameterType="string" resultMap="InvoiceMoney">
