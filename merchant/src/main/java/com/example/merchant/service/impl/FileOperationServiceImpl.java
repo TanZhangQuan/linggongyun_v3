@@ -61,12 +61,6 @@ public class FileOperationServiceImpl implements FileOperationService {
     private String fileStaticAccesspathVideo;
 
 
-    /**
-     * 获取Excel表中的创客信息
-     *
-     * @param workerExcel
-     * @return
-     */
     @Override
     public ReturnJson getExcelWorker(MultipartFile workerExcel) {
         if (workerExcel.getSize() == 0) {
@@ -100,13 +94,6 @@ public class FileOperationServiceImpl implements FileOperationService {
         return ReturnJson.success(workers);
     }
 
-    /**
-     * 上传JPG或PDF文件
-     *
-     * @param uploadJpgOrPdf
-     * @return
-     * @throws IOException
-     */
     @Override
     public ReturnJson uploadJpgOrPdf(MultipartFile uploadJpgOrPdf, HttpServletRequest request) throws IOException {
         if (uploadJpgOrPdf.getSize() == 0) {
@@ -190,13 +177,6 @@ public class FileOperationServiceImpl implements FileOperationService {
         return "";
     }
 
-    /**
-     * 上传支付清单
-     *
-     * @param uploadInvoice
-     * @return
-     * @throws IOException
-     */
     @Override
     public ReturnJson uploadInvoice(MultipartFile uploadInvoice, HttpServletRequest request) throws IOException {
         if (uploadInvoice.getSize() == 0) {
@@ -259,16 +239,6 @@ public class FileOperationServiceImpl implements FileOperationService {
         }
     }
 
-    /**
-     * 上传门征单开发票或税票
-     *
-     * @param state
-     * @param uploadTaxReceipt
-     * @param paymentInventoryId
-     * @param request
-     * @return
-     * @throws IOException
-     */
     @Override
     public ReturnJson uploadInvoiceOrTaxReceipt(String state, MultipartFile uploadTaxReceipt, String paymentInventoryId, HttpServletRequest request) throws IOException {
         //时间转换
@@ -308,13 +278,6 @@ public class FileOperationServiceImpl implements FileOperationService {
         }
     }
 
-    /**
-     * 上传视频
-     *
-     * @param uploadVideo
-     * @param request
-     * @return
-     */
     @Override
     public ReturnJson uploadVideo(MultipartFile uploadVideo, HttpServletRequest request) {
         if (uploadVideo.getSize() == 0) {

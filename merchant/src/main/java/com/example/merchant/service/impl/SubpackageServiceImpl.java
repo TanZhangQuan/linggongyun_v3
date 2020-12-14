@@ -54,12 +54,6 @@ public class SubpackageServiceImpl implements SubpackageService {
         return ReturnJson.success(querySubInfoVo);
     }
 
-    /**
-     * 汇总代开已开票
-     *
-     * @param querySubpackageDto
-     * @return
-     */
     @Override
     public ReturnJson getSummaryList(QuerySubpackageDto querySubpackageDto, String merchantId) {
         Page page = new Page(querySubpackageDto.getPageNo(), querySubpackageDto.getPageSize());
@@ -68,12 +62,6 @@ public class SubpackageServiceImpl implements SubpackageService {
         return ReturnJson.success(list);
     }
 
-    /**
-     * 汇总代开,支付信息，税价总和
-     *
-     * @param invoiceId
-     * @return
-     */
     @Override
     public ReturnJson getSummary(String invoiceId) {
         ReturnJson returnJson = new ReturnJson("查询失败", 300);
@@ -84,12 +72,6 @@ public class SubpackageServiceImpl implements SubpackageService {
         return returnJson;
     }
 
-    /**
-     * 汇总代开,发票信息
-     *
-     * @param invoiceId
-     * @return
-     */
     @Override
     public ReturnJson getSubpackageInfoById(String invoiceId) {
         ReturnJson returnJson = new ReturnJson("查询失败", 300);
@@ -100,14 +82,6 @@ public class SubpackageServiceImpl implements SubpackageService {
         return returnJson;
     }
 
-    /**
-     * 汇总代开,发票信息,创客到手明细
-     *
-     * @param invoiceId
-     * @param pageNo
-     * @param pageSize
-     * @return
-     */
     @Override
     public ReturnJson getListByInvoiceId(String invoiceId, Integer pageNo, Integer pageSize) {
         Page page = new Page(pageNo, pageSize);

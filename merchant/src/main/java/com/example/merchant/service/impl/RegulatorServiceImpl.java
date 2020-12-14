@@ -101,12 +101,6 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
     @Resource
     private CompanyInfoDao companyInfoDao;
 
-    /**
-     * 添加监管部门
-     *
-     * @param regulatorDto
-     * @return
-     */
     @Override
     public ReturnJson addRegulator(RegulatorDto regulatorDto) {
         if (StringUtils.isBlank(regulatorDto.getConfirmPassWord()) || StringUtils.isBlank(regulatorDto.getPassWord())) {
@@ -122,12 +116,6 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
         return ReturnJson.success("添加监管部门成功！");
     }
 
-    /**
-     * 编辑监管部门
-     *
-     * @param regulatorDto
-     * @return
-     */
     @Override
     public ReturnJson updateRegulator(RegulatorDto regulatorDto) {
         Regulator regulator = regulatorDao.selectById(regulatorDto.getId());
@@ -146,12 +134,6 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
 
     }
 
-    /**
-     * 按ID查询监管部门
-     *
-     * @param regulatorId
-     * @return
-     */
     @Override
     public ReturnJson getByRegulatorId(Long regulatorId) {
         Regulator regulator = this.getById(regulatorId);
@@ -159,12 +141,6 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
         return ReturnJson.success(regulator);
     }
 
-    /**
-     * 按条件查询监管部门
-     *
-     * @param regulatorQueryDto
-     * @return
-     */
     @Override
     public ReturnJson getRegulatorQuery(RegulatorQueryDto regulatorQueryDto) {
         Page<Regulator> regulatorPage = new Page<>(regulatorQueryDto.getPageNo(), regulatorQueryDto.getPageSize());
@@ -172,13 +148,6 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
         return ReturnJson.success(regulatorIPage);
     }
 
-    /**
-     * 查询服务商
-     *
-     * @param page
-     * @param pageSize
-     * @return
-     */
     @Override
     public ReturnJson getTaxAll(Integer page, Integer pageSize, String regulatorId) {
         Page taxPage = new Page<>(page, pageSize);
@@ -186,12 +155,6 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
         return ReturnJson.success(taxBriefVOS);
     }
 
-    /**
-     * 添加监管服务商
-     *
-     * @param addRegulatorTaxDtos
-     * @return
-     */
     @Override
     public ReturnJson addRegulatorTax(List<AddRegulatorTaxDto> addRegulatorTaxDtos) {
         List<RegulatorTax> regulatorTaxes = new ArrayList<>();
@@ -207,12 +170,6 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
         return ReturnJson.error("添加监管服务商失败！");
     }
 
-    /**
-     * 查询监管部门监管的服务商交易统计
-     *
-     * @param regulatorId
-     * @return
-     */
     @Override
     public ReturnJson getRegultorPaymentCount(String regulatorId) {
         List<String> taxIds = new ArrayList<>();
@@ -249,12 +206,6 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
         return returnJson;
     }
 
-    /**
-     * 查看监管服务商
-     *
-     * @param regulatorId
-     * @return
-     */
     @Override
     public ReturnJson getRegulatorTaxAll(String regulatorId, Integer page, Integer pageSize) {
         List<RegulatorTaxVO> regulatorTaxVOS = new ArrayList<>();
@@ -289,50 +240,21 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
         return returnJson;
     }
 
-    /**
-     * 查看监管服务商的成交明细
-     *
-     * @param taxId
-     * @param page
-     * @param pageSize
-     * @return
-     */
     @Override
     public ReturnJson getRegulatorTaxPaymentList(String taxId, Integer page, Integer pageSize) {
         return taxService.transactionRecord(taxId, page, pageSize);
     }
 
-    /**
-     * 查看成交订单
-     *
-     * @param paymentOrderId
-     * @param packageStatus
-     * @return
-     */
     @Override
     public ReturnJson getPaymentInfo(String paymentOrderId, Integer packageStatus) {
         return merchantService.getMerchantPaymentInfo(paymentOrderId, packageStatus);
     }
 
-    /**
-     * 查看支付清单
-     *
-     * @param paymentOrderId
-     * @param page
-     * @param pageSize
-     * @return
-     */
     @Override
     public ReturnJson getPaymentInventoryInfo(String paymentOrderId, Integer page, Integer pageSize) {
         return merchantService.getMerchantPaymentInventory(paymentOrderId, page, pageSize);
     }
 
-    /**
-     * 按条件查询所监管的创客
-     *
-     * @param regulatorWorkerDto
-     * @return
-     */
     @Override
     public ReturnJson getRegulatorWorker(RegulatorWorkerDto regulatorWorkerDto, String regulatorId) {
         ReturnJson result = this.getPaymentOrderIds(regulatorId);
@@ -361,12 +283,6 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
         return returnJson;
     }
 
-    /**
-     * 导出创客
-     *
-     * @param workerIds
-     * @return
-     */
     @Override
     public ReturnJson exportRegulatorWorker(String workerIds, String regulatorId, HttpServletResponse response) {
         ReturnJson result = this.getPaymentOrderIds(regulatorId);
@@ -397,12 +313,6 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
         return ReturnJson.error("创客导出失败！");
     }
 
-    /**
-     * 获取所监管的创客的流水统计
-     *
-     * @param regulatorId
-     * @return
-     */
     @Override
     public ReturnJson countRegulatorWorker(String regulatorId) {
         ReturnJson result = this.getPaymentOrderIds(regulatorId);
@@ -438,13 +348,6 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
         return ReturnJson.success(countRegulatorWorkerVO);
     }
 
-    /**
-     * 获取所监管的创客的详情
-     *
-     * @param regulatorId
-     * @param workerId
-     * @return
-     */
     @Override
     public ReturnJson countRegulatorWorkerInfo(String regulatorId, String workerId) {
         Worker worker = workerDao.selectById(workerId);
@@ -475,12 +378,6 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
         return ReturnJson.success(countRegulatorWorkerInfoVO);
     }
 
-    /**
-     * 查询所监管创客的支付明细
-     *
-     * @param regulatorWorkerPaymentDto
-     * @return
-     */
     @Override
     public ReturnJson getRegulatorWorkerPaymentInfo(RegulatorWorkerPaymentDto regulatorWorkerPaymentDto, String regulatorId) {
         ReturnJson result = this.getPaymentOrderIds(regulatorId);
@@ -509,14 +406,6 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
         return returnJson;
     }
 
-    /**
-     * 导出所监管的创客支付明细
-     *
-     * @param workerId
-     * @param paymentIds
-     * @param response
-     * @return
-     */
     @Override
     public ReturnJson exportRegulatorWorkerPaymentInfo(String workerId, String paymentIds, HttpServletResponse response) {
         List<WorekerPaymentListPo> worekerPaymentListPos = workerDao.exportRegulatorWorkerPaymentInfo(Arrays.asList(paymentIds.split(",")), workerId);
@@ -540,14 +429,6 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
         return ReturnJson.error("导出失败！");
     }
 
-    /**
-     * 查询支付订单详情
-     *
-     * @param workerId
-     * @param paymentId
-     * @param packageStatus
-     * @return
-     */
     @Override
     public ReturnJson getPaymentOrderInfo(String workerId, String paymentId, Integer packageStatus) {
         PaymentOrderInfoPO paymentOrderInfoPO = null;
@@ -592,14 +473,6 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
         return ReturnJson.success(paymentOrderInfoVO);
     }
 
-    /**
-     * 分页查询支付明细
-     *
-     * @param paymentOrderId
-     * @param page
-     * @param pageSize
-     * @return
-     */
     @Override
     public ReturnJson getPaymentInventory(String paymentOrderId, Integer page, Integer pageSize) {
         Page<PaymentInventory> paymentInventoryPage = new Page<>(page, pageSize);
@@ -607,12 +480,6 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
         return ReturnJson.success(paymentInventoryPage);
     }
 
-    /**
-     * 按条件查询所监管的商户
-     *
-     * @param regulatorMerchantDto
-     * @return
-     */
     @Override
     public ReturnJson getRegulatorMerchant(RegulatorMerchantDto regulatorMerchantDto, String regulatorId) {
         ReturnJson returnJson = this.getTaxIds(regulatorId);
@@ -637,14 +504,6 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
         return success;
     }
 
-    /**
-     * 导出所监管的商户
-     *
-     * @param companyIds
-     * @param regulatorId
-     * @param response
-     * @return
-     */
     @Override
     public ReturnJson exportRegulatorMerchant(String companyIds, String regulatorId, HttpServletResponse response) {
         ReturnJson returnJson = this.getTaxIds(regulatorId);
@@ -674,12 +533,6 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
         return ReturnJson.success("");
     }
 
-    /**
-     * 统计所监管的商户的流水
-     *
-     * @param regulatorId
-     * @return
-     */
     @Override
     public ReturnJson getCountRegulatorMerchant(String regulatorId) {
         ReturnJson returnJson = this.getTaxIds(regulatorId);
@@ -727,13 +580,6 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
         return ReturnJson.success(countRegulatorMerchantVO);
     }
 
-    /**
-     * 查询所监管的公司详情
-     *
-     * @param companyId
-     * @param regulatorId
-     * @return
-     */
     @Override
     public ReturnJson getRegulatorMerchantParticulars(String companyId, String regulatorId) {
 
@@ -799,12 +645,6 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
         return ReturnJson.success(regulatorMerchantParticularsVO);
     }
 
-    /**
-     * 查询所监管商户的支付订单
-     *
-     * @param regulatorMerchantPaymentOrderDto
-     * @return
-     */
     @Override
     public ReturnJson getRegulatorMerchantPaymentOrder(RegulatorMerchantPaymentOrderDto regulatorMerchantPaymentOrderDto, String regulatorId) {
         ReturnJson returnJson = this.getTaxIds(regulatorId);
@@ -831,12 +671,6 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
         return success;
     }
 
-    /**
-     * 导出所监管商户的支付订单
-     *
-     * @param paymentOrderIds
-     * @return
-     */
     @Override
     public ReturnJson exportRegulatorMerchantPaymentOrder(String paymentOrderIds, HttpServletResponse response) {
         List<CompanyPaymentOrderPO> companyPaymentOrderPOS = companyInfoDao.exportCompanyPaymentOrder(Arrays.asList(paymentOrderIds.split(",")));
@@ -863,18 +697,9 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
         return null;
     }
 
-    /**
-     * 登录
-     *
-     * @param username 用户名
-     * @param password 密码
-     * @param response
-     * @return
-     */
     @Override
     public ReturnJson regulatorLogin(String username, String password, HttpServletResponse response) {
         String encryptPWD = PWD_KEY + MD5.md5(password);
-//        Subject currentUser = SecurityUtils.getSubject();
         QueryWrapper<Regulator> merchantQueryWrapper = new QueryWrapper<>();
         merchantQueryWrapper.eq("user_name", username).eq("pass_word", encryptPWD);
         Regulator re = regulatorDao.selectOne(merchantQueryWrapper);
@@ -884,8 +709,6 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
         if (re.getStatus() == 1) {
             throw new LockedAccountException("账号已被禁用");
         }
-//        CustomizedToken customizedToken = new CustomizedToken(username, encryptPWD, REGULATOR);
-//        currentUser.login(customizedToken);//shiro验证身份
         String token = jwtUtils.generateToken(re.getId());
         response.setHeader(TOKEN, token);
         redisDao.set(re.getId(), token);
@@ -893,12 +716,6 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
         return ReturnJson.success("登录成功！", token);
     }
 
-    /**
-     * 登出
-     *
-     * @param regulatorId 监督用户Id
-     * @return
-     */
     @Override
     public ReturnJson regulatorLogout(String regulatorId) {
         redisDao.remove(regulatorId);

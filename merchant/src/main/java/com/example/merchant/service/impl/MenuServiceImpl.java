@@ -52,11 +52,6 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
     @Resource
     private ManagersDao managersDao;
 
-    /**
-     * 商户端查询所有的权限列表
-     *
-     * @return
-     */
     @Override
     public ReturnJson getMenuList() {
         ReturnJson returnJson = new ReturnJson("查询失败", 300);
@@ -67,11 +62,6 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
         return returnJson;
     }
 
-    /**
-     * 平台端端查询所有的权限列表
-     *
-     * @return
-     */
     @Override
     public ReturnJson getPlatformMenuList() {
         ReturnJson returnJson = new ReturnJson("查询失败", 300);
@@ -82,12 +72,6 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
         return returnJson;
     }
 
-    /**
-     * 添加子账户
-     *
-     * @param merchantDto
-     * @return
-     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ReturnJson saveRole(MerchantDto merchantDto, String merchantId) {
@@ -137,12 +121,6 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
         }
     }
 
-    /**
-     * 查看所有的账户权限
-     *
-     * @param merchantId
-     * @return
-     */
     @Override
     public ReturnJson getAllRole(String merchantId) {
         if (merchantId == null) {
@@ -152,12 +130,6 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
         return ReturnJson.success(list);
     }
 
-    /**
-     * 删除子账户
-     *
-     * @param merchantId
-     * @return
-     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ReturnJson daleteRole(String merchantId) {
@@ -166,12 +138,6 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
         return ReturnJson.success("操作成功");
     }
 
-    /**
-     * 启用或停用子账户
-     *
-     * @param status
-     * @return
-     */
     @Override
     public ReturnJson updataRoleStatus(String merchantId, Integer status) {
         Merchant merchant = new Merchant();
@@ -184,12 +150,6 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
         return ReturnJson.error("操作失败");
     }
 
-    /**
-     * 平台端添加子账户
-     *
-     * @param saveManagersRoleDto
-     * @return
-     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ReturnJson savePlatRole(SaveManagersRoleDto saveManagersRoleDto, String managersId) {
@@ -227,12 +187,6 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
         }
     }
 
-    /**
-     * 平台端查询用户对应的子账户
-     *
-     * @param managersId
-     * @return
-     */
     @Override
     public ReturnJson getPassAllRole(String managersId) {
         if (managersId == null) {
@@ -242,12 +196,6 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
         return ReturnJson.success(list);
     }
 
-    /**
-     * 删除子账户
-     *
-     * @param managersId
-     * @return
-     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ReturnJson daletePassRole(String managersId) {
@@ -256,13 +204,6 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
         return ReturnJson.success("操作成功");
     }
 
-    /**
-     * 修改子账户状态
-     *
-     * @param managersId
-     * @param status
-     * @return
-     */
     @Override
     public ReturnJson updataPassRoleStatus(String managersId, Integer status) {
         Managers managers = new Managers();

@@ -60,12 +60,6 @@ public class StructureServiceImpl implements StructureService {
     @Value("${PWD_KEY}")
     private String PWD_KEY;
 
-    /**
-     * 添加或修改
-     *
-     * @param managersDto
-     * @return
-     */
     @Override
     public ReturnJson addSalesMan(ManagersDto managersDto) {
         Managers managers = managersDao.selectById(managersDto.getId());
@@ -124,12 +118,6 @@ public class StructureServiceImpl implements StructureService {
         return ReturnJson.success(managersIPage);
     }
 
-    /**
-     * 删除业务员
-     *
-     * @param salesManId
-     * @return
-     */
     @Override
     public ReturnJson removeSalesMan(String salesManId) throws CommonException {
         Integer companyInfoCount = companyInfoDao.selectCount(new QueryWrapper<CompanyInfo>().eq("sales_man_id", salesManId));
@@ -143,12 +131,6 @@ public class StructureServiceImpl implements StructureService {
     }
 
 
-    /**
-     * 业务员的流水统计
-     *
-     * @param salesManId
-     * @return
-     */
     @Override
     public ReturnJson getSalesManPaymentListCount(String salesManId) throws CommonException {
         List<String> companyIds = acquireID.getCompanyIds(salesManId);
@@ -162,14 +144,6 @@ public class StructureServiceImpl implements StructureService {
         return homePageInof;
     }
 
-    /**
-     * 业务员的流水
-     *
-     * @param salesManId
-     * @param page
-     * @param pageSize
-     * @return
-     */
     @Override
     public ReturnJson getSalesManPaymentList(String salesManId, Integer page, Integer pageSize) throws CommonException {
         List<String> companyIds = acquireID.getCompanyIds(salesManId);
@@ -181,37 +155,16 @@ public class StructureServiceImpl implements StructureService {
         return ReturnJson.success(salesManPaymentListPOIPage);
     }
 
-    /**
-     * 查询支付订单详情
-     *
-     * @param paymentOrderId
-     * @param packageStatus
-     * @return
-     */
     @Override
     public ReturnJson getSalesManPaymentInfo(String paymentOrderId, Integer packageStatus) {
         return merchantService.getMerchantPaymentInfo(paymentOrderId, packageStatus);
     }
 
-    /**
-     * 获取支付清单列表
-     *
-     * @param paymentOrderId
-     * @param page
-     * @param pageSize
-     * @return
-     */
     @Override
     public ReturnJson getPaymentInventory(String paymentOrderId, Integer page, Integer pageSize) {
         return merchantService.getMerchantPaymentInventory(paymentOrderId, page, pageSize);
     }
 
-    /**
-     * 添加代理商
-     *
-     * @param agentInfoDto
-     * @return
-     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ReturnJson addAgent(AgentInfoDto agentInfoDto) {
@@ -248,27 +201,12 @@ public class StructureServiceImpl implements StructureService {
 
     }
 
-
-    /**
-     * 编辑代理商
-     *
-     * @param agentInfoDto
-     * @return
-     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ReturnJson updataAgent(AgentInfoDto agentInfoDto) {
         return ReturnJson.success("编辑代理商成功!");
     }
 
-
-    /**
-     * 查询所以代理商
-     *
-     * @param page
-     * @param pageSize
-     * @return
-     */
     @Override
     public ReturnJson getAgentAll(Integer page, Integer pageSize) {
         Page<AgentListPO> agentListPOPage = new Page<>(page, pageSize);
@@ -276,12 +214,6 @@ public class StructureServiceImpl implements StructureService {
         return ReturnJson.success(agentListPOIPage);
     }
 
-    /**
-     * 按ID查找代理商(编辑代理商时用来获取代理商信息)
-     *
-     * @param agentId
-     * @return
-     */
     @Override
     public ReturnJson findByAgentId(String agentId) {
         Agent agent = agentDao.selectOne(new QueryWrapper<Agent>().eq("managers_id", agentId));
@@ -295,12 +227,6 @@ public class StructureServiceImpl implements StructureService {
         return ReturnJson.success(agentInfoDto);
     }
 
-    /**
-     * 删除没有业务的代理商
-     *
-     * @param agentId
-     * @return
-     */
     @Override
     public ReturnJson removeAgent(String agentId) {
         Integer count = companyInfoDao.selectCount(new QueryWrapper<CompanyInfo>().eq("agent_id", agentId));

@@ -55,12 +55,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Resource
     private WebsocketServer websocketServer;
 
-    /**
-     * 识别身份证获取信息
-     *
-     * @param filePath
-     * @return
-     */
     @Override
     public ReturnJson getIdCardInfo(String filePath, IdCardSide idCardSide) throws Exception {
         String[] fileFormats = {"jpg", "png", "bmp"};
@@ -73,12 +67,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return ReturnJson.success(idCardInfo);
     }
 
-    /**
-     * 保存创客的身份证信息
-     *
-     * @param idCardInfoDto
-     * @return
-     */
     @Override
     public ReturnJson saveIdCardinfo(IdCardInfoDto idCardInfoDto, String workerId) throws Exception {
         Worker worker = workerDao.selectById(workerId);
@@ -96,12 +84,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return ReturnJson.error("身份证上传失败！");
     }
 
-    /**
-     * 绑定银行卡号
-     *
-     * @param workerBankDto
-     * @return
-     */
     @Override
     public ReturnJson saveBankInfo(WorkerBankDto workerBankDto, String workerId) throws Exception {
         Worker worker = workerDao.selectById(workerId);
@@ -126,13 +108,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return ReturnJson.error("银行卡绑定失败！");
     }
 
-    /**
-     * 保存创客的活体视频信息
-     *
-     * @param workerId
-     * @param fileVideoPath
-     * @return
-     */
     @Override
     public ReturnJson saveWorkerVideo(String workerId, String fileVideoPath) {
         Worker worker = workerDao.selectById(workerId);
@@ -148,12 +123,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return ReturnJson.error("活体视频上传失败！");
     }
 
-    /**
-     * 发送签署加盟合同
-     *
-     * @param workerId
-     * @return
-     */
     @Override
     public ReturnJson senSignAContract(String workerId) throws DefineException {
         Worker worker = workerDao.selectById(workerId);
@@ -175,12 +144,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return ReturnJson.error("您已经签署了加盟合同，请勿重复签署！");
     }
 
-    /**
-     * 合同签署成功后的回调
-     *
-     * @param request
-     * @return
-     */
     @Override
     public synchronized ReturnJson callBackSignAContract(HttpServletRequest request) {
         //查询body的数据进行验签
@@ -265,12 +228,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return ReturnJson.success("签署流程开启！");
     }
 
-    /**
-     * 查看创客是否签署了加盟合同
-     *
-     * @param workerId
-     * @return
-     */
     @Override
     public ReturnJson findSignAContract(String workerId) {
         Worker worker = workerDao.selectById(workerId);

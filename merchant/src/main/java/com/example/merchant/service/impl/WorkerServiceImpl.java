@@ -61,8 +61,6 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
     private CompanyWorkerService companyWorkerService;
     @Resource
     private MerchantDao merchantDao;
-    @Resource
-    private MyBankService myBankService;
     @Value("${TOKEN}")
     private String TOKEN;
     @Resource
@@ -77,8 +75,6 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
     private String APPID;
     @Value("${SECRET}")
     private String SECRET;
-    @Resource
-    private WorkerBankDao workerBankDao;
 
 
     @Override

@@ -24,13 +24,6 @@ public class BillServiceImpl implements BillService {
     @Resource
     private PaymentOrderManyDao paymentOrderManyDao;
 
-    /**
-     * 总包月账单统计
-     *
-     * @param year
-     * @param month
-     * @return
-     */
     @Override
     public ReturnJson getTotalMonthBill(String workerId, Integer year, Integer month) {
         MonthBillCountVO monthBillCountVO = new MonthBillCountVO();
@@ -46,26 +39,12 @@ public class BillServiceImpl implements BillService {
         return returnJson;
     }
 
-    /**
-     * 查询总包月账单明细
-     *
-     * @param year
-     * @param month
-     * @return
-     */
     @Override
     public ReturnJson getTotalMonthBillInfo(String workerId, Integer year, Integer month) {
         List<BillPO> billPOS = paymentOrderDao.selectMonthBill(workerId, year, month, null);
         return ReturnJson.success(billPOS);
     }
 
-    /**
-     * 众包月账单统计
-     *
-     * @param year
-     * @param month
-     * @return
-     */
     @Override
     public ReturnJson getManyMonthBill(String workerId, Integer year, Integer month) {
         MonthBillCountVO monthBillCountVO = new MonthBillCountVO();
@@ -81,37 +60,18 @@ public class BillServiceImpl implements BillService {
         return returnJson;
     }
 
-    /**
-     * 查询众包月账单明细
-     *
-     * @param year
-     * @param month
-     * @return
-     */
     @Override
     public ReturnJson getManyMonthBillInfo(String workerId, Integer year, Integer month) {
         List<BillPO> billPOS = paymentOrderManyDao.selectMonthBill(workerId, year, month);
         return ReturnJson.success(billPOS);
     }
 
-    /**
-     * 总包年账单统计
-     *
-     * @param year
-     * @return
-     */
     @Override
     public ReturnJson getTotalYearBillCount(String workerId, Integer year) {
         BillCountPO billCountPO = paymentOrderDao.selectYearCount(workerId, year);
         return ReturnJson.success(billCountPO);
     }
 
-    /**
-     * 众包年账单统计
-     *
-     * @param year
-     * @return
-     */
     @Override
     public ReturnJson getManyYearBillCount(String workerId, Integer year) {
         BillCountPO billCountPO = paymentOrderManyDao.selectYearCount(workerId, year);

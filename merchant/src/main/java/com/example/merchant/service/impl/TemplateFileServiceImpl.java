@@ -30,57 +30,30 @@ public class TemplateFileServiceImpl implements TemplateFileService {
     @Value("${TemplateFile.StaticAccesspath}")
     private String templateFileStaticAccesspath;
 
-    /**
-     * 获取总包+分包支付清单模板URL
-     *
-     * @param request
-     * @return
-     */
     @Override
     public ReturnJson getTotalPayInventory(HttpServletRequest request) {
         String fileStaticAccesspath = this.getFileStaticAccesspath(totalPayInventory, request);
         return ReturnJson.success("总包+分包支付清单模板URL获取成功！", fileStaticAccesspath);
     }
 
-    /**
-     * 获取总包+分包交付支付验收单URL
-     *
-     * @param request
-     * @return
-     */
     @Override
     public ReturnJson getTotalAcceptanceCertificate(HttpServletRequest request) {
         String fileStaticAccesspath = this.getFileStaticAccesspath(totalAcceptanceCertificate, request);
         return ReturnJson.success("总包+分包交付支付验收单URL获取成功！", fileStaticAccesspath);
     }
 
-    /**
-     * 获取众包清单模板URL
-     * @param request
-     * @return
-     */
     @Override
     public ReturnJson getManyPayInventory(HttpServletRequest request) {
         String fileStaticAccesspath = this.getFileStaticAccesspath(manyPayInventory, request);
         return ReturnJson.success("获取众包清单模板URL！", fileStaticAccesspath);
     }
 
-    /**
-     * 获取众包交付支付验收单URL
-     * @param request
-     * @return
-     */
     @Override
     public ReturnJson getManyAcceptanceCertificate(HttpServletRequest request) {
         String fileStaticAccesspath = this.getFileStaticAccesspath(manyAcceptanceCertificate, request);
         return ReturnJson.success("众包交付支付验收单URL获取成功！", fileStaticAccesspath);
     }
 
-    /**
-     * 获取导入创客模板URL
-     * @param request
-     * @return
-     */
     @Override
     public ReturnJson getImportWorker(HttpServletRequest request) {
         String fileStaticAccesspath = this.getFileStaticAccesspath(importWorker, request);
