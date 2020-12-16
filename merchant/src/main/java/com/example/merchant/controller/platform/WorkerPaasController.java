@@ -148,5 +148,17 @@ public class WorkerPaasController {
         return workerTaskService.queryWorkerPayInfo(workerId,pageNo,pageSize);
     }
 
+    @PostMapping("/queryWorkerCompanyByID")
+    @ApiOperation(value = "添加指定派单创客", notes = "添加指定派单创客", httpMethod = "POST")
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(name = "merchantId", value = "商户ID", required = true),
+            @ApiImplicitParam(name = "pageNo", value = "页数", required = true),
+            @ApiImplicitParam(name = "pageSize", value = "每页的条数", required = true)
+    })
+    public ReturnJson queryWorkerCompanyByID(@RequestParam String merchantId,
+                                             @RequestParam(defaultValue = "1") Integer pageNo,
+                                             @RequestParam(defaultValue = "10") Integer pageSize) {
+        return workerService.queryWorkerCompanyByID(merchantId, pageNo, pageSize);
+    }
 }
 

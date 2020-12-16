@@ -8,6 +8,7 @@ import lombok.Data;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -36,7 +37,7 @@ public class CompanyDto {
      * 公司的成立时间
      */
     @ApiModelProperty(notes = "公司的成立时间", value = "公司的成立时间")
-    private LocalDateTime companyCreateDate;
+    private LocalDate companyCreateDate;
 
     /**
      * 社会统一信用代码

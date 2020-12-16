@@ -32,10 +32,11 @@ public class TaskMerchantController {
     @Resource
     private TaskService taskService;
 
+    @LoginRequired
     @ApiOperation("任务列表")
     @PostMapping(value = "/getTasks")
-    public ReturnJson<Task> TaskList(TaskListDto taskListDto) {
-        return taskService.selectList(taskListDto);
+    public ReturnJson<Task> TaskList(TaskListDto taskListDto,@RequestAttribute("userId") @ApiParam(hidden = true) String userId) {
+        return taskService.selectList(taskListDto,userId);
     }
 
     @ApiOperation("删除任务信息")

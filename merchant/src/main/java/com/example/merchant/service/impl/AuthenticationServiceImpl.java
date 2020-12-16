@@ -77,6 +77,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         worker.setIdcardCode(idCardInfoDto.getIdCard());
         worker.setIdcardFront(idCardInfoDto.getIdCardFront());
         worker.setIdcardBack(idCardInfoDto.getIdCardBack());
+        worker.setAttestation(1);
         int i = workerDao.updateById(worker);
         if (i == 1) {
             return ReturnJson.success("身份证上传成功！");

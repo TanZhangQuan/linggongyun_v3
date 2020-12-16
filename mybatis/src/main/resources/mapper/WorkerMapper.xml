@@ -146,8 +146,21 @@
     </select>
 
     <select id="getWorkerByTaskId" resultMap="WorkerPo">
-        SELECT w.id,w.worker_name,w.mobile_code,w.idcard_code,w.attestation,w.agreementUrl,wt.create_date FROM tb_worker_task as wt,tb_worker as w
-        WHERE wt.worker_id=w.id AND wt.task_id=#{taskId}
+        SELECT
+            w.id,
+            w.account_name AS worker_name,
+            w.mobile_code,
+            w.idcard_code,
+            w.attestation,
+            w.agreementUrl,
+            wt.create_date
+        FROM
+            tb_worker_task AS wt,
+            tb_worker AS w
+        WHERE
+	    wt.worker_id = w.id
+	    AND wt.task_id=#{taskId}
+	    AND wt.task_status = 0
     </select>
 
     <select id="getCheckByTaskId" resultMap="WorkerPos">
@@ -262,7 +275,7 @@
     <select id="getPaasCheckByTaskId" resultMap="workerPassVo">
         SELECT
             w.id,
-            w.worker_name,
+            w.account_name as worker_name,
             w.mobile_code,
             w.idcard_code,
             w.attestation,
@@ -277,7 +290,7 @@
         FROM
             tb_worker AS w
         INNER JOIN tb_worker_task wt ON wt.worker_id = w.id
-        where wt.task_id=#{taskId}
+        where wt.task_id=#{taskId} and  wt.task_status=0
     </select>
 
     <select id="queryWorkerInfo" resultMap="workerInfo">
@@ -376,5 +389,27 @@
             tb_payment_inventory pi
         WHERE
             pi.worker_id =#{param2}
+    </select>
+
+    <resultMap id="WorkerCompanyByID" type="com.example.mybatis.vo.WorkerCompanyVo">
+        <result column="id" property="id"/>
+        <result column="account_name" property="accountName"/>
+        <result column="mobile_code" property="mobileCode"/>
+        <result column="idcard_code" property="idcardCode"/>
+    </resultMap>
+
+    <select id="queryWorkerCompanyByID" resultMap="WorkerCompanyByID">
+        SELECT
+            w.id,
+            w.account_name,
+            w.mobile_code,
+            w.idcard_code
+        FROM
+            tb_company_worker cw
+        INNER JOIN tb_worker w ON cw.worker_id = w.id
+        WHERE
+            cw.company_id = #{param2}
+        AND w.attestation = 1
+        AND w.agreementSign = 2
     </select>
 </mapper>

@@ -84,8 +84,8 @@ public class MerchantPaasController {
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "companyId", value = "企业ID", required = true)
     })
-    public ReturnJson auditMerchant(@NotBlank(message = "商户公司ID不能为空！") @RequestParam(required = false) String merchantId) {
-        return merchantService.auditMerchant(merchantId);
+    public ReturnJson auditMerchant(@NotBlank(message = "商户公司ID不能为空！") @RequestParam(required = false) String companyId) {
+        return merchantService.auditMerchant(companyId);
     }
 
     @PostMapping("/removeMerchant")
@@ -93,8 +93,8 @@ public class MerchantPaasController {
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "companyId", value = "商户公司ID", required = true)
     })
-    public ReturnJson removeMerchant(@NotBlank(message = "商户公司ID不能为空！") @RequestParam(required = false) String merchantId) {
-        return merchantService.removeMerchant(merchantId);
+    public ReturnJson removeMerchant(@NotBlank(message = "商户公司ID不能为空！") @RequestParam(required = false) String companyId) {
+        return merchantService.removeMerchant(companyId);
     }
 
     @PostMapping("/merchantInfo")

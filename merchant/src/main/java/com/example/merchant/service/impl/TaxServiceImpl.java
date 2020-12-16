@@ -151,10 +151,12 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
         log.error(tax.toString());
         taxDao.insert(tax);
         TaxPackageDto totalTaxPackageDto = taxDto.getTotalTaxPackage();
-        TaxPackage totalTaxPackage = new TaxPackage();
-        BeanUtils.copyProperties(totalTaxPackageDto, totalTaxPackage);
         //判断是否有总包，有总包就添加
-        if (totalTaxPackage != null) {
+        if (totalTaxPackageDto != null) {
+
+            TaxPackage totalTaxPackage = new TaxPackage();
+            BeanUtils.copyProperties(totalTaxPackageDto, totalTaxPackage);
+
             totalTaxPackage.setTaxId(tax.getId());
             taxPackageDao.insert(totalTaxPackage);
             List<InvoiceLadderPriceDto> totalLaddersDto = taxDto.getTotalLadders();
@@ -187,10 +189,12 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
 
         }
         TaxPackageDto manyTaxPackageDto = taxDto.getManyTaxPackage();
-        TaxPackage manyTaxPackage = new TaxPackage();
-        BeanUtils.copyProperties(manyTaxPackageDto, manyTaxPackage);
         //判断是否有众包，有众包就添加
-        if (manyTaxPackage != null) {
+        if (manyTaxPackageDto != null) {
+
+            TaxPackage manyTaxPackage = new TaxPackage();
+            BeanUtils.copyProperties(manyTaxPackageDto, manyTaxPackage);
+
             manyTaxPackage.setTaxId(tax.getId());
             taxPackageDao.insert(manyTaxPackage);
             List<InvoiceLadderPriceDto> manyLaddersDto = taxDto.getManyLadders();

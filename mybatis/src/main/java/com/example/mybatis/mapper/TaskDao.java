@@ -8,6 +8,7 @@ import com.example.mybatis.dto.PlatformTaskDto;
 import com.example.mybatis.dto.TaskDto;
 import com.example.mybatis.dto.TaskListDto;
 import com.example.mybatis.entity.Task;
+import com.example.mybatis.vo.TaskInfoVo;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;
 
@@ -26,7 +27,7 @@ public interface TaskDao extends BaseMapper<Task> {
 
     int count(TaskListDto taskListDto);
 
-    IPage<Task> selectLists(Page page, @Param("taskListDto") TaskListDto taskListDto);
+    IPage<Task> selectLists(Page page, @Param("taskListDto") TaskListDto taskListDto,String userId);
 
     /**
      * 更具任务id删除任务
@@ -92,5 +93,5 @@ public interface TaskDao extends BaseMapper<Task> {
      */
     int addPlatformTask(TaskDto TaskDto);
 
-    IPage<Task> setTask(Page page,@Param("industryType") String s);
+    IPage<TaskInfoVo> setTask(Page page, @Param("industryType") String s);
 }

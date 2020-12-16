@@ -58,15 +58,26 @@
     </resultMap>
 
     <select id="myTask" resultMap="workerTask">
-        SELECT 	t.id as task_id,wt.id as worker_task_id,t.task_name,t.task_cost_min,t.task_cost_max, t.cooperate_mode,
-        t.release_date,t.deadline_date,t.industry_type,wt.`status`
-        FROM tb_task t
-        INNER JOIN tb_worker_task wt ON wt.task_id=t.id
+        SELECT
+            t.id AS task_id,
+            wt.id AS worker_task_id,
+            t.task_name,
+            t.task_cost_min,
+            t.task_cost_max,
+            t.cooperate_mode,
+            t.release_date,
+            t.deadline_date,
+            t.industry_type,
+            wt.`status`
+        FROM
+            tb_task t
+        INNER JOIN tb_worker_task wt ON wt.task_id = t.id
         WHERE wt.worker_id=#{workerId}
         <if test="status != null and status != ''">
             AND wt.`status`=#{status}
         </if>
     </select>
+
     <select id="queryWorkerTaskInfo" resultMap="workerTaskInfo">
             SELECT
         (

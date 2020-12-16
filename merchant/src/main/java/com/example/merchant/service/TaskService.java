@@ -27,7 +27,7 @@ public interface TaskService extends IService<Task> {
      * @param taskListDto
      * @return
      */
-    ReturnJson selectList(TaskListDto taskListDto);
+    ReturnJson selectList(TaskListDto taskListDto,String userId);
 
     /**
      * 删除

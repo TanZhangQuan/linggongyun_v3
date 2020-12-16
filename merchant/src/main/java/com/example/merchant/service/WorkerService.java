@@ -209,4 +209,14 @@ public interface WorkerService extends IService<Worker> {
      * @return
      */
     ReturnJson queryWorkerInfo(String workerId);
+
+    /**
+     * 查询商户可用的创客
+     *
+     * @param merchantId
+     * @param pageNo
+     * @param pageSize
+     * @return
+     */
+    ReturnJson queryWorkerCompanyByID(String merchantId, Integer pageNo, Integer pageSize);
 }

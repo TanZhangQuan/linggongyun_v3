@@ -40,24 +40,7 @@
     <!--查询参数-->
     <sql id="query">
         WHERE 1=1
-        <if test="taskListDto.merchantId != null and taskListDto.merchantId != ''">
-            AND merchant_id = #{merchantId}
-        </if>
-        <if test="taskListDto.taskCode != null and taskListDto.taskCode != ''">
-            AND task_code LIKE CONCAT ('%',#{taskListDto.taskCode},'%')
-        </if>
-        <if test="taskListDto.taskName != null and taskListDto.taskName != ''">
-            AND task_name LIKE CONCAT ('%',#{taskListDto.taskName},'%')
-        </if>
-        <if test="taskListDto.cooperateMode != null and taskListDto.cooperateMode != ''">
-            AND cooperate_mode=#{taskListDto.cooperateMode}
-        </if>
-        <if test="taskListDto.releaseDate != null and taskListDto.releaseDate != ''">
-            AND release_date >= unix_timestamp(#{taskListDto.releaseDate})
-        </if>
-        <if test="taskListDto.deadlineDate != null and taskListDto.deadlineDate != ''">
-            AND deadline_date <![CDATA[<=]]> unix_timestamp(#{taskListDto.deadlineDate})
-        </if>
+
     </sql>
 
     <!--查询总条数/* LIMIT #{currPage},#{pageSize}*/-->
@@ -68,15 +51,31 @@
 
     <!--查询所有的任务列表-->
     <select id="selectLists" resultMap="BaseResultMap">
-        <include refid="task_list"/>
-        <include refid="query"/>
+        select * from tb_task
+        where 1=1
+        AND merchant_id = #{param3}
+        <if test="taskListDto.taskCode != null and taskListDto.taskCode != ''">
+            AND task_code LIKE CONCAT ('%',#{taskListDto.taskCode},'%')
+        </if>
+        <if test="taskListDto.taskName != null and taskListDto.taskName != ''">
+            AND task_name LIKE CONCAT ('%',#{taskListDto.taskName},'%')
+        </if>
+        <if test="taskListDto.cooperateMode != null and taskListDto.cooperateMode != ''">
+            AND cooperate_mode= #{taskListDto.cooperateMode}
+        </if>
+        <if test="taskListDto.releaseDate != null and taskListDto.releaseDate != ''">
+            AND release_date >= #{taskListDto.releaseDate}
+        </if>
+        <if test="taskListDto.deadlineDate != null and taskListDto.deadlineDate != ''">
+            AND deadline_date <![CDATA[<=]]> #{taskListDto.deadlineDate}
+        </if>
+        order by create_date desc
     </select>
 
     <!--删除任务信息-->
     <delete id="delete">
         DELETE FROM tb_task WHERE id=#{id}
     </delete>
-
 
     <!--添加任务详情-->
     <insert id="addTask" parameterType="com.example.mybatis.dto.TaskDto">
@@ -110,9 +109,6 @@
         WHERE id=#{taskId}
     </update>
 
-
-
-
     <resultMap id="PlatformTaskList" type="com.example.mybatis.vo.PlatformTaskListVo">
         <id column="id" property="id"/>
         <result column="task_code" property="taskCode"/>
@@ -125,7 +121,7 @@
         <result column="task_mode" property="taskMode"/>
     </resultMap>
 
-    <select id="getPlatformTaskList" resultMap="PlatformTaskList">
+    <select id="getPlatformTaskList" resultMap="BaseResultMap">
         SELECT id,task_code,
         (SELECT company_name FROM tb_merchant WHERE id=merchant_id) as merchant_name,
         task_name,release_date,industry_type,release_time,cooperate_mode,task_mode,state
@@ -141,11 +137,12 @@
             AND cooperate_mode=#{platformTaskDto.cooperateMode}
         </if>
         <if test="platformTaskDto.releaseDate != null and platformTaskDto.releaseDate != ''">
-            AND release_date >= unix_timestamp(#{platformTaskDto.releaseDate})
+            AND release_date >= #{platformTaskDto.releaseDate}
         </if>
         <if test="platformTaskDto.deadlineDate != null and platformTaskDto.deadlineDate != ''">
-            AND deadline_date <![CDATA[<=]]> unix_timestamp(#{platformTaskDto.deadlineDate})
+            AND deadline_date <![CDATA[<=]]> #{platformTaskDto.deadlineDate}
         </if>
+        order by create_date desc
     </select>
 
     <insert id="addPlatformTask" parameterType="com.example.mybatis.dto.TaskDto">
@@ -157,16 +154,40 @@
         #{taskCostMax},#{taskSkill},#{releaseTime},#{deadlineTime},#{upperLimit},#{cooperateMode},#{taskMode},#{state})
     </insert>
 
-    <select id="setTask" resultMap="BaseResultMap">
-        SELECT 	id,task_name,task_cost_min,task_cost_max, cooperate_mode,
-        release_date,deadline_date,industry_type
-        FROM tb_task
+    <resultMap id="taskInfo" type="com.example.mybatis.vo.TaskInfoVo">
+        <id property="id" column="id"/>
+        <result property="companyName" column="company_name"/>
+        <result property="taskName" column="task_name"/>
+        <result property="upperLimit" column="upper_limit"/>
+        <result property="taskCostMin" column="task_cost_min"/>
+        <result property="taskCostMax" column="task_cost_max"/>
+        <result property="cooperateMode" column="cooperate_mode"/>
+        <result property="releaseDate" column="release_date"/>
+        <result property="taskMode" column="task_mode"/>
+    </resultMap>
+
+    <select id="setTask" resultMap="taskInfo">
+        SELECT
+            t.id,
+            m.company_name,
+            t.task_name,
+            t.upper_limit,
+            t.task_cost_min,
+            t.task_cost_max,
+            t.cooperate_mode,
+            CONCAT(
+                DATE(release_date),
+                ' ',
+                TIME(release_time)
+            ) AS release_date,
+            t.task_mode
+        FROM
+            tb_task t
+        INNER JOIN tb_merchant m ON m.id = t.merchant_id
         WHERE
-        task_mode != 0
+            task_mode != 0
         AND state = 0
         AND deadline_date > NOW()
-        <if test="industryType != null and industryType != '' ">
-            AND SUBSTRING_INDEX(industry_type, '/',1)=#{industryType}
-        </if>
+        ORDER BY release_date DESC
     </select>
 </mapper>

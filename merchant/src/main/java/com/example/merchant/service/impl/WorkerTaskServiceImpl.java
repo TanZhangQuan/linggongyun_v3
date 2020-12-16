@@ -44,6 +44,7 @@ public class WorkerTaskServiceImpl extends ServiceImpl<WorkerTaskDao, WorkerTask
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ReturnJson seavWorkerTask(Map map) {
+        Task task=taskDao.selectById(map.get("taskId").toString());
         String wid = map.get("workerId").toString();
         String[] workerIds = wid.split(",");
         for (int i = 0; i < workerIds.length; i++) {
@@ -53,6 +54,11 @@ public class WorkerTaskServiceImpl extends ServiceImpl<WorkerTaskDao, WorkerTask
             workerTask.setGetType(2);
             workerTask.setArrangePerson(map.get("arrangePerson").toString());
             workerTaskDao.addWorkerTask(workerTask);
+        }
+        int count = workerTaskDao.selectCount(new QueryWrapper<WorkerTask>().eq("task_id", map.get("taskId").toString()).eq("task_status", 0));
+        if (count == task.getUpperLimit()) {
+            task.setState(1);
+            taskDao.updateById(task);
         }
         return ReturnJson.success("添加成功");
     }

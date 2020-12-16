@@ -164,6 +164,7 @@
         <if test="param2.applicationDateTwo != null and param2.applicationDateTwo != ''">
             AND csa.application_date <![CDATA[<=]]> #{param2.applicationDateTwo}
         </if>
+        order by csi.invoice_print_date desc
     </select>
 
     <select id="getCrowdSourcingInfoPass" resultMap="CrowdSourcingInfo">
@@ -185,6 +186,7 @@
         <if test="tobeinvoicedDto.applicationDateTwo != null and tobeinvoicedDto.applicationDateTwo != ''">
             AND csa.application_date <![CDATA[<=]]> #{tobeinvoicedDto.applicationDateTwo}
         </if>
+        order by csi.invoice_print_date desc
     </select>
 
     <select id="getInvoiceById" resultMap="InvInfo">
@@ -247,6 +249,7 @@
         <if test="tobeinvoicedDto.applicationDateTwo != null and tobeinvoicedDto.applicationDateTwo != ''">
             AND csa.application_date <![CDATA[<=]]> #{tobeinvoicedDto.applicationDateTwo}
         </if>
+        order by csa.application_date desc
     </select>
     <!--平台查询支付信息-->
     <select id="getPaymentOrderManyPass" resultMap="PayOrderManyById">

@@ -111,7 +111,7 @@
                 and date(create_date) &lt;= #{endDate}
             </if>
         </where>
-        ORDER BY update_date DESC
+        ORDER BY create_date DESC
     </select>
 
 
@@ -341,7 +341,7 @@
         <result column="payee_bank_code" property="payeeBankCode"/>
         <result column="recevice_tax" property="receviceTax"/>
         <result column="merchant_tax" property="merchantTax"/>
-        <result column="tax_status" property="merchantTax"/>
+        <result column="tax_status" property="taxStatus"/>
         <result column="composite_tax" property="compositeTax"/>
         <result column="tax_id" property="taxId"/>
         <result column="task_name" property="taskName"/>
