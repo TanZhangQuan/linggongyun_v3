@@ -81,11 +81,12 @@
             AND po.platform_service_provider=#{param2.platformServiceProvider}
         </if>
         <if test="param2.applicationDateOne != null and param2.applicationDateOne != ''">
-            AND ia.invapp.application_date>=#{param2.applicationDateOne}
+            AND ia.application_date>=#{param2.applicationDateOne}
         </if>
         <if test="param2.applicationDateTwo != null and param2.applicationDateTwo != ''">
-            AND ia.invapp.application_date <![CDATA[<=]]> #{param2.applicationDateTwo}
+            AND ia.application_date <![CDATA[<=]]> #{param2.applicationDateTwo}
         </if>
+        order by mti.invoice_date desc
     </select>
 
 

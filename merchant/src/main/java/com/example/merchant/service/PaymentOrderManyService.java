@@ -115,13 +115,13 @@ public interface PaymentOrderManyService extends IService<PaymentOrderMany> {
      * @return
      */
     ReturnJson getYearPaas(String merchantId) throws CommonException;
+
     /**
      * 众包确认收款
      *
      * @param id
      * @return
      */
-
     ReturnJson confirmPaymentManyPaas(String id);
 
     /**

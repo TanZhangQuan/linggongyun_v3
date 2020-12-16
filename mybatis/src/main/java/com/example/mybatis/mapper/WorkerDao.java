@@ -6,10 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.mybatis.entity.Worker;
 import com.example.mybatis.po.WorekerPaymentListPo;
 import com.example.mybatis.po.WorkerPo;
-import com.example.mybatis.vo.WorkerInfoVo;
-import com.example.mybatis.vo.WorkerPassVo;
-import com.example.mybatis.vo.WorkerPayInfoVo;
-import com.example.mybatis.vo.WorkerVo;
+import com.example.mybatis.vo.*;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -63,4 +60,6 @@ public interface WorkerDao extends BaseMapper<Worker> {
      * @return
      */
     IPage<WorkerPayInfoVo> queryWorkerPayInfo(Page page, String workerId);
+
+    IPage<WorkerCompanyVo> queryWorkerCompanyByID(Page page,String companyId);
 }

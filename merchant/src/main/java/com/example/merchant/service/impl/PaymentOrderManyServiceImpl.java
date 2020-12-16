@@ -251,7 +251,10 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
         BigDecimal countMoney = new BigDecimal("0");
         Integer taxStatus = paymentOrderMany.getTaxStatus();
 
-        CompanyTax companyTax = companyTaxDao.selectOne(new QueryWrapper<CompanyTax>().eq("tax_id", paymentOrderMany.getTaxId()).eq("company_id", paymentOrderMany.getCompanyId()));
+        CompanyTax companyTax = companyTaxDao.selectOne(new QueryWrapper<CompanyTax>().
+                eq("tax_id", paymentOrderMany.getTaxId()).
+                eq("company_id", paymentOrderMany.getCompanyId()).
+                eq("package_status",1));
 
         if (companyTax.getChargeStatus() == 0) {
             compositeTax = companyTax.getServiceCharge().divide(BigDecimal.valueOf(100));
@@ -352,8 +355,10 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
 
     @Override
     public ReturnJson confirmPaymentManyPaas(String id) {
-        PaymentOrderMany paymentOrderMany = new PaymentOrderMany();
-        paymentOrderMany.setId(id);
+        PaymentOrderMany paymentOrderMany = paymentOrderManyDao.selectById(id);
+        if (paymentOrderMany==null){
+            return ReturnJson.error("不存在此众包支付信息！");
+        }
         paymentOrderMany.setPaymentOrderStatus(3);
         paymentOrderManyDao.updateById(paymentOrderMany);
         return ReturnJson.success("已成功确认收款");

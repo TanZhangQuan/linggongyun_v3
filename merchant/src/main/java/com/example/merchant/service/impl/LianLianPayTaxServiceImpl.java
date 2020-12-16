@@ -81,7 +81,9 @@ public class LianLianPayTaxServiceImpl extends ServiceImpl<LianlianpayTaxDao, Li
     @Value("${salary.workerNotifyUrl}")
     private String workerNotifyUrl;
 
-    //实时付款接口
+    /**
+     * 实时付款接口
+     */
     @Value("${salary.url.paymentapi}")
     private String paymentapi;
 

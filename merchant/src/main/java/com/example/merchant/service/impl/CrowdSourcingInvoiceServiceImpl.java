@@ -127,9 +127,8 @@ public class CrowdSourcingInvoiceServiceImpl extends ServiceImpl<CrowdSourcingIn
 
     @Override
     public ReturnJson getPaymentInventoryPass(String invoiceId, Integer pageNo, Integer pageSize) {
-        ReturnJson returnJson = new ReturnJson("操作失败", 300);
         BigDecimal totalTaxPrice = new BigDecimal("0.00");
-        Map<String, Object> map = new HashMap();
+        Map<String, Object> map = new HashMap(0);
         List<InvoiceDetailsVo> list = crowdSourcingInvoiceDao.getPaymentInventoryPass(invoiceId);
         for (InvoiceDetailsVo vo : list) {
             totalTaxPrice = totalTaxPrice.add(vo.getTaskMoney());
@@ -155,9 +154,8 @@ public class CrowdSourcingInvoiceServiceImpl extends ServiceImpl<CrowdSourcingIn
             }
             map.put("list", list);
             map.put("totalTaxPrice", totalTaxPrice);
-            returnJson = new ReturnJson("操作成功", map, 200);
         }
-        return returnJson;
+        return ReturnJson.success(map);
     }
 
     /**

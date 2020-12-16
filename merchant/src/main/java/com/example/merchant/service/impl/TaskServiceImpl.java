@@ -19,6 +19,7 @@ import com.example.mybatis.entity.*;
 import com.example.mybatis.mapper.*;
 import com.example.merchant.service.TaskService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.example.mybatis.vo.TaskInfoVo;
 import com.example.mybatis.vo.WorkerTaskVo;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.poi.ss.formula.functions.T;
@@ -60,9 +61,9 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
 
 
     @Override
-    public ReturnJson selectList(TaskListDto taskListDto) {
+    public ReturnJson selectList(TaskListDto taskListDto, String userId) {
         Page page = new Page(taskListDto.getPageNo(), taskListDto.getPageSize());
-        IPage<Task> taskList = taskDao.selectLists(page, taskListDto);
+        IPage<Task> taskList = taskDao.selectLists(page, taskListDto, userId);
         return ReturnJson.success(taskList);
     }
 
@@ -86,6 +87,9 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
         if (merchant == null) {
             return ReturnJson.error("商户不存在！");
         }
+        if (addTaskDto.getTaskCostMax().compareTo(addTaskDto.getTaskCostMax()) == -1) {
+            return ReturnJson.error("结束金额必须大于起始金额");
+        }
         Task task = taskDao.selectById(addTaskDto.getId());
         if (task != null) {
             BeanUtils.copyProperties(addTaskDto, task);
@@ -104,6 +108,9 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
                 if (!VerificationCheck.isNull(addTaskDto.getMakerIds())) {
                     return new ReturnJson("必须指定创客", 300);
                 }
+                if (addTaskDto.getUpperLimit() < Arrays.asList(addTaskDto.getMakerIds().split(",")).size()) {
+                    return ReturnJson.error("派单任务人数不能超过上线人数");
+                }
             }
             task.setReleaseDate(LocalDate.parse(addTaskDto.getReleaseDate(), df));
             task.setReleaseTime(LocalTime.parse(addTaskDto.getReleaseTime(), df1));
@@ -111,19 +118,19 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
             task.setDeadlineTime(LocalTime.parse(addTaskDto.getDeadlineTime(), df1));
             String taskCode = this.getTaskCode();
             int code = Integer.valueOf(taskCode.substring(2)) + 1;
-            task.setTaskCode("RW" + String.valueOf(code));
+            task.setTaskCode("RW" + code);
             int i = taskDao.insert(task);
             if (i > 0) {
                 if (addTaskDto.getTaskMode() != 1) {
-                    Map<String, String> map = new HashMap<String, String>();
+                    Map<String, String> map = new HashMap<>();
                     map.put("workerId", addTaskDto.getMakerIds());
                     map.put("taskId", task.getId());
                     map.put("arrangePerson", merchantDao.getNameById(merchant.getId()));
-                    return workerTaskService.seavWorkerTask(map);
+                    workerTaskService.seavWorkerTask(map);
                 }
             }
+            return ReturnJson.success("添加成功！");
         }
-        return new ReturnJson("添加失败", 300);
     }
 
     @Override
@@ -155,7 +162,8 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
     public ReturnJson openTask(String taskId) {
         Task task = taskDao.selectById(taskId);
         if (task.getState() == 1) {
-            int num = taskDao.openTask(taskId);
+            task.setState(0);
+            taskDao.updateById(task);
             return ReturnJson.success("操作成功");
         } else {
             return ReturnJson.error("任务必需关闭才能重新开启");
@@ -221,32 +229,23 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
 
     @Override
     public ReturnJson setTask(QueryMissionHall queryMissionHall) {
-        ReturnJson returnJson = new ReturnJson("操作失败", 300);
         Page page = new Page(queryMissionHall.getPageNo(), queryMissionHall.getPageSize());
-        IPage<Task> list = taskDao.setTask(page, queryMissionHall.getIndustryType());
-        if (list != null) {
-            return ReturnJson.success(list);
-        }
-        return returnJson;
+        IPage<TaskInfoVo> list = taskDao.setTask(page, queryMissionHall.getIndustryType());
+        return ReturnJson.success(list);
     }
 
     @Override
     public ReturnJson taskDetails(String taskId) {
-        ReturnJson returnJson = new ReturnJson("操作失败", 300);
         Task task = taskDao.selectById(taskId);
-        if (task != null) {
-            returnJson = new ReturnJson("操作成功", task, 200);
-        }
-        return returnJson;
+        return ReturnJson.success(task);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public synchronized ReturnJson orderGrabbing(String taskId, String workerId) {
-        ReturnJson returnJson = new ReturnJson("操作失败", 300);
         Worker worker = workerDao.selectOne(new QueryWrapper<Worker>().eq("id", workerId));
         if (worker.getAttestation() != 1 && worker.getAgreementSign() != 1) {
-            return ReturnJson.error("您还不是认证用户");
+            return ReturnJson.error("您还未实名,请前往实名认证！");
         }
         Task task = taskDao.selectById(taskId);
         int count = workerTaskDao.selectCount(new QueryWrapper<WorkerTask>().eq("task_id", taskId).eq("task_status", 0));
@@ -266,21 +265,18 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
         workerTask.setStatus(0);
         workerTask.setCreateDate(LocalDateTime.now());
         int num = workerTaskDao.insert(workerTask);
-        if (num > 0) {
-            return ReturnJson.success("恭喜,抢单成功");
+        count = workerTaskDao.selectCount(new QueryWrapper<WorkerTask>().eq("task_id", taskId).eq("task_status", 0));
+        if (count == task.getUpperLimit()) {
+            task.setState(1);
+            taskDao.updateById(task);
         }
-
-        return returnJson;
+        return ReturnJson.success("恭喜,抢单成功");
     }
 
     @Override
     public ReturnJson myTask(String workerId, String status) {
-        ReturnJson returnJson = new ReturnJson("操作失败", 300);
         List<WorkerTaskVo> workerTaskList = workerTaskDao.myTask(workerId, status);
-        if (workerTaskList != null) {
-            returnJson = new ReturnJson("操作成功", workerTaskList, 200);
-        }
-        return returnJson;
+        return ReturnJson.success(workerTaskList);
     }
 
 

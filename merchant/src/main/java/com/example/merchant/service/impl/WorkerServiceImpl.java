@@ -20,6 +20,7 @@ import com.example.mybatis.mapper.WorkerBankDao;
 import com.example.mybatis.mapper.WorkerDao;
 import com.example.mybatis.po.WorekerPaymentListPo;
 import com.example.mybatis.po.WorkerPo;
+import com.example.mybatis.vo.WorkerCompanyVo;
 import com.example.mybatis.vo.WorkerPassVo;
 import com.example.mybatis.vo.WorkerVo;
 import com.example.redis.dao.RedisDao;
@@ -453,6 +454,19 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
     @Override
     public ReturnJson queryWorkerInfo(String workerId) {
         return ReturnJson.success(workerDao.queryWorkerInfo(workerId));
+    }
+
+    @Override
+    public ReturnJson queryWorkerCompanyByID(String merchantId, Integer pageNo, Integer pageSize) {
+        Page page = new Page(pageNo, pageSize);
+        Merchant merchant = merchantDao.selectById(merchantId);
+        IPage<WorkerCompanyVo> iPage;
+        if (merchant != null) {
+            iPage = workerDao.queryWorkerCompanyByID(page, merchant.getCompanyId());
+        } else {
+            iPage = workerDao.queryWorkerCompanyByID(page, merchantId);
+        }
+        return ReturnJson.success(iPage);
     }
 }
 

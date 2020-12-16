@@ -69,8 +69,8 @@ public class PaymentOrderManyPaasController {
 
     @PostMapping("/confirmPayment")
     @ApiOperation(value = "众包确认收款", notes = "众包确认收款", httpMethod = "POST")
-    @ApiImplicitParams(value = {@ApiImplicitParam(name = "id", value = "众包支付订单ID", required = true)})
-    public ReturnJson confirmPaymentMany(String id) {
-        return paymentOrderManyService.confirmPaymentManyPaas(id);
+    @ApiImplicitParams(value = {@ApiImplicitParam(name = "paymentOrderId", value = "众包支付订单ID", required = true)})
+    public ReturnJson confirmPaymentMany(String paymentOrderId) {
+        return paymentOrderManyService.confirmPaymentManyPaas(paymentOrderId);
     }
 }

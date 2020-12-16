@@ -189,17 +189,16 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
         paymentOrder.setPlatformServiceProvider(tax.getTaxName());
         List<PaymentInventory> paymentInventories = addPaymentOrderDto.getPaymentInventories();
         String id = paymentOrder.getId();
-        if (merchantId != null) {
-            CompanyInfo companyInfo = companyInfoDao.selectById(merchantId);
-            if (companyInfo == null) {
-                Merchant merchant = merchantDao.selectById(merchantId);
-                paymentOrder.setCompanyId(merchant.getCompanyId());
-                paymentOrder.setCompanySName(merchant.getCompanyName());
-            }
-            if (companyInfo != null) {
-                paymentOrder.setCompanyId(companyInfo.getId());
-                paymentOrder.setCompanySName(companyInfo.getCompanyName());
-            }
+        paymentOrder.setMerchantId(merchantId);
+        CompanyInfo companyInfo = companyInfoDao.selectById(merchantId);
+        if (companyInfo == null) {
+            Merchant merchant = merchantDao.selectById(merchantId);
+            paymentOrder.setCompanyId(merchant.getCompanyId());
+            paymentOrder.setCompanySName(merchant.getCompanyName());
+        }
+        if (companyInfo != null) {
+            paymentOrder.setCompanyId(companyInfo.getId());
+            paymentOrder.setCompanySName(companyInfo.getCompanyName());
         }
         if (id != null && paymentOrder.getPaymentOrderStatus() == 0) {
             List<PaymentInventory> paymentInventoryList = paymentInventoryDao.selectList(new QueryWrapper<PaymentInventory>().eq("payment_order_id", id));
@@ -216,7 +215,10 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
         BigDecimal countMoney = new BigDecimal("0");
         BigDecimal countWorkerMoney = new BigDecimal("0");
 
-        CompanyTax companyTax = companyTaxDao.selectOne(new QueryWrapper<CompanyTax>().eq("tax_id", paymentOrder.getTaxId()).eq("company_id", paymentOrder.getCompanyId()));
+        CompanyTax companyTax = companyTaxDao.selectOne(new QueryWrapper<CompanyTax>()
+                .eq("tax_id", paymentOrder.getTaxId())
+                .eq("company_id", paymentOrder.getCompanyId())
+                .eq("package_status",1));
         Integer taxStatus = paymentOrder.getTaxStatus();
         //判断服务费是一口价还是梯度价
         if (companyTax.getChargeStatus() == 0) {

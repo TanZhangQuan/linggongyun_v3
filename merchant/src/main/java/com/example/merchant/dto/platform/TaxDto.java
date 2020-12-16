@@ -8,6 +8,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -53,7 +54,7 @@ public class TaxDto {
      * 公司的成立时间
      */
     @ApiModelProperty(notes = "公司的成立时间", value = "公司的成立时间")
-    private LocalDateTime taxCreateDate;
+    private LocalDate taxCreateDate;
 
     /**
      * 公司联系人

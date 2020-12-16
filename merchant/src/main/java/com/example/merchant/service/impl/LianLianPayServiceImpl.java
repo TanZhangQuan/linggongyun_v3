@@ -531,7 +531,6 @@ public class LianLianPayServiceImpl extends ServiceImpl<LianlianpayDao, Lianlian
             log.error("服务商不存在！");
             return ReturnJson.error("您输入的服务商不存在，请联系客服！");
         }
-
         //当支付订单ID相同时加锁,防止订单重复支付提交
         synchronized (paymentOrderId) {
             log.info(paymentOrderId + "进入同步代码块。。。。。。。。。。。。。。");
