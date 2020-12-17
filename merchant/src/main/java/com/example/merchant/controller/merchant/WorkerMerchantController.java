@@ -103,7 +103,7 @@ public class WorkerMerchantController {
     public ReturnJson eliminateWorker(
             @NotBlank(message = "创客Id不能为空") @ApiParam(value = "创客id") @RequestParam String workerId,
                                       @NotBlank(message = "任务Id不能为空") @ApiParam(value = "任务id") @RequestParam String taskId) {
-        return workerTaskService.eliminateWorker(null,workerId,taskId);
+        return workerTaskService.eliminateWorker(workerId,taskId);
     }
 
     @ApiOperation("验收")

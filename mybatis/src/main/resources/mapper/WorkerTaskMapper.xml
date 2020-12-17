@@ -33,7 +33,11 @@
     </insert>
 
     <update id="eliminateWorker">
-        UPDATE tb_worker_task SET task_status='1' WHERE worker_id=#{param1} and task_id=#{param2}
+        UPDATE tb_worker_task
+            SET task_status='1',
+            `status` = '2'
+        WHERE worker_id=#{param1}
+            and task_id=#{param2}
     </update>
 
     <update id="updateCheckMoney">
@@ -58,26 +62,23 @@
     </resultMap>
 
     <select id="myTask" resultMap="workerTask">
-        SELECT
-            t.id AS task_id,
-            wt.id AS worker_task_id,
-            t.task_name,
-            t.task_cost_min,
-            t.task_cost_max,
-            t.cooperate_mode,
-            t.release_date,
-            t.deadline_date,
-            t.industry_type,
-            wt.`status`
-        FROM
-            tb_task t
-        INNER JOIN tb_worker_task wt ON wt.task_id = t.id
+        SELECT 	t.id as task_id,wt.id as worker_task_id,t.task_name,t.task_cost_min,t.task_cost_max, t.cooperate_mode,
+        t.release_date,t.deadline_date,t.industry_type,wt.`status`
+        FROM tb_task t
+        INNER JOIN tb_worker_task wt ON wt.task_id=t.id
         WHERE wt.worker_id=#{workerId}
         <if test="status != null and status != ''">
-            AND wt.`status`=#{status}
+            <if test="status ==0 ">
+                AND wt.`status` in(0,2)
+            </if>
+            <if test="status == 1">
+                AND wt.`status` in(1,3,4)
+            </if>
+             <if test="status == 2">
+                AND wt.`status` in(3)
+            </if>
         </if>
     </select>
-
     <select id="queryWorkerTaskInfo" resultMap="workerTaskInfo">
             SELECT
         (

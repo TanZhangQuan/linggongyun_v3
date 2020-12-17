@@ -29,11 +29,17 @@ public class WorkerPo {
     @ApiModelProperty(value = "接单时间")
     private String createDate;
 
+    @ApiModelProperty(value = "是否交付")
+    private String isDeliver;
+
+    @ApiModelProperty(value ="验收金额")
+    private String checkMoney;
+
     @ApiModelProperty(value = "提交工作成果时间")
     private String achievementDate;
 
     @ApiModelProperty(value = "提交工作成果说明文字")
-    private String achievement_desc;
+    private String achievementDesc;
 
     @ApiModelProperty(value = "工作成果附件,可以多个文件")
     private String achievementFiles;

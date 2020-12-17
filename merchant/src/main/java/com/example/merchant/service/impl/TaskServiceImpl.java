@@ -244,8 +244,11 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
     @Transactional(rollbackFor = Exception.class)
     public synchronized ReturnJson orderGrabbing(String taskId, String workerId) {
         Worker worker = workerDao.selectOne(new QueryWrapper<Worker>().eq("id", workerId));
-        if (worker.getAttestation() != 1 && worker.getAgreementSign() != 1) {
+        if (worker.getAttestation() != 1) {
             return ReturnJson.error("您还未实名,请前往实名认证！");
+        }
+        if (worker.getAgreementSign() != 2) {
+            return ReturnJson.error("您还未签约,请前往签约！");
         }
         Task task = taskDao.selectById(taskId);
         int count = workerTaskDao.selectCount(new QueryWrapper<WorkerTask>().eq("task_id", taskId).eq("task_status", 0));
@@ -264,7 +267,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
         workerTask.setGetType(0);
         workerTask.setStatus(0);
         workerTask.setCreateDate(LocalDateTime.now());
-        int num = workerTaskDao.insert(workerTask);
+        workerTaskDao.insert(workerTask);
         count = workerTaskDao.selectCount(new QueryWrapper<WorkerTask>().eq("task_id", taskId).eq("task_status", 0));
         if (count == task.getUpperLimit()) {
             task.setState(1);

@@ -40,7 +40,7 @@ public class TaskMakerendController {
     @GetMapping(value = "/myTask")
     @LoginRequired
     public ReturnJson myTask(@ApiParam(value = "创客id", hidden = true) @RequestAttribute(value = "userId") String workerId,
-                             @ApiParam(value = "创客完成状态0进行中1已完成2已失效3已提交4已验收") @RequestParam(value = "status", required = false) String status) {
+                             @ApiParam(value = "创客完成状态：0已接单 ，1已交付，2已失效") @RequestParam(value = "status", required = false) String status) {
         return taskService.myTask(workerId, status);
     }
 
