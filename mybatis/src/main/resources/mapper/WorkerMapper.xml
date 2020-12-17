@@ -40,6 +40,10 @@
         <result column="attestation" property="attestation"/>
         <result column="agreementUrl" property="agreementUrl"/>
         <result column="create_date" property="createDate"/>
+        <result column="is_deliver" property="isDeliver"/>
+        <result column="achievement_desc" property="achievementDesc"/>
+        <result column="achievement_date" property="achievementDate"/>
+        <result column="achievement_files" property="achievementFiles"/>
     </resultMap>
 
     <resultMap id="WorkerPos" type="com.example.mybatis.po.WorkerPo">
@@ -50,6 +54,12 @@
         <result column="attestation" property="attestation"/>
         <result column="agreementUrl" property="agreementUrl"/>
         <result column="create_date" property="createDate"/>
+        <result column="check_money" property="checkMoney"/>
+        <result column="is_deliver" property="isDeliver"/>
+        <result column="achievement_date" property="achievementDate"/>
+        <result column="achievement_desc" property="achievementDesc"/>
+        <result column="achievement_files" property="achievementFiles"/>
+
     </resultMap>
 
     <resultMap id="workerPassVo" type="com.example.mybatis.vo.WorkerPassVo">
@@ -63,6 +73,7 @@
         <result column="is_deliver" property="isDeliver"/>
         <result column="acceptance_amount" property="acceptanceAmount"/>
         <result column="status" property="status"/>
+        <result column="achievement_desc" property="achievementDesc"/>
     </resultMap>
 
     <resultMap id="workerInfo" type="com.example.mybatis.vo.WorkerInfoVo">
@@ -153,6 +164,10 @@
             w.idcard_code,
             w.attestation,
             w.agreementUrl,
+            IF (ISNULL(wt.achievement_date),0,1) AS is_deliver,
+            wt.achievement_date,
+            wt.achievement_desc,
+            wt.achievement_files,
             wt.create_date
         FROM
             tb_worker_task AS wt,
@@ -164,9 +179,25 @@
     </select>
 
     <select id="getCheckByTaskId" resultMap="WorkerPos">
-        SELECT w.id,w.worker_name,w.mobile_code,w.idcard_code,w.attestation,w.agreementUrl,wt.achievement_date,wt.achievement_desc,wt.achievement_files
-        FROM tb_worker_task as wt,tb_worker as w
-        WHERE wt.worker_id=w.id AND wt.task_id=#{taskId}
+        SELECT
+            w.id,
+            w.account_name as worker_name,
+            w.mobile_code,
+            w.idcard_code,
+            w.attestation,
+            w.agreementUrl,
+            wt.check_money,
+            IF (ISNULL(wt.achievement_date),0,1) AS is_deliver,
+            wt.achievement_date,
+            wt.achievement_desc,
+            wt.achievement_files,
+            wt.create_date
+        FROM
+            tb_worker_task AS wt,
+            tb_worker AS w
+        WHERE
+            wt.worker_id = w.id
+        AND wt.task_id =#{taskId}
     </select>
 
     <resultMap id="worekerPaymentListPo" type="com.example.mybatis.po.WorekerPaymentListPo">
@@ -233,7 +264,7 @@
             <if test="taxName != null and taxName != ''">
                 AND tax_name like CONCAT('%',#{taxName},'%')
             </if>
-            <if test="companyName != null and regulatorName != ''">
+            <if test="companyName != null and companyName != ''">
                 AND merchant_name like CONCAT('%',#{companyName},'%')
             </if>
             <if test="startDate != null and startDate != ''">

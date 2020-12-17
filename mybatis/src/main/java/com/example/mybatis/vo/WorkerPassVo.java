@@ -43,7 +43,7 @@ public class WorkerPassVo {
     private String achievementDate;
 
     @ApiModelProperty(value = "提交工作成果说明文字")
-    private String achievement_desc;
+    private String achievementDesc;
 
     @ApiModelProperty(value = "工作成果附件,可以多个文件")
     private String achievementFiles;

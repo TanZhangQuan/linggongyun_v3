@@ -38,7 +38,8 @@ public class PaymentOrderMerchantController {
             @ApiImplicitParam(name = "paymentOrderMerchantDto", value = "查询条件", required = true, dataType = "PaymentOrderMerchantDto")
     })
     @LoginRequired
-    public ReturnJson getPaymentOrderAll(@ApiParam(hidden = true) @RequestAttribute("userId") String merchantId, @Valid @RequestBody PaymentOrderMerchantDto paymentOrderMerchantDto) {
+    public ReturnJson getPaymentOrderAll(@ApiParam(hidden = true) @RequestAttribute("userId") String merchantId,
+                                         @Valid @RequestBody PaymentOrderMerchantDto paymentOrderMerchantDto) {
         return paymentOrderService.getPaymentOrder(merchantId, paymentOrderMerchantDto);
     }
 
@@ -57,7 +58,8 @@ public class PaymentOrderMerchantController {
             @ApiImplicitParam(name = "addPaymentOrderDto", value = "新建或修改的支付订单", required = true, dataType = "AddPaymentOrderDto")
     })
     @LoginRequired
-    public ReturnJson saveOrUpdataPaymentOrder(@Valid @RequestBody AddPaymentOrderDto addPaymentOrderDto, @RequestAttribute(value = "userId") @ApiParam(hidden = true) String merchantId) {
+    public ReturnJson saveOrUpdataPaymentOrder(@Valid @RequestBody AddPaymentOrderDto addPaymentOrderDto,
+                                               @RequestAttribute(value = "userId") @ApiParam(hidden = true) String merchantId) {
         return paymentOrderService.saveOrUpdataPaymentOrder(addPaymentOrderDto, merchantId);
     }
 

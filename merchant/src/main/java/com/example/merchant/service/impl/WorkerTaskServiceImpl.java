@@ -44,7 +44,7 @@ public class WorkerTaskServiceImpl extends ServiceImpl<WorkerTaskDao, WorkerTask
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ReturnJson seavWorkerTask(Map map) {
-        Task task=taskDao.selectById(map.get("taskId").toString());
+        Task task = taskDao.selectById(map.get("taskId").toString());
         String wid = map.get("workerId").toString();
         String[] workerIds = wid.split(",");
         for (int i = 0; i < workerIds.length; i++) {
@@ -64,20 +64,22 @@ public class WorkerTaskServiceImpl extends ServiceImpl<WorkerTaskDao, WorkerTask
     }
 
     @Override
-    public ReturnJson eliminateWorker(Integer state, String workerId, String taskId) {
-        ReturnJson returnJson = new ReturnJson("剔除失败", 300);
+    public ReturnJson eliminateWorker(String workerId, String taskId) {
         Task task = taskDao.setTaskById(taskId);
-        if (task != null) {
-            if (task.getState() == 0 && task.getState() == 1) {
-                returnJson = new ReturnJson("必须在发布中或已接单才能剔除", 300);
-            } else {
-                int num = workerTaskDao.eliminateWorker(workerId, taskId);
-                if (num > 0) {
-                    returnJson = new ReturnJson("剔除成功", 200);
-                }
-            }
+        if (task == null) {
+            return ReturnJson.error("不存在此任务信息！");
         }
-        return returnJson;
+        WorkerTask workerTask = workerTaskDao.selectOne(new QueryWrapper<WorkerTask>()
+                .eq("worker_id", workerId).eq("task_id", taskId));
+        if (workerTask.getStatus() != 0) {
+            return ReturnJson.error("该创客已经完成了该任务不能进行剔除！");
+        }
+        if (task.getState() == 0 && task.getState() == 1) {
+            return ReturnJson.error("必须在发布中或已接单才能剔除", 300);
+        } else {
+            workerTaskDao.eliminateWorker(workerId, taskId);
+            return ReturnJson.success("剔除成功");
+        }
     }
 
     @Override
@@ -109,19 +111,23 @@ public class WorkerTaskServiceImpl extends ServiceImpl<WorkerTaskDao, WorkerTask
 
     @Override
     public ReturnJson acceptanceResults(String workerTaskId, String achievementDesc, String achievementFiles) {
-        WorkerTask workerTask = new WorkerTask();
-        workerTask.setId(workerTaskId);
+        WorkerTask workerTask = workerTaskDao.selectById(workerTaskId);
         workerTask.setAchievementDesc(achievementDesc);
         workerTask.setAchievementFiles(achievementFiles);
         //获取系统当前时间
         workerTask.setAchievementDate(LocalDateTime.now());
         workerTask.setUpdateDate(LocalDateTime.now());
         workerTask.setStatus(3);
-        int num = workerTaskDao.updateById(workerTask);
-        if (num > 0) {
-            return ReturnJson.success("提交成功");
+        workerTaskDao.updateById(workerTask);
+        Task task = taskDao.selectById(workerTask.getTaskId());
+        if (task.getState() != 1) {
+            return ReturnJson.error("任务还在开启状态不能提交工作成果！");
         }
-        return ReturnJson.error("提交失败");
+        if (task.getState() != 2) {
+            task.setState(2);
+            taskDao.updateById(task);
+        }
+        return ReturnJson.success("提交成功");
     }
 
     @Override
@@ -135,16 +141,16 @@ public class WorkerTaskServiceImpl extends ServiceImpl<WorkerTaskDao, WorkerTask
     }
 
     @Override
-    public ReturnJson queryWorkerTaskInfo(String workerId,Integer pageNo,Integer pageSize) {
-        Page page=new Page(pageNo,pageSize);
-        IPage<WorkerTaskInfoVo> iPage=workerTaskDao.queryWorkerTaskInfo(page,workerId);
+    public ReturnJson queryWorkerTaskInfo(String workerId, Integer pageNo, Integer pageSize) {
+        Page page = new Page(pageNo, pageSize);
+        IPage<WorkerTaskInfoVo> iPage = workerTaskDao.queryWorkerTaskInfo(page, workerId);
         return ReturnJson.success(iPage);
     }
 
     @Override
     public ReturnJson queryWorkerPayInfo(String workerId, Integer pageNo, Integer pageSize) {
-        Page page=new Page(pageNo,pageSize);
-        IPage<WorkerPayInfoVo> iPage=workerDao.queryWorkerPayInfo(page,workerId);
+        Page page = new Page(pageNo, pageSize);
+        IPage<WorkerPayInfoVo> iPage = workerDao.queryWorkerPayInfo(page, workerId);
         return ReturnJson.success(iPage);
     }
 

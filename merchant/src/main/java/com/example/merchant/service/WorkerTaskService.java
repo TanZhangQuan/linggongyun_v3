@@ -29,12 +29,11 @@ public interface WorkerTaskService extends IService<WorkerTask> {
     /**
      * 剔除用户,判断任务是否为发布中或已接单,逻辑删除
      *
-     * @param state
      * @param workerId
      * @param taskId
      * @return
      */
-    ReturnJson eliminateWorker(Integer state, String workerId, String taskId);
+    ReturnJson eliminateWorker(String workerId, String taskId);
 
     /**
      * 修改验收金额
