@@ -14,6 +14,7 @@
         <result column="parent_id" property="parentId"/>
         <result column="real_name" property="realNmae"/>
         <result column="user_name" property="userName"/>
+        <result column="role_name" property="roleName"/>
         <result column="login_mobile" property="loginMoblie"/>
         <result column="status" property="statue"/>
         <result column="create_date" property="createDate"/>
@@ -21,7 +22,6 @@
             <id column="mid" property="id"/>
             <result column="menu_name" property="menuName"/>
             <result column="menu_zhname" property="menuZhname"/>
-            <result column="menu_parent" property="menuParent"/>
             <result column="mcreate_date" property="createDate"/>
             <result column="mupdate_date" property="updateDate"/>
         </collection>
@@ -71,7 +71,7 @@
     </select>
 
     <select id="getRolemenu" resultMap="Rolemenu">
-        SELECT m.id,m.parent_id,m.real_name,m.user_name,m.login_mobile,m.status,m.create_date,me.id as mid,me.menu_name,me.menu_zhname,me.create_date as mcreate_date,me.update_date as mupdate_date
+        SELECT m.id,m.parent_id,m.real_name,m.role_name,m.user_name,m.login_mobile,m.status,m.create_date,me.id as mid,me.menu_name,me.menu_zhname,me.create_date as mcreate_date,me.update_date as mupdate_date
         FROM tb_merchant m
         LEFT JOIN tb_object_menu om ON om.object_user_id=m.id
         LEFT JOIN tb_menu me ON om.menu_id=me.id

@@ -2,11 +2,13 @@ package com.example.common.mybank.entity;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
+@Data
 @ApiModel("单笔提现")
 public class TradePayToCard extends BaseRequest {
     @ApiModelProperty(value = "合作方业务平台订单号", required = true)
@@ -39,67 +41,4 @@ public class TradePayToCard extends BaseRequest {
     @ApiModelProperty(value = "手续费信息，json格式。buyerFee即收取会员提现手续费", example = "{\"buyerFee\":\"0.3\"}")
     private String fee_info;
 
-    public String getOuter_trade_no() {
-        return outer_trade_no;
-    }
-
-    public void setOuter_trade_no(String outer_trade_no) {
-        this.outer_trade_no = outer_trade_no;
-    }
-
-    public String getOuter_inst_order_no() {
-        return outer_inst_order_no;
-    }
-
-    public void setOuter_inst_order_no(String outer_inst_order_no) {
-        this.outer_inst_order_no = outer_inst_order_no;
-    }
-
-    public String getWhite_channel_code() {
-        return white_channel_code;
-    }
-
-    public void setWhite_channel_code(String white_channel_code) {
-        this.white_channel_code = white_channel_code;
-    }
-
-    public String getAccount_type() {
-        return account_type;
-    }
-
-    public void setAccount_type(String account_type) {
-        this.account_type = account_type;
-    }
-
-    public String getBank_id() {
-        return bank_id;
-    }
-
-    public void setBank_id(String bank_id) {
-        this.bank_id = bank_id;
-    }
-
-    public BigDecimal getAmount() {
-        return amount;
-    }
-
-    public void setAmount(BigDecimal amount) {
-        this.amount = amount;
-    }
-
-    public String getNotify_url() {
-        return notify_url;
-    }
-
-    public void setNotify_url(String notify_url) {
-        this.notify_url = notify_url;
-    }
-
-    public String getFee_info() {
-        return fee_info;
-    }
-
-    public void setFee_info(String fee_info) {
-        this.fee_info = fee_info;
-    }
 }

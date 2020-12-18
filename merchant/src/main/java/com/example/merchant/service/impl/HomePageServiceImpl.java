@@ -68,9 +68,6 @@ public class HomePageServiceImpl implements HomePageService {
     @Resource
     private CrowdSourcingInvoiceDao crowdSourcingInvoiceDao;
 
-    @Resource
-    private JwtUtils jwtUtils;
-
     /**
      * 获取首页基本信息
      *
@@ -131,13 +128,14 @@ public class HomePageServiceImpl implements HomePageService {
     public ReturnJson getHomePageInofpaas(String userId) throws CommonException {
         String managersId = userId;
         Managers managers = managersDao.selectById(managersId);
-        HomePageVO homePageVO = null;
+        HomePageVO homePageVO;
         List<String> merchantIds = acquireID.getCompanyIds(managersId);
         if (merchantIds == null || merchantIds.size() == 0) {
-            return ReturnJson.success(homePageVO);
+            return ReturnJson.success((Object) null);
         }
         homePageVO = this.getHomePageOV(merchantIds);
-        if (managers.getUserSign() == 1) { //当为代理商时可以查看代理商的所有商户及商户所拥有的创客
+        //当为代理商时可以查看代理商的所有商户及商户所拥有的创客
+        if (managers.getUserSign() == 1) {
             Integer workerTotal = companyWorkerDao.selectCount(new QueryWrapper<CompanyWorker>().in("company_id", merchantIds));
             //除去可能重复的商户ID
             Set merchantIdsSet = new HashSet();
@@ -145,7 +143,8 @@ public class HomePageServiceImpl implements HomePageService {
             homePageVO.setWorkerTotal(workerTotal);
             homePageVO.setMerchantTotal(merchantIdsSet.size());
             return ReturnJson.success(homePageVO);
-        } else if (managers.getUserSign() == 2) { //当为业务员时以查看所拥有的代理商及代理商下的所以商户及商户所拥有的创客
+            //当为业务员时以查看所拥有的代理商及代理商下的所以商户及商户所拥有的创客
+        } else if (managers.getUserSign() == 2) {
             Integer agentTotal = agentDao.selectCount(new QueryWrapper<Agent>().eq("sales_man_id", managersId));
             Integer workerTotal = companyWorkerDao.selectCount(new QueryWrapper<CompanyWorker>().in("company_id", merchantIds));
             //除去可能重复的商户ID

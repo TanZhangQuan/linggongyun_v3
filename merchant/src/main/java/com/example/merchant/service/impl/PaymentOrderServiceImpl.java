@@ -154,7 +154,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
     public ReturnJson getPaymentOrderInfo(String id) {
         PaymentOrderInfoVO paymentOrderInfoVO = new PaymentOrderInfoVO();
         ExpressInfoVO expressInfoVO = new ExpressInfoVO();
-        //为总包订单
+        // 为总包订单
         PaymentOrderInfoPO paymentOrderInfoPO = paymentOrderDao.selectPaymentOrderInfo(id);
         if (paymentOrderInfoPO == null) {
             return ReturnJson.error("订单编号有误，请重新输入！");
@@ -218,7 +218,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
         CompanyTax companyTax = companyTaxDao.selectOne(new QueryWrapper<CompanyTax>()
                 .eq("tax_id", paymentOrder.getTaxId())
                 .eq("company_id", paymentOrder.getCompanyId())
-                .eq("package_status",1));
+                .eq("package_status", 1));
         Integer taxStatus = paymentOrder.getTaxStatus();
         //判断服务费是一口价还是梯度价
         if (companyTax.getChargeStatus() == 0) {

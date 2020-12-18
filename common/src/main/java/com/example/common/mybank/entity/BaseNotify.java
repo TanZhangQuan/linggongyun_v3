@@ -1,7 +1,10 @@
 package com.example.common.mybank.entity;
 
+import lombok.Data;
+
 import java.time.LocalDateTime;
 
+@Data
 public class BaseNotify {
     //通知的唯一标识
     private String notifyId;
@@ -20,67 +23,4 @@ public class BaseNotify {
     //产品编码
     private String productCode;
 
-    public String getNotifyId() {
-        return notifyId;
-    }
-
-    public void setNotifyId(String notifyId) {
-        this.notifyId = notifyId;
-    }
-
-    public String getNotifyType() {
-        return notifyType;
-    }
-
-    public void setNotifyType(String notifyType) {
-        this.notifyType = notifyType;
-    }
-
-    public LocalDateTime getNotifyTime() {
-        return notifyTime;
-    }
-
-    public void setNotifyTime(LocalDateTime notifyTime) {
-        this.notifyTime = notifyTime;
-    }
-
-    public String getCharset() {
-        return charset;
-    }
-
-    public void setCharset(String charset) {
-        this.charset = charset;
-    }
-
-    public String getSign() {
-        return sign;
-    }
-
-    public void setSign(String sign) {
-        this.sign = sign;
-    }
-
-    public String getSignType() {
-        return signType;
-    }
-
-    public void setSignType(String signType) {
-        this.signType = signType;
-    }
-
-    public String getVersion() {
-        return version;
-    }
-
-    public void setVersion(String version) {
-        this.version = version;
-    }
-
-    public String getProductCode() {
-        return productCode;
-    }
-
-    public void setProductCode(String productCode) {
-        this.productCode = productCode;
-    }
 }

@@ -14,6 +14,8 @@ public class RoleMenuVo {
 
     private String realNmae;
 
+    private String roleName;
+
     private String userName;
 
     private String loginMoblie;
