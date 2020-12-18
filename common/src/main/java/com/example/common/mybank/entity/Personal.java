@@ -3,9 +3,11 @@ package com.example.common.mybank.entity;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 
+@Data
 @ApiModel("个人会员")
 public class Personal extends BaseRequest {
 //    @ApiModelProperty("用户UserGUID")
@@ -25,60 +27,4 @@ public class Personal extends BaseRequest {
     @ApiModelProperty(value = "是否验证, T/F")
     private String is_verify;
 
-//
-//    public String getUid() {
-//        return uid;
-//    }
-//
-//    public void setUid(String uid) {
-//        this.uid = uid;
-//    }
-
-    public String getMobile() {
-        return mobile;
-    }
-
-    public void setMobile(String mobile) {
-        this.mobile = mobile;
-    }
-
-    public String getMember_name() {
-        return member_name;
-    }
-
-    public void setMember_name(String member_name) {
-        this.member_name = member_name;
-    }
-
-    public String getReal_name() {
-        return real_name;
-    }
-
-    public void setReal_name(String real_name) {
-        this.real_name = real_name;
-    }
-
-    public String getCertificate_type() {
-        return certificate_type;
-    }
-
-    public void setCertificate_type(String certificate_type) {
-        this.certificate_type = certificate_type;
-    }
-
-    public String getCertificate_no() {
-        return certificate_no;
-    }
-
-    public void setCertificate_no(String certificate_no) {
-        this.certificate_no = certificate_no;
-    }
-
-    public String getIs_verify() {
-        return is_verify;
-    }
-
-    public void setIs_verify(String is_verify) {
-        this.is_verify = is_verify;
-    }
 }

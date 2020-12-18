@@ -16,7 +16,6 @@ import com.example.merchant.util.AcquireID;
 import com.example.merchant.util.JwtUtils;
 import com.example.mybatis.entity.*;
 import com.example.mybatis.mapper.MerchantDao;
-import com.example.mybatis.mapper.WorkerBankDao;
 import com.example.mybatis.mapper.WorkerDao;
 import com.example.mybatis.po.WorekerPaymentListPo;
 import com.example.mybatis.po.WorkerPo;
@@ -25,7 +24,6 @@ import com.example.mybatis.vo.WorkerPassVo;
 import com.example.mybatis.vo.WorkerVo;
 import com.example.redis.dao.RedisDao;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,7 +32,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -333,7 +330,7 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
 
         if (StringUtils.isNoneBlank(iv, encryptedData)) {
             // 参数含义：第一个，加密数据串（String）；第二个，session_key需要通过微信小程序的code获得（String）；
-            // 第三个，数据加密时所使用的偏移量，解密时需要使用（String）；第四个，编码
+            // 第三个，数据加密时所使用的偏移量，解密时需要使用（String）；第四个，编码；
             String AesResult = AesCbcUtil.decrypt(encryptedData, sessionKey, iv, "UTF-8");
 
             if (StringUtils.isBlank(AesResult)) {
@@ -368,7 +365,7 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
             redisDao.setExpire(worker.getId(), 7, TimeUnit.DAYS);
             return ReturnJson.success("登录成功", token);
         }
-        return ReturnJson.error("信息错误请重新登录");
+        return ReturnJson.error("信息错误,请重新登录");
     }
 
     @Override

@@ -34,6 +34,7 @@ public interface MenuService extends IService<Menu> {
      * 添加子账户
      *
      * @param merchantDto
+     * @param merchantId
      * @return
      */
     ReturnJson saveRole(MerchantDto merchantDto, String merchantId);
@@ -57,6 +58,7 @@ public interface MenuService extends IService<Menu> {
     /**
      * 启用或停用子账户
      *
+     * @param merchantId
      * @param status
      * @return
      */
@@ -66,6 +68,7 @@ public interface MenuService extends IService<Menu> {
      * 平台端添加子账户
      *
      * @param saveManagersRoleDto
+     * @param managersId
      * @return
      */
     ReturnJson savePlatRole(SaveManagersRoleDto saveManagersRoleDto, String managersId);

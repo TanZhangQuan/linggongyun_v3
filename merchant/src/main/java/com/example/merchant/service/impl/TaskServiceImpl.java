@@ -255,10 +255,10 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
         //用户是否已经抢过这一单
         int count1 = workerTaskDao.selectCount(new QueryWrapper<WorkerTask>().eq("task_id", taskId).eq("worker_id", workerId));
         if (count1 > 0) {
-            return ReturnJson.error("您已经抢过这一单了");
+            return ReturnJson.error("您已经抢过这一单了！");
         }
         if (count >= task.getUpperLimit()) {
-            return ReturnJson.error("任务所需人数已满");
+            return ReturnJson.error("任务所需人数已满！");
         }
         WorkerTask workerTask = new WorkerTask();
         workerTask.setTaskId(taskId);
@@ -273,7 +273,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
             task.setState(1);
             taskDao.updateById(task);
         }
-        return ReturnJson.success("恭喜,抢单成功");
+        return ReturnJson.success("恭喜,抢单成功！");
     }
 
     @Override

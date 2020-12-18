@@ -2,12 +2,13 @@ package com.example.common.mybank.entity;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 import lombok.ToString;
 
 import javax.validation.constraints.NotBlank;
 
 @ApiModel("银行卡绑定")
-@ToString
+@Data
 public class BankCardBind extends BaseRequest {
 
     @ApiModelProperty(value = "银行全称", required = true)
@@ -55,115 +56,4 @@ public class BankCardBind extends BaseRequest {
     @ApiModelProperty(value = "支付属性/只支持NORMAL", example = "NORMAL")
     private String pay_attribute;
 
-    public String getBank_name() {
-        return bank_name;
-    }
-
-    public void setBank_name(String bank_name) {
-        this.bank_name = bank_name;
-    }
-
-    public String getBank_branch() {
-        return bank_branch;
-    }
-
-    public void setBank_branch(String bank_branch) {
-        this.bank_branch = bank_branch;
-    }
-
-    public String getBranch_no() {
-        return branch_no;
-    }
-
-    public void setBranch_no(String branch_no) {
-        this.branch_no = branch_no;
-    }
-
-    public String getBank_account_no() {
-        return bank_account_no;
-    }
-
-    public void setBank_account_no(String bank_account_no) {
-        this.bank_account_no = bank_account_no;
-    }
-
-    public String getAccount_name() {
-        return account_name;
-    }
-
-    public void setAccount_name(String account_name) {
-        this.account_name = account_name;
-    }
-
-    public String getCard_type() {
-        return card_type;
-    }
-
-    public void setCard_type(String card_type) {
-        this.card_type = card_type;
-    }
-
-    public String getCard_attribute() {
-        return card_attribute;
-    }
-
-    public void setCard_attribute(String card_attribute) {
-        this.card_attribute = card_attribute;
-    }
-
-    public String getVerify_type() {
-        return verify_type;
-    }
-
-    public void setVerify_type(String verify_type) {
-        this.verify_type = verify_type;
-    }
-
-    public String getCertificate_type() {
-        return certificate_type;
-    }
-
-    public void setCertificate_type(String certificate_type) {
-        this.certificate_type = certificate_type;
-    }
-
-    public String getCertificate_no() {
-        return certificate_no;
-    }
-
-    public void setCertificate_no(String certificate_no) {
-        this.certificate_no = certificate_no;
-    }
-
-    public String getProvince() {
-        return province;
-    }
-
-    public void setProvince(String province) {
-        this.province = province;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
-
-    public String getReserved_mobile() {
-        return reserved_mobile;
-    }
-
-    public void setReserved_mobile(String reserved_mobile) {
-        this.reserved_mobile = reserved_mobile;
-    }
-
-    public String getPay_attribute() {
-        return pay_attribute;
-    }
-
-    public void setPay_attribute(String pay_attribute) {
-        this.pay_attribute = pay_attribute;
-    }
 }

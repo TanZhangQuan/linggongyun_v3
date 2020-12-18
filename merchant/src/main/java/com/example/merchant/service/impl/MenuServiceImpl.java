@@ -154,7 +154,8 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
     @Transactional(rollbackFor = Exception.class)
     public ReturnJson savePlatRole(SaveManagersRoleDto saveManagersRoleDto, String managersId) {
 
-        Managers managersOne = managersDao.selectOne(new QueryWrapper<Managers>().eq("mobile_code", saveManagersRoleDto.getMobileCode()));
+        Managers managersOne = managersDao.selectOne(new QueryWrapper<Managers>().eq("mobile_code",
+                saveManagersRoleDto.getMobileCode()));
         if (managersOne != null) {
             return ReturnJson.error("此手机号码已近注册过！");
         }

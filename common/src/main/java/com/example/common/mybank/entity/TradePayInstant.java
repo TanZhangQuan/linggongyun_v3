@@ -2,11 +2,13 @@ package com.example.common.mybank.entity;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
+@Data
 @ApiModel("即时交易入账")
 public class TradePayInstant extends BaseRequest {
     @ApiModelProperty(value = "卖家账户类型", required = true, example = "BASIC")
@@ -63,123 +65,4 @@ public class TradePayInstant extends BaseRequest {
     @NotNull(message = "请输入交易金额")
     private BigDecimal total_amount;
 
-    public String getAccount_type() {
-        return account_type;
-    }
-
-    public void setAccount_type(String account_type) {
-        this.account_type = account_type;
-    }
-
-    public String getBody() {
-        return body;
-    }
-
-    public void setBody(String body) {
-        this.body = body;
-    }
-
-    public String getBuyer_id() {
-        return buyer_id;
-    }
-
-    public void setBuyer_id(String buyer_id) {
-        this.buyer_id = buyer_id;
-    }
-
-    public String getBuyer_ip() {
-        return buyer_ip;
-    }
-
-    public void setBuyer_ip(String buyer_ip) {
-        this.buyer_ip = buyer_ip;
-    }
-
-    public String getDiscount_pay_method() {
-        return discount_pay_method;
-    }
-
-    public void setDiscount_pay_method(String discount_pay_method) {
-        this.discount_pay_method = discount_pay_method;
-    }
-
-    public String getFee_info() {
-        return fee_info;
-    }
-
-    public void setFee_info(String fee_info) {
-        this.fee_info = fee_info;
-    }
-
-    public String getOuter_inst_order_no() {
-        return outer_inst_order_no;
-    }
-
-    public void setOuter_inst_order_no(String outer_inst_order_no) {
-        this.outer_inst_order_no = outer_inst_order_no;
-    }
-
-    public String getOuter_trade_no() {
-        return outer_trade_no;
-    }
-
-    public void setOuter_trade_no(String outer_trade_no) {
-        this.outer_trade_no = outer_trade_no;
-    }
-
-    public String getPay_method() {
-        return pay_method;
-    }
-
-    public void setPay_method(String pay_method) {
-        this.pay_method = pay_method;
-    }
-
-    public BigDecimal getPrice() {
-        return price;
-    }
-
-    public void setPrice(BigDecimal price) {
-        this.price = price;
-    }
-
-    public Integer getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(Integer quantity) {
-        this.quantity = quantity;
-    }
-
-    public String getReturn_url() {
-        return return_url;
-    }
-
-    public void setReturn_url(String return_url) {
-        this.return_url = return_url;
-    }
-
-    public String getSeller_id() {
-        return seller_id;
-    }
-
-    public void setSeller_id(String seller_id) {
-        this.seller_id = seller_id;
-    }
-
-    public String getSubject() {
-        return subject;
-    }
-
-    public void setSubject(String subject) {
-        this.subject = subject;
-    }
-
-    public BigDecimal getTotal_amount() {
-        return total_amount;
-    }
-
-    public void setTotal_amount(BigDecimal total_amount) {
-        this.total_amount = total_amount;
-    }
 }

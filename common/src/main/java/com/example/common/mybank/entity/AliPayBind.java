@@ -2,9 +2,11 @@ package com.example.common.mybank.entity;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 
+@Data
 @ApiModel("支付宝绑定")
 public class AliPayBind extends BaseRequest {
     @ApiModelProperty(value = "支付宝账号", required = true)
@@ -24,44 +26,4 @@ public class AliPayBind extends BaseRequest {
 
     @ApiModelProperty(value = "是否认证支付宝账号有效性/Y:是,N:否", example = "T")
     private String is_verify;
-
-    public String getAccount_no() {
-        return account_no;
-    }
-
-    public void setAccount_no(String account_no) {
-        this.account_no = account_no;
-    }
-
-    public String getAccount_name() {
-        return account_name;
-    }
-
-    public void setAccount_name(String account_name) {
-        this.account_name = account_name;
-    }
-
-    public String getCertificate_no() {
-        return certificate_no;
-    }
-
-    public void setCertificate_no(String certificate_no) {
-        this.certificate_no = certificate_no;
-    }
-
-    public String getMobile_no() {
-        return mobile_no;
-    }
-
-    public void setMobile_no(String mobile_no) {
-        this.mobile_no = mobile_no;
-    }
-
-    public String getIs_verify() {
-        return is_verify;
-    }
-
-    public void setIs_verify(String is_verify) {
-        this.is_verify = is_verify;
-    }
 }
