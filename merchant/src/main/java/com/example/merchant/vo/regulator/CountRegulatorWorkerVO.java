@@ -4,11 +4,13 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 @Data
 @ApiModel(description = "创客流水信息统计")
-public class CountRegulatorWorkerVO {
+public class CountRegulatorWorkerVO implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     @ApiModelProperty(notes = "监管区入驻创客总数", value = "监管区入驻创客总数")
     private Integer countWorker;

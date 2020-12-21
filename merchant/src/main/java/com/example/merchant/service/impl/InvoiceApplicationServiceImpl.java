@@ -6,9 +6,9 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.merchant.UpdateApplication;
 import com.example.merchant.service.InvoiceApplicationService;
-import com.example.merchant.vo.merchant.GoApplicationInvoiceVo;
-import com.example.merchant.vo.merchant.InvoiceApplicationVo;
-import com.example.merchant.vo.merchant.QueryApplicationInvoiceVo;
+import com.example.merchant.vo.merchant.GoApplicationInvoiceVO;
+import com.example.merchant.vo.merchant.InvoiceApplicationVO;
+import com.example.merchant.vo.merchant.QueryApplicationInvoiceVO;
 import com.example.mybatis.dto.ApplicationPaymentDTO;
 import com.example.mybatis.dto.InvoiceApplicationDTO;
 import com.example.mybatis.entity.InvoiceApplication;
@@ -90,7 +90,7 @@ public class InvoiceApplicationServiceImpl extends ServiceImpl<InvoiceApplicatio
 
     @Override
     public ReturnJson goInvApplication(String payIds, String merchantId) {
-        GoApplicationInvoiceVo goApplicationInvoiceVo = new GoApplicationInvoiceVo();
+        GoApplicationInvoiceVO goApplicationInvoiceVo = new GoApplicationInvoiceVO();
         String[] paymentOrderIds = payIds.split(",");
         PaymentOrder paymentOrderOne = paymentOrderDao.selectById(paymentOrderIds[0]);
         List<PaymentOrderVO> paymentOrderVOList = new ArrayList<>();
@@ -129,7 +129,7 @@ public class InvoiceApplicationServiceImpl extends ServiceImpl<InvoiceApplicatio
 
     @Override
     public ReturnJson queryApplicationInfo(String applicationId, String userId) {
-        QueryApplicationInvoiceVo queryApplicationInvoiceVo = new QueryApplicationInvoiceVo();
+        QueryApplicationInvoiceVO queryApplicationInvoiceVo = new QueryApplicationInvoiceVO();
         List<PaymentOrderVO> paymentOrderVOList = paymentOrderDao.queryPaymentOrderInfo(applicationId);
         queryApplicationInvoiceVo.setPaymentOrderVOList(paymentOrderVOList);
         List<BillingInfoVO> billingInfoVOList = new ArrayList<>();
@@ -142,7 +142,7 @@ public class InvoiceApplicationServiceImpl extends ServiceImpl<InvoiceApplicatio
         PaymentOrder paymentOrderOne = paymentOrderDao.selectById(paymentOrderVOList.get(0).getId());
         queryApplicationInvoiceVo.setSellerVo(taxDao.getSellerById(paymentOrderOne.getTaxId()));
         InvoiceApplication invoiceApplication=invoiceApplicationDao.selectById(applicationId);
-        InvoiceApplicationVo invoiceApplicationVo=new InvoiceApplicationVo();
+        InvoiceApplicationVO invoiceApplicationVo=new InvoiceApplicationVO();
         BeanUtils.copyProperties(invoiceApplication,invoiceApplicationVo);
         queryApplicationInvoiceVo.setInvoiceApplicationVo(invoiceApplicationVo);
         return ReturnJson.success(queryApplicationInvoiceVo);

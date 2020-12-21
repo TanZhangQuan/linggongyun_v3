@@ -1,20 +1,20 @@
 package com.example.merchant.vo.platform;
 
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.example.mybatis.entity.InvoiceLadderPrice;
-import com.example.mybatis.entity.Tax;
 import com.example.mybatis.entity.TaxPackage;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 
 
 @Data
 @ApiModel(description = "添加服务商")
-public class TaxPlatformVO {
+public class TaxPlatformVO implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     @ApiModelProperty(notes = "服务商ID(编辑时用)", value = "服务商ID(编辑时用)")
     private String id;

@@ -6,6 +6,7 @@ import com.example.mybatis.vo.PaymentOrderManyVO;
 import com.example.mybatis.vo.SendAndReceiveVO;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -14,7 +15,9 @@ import java.util.List;
  * @Date 2020/12/7
  */
 @Data
-public class QueryInvoiceInfoVo {
+public class QueryInvoiceInfoVO implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     /**
      * 支付信息
      */
@@ -28,17 +31,17 @@ public class QueryInvoiceInfoVo {
     /**
      * 申请开票信息
      */
-    private InvoiceApplicationVo invoiceApplicationVo;
+    private InvoiceApplicationVO invoiceApplicationVo;
 
     /**
      * 开票类目
      */
-    private InvoiceCatalogVo invoiceCatalogVo;
+    private InvoiceCatalogVO invoiceCatalogVo;
 
     /**
      * 发票信息
      */
-    private InvoiceVo invoiceVo;
+    private InvoiceVO invoiceVo;
 
     /**
      * 发收件信息

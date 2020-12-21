@@ -4,11 +4,13 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Data
 @ApiModel(description = "所监管的商户的详情")
-public class RegulatorMerchantParticularsVO {
+public class RegulatorMerchantParticularsVO implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     @ApiModelProperty("公司流水统计")
     private CountSingleRegulatorMerchantVO countSingleRegulatorMerchantVO;

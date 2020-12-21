@@ -6,11 +6,14 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Data
 @ApiModel(description = "创客详情")
-public class CountRegulatorWorkerInfoVO {
+public class CountRegulatorWorkerInfoVO implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     @ApiModelProperty(value = "创客个人流水统计")
     private CountSingleRegulatorWorkerVO countSingleRegulatorWorkerVO;
 

@@ -4,13 +4,17 @@ import com.example.mybatis.vo.BuyerVO;
 import com.example.mybatis.vo.PaymentOrderManyVO;
 import lombok.Data;
 
+import java.io.Serializable;
+
 /**
  * @Description
  * @Author JWei <jwei0401@163.com>
  * @Date 2020/12/7
  */
 @Data
-public class QueryApplicationInfoVo {
+public class QueryApplicationInfoVO implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     /**
      * 支付信息
      */
@@ -24,5 +28,5 @@ public class QueryApplicationInfoVo {
     /**
      * 申请开票信息
      */
-    private InvoiceApplicationVo invoiceApplicationVo;
+    private InvoiceApplicationVO invoiceApplicationVo;
 }

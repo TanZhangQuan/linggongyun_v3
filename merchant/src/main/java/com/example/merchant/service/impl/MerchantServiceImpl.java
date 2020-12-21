@@ -452,19 +452,19 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
     @Override
     public ReturnJson queryAgent() {
         List<Agent> list = agentDao.selectList(new QueryWrapper<Agent>().eq("agent_status", 0));
-        List<AgentVo> agentVoList = new ArrayList<>();
+        List<AgentVO> agentVOList = new ArrayList<>();
         for (int i = 0; i < list.size(); i++) {
-            AgentVo agentVo = new AgentVo();
+            AgentVO agentVo = new AgentVO();
             agentVo.setAgentName(list.get(i).getAgentName());
             agentVo.setId(list.get(i).getManagersId());
-            agentVoList.add(agentVo);
+            agentVOList.add(agentVo);
         }
-        return ReturnJson.success(agentVoList);
+        return ReturnJson.success(agentVOList);
     }
 
     @Override
     public ReturnJson queryCompanyInfo(String companyId) {
-        CompanyInfoVo companyInfoVo = new CompanyInfoVo();
+        CompanyInfoVO companyInfoVo = new CompanyInfoVO();
         CompanyInfo companyInfo = companyInfoDao.selectById(companyId);
         BeanUtils.copyProperties(companyInfo, companyInfoVo);
         return ReturnJson.success(companyInfoVo);
@@ -483,7 +483,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
 
     @Override
     public ReturnJson queryInvoiceInfo(String companyId) {
-        QueryInvoiceInfoVo queryInvoiceInfoVo = new QueryInvoiceInfoVo();
+        QueryInvoiceInfoVO queryInvoiceInfoVo = new QueryInvoiceInfoVO();
         CompanyInvoiceInfo companyInvoiceInfo = companyInvoiceInfoDao.selectOne(new QueryWrapper<CompanyInvoiceInfo>().eq("company_id", companyId));
         BeanUtils.copyProperties(companyInvoiceInfo, queryInvoiceInfoVo);
         return ReturnJson.success(queryInvoiceInfoVo);
@@ -503,7 +503,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
     @Override
     public ReturnJson queryMerchantInfo(String companyId) {
         Merchant merchant = merchantDao.selectOne(new QueryWrapper<Merchant>().eq("company_id", companyId).eq("parent_id", 0));
-        QueryMerchantInfoVo queryMerchantInfoVo = new QueryMerchantInfoVo();
+        QueryMerchantInfoVO queryMerchantInfoVo = new QueryMerchantInfoVO();
         BeanUtils.copyProperties(merchant, queryMerchantInfoVo);
         return ReturnJson.success(queryMerchantInfoVo);
     }
@@ -521,7 +521,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
 
     @Override
     public ReturnJson queryCooperationInfo(String companyId) {
-        QueryCooperationInfoVo queryCooperationInfoVo = new QueryCooperationInfoVo();
+        QueryCooperationInfoVO queryCooperationInfoVo = new QueryCooperationInfoVO();
         CompanyInfo companyInfo = companyInfoDao.selectById(companyId);
         queryCooperationInfoVo.setSalesManId(companyInfo.getSalesManId());
         queryCooperationInfoVo.setAgentId(companyInfo.getAgentId());
@@ -540,21 +540,21 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
 
     @Override
     public ReturnJson queryCompanyInfoById(String companyId) {
-        CompanyVo companyVo = new CompanyVo();
-        CompanyInfoVo companyInfoVo = new CompanyInfoVo();
+        CompanyVO companyVo = new CompanyVO();
+        CompanyInfoVO companyInfoVo = new CompanyInfoVO();
         CompanyInfo companyInfo = companyInfoDao.selectById(companyId);
         BeanUtils.copyProperties(companyInfo, companyInfoVo);
         companyVo.setCompanyInfoVo(companyInfoVo);
-        QueryInvoiceInfoVo queryInvoiceInfoVo = new QueryInvoiceInfoVo();
+        QueryInvoiceInfoVO queryInvoiceInfoVo = new QueryInvoiceInfoVO();
         CompanyInvoiceInfo companyInvoiceInfo = companyInvoiceInfoDao.selectOne(new QueryWrapper<CompanyInvoiceInfo>().eq("company_id", companyId));
         BeanUtils.copyProperties(companyInvoiceInfo, queryInvoiceInfoVo);
         companyVo.setQueryInvoiceInfoVo(queryInvoiceInfoVo);
         Merchant merchant = merchantDao.selectOne(new QueryWrapper<Merchant>().eq("company_id", companyId).eq("parent_id", 0));
-        QueryMerchantInfoVo queryMerchantInfoVo = new QueryMerchantInfoVo();
+        QueryMerchantInfoVO queryMerchantInfoVo = new QueryMerchantInfoVO();
         BeanUtils.copyProperties(merchant, queryMerchantInfoVo);
         queryMerchantInfoVo.setPassWord("");
         companyVo.setQueryMerchantInfoVo(queryMerchantInfoVo);
-        QueryCooperationInfoVo queryCooperationInfoVo = new QueryCooperationInfoVo();
+        QueryCooperationInfoVO queryCooperationInfoVo = new QueryCooperationInfoVO();
         queryCooperationInfoVo.setSalesManId(companyInfo.getSalesManId());
         queryCooperationInfoVo.setAgentId(companyInfo.getAgentId());
         Managers managers = managersDao.selectById(companyInfo.getSalesManId());

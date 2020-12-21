@@ -11,7 +11,7 @@ import com.example.merchant.dto.platform.ManagersDto;
 import com.example.merchant.exception.CommonException;
 import com.example.merchant.service.*;
 import com.example.merchant.util.AcquireID;
-import com.example.merchant.vo.platform.QuerySalesmanVo;
+import com.example.merchant.vo.platform.QuerySalesmanVO;
 import com.example.mybatis.entity.Agent;
 import com.example.mybatis.entity.CompanyInfo;
 import com.example.mybatis.entity.Managers;
@@ -20,7 +20,6 @@ import com.example.mybatis.mapper.CompanyInfoDao;
 import com.example.mybatis.mapper.ManagersDao;
 import com.example.mybatis.po.AgentListPO;
 import com.example.mybatis.po.SalesManPaymentListPO;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -241,12 +240,12 @@ public class StructureServiceImpl implements StructureService {
     @Override
     public ReturnJson querySalesman() {
         List<Managers> list = managersDao.selectList(new QueryWrapper<Managers>().eq("user_sign", 2));
-        List<QuerySalesmanVo> querySalesmanVoList = new ArrayList<>();
+        List<QuerySalesmanVO> querySalesmanVOList = new ArrayList<>();
         for (int i = 0; i < list.size(); i++) {
-            QuerySalesmanVo querySalesmanVo = new QuerySalesmanVo();
+            QuerySalesmanVO querySalesmanVo = new QuerySalesmanVO();
             BeanUtils.copyProperties(list.get(i), querySalesmanVo);
-            querySalesmanVoList.add(querySalesmanVo);
+            querySalesmanVOList.add(querySalesmanVo);
         }
-        return ReturnJson.success(querySalesmanVoList);
+        return ReturnJson.success(querySalesmanVOList);
     }
 }

@@ -4,11 +4,13 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 @Data
 @ApiModel(description = "首页5个数据统计返还对象")
-public class HomePageMerchantVO {
+public class HomePageMerchantVO implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     /**
      * 30天的众包支付总金额

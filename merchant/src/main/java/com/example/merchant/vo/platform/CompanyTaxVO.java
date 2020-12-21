@@ -3,6 +3,7 @@ package com.example.merchant.vo.platform;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -10,7 +11,9 @@ import java.util.List;
  * @author yixi
  */
 @Data
-public class CompanyTaxVo {
+public class CompanyTaxVO implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     @ApiModelProperty(notes = "公司ID", value = "公司ID")
     private String companyId;
 
@@ -30,6 +33,6 @@ public class CompanyTaxVo {
     private String contract;
 
     @ApiModelProperty(notes = "梯度价", value = "总包信息")
-    private List<CompanyLadderServiceVo> companyLadderServiceVoList;
+    private List<CompanyLadderServiceVO> companyLadderServiceVOList;
 
 }

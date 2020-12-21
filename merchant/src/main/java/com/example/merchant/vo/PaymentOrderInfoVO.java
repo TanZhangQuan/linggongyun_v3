@@ -6,11 +6,13 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Data
 @ApiModel(description = "支付订单详情")
-public class PaymentOrderInfoVO {
+public class PaymentOrderInfoVO implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     @ApiModelProperty("支付订单信息")
     private PaymentOrderInfoPO paymentOrderInfoPO;

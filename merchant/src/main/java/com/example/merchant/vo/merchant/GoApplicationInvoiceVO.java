@@ -6,6 +6,7 @@ import com.example.mybatis.vo.PaymentOrderVO;
 import com.example.mybatis.vo.SellerVO;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -14,7 +15,8 @@ import java.util.List;
  * @Date 2020/12/2
  */
 @Data
-public class GoApplicationInvoiceVo {
+public class GoApplicationInvoiceVO implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     /**
      * 支付信息

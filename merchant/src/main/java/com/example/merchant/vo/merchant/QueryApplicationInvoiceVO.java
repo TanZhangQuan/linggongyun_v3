@@ -1,9 +1,12 @@
 package com.example.merchant.vo.merchant;
 
-import com.example.common.util.ExpressLogisticsInfo;
-import com.example.mybatis.vo.*;
+import com.example.mybatis.vo.BillingInfoVO;
+import com.example.mybatis.vo.BuyerVO;
+import com.example.mybatis.vo.PaymentOrderVO;
+import com.example.mybatis.vo.SellerVO;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -12,7 +15,9 @@ import java.util.List;
  * @Date 2020/12/3
  */
 @Data
-public class QueryInvoiceVo {
+public class QueryApplicationInvoiceVO implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     /**
      * 支付信息
      */
@@ -34,22 +39,7 @@ public class QueryInvoiceVo {
     private SellerVO sellerVo;
 
     /**
-     * 开票类目
+     * 申请开票信息
      */
-    private InvoiceCatalogVo invoiceCatalogVo;
-
-    /**
-     * 发票信息
-     */
-    private InvoiceApplicationVo invoiceApplicationVo;
-
-    /**
-     * 物流信息
-     */
-    private List<ExpressLogisticsInfo> expressLogisticsInfoList;
-
-    /**
-     * 收发件信息
-     */
-    private SendAndReceiveVO sendAndReceiveVo;
+    private InvoiceApplicationVO invoiceApplicationVo;
 }

@@ -2,13 +2,16 @@ package com.example.merchant.vo.platform;
 
 import lombok.Data;
 
+import java.io.Serializable;
+
 /**
  * @Description
  * @Author JWei <jwei0401@163.com>
  * @Date 2020/12/7
  */
 @Data
-public class QueryMerchantInfoVo {
+public class QueryMerchantInfoVO implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     /**
      * 账户信息ID

@@ -6,12 +6,14 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
 @ApiModel("公司的支付订单")
-public class RegulatorMerchantPaymentOrderVO {
+public class RegulatorMerchantPaymentOrderVO implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     @Excel(name = "支付编号")
     @ApiModelProperty("支付编号")

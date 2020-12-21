@@ -2,6 +2,7 @@ package com.example.merchant.vo.platform;
 
 import lombok.Data;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 /**
@@ -10,7 +11,9 @@ import java.math.BigDecimal;
  * @Date 2020/12/2
  */
 @Data
-public class CompanyLadderServiceVo {
+public class CompanyLadderServiceVO implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     /**
      * 商户公司ID
      */

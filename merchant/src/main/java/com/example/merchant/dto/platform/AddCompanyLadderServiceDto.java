@@ -11,6 +11,7 @@ import java.math.BigDecimal;
  */
 @Data
 public class AddCompanyLadderServiceDto {
+
     /**
      * 商户公司ID
      */

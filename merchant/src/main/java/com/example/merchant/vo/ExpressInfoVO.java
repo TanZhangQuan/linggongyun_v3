@@ -6,12 +6,15 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.List;
 
 
 @Data
 @ApiModel(description = "快递具体信息")
-public class ExpressInfoVO {
+public class ExpressInfoVO implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     @ApiModelProperty("快递公司名称")
     private String expressCompanyName;
 

@@ -3,6 +3,7 @@ package com.example.merchant.vo.platform;
 import com.example.mybatis.vo.CooperationInfoVO;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -11,27 +12,28 @@ import java.util.List;
  * @Date 2020/12/9
  */
 @Data
-public class CompanyVo {
+public class CompanyVO implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     /**
      * 公司基本信息
      */
-    private CompanyInfoVo companyInfoVo;
+    private CompanyInfoVO companyInfoVo;
 
     /**
      * 公司的开票信息
      */
-    private QueryInvoiceInfoVo queryInvoiceInfoVo;
+    private QueryInvoiceInfoVO queryInvoiceInfoVo;
 
     /**
      * 公司的账户信息
      */
-    private QueryMerchantInfoVo queryMerchantInfoVo;
+    private QueryMerchantInfoVO queryMerchantInfoVo;
 
     /**
      * 公司的组织结构信息
      */
-    private QueryCooperationInfoVo queryCooperationInfoVo;
+    private QueryCooperationInfoVO queryCooperationInfoVo;
 
     /**
      * 服务商合作信息

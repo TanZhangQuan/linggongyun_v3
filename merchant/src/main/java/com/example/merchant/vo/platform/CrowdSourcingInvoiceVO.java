@@ -3,7 +3,7 @@ package com.example.merchant.vo.platform;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 
 /**
  * @Description
@@ -11,7 +11,8 @@ import javax.validation.constraints.NotNull;
  * @Date 2020/12/10
  */
 @Data
-public class CrowdSourcingInvoiceVo {
+public class CrowdSourcingInvoiceVO implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     @ApiModelProperty(value = "修改时用")
     private String id;

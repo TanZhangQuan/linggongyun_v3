@@ -5,9 +5,9 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.service.SubpackageService;
-import com.example.merchant.vo.merchant.InvoiceCatalogVo;
-import com.example.merchant.vo.merchant.InvoiceInfoVo;
-import com.example.merchant.vo.merchant.QuerySubInfoVo;
+import com.example.merchant.vo.merchant.InvoiceCatalogVO;
+import com.example.merchant.vo.merchant.InvoiceInfoVO;
+import com.example.merchant.vo.merchant.QuerySubInfoVO;
 import com.example.mybatis.dto.QuerySubpackageDTO;
 import com.example.mybatis.entity.InvoiceCatalog;
 import com.example.mybatis.entity.MakerTotalInvoice;
@@ -34,18 +34,18 @@ public class SubpackageServiceImpl implements SubpackageService {
 
     @Override
     public ReturnJson getSummaryInfo(String id, String merchantId) {
-        QuerySubInfoVo querySubInfoVo = new QuerySubInfoVo();
+        QuerySubInfoVO querySubInfoVo = new QuerySubInfoVO();
         List<PaymentOrderVO> paymentOrderVOList = subpackageDao.queryPaymentOrderInfo(id);
         querySubInfoVo.setPaymentOrderVOS(paymentOrderVOList);
         BuyerVO buyerVo = merchantDao.getBuyerById(id);
         querySubInfoVo.setBuyerVo(buyerVo);
         MakerTotalInvoice makerTotalInvoice = makerTotalInvoiceDao.selectById(id);
-        InvoiceInfoVo invoiceInfoVo = new InvoiceInfoVo();
+        InvoiceInfoVO invoiceInfoVo = new InvoiceInfoVO();
         invoiceInfoVo.setInvoiceUrl(makerTotalInvoice.getMakerInvoiceUrl());
         invoiceInfoVo.setTaxReceiptUrl(makerTotalInvoice.getMakerTaxUrl());
         querySubInfoVo.setInvoiceInfoVo(invoiceInfoVo);
         InvoiceCatalog invoiceCatalog = invoiceCatalogDao.selectById(makerTotalInvoice.getInvoiceCategory());
-        InvoiceCatalogVo invoiceCatalogVo = new InvoiceCatalogVo();
+        InvoiceCatalogVO invoiceCatalogVo = new InvoiceCatalogVO();
         BeanUtils.copyProperties(invoiceCatalog, invoiceCatalogVo);
         querySubInfoVo.setInvoiceCatalogVo(invoiceCatalogVo);
         querySubInfoVo.setRemarks(makerTotalInvoice.getMakerInvoiceDesc());

@@ -1,9 +1,11 @@
 package com.example.merchant.vo.platform;
 
-import com.example.merchant.vo.merchant.InvoiceCatalogVo;
+import com.example.merchant.vo.merchant.InvoiceCatalogVO;
 import com.example.mybatis.vo.BuyerVO;
 import com.example.mybatis.vo.PaymentOrderManyVO;
 import lombok.Data;
+
+import java.io.Serializable;
 
 /**
  * @Description
@@ -11,7 +13,9 @@ import lombok.Data;
  * @Date 2020/12/10
  */
 @Data
-public class QueryNotInvoicedVo {
+public class QueryNotInvoicedVO implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     /**
      * 众包支付信息
      */
@@ -25,12 +29,12 @@ public class QueryNotInvoicedVo {
     /**
      * 开票类目
      */
-    private InvoiceCatalogVo invoiceCatalogVo;
+    private InvoiceCatalogVO invoiceCatalogVo;
 
     /**
      * 地址信息
      */
-    private AddressVo addressVo;
+    private AddressVO addressVo;
 
     /**
      * 备注

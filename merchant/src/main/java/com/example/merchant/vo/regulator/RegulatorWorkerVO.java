@@ -6,12 +6,15 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
 @ApiModel(description = "导出创客的信息")
-public class RegulatorWorkerVO {
+public class RegulatorWorkerVO implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     @Excel(name = "创客编号")
     @ApiModelProperty(notes = "创客ID", value = "创客ID")
     private String workerId;

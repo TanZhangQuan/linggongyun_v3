@@ -4,11 +4,14 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 @Data
 @ApiModel(description = "单个商户流水统计")
-public class CountSingleRegulatorMerchantVO {
+public class CountSingleRegulatorMerchantVO implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     @ApiModelProperty(notes = "公司名称", value = "公司名称")
     private String companyName;
 

@@ -3,6 +3,7 @@ package com.example.merchant.vo.platform;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -12,7 +13,8 @@ import java.time.LocalDateTime;
  * @Date 2020/12/7
  */
 @Data
-public class CompanyInfoVo {
+public class CompanyInfoVO implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     /**
      * 商户id

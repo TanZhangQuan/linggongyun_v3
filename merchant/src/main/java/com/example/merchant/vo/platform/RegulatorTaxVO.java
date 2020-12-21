@@ -5,12 +5,15 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
 @ApiModel(description = "监管服务商信息")
-public class RegulatorTaxVO {
+public class RegulatorTaxVO implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     @ApiModelProperty(notes = "服务商ID", value = "服务商ID")
     private String taxId;
 

@@ -1,10 +1,11 @@
 package com.example.merchant.vo.platform;
 
-import com.example.merchant.vo.merchant.InvoiceCatalogVo;
+import com.example.merchant.vo.merchant.InvoiceCatalogVO;
 import com.example.mybatis.vo.BuyerVO;
 import com.example.mybatis.vo.PaymentOrderVO;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -13,7 +14,8 @@ import java.util.List;
  * @Date 2020/12/9
  */
 @Data
-public class MakerTotalInvoiceInfoVo {
+public class MakerTotalInvoiceInfoVO implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     /**
      * 支付信息
@@ -28,5 +30,5 @@ public class MakerTotalInvoiceInfoVo {
     /**
      * 开票类目
      */
-    private InvoiceCatalogVo invoiceCatalogVo;
+    private InvoiceCatalogVO invoiceCatalogVo;
 }

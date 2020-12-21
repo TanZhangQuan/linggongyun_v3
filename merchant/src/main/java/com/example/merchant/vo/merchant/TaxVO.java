@@ -4,6 +4,7 @@ import com.example.mybatis.entity.CompanyLadderService;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -11,7 +12,9 @@ import java.util.List;
  * 服务商信息
  */
 @Data
-public class TaxVO {
+public class TaxVO implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     @ApiModelProperty(notes = "是否有梯度价：0没有，1有", value = "是否有梯度价：0没有，1有")
     private Integer chargeStatus;
 

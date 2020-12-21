@@ -7,11 +7,11 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.common.util.DateUtil;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.MakerTotalInvoiceDto;
-import com.example.merchant.vo.platform.MakerTotalInvoiceDetailsVo;
-import com.example.merchant.vo.platform.QueryMakerTotalInvoiceDetailVo;
+import com.example.merchant.vo.platform.MakerTotalInvoiceDetailsVO;
+import com.example.merchant.vo.platform.QueryMakerTotalInvoiceDetailVO;
 import com.example.merchant.service.MakerTotalInvoiceService;
-import com.example.merchant.vo.merchant.InvoiceCatalogVo;
-import com.example.merchant.vo.platform.MakerTotalInvoiceInfoVo;
+import com.example.merchant.vo.merchant.InvoiceCatalogVO;
+import com.example.merchant.vo.platform.MakerTotalInvoiceInfoVO;
 import com.example.mybatis.dto.QueryMakerTotalInvoiceDTO;
 import com.example.mybatis.entity.*;
 import com.example.mybatis.mapper.*;
@@ -114,7 +114,7 @@ public class MakerTotalInvoiceServiceImpl extends ServiceImpl<MakerTotalInvoiceD
 
     @Override
     public ReturnJson queryMakerTotalInvoiceInfo(String invoiceIds) {
-        MakerTotalInvoiceInfoVo makerTotalInvoiceInfoVo = new MakerTotalInvoiceInfoVo();
+        MakerTotalInvoiceInfoVO makerTotalInvoiceInfoVo = new MakerTotalInvoiceInfoVO();
         List<String> invoiceId = Arrays.asList(invoiceIds.split(","));
         for (int i = 0; i < invoiceId.size(); i++) {
             Invoice invoice = invoiceDao.selectById(invoiceId.get(i));
@@ -123,7 +123,7 @@ public class MakerTotalInvoiceServiceImpl extends ServiceImpl<MakerTotalInvoiceD
             }
             InvoiceCatalog invoiceCatalog = invoiceCatalogDao.selectById(invoice.getInvoiceCatalog());
             if (invoiceCatalog != null) {
-                InvoiceCatalogVo invoiceCatalogVo = new InvoiceCatalogVo();
+                InvoiceCatalogVO invoiceCatalogVo = new InvoiceCatalogVO();
                 BeanUtils.copyProperties(invoiceCatalog, invoiceCatalogVo);
                 makerTotalInvoiceInfoVo.setInvoiceCatalogVo(invoiceCatalogVo);
             }
@@ -159,14 +159,14 @@ public class MakerTotalInvoiceServiceImpl extends ServiceImpl<MakerTotalInvoiceD
         List<PaymentOrderVO> paymentOrderVOList = paymentOrderDao.queryPaymentOrderInfoById(invoiceId);
         BuyerVO queryBuyer = paymentOrderDao.queryBuyer(invoiceId);
         MakerTotalInvoice makerTotalInvoice = makerTotalInvoiceDao.selectById(invoiceId);
-        QueryMakerTotalInvoiceDetailVo queryMakerTotalInvoiceDetail = new QueryMakerTotalInvoiceDetailVo();
+        QueryMakerTotalInvoiceDetailVO queryMakerTotalInvoiceDetail = new QueryMakerTotalInvoiceDetailVO();
         queryMakerTotalInvoiceDetail.setPaymentOrderVOList(paymentOrderVOList);
         queryMakerTotalInvoiceDetail.setQueryBuyer(queryBuyer);
-        MakerTotalInvoiceDetailsVo makerTotalInvoiceDetails = new MakerTotalInvoiceDetailsVo();
+        MakerTotalInvoiceDetailsVO makerTotalInvoiceDetails = new MakerTotalInvoiceDetailsVO();
         BeanUtils.copyProperties(makerTotalInvoice, makerTotalInvoiceDetails);
         queryMakerTotalInvoiceDetail.setMakerTotalInvoiceDetails(makerTotalInvoiceDetails);
         InvoiceCatalog invoiceCatalog = invoiceCatalogDao.selectById(makerTotalInvoice.getInvoiceCategory());
-        InvoiceCatalogVo invoiceCatalogVo = new InvoiceCatalogVo();
+        InvoiceCatalogVO invoiceCatalogVo = new InvoiceCatalogVO();
         BeanUtils.copyProperties(invoiceCatalog, invoiceCatalogVo);
         queryMakerTotalInvoiceDetail.setInvoiceCatalogVo(invoiceCatalogVo);
         return ReturnJson.success(queryMakerTotalInvoiceDetail);

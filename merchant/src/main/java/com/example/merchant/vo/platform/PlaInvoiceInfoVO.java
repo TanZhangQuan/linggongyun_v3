@@ -3,7 +3,7 @@ package com.example.merchant.vo.platform;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 /**
@@ -12,7 +12,9 @@ import java.math.BigDecimal;
  * @Date 2020/12/8
  */
 @Data
-public class PlaInvoiceInfoVo {
+public class PlaInvoiceInfoVO implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     @ApiModelProperty(value = "修改时用")
     private String id;
 

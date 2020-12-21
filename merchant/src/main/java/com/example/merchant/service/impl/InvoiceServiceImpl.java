@@ -6,9 +6,10 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.common.util.*;
 import com.example.merchant.vo.merchant.*;
-import com.example.merchant.vo.platform.AddressVo;
-import com.example.merchant.vo.platform.QueryApplicationVo;
-import com.example.merchant.vo.platform.QueryPlaInvoiceVo;
+import com.example.merchant.vo.platform.AddressVO;
+import com.example.merchant.vo.platform.PlaInvoiceInfoVO;
+import com.example.merchant.vo.platform.QueryApplicationVO;
+import com.example.merchant.vo.platform.QueryPlaInvoiceVO;
 import com.example.mybatis.dto.QueryTobeinvoicedDTO;
 import com.example.merchant.service.InvoiceApplicationService;
 import com.example.merchant.service.InvoiceService;
@@ -80,7 +81,7 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
     @Override
     public ReturnJson getInvInfoById(String invId, String merchantId) {
         InvoiceInformationVO vo = invoiceDao.getInvInfoById(invId);
-        QueryInvoiceVo queryInvoiceVo = new QueryInvoiceVo();
+        QueryInvoiceVO queryInvoiceVo = new QueryInvoiceVO();
         List<PaymentOrderVO> paymentOrderVOList = paymentOrderDao.queryPaymentOrderInfo(vo.getInvAppId());
         queryInvoiceVo.setPaymentOrderVOList(paymentOrderVOList);
         List<BillingInfoVO> billingInfoVOList = new ArrayList<>();
@@ -93,10 +94,10 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
         PaymentOrder paymentOrderOne = paymentOrderDao.selectById(paymentOrderVOList.get(0).getId());
         queryInvoiceVo.setSellerVo(taxDao.getSellerById(paymentOrderOne.getTaxId()));
         InvoiceApplication invoiceApplication = invoiceApplicationDao.selectById(vo.getInvAppId());
-        InvoiceApplicationVo invoiceApplicationVo = new InvoiceApplicationVo();
+        InvoiceApplicationVO invoiceApplicationVo = new InvoiceApplicationVO();
         BeanUtils.copyProperties(invoiceApplication, invoiceApplicationVo);
         InvoiceCatalog invoiceCatalog = invoiceCatalogDao.selectById(invoiceApplication.getInvoiceCatalogType());
-        InvoiceCatalogVo invoiceCatalogVo = new InvoiceCatalogVo();
+        InvoiceCatalogVO invoiceCatalogVo = new InvoiceCatalogVO();
         BeanUtils.copyProperties(invoiceCatalog, invoiceCatalogVo);
         queryInvoiceVo.setInvoiceCatalogVo(invoiceCatalogVo);
         queryInvoiceVo.setInvoiceApplicationVo(invoiceApplicationVo);
@@ -144,7 +145,7 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
 
     @Override
     public ReturnJson getPlaInvoiceInfo(String applicationId) {
-        QueryApplicationVo queryApplicationInvoiceVo = new QueryApplicationVo();
+        QueryApplicationVO queryApplicationInvoiceVo = new QueryApplicationVO();
         List<PaymentOrderVO> paymentOrderVOList = paymentOrderDao.queryPaymentOrderInfo(applicationId);
         queryApplicationInvoiceVo.setPaymentOrderVOList(paymentOrderVOList);
         List<BillingInfoVO> billingInfoVOList = new ArrayList<>();
@@ -157,15 +158,15 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
         queryApplicationInvoiceVo.setBuyerVo(merchantDao.getBuyerById(paymentOrderOne.getMerchantId()));
         queryApplicationInvoiceVo.setSellerVo(taxDao.getSellerById(paymentOrderOne.getTaxId()));
         InvoiceApplication invoiceApplication = invoiceApplicationDao.selectById(applicationId);
-        InvoiceApplicationVo invoiceApplicationVo = new InvoiceApplicationVo();
+        InvoiceApplicationVO invoiceApplicationVo = new InvoiceApplicationVO();
         BeanUtils.copyProperties(invoiceApplication, invoiceApplicationVo);
         queryApplicationInvoiceVo.setInvoiceApplicationVo(invoiceApplicationVo);
         Address address = addressDao.selectById(invoiceApplication.getApplicationAddress());
-        AddressVo addressVo = new AddressVo();
+        AddressVO addressVo = new AddressVO();
         BeanUtils.copyProperties(address, addressVo);
         queryApplicationInvoiceVo.setAddressVo(addressVo);
         InvoiceCatalog invoiceCatalog = invoiceCatalogDao.selectById(invoiceApplication.getInvoiceCatalogType());
-        InvoiceCatalogVo invoiceCatalogVo = new InvoiceCatalogVo();
+        InvoiceCatalogVO invoiceCatalogVo = new InvoiceCatalogVO();
         BeanUtils.copyProperties(invoiceCatalog, invoiceCatalogVo);
         queryApplicationInvoiceVo.setInvoiceCatalogVo(invoiceCatalogVo);
         return ReturnJson.success(queryApplicationInvoiceVo);
@@ -301,7 +302,7 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
         if (invoice == null) {
             return ReturnJson.error("不存在此发票");
         }
-        QueryPlaInvoiceVo queryApplicationInvoiceVo = new QueryPlaInvoiceVo();
+        QueryPlaInvoiceVO queryApplicationInvoiceVo = new QueryPlaInvoiceVO();
         List<PaymentOrderVO> paymentOrderVOList = paymentOrderDao.queryPaymentOrderInfo(invoice.getApplicationId());
         queryApplicationInvoiceVo.setPaymentOrderVOList(paymentOrderVOList);
         List<BillingInfoVO> billingInfoVOList = new ArrayList<>();
@@ -315,14 +316,14 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
         queryApplicationInvoiceVo.setSellerVo(taxDao.getSellerById(paymentOrderOne.getTaxId()));
         InvoiceApplication invoiceApplication = invoiceApplicationDao.selectById(invoice.getApplicationId());
         Address address = addressDao.selectById(invoiceApplication.getApplicationAddress());
-        AddressVo addressVo = new AddressVo();
+        AddressVO addressVo = new AddressVO();
         BeanUtils.copyProperties(address, addressVo);
         queryApplicationInvoiceVo.setAddressVo(addressVo);
         InvoiceCatalog invoiceCatalog = invoiceCatalogDao.selectById(invoiceApplication.getInvoiceCatalogType());
-        InvoiceCatalogVo invoiceCatalogVo = new InvoiceCatalogVo();
+        InvoiceCatalogVO invoiceCatalogVo = new InvoiceCatalogVO();
         BeanUtils.copyProperties(invoiceCatalog, invoiceCatalogVo);
         queryApplicationInvoiceVo.setInvoiceCatalogVo(invoiceCatalogVo);
-        com.example.merchant.vo.platform.PlaInvoiceInfoVo invoiceInfoVo= new com.example.merchant.vo.platform.PlaInvoiceInfoVo();
+        PlaInvoiceInfoVO invoiceInfoVo= new PlaInvoiceInfoVO();
         BeanUtils.copyProperties(invoice,invoiceInfoVo);
         queryApplicationInvoiceVo.setPlaInvoiceInfoVo(invoiceInfoVo);
         return ReturnJson.success(queryApplicationInvoiceVo);
