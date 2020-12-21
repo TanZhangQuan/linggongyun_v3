@@ -19,9 +19,9 @@ import com.example.mybatis.mapper.MerchantDao;
 import com.example.mybatis.mapper.WorkerDao;
 import com.example.mybatis.po.WorekerPaymentListPo;
 import com.example.mybatis.po.WorkerPo;
-import com.example.mybatis.vo.WorkerCompanyVo;
-import com.example.mybatis.vo.WorkerPassVo;
-import com.example.mybatis.vo.WorkerVo;
+import com.example.mybatis.vo.WorkerCompanyVO;
+import com.example.mybatis.vo.WorkerPassVO;
+import com.example.mybatis.vo.WorkerVO;
 import com.example.redis.dao.RedisDao;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -371,24 +371,24 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
     @Override
     public ReturnJson setWorkerMakeMoney() {
         ReturnJson returnJson = new ReturnJson("操作失败", 300);
-        List<WorkerVo> workerVos = workerDao.setWorkerMakeMoney();
-        if (workerVos != null) {
-            for (int i = 0; i < workerVos.size(); i++) {
-                int num = workerVos.get(i).getAccountName().length();
-                String name = workerVos.get(i).getAccountName().substring(0, 1);
+        List<WorkerVO> workerVOS = workerDao.setWorkerMakeMoney();
+        if (workerVOS != null) {
+            for (int i = 0; i < workerVOS.size(); i++) {
+                int num = workerVOS.get(i).getAccountName().length();
+                String name = workerVOS.get(i).getAccountName().substring(0, 1);
                 switch (num - 1) {
                     case 1:
-                        workerVos.get(i).setAccountName(name + "*");
+                        workerVOS.get(i).setAccountName(name + "*");
                         break;
                     case 2:
-                        workerVos.get(i).setAccountName(name + "**");
+                        workerVOS.get(i).setAccountName(name + "**");
                         break;
                     default:
-                        workerVos.get(i).setAccountName(name + "***");
+                        workerVOS.get(i).setAccountName(name + "***");
                         break;
                 }
             }
-            returnJson = new ReturnJson("操作成功", workerVos, 200);
+            returnJson = new ReturnJson("操作成功", workerVOS, 200);
         }
         return returnJson;
     }
@@ -409,7 +409,7 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
     @Override
     public ReturnJson getPaasWorkerByTaskId(String taskId, Integer pageNo, Integer pageSize) {
         Page page = new Page(pageNo, pageSize);
-        IPage<WorkerPassVo> iPage = workerDao.getPaasCheckByTaskId(page, taskId);
+        IPage<WorkerPassVO> iPage = workerDao.getPaasCheckByTaskId(page, taskId);
         return ReturnJson.success(iPage);
     }
 
@@ -457,7 +457,7 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
     public ReturnJson queryWorkerCompanyByID(String merchantId, Integer pageNo, Integer pageSize) {
         Page page = new Page(pageNo, pageSize);
         Merchant merchant = merchantDao.selectById(merchantId);
-        IPage<WorkerCompanyVo> iPage;
+        IPage<WorkerCompanyVO> iPage;
         if (merchant != null) {
             iPage = workerDao.queryWorkerCompanyByID(page, merchant.getCompanyId());
         } else {

@@ -47,7 +47,7 @@
         </if>
     </sql>
 
-    <resultMap id="SellerById" type="com.example.mybatis.vo.SellerVo">
+    <resultMap id="SellerById" type="com.example.mybatis.vo.SellerVO">
         <result column="tax_s_name" property="taxName"/>
         <result column="tax_address" property="taxAddress"/>
         <result column="link_mobile" property="phone"/>
@@ -193,7 +193,7 @@
         <result column="payee" property="payee"/>
         <result column="bank_code" property="bankCode"/>
         <result column="bank_name" property="bankName"/>
-        <collection property="companyLadderServiceVos" ofType="com.example.mybatis.vo.CompanyLadderServiceVo">
+        <collection property="companyLadderServiceVOS" ofType="com.example.mybatis.vo.CompanyLadderServiceVO">
             <id column="cls_id" property="companyLadderServiceId"/>
             <result column="start_money" property="startMoney"/>
             <result column="end_money" property="endMoney"/>

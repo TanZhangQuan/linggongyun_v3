@@ -9,13 +9,11 @@ import com.example.merchant.vo.merchant.InvoiceCatalogVo;
 import com.example.merchant.vo.merchant.InvoiceInfoVo;
 import com.example.merchant.vo.merchant.QuerySubInfoVo;
 import com.example.mybatis.dto.QuerySubpackageDto;
-import com.example.mybatis.dto.TobeinvoicedDto;
 import com.example.mybatis.entity.InvoiceCatalog;
 import com.example.mybatis.entity.MakerTotalInvoice;
 import com.example.mybatis.entity.Merchant;
 import com.example.mybatis.mapper.*;
 import com.example.mybatis.vo.*;
-import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
@@ -37,9 +35,9 @@ public class SubpackageServiceImpl implements SubpackageService {
     @Override
     public ReturnJson getSummaryInfo(String id, String merchantId) {
         QuerySubInfoVo querySubInfoVo = new QuerySubInfoVo();
-        List<PaymentOrderVo> paymentOrderVoList = subpackageDao.queryPaymentOrderInfo(id);
-        querySubInfoVo.setPaymentOrderVos(paymentOrderVoList);
-        BuyerVo buyerVo = merchantDao.getBuyerById(id);
+        List<PaymentOrderVO> paymentOrderVOList = subpackageDao.queryPaymentOrderInfo(id);
+        querySubInfoVo.setPaymentOrderVOS(paymentOrderVOList);
+        BuyerVO buyerVo = merchantDao.getBuyerById(id);
         querySubInfoVo.setBuyerVo(buyerVo);
         MakerTotalInvoice makerTotalInvoice = makerTotalInvoiceDao.selectById(id);
         InvoiceInfoVo invoiceInfoVo = new InvoiceInfoVo();
@@ -58,14 +56,14 @@ public class SubpackageServiceImpl implements SubpackageService {
     public ReturnJson getSummaryList(QuerySubpackageDto querySubpackageDto, String merchantId) {
         Page page = new Page(querySubpackageDto.getPageNo(), querySubpackageDto.getPageSize());
         Merchant merchant = merchantDao.selectById(merchantId);
-        IPage<SubpackageVo> list = subpackageDao.getSummaryList(page, querySubpackageDto, merchant.getCompanyId());
+        IPage<SubpackageVO> list = subpackageDao.getSummaryList(page, querySubpackageDto, merchant.getCompanyId());
         return ReturnJson.success(list);
     }
 
     @Override
     public ReturnJson getSummary(String invoiceId) {
         ReturnJson returnJson = new ReturnJson("查询失败", 300);
-        SubpackageVo subpackage = subpackageDao.getSummary(invoiceId);
+        SubpackageVO subpackage = subpackageDao.getSummary(invoiceId);
         if (subpackage != null) {
             returnJson = new ReturnJson("查询成功", subpackage, 200);
         }
@@ -75,7 +73,7 @@ public class SubpackageServiceImpl implements SubpackageService {
     @Override
     public ReturnJson getSubpackageInfoById(String invoiceId) {
         ReturnJson returnJson = new ReturnJson("查询失败", 300);
-        SubpackageInfoVo subpackageInfo = subpackageDao.getSubpackageInfoById(invoiceId);
+        SubpackageInfoVO subpackageInfo = subpackageDao.getSubpackageInfoById(invoiceId);
         if (subpackageInfo != null) {
             returnJson = new ReturnJson("查询成功", subpackageInfo, 200);
         }
@@ -85,7 +83,7 @@ public class SubpackageServiceImpl implements SubpackageService {
     @Override
     public ReturnJson getListByInvoiceId(String invoiceId, Integer pageNo, Integer pageSize) {
         Page page = new Page(pageNo, pageSize);
-        IPage<InvoiceDetailsVo> list = subpackageDao.getListById(page, invoiceId);
+        IPage<InvoiceDetailsVO> list = subpackageDao.getListById(page, invoiceId);
         return ReturnJson.success(list);
 
     }

@@ -16,22 +16,22 @@ public class QueryInvoiceVo {
     /**
      * 支付信息
      */
-    private List<PaymentOrderVo> paymentOrderVoList;
+    private List<PaymentOrderVO> paymentOrderVOList;
 
     /**
      * 开票信息
      */
-    private List<BillingInfoVo> billingInfoVoList;
+    private List<BillingInfoVO> billingInfoVOList;
 
     /**
      * 购买方信息
      */
-    private BuyerVo buyerVo;
+    private BuyerVO buyerVo;
 
     /**
      * 销售方信息
      */
-    private SellerVo sellerVo;
+    private SellerVO sellerVo;
 
     /**
      * 开票类目
@@ -51,5 +51,5 @@ public class QueryInvoiceVo {
     /**
      * 收发件信息
      */
-    private SendAndReceiveVo sendAndReceiveVo;
+    private SendAndReceiveVO sendAndReceiveVo;
 }

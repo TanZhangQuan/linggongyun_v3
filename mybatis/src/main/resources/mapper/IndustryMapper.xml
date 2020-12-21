@@ -3,7 +3,7 @@
 <mapper namespace="com.example.mybatis.mapper.IndustryDao">
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="com.example.mybatis.vo.IndustryVo">
+    <resultMap id="BaseResultMap" type="com.example.mybatis.vo.IndustryVO">
         <id column="id" property="id"/>
         <result column="industry_type" property="industryType"/>
         <collection property="list" ofType="com.example.mybatis.entity.Industry">

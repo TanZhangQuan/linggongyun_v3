@@ -2,7 +2,7 @@ package com.example.mybatis.mapper;
 
 import com.example.mybatis.entity.Menu;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.example.mybatis.vo.MenuListVo;
+import com.example.mybatis.vo.MenuListVO;
 
 import java.util.List;
 
@@ -16,7 +16,7 @@ import java.util.List;
  */
 public interface MenuDao extends BaseMapper<Menu> {
 
-    List<MenuListVo> getMenuList();
+    List<MenuListVO> getMenuList();
 
-    List<MenuListVo> getPlatformMenuList();
+    List<MenuListVO> getPlatformMenuList();
 }

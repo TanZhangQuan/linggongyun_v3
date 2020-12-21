@@ -29,14 +29,14 @@ public interface MerchantDao extends BaseMapper<Merchant> {
     String getNameById(String id);
 
     //购买方
-    BuyerVo getBuyerById(String id);
+    BuyerVO getBuyerById(String id);
 
     /**
      * 查询商户今日成交总额
      * @param merchantId
      * @return
      */
-    TodayVo getTodayById(String merchantId);
+    TodayVO getTodayById(String merchantId);
 
     /**
      * 查询商户本周成交总额

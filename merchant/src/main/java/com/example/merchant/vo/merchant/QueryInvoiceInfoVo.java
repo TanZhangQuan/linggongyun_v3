@@ -1,9 +1,9 @@
 package com.example.merchant.vo.merchant;
 
 import com.example.common.util.ExpressLogisticsInfo;
-import com.example.mybatis.vo.BuyerVo;
-import com.example.mybatis.vo.PaymentOrderManyVo;
-import com.example.mybatis.vo.SendAndReceiveVo;
+import com.example.mybatis.vo.BuyerVO;
+import com.example.mybatis.vo.PaymentOrderManyVO;
+import com.example.mybatis.vo.SendAndReceiveVO;
 import lombok.Data;
 
 import java.util.List;
@@ -18,12 +18,12 @@ public class QueryInvoiceInfoVo {
     /**
      * 支付信息
      */
-    private PaymentOrderManyVo paymentOrderManyVo;
+    private PaymentOrderManyVO paymentOrderManyVo;
 
     /**
      * 销售方信息
      */
-    private BuyerVo buyerVo;
+    private BuyerVO buyerVo;
 
     /**
      * 申请开票信息
@@ -43,7 +43,7 @@ public class QueryInvoiceInfoVo {
     /**
      * 发收件信息
      */
-    private SendAndReceiveVo sendAndReceiveVo;
+    private SendAndReceiveVO sendAndReceiveVo;
 
     /**
      * 物流信息

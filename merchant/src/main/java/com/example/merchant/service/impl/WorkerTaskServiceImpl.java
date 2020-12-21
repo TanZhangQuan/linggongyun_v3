@@ -4,23 +4,20 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.common.util.ReturnJson;
-import com.example.mybatis.dto.WorkerTaskDto;
 import com.example.mybatis.entity.Task;
-import com.example.mybatis.entity.Worker;
 import com.example.mybatis.entity.WorkerTask;
 import com.example.mybatis.mapper.TaskDao;
 import com.example.mybatis.mapper.WorkerDao;
 import com.example.mybatis.mapper.WorkerTaskDao;
 import com.example.merchant.service.WorkerTaskService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.example.mybatis.vo.WorkerPayInfoVo;
-import com.example.mybatis.vo.WorkerTaskInfoVo;
+import com.example.mybatis.vo.WorkerPayInfoVO;
+import com.example.mybatis.vo.WorkerTaskInfoVO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -143,14 +140,14 @@ public class WorkerTaskServiceImpl extends ServiceImpl<WorkerTaskDao, WorkerTask
     @Override
     public ReturnJson queryWorkerTaskInfo(String workerId, Integer pageNo, Integer pageSize) {
         Page page = new Page(pageNo, pageSize);
-        IPage<WorkerTaskInfoVo> iPage = workerTaskDao.queryWorkerTaskInfo(page, workerId);
+        IPage<WorkerTaskInfoVO> iPage = workerTaskDao.queryWorkerTaskInfo(page, workerId);
         return ReturnJson.success(iPage);
     }
 
     @Override
     public ReturnJson queryWorkerPayInfo(String workerId, Integer pageNo, Integer pageSize) {
         Page page = new Page(pageNo, pageSize);
-        IPage<WorkerPayInfoVo> iPage = workerDao.queryWorkerPayInfo(page, workerId);
+        IPage<WorkerPayInfoVO> iPage = workerDao.queryWorkerPayInfo(page, workerId);
         return ReturnJson.success(iPage);
     }
 

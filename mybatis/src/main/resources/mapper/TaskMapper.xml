@@ -109,7 +109,7 @@
         WHERE id=#{taskId}
     </update>
 
-    <resultMap id="PlatformTaskList" type="com.example.mybatis.vo.PlatformTaskListVo">
+    <resultMap id="PlatformTaskList" type="com.example.mybatis.vo.PlatformTaskListVO">
         <id column="id" property="id"/>
         <result column="task_code" property="taskCode"/>
         <result column="merchant_name" property="merchantName"/>
@@ -154,7 +154,7 @@
         #{taskCostMax},#{taskSkill},#{releaseTime},#{deadlineTime},#{upperLimit},#{cooperateMode},#{taskMode},#{state})
     </insert>
 
-    <resultMap id="taskInfo" type="com.example.mybatis.vo.TaskInfoVo">
+    <resultMap id="taskInfo" type="com.example.mybatis.vo.TaskInfoVO">
         <id property="id" column="id"/>
         <result property="companyName" column="company_name"/>
         <result property="taskName" column="task_name"/>

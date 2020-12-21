@@ -7,12 +7,11 @@ import com.example.mybatis.entity.PaymentOrder;
 import com.example.mybatis.po.BillCountPO;
 import com.example.mybatis.po.BillPO;
 import com.example.mybatis.po.PaymentOrderInfoPO;
-import com.example.mybatis.vo.BillingInfoVo;
-import com.example.mybatis.vo.BuyerVo;
-import com.example.mybatis.vo.InvoiceListVo;
-import com.example.mybatis.vo.PaymentOrderVo;
+import com.example.mybatis.vo.BillingInfoVO;
+import com.example.mybatis.vo.BuyerVO;
+import com.example.mybatis.vo.InvoiceListVO;
+import com.example.mybatis.vo.PaymentOrderVO;
 import org.apache.ibatis.annotations.Param;
-import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -53,9 +52,9 @@ public interface PaymentOrderDao extends BaseMapper<PaymentOrder> {
     List<PaymentOrder> selectMonthpaas(List<String> merchantId);
     List<PaymentOrder> selectYearpaas(List<String> merchantId);
 
-    PaymentOrderVo getPaymentOrderById(String id);
+    PaymentOrderVO getPaymentOrderById(String id);
 
-    BillingInfoVo getBillingInfo(String id);
+    BillingInfoVO getBillingInfo(String id);
 
     List<BillPO> selectMonthBill(@Param("workerId") String workerId, @Param("year") Integer year, @Param("month")Integer month,@Param("id") String id);
 
@@ -63,17 +62,17 @@ public interface PaymentOrderDao extends BaseMapper<PaymentOrder> {
 
     PaymentOrderInfoPO selectPaymentOrderInfo(String paymentOrderId);
 
-    List<PaymentOrderVo> queryPaymentOrderInfo(String invoiceAppcationId);
+    List<PaymentOrderVO> queryPaymentOrderInfo(String invoiceAppcationId);
 
     BillPO queryBillInfo(String workerId,String id);
 
-    List<PaymentOrderVo> querySubInfo(String invoiceId);
+    List<PaymentOrderVO> querySubInfo(String invoiceId);
 
-    List<PaymentOrderVo> queryPaymentOrderInfoByIds(@Param("invoiceId")List<String> invoiceId);
+    List<PaymentOrderVO> queryPaymentOrderInfoByIds(@Param("invoiceId")List<String> invoiceId);
 
-    List<PaymentOrderVo> queryPaymentOrderInfoById(String invoiceId);
+    List<PaymentOrderVO> queryPaymentOrderInfoById(String invoiceId);
 
-    BuyerVo queryBuyer(String invoiceId);
+    BuyerVO queryBuyer(String invoiceId);
 
-    IPage<InvoiceListVo> queryMakerPaymentInventory(Page page,String invoiceId);
+    IPage<InvoiceListVO> queryMakerPaymentInventory(Page page, String invoiceId);
 }

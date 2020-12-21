@@ -5,9 +5,9 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.mybatis.dto.QueryMakerTotalInvoiceDto;
 import com.example.mybatis.entity.MakerTotalInvoice;
-import com.example.mybatis.vo.MakerTotalInvoiceVo;
+import com.example.mybatis.vo.MakerTotalInvoiceVO;
 
 public interface MakerTotalInvoiceDao extends BaseMapper<MakerTotalInvoice> {
 
-    IPage<MakerTotalInvoiceVo> queryMakerTotalInvoice(Page page,QueryMakerTotalInvoiceDto queryMakerTotalInvoiceDto);
+    IPage<MakerTotalInvoiceVO> queryMakerTotalInvoice(Page page, QueryMakerTotalInvoiceDto queryMakerTotalInvoiceDto);
 }

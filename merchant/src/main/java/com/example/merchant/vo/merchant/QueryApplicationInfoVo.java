@@ -1,7 +1,7 @@
 package com.example.merchant.vo.merchant;
 
-import com.example.mybatis.vo.BuyerVo;
-import com.example.mybatis.vo.PaymentOrderManyVo;
+import com.example.mybatis.vo.BuyerVO;
+import com.example.mybatis.vo.PaymentOrderManyVO;
 import lombok.Data;
 
 /**
@@ -14,12 +14,12 @@ public class QueryApplicationInfoVo {
     /**
      * 支付信息
      */
-    private PaymentOrderManyVo paymentOrderManyVo;
+    private PaymentOrderManyVO paymentOrderManyVo;
 
     /**
      * 销售方信息
      */
-    private BuyerVo buyerVo;
+    private BuyerVO buyerVo;
 
     /**
      * 申请开票信息

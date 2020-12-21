@@ -15,10 +15,10 @@ import com.example.merchant.vo.platform.MakerTotalInvoiceInfoVo;
 import com.example.mybatis.dto.QueryMakerTotalInvoiceDto;
 import com.example.mybatis.entity.*;
 import com.example.mybatis.mapper.*;
-import com.example.mybatis.vo.BuyerVo;
-import com.example.mybatis.vo.InvoiceListVo;
-import com.example.mybatis.vo.MakerTotalInvoiceVo;
-import com.example.mybatis.vo.PaymentOrderVo;
+import com.example.mybatis.vo.BuyerVO;
+import com.example.mybatis.vo.InvoiceListVO;
+import com.example.mybatis.vo.MakerTotalInvoiceVO;
+import com.example.mybatis.vo.PaymentOrderVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -128,13 +128,13 @@ public class MakerTotalInvoiceServiceImpl extends ServiceImpl<MakerTotalInvoiceD
                 makerTotalInvoiceInfoVo.setInvoiceCatalogVo(invoiceCatalogVo);
             }
         }
-        List<PaymentOrderVo> paymentOrderVoList = paymentOrderDao.queryPaymentOrderInfoByIds(invoiceId);
-        if (paymentOrderVoList.size() == 0) {
+        List<PaymentOrderVO> paymentOrderVOList = paymentOrderDao.queryPaymentOrderInfoByIds(invoiceId);
+        if (paymentOrderVOList.size() == 0) {
             return ReturnJson.error("支付信息有误！");
         }
-        makerTotalInvoiceInfoVo.setPaymentOrderVoList(paymentOrderVoList);
-        PaymentOrder paymentOrder = paymentOrderDao.selectById(paymentOrderVoList.get(0).getId());
-        BuyerVo buyerVo = new BuyerVo();
+        makerTotalInvoiceInfoVo.setPaymentOrderVOList(paymentOrderVOList);
+        PaymentOrder paymentOrder = paymentOrderDao.selectById(paymentOrderVOList.get(0).getId());
+        BuyerVO buyerVo = new BuyerVO();
         Tax tax = taxDao.selectById(paymentOrder.getTaxId());
         buyerVo.setCompanyAddress(tax.getTaxAddress());
         buyerVo.setCompanyName(tax.getTaxSName());
@@ -150,17 +150,17 @@ public class MakerTotalInvoiceServiceImpl extends ServiceImpl<MakerTotalInvoiceD
     @Override
     public ReturnJson queryMakerTotalInvoice(QueryMakerTotalInvoiceDto queryMakerTotalInvoiceDto) {
         Page page = new Page(queryMakerTotalInvoiceDto.getPageNo(), queryMakerTotalInvoiceDto.getPageSize());
-        IPage<MakerTotalInvoiceVo> makerTotalInvoiceVoIPage = makerTotalInvoiceDao.queryMakerTotalInvoice(page, queryMakerTotalInvoiceDto);
+        IPage<MakerTotalInvoiceVO> makerTotalInvoiceVoIPage = makerTotalInvoiceDao.queryMakerTotalInvoice(page, queryMakerTotalInvoiceDto);
         return ReturnJson.success(makerTotalInvoiceVoIPage);
     }
 
     @Override
     public ReturnJson queryMakerTotalInvoiceDetails(String invoiceId) {
-        List<PaymentOrderVo> paymentOrderVoList = paymentOrderDao.queryPaymentOrderInfoById(invoiceId);
-        BuyerVo queryBuyer = paymentOrderDao.queryBuyer(invoiceId);
+        List<PaymentOrderVO> paymentOrderVOList = paymentOrderDao.queryPaymentOrderInfoById(invoiceId);
+        BuyerVO queryBuyer = paymentOrderDao.queryBuyer(invoiceId);
         MakerTotalInvoice makerTotalInvoice = makerTotalInvoiceDao.selectById(invoiceId);
         QueryMakerTotalInvoiceDetailVo queryMakerTotalInvoiceDetail = new QueryMakerTotalInvoiceDetailVo();
-        queryMakerTotalInvoiceDetail.setPaymentOrderVoList(paymentOrderVoList);
+        queryMakerTotalInvoiceDetail.setPaymentOrderVOList(paymentOrderVOList);
         queryMakerTotalInvoiceDetail.setQueryBuyer(queryBuyer);
         MakerTotalInvoiceDetailsVo makerTotalInvoiceDetails = new MakerTotalInvoiceDetailsVo();
         BeanUtils.copyProperties(makerTotalInvoice, makerTotalInvoiceDetails);
@@ -175,10 +175,10 @@ public class MakerTotalInvoiceServiceImpl extends ServiceImpl<MakerTotalInvoiceD
     @Override
     public ReturnJson getMakerTotalInvoicePayList(String invoiceId, Integer pageNo, Integer pageSize) {
         Page page = new Page(pageNo, pageSize);
-        IPage<InvoiceListVo> invoiceListVoIPage = paymentOrderDao.queryMakerPaymentInventory(page, invoiceId);
+        IPage<InvoiceListVO> invoiceListVoIPage = paymentOrderDao.queryMakerPaymentInventory(page, invoiceId);
         Map<String, Object> map = new HashMap<>(0);
         BigDecimal totalTaxPrice = new BigDecimal("0.00");
-        for (InvoiceListVo invoiceListVo : invoiceListVoIPage.getRecords()) {
+        for (InvoiceListVO invoiceListVo : invoiceListVoIPage.getRecords()) {
             totalTaxPrice = totalTaxPrice.add(invoiceListVo.getTaskMoney());
         }
         map.put("invoiceListVoIPage", invoiceListVoIPage.getRecords());

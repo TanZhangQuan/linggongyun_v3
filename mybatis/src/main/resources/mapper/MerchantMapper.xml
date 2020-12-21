@@ -19,7 +19,7 @@
         <result column="update_date" property="updateDate"/>
     </resultMap>
 
-    <resultMap id="BuyerById" type="com.example.mybatis.vo.BuyerVo">
+    <resultMap id="BuyerById" type="com.example.mybatis.vo.BuyerVO">
         <result column="company_name" property="companyName"/>
         <result column="credit_code" property="creditCode"/>
         <result column="company_address" property="companyAddress"/>
@@ -28,7 +28,7 @@
         <result column="bank_code" property="bankCode"/>
     </resultMap>
 
-    <resultMap type="com.example.mybatis.vo.TodayVo" id="dayTradeVO">
+    <resultMap type="com.example.mybatis.vo.TodayVO" id="dayTradeVO">
         <result property="oneHourIncome" column="one_hour_income"/>
         <result property="twoHourIncome" column="two_hour_income"/>
         <result property="threeHourIncome" column="three_hour_income"/>
@@ -125,7 +125,7 @@
         select * from tb_merchant where id=#{id}
     </select>
 
-    <resultMap id="IdAndName" type="com.example.mybatis.vo.MerchantListVo">
+    <resultMap id="IdAndName" type="com.example.mybatis.vo.MerchantListVO">
         <id column="id" property="id"/>
         <result column="company_name" property="companyName"/>
     </resultMap>

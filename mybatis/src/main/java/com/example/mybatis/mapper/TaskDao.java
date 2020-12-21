@@ -8,12 +8,8 @@ import com.example.mybatis.dto.PlatformTaskDto;
 import com.example.mybatis.dto.TaskDto;
 import com.example.mybatis.dto.TaskListDto;
 import com.example.mybatis.entity.Task;
-import com.example.mybatis.vo.TaskInfoVo;
+import com.example.mybatis.vo.TaskInfoVO;
 import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.session.RowBounds;
-
-import javax.validation.constraints.Pattern;
-import java.util.List;
 
 /**
  * <p>
@@ -93,5 +89,5 @@ public interface TaskDao extends BaseMapper<Task> {
      */
     int addPlatformTask(TaskDto TaskDto);
 
-    IPage<TaskInfoVo> setTask(Page page, @Param("industryType") String s);
+    IPage<TaskInfoVO> setTask(Page page, @Param("industryType") String s);
 }

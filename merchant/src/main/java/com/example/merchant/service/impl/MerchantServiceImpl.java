@@ -24,9 +24,9 @@ import com.example.mybatis.mapper.*;
 import com.example.mybatis.po.MerchantInfoPo;
 import com.example.mybatis.po.MerchantPaymentListPO;
 import com.example.mybatis.po.TaxPO;
-import com.example.mybatis.vo.BuyerVo;
+import com.example.mybatis.vo.BuyerVO;
 import com.example.mybatis.vo.CooperationInfoVO;
-import com.example.mybatis.vo.MenuListVo;
+import com.example.mybatis.vo.MenuListVO;
 import com.example.redis.dao.RedisDao;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
@@ -255,7 +255,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
     @Override
     public ReturnJson getBuyerById(String id) {
         ReturnJson returnJson = new ReturnJson("查询失败", 300);
-        BuyerVo buyerVo = merchantDao.getBuyerById(id);
+        BuyerVO buyerVo = merchantDao.getBuyerById(id);
         if (buyerVo != null) {
             returnJson = new ReturnJson("查询成功", buyerVo, 200);
         }
@@ -432,7 +432,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         merchant.setCompanyId(companyInfo.getId());
         merchant.setCompanyName(companyInfo.getCompanyName());
         merchantDao.insert(merchant);
-        List<MenuListVo> listVos = menuDao.getMenuList();
+        List<MenuListVO> listVos = menuDao.getMenuList();
         for (int i = 0; i < listVos.size(); i++) {
             ObjectMenu objectMenu = new ObjectMenu();
             objectMenu.setMenuId(listVos.get(i).getId());

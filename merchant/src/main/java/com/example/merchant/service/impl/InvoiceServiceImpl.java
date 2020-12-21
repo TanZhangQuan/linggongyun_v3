@@ -17,7 +17,7 @@ import com.example.mybatis.dto.TobeinvoicedDto;
 import com.example.mybatis.entity.*;
 import com.example.mybatis.mapper.*;
 import com.example.mybatis.vo.*;
-import com.example.mybatis.vo.InvoiceVo;
+import com.example.mybatis.vo.InvoiceVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -65,7 +65,7 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
     public ReturnJson selectTobeinvoiced(QueryTobeinvoicedDto queryTobeinvoicedDto, String merchantId) {
         Merchant merchant = merchantDao.selectById(merchantId);
         Page page = new Page(queryTobeinvoicedDto.getPageNo(), queryTobeinvoicedDto.getPageSize());
-        IPage<TobeinvoicedVo> list = invoiceDao.selectTobeinvoiced(page, queryTobeinvoicedDto, merchant.getCompanyId());
+        IPage<TobeinvoicedVO> list = invoiceDao.selectTobeinvoiced(page, queryTobeinvoicedDto, merchant.getCompanyId());
         return ReturnJson.success(list);
     }
 
@@ -73,24 +73,24 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
     public ReturnJson getInvoiceList(QueryTobeinvoicedDto queryTobeinvoicedDto, String merchantId) {
         Merchant merchant = merchantDao.selectById(merchantId);
         Page page = new Page(queryTobeinvoicedDto.getPageNo(), queryTobeinvoicedDto.getPageSize());
-        IPage<InvoiceVo> list = invoiceDao.getInvoiceList(page, queryTobeinvoicedDto, merchant.getCompanyId());
+        IPage<InvoiceVO> list = invoiceDao.getInvoiceList(page, queryTobeinvoicedDto, merchant.getCompanyId());
         return ReturnJson.success(list);
     }
 
     @Override
     public ReturnJson getInvInfoById(String invId, String merchantId) {
-        InvoiceInformationVo vo = invoiceDao.getInvInfoById(invId);
+        InvoiceInformationVO vo = invoiceDao.getInvInfoById(invId);
         QueryInvoiceVo queryInvoiceVo = new QueryInvoiceVo();
-        List<PaymentOrderVo> paymentOrderVoList = paymentOrderDao.queryPaymentOrderInfo(vo.getInvAppId());
-        queryInvoiceVo.setPaymentOrderVoList(paymentOrderVoList);
-        List<BillingInfoVo> billingInfoVoList = new ArrayList<>();
-        for (int i = 0; i < paymentOrderVoList.size(); i++) {
-            BillingInfoVo billingInfo = paymentOrderDao.getBillingInfo(paymentOrderVoList.get(i).getId());
-            billingInfoVoList.add(billingInfo);
+        List<PaymentOrderVO> paymentOrderVOList = paymentOrderDao.queryPaymentOrderInfo(vo.getInvAppId());
+        queryInvoiceVo.setPaymentOrderVOList(paymentOrderVOList);
+        List<BillingInfoVO> billingInfoVOList = new ArrayList<>();
+        for (int i = 0; i < paymentOrderVOList.size(); i++) {
+            BillingInfoVO billingInfo = paymentOrderDao.getBillingInfo(paymentOrderVOList.get(i).getId());
+            billingInfoVOList.add(billingInfo);
         }
-        queryInvoiceVo.setBillingInfoVoList(billingInfoVoList);
+        queryInvoiceVo.setBillingInfoVOList(billingInfoVOList);
         queryInvoiceVo.setBuyerVo(merchantDao.getBuyerById(merchantId));
-        PaymentOrder paymentOrderOne = paymentOrderDao.selectById(paymentOrderVoList.get(0).getId());
+        PaymentOrder paymentOrderOne = paymentOrderDao.selectById(paymentOrderVOList.get(0).getId());
         queryInvoiceVo.setSellerVo(taxDao.getSellerById(paymentOrderOne.getTaxId()));
         InvoiceApplication invoiceApplication = invoiceApplicationDao.selectById(vo.getInvAppId());
         InvoiceApplicationVo invoiceApplicationVo = new InvoiceApplicationVo();
@@ -102,7 +102,7 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
         queryInvoiceVo.setInvoiceApplicationVo(invoiceApplicationVo);
         List<ExpressLogisticsInfo> expressLogisticsInfos = KdniaoTrackQueryAPI.getExpressInfo(vo.getExpressCompanyName(), vo.getExpressSheetNo());
         queryInvoiceVo.setExpressLogisticsInfoList(expressLogisticsInfos);
-        SendAndReceiveVo sendAndReceiveVo = new SendAndReceiveVo();
+        SendAndReceiveVO sendAndReceiveVo = new SendAndReceiveVO();
         sendAndReceiveVo.setLogisticsCompany(vo.getExpressCompanyName());
         sendAndReceiveVo.setLogisticsOrderNo(vo.getExpressSheetNo());
         Address address = addressDao.selectById(invoiceApplicationVo.getApplicationAddress());
@@ -138,22 +138,22 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
     @Override
     public ReturnJson getPlaInvoiceList(TobeinvoicedDto tobeinvoicedDto) {
         Page page = new Page(tobeinvoicedDto.getPageNo(), tobeinvoicedDto.getPageSize());
-        IPage<PlaInvoiceListVo> list = invoiceDao.getPlaInvoiceList(page, tobeinvoicedDto);
+        IPage<PlaInvoiceListVO> list = invoiceDao.getPlaInvoiceList(page, tobeinvoicedDto);
         return ReturnJson.success(list);
     }
 
     @Override
     public ReturnJson getPlaInvoiceInfo(String applicationId) {
         QueryApplicationVo queryApplicationInvoiceVo = new QueryApplicationVo();
-        List<PaymentOrderVo> paymentOrderVoList = paymentOrderDao.queryPaymentOrderInfo(applicationId);
-        queryApplicationInvoiceVo.setPaymentOrderVoList(paymentOrderVoList);
-        List<BillingInfoVo> billingInfoVoList = new ArrayList<>();
-        for (int i = 0; i < paymentOrderVoList.size(); i++) {
-            BillingInfoVo billingInfo = paymentOrderDao.getBillingInfo(paymentOrderVoList.get(i).getId());
-            billingInfoVoList.add(billingInfo);
+        List<PaymentOrderVO> paymentOrderVOList = paymentOrderDao.queryPaymentOrderInfo(applicationId);
+        queryApplicationInvoiceVo.setPaymentOrderVOList(paymentOrderVOList);
+        List<BillingInfoVO> billingInfoVOList = new ArrayList<>();
+        for (int i = 0; i < paymentOrderVOList.size(); i++) {
+            BillingInfoVO billingInfo = paymentOrderDao.getBillingInfo(paymentOrderVOList.get(i).getId());
+            billingInfoVOList.add(billingInfo);
         }
-        queryApplicationInvoiceVo.setBillingInfoVoList(billingInfoVoList);
-        PaymentOrder paymentOrderOne = paymentOrderDao.selectById(paymentOrderVoList.get(0).getId());
+        queryApplicationInvoiceVo.setBillingInfoVOList(billingInfoVOList);
+        PaymentOrder paymentOrderOne = paymentOrderDao.selectById(paymentOrderVOList.get(0).getId());
         queryApplicationInvoiceVo.setBuyerVo(merchantDao.getBuyerById(paymentOrderOne.getMerchantId()));
         queryApplicationInvoiceVo.setSellerVo(taxDao.getSellerById(paymentOrderOne.getTaxId()));
         InvoiceApplication invoiceApplication = invoiceApplicationDao.selectById(applicationId);
@@ -242,7 +242,7 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
     @Override
     public ReturnJson getListInvoicequery(TobeinvoicedDto tobeinvoicedDto) {
         Page page = new Page(tobeinvoicedDto.getPageNo(), tobeinvoicedDto.getPageSize());
-        IPage<InvoiceVo> list = invoiceDao.getListInvoicequery(page, tobeinvoicedDto);
+        IPage<InvoiceVO> list = invoiceDao.getListInvoicequery(page, tobeinvoicedDto);
         return ReturnJson.success(list);
     }
 
@@ -261,7 +261,7 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
     @Override
     public ReturnJson getListSubQuery(TobeinvoicedDto tobeinvoicedDto) {
         Page page = new Page(tobeinvoicedDto.getPageNo(), tobeinvoicedDto.getPageSize());
-        IPage<ToSubcontractInvoiceVo> list = invoiceDao.getListSubQuery(page, tobeinvoicedDto);
+        IPage<ToSubcontractInvoiceVO> list = invoiceDao.getListSubQuery(page, tobeinvoicedDto);
         return ReturnJson.success(list);
     }
 
@@ -272,8 +272,8 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
         Map<String, Object> map = new HashMap();
         BigDecimal totalTaxPrice = new BigDecimal("0.00");
         List<String> list = Arrays.asList(invoiceId.split(","));
-        List<InvoiceListVo> voList = invoiceDao.getInvoiceListQuery(list);
-        for (InvoiceListVo vo : voList) {
+        List<InvoiceListVO> voList = invoiceDao.getInvoiceListQuery(list);
+        for (InvoiceListVO vo : voList) {
             PaymentInventory paymentInventory = new PaymentInventory();
             paymentInventory.setId(vo.getId());
             totalTaxPrice = totalTaxPrice.add(vo.getTaskMoney());
@@ -302,15 +302,15 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
             return ReturnJson.error("不存在此发票");
         }
         QueryPlaInvoiceVo queryApplicationInvoiceVo = new QueryPlaInvoiceVo();
-        List<PaymentOrderVo> paymentOrderVoList = paymentOrderDao.queryPaymentOrderInfo(invoice.getApplicationId());
-        queryApplicationInvoiceVo.setPaymentOrderVoList(paymentOrderVoList);
-        List<BillingInfoVo> billingInfoVoList = new ArrayList<>();
-        for (int i = 0; i < paymentOrderVoList.size(); i++) {
-            BillingInfoVo billingInfo = paymentOrderDao.getBillingInfo(paymentOrderVoList.get(i).getId());
-            billingInfoVoList.add(billingInfo);
+        List<PaymentOrderVO> paymentOrderVOList = paymentOrderDao.queryPaymentOrderInfo(invoice.getApplicationId());
+        queryApplicationInvoiceVo.setPaymentOrderVOList(paymentOrderVOList);
+        List<BillingInfoVO> billingInfoVOList = new ArrayList<>();
+        for (int i = 0; i < paymentOrderVOList.size(); i++) {
+            BillingInfoVO billingInfo = paymentOrderDao.getBillingInfo(paymentOrderVOList.get(i).getId());
+            billingInfoVOList.add(billingInfo);
         }
-        queryApplicationInvoiceVo.setBillingInfoVoList(billingInfoVoList);
-        PaymentOrder paymentOrderOne = paymentOrderDao.selectById(paymentOrderVoList.get(0).getId());
+        queryApplicationInvoiceVo.setBillingInfoVOList(billingInfoVOList);
+        PaymentOrder paymentOrderOne = paymentOrderDao.selectById(paymentOrderVOList.get(0).getId());
         queryApplicationInvoiceVo.setBuyerVo(merchantDao.getBuyerById(paymentOrderOne.getMerchantId()));
         queryApplicationInvoiceVo.setSellerVo(taxDao.getSellerById(paymentOrderOne.getTaxId()));
         InvoiceApplication invoiceApplication = invoiceApplicationDao.selectById(invoice.getApplicationId());

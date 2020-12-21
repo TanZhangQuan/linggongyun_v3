@@ -27,35 +27,35 @@ public interface CrowdSourcingInvoiceDao extends BaseMapper<CrowdSourcingInvoice
     InvoicePO selectCrowdInvoiceMoneyPaas(List<String> merchantId);
     int addCrowdSourcingInvoice(ApplicationCrowdSourcing applicationCrowdSourcing);
 
-    IPage<CrowdSourcingInfoVo> getCrowdSourcingInfo(Page page, QueryCrowdSourcingDto queryCrowdSourcingDto, String userId);
+    IPage<CrowdSourcingInfoVO> getCrowdSourcingInfo(Page page, QueryCrowdSourcingDto queryCrowdSourcingDto, String userId);
 
     //众包发票id
-    InvoiceInformationVo getInvoiceById(String csiId);
+    InvoiceInformationVO getInvoiceById(String csiId);
 
     InvoicePO selectCrowdInvoiceMoneyPaasTax(String taxId);
 
     InvoicePO selectCrowdInvoiceMoneyPaasRegultor(@Param("taxIds") List<String> taxIds);
 
     //购买方id
-    BuyerVo getBuyer(String id);
+    BuyerVO getBuyer(String id);
 
     /** ----平台端---- **/
-    IPage<CrowdSourcingInvoiceInfoVo> getCrowdSourcingInvoicePass(Page page, @Param("tobeinvoicedDto") TobeinvoicedDto tobeinvoicedDto);
+    IPage<CrowdSourcingInvoiceInfoVO> getCrowdSourcingInvoicePass(Page page, @Param("tobeinvoicedDto") TobeinvoicedDto tobeinvoicedDto);
 
-    PaymentOrderManyVo getPaymentOrderManyPass(String appcationId);
+    PaymentOrderManyVO getPaymentOrderManyPass(String appcationId);
 
-    List<InvoiceDetailsVo> getPaymentInventoryPass(String payId);
+    List<InvoiceDetailsVO> getPaymentInventoryPass(String payId);
 
     String getCrowdInvoiceCode();
 
-    IPage<CrowdSourcingInfoVo> getCrowdSourcingInfoPass(Page page,@Param("tobeinvoicedDto") TobeinvoicedDto tobeinvoicedDto);
+    IPage<CrowdSourcingInfoVO> getCrowdSourcingInfoPass(Page page, @Param("tobeinvoicedDto") TobeinvoicedDto tobeinvoicedDto);
 
-    IPage<InvoiceDetailsVo> getPaymentInventoryInfoPass(Page page,String invoiceId);
+    IPage<InvoiceDetailsVO> getPaymentInventoryInfoPass(Page page, String invoiceId);
 
     //根据支付订单ID查找发票信息
     InvoiceInfoPO selectInvoiceInfoPO(String paymentOrderId);
 
-    PaymentOrderManyVo getPaymentOrderManySPass(String invoiceId);
+    PaymentOrderManyVO getPaymentOrderManySPass(String invoiceId);
 
-    SendAndReceiveVo querySendAndReceive(String invoiceId);
+    SendAndReceiveVO querySendAndReceive(String invoiceId);
 }

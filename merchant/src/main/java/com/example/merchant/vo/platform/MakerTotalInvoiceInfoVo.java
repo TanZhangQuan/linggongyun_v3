@@ -1,9 +1,8 @@
 package com.example.merchant.vo.platform;
 
 import com.example.merchant.vo.merchant.InvoiceCatalogVo;
-import com.example.mybatis.entity.InvoiceCatalog;
-import com.example.mybatis.vo.BuyerVo;
-import com.example.mybatis.vo.PaymentOrderVo;
+import com.example.mybatis.vo.BuyerVO;
+import com.example.mybatis.vo.PaymentOrderVO;
 import lombok.Data;
 
 import java.util.List;
@@ -19,12 +18,12 @@ public class MakerTotalInvoiceInfoVo {
     /**
      * 支付信息
      */
-    private List<PaymentOrderVo> paymentOrderVoList;
+    private List<PaymentOrderVO> paymentOrderVOList;
 
     /**
      * 购买方
      */
-    private BuyerVo buyerVo;
+    private BuyerVO buyerVo;
 
     /**
      * 开票类目

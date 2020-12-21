@@ -8,27 +8,21 @@ import com.example.common.util.ExcelUtils;
 import com.example.common.util.ReturnJson;
 import com.example.common.util.VerificationCheck;
 import com.example.merchant.dto.regulator.PayInfoDto;
-import com.example.merchant.vo.PaymentOrderInfoVO;
-import com.example.merchant.vo.regulator.RegulatorWorkerPaymentInfoVO;
 import com.example.mybatis.dto.RegulatorTaxDto;
 import com.example.mybatis.entity.*;
 import com.example.mybatis.mapper.*;
 import com.example.merchant.service.RegulatorTaxService;
 import com.example.mybatis.po.PaymentOrderInfoPO;
 import com.example.mybatis.po.RegulatorTaxPayInfoPo;
-import com.example.mybatis.vo.TaxVo;
-import com.sun.org.apache.bcel.internal.generic.LSTORE;
+import com.example.mybatis.vo.TaxVO;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -123,8 +117,8 @@ public class RegulatorTaxServiceImpl extends ServiceImpl<RegulatorTaxDao, Regula
     @Override
     public ReturnJson listTax(RegulatorTaxDto regulatorTaxDto, String regulatorId) {
         Page page = new Page(regulatorTaxDto.getPageNo(), regulatorTaxDto.getPageSize());
-        IPage<TaxVo> taxIPage = regulatorTaxDao.selServiceProviders(page, regulatorTaxDto,regulatorId);
-        List<TaxVo> voList = taxIPage.getRecords();
+        IPage<TaxVO> taxIPage = regulatorTaxDao.selServiceProviders(page, regulatorTaxDto,regulatorId);
+        List<TaxVO> voList = taxIPage.getRecords();
         for (int i = 0; i < voList.size(); i++) {
             voList.get(i).setPaymentOrderCount(voList.get(i).getPaymentOrderNum() + "/" + voList.get(i).getPaymentOrderManyNum());
             voList.get(i).setStatus(voList.get(i).getTaxStatus() == 0 ? "未认证" : "已认证");
@@ -184,14 +178,14 @@ public class RegulatorTaxServiceImpl extends ServiceImpl<RegulatorTaxDao, Regula
     @Override
     public ReturnJson batchExportTax(String taxIds, HttpServletResponse response) {
         List list = Arrays.asList(taxIds.split(","));
-        List<TaxVo> taxVos = regulatorTaxDao.selTaxListByIds(list);
-        for (int i = 0; i < taxVos.size(); i++) {
-            taxVos.get(i).setPaymentOrderCount(taxVos.get(i).getPaymentOrderNum() + "/" + taxVos.get(i).getPaymentOrderManyNum());
-            taxVos.get(i).setStatus(taxVos.get(i).getTaxStatus() == 0 ? "未认证" : "已认证");
+        List<TaxVO> taxVOS = regulatorTaxDao.selTaxListByIds(list);
+        for (int i = 0; i < taxVOS.size(); i++) {
+            taxVOS.get(i).setPaymentOrderCount(taxVOS.get(i).getPaymentOrderNum() + "/" + taxVOS.get(i).getPaymentOrderManyNum());
+            taxVOS.get(i).setStatus(taxVOS.get(i).getTaxStatus() == 0 ? "未认证" : "已认证");
         }
-        if (!VerificationCheck.listIsNull(taxVos)) {
+        if (!VerificationCheck.listIsNull(taxVOS)) {
             try {
-                ExcelUtils.exportExcel(taxVos, "平台服务商信息", "服务商信息", TaxVo.class, "RegulatorTax", true, response);
+                ExcelUtils.exportExcel(taxVOS, "平台服务商信息", "服务商信息", TaxVO.class, "RegulatorTax", true, response);
                 return ReturnJson.success("服务商导出成功！");
             } catch (IOException e) {
                 log.error(e.toString() + ":" + e.getMessage());

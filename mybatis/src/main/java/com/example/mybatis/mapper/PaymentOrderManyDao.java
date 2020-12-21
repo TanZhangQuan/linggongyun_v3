@@ -32,7 +32,7 @@ public interface PaymentOrderManyDao extends BaseMapper<PaymentOrderMany> {
      * @param merchantId
      * @return
      */
-    TodayVo getTodayById(String merchantId);
+    TodayVO getTodayById(String merchantId);
 
     /**
      * 查询商户本周成交总额
@@ -57,13 +57,13 @@ public interface PaymentOrderManyDao extends BaseMapper<PaymentOrderMany> {
 
 
     //根据商户id查众包待开票数据
-    IPage<CrowdSourcingInvoiceInfoVo> getListCSIByID(Page page, QueryCrowdSourcingDto queryCrowdSourcingDto, String userId);
+    IPage<CrowdSourcingInvoiceInfoVO> getListCSIByID(Page page, QueryCrowdSourcingDto queryCrowdSourcingDto, String userId);
 
     //根据支付id查询众包支付信息
-    PaymentOrderManyVo getPayOrderManyById(String id);
+    PaymentOrderManyVO getPayOrderManyById(String id);
 
     //根据众包支付id查询对应的开票清单
-    IPage<InvoiceDetailsVo> getInvoiceDetailsByPayId(Page page,@Param("id") String id);
+    IPage<InvoiceDetailsVO> getInvoiceDetailsByPayId(Page page, @Param("id") String id);
 
     IPage<PaymentOrderMany> selectMany(Page page, @Param("merchantId")String mercahntId, @Param("id") String id, @Param("taxId") String taxId, @Param("beginDate") String beginDate, @Param("endDate") String endDate);
 

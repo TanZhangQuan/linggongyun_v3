@@ -2,10 +2,9 @@ package com.example.merchant.vo.platform;
 
 import com.example.common.util.ExpressLogisticsInfo;
 import com.example.merchant.vo.merchant.InvoiceCatalogVo;
-import com.example.mybatis.vo.CrowdSourcingInvoiceInfoVo;
-import com.example.mybatis.vo.SendAndReceiveVo;
-import com.example.mybatis.vo.BuyerVo;
-import com.example.mybatis.vo.PaymentOrderManyVo;
+import com.example.mybatis.vo.SendAndReceiveVO;
+import com.example.mybatis.vo.BuyerVO;
+import com.example.mybatis.vo.PaymentOrderManyVO;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -22,12 +21,12 @@ public class QueryInvoicedVo {
     /**
      * 众包支付信息
      */
-    private PaymentOrderManyVo paymentOrderManyVo;
+    private PaymentOrderManyVO paymentOrderManyVo;
 
     /**
      * 购买方
      */
-    private BuyerVo buyerVo;
+    private BuyerVO buyerVo;
 
     /**
      * 开票类目
@@ -56,7 +55,7 @@ public class QueryInvoicedVo {
     /**
      * 发收件信息
      */
-    private SendAndReceiveVo sendAndReceiveVo;
+    private SendAndReceiveVO sendAndReceiveVo;
 
     /**
      * 物流信息

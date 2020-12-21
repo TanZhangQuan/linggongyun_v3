@@ -1,9 +1,9 @@
 package com.example.merchant.vo.merchant;
 
-import com.example.mybatis.vo.BillingInfoVo;
-import com.example.mybatis.vo.BuyerVo;
-import com.example.mybatis.vo.PaymentOrderVo;
-import com.example.mybatis.vo.SellerVo;
+import com.example.mybatis.vo.BillingInfoVO;
+import com.example.mybatis.vo.BuyerVO;
+import com.example.mybatis.vo.PaymentOrderVO;
+import com.example.mybatis.vo.SellerVO;
 import lombok.Data;
 
 import java.util.List;
@@ -18,22 +18,22 @@ public class QueryApplicationInvoiceVo {
     /**
      * 支付信息
      */
-    private List<PaymentOrderVo> paymentOrderVoList;
+    private List<PaymentOrderVO> paymentOrderVOList;
 
     /**
      * 开票信息
      */
-    private List<BillingInfoVo> billingInfoVoList;
+    private List<BillingInfoVO> billingInfoVOList;
 
     /**
      * 购买方信息
      */
-    private BuyerVo buyerVo;
+    private BuyerVO buyerVo;
 
     /**
      * 销售方信息
      */
-    private SellerVo sellerVo;
+    private SellerVO sellerVo;
 
     /**
      * 申请开票信息

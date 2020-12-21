@@ -3,7 +3,7 @@
 <mapper namespace="com.example.mybatis.mapper.SubpackageDao">
 
 
-    <resultMap id="summaryList" type="com.example.mybatis.vo.SubpackageVo">
+    <resultMap id="summaryList" type="com.example.mybatis.vo.SubpackageVO">
         <id column="id" property="id"/>
         <result column="company_s_name" property="companySName"/>
         <result column="platform_service_provider" property="platformServiceProvider"/>
@@ -11,14 +11,14 @@
         <result column="maker_invoice_url" property="makerInvoiceUrl"/>
         <result column="is_subpackage" property="isSubpackage"/>
         <result column="invoice_date" property="invoiceDate"/>
-        <collection property="list" ofType="com.example.mybatis.vo.OrderSubpackageVo">
+        <collection property="list" ofType="com.example.mybatis.vo.OrderSubpackageVO">
             <id column="pid" property="id"/>
             <result column="payment_inventory" property="paymentInventory"/>
             <result column="turnkey_project_payment" property="turnkeyProjectPayment"/>
         </collection>
     </resultMap>
 
-    <resultMap id="summary" type="com.example.mybatis.vo.SubpackageVo">
+    <resultMap id="summary" type="com.example.mybatis.vo.SubpackageVO">
         <id column="id" property="id"/>
         <result column="company_s_name" property="companySName"/>
         <result column="platform_service_provider" property="platformServiceProvider"/>
@@ -28,14 +28,14 @@
         <result column="payment_date" property="paymentDate"/>
         <result column="payment_order_status" property="paymentOrderStatus"/>
         <result column="invoice_date" property="invoiceDate"/>
-        <collection property="list" ofType="com.example.mybatis.vo.OrderSubpackageVo">
+        <collection property="list" ofType="com.example.mybatis.vo.OrderSubpackageVO">
             <id column="pid" property="id"/>
             <result column="payment_inventory" property="paymentInventory"/>
             <result column="turnkey_project_payment" property="turnkeyProjectPayment"/>
             <result column="acceptance_certificate" property="acceptanceCertificate"/>
             <result column="subpackage_payment" property="subpackagePayment"/>
         </collection>
-        <collection property="taskVoList" ofType="com.example.mybatis.vo.TaskVo">
+        <collection property="taskVOList" ofType="com.example.mybatis.vo.TaskVO">
             <result column="task_code" property="taskCode"/>
             <result column="task_name" property="taskName"/>
             <result column="release_date" property="releaseDate"/>
@@ -44,14 +44,14 @@
         </collection>
     </resultMap>
 
-    <resultMap id="SubpackageInfo" type="com.example.mybatis.vo.SubpackageInfoVo">
+    <resultMap id="SubpackageInfo" type="com.example.mybatis.vo.SubpackageInfoVO">
         <result column="invoice_category" property="invoiceCategory"/>
         <result column="maker_invoice_desc" property="makerInvoiceDesc"/>
         <result column="maker_invoice_url" property="makerInvoiceUrl"/>
         <result column="maker_tax_url" property="makerTaxUrl"/>
     </resultMap>
 
-    <resultMap id="InvoiceDetailsByPayId" type="com.example.mybatis.vo.InvoiceDetailsVo">
+    <resultMap id="InvoiceDetailsByPayId" type="com.example.mybatis.vo.InvoiceDetailsVO">
         <result column="worker_id" property="workerId"/>
         <result column="worker_name" property="workerName"/>
         <result column="mobile_code" property="mobileCode"/>
@@ -120,7 +120,7 @@
         WHERE mti.id=#{invoiceId}
     </select>
 
-    <resultMap id="PaymentOrderById" type="com.example.mybatis.vo.PaymentOrderVo">
+    <resultMap id="PaymentOrderById" type="com.example.mybatis.vo.PaymentOrderVO">
         <result column="id" property="id"/>
         <result column="company_s_name" property="companySName"/>
         <result column="platform_service_provider" property="platformServiceProvider"/>
@@ -129,7 +129,7 @@
         <result column="payment_inventory" property="paymentInventory"/>
         <result column="payment_date" property="paymentDate"/>
         <result column="subpackage_payment" property="subpackagePayment"/>
-        <association property="taskVo" javaType="com.example.mybatis.vo.TaskVo">
+        <association property="taskVo" javaType="com.example.mybatis.vo.TaskVO">
             <result column="task_code" property="taskCode"/>
             <result column="task_name" property="taskName"/>
             <result column="release_date" property="releaseDate"/>
