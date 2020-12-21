@@ -8,9 +8,9 @@ import com.example.common.util.*;
 import com.example.merchant.dto.makerend.QueryMissionHall;
 import com.example.merchant.dto.merchant.AddTaskDto;
 import com.example.merchant.service.WorkerTaskService;
-import com.example.mybatis.dto.PlatformTaskDto;
-import com.example.mybatis.dto.TaskDto;
-import com.example.mybatis.dto.TaskListDto;
+import com.example.mybatis.dto.PlatformTaskDTO;
+import com.example.mybatis.dto.TaskDTO;
+import com.example.mybatis.dto.TaskListDTO;
 import com.example.mybatis.entity.*;
 import com.example.mybatis.mapper.*;
 import com.example.merchant.service.TaskService;
@@ -54,7 +54,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
 
 
     @Override
-    public ReturnJson selectList(TaskListDto taskListDto, String userId) {
+    public ReturnJson selectList(TaskListDTO taskListDto, String userId) {
         Page page = new Page(taskListDto.getPageNo(), taskListDto.getPageSize());
         IPage<Task> taskList = taskDao.selectLists(page, taskListDto, userId);
         return ReturnJson.success(taskList);
@@ -164,14 +164,14 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
     }
 
     @Override
-    public ReturnJson getPlatformTaskList(PlatformTaskDto platformTaskDto) {
+    public ReturnJson getPlatformTaskList(PlatformTaskDTO platformTaskDto) {
         Page page = new Page(platformTaskDto.getPageNo(), platformTaskDto.getPageSize());
         IPage<Task> taskList = taskDao.getPlatformTaskList(page, platformTaskDto);
         return ReturnJson.success(taskList);
     }
 
     @Override
-    public ReturnJson savePlatformTask(TaskDto taskDto) {
+    public ReturnJson savePlatformTask(TaskDTO taskDto) {
         Merchant merchant = merchantDao.selectById(taskDto.getMerchantId());
         DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         DateTimeFormatter df1 = DateTimeFormatter.ofPattern("HH:mm:ss");
@@ -207,7 +207,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
     }
 
     @Override
-    public ReturnJson updatePlatfromTask(TaskDto taskDto) {
+    public ReturnJson updatePlatfromTask(TaskDTO taskDto) {
         if (taskDto.getId() == null) {
             return ReturnJson.error("请选择任务");
         }

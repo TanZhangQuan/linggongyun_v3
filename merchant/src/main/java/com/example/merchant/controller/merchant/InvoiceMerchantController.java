@@ -4,8 +4,8 @@ import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.merchant.UpdateApplication;
 import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.*;
-import com.example.mybatis.dto.InvoiceApplicationDto;
-import com.example.mybatis.dto.QueryTobeinvoicedDto;
+import com.example.mybatis.dto.InvoiceApplicationDTO;
+import com.example.mybatis.dto.QueryTobeinvoicedDTO;
 import io.swagger.annotations.*;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -49,7 +49,7 @@ public class InvoiceMerchantController {
     @ApiOperation("总包发票列表,待开票")
     @PostMapping(value = "/gettobeinvoiced")
     @LoginRequired
-    public ReturnJson gettobeinvoiced(@Valid @RequestBody QueryTobeinvoicedDto queryTobeinvoicedDto,
+    public ReturnJson gettobeinvoiced(@Valid @RequestBody QueryTobeinvoicedDTO queryTobeinvoicedDto,
                                       @RequestAttribute(value = "userId") @ApiParam(hidden = true) String merchantId) {
         return invoiceService.selectTobeinvoiced(queryTobeinvoicedDto, merchantId);
     }
@@ -57,7 +57,7 @@ public class InvoiceMerchantController {
     @ApiOperation("总包发票列表,已开票")
     @PostMapping(value = "/getInvoiceList")
     @LoginRequired
-    public ReturnJson getInvoiceList(@Valid @RequestBody QueryTobeinvoicedDto queryTobeinvoicedDto,
+    public ReturnJson getInvoiceList(@Valid @RequestBody QueryTobeinvoicedDTO queryTobeinvoicedDto,
                                      @RequestAttribute(value = "userId") @ApiParam(hidden = true) String merchantId) {
         return invoiceService.getInvoiceList(queryTobeinvoicedDto, merchantId);
     }
@@ -111,7 +111,7 @@ public class InvoiceMerchantController {
 
     @ApiOperation("添加申请开票信息")
     @PostMapping(value = "/addInvApplication")
-    public ReturnJson addInvApplication(InvoiceApplicationDto invoiceApplicationDto) {
+    public ReturnJson addInvApplication(InvoiceApplicationDTO invoiceApplicationDto) {
         return invoiceApplicationService.addInvApplication(invoiceApplicationDto);
     }
 

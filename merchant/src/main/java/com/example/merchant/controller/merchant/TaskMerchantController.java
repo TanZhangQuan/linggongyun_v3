@@ -5,7 +5,7 @@ import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.merchant.AddTaskDto;
 import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.TaskService;
-import com.example.mybatis.dto.TaskListDto;
+import com.example.mybatis.dto.TaskListDTO;
 import com.example.mybatis.entity.Task;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -34,7 +34,7 @@ public class TaskMerchantController {
     @LoginRequired
     @ApiOperation("任务列表")
     @PostMapping(value = "/getTasks")
-    public ReturnJson<Task> TaskList(TaskListDto taskListDto, @RequestAttribute("userId") @ApiParam(hidden = true) String userId) {
+    public ReturnJson<Task> TaskList(TaskListDTO taskListDto, @RequestAttribute("userId") @ApiParam(hidden = true) String userId) {
         return taskService.selectList(taskListDto, userId);
     }
 

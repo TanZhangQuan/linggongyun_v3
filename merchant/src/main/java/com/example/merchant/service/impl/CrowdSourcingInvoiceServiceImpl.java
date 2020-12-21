@@ -16,8 +16,8 @@ import com.example.merchant.vo.merchant.*;
 import com.example.merchant.vo.merchant.InvoiceVo;
 import com.example.merchant.vo.platform.AddressVo;
 import com.example.merchant.vo.platform.QueryNotInvoicedVo;
-import com.example.mybatis.dto.QueryCrowdSourcingDto;
-import com.example.mybatis.dto.TobeinvoicedDto;
+import com.example.mybatis.dto.QueryCrowdSourcingDTO;
+import com.example.mybatis.dto.TobeinvoicedDTO;
 import com.example.mybatis.entity.*;
 import com.example.mybatis.mapper.*;
 import com.example.mybatis.vo.*;
@@ -88,7 +88,7 @@ public class CrowdSourcingInvoiceServiceImpl extends ServiceImpl<CrowdSourcingIn
     }
 
     @Override
-    public ReturnJson getCrowdSourcingInfo(QueryCrowdSourcingDto queryCrowdSourcingDto, String userId) {
+    public ReturnJson getCrowdSourcingInfo(QueryCrowdSourcingDTO queryCrowdSourcingDto, String userId) {
         Page page = new Page(queryCrowdSourcingDto.getPageNo(), queryCrowdSourcingDto.getPageSize());
         Merchant merchant = merchantDao.selectById(userId);
         IPage<CrowdSourcingInfoVO> vos = crowdSourcingInvoiceDao.getCrowdSourcingInfo(page,
@@ -107,7 +107,7 @@ public class CrowdSourcingInvoiceServiceImpl extends ServiceImpl<CrowdSourcingIn
     }
 
     @Override
-    public ReturnJson getTobeCrowdSourcingInvoice(TobeinvoicedDto tobeinvoicedDto) {
+    public ReturnJson getTobeCrowdSourcingInvoice(TobeinvoicedDTO tobeinvoicedDto) {
         Page page = new Page(tobeinvoicedDto.getPageNo(), tobeinvoicedDto.getPageSize());
         IPage<CrowdSourcingInvoiceInfoVO> list = crowdSourcingInvoiceDao.
                 getCrowdSourcingInvoicePass(page, tobeinvoicedDto);
@@ -230,7 +230,7 @@ public class CrowdSourcingInvoiceServiceImpl extends ServiceImpl<CrowdSourcingIn
     }
 
     @Override
-    public ReturnJson getCrowdSourcingInfoPass(TobeinvoicedDto tobeinvoicedDto) {
+    public ReturnJson getCrowdSourcingInfoPass(TobeinvoicedDTO tobeinvoicedDto) {
         Page page = new Page(tobeinvoicedDto.getPageNo(), tobeinvoicedDto.getPageSize());
         IPage<CrowdSourcingInfoVO> vos = crowdSourcingInvoiceDao.getCrowdSourcingInfoPass(page, tobeinvoicedDto);
         return ReturnJson.success(vos);

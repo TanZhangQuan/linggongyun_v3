@@ -1,11 +1,9 @@
 package com.example.merchant.service;
 
 import com.example.common.util.ReturnJson;
-import com.example.mybatis.dto.WorkerTaskDto;
 import com.example.mybatis.entity.WorkerTask;
 import com.baomidou.mybatisplus.extension.service.IService;
 
-import java.util.List;
 import java.util.Map;
 
 /**

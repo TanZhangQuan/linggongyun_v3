@@ -1,9 +1,9 @@
 package com.example.merchant.service;
 
 import com.example.common.util.ReturnJson;
-import com.example.mybatis.dto.QueryTobeinvoicedDto;
-import com.example.mybatis.dto.AddInvoiceDto;
-import com.example.mybatis.dto.TobeinvoicedDto;
+import com.example.mybatis.dto.QueryTobeinvoicedDTO;
+import com.example.mybatis.dto.AddInvoiceDTO;
+import com.example.mybatis.dto.TobeinvoicedDTO;
 import com.example.mybatis.entity.Invoice;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -24,7 +24,7 @@ public interface InvoiceService extends IService<Invoice> {
      * @param merchantId
      * @return
      */
-    ReturnJson selectTobeinvoiced(QueryTobeinvoicedDto queryTobeinvoicedDto, String merchantId);
+    ReturnJson selectTobeinvoiced(QueryTobeinvoicedDTO queryTobeinvoicedDto, String merchantId);
 
     /**
      * 总包发票列表,已开票
@@ -33,7 +33,7 @@ public interface InvoiceService extends IService<Invoice> {
      * @param merchantId
      * @return
      */
-    ReturnJson getInvoiceList(QueryTobeinvoicedDto queryTobeinvoicedDto, String merchantId);
+    ReturnJson getInvoiceList(QueryTobeinvoicedDTO queryTobeinvoicedDto, String merchantId);
 
     /**
      * 总包发票列表已开票,发票信息
@@ -60,7 +60,7 @@ public interface InvoiceService extends IService<Invoice> {
      * @param tobeinvoicedDto
      * @return
      */
-    ReturnJson getPlaInvoiceList(TobeinvoicedDto tobeinvoicedDto);
+    ReturnJson getPlaInvoiceList(TobeinvoicedDTO tobeinvoicedDto);
 
     /**
      * 平台查询发票信息
@@ -76,7 +76,7 @@ public interface InvoiceService extends IService<Invoice> {
      * @param addInvoiceDto
      * @return
      */
-    ReturnJson saveInvoice(AddInvoiceDto addInvoiceDto);
+    ReturnJson saveInvoice(AddInvoiceDTO addInvoiceDto);
 
     /**
      * 发票编号
@@ -91,9 +91,9 @@ public interface InvoiceService extends IService<Invoice> {
      * @param tobeinvoicedDto
      * @return
      */
-    ReturnJson getListInvoicequery(TobeinvoicedDto tobeinvoicedDto);
+    ReturnJson getListInvoicequery(TobeinvoicedDTO tobeinvoicedDto);
 
-    ReturnJson updateInvoiceById(AddInvoiceDto addInvoiceDto);
+    ReturnJson updateInvoiceById(AddInvoiceDTO addInvoiceDto);
 
     /**
      * 分包开票，待开票
@@ -101,7 +101,7 @@ public interface InvoiceService extends IService<Invoice> {
      * @param tobeinvoicedDto
      * @return
      */
-    ReturnJson getListSubQuery(TobeinvoicedDto tobeinvoicedDto);
+    ReturnJson getListSubQuery(TobeinvoicedDTO tobeinvoicedDto);
 
     /**
      * 汇总开票详情数据

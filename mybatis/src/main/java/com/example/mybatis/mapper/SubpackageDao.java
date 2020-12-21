@@ -2,7 +2,7 @@ package com.example.mybatis.mapper;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.example.mybatis.dto.QuerySubpackageDto;
+import com.example.mybatis.dto.QuerySubpackageDTO;
 import com.example.mybatis.vo.InvoiceDetailsVO;
 import com.example.mybatis.vo.PaymentOrderVO;
 import com.example.mybatis.vo.SubpackageInfoVO;
@@ -16,7 +16,7 @@ import java.util.List;
  */
 public interface SubpackageDao {
     //汇总代开
-    IPage<SubpackageVO> getSummaryList(Page page, QuerySubpackageDto querySubpackageDto, String merchantId);
+    IPage<SubpackageVO> getSummaryList(Page page, QuerySubpackageDTO querySubpackageDto, String merchantId);
 
     //根据发票id查询单个发票对应支付信息
     SubpackageVO getSummary(String invoiceId);

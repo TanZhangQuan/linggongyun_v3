@@ -10,7 +10,7 @@ import com.example.common.util.ReturnJson;
 import com.example.common.util.VerificationCheck;
 import com.example.merchant.dto.merchant.AddPaymentOrderManyDto;
 import com.example.merchant.dto.merchant.PaymentOrderMerchantDto;
-import com.example.mybatis.dto.QueryCrowdSourcingDto;
+import com.example.mybatis.dto.QueryCrowdSourcingDTO;
 import com.example.merchant.dto.platform.PaymentOrderDto;
 import com.example.merchant.dto.platform.PaymentOrderManyDto;
 import com.example.merchant.exception.CommonException;
@@ -149,7 +149,7 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
      * @return
      */
     @Override
-    public ReturnJson getListCSIByID(QueryCrowdSourcingDto queryCrowdSourcingDto, String userId) {
+    public ReturnJson getListCSIByID(QueryCrowdSourcingDTO queryCrowdSourcingDto, String userId) {
         Page page = new Page(queryCrowdSourcingDto.getPageNo(), queryCrowdSourcingDto.getPageSize());
         Merchant merchant = merchantDao.selectById(userId);
         IPage<CrowdSourcingInvoiceInfoVO> list = paymentOrderManyDao.getListCSIByID(page, queryCrowdSourcingDto, merchant.getCompanyId());

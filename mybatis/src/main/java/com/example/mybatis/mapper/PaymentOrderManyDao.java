@@ -3,7 +3,7 @@ package com.example.mybatis.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.example.mybatis.dto.QueryCrowdSourcingDto;
+import com.example.mybatis.dto.QueryCrowdSourcingDTO;
 import com.example.mybatis.entity.PaymentOrderMany;
 import com.example.mybatis.po.BillCountPO;
 import com.example.mybatis.po.BillPO;
@@ -57,7 +57,7 @@ public interface PaymentOrderManyDao extends BaseMapper<PaymentOrderMany> {
 
 
     //根据商户id查众包待开票数据
-    IPage<CrowdSourcingInvoiceInfoVO> getListCSIByID(Page page, QueryCrowdSourcingDto queryCrowdSourcingDto, String userId);
+    IPage<CrowdSourcingInvoiceInfoVO> getListCSIByID(Page page, QueryCrowdSourcingDTO queryCrowdSourcingDto, String userId);
 
     //根据支付id查询众包支付信息
     PaymentOrderManyVO getPayOrderManyById(String id);

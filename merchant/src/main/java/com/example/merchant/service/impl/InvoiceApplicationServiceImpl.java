@@ -9,8 +9,8 @@ import com.example.merchant.service.InvoiceApplicationService;
 import com.example.merchant.vo.merchant.GoApplicationInvoiceVo;
 import com.example.merchant.vo.merchant.InvoiceApplicationVo;
 import com.example.merchant.vo.merchant.QueryApplicationInvoiceVo;
-import com.example.mybatis.dto.ApplicationPaymentDto;
-import com.example.mybatis.dto.InvoiceApplicationDto;
+import com.example.mybatis.dto.ApplicationPaymentDTO;
+import com.example.mybatis.dto.InvoiceApplicationDTO;
 import com.example.mybatis.entity.InvoiceApplication;
 import com.example.mybatis.entity.PaymentOrder;
 import com.example.mybatis.mapper.InvoiceApplicationDao;
@@ -58,7 +58,7 @@ public class InvoiceApplicationServiceImpl extends ServiceImpl<InvoiceApplicatio
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ReturnJson addInvApplication(InvoiceApplicationDto invoiceApplicationDto) {
+    public ReturnJson addInvApplication(InvoiceApplicationDTO invoiceApplicationDto) {
         ReturnJson returnJson = new ReturnJson("添加失败", 300);
         InvoiceApplication invoiceApplication = new InvoiceApplication();
         IdentifierGenerator identifierGenerator = new DefaultIdentifierGenerator();
@@ -68,7 +68,7 @@ public class InvoiceApplicationServiceImpl extends ServiceImpl<InvoiceApplicatio
         if (num > 0) {
             String[] paymentOrderIds = invoiceApplicationDto.getPaymentOrderId().split(",");
             for (int i = 0; i < paymentOrderIds.length; i++) {
-                ApplicationPaymentDto applicationPaymentDto = new ApplicationPaymentDto();
+                ApplicationPaymentDTO applicationPaymentDto = new ApplicationPaymentDTO();
                 applicationPaymentDto.setId(identifierGenerator.nextId(new Object()).toString());
                 applicationPaymentDto.setInvoiceApplicationId(invoiceApplication.getId());
                 applicationPaymentDto.setPaymentOrderId(paymentOrderIds[i]);
@@ -84,7 +84,7 @@ public class InvoiceApplicationServiceImpl extends ServiceImpl<InvoiceApplicatio
     }
 
     @Override
-    public int addApplicationPay(ApplicationPaymentDto applicationPaymentDto) {
+    public int addApplicationPay(ApplicationPaymentDTO applicationPaymentDto) {
         return invoiceApplicationDao.addApplicationPay(applicationPaymentDto);
     }
 

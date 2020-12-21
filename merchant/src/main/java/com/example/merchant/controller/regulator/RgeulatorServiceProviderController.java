@@ -3,9 +3,8 @@ package com.example.merchant.controller.regulator;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.regulator.PayInfoDto;
 import com.example.merchant.interceptor.LoginRequired;
-import com.example.merchant.service.RegulatorService;
 import com.example.merchant.service.RegulatorTaxService;
-import com.example.mybatis.dto.RegulatorTaxDto;
+import com.example.mybatis.dto.RegulatorTaxDTO;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -28,8 +27,8 @@ public class RgeulatorServiceProviderController {
     @PostMapping("getListServiceProvider")
     @LoginRequired
     @ApiOperation(value = "查询服务商列表", notes = "查询服务商列表", httpMethod = "POST")
-    @ApiImplicitParams(value = {@ApiImplicitParam(name = "regulatorTaxDto", value = "监管服务商查询", dataType = "RegulatorTaxDto", required = true)})
-    public ReturnJson getListServiceProvider(@Valid @RequestBody RegulatorTaxDto regulatorTaxDto, @ApiParam(hidden = true) @RequestAttribute(value = "userId", required = false) String regulatorId) {
+    @ApiImplicitParams(value = {@ApiImplicitParam(name = "regulatorTaxDto", value = "监管服务商查询", dataType = "RegulatorTaxDTO", required = true)})
+    public ReturnJson getListServiceProvider(@Valid @RequestBody RegulatorTaxDTO regulatorTaxDto, @ApiParam(hidden = true) @RequestAttribute(value = "userId", required = false) String regulatorId) {
         return regulatorTaxService.listTax(regulatorTaxDto, regulatorId);
     }
 

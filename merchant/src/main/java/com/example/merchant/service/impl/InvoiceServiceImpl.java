@@ -9,11 +9,11 @@ import com.example.merchant.vo.merchant.*;
 import com.example.merchant.vo.platform.AddressVo;
 import com.example.merchant.vo.platform.QueryApplicationVo;
 import com.example.merchant.vo.platform.QueryPlaInvoiceVo;
-import com.example.mybatis.dto.QueryTobeinvoicedDto;
+import com.example.mybatis.dto.QueryTobeinvoicedDTO;
 import com.example.merchant.service.InvoiceApplicationService;
 import com.example.merchant.service.InvoiceService;
-import com.example.mybatis.dto.AddInvoiceDto;
-import com.example.mybatis.dto.TobeinvoicedDto;
+import com.example.mybatis.dto.AddInvoiceDTO;
+import com.example.mybatis.dto.TobeinvoicedDTO;
 import com.example.mybatis.entity.*;
 import com.example.mybatis.mapper.*;
 import com.example.mybatis.vo.*;
@@ -62,7 +62,7 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
 
 
     @Override
-    public ReturnJson selectTobeinvoiced(QueryTobeinvoicedDto queryTobeinvoicedDto, String merchantId) {
+    public ReturnJson selectTobeinvoiced(QueryTobeinvoicedDTO queryTobeinvoicedDto, String merchantId) {
         Merchant merchant = merchantDao.selectById(merchantId);
         Page page = new Page(queryTobeinvoicedDto.getPageNo(), queryTobeinvoicedDto.getPageSize());
         IPage<TobeinvoicedVO> list = invoiceDao.selectTobeinvoiced(page, queryTobeinvoicedDto, merchant.getCompanyId());
@@ -70,7 +70,7 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
     }
 
     @Override
-    public ReturnJson getInvoiceList(QueryTobeinvoicedDto queryTobeinvoicedDto, String merchantId) {
+    public ReturnJson getInvoiceList(QueryTobeinvoicedDTO queryTobeinvoicedDto, String merchantId) {
         Merchant merchant = merchantDao.selectById(merchantId);
         Page page = new Page(queryTobeinvoicedDto.getPageNo(), queryTobeinvoicedDto.getPageSize());
         IPage<InvoiceVO> list = invoiceDao.getInvoiceList(page, queryTobeinvoicedDto, merchant.getCompanyId());
@@ -136,7 +136,7 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
 
 
     @Override
-    public ReturnJson getPlaInvoiceList(TobeinvoicedDto tobeinvoicedDto) {
+    public ReturnJson getPlaInvoiceList(TobeinvoicedDTO tobeinvoicedDto) {
         Page page = new Page(tobeinvoicedDto.getPageNo(), tobeinvoicedDto.getPageSize());
         IPage<PlaInvoiceListVO> list = invoiceDao.getPlaInvoiceList(page, tobeinvoicedDto);
         return ReturnJson.success(list);
@@ -173,7 +173,7 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ReturnJson saveInvoice(AddInvoiceDto addInvoiceDto) {
+    public ReturnJson saveInvoice(AddInvoiceDTO addInvoiceDto) {
         ReturnJson returnJson = new ReturnJson("添加失败", 300);
         DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         Invoice invoice = new Invoice();
@@ -240,14 +240,14 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
     }
 
     @Override
-    public ReturnJson getListInvoicequery(TobeinvoicedDto tobeinvoicedDto) {
+    public ReturnJson getListInvoicequery(TobeinvoicedDTO tobeinvoicedDto) {
         Page page = new Page(tobeinvoicedDto.getPageNo(), tobeinvoicedDto.getPageSize());
         IPage<InvoiceVO> list = invoiceDao.getListInvoicequery(page, tobeinvoicedDto);
         return ReturnJson.success(list);
     }
 
     @Override
-    public ReturnJson updateInvoiceById(AddInvoiceDto addInvoiceDto) {
+    public ReturnJson updateInvoiceById(AddInvoiceDTO addInvoiceDto) {
         ReturnJson returnJson = new ReturnJson("操作失败", 300);
         return returnJson;
     }
@@ -259,7 +259,7 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
      * @return
      */
     @Override
-    public ReturnJson getListSubQuery(TobeinvoicedDto tobeinvoicedDto) {
+    public ReturnJson getListSubQuery(TobeinvoicedDTO tobeinvoicedDto) {
         Page page = new Page(tobeinvoicedDto.getPageNo(), tobeinvoicedDto.getPageSize());
         IPage<ToSubcontractInvoiceVO> list = invoiceDao.getListSubQuery(page, tobeinvoicedDto);
         return ReturnJson.success(list);

@@ -8,7 +8,7 @@ import com.example.common.util.ExcelUtils;
 import com.example.common.util.ReturnJson;
 import com.example.common.util.VerificationCheck;
 import com.example.merchant.dto.regulator.PayInfoDto;
-import com.example.mybatis.dto.RegulatorTaxDto;
+import com.example.mybatis.dto.RegulatorTaxDTO;
 import com.example.mybatis.entity.*;
 import com.example.mybatis.mapper.*;
 import com.example.merchant.service.RegulatorTaxService;
@@ -115,7 +115,7 @@ public class RegulatorTaxServiceImpl extends ServiceImpl<RegulatorTaxDao, Regula
     }
 
     @Override
-    public ReturnJson listTax(RegulatorTaxDto regulatorTaxDto, String regulatorId) {
+    public ReturnJson listTax(RegulatorTaxDTO regulatorTaxDto, String regulatorId) {
         Page page = new Page(regulatorTaxDto.getPageNo(), regulatorTaxDto.getPageSize());
         IPage<TaxVO> taxIPage = regulatorTaxDao.selServiceProviders(page, regulatorTaxDto,regulatorId);
         List<TaxVO> voList = taxIPage.getRecords();

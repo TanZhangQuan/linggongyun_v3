@@ -15,13 +15,13 @@
         id,service_type,service_content,billing_category
     </sql>
 
-    <insert id="addInvApplication" parameterType="com.example.mybatis.dto.InvoiceApplicationDto">
+    <insert id="addInvApplication" parameterType="com.example.mybatis.dto.InvoiceApplicationDTO">
         INSERT INTO tb_invoice_application(id,application_date,application_person,invoice_total_amount,
         invoice_catalog_type,application_desc,application_address,application_state)
         VALUES (#{id},now(),#{applicationPerson},#{invoiceTotalAmount},#{invoiceCatalogType},#{applicationDesc},#{applicationAddress},1);
     </insert>
 
-    <insert id="addApplicationPay" parameterType="com.example.mybatis.dto.ApplicationPaymentDto">
+    <insert id="addApplicationPay" parameterType="com.example.mybatis.dto.ApplicationPaymentDTO">
         INSERT INTO tb_application_payment
         (id,invoice_application_id,payment_order_id)
         VALUES (#{id},#{invoiceApplicationId},#{paymentOrderId});

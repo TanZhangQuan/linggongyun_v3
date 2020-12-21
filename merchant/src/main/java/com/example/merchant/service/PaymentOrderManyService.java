@@ -2,7 +2,7 @@ package com.example.merchant.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.common.util.ReturnJson;
-import com.example.mybatis.dto.QueryCrowdSourcingDto;
+import com.example.mybatis.dto.QueryCrowdSourcingDTO;
 import com.example.merchant.dto.platform.PaymentOrderDto;
 import com.example.merchant.dto.merchant.AddPaymentOrderManyDto;
 import com.example.merchant.dto.merchant.PaymentOrderMerchantDto;
@@ -33,7 +33,7 @@ public interface PaymentOrderManyService extends IService<PaymentOrderMany> {
      * @param userId
      * @return
      */
-    ReturnJson getListCSIByID(QueryCrowdSourcingDto queryCrowdSourcingDto,String userId);
+    ReturnJson getListCSIByID(QueryCrowdSourcingDTO queryCrowdSourcingDto, String userId);
 
     /**
      * 根据支付id查询众包支付信息

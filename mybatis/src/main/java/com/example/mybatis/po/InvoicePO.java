@@ -15,7 +15,6 @@ public class InvoicePO {
     /**
      * 发票总金额
      */
-
     private BigDecimal TotalMoney;
 
     /**

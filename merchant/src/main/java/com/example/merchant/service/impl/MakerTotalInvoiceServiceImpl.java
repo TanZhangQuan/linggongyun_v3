@@ -12,7 +12,7 @@ import com.example.merchant.vo.platform.QueryMakerTotalInvoiceDetailVo;
 import com.example.merchant.service.MakerTotalInvoiceService;
 import com.example.merchant.vo.merchant.InvoiceCatalogVo;
 import com.example.merchant.vo.platform.MakerTotalInvoiceInfoVo;
-import com.example.mybatis.dto.QueryMakerTotalInvoiceDto;
+import com.example.mybatis.dto.QueryMakerTotalInvoiceDTO;
 import com.example.mybatis.entity.*;
 import com.example.mybatis.mapper.*;
 import com.example.mybatis.vo.BuyerVO;
@@ -148,7 +148,7 @@ public class MakerTotalInvoiceServiceImpl extends ServiceImpl<MakerTotalInvoiceD
     }
 
     @Override
-    public ReturnJson queryMakerTotalInvoice(QueryMakerTotalInvoiceDto queryMakerTotalInvoiceDto) {
+    public ReturnJson queryMakerTotalInvoice(QueryMakerTotalInvoiceDTO queryMakerTotalInvoiceDto) {
         Page page = new Page(queryMakerTotalInvoiceDto.getPageNo(), queryMakerTotalInvoiceDto.getPageSize());
         IPage<MakerTotalInvoiceVO> makerTotalInvoiceVoIPage = makerTotalInvoiceDao.queryMakerTotalInvoice(page, queryMakerTotalInvoiceDto);
         return ReturnJson.success(makerTotalInvoiceVoIPage);

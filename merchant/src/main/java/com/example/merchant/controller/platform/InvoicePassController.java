@@ -8,9 +8,9 @@ import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.InvoiceService;
 import com.example.merchant.service.MakerInvoiceService;
 import com.example.merchant.service.MakerTotalInvoiceService;
-import com.example.mybatis.dto.AddInvoiceDto;
-import com.example.mybatis.dto.QueryMakerTotalInvoiceDto;
-import com.example.mybatis.dto.TobeinvoicedDto;
+import com.example.mybatis.dto.AddInvoiceDTO;
+import com.example.mybatis.dto.QueryMakerTotalInvoiceDTO;
+import com.example.mybatis.dto.TobeinvoicedDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -46,7 +46,7 @@ public class InvoicePassController {
 
     @ApiOperation("总包开票，待开票")
     @PostMapping("/getPlaInvoiceList")
-    public ReturnJson getPlaInvoiceList(@Valid @RequestBody TobeinvoicedDto tobeinvoicedDto) {
+    public ReturnJson getPlaInvoiceList(@Valid @RequestBody TobeinvoicedDTO tobeinvoicedDto) {
         return invoiceService.getPlaInvoiceList(tobeinvoicedDto);
     }
 
@@ -64,19 +64,19 @@ public class InvoicePassController {
 
     @ApiOperation("总包开票")
     @PostMapping("/saveInvoice")
-    public ReturnJson saveInvoice(@Valid @RequestBody AddInvoiceDto addInvoiceDto) {
+    public ReturnJson saveInvoice(@Valid @RequestBody AddInvoiceDTO addInvoiceDto) {
         return invoiceService.saveInvoice(addInvoiceDto);
     }
 
     @ApiOperation("总包开票，以开票")
     @PostMapping("/listInvoiceQuery")
-    public ReturnJson listInvoiceQuery(@Valid @RequestBody TobeinvoicedDto tobeinvoicedDto) {
+    public ReturnJson listInvoiceQuery(@Valid @RequestBody TobeinvoicedDTO tobeinvoicedDto) {
         return invoiceService.getListInvoicequery(tobeinvoicedDto);
     }
 
     @ApiOperation("分包开票，待开票")
     @PostMapping("/listSubQuery")
-    public ReturnJson listSubQuery(@Valid @RequestBody TobeinvoicedDto tobeinvoicedDto) {
+    public ReturnJson listSubQuery(@Valid @RequestBody TobeinvoicedDTO tobeinvoicedDto) {
         return invoiceService.getListSubQuery(tobeinvoicedDto);
     }
 
@@ -114,7 +114,7 @@ public class InvoicePassController {
 
     @ApiOperation("分包已开票，汇总代开列表")
     @PostMapping("/queryMakerTotalInvoice")
-    public ReturnJson queryMakerTotalInvoice(@Valid @RequestBody QueryMakerTotalInvoiceDto queryMakerTotalInvoiceDto) {
+    public ReturnJson queryMakerTotalInvoice(@Valid @RequestBody QueryMakerTotalInvoiceDTO queryMakerTotalInvoiceDto) {
         return makerTotalInvoiceService.queryMakerTotalInvoice(queryMakerTotalInvoiceDto);
     }
 

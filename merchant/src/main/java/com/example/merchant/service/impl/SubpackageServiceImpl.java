@@ -8,7 +8,7 @@ import com.example.merchant.service.SubpackageService;
 import com.example.merchant.vo.merchant.InvoiceCatalogVo;
 import com.example.merchant.vo.merchant.InvoiceInfoVo;
 import com.example.merchant.vo.merchant.QuerySubInfoVo;
-import com.example.mybatis.dto.QuerySubpackageDto;
+import com.example.mybatis.dto.QuerySubpackageDTO;
 import com.example.mybatis.entity.InvoiceCatalog;
 import com.example.mybatis.entity.MakerTotalInvoice;
 import com.example.mybatis.entity.Merchant;
@@ -53,7 +53,7 @@ public class SubpackageServiceImpl implements SubpackageService {
     }
 
     @Override
-    public ReturnJson getSummaryList(QuerySubpackageDto querySubpackageDto, String merchantId) {
+    public ReturnJson getSummaryList(QuerySubpackageDTO querySubpackageDto, String merchantId) {
         Page page = new Page(querySubpackageDto.getPageNo(), querySubpackageDto.getPageSize());
         Merchant merchant = merchantDao.selectById(merchantId);
         IPage<SubpackageVO> list = subpackageDao.getSummaryList(page, querySubpackageDto, merchant.getCompanyId());
