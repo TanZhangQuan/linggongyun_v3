@@ -114,7 +114,7 @@ public class InvoicePassController {
 
     @ApiOperation("分包已开票，汇总代开列表")
     @PostMapping("/queryMakerTotalInvoice")
-    public ReturnJson queryMakerTotalInvoice(@RequestBody QueryMakerTotalInvoiceDto queryMakerTotalInvoiceDto) {
+    public ReturnJson queryMakerTotalInvoice(@Valid @RequestBody QueryMakerTotalInvoiceDto queryMakerTotalInvoiceDto) {
         return makerTotalInvoiceService.queryMakerTotalInvoice(queryMakerTotalInvoiceDto);
     }
 

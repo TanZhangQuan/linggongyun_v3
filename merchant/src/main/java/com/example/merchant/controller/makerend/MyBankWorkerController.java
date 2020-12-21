@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 /**
  * @author Jwei
  */
@@ -25,7 +27,7 @@ public class MyBankWorkerController {
     @PostMapping("/personalRegister")
     @LoginRequired
     @ApiOperation(value = "注册网商个人会员", notes = "注册网商个人会员", httpMethod = "POST")
-    public ReturnJson personalRegister(@RequestBody Personal personal,
+    public ReturnJson personalRegister(@Valid @RequestBody Personal personal,
                                        @RequestAttribute(value = "userId") @ApiParam(hidden = true) String userId) throws Exception {
         return myBankWorkerService.personalRegister(personal, userId);
     }
@@ -33,7 +35,7 @@ public class MyBankWorkerController {
     @PostMapping("/personalInfoModify")
     @LoginRequired
     @ApiOperation(value = "修改网商个人会员信息", notes = "修改网商个人会员信息", httpMethod = "POST")
-    public ReturnJson personalInfoModify(@RequestBody Personal personal,
+    public ReturnJson personalInfoModify(@Valid @RequestBody Personal personal,
                                          @RequestAttribute(value = "userId") @ApiParam(hidden = true) String userId) throws Exception {
         return myBankWorkerService.personalInfoModify(personal, userId);
     }
@@ -48,7 +50,7 @@ public class MyBankWorkerController {
     @PostMapping("/bankCardBind")
     @LoginRequired
     @ApiOperation(value = "绑定网商银行卡", notes = "绑定网商银行卡", httpMethod = "POST")
-    public ReturnJson bankCardBind(@RequestBody BankCardBind bankCardBind,
+    public ReturnJson bankCardBind(@Valid @RequestBody BankCardBind bankCardBind,
                                    @RequestAttribute(value = "userId") @ApiParam(hidden = true) String userId) throws Exception {
         return myBankWorkerService.bankCardBind(bankCardBind, userId);
     }

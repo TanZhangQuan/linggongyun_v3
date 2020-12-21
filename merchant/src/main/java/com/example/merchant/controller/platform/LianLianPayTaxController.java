@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,7 +25,7 @@ public class LianLianPayTaxController {
     @LoginRequired
     @ApiOperation("添加或修改连连支付商户号和私钥")
     @PostMapping(value = "/addLianlianPay")
-    public ReturnJson addLianlianPay(@ApiParam("服务商ID") @NotBlank(message = "服务商ID不能为空！") @RequestParam(required = false) String taxId, @RequestBody AddLianLianPay addLianLianPay) {
+    public ReturnJson addLianlianPay(@ApiParam("服务商ID") @NotBlank(message = "服务商ID不能为空！") @RequestParam(required = false) String taxId, @Valid @RequestBody AddLianLianPay addLianLianPay) {
         return LianLianPayTaxService.addLianlianPay(taxId, addLianLianPay);
     }
 

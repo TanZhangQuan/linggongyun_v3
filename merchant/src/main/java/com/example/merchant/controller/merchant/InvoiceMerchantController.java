@@ -2,11 +2,10 @@ package com.example.merchant.controller.merchant;
 
 import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.merchant.UpdateApplication;
-import com.example.mybatis.dto.QueryTobeinvoicedDto;
 import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.*;
 import com.example.mybatis.dto.InvoiceApplicationDto;
-import com.example.mybatis.dto.TobeinvoicedDto;
+import com.example.mybatis.dto.QueryTobeinvoicedDto;
 import io.swagger.annotations.*;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -58,7 +57,7 @@ public class InvoiceMerchantController {
     @ApiOperation("总包发票列表,已开票")
     @PostMapping(value = "/getInvoiceList")
     @LoginRequired
-    public ReturnJson getInvoiceList(@RequestBody QueryTobeinvoicedDto queryTobeinvoicedDto,
+    public ReturnJson getInvoiceList(@Valid @RequestBody QueryTobeinvoicedDto queryTobeinvoicedDto,
                                      @RequestAttribute(value = "userId") @ApiParam(hidden = true) String merchantId) {
         return invoiceService.getInvoiceList(queryTobeinvoicedDto, merchantId);
     }

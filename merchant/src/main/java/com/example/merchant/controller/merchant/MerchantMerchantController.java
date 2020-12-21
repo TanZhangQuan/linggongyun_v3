@@ -6,14 +6,13 @@ import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.AddressService;
 import com.example.merchant.service.LinkmanService;
 import com.example.merchant.service.MerchantService;
-import com.example.mybatis.entity.Address;
 import com.example.mybatis.entity.Linkman;
 import io.swagger.annotations.*;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
@@ -59,7 +58,7 @@ public class MerchantMerchantController {
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "linkman", value = "联系人信息", required = true, dataType = "Linkman")
     })
-    public ReturnJson addOrUpdataLinkman(@RequestBody Linkman linkman) {
+    public ReturnJson addOrUpdataLinkman(@Valid @RequestBody Linkman linkman) {
         return linkmanService.addOrUpdataLinkman(linkman);
     }
 
@@ -102,8 +101,8 @@ public class MerchantMerchantController {
             @ApiImplicitParam(name = "address", value = "快递地址信息", required = true, dataType = "Address")
     })
     @LoginRequired
-    public ReturnJson addOrUpdataAddress(@RequestBody AddressDto addressDto, @ApiParam(hidden = true) @RequestAttribute("userId") String merchantId) {
-        return addressService.addOrUpdataAddress(addressDto,merchantId);
+    public ReturnJson addOrUpdataAddress(@Valid @RequestBody AddressDto addressDto, @ApiParam(hidden = true) @RequestAttribute("userId") String merchantId) {
+        return addressService.addOrUpdataAddress(addressDto, merchantId);
     }
 
     @PostMapping("/updataAddressStatus")

@@ -2,13 +2,11 @@ package com.example.merchant.controller.merchant;
 
 import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.merchant.AddApplicationCrowdSourcingDto;
-import com.example.merchant.service.MerchantService;
-import com.example.mybatis.dto.QueryCrowdSourcingDto;
 import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.CrowdSourcingInvoiceService;
+import com.example.merchant.service.MerchantService;
 import com.example.merchant.service.PaymentOrderManyService;
-import com.example.mybatis.dto.TobeinvoicedDto;
-import com.example.mybatis.entity.ApplicationCrowdSourcing;
+import com.example.mybatis.dto.QueryCrowdSourcingDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -37,7 +35,7 @@ public class CrowdSourcingMerchantController {
     @ApiOperation("众包发票列表")
     @PostMapping(value = "/getListCSIByID")
     @LoginRequired
-    public ReturnJson getListCSIByID(@RequestBody QueryCrowdSourcingDto queryCrowdSourcingDto, @RequestAttribute("userId") @ApiParam(hidden = true) String userId) {
+    public ReturnJson getListCSIByID(@Valid @RequestBody QueryCrowdSourcingDto queryCrowdSourcingDto, @RequestAttribute("userId") @ApiParam(hidden = true) String userId) {
         return paymentOrderManyService.getListCSIByID(queryCrowdSourcingDto, userId);
     }
 
@@ -62,7 +60,7 @@ public class CrowdSourcingMerchantController {
     @ApiOperation("众包支付信息,已开票页面")
     @PostMapping(value = "/getCrowdSourcingInfo")
     @LoginRequired
-    public ReturnJson getCrowdSourcingInfo(@RequestBody QueryCrowdSourcingDto queryCrowdSourcingDto, @RequestAttribute("userId") @ApiParam(hidden = true) String userId) {
+    public ReturnJson getCrowdSourcingInfo(@Valid @RequestBody QueryCrowdSourcingDto queryCrowdSourcingDto, @RequestAttribute("userId") @ApiParam(hidden = true) String userId) {
         return crowdSourcingInvoiceService.getCrowdSourcingInfo(queryCrowdSourcingDto, userId);
     }
 

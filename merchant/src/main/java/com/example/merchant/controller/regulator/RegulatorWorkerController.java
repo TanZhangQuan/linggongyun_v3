@@ -29,7 +29,7 @@ public class RegulatorWorkerController {
     @LoginRequired
     @ApiOperation(value = "按条件查询所监管的创客", notes = "按条件查询所监管的创客", httpMethod = "POST")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "regulatorWorkerDto", value = "监管部门的信息", required = true, dataType = "RegulatorWorkerDto")})
-    public ReturnJson getRegulatorWorker(@RequestBody RegulatorWorkerDto regulatorWorkerDto, @ApiParam(hidden = true) @RequestAttribute(value = "userId", required = false) String regulatorId) {
+    public ReturnJson getRegulatorWorker(@Valid @RequestBody RegulatorWorkerDto regulatorWorkerDto, @ApiParam(hidden = true) @RequestAttribute(value = "userId", required = false) String regulatorId) {
         return regulatorService.getRegulatorWorker(regulatorWorkerDto, regulatorId);
     }
 

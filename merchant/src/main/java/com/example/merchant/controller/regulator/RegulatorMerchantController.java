@@ -37,7 +37,7 @@ public class RegulatorMerchantController {
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "regulatorMerchantDto", value = "查询所监管的商户条件", required = true, dataType = "RegulatorMerchantDto")
     })
-    public ReturnJson getRegulatorMerchant(@RequestBody RegulatorMerchantDto regulatorMerchantDto, @ApiParam(hidden = true) @RequestAttribute(value = "userId", required = false) String regulatorId) {
+    public ReturnJson getRegulatorMerchant(@Valid @RequestBody RegulatorMerchantDto regulatorMerchantDto, @ApiParam(hidden = true) @RequestAttribute(value = "userId", required = false) String regulatorId) {
         return regulatorService.getRegulatorMerchant(regulatorMerchantDto, regulatorId);
     }
 

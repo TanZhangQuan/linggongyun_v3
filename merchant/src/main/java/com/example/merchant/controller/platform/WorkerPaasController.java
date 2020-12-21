@@ -9,11 +9,11 @@ import com.example.merchant.service.WorkerService;
 import com.example.merchant.service.WorkerTaskService;
 import com.example.mybatis.entity.Worker;
 import io.swagger.annotations.*;
-import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -42,14 +42,14 @@ public class WorkerPaasController {
     @PostMapping("/getWorkerQuery")
     @LoginRequired
     @ApiOperation(value = "按条件获取已认证的创客", notes = "按条件获取已认证的创客", httpMethod = "POST")
-    public ReturnJson getWorkerQuery(@ApiParam(hidden = true) @RequestAttribute("userId") String managersId, @RequestBody WorkerQueryDto workerQueryDto) throws CommonException {
+    public ReturnJson getWorkerQuery(@ApiParam(hidden = true) @RequestAttribute("userId") String managersId, @Valid @RequestBody WorkerQueryDto workerQueryDto) throws CommonException {
         return workerService.getWorkerQuery(managersId, workerQueryDto);
     }
 
     @PostMapping("/getWorkerQueryNot")
     @LoginRequired
     @ApiOperation(value = "按条件获取所以未认证的创客", notes = "按条件获取所以未认证的创客", httpMethod = "POST")
-    public ReturnJson getWorkerQueryNot(@ApiParam(hidden = true) @RequestAttribute("userId") String managersId, @RequestBody WorkerQueryDto workerQueryDto) throws CommonException {
+    public ReturnJson getWorkerQueryNot(@ApiParam(hidden = true) @RequestAttribute("userId") String managersId, @Valid @RequestBody WorkerQueryDto workerQueryDto) throws CommonException {
         return workerService.getWorkerQueryNot(managersId, workerQueryDto);
     }
 
@@ -80,7 +80,7 @@ public class WorkerPaasController {
     @PostMapping("/updetaWorker")
     @ApiOperation(value = "编辑创客", notes = "编辑创客", httpMethod = "POST")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "worker", value = "编辑后的创客", required = true, dataType = "Worker")})
-    public ReturnJson updataWorker(@RequestBody Worker worker) {
+    public ReturnJson updataWorker(@Valid @RequestBody Worker worker) {
         return workerService.updateWorkerPaas(worker);
     }
 
@@ -110,7 +110,7 @@ public class WorkerPaasController {
             @ApiImplicitParam(name = "taskId", value = "任务Id", required = true)})
     public ReturnJson eliminateWorker(@NotBlank(message = "创客id不能为空") @ApiParam(value = "创客id") @RequestParam String workerId,
                                       @NotBlank(message = "任务Id不能为空") @ApiParam(value = "任务id") @RequestParam String taskId) {
-        return workerTaskService.eliminateWorker(workerId,taskId);
+        return workerTaskService.eliminateWorker(workerId, taskId);
     }
 
     @ApiOperation("修改验收金额")
@@ -135,17 +135,17 @@ public class WorkerPaasController {
     @ApiOperation("创客任务详细信息")
     @PostMapping(value = "/queryPassWorkerTaskInfo")
     public ReturnJson queryPassWorkerTaskInfo(@NotNull(message = "当前页不能为空") @ApiParam(value = "当前页") @RequestParam Integer pageNo,
-                                          @NotNull(message = "页大小不能为空")  @ApiParam(value = "页大小") @RequestParam Integer pageSize,
-                                          @NotBlank(message = "创客Id不能为空") @ApiParam(value = "创客Id") @RequestParam String workerId) {
-        return workerTaskService.queryWorkerTaskInfo(workerId,pageNo,pageSize);
+                                              @NotNull(message = "页大小不能为空") @ApiParam(value = "页大小") @RequestParam Integer pageSize,
+                                              @NotBlank(message = "创客Id不能为空") @ApiParam(value = "创客Id") @RequestParam String workerId) {
+        return workerTaskService.queryWorkerTaskInfo(workerId, pageNo, pageSize);
     }
 
     @ApiOperation("创客支付列表信息")
     @PostMapping(value = "/queryWorkerPayInfo")
     public ReturnJson queryWorkerPayInfo(@NotNull(message = "当前页不能为空") @ApiParam(value = "当前页") @RequestParam Integer pageNo,
-                                              @NotNull(message = "页大小不能为空")  @ApiParam(value = "页大小") @RequestParam Integer pageSize,
-                                              @NotBlank(message = "创客Id不能为空") @ApiParam(value = "创客Id") @RequestParam String workerId) {
-        return workerTaskService.queryWorkerPayInfo(workerId,pageNo,pageSize);
+                                         @NotNull(message = "页大小不能为空") @ApiParam(value = "页大小") @RequestParam Integer pageSize,
+                                         @NotBlank(message = "创客Id不能为空") @ApiParam(value = "创客Id") @RequestParam String workerId) {
+        return workerTaskService.queryWorkerPayInfo(workerId, pageNo, pageSize);
     }
 
     @PostMapping("/queryWorkerCompanyByID")

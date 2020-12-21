@@ -5,7 +5,6 @@ import com.example.common.util.ReturnJson;
 import com.example.merchant.service.TaskService;
 import com.example.mybatis.dto.PlatformTaskDto;
 import com.example.mybatis.dto.TaskDto;
-import com.example.mybatis.dto.TaskListDto;
 import com.example.mybatis.entity.Task;
 import io.swagger.annotations.*;
 import org.springframework.validation.annotation.Validated;
@@ -62,7 +61,7 @@ public class TaskPaasController {
 
     @ApiOperation("平台端任务列表")
     @PostMapping(value = "/getplatformTasks")
-    public ReturnJson<Task> platformTaskList(@RequestBody PlatformTaskDto platformTaskDto) {
+    public ReturnJson<Task> platformTaskList(@Valid @RequestBody PlatformTaskDto platformTaskDto) {
         return taskService.getPlatformTaskList(platformTaskDto);
     }
 
