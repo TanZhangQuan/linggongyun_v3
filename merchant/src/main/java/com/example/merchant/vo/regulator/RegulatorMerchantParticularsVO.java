@@ -1,7 +1,6 @@
 package com.example.merchant.vo.regulator;
 
 import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -12,12 +11,18 @@ import java.util.List;
 public class RegulatorMerchantParticularsVO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @ApiModelProperty("公司流水统计")
+    /**
+     * 公司流水统计
+     */
     private CountSingleRegulatorMerchantVO countSingleRegulatorMerchantVO;
 
-    @ApiModelProperty("公司基本信息")
+    /**
+     * 公司基本信息
+     */
     private RegulatorMerchantInfoVO regulatorMerchantInfoVO;
 
-    @ApiModelProperty("公司的支付订单")
+    /**
+     * 公司的支付订单
+     */
     List<RegulatorMerchantPaymentOrderVO> regulatorMerchantPaymentOrderVOS;
 }

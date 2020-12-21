@@ -17,6 +17,7 @@ public class AddressVO implements Serializable {
      * 地址ID
      */
     private String id;
+
     /**
      * 联系人
      */

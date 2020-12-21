@@ -3,7 +3,6 @@ package com.example.merchant.vo.regulator;
 import com.example.mybatis.entity.Worker;
 import com.example.mybatis.po.WorekerPaymentListPo;
 import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -14,12 +13,18 @@ import java.util.List;
 public class CountRegulatorWorkerInfoVO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @ApiModelProperty(value = "创客个人流水统计")
+    /**
+     * 创客个人流水统计
+     */
     private CountSingleRegulatorWorkerVO countSingleRegulatorWorkerVO;
 
-    @ApiModelProperty(value = "创客个人信息")
+    /**
+     * 创客个人信息
+     */
     private Worker worker;
 
-    @ApiModelProperty(value = "创客支付明细")
+    /**
+     * 创客支付明细
+     */
     private List<WorekerPaymentListPo> worekerPaymentListPos;
 }

@@ -1,6 +1,5 @@
 package com.example.merchant.vo.platform;
 
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -14,27 +13,43 @@ import java.io.Serializable;
 public class CrowdSourcingInvoiceVO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @ApiModelProperty(value = "修改时用")
+    /**
+     * 众包ID
+     */
     private String id;
 
-    @ApiModelProperty(value = "发票数字")
+    /**
+     * 发票数字
+     */
     private String invoiceNumber;
 
-    @ApiModelProperty(value = "发票代码")
+    /**
+     * 发票代码
+     */
     private String invoiceCodeno;
 
-    @ApiModelProperty(value = "发票存放url")
+    /**
+     * 发票
+     */
     private String invoiceUrl;
 
-    @ApiModelProperty(value = "税票存放url")
+    /**
+     * 税票
+     */
     private String taxReceiptUrl;
 
-    @ApiModelProperty("快递单号")
+    /**
+     * 快递单号
+     */
     private String expressSheetNo;
 
-    @ApiModelProperty("快递公司")
+    /**
+     * 快递公司
+     */
     private String expressCompanyName;
 
-    @ApiModelProperty(value = "开票说明")
+    /**
+     * 开票说明
+     */
     private String invoiceDesc;
 }
