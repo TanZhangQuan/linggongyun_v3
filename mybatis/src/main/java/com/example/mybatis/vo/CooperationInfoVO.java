@@ -33,6 +33,10 @@ public class CooperationInfoVO {
      */
     private String chargeStatus;
     /**
+     * 一口价费率
+     */
+    private String serviceCharge;
+    /**
      * 合作合同地址
      */
     private String contract;

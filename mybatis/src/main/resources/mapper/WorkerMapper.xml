@@ -138,10 +138,12 @@
             create_date
         FROM
             tb_worker
-        WHERE
-            attestation = 0
-        OR agreementSign != 2
+        WHERE 1=1
         <include refid="ByIdAndAccountNameAndMobile"></include>
+        AND (
+            attestation = 0
+            OR agreementSign != 2
+        )
         ORDER BY create_date desc
     </select>
 
@@ -429,6 +431,7 @@
             tb_payment_inventory pi
         WHERE
             pi.worker_id =#{param2}
+        order by pi.create_date desc
     </select>
 
     <resultMap id="WorkerCompanyByID" type="com.example.mybatis.vo.WorkerCompanyVo">

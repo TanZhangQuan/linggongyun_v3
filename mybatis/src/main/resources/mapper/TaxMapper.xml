@@ -191,6 +191,7 @@
         <result column="tid" property="taxId"/>
         <result column="tax_name" property="taxName"/>
         <result column="charge_status" property="chargeStatus"/>
+        <result column="service" property="serviceCharge"/>
         <result column="payee" property="payee"/>
         <result column="bank_code" property="bankCode"/>
         <result column="bank_name" property="bankName"/>
@@ -209,6 +210,8 @@
             t.tax_name,
             t.id as tid,
             ct.charge_status,
+            ct.service_charge,
+            ct.service_charge as service,
             ct.contract,
             tp.payee,
             tp.bank_code,

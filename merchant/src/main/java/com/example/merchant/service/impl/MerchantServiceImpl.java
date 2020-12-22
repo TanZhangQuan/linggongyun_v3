@@ -509,8 +509,14 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         if (merchant == null) {
             return ReturnJson.error("商户账户信息不正确！");
         }
-        BeanUtils.copyProperties(updateCompanyDto.getUpdateMerchantInfDto(), merchant);
+        if (updateCompanyDto.getUpdateMerchantInfDto().getPassWord() != "" && updateCompanyDto.getUpdateMerchantInfDto().getPassWord() != null) {
+           merchant.setPassWord(PWD_KEY+MD5.md5(updateCompanyDto.getUpdateMerchantInfDto().getPassWord()));
+        }
+        if (updateCompanyDto.getUpdateMerchantInfDto().getPayPwd() != "" && updateCompanyDto.getUpdateMerchantInfDto().getPayPwd() != null) {
+            merchant.setPayPwd(PWD_KEY+MD5.md5(updateCompanyDto.getUpdateMerchantInfDto().getPayPwd()));
+        }
         merchantDao.updateById(merchant);
+
         List<UpdateCompanyTaxDto> updateCompanyTaxDtoList = updateCompanyDto.getUpdateCompanyTaxDtoList();
         for (int i = 0; i < updateCompanyTaxDtoList.size(); i++) {
             CompanyTax companyTax;
