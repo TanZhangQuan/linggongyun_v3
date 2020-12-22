@@ -9,7 +9,6 @@ import com.example.merchant.service.WorkerService;
 import com.example.merchant.service.WorkerTaskService;
 import com.example.mybatis.entity.Worker;
 import io.swagger.annotations.*;
-import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -48,7 +47,7 @@ public class WorkerPaasController {
 
     @PostMapping("/getWorkerQueryNot")
     @LoginRequired
-    @ApiOperation(value = "按条件获取所以未认证的创客", notes = "按条件获取所以未认证的创客", httpMethod = "POST")
+    @ApiOperation(value = "按条件获取所有未认证的创客", notes = "按条件获取所有未认证的创客", httpMethod = "POST")
     public ReturnJson getWorkerQueryNot(@ApiParam(hidden = true) @RequestAttribute("userId") String managersId, @RequestBody WorkerQueryDto workerQueryDto) throws CommonException {
         return workerService.getWorkerQueryNot(managersId, workerQueryDto);
     }

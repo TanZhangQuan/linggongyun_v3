@@ -29,6 +29,7 @@ public class LinkmanServiceImpl extends ServiceImpl<LinkmanDao, Linkman> impleme
 
     /**
      * 添加或修改联系人
+     *
      * @param linkman
      * @return
      */
@@ -51,7 +52,13 @@ public class LinkmanServiceImpl extends ServiceImpl<LinkmanDao, Linkman> impleme
     @Override
     public ReturnJson getLinkmanAll(String merchantId) {
         Merchant merchant = merchantDao.selectById(merchantId);
-        List<Linkman> list = this.list(new QueryWrapper<Linkman>().eq("company_id", merchant.getCompanyId()).orderByAsc("is_not"));
+        List<Linkman> list = null;
+        if (merchant == null) {
+            list = this.list(new QueryWrapper<Linkman>().eq("company_id", merchantId).orderByAsc("is_not"));
+        }
+        if (merchant != null){
+            list = this.list(new QueryWrapper<Linkman>().eq("company_id", merchant.getCompanyId()).orderByAsc("is_not"));
+        }
         return ReturnJson.success(list);
     }
 

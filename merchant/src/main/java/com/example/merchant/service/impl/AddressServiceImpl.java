@@ -32,7 +32,13 @@ public class AddressServiceImpl extends ServiceImpl<AddressDao, Address> impleme
     @Override
     public ReturnJson getAddressAll(String merchantId) {
         Merchant merchant = merchantDao.selectById(merchantId);
-        List<Address> addressList = this.list(new QueryWrapper<Address>().eq("company_id", merchant.getCompanyId()).orderByAsc("is_not"));
+        List<Address> addressList = null;
+        if (merchant == null) {
+            addressList = this.list(new QueryWrapper<Address>().eq("company_id", merchantId).orderByAsc("is_not"));
+        }
+        if (merchant != null){
+            addressList = this.list(new QueryWrapper<Address>().eq("company_id", merchant.getCompanyId()).orderByAsc("is_not"));
+        }
         return ReturnJson.success(addressList);
     }
 

@@ -21,6 +21,10 @@ public class CooperationInfoVO {
      */
     private String packageStatus;
     /**
+     * 服务商ID
+     */
+    private String taxId;
+    /**
      * 服务商名称
      */
     private String taxName;

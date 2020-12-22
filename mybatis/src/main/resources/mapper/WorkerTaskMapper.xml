@@ -78,6 +78,7 @@
                 AND wt.`status` in(2)
             </if>
         </if>
+        ORDER BY wt.create_date desc
     </select>
     <select id="queryWorkerTaskInfo" resultMap="workerTaskInfo">
         SELECT

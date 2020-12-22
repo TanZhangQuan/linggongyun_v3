@@ -188,6 +188,7 @@
     <resultMap id="cooperationInfoVO" type="com.example.mybatis.vo.CooperationInfoVO">
         <id column="id" property="id"/>
         <result column="package_status" property="packageStatus"/>
+        <result column="tid" property="taxId"/>
         <result column="tax_name" property="taxName"/>
         <result column="charge_status" property="chargeStatus"/>
         <result column="payee" property="payee"/>
@@ -206,6 +207,7 @@
             ct.id,
             ct.package_status,
             t.tax_name,
+            t.id as tid,
             ct.charge_status,
             ct.contract,
             tp.payee,

@@ -84,29 +84,55 @@ public class WorkerTaskServiceImpl extends ServiceImpl<WorkerTaskDao, WorkerTask
 
     @Override
     public ReturnJson updateCheckMoney(String taskId, Double money, String id) {
-        ReturnJson returnJson = new ReturnJson("修改失败", 300);
+        ReturnJson returnJson;
         if (money == null) {
             returnJson = new ReturnJson("验收金额不能为空", 300);
         } else {
-            int num = workerTaskDao.updateCheckMoney(money, id, taskId);
-            if (num > 0) {
-                returnJson = new ReturnJson("修改成功", 200);
+            workerTaskDao.updateCheckMoney(money, id, taskId);
+            List<WorkerTask> list = workerTaskDao.selectList(new QueryWrapper<WorkerTask>().
+                    eq("task_id", taskId).eq("task_status", 0));
+            int j = 0;
+            for (int i = 0; i < list.size(); i++) {
+                if (list.get(i).getStatus() == 4) {
+                    j++;
+                }
             }
+            if (j == list.size()) {
+                Task task = taskDao.selectById(taskId);
+                task.setState(3);
+                taskDao.updateById(task);
+                for (WorkerTask workerTask : list) {
+                    workerTask.setStatus(1);
+                    workerTaskDao.updateById(workerTask);
+                }
+            }
+            returnJson = new ReturnJson("修改成功", 200);
         }
+
         return returnJson;
     }
 
     @Override
     public ReturnJson updateCheck(String taskId, String id) {
-        ReturnJson returnJson = new ReturnJson("修改失败", 300);
-        WorkerTask workerTask = new WorkerTask();
-        workerTask.setWorkerId(id);
-        workerTask.setTaskId(taskId);
         int num = workerTaskDao.updateCheckMoney(null, id, taskId);
-        if (num > 0) {
-            returnJson = new ReturnJson("修改成功", 200);
+        List<WorkerTask> list = workerTaskDao.selectList(new QueryWrapper<WorkerTask>()
+                .eq("task_id", taskId).eq("task_status", 0));
+        int j = 0;
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).getStatus() == 4) {
+                j++;
+            }
         }
-        return returnJson;
+        if (j == list.size()) {
+            Task task = taskDao.selectById(taskId);
+            task.setState(3);
+            taskDao.updateById(task);
+            for (WorkerTask workerTask : list) {
+                workerTask.setStatus(1);
+                workerTaskDao.updateById(workerTask);
+            }
+        }
+        return ReturnJson.success("修改成功");
     }
 
     @Override
