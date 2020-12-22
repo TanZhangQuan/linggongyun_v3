@@ -24,7 +24,7 @@ public class CompanyInfoVO implements Serializable {
     /**
      * 公司名称
      */
-    private String companySName;
+    private String companyName;
 
     /**
      * 法人

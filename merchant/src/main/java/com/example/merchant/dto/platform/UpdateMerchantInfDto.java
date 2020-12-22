@@ -21,6 +21,11 @@ public class UpdateMerchantInfDto {
     private String passWord;
 
     /**
+     * 支付密码
+     */
+    private String payPwd;
+    
+    /**
      * 登录时用的手机号码
      */
     private String loginMobile;

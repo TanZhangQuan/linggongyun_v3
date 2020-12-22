@@ -1,5 +1,6 @@
 package com.example.merchant.dto.platform;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -21,7 +22,7 @@ public class UpdateCompanyInfoDto {
     /**
      * 公司名称
      */
-    private String companySName;
+    private String companyName;
 
     /**
      * 法人
@@ -36,6 +37,7 @@ public class UpdateCompanyInfoDto {
     /**
      * 成立日期
      */
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
     private LocalDateTime companyCreateDate;
 
     /**

@@ -25,6 +25,10 @@ public class CooperationInfoVO implements Serializable {
     private String packageStatus;
 
     /**
+     * 服务商ID
+     */
+    private String taxId;
+    /**
      * 服务商名称
      */
     private String taxName;
@@ -34,6 +38,10 @@ public class CooperationInfoVO implements Serializable {
      */
     private String chargeStatus;
 
+    /**
+     * 一口价费率
+     */
+    private String serviceCharge;
     /**
      * 合作合同地址
      */

@@ -101,7 +101,7 @@
 
     <sql id="ByIdAndAccountNameAndMobile">
         <if test="workerId != null and workerId != ''">
-            and a.id = #{workerId}
+            and id = #{workerId}
         </if>
         <if test="accountName != null and accountName != ''">
             and account_name like CONCAT('%',#{accountName},'%')
@@ -127,33 +127,43 @@
     </select>
 
     <select id="selectWorkerQueryNot" resultMap="BaseResultMap" parameterType="list">
-        select
-        a.id, account_name, mobile_code, idcard_code, bank_code, attestation, agreementSign ,a.create_date
-        from tb_worker a join tb_company_worker b on a.id = b.worker_id
-        <where>
-            b.company_id in
-            <foreach collection="companyIds" index="index" item="item" open="(" separator="," close=")">
-                #{item}
-            </foreach>
-            <include refid="ByIdAndAccountNameAndMobile"></include>
-            and (attestation = 0
-            or agreementSign = 0)
-        </where>
+       SELECT
+            id,
+            account_name,
+            mobile_code,
+            idcard_code,
+            bank_code,
+            attestation,
+            agreementUrl,
+            create_date
+        FROM
+            tb_worker
+        WHERE 1=1
+        <include refid="ByIdAndAccountNameAndMobile"></include>
+        AND (
+            attestation = 0
+            OR agreementSign != 2
+        )
+        ORDER BY create_date desc
     </select>
 
     <select id="selectWorkerQuery" resultMap="BaseResultMap" parameterType="list">
-        select
-        a.id, account_name, mobile_code, idcard_code, bank_code, attestation, agreementSign ,a.create_date
-        from tb_worker a join tb_company_worker b on a.id = b.worker_id
-        <where>
-            b.company_id in
-            <foreach collection="companyIds" index="index" item="item" open="(" separator="," close=")">
-                #{item}
-            </foreach>
-            <include refid="ByIdAndAccountNameAndMobile"></include>
-            and attestation = 1
-            and agreementSign = 1
-        </where>
+        SELECT
+            id,
+            account_name,
+            mobile_code,
+            idcard_code,
+            bank_code,
+            attestation,
+            agreementUrl,
+            create_date
+        FROM
+            tb_worker
+        WHERE
+            attestation = 1
+        AND agreementSign = 2
+        <include refid="ByIdAndAccountNameAndMobile"></include>
+        ORDER BY create_date desc
     </select>
 
     <select id="getWorkerByTaskId" resultMap="WorkerPo">
@@ -197,6 +207,7 @@
             tb_worker AS w
         WHERE
             wt.worker_id = w.id
+        AND wt.task_status = 0
         AND wt.task_id =#{taskId}
     </select>
 
@@ -420,6 +431,7 @@
             tb_payment_inventory pi
         WHERE
             pi.worker_id =#{param2}
+        order by pi.create_date desc
     </select>
 
     <resultMap id="WorkerCompanyByID" type="com.example.mybatis.vo.WorkerCompanyVO">
