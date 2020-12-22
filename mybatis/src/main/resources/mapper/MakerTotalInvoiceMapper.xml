@@ -24,7 +24,7 @@
     maker_invoice_url, maker_tax_url, maker_voice_upload_date_time, create_time, update_time
   </sql>
 
-  <resultMap id="MakerTotalInvoiceVo" type="com.example.mybatis.vo.MakerTotalInvoiceVo">
+  <resultMap id="MakerTotalInvoiceVo" type="com.example.mybatis.vo.MakerTotalInvoiceVO">
         <id property="id" column="id"/>
         <result property="companyId" column="company_id"/>
         <result property="companySName" column="company_s_name"/>
@@ -36,7 +36,7 @@
         <result property="makerTaxUrl" column="maker_tax_url"/>
         <result property="isSubpackage" column="is_subpackage"/>
         <result property="createDate" column="create_date"/>
-      <collection property="payVoList" ofType="com.example.mybatis.vo.PayVo">
+      <collection property="payVOList" ofType="com.example.mybatis.vo.PayVO">
             <id property="pId" column="pid"/>
             <result property="paymentTnventory" column="payment_inventory"/>
             <result property="subpackagePayment" column="turnkey_project_payment"/>

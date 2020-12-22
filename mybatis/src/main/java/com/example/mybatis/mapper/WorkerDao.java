@@ -46,11 +46,11 @@ public interface WorkerDao extends BaseMapper<Worker> {
 
     List<WorekerPaymentListPo> exportRegulatorWorkerPaymentInfo(@Param("paymentOrderIds") List<String> paymentOrderIds, @Param("workerId") String workerId);
 
-    List<WorkerVo> setWorkerMakeMoney();
+    List<WorkerVO> setWorkerMakeMoney();
 
-    IPage<WorkerPassVo> getPaasCheckByTaskId(Page page, @Param("taskId") String taskId);
+    IPage<WorkerPassVO> getPaasCheckByTaskId(Page page, @Param("taskId") String taskId);
 
-    WorkerInfoVo queryWorkerInfo(String workerId);
+    WorkerInfoVO queryWorkerInfo(String workerId);
 
     /**
      * 创客支付列表明细
@@ -59,7 +59,7 @@ public interface WorkerDao extends BaseMapper<Worker> {
      * @param workerId
      * @return
      */
-    IPage<WorkerPayInfoVo> queryWorkerPayInfo(Page page, String workerId);
+    IPage<WorkerPayInfoVO> queryWorkerPayInfo(Page page, String workerId);
 
-    IPage<WorkerCompanyVo> queryWorkerCompanyByID(Page page,String companyId);
+    IPage<WorkerCompanyVO> queryWorkerCompanyByID(Page page, String companyId);
 }

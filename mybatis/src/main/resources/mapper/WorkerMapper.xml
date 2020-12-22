@@ -62,7 +62,7 @@
 
     </resultMap>
 
-    <resultMap id="workerPassVo" type="com.example.mybatis.vo.WorkerPassVo">
+    <resultMap id="workerPassVo" type="com.example.mybatis.vo.WorkerPassVO">
         <id column="id" property="wId"/>
         <result column="worker_name" property="workerName"/>
         <result column="mobile_code" property="mobileCode"/>
@@ -76,14 +76,14 @@
         <result column="achievement_desc" property="achievementDesc"/>
     </resultMap>
 
-    <resultMap id="workerInfo" type="com.example.mybatis.vo.WorkerInfoVo">
+    <resultMap id="workerInfo" type="com.example.mybatis.vo.WorkerInfoVO">
         <result column="task_number" property="taskNumber"/>
         <result column="total_revenue" property="totalRevenue"/>
         <result column="total_tax" property="totalTax"/>
         <result column="invoice_number" property="invoiceNumber"/>
     </resultMap>
 
-    <resultMap id="workerPayInfo" type="com.example.mybatis.vo.WorkerPayInfoVo">
+    <resultMap id="workerPayInfo" type="com.example.mybatis.vo.WorkerPayInfoVO">
         <result column="payment_order_id" property="paymentOrderId"/>
         <result column="company_s_name" property="companySName"/>
         <result column="platform_service_provider" property="platformServiceProvider"/>
@@ -300,7 +300,7 @@
         </where>
     </select>
 
-    <resultMap id="workerMakeMoney" type="com.example.mybatis.vo.WorkerVo">
+    <resultMap id="workerMakeMoney" type="com.example.mybatis.vo.WorkerVO">
         <result column="real_money" property="realMoney"/>
         <result column="head_portraits" property="headPortraits"/>
         <result column="account_name" property="accountName"/>
@@ -434,7 +434,7 @@
         order by pi.create_date desc
     </select>
 
-    <resultMap id="WorkerCompanyByID" type="com.example.mybatis.vo.WorkerCompanyVo">
+    <resultMap id="WorkerCompanyByID" type="com.example.mybatis.vo.WorkerCompanyVO">
         <result column="id" property="id"/>
         <result column="account_name" property="accountName"/>
         <result column="mobile_code" property="mobileCode"/>

@@ -9,7 +9,7 @@
         <result column="object_user_id" property="objectUserId" />
     </resultMap>
 
-     <resultMap id="Rolemenu" type="com.example.mybatis.vo.RoleMenuVo">
+     <resultMap id="Rolemenu" type="com.example.mybatis.vo.RoleMenuVO">
         <id column="id" property="merchantId"/>
         <result column="parent_id" property="parentId"/>
         <result column="real_name" property="realNmae"/>
@@ -27,7 +27,7 @@
         </collection>
     </resultMap>
 
-    <resultMap id="RolemenuPass" type="com.example.mybatis.vo.RoleMenuPassVo">
+    <resultMap id="RolemenuPass" type="com.example.mybatis.vo.RoleMenuPassVO">
         <id column="id" property="managersId"/>
         <result column="parent_id" property="parentId"/>
         <result column="real_name" property="realNmae"/>
@@ -45,13 +45,13 @@
         </collection>
     </resultMap>
 
-    <resultMap id="passRolemenu" type="com.example.mybatis.vo.QueryPassRolemenuVo">
+    <resultMap id="passRolemenu" type="com.example.mybatis.vo.QueryPassRolemenuVO">
         <id column="id" property="managersId"/>
         <result column="real_name" property="realNmae"/>
         <result column="user_name" property="userName"/>
         <result column="role_name" property="roleName"/>
         <result column="mobile_code" property="loginMoblie"/>
-        <collection property="list" ofType="com.example.mybatis.vo.MenuVo">
+        <collection property="list" ofType="com.example.mybatis.vo.MenuVO">
             <id column="mid" property="id"/>
             <result column="menu_name" property="menuName"/>
             <result column="menu_zhname" property="menuZhname"/>

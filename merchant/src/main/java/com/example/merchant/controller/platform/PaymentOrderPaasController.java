@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 
 /**
  * <p>
@@ -38,8 +37,8 @@ public class PaymentOrderPaasController {
     @LoginRequired
     @ApiOperation(value = "查询总包+分包支付订单", notes = "查询总包+分包支付订单", httpMethod = "POST")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "paymentOrderDto", value = "查询条件", required = true, dataType = "PaymentOrderDto")})
-    public ReturnJson getPaymentOrderAll(@Valid @RequestBody PaymentOrderDto paymentOrderDto,@ApiParam(hidden = true) @RequestAttribute(value = "userId") String managersId) throws CommonException {
-        return paymentOrderService.getPaymentOrderPaas(paymentOrderDto,managersId);
+    public ReturnJson getPaymentOrderAll(@Valid @RequestBody PaymentOrderDto paymentOrderDto, @ApiParam(hidden = true) @RequestAttribute(value = "userId") String managersId) throws CommonException {
+        return paymentOrderService.getPaymentOrderPaas(paymentOrderDto, managersId);
     }
 
     @GetMapping("/getPaymentOrderInfo")
@@ -52,15 +51,15 @@ public class PaymentOrderPaasController {
     @LoginRequired
     @PostMapping("/findMerchant")
     @ApiOperation(value = "查询商户", notes = "查询商户", httpMethod = "POST")
-    public ReturnJson findMerchant(@NotBlank(message = "支付订单不能为空！") @ApiParam(hidden = true)@RequestAttribute(value = "userId") String managersId) {
+    public ReturnJson findMerchant(@NotBlank(message = "支付订单不能为空！") @ApiParam(hidden = true) @RequestAttribute(value = "userId") String managersId) {
         return paymentOrderService.findMerchantPaas(managersId);
     }
 
     @PostMapping("/saveOrUpdata")
     @ApiOperation(value = "创建或修改总包+分包支付订单", notes = "创建或修改总包+分包支付订单", httpMethod = "POST")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "addPaymentOrderDto", value = "新建或修改的支付订单", required = true, dataType = "AddPaymentOrderDto")})
-    public ReturnJson saveOrUpdataPaymentOrder(@RequestBody AddPaymentOrderDto addPaymentOrderDto,@RequestParam String merchantId) {
-        return paymentOrderService.saveOrUpdataPaymentOrder(addPaymentOrderDto,merchantId);
+    public ReturnJson saveOrUpdataPaymentOrder(@Valid @RequestBody AddPaymentOrderDto addPaymentOrderDto, @RequestParam String merchantId) {
+        return paymentOrderService.saveOrUpdataPaymentOrder(addPaymentOrderDto, merchantId);
     }
 
     @PostMapping("/offlinePayment")

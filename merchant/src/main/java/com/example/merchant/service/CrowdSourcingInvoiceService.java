@@ -3,10 +3,8 @@ package com.example.merchant.service;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.merchant.AddApplicationCrowdSourcingDto;
 import com.example.merchant.dto.platform.AddCrowdSourcingInvoiceDto;
-import com.example.mybatis.dto.QueryCrowdSourcingDto;
-import com.example.mybatis.dto.TobeinvoicedDto;
-import com.example.mybatis.entity.ApplicationCrowdSourcing;
-import com.example.mybatis.entity.CrowdSourcingInvoice;
+import com.example.mybatis.dto.QueryCrowdSourcingDTO;
+import com.example.mybatis.dto.TobeinvoicedDTO;
 
 public interface CrowdSourcingInvoiceService {
     /**
@@ -24,7 +22,7 @@ public interface CrowdSourcingInvoiceService {
      * @param userId
      * @return
      */
-    ReturnJson getCrowdSourcingInfo(QueryCrowdSourcingDto queryCrowdSourcingDto, String userId);
+    ReturnJson getCrowdSourcingInfo(QueryCrowdSourcingDTO queryCrowdSourcingDto, String userId);
 
     /**
      * 查询单条众包信息
@@ -40,7 +38,7 @@ public interface CrowdSourcingInvoiceService {
      * @param tobeinvoicedDto
      * @return
      */
-    ReturnJson getTobeCrowdSourcingInvoice(TobeinvoicedDto tobeinvoicedDto);
+    ReturnJson getTobeCrowdSourcingInvoice(TobeinvoicedDTO tobeinvoicedDto);
 
     /**
      * 查询众包支付信息
@@ -87,7 +85,7 @@ public interface CrowdSourcingInvoiceService {
      * @param tobeinvoicedDto
      * @return
      */
-    ReturnJson getCrowdSourcingInfoPass(TobeinvoicedDto tobeinvoicedDto);
+    ReturnJson getCrowdSourcingInfoPass(TobeinvoicedDTO tobeinvoicedDto);
 
     /**
      * 平台端众包支付明细列表

@@ -61,7 +61,7 @@ public class RegulatorController {
     @PostMapping("/getRegulatorQuery")
     @ApiOperation(value = "按条件查询监管部门", notes = "按条件查询监管部门", httpMethod = "POST")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "regulatorQueryDto", value = "查询监管部门的查询条件", dataType = "RegulatorQueryDto", required = true)})
-    public ReturnJson getRegulatorQuery(@RequestBody RegulatorQueryDto regulatorQueryDto) {
+    public ReturnJson getRegulatorQuery(@Valid @RequestBody RegulatorQueryDto regulatorQueryDto) {
         return regulatorService.getRegulatorQuery(regulatorQueryDto);
     }
 

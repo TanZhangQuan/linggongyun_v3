@@ -2,13 +2,14 @@ package com.example.merchant.controller.platform;
 
 
 import com.example.common.util.ReturnJson;
-import com.example.merchant.dto.platform.*;
+import com.example.merchant.dto.platform.AddressDto;
+import com.example.merchant.dto.platform.CompanyDto;
+import com.example.merchant.dto.platform.UpdateCompanyDto;
 import com.example.merchant.exception.CommonException;
 import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.AddressService;
 import com.example.merchant.service.LinkmanService;
 import com.example.merchant.service.MerchantService;
-import com.example.mybatis.entity.Address;
 import com.example.mybatis.entity.Linkman;
 import io.swagger.annotations.*;
 import org.springframework.validation.annotation.Validated;
@@ -59,7 +60,7 @@ public class MerchantPaasController {
             @ApiImplicitParam(name = "pageNo", value = "页数"),
             @ApiImplicitParam(name = "pageSize", value = "一页的条数")
     })
-    public ReturnJson getMerchantList(@RequestAttribute("userId") @ApiParam(hidden = true) String managersId,  String merchantId, String merchantName, String linkMobile, @RequestParam(defaultValue = "1") Integer pageNo,
+    public ReturnJson getMerchantList(@RequestAttribute("userId") @ApiParam(hidden = true) String managersId, String merchantId, String merchantName, String linkMobile, @RequestParam(defaultValue = "1") Integer pageNo,
                                       @RequestParam(defaultValue = "10") Integer pageSize) throws CommonException {
         return merchantService.getMerchantList(managersId, merchantId, merchantName, linkMobile, 1, pageNo, pageSize);
     }
@@ -152,7 +153,7 @@ public class MerchantPaasController {
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "linkman", value = "联系人信息", required = true, dataType = "Linkman")
     })
-    public ReturnJson addOrUpdataLinkman(@RequestBody Linkman linkman) {
+    public ReturnJson addOrUpdataLinkman(@Valid @RequestBody Linkman linkman) {
         return linkmanService.addOrUpdataLinkman(linkman);
     }
 
@@ -199,8 +200,8 @@ public class MerchantPaasController {
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "address", value = "快递地址信息", required = true, dataType = "Address")
     })
-    public ReturnJson addOrUpdataAddress(@RequestBody AddressDto addressDto, String merchantId) {
-        return addressService.addOrUpdataAddress(addressDto,merchantId);
+    public ReturnJson addOrUpdataAddress(@Valid @RequestBody AddressDto addressDto, String merchantId) {
+        return addressService.addOrUpdataAddress(addressDto, merchantId);
     }
 
     @PostMapping("/updataAddressStatus")
@@ -247,7 +248,7 @@ public class MerchantPaasController {
 
     @PostMapping("/updateCompanyInfo")
     @ApiOperation(value = "修改公司的信息", notes = "修改或忘记密码", httpMethod = "POST")
-    public ReturnJson updateCompanyInfo(@RequestBody UpdateCompanyDto updateCompanyDto) {
+    public ReturnJson updateCompanyInfo(@Valid @RequestBody UpdateCompanyDto updateCompanyDto) {
         return merchantService.updateCompanyInfo(updateCompanyDto);
     }
 }

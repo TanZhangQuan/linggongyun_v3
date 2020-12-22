@@ -16,7 +16,6 @@ import com.example.merchant.exception.CommonException;
 import com.example.merchant.service.PaymentInventoryService;
 import com.example.merchant.service.PaymentOrderService;
 import com.example.merchant.util.AcquireID;
-import com.example.merchant.util.JwtUtils;
 import com.example.merchant.vo.ExpressInfoVO;
 import com.example.merchant.vo.PaymentOrderInfoVO;
 import com.example.merchant.vo.platform.CompanyBriefVO;
@@ -24,8 +23,8 @@ import com.example.mybatis.entity.*;
 import com.example.mybatis.mapper.*;
 import com.example.mybatis.po.InvoiceInfoPO;
 import com.example.mybatis.po.PaymentOrderInfoPO;
-import com.example.mybatis.vo.BillingInfoVo;
-import com.example.mybatis.vo.PaymentOrderVo;
+import com.example.mybatis.vo.BillingInfoVO;
+import com.example.mybatis.vo.PaymentOrderVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -301,12 +300,12 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
     @Override
     public ReturnJson getPaymentOrderById(String id) {
         ReturnJson returnJson = new ReturnJson("查询失败", 300);
-        List<PaymentOrderVo> paymentOrderVoList = new ArrayList<>();
+        List<PaymentOrderVO> paymentOrderVOList = new ArrayList<>();
         String[] ids = id.split(",");
         for (int i = 0; i < ids.length; i++) {
-            PaymentOrderVo paymentOrder = paymentOrderDao.getPaymentOrderById(ids[i]);
+            PaymentOrderVO paymentOrder = paymentOrderDao.getPaymentOrderById(ids[i]);
             if (paymentOrder != null) {
-                paymentOrderVoList.add(paymentOrder);
+                paymentOrderVOList.add(paymentOrder);
                 returnJson = new ReturnJson("查询成功", paymentOrder, 200);
             }
         }
@@ -316,7 +315,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
     @Override
     public ReturnJson getBillingInfo(String id) {
         ReturnJson returnJson = new ReturnJson("查询失败", 300);
-        BillingInfoVo billingInfo = paymentOrderDao.getBillingInfo(id);
+        BillingInfoVO billingInfo = paymentOrderDao.getBillingInfo(id);
         if (billingInfo != null) {
             returnJson = new ReturnJson("查询成功", billingInfo, 200);
         }

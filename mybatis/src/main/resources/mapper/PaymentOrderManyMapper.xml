@@ -68,7 +68,7 @@
         ORDER BY create_date DESC
     </select>
 
-    <resultMap id="ListCSIByID" type="com.example.mybatis.vo.CrowdSourcingInvoiceInfoVo">
+    <resultMap id="ListCSIByID" type="com.example.mybatis.vo.CrowdSourcingInvoiceInfoVO">
         <result column="application_id" property="applicationId"/>
         <result column="company_s_name" property="companySName"/>
         <result column="platform_service_provider" property="platformServiceProvider"/>
@@ -98,7 +98,7 @@
         order by csi.application_date desc
     </select>
 
-    <resultMap id="PayOrderManyById" type="com.example.mybatis.vo.PaymentOrderManyVo">
+    <resultMap id="PayOrderManyById" type="com.example.mybatis.vo.PaymentOrderManyVO">
         <result column="id" property="id"/>
         <result column="company_s_name" property="companySName"/>
         <result column="platform_service_provider" property="platformServiceProvider"/>
@@ -107,7 +107,7 @@
         <result column="payment_inventory" property="paymentInventory"/>
         <result column="payment_date" property="paymentDate"/>
         <result column="real_money" property="realMoney"/>
-        <association property="taskVo" javaType="com.example.mybatis.vo.TaskVo">
+        <association property="taskVo" javaType="com.example.mybatis.vo.TaskVO">
             <result column="task_code" property="taskCode"/>
             <result column="task_name" property="taskName"/>
             <result column="release_date" property="releaseDate"/>
@@ -125,7 +125,7 @@
         WHERE pom.id=#{id}
     </select>
 
-    <resultMap id="InvoiceDetailsByPayId" type="com.example.mybatis.vo.InvoiceDetailsVo">
+    <resultMap id="InvoiceDetailsByPayId" type="com.example.mybatis.vo.InvoiceDetailsVO">
         <result column="worker_id" property="workerId"/>
         <result column="worker_name" property="workerName"/>
         <result column="mobile_code" property="mobileCode"/>
@@ -336,7 +336,7 @@
         <result column="payee_bank_code" property="payeeBankCode"/>
     </resultMap>
 
-    <resultMap type="com.example.mybatis.vo.TodayVo" id="dayTradeVO">
+    <resultMap type="com.example.mybatis.vo.TodayVO" id="dayTradeVO">
         <result property="oneHourIncome" column="one_hour_income"/>
         <result property="twoHourIncome" column="two_hour_income"/>
         <result property="threeHourIncome" column="three_hour_income"/>

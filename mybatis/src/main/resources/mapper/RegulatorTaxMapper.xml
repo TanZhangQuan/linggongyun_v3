@@ -12,7 +12,7 @@
         <result column="update_date" property="updateDate" />
     </resultMap>
 
-    <resultMap id="ServiceProvider" type="com.example.mybatis.vo.TaxVo">
+    <resultMap id="ServiceProvider" type="com.example.mybatis.vo.TaxVO">
         <id column="id" property="id"/>
         <result column="tax_name" property="taxName"/>
         <result column="payment_order_num" property="paymentOrderNum"/>

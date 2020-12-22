@@ -27,7 +27,7 @@
     maker_voice_upload_date_time, create_time, update_time
   </sql>
 
-  <resultMap id="InvoiceListQuery" type="com.example.mybatis.vo.InvoiceListVo">
+  <resultMap id="InvoiceListQuery" type="com.example.mybatis.vo.InvoiceListVO">
     <id column="id" property="id"/>
     <result column="worker_name" property="workerName"/>
     <result column="mobile_code" property="mobileCode"/>

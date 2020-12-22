@@ -2,11 +2,10 @@ package com.example.mybatis.mapper;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.example.mybatis.dto.WorkerTaskDto;
 import com.example.mybatis.entity.WorkerTask;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.example.mybatis.vo.WorkerTaskInfoVo;
-import com.example.mybatis.vo.WorkerTaskVo;
+import com.example.mybatis.vo.WorkerTaskInfoVO;
+import com.example.mybatis.vo.WorkerTaskVO;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -55,7 +54,7 @@ public interface WorkerTaskDao extends BaseMapper<WorkerTask> {
      * @param status
      * @return
      */
-    List<WorkerTaskVo> myTask(@Param("workerId") String workerId, @Param("status") String status);
+    List<WorkerTaskVO> myTask(@Param("workerId") String workerId, @Param("status") String status);
 
     /**
      * 创客任务详细信息
@@ -64,6 +63,6 @@ public interface WorkerTaskDao extends BaseMapper<WorkerTask> {
      * @param workerId
      * @return
      */
-    IPage<WorkerTaskInfoVo> queryWorkerTaskInfo(Page page, String workerId);
+    IPage<WorkerTaskInfoVO> queryWorkerTaskInfo(Page page, String workerId);
 
 }

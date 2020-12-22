@@ -16,7 +16,7 @@
         id, menu_name, menu_parent, create_date, update_date
     </sql>
 
-    <resultMap id="MenuList" type="com.example.mybatis.vo.MenuListVo">
+    <resultMap id="MenuList" type="com.example.mybatis.vo.MenuListVO">
         <id column="id" property="id"/>
         <result column="menu_name" property="menuName"/>
         <result column="menu_zhname" property="menuZhname"/>

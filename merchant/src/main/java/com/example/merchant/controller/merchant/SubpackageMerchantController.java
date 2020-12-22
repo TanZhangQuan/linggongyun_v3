@@ -4,14 +4,14 @@ package com.example.merchant.controller.merchant;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.SubpackageService;
-import com.example.mybatis.dto.QuerySubpackageDto;
-import com.example.mybatis.dto.TobeinvoicedDto;
+import com.example.mybatis.dto.QuerySubpackageDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.validation.Valid;
 
 @Api(value = "商户端分包发票关操作接口", tags = {"商户端分包发票关操作接口"})
 @RestController
@@ -24,7 +24,7 @@ public class SubpackageMerchantController {
     @ApiOperation("汇总代开已开票")
     @PostMapping(value = "/getSummaryList")
     @LoginRequired
-    public ReturnJson getSummaryList(@RequestBody QuerySubpackageDto querySubpackageDto,
+    public ReturnJson getSummaryList(@Valid @RequestBody QuerySubpackageDTO querySubpackageDto,
                                      @RequestAttribute("userId") @ApiParam(hidden = true) String merchantId) {
         return subpackageService.getSummaryList(querySubpackageDto, merchantId);
     }

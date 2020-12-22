@@ -1,8 +1,7 @@
 package com.example.merchant.service;
 
 import com.example.common.util.ReturnJson;
-import com.example.mybatis.dto.QuerySubpackageDto;
-import com.example.mybatis.dto.TobeinvoicedDto;
+import com.example.mybatis.dto.QuerySubpackageDTO;
 
 public interface SubpackageService {
 
@@ -21,7 +20,7 @@ public interface SubpackageService {
      * @param querySubpackageDto
      * @return
      */
-    ReturnJson getSummaryList(QuerySubpackageDto querySubpackageDto, String merchantId);
+    ReturnJson getSummaryList(QuerySubpackageDTO querySubpackageDto, String merchantId);
 
     /**
      * 汇总代开,支付信息，税价总和

@@ -2,14 +2,12 @@ package com.example.mybatis.mapper;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.example.mybatis.dto.QuerySubpackageDto;
-import com.example.mybatis.dto.TobeinvoicedDto;
-import com.example.mybatis.vo.InvoiceDetailsVo;
-import com.example.mybatis.vo.PaymentOrderVo;
-import com.example.mybatis.vo.SubpackageInfoVo;
-import com.example.mybatis.vo.SubpackageVo;
+import com.example.mybatis.dto.QuerySubpackageDTO;
+import com.example.mybatis.vo.InvoiceDetailsVO;
+import com.example.mybatis.vo.PaymentOrderVO;
+import com.example.mybatis.vo.SubpackageInfoVO;
+import com.example.mybatis.vo.SubpackageVO;
 import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.session.RowBounds;
 
 import java.util.List;
 
@@ -18,15 +16,15 @@ import java.util.List;
  */
 public interface SubpackageDao {
     //汇总代开
-    IPage<SubpackageVo> getSummaryList(Page page, QuerySubpackageDto querySubpackageDto, String merchantId);
+    IPage<SubpackageVO> getSummaryList(Page page, QuerySubpackageDTO querySubpackageDto, String merchantId);
 
     //根据发票id查询单个发票对应支付信息
-    SubpackageVo getSummary(String invoiceId);
+    SubpackageVO getSummary(String invoiceId);
 
     //发票信息
-    SubpackageInfoVo getSubpackageInfoById(String invoiceId);
+    SubpackageInfoVO getSubpackageInfoById(String invoiceId);
 
-    IPage<InvoiceDetailsVo> getListById(Page page, @Param("invoiceId") String invoiceId);
+    IPage<InvoiceDetailsVO> getListById(Page page, @Param("invoiceId") String invoiceId);
 
-    List<PaymentOrderVo> queryPaymentOrderInfo(String invoiceId);
+    List<PaymentOrderVO> queryPaymentOrderInfo(String invoiceId);
 }

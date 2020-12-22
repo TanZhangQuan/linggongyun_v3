@@ -12,7 +12,7 @@
         <result column="update_date" property="updateDate" />
     </resultMap>
 
-    <resultMap id="workerTaskInfo" type="com.example.mybatis.vo.WorkerTaskInfoVo">
+    <resultMap id="workerTaskInfo" type="com.example.mybatis.vo.WorkerTaskInfoVO">
         <result column="task_code" property="taskCode"/>
         <result column="account_name" property="accountName"/>
         <result column="companyName" property="companyName"/>
@@ -48,7 +48,7 @@
         WHERE worker_id=#{param2} and task_id=#{param3}
     </update>
 
-    <resultMap id="workerTask" type="com.example.mybatis.vo.WorkerTaskVo">
+    <resultMap id="workerTask" type="com.example.mybatis.vo.WorkerTaskVO">
         <result column="task_id" property="taskId"/>
         <result column="worker_task_id" property="workerTaskId"/>
         <result column="task_name" property="taskName"/>

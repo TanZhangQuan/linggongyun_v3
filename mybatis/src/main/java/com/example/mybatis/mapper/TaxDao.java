@@ -9,7 +9,7 @@ import com.example.mybatis.po.RegulatorTaxPayInfoPo;
 import com.example.mybatis.po.TaxListPO;
 import com.example.mybatis.po.TaxPO;
 import com.example.mybatis.vo.CooperationInfoVO;
-import com.example.mybatis.vo.SellerVo;
+import com.example.mybatis.vo.SellerVO;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -25,7 +25,7 @@ import java.util.List;
  */
 public interface TaxDao extends BaseMapper<Tax> {
     //销售方查询
-    SellerVo getSellerById(String id);
+    SellerVO getSellerById(String id);
 
     List<TaxPO> selectByMerchantId(String companyId);
 

@@ -9,18 +9,17 @@ import com.example.common.util.VerificationCheck;
 import com.example.merchant.dto.platform.*;
 import com.example.merchant.exception.CommonException;
 import com.example.merchant.service.InvoiceLadderPriceService;
-import com.example.merchant.service.MyBankService;
 import com.example.merchant.service.TaxService;
 import com.example.mybatis.vo.TaxBriefVO;
 import com.example.merchant.vo.platform.HomePageVO;
-import com.example.merchant.vo.platform.TaxListVo;
+import com.example.merchant.vo.platform.TaxListVO;
 import com.example.merchant.vo.platform.TaxPlatformVO;
 import com.example.mybatis.entity.*;
 import com.example.mybatis.mapper.*;
 import com.example.mybatis.po.InvoicePO;
 import com.example.mybatis.po.MerchantPaymentListPO;
 import com.example.mybatis.po.TaxListPO;
-import com.example.mybatis.vo.SellerVo;
+import com.example.mybatis.vo.SellerVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -306,7 +305,7 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
     @Override
     public ReturnJson getSellerById(String id) {
         ReturnJson returnJson = new ReturnJson("查询失败", 300);
-        SellerVo sellerVo = taxDao.getSellerById(id);
+        SellerVO sellerVo = taxDao.getSellerById(id);
         if (sellerVo != null) {
             returnJson = new ReturnJson("查询成功", sellerVo, 200);
         }
@@ -316,13 +315,13 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
     @Override
     public ReturnJson getTaxPaasList() {
         List<Tax> taxList = taxDao.selectList(new QueryWrapper<Tax>().eq("tax_status", 0));
-        List<TaxListVo> taxListVos = new ArrayList<>();
+        List<TaxListVO> taxListVOS = new ArrayList<>();
         for (int i = 0; i < taxList.size(); i++) {
-            TaxListVo taxListVo = new TaxListVo();
+            TaxListVO taxListVo = new TaxListVO();
             BeanUtils.copyProperties(taxList.get(i), taxListVo);
-            taxListVos.add(taxListVo);
+            taxListVOS.add(taxListVo);
         }
-        return ReturnJson.success(taxListVos);
+        return ReturnJson.success(taxListVOS);
     }
 
 }

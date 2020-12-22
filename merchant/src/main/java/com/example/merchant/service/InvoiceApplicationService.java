@@ -4,8 +4,8 @@ package com.example.merchant.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.merchant.UpdateApplication;
-import com.example.mybatis.dto.ApplicationPaymentDto;
-import com.example.mybatis.dto.InvoiceApplicationDto;
+import com.example.mybatis.dto.ApplicationPaymentDTO;
+import com.example.mybatis.dto.InvoiceApplicationDTO;
 import com.example.mybatis.entity.InvoiceApplication;
 
 public interface InvoiceApplicationService extends IService<InvoiceApplication> {
@@ -17,7 +17,7 @@ public interface InvoiceApplicationService extends IService<InvoiceApplication> 
      * @param invoiceApplicationDto
      * @return
      */
-    ReturnJson addInvApplication(InvoiceApplicationDto invoiceApplicationDto);
+    ReturnJson addInvApplication(InvoiceApplicationDTO invoiceApplicationDto);
 
     /**
      * 支付&申请对应
@@ -25,7 +25,7 @@ public interface InvoiceApplicationService extends IService<InvoiceApplication> 
      * @param applicationPaymentDto
      * @return
      */
-    int addApplicationPay(ApplicationPaymentDto applicationPaymentDto);
+    int addApplicationPay(ApplicationPaymentDTO applicationPaymentDto);
 
     /**
      * 去申请开票信息

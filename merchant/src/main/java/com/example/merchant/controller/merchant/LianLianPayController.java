@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,7 +25,7 @@ public class LianLianPayController {
     @LoginRequired
     @ApiOperation("添加或修改连连支付商户号和私钥")
     @PostMapping(value = "/addLianlianPay")
-    public ReturnJson addLianlianPay(@RequestAttribute(value = "userId") @ApiParam(hidden = true) String merchantId, @RequestBody AddLianLianPay addLianLianPay) {
+    public ReturnJson addLianlianPay(@RequestAttribute(value = "userId") @ApiParam(hidden = true) String merchantId, @Valid @RequestBody AddLianLianPay addLianLianPay) {
         return lianLianPayService.addLianlianPay(merchantId, addLianLianPay);
     }
 
@@ -76,7 +77,7 @@ public class LianLianPayController {
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "oidPaybill", value = "连连订单号", required = true)
     })
-    public Map<String, String> queryPayment(@ApiParam(hidden = true) @NotBlank(message = "您的登录已过期！") @RequestAttribute(value = "userId",required = false) String merchantId, @NotBlank(message = "请选择订单") @RequestParam String oidPaybill) throws CommonException{
+    public Map<String, String> queryPayment(@ApiParam(hidden = true) @NotBlank(message = "您的登录已过期！") @RequestAttribute(value = "userId", required = false) String merchantId, @NotBlank(message = "请选择订单") @RequestParam String oidPaybill) throws CommonException {
         return lianLianPayService.queryPaymentByorderId(merchantId, oidPaybill);
     }
 

@@ -2,29 +2,22 @@ package com.example.merchant.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.incrementer.DefaultIdentifierGenerator;
-import com.baomidou.mybatisplus.core.incrementer.IdentifierGenerator;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.api.R;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.common.util.*;
 import com.example.merchant.dto.makerend.QueryMissionHall;
 import com.example.merchant.dto.merchant.AddTaskDto;
-import com.example.merchant.service.MerchantService;
 import com.example.merchant.service.WorkerTaskService;
-import com.example.mybatis.dto.PlatformTaskDto;
-import com.example.mybatis.dto.TaskDto;
-import com.example.mybatis.dto.TaskListDto;
+import com.example.mybatis.dto.PlatformTaskDTO;
+import com.example.mybatis.dto.TaskDTO;
+import com.example.mybatis.dto.TaskListDTO;
 import com.example.mybatis.entity.*;
 import com.example.mybatis.mapper.*;
 import com.example.merchant.service.TaskService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.example.mybatis.vo.TaskInfoVo;
-import com.example.mybatis.vo.WorkerTaskVo;
-import org.apache.ibatis.session.RowBounds;
-import org.apache.poi.ss.formula.functions.T;
+import com.example.mybatis.vo.TaskInfoVO;
+import com.example.mybatis.vo.WorkerTaskVO;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -61,7 +54,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
 
 
     @Override
-    public ReturnJson selectList(TaskListDto taskListDto, String userId) {
+    public ReturnJson selectList(TaskListDTO taskListDto, String userId) {
         Page page = new Page(taskListDto.getPageNo(), taskListDto.getPageSize());
         IPage<Task> taskList = taskDao.selectLists(page, taskListDto, userId);
         return ReturnJson.success(taskList);
@@ -171,14 +164,14 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
     }
 
     @Override
-    public ReturnJson getPlatformTaskList(PlatformTaskDto platformTaskDto) {
+    public ReturnJson getPlatformTaskList(PlatformTaskDTO platformTaskDto) {
         Page page = new Page(platformTaskDto.getPageNo(), platformTaskDto.getPageSize());
         IPage<Task> taskList = taskDao.getPlatformTaskList(page, platformTaskDto);
         return ReturnJson.success(taskList);
     }
 
     @Override
-    public ReturnJson savePlatformTask(TaskDto taskDto) {
+    public ReturnJson savePlatformTask(TaskDTO taskDto) {
         Merchant merchant = merchantDao.selectById(taskDto.getMerchantId());
         DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         DateTimeFormatter df1 = DateTimeFormatter.ofPattern("HH:mm:ss");
@@ -214,7 +207,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
     }
 
     @Override
-    public ReturnJson updatePlatfromTask(TaskDto taskDto) {
+    public ReturnJson updatePlatfromTask(TaskDTO taskDto) {
         if (taskDto.getId() == null) {
             return ReturnJson.error("请选择任务");
         }
@@ -230,7 +223,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
     @Override
     public ReturnJson setTask(QueryMissionHall queryMissionHall) {
         Page page = new Page(queryMissionHall.getPageNo(), queryMissionHall.getPageSize());
-        IPage<TaskInfoVo> list = taskDao.setTask(page, queryMissionHall.getIndustryType());
+        IPage<TaskInfoVO> list = taskDao.setTask(page, queryMissionHall.getIndustryType());
         return ReturnJson.success(list);
     }
 
@@ -278,7 +271,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
 
     @Override
     public ReturnJson myTask(String workerId, String status) {
-        List<WorkerTaskVo> workerTaskList = workerTaskDao.myTask(workerId, status);
+        List<WorkerTaskVO> workerTaskList = workerTaskDao.myTask(workerId, status);
         return ReturnJson.success(workerTaskList);
     }
 

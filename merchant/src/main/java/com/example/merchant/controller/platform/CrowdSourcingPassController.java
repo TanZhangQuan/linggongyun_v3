@@ -3,13 +3,13 @@ package com.example.merchant.controller.platform;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.platform.AddCrowdSourcingInvoiceDto;
 import com.example.merchant.service.CrowdSourcingInvoiceService;
-import com.example.mybatis.dto.TobeinvoicedDto;
-import com.example.mybatis.entity.CrowdSourcingInvoice;
+import com.example.mybatis.dto.TobeinvoicedDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.validation.Valid;
 
 @Api(value = "平台端众包发票关操作接口", tags = {"平台端众包发票关操作接口"})
 @RestController
@@ -21,7 +21,7 @@ public class CrowdSourcingPassController {
 
     @PostMapping("/getTobeCrowdSourcingInvoice")
     @ApiOperation(value = "众包待开票")
-    public ReturnJson getTobeCrowdSourcingInvoice(TobeinvoicedDto tobeinvoicedDto) {
+    public ReturnJson getTobeCrowdSourcingInvoice(TobeinvoicedDTO tobeinvoicedDto) {
         return crowdSourcingInvoiceService.getTobeCrowdSourcingInvoice(tobeinvoicedDto);
     }
 
@@ -33,8 +33,8 @@ public class CrowdSourcingPassController {
 
     @PostMapping("/getPaymentInventory")
     @ApiOperation(value = "众包开票详情页，支付清单信息")
-    public ReturnJson getPaymentInventory(@RequestParam String invoiceId,@RequestParam(defaultValue = "1") Integer pageNo,@RequestParam(defaultValue = "10") Integer pageSize) {
-        return crowdSourcingInvoiceService.getPaymentInventoryPass(invoiceId,pageNo,pageSize);
+    public ReturnJson getPaymentInventory(@RequestParam String invoiceId, @RequestParam(defaultValue = "1") Integer pageNo, @RequestParam(defaultValue = "10") Integer pageSize) {
+        return crowdSourcingInvoiceService.getPaymentInventoryPass(invoiceId, pageNo, pageSize);
     }
 
     @PostMapping("/getBuyer")
@@ -51,20 +51,20 @@ public class CrowdSourcingPassController {
 
     @PostMapping("/saveCrowdSourcingInvoice")
     @ApiOperation(value = "众包开票详情页，开票")
-    public ReturnJson saveCrowdSourcingInvoice(@RequestBody AddCrowdSourcingInvoiceDto addCrowdSourcingInvoiceDto) {
+    public ReturnJson saveCrowdSourcingInvoice(@Valid @RequestBody AddCrowdSourcingInvoiceDto addCrowdSourcingInvoiceDto) {
         return crowdSourcingInvoiceService.saveCrowdSourcingInvoice(addCrowdSourcingInvoiceDto);
     }
 
     @PostMapping("/getCrowdSourcingInfo")
     @ApiOperation(value = "众包开票详情页，以开票")
-    public ReturnJson getCrowdSourcingInfo(TobeinvoicedDto tobeinvoicedDto) {
+    public ReturnJson getCrowdSourcingInfo(TobeinvoicedDTO tobeinvoicedDto) {
         return crowdSourcingInvoiceService.getCrowdSourcingInfoPass(tobeinvoicedDto);
     }
 
     @PostMapping("/getPaymentInventoryInfo")
     @ApiOperation(value = "众包开票详情页，已开票支付清单详情")
-    public ReturnJson getPaymentInventoryInfo(@RequestParam String invoiceId,@RequestParam(defaultValue = "1") Integer pageNo,@RequestParam(defaultValue = "10") Integer pageSize) {
-        return crowdSourcingInvoiceService.getPaymentInventoryInfoPass(invoiceId,pageNo,pageSize);
+    public ReturnJson getPaymentInventoryInfo(@RequestParam String invoiceId, @RequestParam(defaultValue = "1") Integer pageNo, @RequestParam(defaultValue = "10") Integer pageSize) {
+        return crowdSourcingInvoiceService.getPaymentInventoryInfoPass(invoiceId, pageNo, pageSize);
     }
 
 

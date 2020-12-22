@@ -8,14 +8,12 @@ import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.PaymentOrderManyService;
 import com.example.merchant.service.PaymentOrderService;
 import io.swagger.annotations.*;
-import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 
 /**
  * <p>
@@ -63,8 +61,8 @@ public class PaymentOrderManyPaasController {
     @PostMapping("/saveOrUpdata")
     @ApiOperation(value = "创建或修改众包支付订单", notes = "创建或修改众包支付订单", httpMethod = "POST")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "addPaymentOrderManyDto", value = "添加众包支付订单", required = true, dataType = "AddPaymentOrderManyDto")})
-    public ReturnJson saveOrUpdataPaymentOrderMany(@RequestBody AddPaymentOrderManyDto addPaymentOrderManyDto,@RequestParam String merchantId) {
-        return paymentOrderManyService.saveOrUpdataPaymentOrderMany(addPaymentOrderManyDto,merchantId);
+    public ReturnJson saveOrUpdataPaymentOrderMany(@Valid @RequestBody AddPaymentOrderManyDto addPaymentOrderManyDto, @RequestParam String merchantId) {
+        return paymentOrderManyService.saveOrUpdataPaymentOrderMany(addPaymentOrderManyDto, merchantId);
     }
 
     @PostMapping("/confirmPayment")

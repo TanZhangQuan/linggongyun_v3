@@ -10,7 +10,7 @@ import com.example.common.util.ReturnJson;
 import com.example.common.util.VerificationCheck;
 import com.example.merchant.dto.merchant.AddPaymentOrderManyDto;
 import com.example.merchant.dto.merchant.PaymentOrderMerchantDto;
-import com.example.mybatis.dto.QueryCrowdSourcingDto;
+import com.example.mybatis.dto.QueryCrowdSourcingDTO;
 import com.example.merchant.dto.platform.PaymentOrderDto;
 import com.example.merchant.dto.platform.PaymentOrderManyDto;
 import com.example.merchant.exception.CommonException;
@@ -23,9 +23,9 @@ import com.example.mybatis.entity.*;
 import com.example.mybatis.mapper.*;
 import com.example.mybatis.po.InvoiceInfoPO;
 import com.example.mybatis.po.PaymentOrderInfoPO;
-import com.example.mybatis.vo.CrowdSourcingInvoiceInfoVo;
-import com.example.mybatis.vo.InvoiceDetailsVo;
-import com.example.mybatis.vo.PaymentOrderManyVo;
+import com.example.mybatis.vo.CrowdSourcingInvoiceInfoVO;
+import com.example.mybatis.vo.InvoiceDetailsVO;
+import com.example.mybatis.vo.PaymentOrderManyVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -149,10 +149,10 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
      * @return
      */
     @Override
-    public ReturnJson getListCSIByID(QueryCrowdSourcingDto queryCrowdSourcingDto, String userId) {
+    public ReturnJson getListCSIByID(QueryCrowdSourcingDTO queryCrowdSourcingDto, String userId) {
         Page page = new Page(queryCrowdSourcingDto.getPageNo(), queryCrowdSourcingDto.getPageSize());
         Merchant merchant = merchantDao.selectById(userId);
-        IPage<CrowdSourcingInvoiceInfoVo> list = paymentOrderManyDao.getListCSIByID(page, queryCrowdSourcingDto, merchant.getCompanyId());
+        IPage<CrowdSourcingInvoiceInfoVO> list = paymentOrderManyDao.getListCSIByID(page, queryCrowdSourcingDto, merchant.getCompanyId());
         return ReturnJson.success(list);
     }
 
@@ -164,14 +164,14 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
      */
     @Override
     public ReturnJson getPayOrderManyById(String id) {
-        PaymentOrderManyVo paymentOrderManyVo = paymentOrderManyDao.getPayOrderManyById(id);
+        PaymentOrderManyVO paymentOrderManyVo = paymentOrderManyDao.getPayOrderManyById(id);
         return ReturnJson.success(paymentOrderManyVo);
     }
 
     @Override
     public ReturnJson getInvoiceDetailsByPayId(String id, Integer pageNo, Integer pageSize) {
         Page page = new Page(pageNo, pageSize);
-        IPage<InvoiceDetailsVo> list = paymentOrderManyDao.getInvoiceDetailsByPayId(page, id);
+        IPage<InvoiceDetailsVO> list = paymentOrderManyDao.getInvoiceDetailsByPayId(page, id);
         return ReturnJson.success(list);
     }
 

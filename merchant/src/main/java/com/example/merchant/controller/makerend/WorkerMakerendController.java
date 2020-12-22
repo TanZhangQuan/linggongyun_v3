@@ -10,7 +10,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
@@ -84,7 +83,7 @@ public class WorkerMakerendController {
     @PostMapping("/getWorkerInfoBytoken")
     @ApiOperation(value = "根据token获取用户信息", notes = "根据token获取用户信息", httpMethod = "POST")
     @LoginRequired
-    public ReturnJson getWorkerInfoBytoken(@RequestAttribute(value = "userId") @ApiParam(hidden = true) String userId) {
+    public ReturnJson getWorkerInfoBytoken(@Valid @RequestAttribute(value = "userId") @ApiParam(hidden = true) String userId) {
         return workerService.getWorkerInfoBytoken(userId);
     }
 

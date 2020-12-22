@@ -12,7 +12,7 @@ import com.example.mybatis.entity.PaymentInventory;
 import com.example.mybatis.mapper.InvoiceLadderPriceDao;
 import com.example.mybatis.mapper.MakerInvoiceDao;
 import com.example.mybatis.mapper.PaymentInventoryDao;
-import com.example.mybatis.vo.InvoiceListVo;
+import com.example.mybatis.vo.InvoiceListVO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,8 +48,8 @@ public class MakerInvoiceServiceImpl extends ServiceImpl<MakerInvoiceDao, MakerI
     public ReturnJson getPaymentInventory(String invoiceId) {
         ReturnJson returnJson = new ReturnJson("操作失败", 300);
         Map<String, Object> map = new HashMap<>();
-        List<InvoiceListVo> listVos = makerInvoiceDao.getInvoiceListQuery(invoiceId);
-        for (InvoiceListVo vo : listVos) {
+        List<InvoiceListVO> listVos = makerInvoiceDao.getInvoiceListQuery(invoiceId);
+        for (InvoiceListVO vo : listVos) {
             PaymentInventory paymentInventory = new PaymentInventory();
             paymentInventory.setId(vo.getId());
             List<InvoiceLadderPrice> invoiceLadderPrice = invoiceLadderPriceDao.selectList(new QueryWrapper<InvoiceLadderPrice>().eq("tax_id", vo.getTaxId()));

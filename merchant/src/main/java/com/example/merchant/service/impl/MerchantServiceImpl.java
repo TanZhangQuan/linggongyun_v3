@@ -18,14 +18,15 @@ import com.example.merchant.vo.merchant.HomePageMerchantVO;
 import com.example.merchant.vo.merchant.MerchantInfoVO;
 import com.example.merchant.vo.merchant.TaxVO;
 import com.example.merchant.vo.platform.*;
+import com.example.merchant.dto.platform.UpdateCompanyInfoDto;
 import com.example.mybatis.entity.*;
 import com.example.mybatis.mapper.*;
 import com.example.mybatis.po.MerchantInfoPo;
 import com.example.mybatis.po.MerchantPaymentListPO;
 import com.example.mybatis.po.TaxPO;
-import com.example.mybatis.vo.BuyerVo;
+import com.example.mybatis.vo.BuyerVO;
 import com.example.mybatis.vo.CooperationInfoVO;
-import com.example.mybatis.vo.MenuListVo;
+import com.example.mybatis.vo.MenuListVO;
 import com.example.redis.dao.RedisDao;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
@@ -254,7 +255,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
     @Override
     public ReturnJson getBuyerById(String id) {
         ReturnJson returnJson = new ReturnJson("查询失败", 300);
-        BuyerVo buyerVo = merchantDao.getBuyerById(id);
+        BuyerVO buyerVo = merchantDao.getBuyerById(id);
         if (buyerVo != null) {
             returnJson = new ReturnJson("查询成功", buyerVo, 200);
         }
@@ -431,7 +432,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         merchant.setCompanyId(companyInfo.getId());
         merchant.setCompanyName(companyInfo.getCompanyName());
         merchantDao.insert(merchant);
-        List<MenuListVo> listVos = menuDao.getMenuList();
+        List<MenuListVO> listVos = menuDao.getMenuList();
         for (int i = 0; i < listVos.size(); i++) {
             ObjectMenu objectMenu = new ObjectMenu();
             objectMenu.setMenuId(listVos.get(i).getId());
@@ -451,33 +452,109 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
     @Override
     public ReturnJson queryAgent() {
         List<Agent> list = agentDao.selectList(new QueryWrapper<Agent>().eq("agent_status", 0));
-        List<AgentVo> agentVoList = new ArrayList<>();
+        List<AgentVO> agentVOList = new ArrayList<>();
         for (int i = 0; i < list.size(); i++) {
-            AgentVo agentVo = new AgentVo();
+            AgentVO agentVo = new AgentVO();
             agentVo.setAgentName(list.get(i).getAgentName());
             agentVo.setId(list.get(i).getManagersId());
-            agentVoList.add(agentVo);
+            agentVOList.add(agentVo);
         }
-        return ReturnJson.success(agentVoList);
+        return ReturnJson.success(agentVOList);
+    }
+
+    @Override
+    public ReturnJson queryCompanyInfo(String companyId) {
+        CompanyInfoVO companyInfoVo = new CompanyInfoVO();
+        CompanyInfo companyInfo = companyInfoDao.selectById(companyId);
+        BeanUtils.copyProperties(companyInfo, companyInfoVo);
+        return ReturnJson.success(companyInfoVo);
+    }
+
+    @Override
+    public ReturnJson updateCompanyInfo(UpdateCompanyInfoDto updateCompanyInfoDto) {
+        CompanyInfo companyInfo = companyInfoDao.selectById(updateCompanyInfoDto.getId());
+        if (companyInfo == null) {
+            return ReturnJson.error("商户信息不正确！");
+        }
+        BeanUtils.copyProperties(updateCompanyInfoDto, companyInfo);
+        companyInfoDao.updateById(companyInfo);
+        return ReturnJson.success("修改成功");
+    }
+
+    @Override
+    public ReturnJson queryInvoiceInfo(String companyId) {
+        QueryInvoiceInfoVO queryInvoiceInfoVo = new QueryInvoiceInfoVO();
+        CompanyInvoiceInfo companyInvoiceInfo = companyInvoiceInfoDao.selectOne(new QueryWrapper<CompanyInvoiceInfo>().eq("company_id", companyId));
+        BeanUtils.copyProperties(companyInvoiceInfo, queryInvoiceInfoVo);
+        return ReturnJson.success(queryInvoiceInfoVo);
+    }
+
+    @Override
+    public ReturnJson updateInvoiceInfo(UpdetaInvoiceInfoDto updetaInvoiceInfoDto) {
+        CompanyInvoiceInfo companyInvoiceInfo = companyInvoiceInfoDao.selectById(updetaInvoiceInfoDto.getId());
+        if (companyInvoiceInfo == null) {
+            return ReturnJson.error("商户发票信息不正确！");
+        }
+        BeanUtils.copyProperties(updetaInvoiceInfoDto, companyInvoiceInfo);
+        companyInvoiceInfoDao.updateById(companyInvoiceInfo);
+        return ReturnJson.success("修改成功");
+    }
+
+    @Override
+    public ReturnJson queryMerchantInfo(String companyId) {
+        Merchant merchant = merchantDao.selectOne(new QueryWrapper<Merchant>().eq("company_id", companyId).eq("parent_id", 0));
+        QueryMerchantInfoVO queryMerchantInfoVo = new QueryMerchantInfoVO();
+        BeanUtils.copyProperties(merchant, queryMerchantInfoVo);
+        return ReturnJson.success(queryMerchantInfoVo);
+    }
+
+    @Override
+    public ReturnJson updateMerchantInfo(UpdateMerchantInfDto updateMerchantInfDto) {
+        Merchant merchant = merchantDao.selectById(updateMerchantInfDto.getId());
+        if (merchant == null) {
+            return ReturnJson.error("商户账户信息不正确！");
+        }
+        BeanUtils.copyProperties(updateMerchantInfDto, merchant);
+        merchantDao.updateById(merchant);
+        return ReturnJson.success("修改成功");
+    }
+
+    @Override
+    public ReturnJson queryCooperationInfo(String companyId) {
+        QueryCooperationInfoVO queryCooperationInfoVo = new QueryCooperationInfoVO();
+        CompanyInfo companyInfo = companyInfoDao.selectById(companyId);
+        queryCooperationInfoVo.setSalesManId(companyInfo.getSalesManId());
+        queryCooperationInfoVo.setAgentId(companyInfo.getAgentId());
+        Managers managers = managersDao.selectById(companyInfo.getSalesManId());
+        queryCooperationInfoVo.setSalesManName(managers.getRealName());
+        managers = managersDao.selectById(companyInfo.getAgentId());
+        queryCooperationInfoVo.setAgentName(managers.getRealName());
+        queryCooperationInfoVo.setCompanyInfoId(companyId);
+        return ReturnJson.success(queryCooperationInfoVo);
+    }
+
+    @Override
+    public ReturnJson updateCooperationInfo(String companyId) {
+        return null;
     }
 
     @Override
     public ReturnJson queryCompanyInfoById(String companyId) {
-        CompanyVo companyVo = new CompanyVo();
-        CompanyInfoVo companyInfoVo = new CompanyInfoVo();
+        CompanyVO companyVo = new CompanyVO();
+        CompanyInfoVO companyInfoVo = new CompanyInfoVO();
         CompanyInfo companyInfo = companyInfoDao.selectById(companyId);
         BeanUtils.copyProperties(companyInfo, companyInfoVo);
         companyVo.setCompanyInfoVo(companyInfoVo);
-        QueryInvoiceInfoVo queryInvoiceInfoVo = new QueryInvoiceInfoVo();
+        QueryInvoiceInfoVO queryInvoiceInfoVo = new QueryInvoiceInfoVO();
         CompanyInvoiceInfo companyInvoiceInfo = companyInvoiceInfoDao.selectOne(new QueryWrapper<CompanyInvoiceInfo>().eq("company_id", companyId));
         BeanUtils.copyProperties(companyInvoiceInfo, queryInvoiceInfoVo);
         companyVo.setQueryInvoiceInfoVo(queryInvoiceInfoVo);
         Merchant merchant = merchantDao.selectOne(new QueryWrapper<Merchant>().eq("company_id", companyId).eq("parent_id", 0));
-        QueryMerchantInfoVo queryMerchantInfoVo = new QueryMerchantInfoVo();
+        QueryMerchantInfoVO queryMerchantInfoVo = new QueryMerchantInfoVO();
         BeanUtils.copyProperties(merchant, queryMerchantInfoVo);
         queryMerchantInfoVo.setPassWord("");
         companyVo.setQueryMerchantInfoVo(queryMerchantInfoVo);
-        QueryCooperationInfoVo queryCooperationInfoVo = new QueryCooperationInfoVo();
+        QueryCooperationInfoVO queryCooperationInfoVo = new QueryCooperationInfoVO();
         queryCooperationInfoVo.setSalesManId(companyInfo.getSalesManId());
         queryCooperationInfoVo.setAgentId(companyInfo.getAgentId());
         Managers managers = managersDao.selectById(companyInfo.getSalesManId());
@@ -509,14 +586,8 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         if (merchant == null) {
             return ReturnJson.error("商户账户信息不正确！");
         }
-        if (updateCompanyDto.getUpdateMerchantInfDto().getPassWord() != "" && updateCompanyDto.getUpdateMerchantInfDto().getPassWord() != null) {
-           merchant.setPassWord(PWD_KEY+MD5.md5(updateCompanyDto.getUpdateMerchantInfDto().getPassWord()));
-        }
-        if (updateCompanyDto.getUpdateMerchantInfDto().getPayPwd() != "" && updateCompanyDto.getUpdateMerchantInfDto().getPayPwd() != null) {
-            merchant.setPayPwd(PWD_KEY+MD5.md5(updateCompanyDto.getUpdateMerchantInfDto().getPayPwd()));
-        }
+        BeanUtils.copyProperties(updateCompanyDto.getUpdateMerchantInfDto(), merchant);
         merchantDao.updateById(merchant);
-
         List<UpdateCompanyTaxDto> updateCompanyTaxDtoList = updateCompanyDto.getUpdateCompanyTaxDtoList();
         for (int i = 0; i < updateCompanyTaxDtoList.size(); i++) {
             CompanyTax companyTax;
@@ -529,20 +600,18 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
                 companyTax.setCompanyId(updateCompanyDto.getUpdateCompanyInfoDto().getId());
                 companyTaxDao.updateById(companyTax);
                 List<UpdateCompanyLadderServiceDto> updateCompanyLadderServiceDtoList = updateCompanyTaxDtoList.get(i).getUpdateCompanyLadderServiceDtoList();
-                if (updateCompanyLadderServiceDtoList != null) {
-                    for (UpdateCompanyLadderServiceDto updateCompanyLadderServiceDto : updateCompanyLadderServiceDtoList) {
-                        if (updateCompanyLadderServiceDto.getId() != null) {
-                            CompanyLadderService companyLadderService = new CompanyLadderService();
-                            BeanUtils.copyProperties(updateCompanyLadderServiceDto, companyLadderService);
-                            companyLadderService.setCompanyTaxId(companyTax.getId());
-                            companyLadderServiceService.updateById(companyLadderService);
-                        }
-                        if (updateCompanyLadderServiceDto.getId() == null) {
-                            CompanyLadderService companyLadderService = new CompanyLadderService();
-                            companyLadderService.setCompanyTaxId(companyTax.getId());
-                            BeanUtils.copyProperties(updateCompanyLadderServiceDto, companyLadderService);
-                            companyLadderServiceService.save(companyLadderService);
-                        }
+                for (UpdateCompanyLadderServiceDto updateCompanyLadderServiceDto : updateCompanyLadderServiceDtoList) {
+                    if (updateCompanyLadderServiceDto.getId() != null) {
+                        CompanyLadderService companyLadderService = new CompanyLadderService();
+                        BeanUtils.copyProperties(updateCompanyLadderServiceDto, companyLadderService);
+                        companyLadderService.setCompanyTaxId(companyTax.getId());
+                        companyLadderServiceService.updateById(companyLadderService);
+                    }
+                    if (updateCompanyLadderServiceDto.getId() == null) {
+                        CompanyLadderService companyLadderService = new CompanyLadderService();
+                        companyLadderService.setCompanyTaxId(companyTax.getId());
+                        BeanUtils.copyProperties(updateCompanyLadderServiceDto, companyLadderService);
+                        companyLadderServiceService.save(companyLadderService);
                     }
                 }
             }
@@ -552,7 +621,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
                 List<UpdateCompanyLadderServiceDto> updateCompanyLadderServiceDtoList = updateCompanyTaxDtoList.get(i).getUpdateCompanyLadderServiceDtoList();
                 if (updateCompanyLadderServiceDtoList != null) {
                     for (UpdateCompanyLadderServiceDto updateCompanyLadderServiceDto : updateCompanyLadderServiceDtoList) {
-                        CompanyLadderService companyLadderService = new CompanyLadderService();
+                        CompanyLadderService companyLadderService=new CompanyLadderService();
                         BeanUtils.copyProperties(updateCompanyLadderServiceDto, companyLadderService);
                         companyLadderService.setCompanyTaxId(companyTax.getId());
                         companyLadderServiceService.save(companyLadderService);

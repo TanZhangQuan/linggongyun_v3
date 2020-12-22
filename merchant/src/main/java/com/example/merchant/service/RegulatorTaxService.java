@@ -3,9 +3,8 @@ package com.example.merchant.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.regulator.PayInfoDto;
-import com.example.mybatis.dto.RegulatorTaxDto;
+import com.example.mybatis.dto.RegulatorTaxDTO;
 import com.example.mybatis.entity.RegulatorTax;
-import org.apache.http.HttpRequest;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -33,7 +32,7 @@ public interface RegulatorTaxService extends IService<RegulatorTax> {
      * @param regulatorTaxDto
      * @return
      */
-    ReturnJson listTax(RegulatorTaxDto regulatorTaxDto, String regulatorId);
+    ReturnJson listTax(RegulatorTaxDTO regulatorTaxDto, String regulatorId);
 
     /**
      * 查询服务商信息

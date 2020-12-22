@@ -3,9 +3,8 @@ package com.example.merchant.controller.platform;
 
 import com.example.common.util.ReturnJson;
 import com.example.merchant.service.TaskService;
-import com.example.mybatis.dto.PlatformTaskDto;
-import com.example.mybatis.dto.TaskDto;
-import com.example.mybatis.dto.TaskListDto;
+import com.example.mybatis.dto.PlatformTaskDTO;
+import com.example.mybatis.dto.TaskDTO;
 import com.example.mybatis.entity.Task;
 import io.swagger.annotations.*;
 import org.springframework.validation.annotation.Validated;
@@ -62,19 +61,19 @@ public class TaskPaasController {
 
     @ApiOperation("平台端任务列表")
     @PostMapping(value = "/getplatformTasks")
-    public ReturnJson<Task> platformTaskList(@RequestBody PlatformTaskDto platformTaskDto) {
+    public ReturnJson<Task> platformTaskList(@Valid @RequestBody PlatformTaskDTO platformTaskDto) {
         return taskService.getPlatformTaskList(platformTaskDto);
     }
 
     @ApiOperation("平台端任务新增")
     @PostMapping(value = "/addPlatformTask")
-    public ReturnJson addPlatformTask(@Valid @RequestBody TaskDto taskDto) {
+    public ReturnJson addPlatformTask(@Valid @RequestBody TaskDTO taskDto) {
         return taskService.savePlatformTask(taskDto);
     }
 
     @ApiOperation("平台端任务编辑")
     @PostMapping(value = "/updatePlatfromTask")
-    public ReturnJson updatePlatfromTask(@Valid @RequestBody TaskDto taskDto) {
+    public ReturnJson updatePlatfromTask(@Valid @RequestBody TaskDTO taskDto) {
         return taskService.updatePlatfromTask(taskDto);
     }
 }

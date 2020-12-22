@@ -3,7 +3,7 @@ package com.example.merchant.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.MakerTotalInvoiceDto;
-import com.example.mybatis.dto.QueryMakerTotalInvoiceDto;
+import com.example.mybatis.dto.QueryMakerTotalInvoiceDTO;
 import com.example.mybatis.entity.MakerTotalInvoice;
 
 public interface MakerTotalInvoiceService extends IService<MakerTotalInvoice> {
@@ -31,7 +31,7 @@ public interface MakerTotalInvoiceService extends IService<MakerTotalInvoice> {
      * @param queryMakerTotalInvoiceDto
      * @return
      */
-    ReturnJson queryMakerTotalInvoice(QueryMakerTotalInvoiceDto queryMakerTotalInvoiceDto);
+    ReturnJson queryMakerTotalInvoice(QueryMakerTotalInvoiceDTO queryMakerTotalInvoiceDto);
 
     /**
      * 汇总代开已开票详情

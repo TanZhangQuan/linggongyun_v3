@@ -9,10 +9,10 @@ import com.example.mybatis.entity.*;
 import com.example.mybatis.mapper.*;
 import com.example.merchant.service.MenuService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.example.mybatis.vo.MenuListVo;
-import com.example.mybatis.vo.QueryPassRolemenuVo;
-import com.example.mybatis.vo.RoleMenuPassVo;
-import com.example.mybatis.vo.RoleMenuVo;
+import com.example.mybatis.vo.MenuListVO;
+import com.example.mybatis.vo.QueryPassRolemenuVO;
+import com.example.mybatis.vo.RoleMenuPassVO;
+import com.example.mybatis.vo.RoleMenuVO;
 import com.example.redis.dao.RedisDao;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -55,7 +54,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
     @Override
     public ReturnJson getMenuList() {
         ReturnJson returnJson = new ReturnJson("查询失败", 300);
-        List<MenuListVo> listVos = menuDao.getMenuList();
+        List<MenuListVO> listVos = menuDao.getMenuList();
         if (listVos != null && listVos.size() != 0) {
             returnJson = new ReturnJson("查询成功", listVos, 200);
         }
@@ -65,7 +64,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
     @Override
     public ReturnJson getPlatformMenuList() {
         ReturnJson returnJson = new ReturnJson("查询失败", 300);
-        List<MenuListVo> listVos = menuDao.getPlatformMenuList();
+        List<MenuListVO> listVos = menuDao.getPlatformMenuList();
         if (listVos != null && listVos.size() != 0) {
             returnJson = new ReturnJson("查询成功", listVos, 200);
         }
@@ -126,7 +125,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
         if (merchantId == null) {
             return ReturnJson.error("merchantId不能为空");
         }
-        List<RoleMenuVo> list = objectMenuDao.getRolemenu(merchantId);
+        List<RoleMenuVO> list = objectMenuDao.getRolemenu(merchantId);
         return ReturnJson.success(list);
     }
 
@@ -193,7 +192,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
         if (managersId == null) {
             return ReturnJson.error("managersId不能为空");
         }
-        List<RoleMenuPassVo> list = objectMenuDao.getPassRolemenu(managersId);
+        List<RoleMenuPassVO> list = objectMenuDao.getPassRolemenu(managersId);
         return ReturnJson.success(list);
     }
 
@@ -219,7 +218,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
 
     @Override
     public ReturnJson getManagersInfo(String managersId) {
-        QueryPassRolemenuVo roleMenuPassVo = objectMenuDao.queryPassRolemenu(managersId);
+        QueryPassRolemenuVO roleMenuPassVo = objectMenuDao.queryPassRolemenu(managersId);
         return ReturnJson.success(roleMenuPassVo);
     }
 
@@ -228,8 +227,8 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
         if (userId == null) {
             return ReturnJson.error("merchantId不能为空");
         }
-        List<RoleMenuVo> list = objectMenuDao.getRolemenu(userId);
-        RoleMenuVo roleMenuVo=list.get(0);
+        List<RoleMenuVO> list = objectMenuDao.getRolemenu(userId);
+        RoleMenuVO roleMenuVo=list.get(0);
         return ReturnJson.success(roleMenuVo);
     }
 

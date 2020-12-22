@@ -27,7 +27,7 @@
         <result column="update_date" property="updateDate" />
     </resultMap>
 
-    <resultMap id="InvoiceVo" type="com.example.mybatis.vo.InvoiceVo">
+    <resultMap id="InvoiceVo" type="com.example.mybatis.vo.InvoiceVO">
         <id column="id" property="id"/>
         <result column="application_id" property="applicationId"/>
         <result column="invoice_code" property="invoiceCode"/>
@@ -39,14 +39,14 @@
         <result column="invoice_url" property="invoiceUrl"/>
         <result column="tax_receipt_url" property="taxReceiptUrl"/>
         <result column="is_invoice" property="isInvoice"/>
-        <collection property="list" ofType="com.example.mybatis.vo.OrderSubpackageVo">
+        <collection property="list" ofType="com.example.mybatis.vo.OrderSubpackageVO">
             <result column="pid" property="id"/>
             <result column="payment_inventory" property="paymentInventory"/>
             <result column="subpackage_payment" property="subpackagePayment"/>
         </collection>
     </resultMap>
 
-    <resultMap id="InvInfo" type="com.example.mybatis.vo.InvoiceInformationVo">
+    <resultMap id="InvInfo" type="com.example.mybatis.vo.InvoiceInformationVO">
         <result column="id" property="invAppId"/>
         <result column="invoice_catalog_type" property="invoiceCatalogType"/>
         <result column="application_desc" property="applicationDesc"/>
@@ -57,13 +57,13 @@
         <result column="express_sheet_no" property="expressSheetNo"/>
     </resultMap>
 
-    <resultMap id="PlaInvInfo" type="com.example.mybatis.vo.PlaInvoiceInfoVo">
+    <resultMap id="PlaInvInfo" type="com.example.mybatis.vo.PlaInvoiceInfoVO">
         <result column="invoice_catalog_type" property="invoiceCatalogType"/>
         <result column="application_desc" property="applicationDesc"/>
         <result column="application_address" property="applicationAddress"/>
     </resultMap>
 
-    <resultMap id="SubList" type="com.example.mybatis.vo.ToSubcontractInvoiceVo">
+    <resultMap id="SubList" type="com.example.mybatis.vo.ToSubcontractInvoiceVO">
         <id column="id" property="id"/>
         <result column="company_s_name" property="companySName"/>
         <result column="platform_service_provider" property="platformServiceProvider"/>
@@ -71,14 +71,14 @@
         <result column="tax_receipt_url" property="taxReceiptUrl"/>
         <result column="is_subpackage" property="isSubpackage"/>
         <result column="payment_date" property="paymentDate"/>
-        <collection property="list" ofType="com.example.mybatis.vo.OrderSubpackageVo">
+        <collection property="list" ofType="com.example.mybatis.vo.OrderSubpackageVO">
             <result column="pid" property="id"/>
             <result column="payment_inventory" property="paymentInventory"/>
             <result column="subpackage_payment" property="subpackagePayment"/>
         </collection>
     </resultMap>
 
-    <resultMap id="InvoiceListQuery" type="com.example.mybatis.vo.InvoiceListVo">
+    <resultMap id="InvoiceListQuery" type="com.example.mybatis.vo.InvoiceListVO">
         <id column="id" property="id"/>
         <result column="worker_id" property="workerId"/>
         <result column="worker_name" property="workerName"/>
@@ -174,14 +174,14 @@
 <!--    </select>-->
 
 
-    <resultMap id="TobeInvoiced" type="com.example.mybatis.vo.TobeinvoicedVo">
+    <resultMap id="TobeInvoiced" type="com.example.mybatis.vo.TobeinvoicedVO">
         <id column="id" property="invoiceApplicationId"/>
         <result column="company_s_name" property="companySName"/>
         <result column="platform_service_provider" property="platformServiceProvider"/>
         <result column="application_desc" property="applicationDesc"/>
         <result column="is_invoice" property="isInvoice"/>
         <result column="application_date" property="applicationDate"/>
-        <collection property="list" ofType="com.example.mybatis.vo.OrderSubpackageVo">
+        <collection property="list" ofType="com.example.mybatis.vo.OrderSubpackageVO">
             <result column="pid" property="id"/>
             <result column="payment_inventory" property="paymentInventory"/>
             <result column="subpackage_payment" property="subpackagePayment"/>
@@ -258,7 +258,7 @@
     </select>
 
 
-    <resultMap id="invoiceListVo" type="com.example.mybatis.vo.PlaInvoiceListVo">
+    <resultMap id="invoiceListVo" type="com.example.mybatis.vo.PlaInvoiceListVO">
         <result column="invoice_application_id" property="invoiceApplicationId"/>
         <result column="company_s_name" property="companySName"/>
         <result column="platform_service_provider" property="platformServiceProvider"/>
@@ -266,7 +266,7 @@
         <result column="application_state" property="applicationState"/>
         <result column="application_date" property="applicationDate"/>
         <result column="is_invoice" property="isInvoice"/>
-        <collection property="payVo" ofType="com.example.mybatis.vo.PayVo">
+        <collection property="payVo" ofType="com.example.mybatis.vo.PayVO">
             <id column="pid" property="pId"/>
             <result column="payment_inventory" property="paymentTnventory"/>
             <result column="subpackage_payment" property="subpackagePayment"/>

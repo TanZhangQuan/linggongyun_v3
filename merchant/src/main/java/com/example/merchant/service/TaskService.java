@@ -4,11 +4,10 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.makerend.QueryMissionHall;
 import com.example.merchant.dto.merchant.AddTaskDto;
-import com.example.mybatis.dto.PlatformTaskDto;
-import com.example.mybatis.dto.TaskDto;
-import com.example.mybatis.dto.TaskListDto;
+import com.example.mybatis.dto.PlatformTaskDTO;
+import com.example.mybatis.dto.TaskDTO;
+import com.example.mybatis.dto.TaskListDTO;
 import com.example.mybatis.entity.Task;
-import org.apache.ibatis.session.RowBounds;
 
 /**
  * <p>
@@ -27,7 +26,7 @@ public interface TaskService extends IService<Task> {
      * @param taskListDto
      * @return
      */
-    ReturnJson selectList(TaskListDto taskListDto,String userId);
+    ReturnJson selectList(TaskListDTO taskListDto, String userId);
 
     /**
      * 删除
@@ -82,7 +81,7 @@ public interface TaskService extends IService<Task> {
      * @param platformTaskDto
      * @return
      */
-    ReturnJson getPlatformTaskList(PlatformTaskDto platformTaskDto);
+    ReturnJson getPlatformTaskList(PlatformTaskDTO platformTaskDto);
 
     /**
      * 平台任务添加
@@ -90,7 +89,7 @@ public interface TaskService extends IService<Task> {
      * @param taskDto
      * @return
      */
-    ReturnJson savePlatformTask(TaskDto taskDto);
+    ReturnJson savePlatformTask(TaskDTO taskDto);
 
     /**
      * 编辑任务
@@ -98,7 +97,7 @@ public interface TaskService extends IService<Task> {
      * @param taskDto
      * @return
      */
-    ReturnJson updatePlatfromTask(TaskDto taskDto);
+    ReturnJson updatePlatfromTask(TaskDTO taskDto);
 
     /**
      * 小程序任务大厅

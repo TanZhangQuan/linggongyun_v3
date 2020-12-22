@@ -29,7 +29,7 @@
         <result column="update_date" property="updateDate"/>
     </resultMap>
 
-    <resultMap id="PaymentOrderById" type="com.example.mybatis.vo.PaymentOrderVo">
+    <resultMap id="PaymentOrderById" type="com.example.mybatis.vo.PaymentOrderVO">
         <result column="id" property="id"/>
         <result column="company_s_name" property="companySName"/>
         <result column="platform_service_provider" property="platformServiceProvider"/>
@@ -38,7 +38,7 @@
         <result column="payment_inventory" property="paymentInventory"/>
         <result column="payment_date" property="paymentDate"/>
         <result column="subpackage_payment" property="subpackagePayment"/>
-        <association property="taskVo" javaType="com.example.mybatis.vo.TaskVo">
+        <association property="taskVo" javaType="com.example.mybatis.vo.TaskVO">
             <result column="task_code" property="taskCode"/>
             <result column="task_name" property="taskName"/>
             <result column="release_date" property="releaseDate"/>
@@ -213,7 +213,7 @@
         WHERE po.id=#{id}
     </select>
 
-    <resultMap id="BillingInfo" type="com.example.mybatis.vo.BillingInfoVo">
+    <resultMap id="BillingInfo" type="com.example.mybatis.vo.BillingInfoVO">
         <result column="id" property="id"/>
         <result column="company_s_name" property="companySName"/>
         <result column="platform_service_provider" property="platformServiceProvider"/>
@@ -348,7 +348,7 @@
         <result column="task_type" property="taskType"/>
     </resultMap>
 
-    <resultMap id="InvoiceListQuery" type="com.example.mybatis.vo.InvoiceListVo">
+    <resultMap id="InvoiceListQuery" type="com.example.mybatis.vo.InvoiceListVO">
         <id column="id" property="id"/>
         <result column="worker_id" property="workerId"/>
         <result column="worker_name" property="workerName"/>
@@ -499,7 +499,7 @@
             mti.id =#{invoiceId}
     </select>
 
-     <resultMap id="BuyerById" type="com.example.mybatis.vo.BuyerVo">
+     <resultMap id="BuyerById" type="com.example.mybatis.vo.BuyerVO">
         <result column="tax_name" property="companyName"/>
         <result column="credit_code" property="creditCode"/>
         <result column="tax_address" property="companyAddress"/>
