@@ -18,7 +18,6 @@ import com.example.merchant.vo.merchant.HomePageMerchantVO;
 import com.example.merchant.vo.merchant.MerchantInfoVO;
 import com.example.merchant.vo.merchant.TaxVO;
 import com.example.merchant.vo.platform.*;
-import com.example.merchant.dto.platform.UpdateCompanyInfoDto;
 import com.example.mybatis.entity.*;
 import com.example.mybatis.mapper.*;
 import com.example.mybatis.po.MerchantInfoPo;
@@ -460,82 +459,6 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
             agentVOList.add(agentVo);
         }
         return ReturnJson.success(agentVOList);
-    }
-
-    @Override
-    public ReturnJson queryCompanyInfo(String companyId) {
-        CompanyInfoVO companyInfoVo = new CompanyInfoVO();
-        CompanyInfo companyInfo = companyInfoDao.selectById(companyId);
-        BeanUtils.copyProperties(companyInfo, companyInfoVo);
-        return ReturnJson.success(companyInfoVo);
-    }
-
-    @Override
-    public ReturnJson updateCompanyInfo(UpdateCompanyInfoDto updateCompanyInfoDto) {
-        CompanyInfo companyInfo = companyInfoDao.selectById(updateCompanyInfoDto.getId());
-        if (companyInfo == null) {
-            return ReturnJson.error("商户信息不正确！");
-        }
-        BeanUtils.copyProperties(updateCompanyInfoDto, companyInfo);
-        companyInfoDao.updateById(companyInfo);
-        return ReturnJson.success("修改成功");
-    }
-
-    @Override
-    public ReturnJson queryInvoiceInfo(String companyId) {
-        QueryInvoiceInfoVO queryInvoiceInfoVo = new QueryInvoiceInfoVO();
-        CompanyInvoiceInfo companyInvoiceInfo = companyInvoiceInfoDao.selectOne(new QueryWrapper<CompanyInvoiceInfo>().eq("company_id", companyId));
-        BeanUtils.copyProperties(companyInvoiceInfo, queryInvoiceInfoVo);
-        return ReturnJson.success(queryInvoiceInfoVo);
-    }
-
-    @Override
-    public ReturnJson updateInvoiceInfo(UpdetaInvoiceInfoDto updetaInvoiceInfoDto) {
-        CompanyInvoiceInfo companyInvoiceInfo = companyInvoiceInfoDao.selectById(updetaInvoiceInfoDto.getId());
-        if (companyInvoiceInfo == null) {
-            return ReturnJson.error("商户发票信息不正确！");
-        }
-        BeanUtils.copyProperties(updetaInvoiceInfoDto, companyInvoiceInfo);
-        companyInvoiceInfoDao.updateById(companyInvoiceInfo);
-        return ReturnJson.success("修改成功");
-    }
-
-    @Override
-    public ReturnJson queryMerchantInfo(String companyId) {
-        Merchant merchant = merchantDao.selectOne(new QueryWrapper<Merchant>().eq("company_id", companyId).eq("parent_id", 0));
-        QueryMerchantInfoVO queryMerchantInfoVo = new QueryMerchantInfoVO();
-        BeanUtils.copyProperties(merchant, queryMerchantInfoVo);
-        return ReturnJson.success(queryMerchantInfoVo);
-    }
-
-    @Override
-    public ReturnJson updateMerchantInfo(UpdateMerchantInfDto updateMerchantInfDto) {
-        Merchant merchant = merchantDao.selectById(updateMerchantInfDto.getId());
-        if (merchant == null) {
-            return ReturnJson.error("商户账户信息不正确！");
-        }
-        BeanUtils.copyProperties(updateMerchantInfDto, merchant);
-        merchantDao.updateById(merchant);
-        return ReturnJson.success("修改成功");
-    }
-
-    @Override
-    public ReturnJson queryCooperationInfo(String companyId) {
-        QueryCooperationInfoVO queryCooperationInfoVo = new QueryCooperationInfoVO();
-        CompanyInfo companyInfo = companyInfoDao.selectById(companyId);
-        queryCooperationInfoVo.setSalesManId(companyInfo.getSalesManId());
-        queryCooperationInfoVo.setAgentId(companyInfo.getAgentId());
-        Managers managers = managersDao.selectById(companyInfo.getSalesManId());
-        queryCooperationInfoVo.setSalesManName(managers.getRealName());
-        managers = managersDao.selectById(companyInfo.getAgentId());
-        queryCooperationInfoVo.setAgentName(managers.getRealName());
-        queryCooperationInfoVo.setCompanyInfoId(companyId);
-        return ReturnJson.success(queryCooperationInfoVo);
-    }
-
-    @Override
-    public ReturnJson updateCooperationInfo(String companyId) {
-        return null;
     }
 
     @Override
