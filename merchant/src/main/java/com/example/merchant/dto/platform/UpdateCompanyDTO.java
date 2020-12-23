@@ -13,13 +13,13 @@ public class UpdateCompanyDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty(value = "公司的基本信息")
-    private UpdateCompanyInfoDto updateCompanyInfoDto;
+    private UpdateCompanyInfoDTO updateCompanyInfoDto;
 
     @ApiModelProperty(value = "公司的开票信息")
     private UpdetaInvoiceInfoDTO updetaInvoiceInfoDto;
 
     @ApiModelProperty(value = "公司的账户信息")
-    private UpdateMerchantInfDto updateMerchantInfDto;
+    private UpdateMerchantInfDTO updateMerchantInfDto;
 
     @ApiModelProperty(value = "公司的组织结构信息")
     private UpdateCooperationDTO updateCooperationDto;

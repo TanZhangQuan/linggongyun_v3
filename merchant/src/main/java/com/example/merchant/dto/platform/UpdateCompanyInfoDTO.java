@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 
 @Data
 @ApiModel(description = "XXXXX")
-public class UpdateCompanyInfoDto implements Serializable {
+public class UpdateCompanyInfoDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty(value = "商户ID")

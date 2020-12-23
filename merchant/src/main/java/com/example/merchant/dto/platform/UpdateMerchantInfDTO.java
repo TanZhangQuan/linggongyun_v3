@@ -8,7 +8,7 @@ import java.io.Serializable;
 
 @Data
 @ApiModel(description = "XXXXX")
-public class UpdateMerchantInfDto implements Serializable {
+public class UpdateMerchantInfDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty(value = "账户信息ID")
