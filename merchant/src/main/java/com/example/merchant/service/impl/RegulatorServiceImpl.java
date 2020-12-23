@@ -738,6 +738,14 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
         return ReturnJson.success("操作成功！");
     }
 
+    @Override
+    public ReturnJson getRegulatorInfo(String regulatorId) {
+        Regulator regulator=regulatorDao.selectById(regulatorId);
+        RegulatorInfoVO regulatorInfoVo=new RegulatorInfoVO();
+        BeanUtils.copyProperties(regulator,regulatorInfoVo);
+        return ReturnJson.success(regulatorInfoVo);
+    }
+
 
     /**
      * 获取监管部门所监管的服务商下产生的支付订单

@@ -269,4 +269,13 @@ public interface RegulatorService extends IService<Regulator> {
      * @return
      */
     ReturnJson updateRegulatorTaxStatus(String taxId, String regulatorId, Integer status);
+
+    /**
+     * 获取监管人员信息
+     *
+     * @param regulatorId
+     * @return
+     */
+    ReturnJson getRegulatorInfo(String regulatorId);
+
 }

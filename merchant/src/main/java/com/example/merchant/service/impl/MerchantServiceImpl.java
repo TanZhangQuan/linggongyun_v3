@@ -523,29 +523,31 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
                 BeanUtils.copyProperties(updateCompanyTaxDTOList.get(i), companyTax);
                 companyTax.setCompanyId(updateCompanyDto.getUpdateCompanyInfoDto().getId());
                 companyTaxDao.updateById(companyTax);
-                List<UpdateCompanyLadderServiceDTO> updateCompanyLadderServiceDTOList = updateCompanyTaxDTOList.get(i).getUpdateCompanyLadderServiceDTOList();
-                for (UpdateCompanyLadderServiceDTO updateCompanyLadderServiceDto : updateCompanyLadderServiceDTOList) {
-                    if (updateCompanyLadderServiceDto.getId() != null) {
-                        CompanyLadderService companyLadderService = new CompanyLadderService();
-                        BeanUtils.copyProperties(updateCompanyLadderServiceDto, companyLadderService);
-                        companyLadderService.setCompanyTaxId(companyTax.getId());
-                        companyLadderServiceService.updateById(companyLadderService);
-                    }
-                    if (updateCompanyLadderServiceDto.getId() == null) {
-                        CompanyLadderService companyLadderService = new CompanyLadderService();
-                        companyLadderService.setCompanyTaxId(companyTax.getId());
-                        BeanUtils.copyProperties(updateCompanyLadderServiceDto, companyLadderService);
-                        companyLadderServiceService.save(companyLadderService);
+                List<UpdateCompanyLadderServiceDto> updateCompanyLadderServiceDtoList = updateCompanyTaxDtoList.get(i).getUpdateCompanyLadderServiceDtoList();
+                if (updateCompanyLadderServiceDtoList != null) {
+                    for (UpdateCompanyLadderServiceDto updateCompanyLadderServiceDto : updateCompanyLadderServiceDtoList) {
+                        if (updateCompanyLadderServiceDto.getId() != null) {
+                            CompanyLadderService companyLadderService = new CompanyLadderService();
+                            BeanUtils.copyProperties(updateCompanyLadderServiceDto, companyLadderService);
+                            companyLadderService.setCompanyTaxId(companyTax.getId());
+                            companyLadderServiceService.updateById(companyLadderService);
+                        }
+                        if (updateCompanyLadderServiceDto.getId() == null) {
+                            CompanyLadderService companyLadderService = new CompanyLadderService();
+                            companyLadderService.setCompanyTaxId(companyTax.getId());
+                            BeanUtils.copyProperties(updateCompanyLadderServiceDto, companyLadderService);
+                            companyLadderServiceService.save(companyLadderService);
+                        }
                     }
                 }
             }
             if (updateCompanyTaxDTOList.get(i).getId() == null) {
                 companyTax = companyTaxDao.selectById(updateCompanyTaxDTOList.get(i).getId());
                 companyTaxDao.insert(companyTax);
-                List<UpdateCompanyLadderServiceDTO> updateCompanyLadderServiceDTOList = updateCompanyTaxDTOList.get(i).getUpdateCompanyLadderServiceDTOList();
-                if (updateCompanyLadderServiceDTOList != null) {
-                    for (UpdateCompanyLadderServiceDTO updateCompanyLadderServiceDto : updateCompanyLadderServiceDTOList) {
-                        CompanyLadderService companyLadderService=new CompanyLadderService();
+                List<UpdateCompanyLadderServiceDto> updateCompanyLadderServiceDtoList = updateCompanyTaxDtoList.get(i).getUpdateCompanyLadderServiceDtoList();
+                if (updateCompanyLadderServiceDtoList != null) {
+                    for (UpdateCompanyLadderServiceDto updateCompanyLadderServiceDto : updateCompanyLadderServiceDtoList) {
+                        CompanyLadderService companyLadderService = new CompanyLadderService();
                         BeanUtils.copyProperties(updateCompanyLadderServiceDto, companyLadderService);
                         companyLadderService.setCompanyTaxId(companyTax.getId());
                         companyLadderServiceService.save(companyLadderService);

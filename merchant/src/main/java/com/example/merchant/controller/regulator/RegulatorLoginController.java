@@ -37,4 +37,11 @@ public class RegulatorLoginController {
     public ReturnJson regulatorLogout(@ApiParam(hidden = true) @RequestAttribute(value = "userId", required = false) String regulatorId) {
         return regulatorService.regulatorLogout(regulatorId);
     }
+
+    @PostMapping("/getRegulatorInfo")
+    @LoginRequired
+    @ApiOperation(value = "获取监管人员信息", notes = "获取监管人员信息", httpMethod = "POST")
+    public ReturnJson getRegulatorInfo(@ApiParam(hidden = true) @RequestAttribute(value = "userId", required = false) String regulatorId) {
+        return regulatorService.getRegulatorInfo(regulatorId);
+    }
 }

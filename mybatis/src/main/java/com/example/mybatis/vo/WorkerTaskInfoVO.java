@@ -33,6 +33,7 @@ public class WorkerTaskInfoVO implements Serializable {
     private Integer taskStatus;
 
     @ApiModelProperty(value = "接单时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private LocalDateTime createDate;
 
     @ApiModelProperty(value = "完成时间")

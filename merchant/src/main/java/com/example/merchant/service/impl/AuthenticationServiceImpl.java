@@ -25,6 +25,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -86,11 +87,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public ReturnJson saveBankInfo(WorkerBankDTO workerBankDto, String workerId) throws Exception {
+    @Transactional(rollbackFor = Exception.class)
+    public ReturnJson saveBankInfo(WorkerBankDto workerBankDto, String workerId) {
         Worker worker = workerDao.selectById(workerId);
         if (worker == null) {
             return ReturnJson.error("您输入的用户不存在！");
         }
+        worker.setBankCode(workerBankDto.getBankCode());
+        worker.setBankName(workerBankDto.getBankName());
+        workerDao.updateById(worker);
         WorkerBank workerBank = new WorkerBank();
         BeanUtils.copyProperties(workerBankDto, workerBank);
         workerBank.setWorkerId(worker.getId());
