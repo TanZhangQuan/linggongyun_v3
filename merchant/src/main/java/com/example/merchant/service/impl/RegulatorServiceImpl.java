@@ -263,7 +263,7 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
         }
         List<String> paymentOrderIds = (List<String>) result.getData();
         if (VerificationCheck.listIsNull(paymentOrderIds)) {
-            return ReturnJson.error("您所监管的服务商还没产生过流水！");
+            return ReturnJson.success(paymentOrderIds);
         }
         Page<RegulatorWorkerPO> regulatorWorkerPOPage = new Page<>(regulatorWorkerDto.getPageNo(), regulatorWorkerDto.getPageSize());
         IPage<RegulatorWorkerPO> regulatorWorkerPOIPage = regulatorDao.selectRegulatorWorker(regulatorWorkerPOPage,
@@ -291,7 +291,7 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
         }
         List<String> paymentOrderIds = (List<String>) result.getData();
         if (VerificationCheck.listIsNull(paymentOrderIds)) {
-            return ReturnJson.error("您所监管的服务商还没产生过流水！");
+            return ReturnJson.success(paymentOrderIds);
         }
         List<RegulatorWorkerPO> regulatorWorkerPOS = regulatorDao.selectExportRegulatorWorker(Arrays.asList(workerIds.split(",")), paymentOrderIds);
         List<RegulatorWorkerVO> regulatorWorkerVOS = new ArrayList<>();
@@ -321,7 +321,7 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
         }
         List<String> paymentOrderIds = (List<String>) result.getData();
         if (VerificationCheck.listIsNull(paymentOrderIds)) {
-            return ReturnJson.error("您所监管的服务商还没产生过流水！");
+            return ReturnJson.success(paymentOrderIds);
         }
         List<PaymentInventory> paymentInventories = paymentInventoryDao.selectList(new QueryWrapper<PaymentInventory>().in("payment_order_id", paymentOrderIds));
         Integer totalOrderCount = 0;
@@ -361,7 +361,7 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
         }
         List<String> paymentOrderIds = (List<String>) result.getData();
         if (VerificationCheck.listIsNull(paymentOrderIds)) {
-            return ReturnJson.error("您所监管的服务商还没产生过流水！");
+            return ReturnJson.success(paymentOrderIds);
         }
         List<String> workerIds = new ArrayList<>();
         workerIds.add(workerId);
@@ -386,7 +386,7 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
         }
         List<String> paymentOrderIds = (List<String>) result.getData();
         if (VerificationCheck.listIsNull(paymentOrderIds)) {
-            return ReturnJson.error("您所监管的服务商还没产生过流水！");
+            return ReturnJson.success(paymentOrderIds);
         }
         Page<WorekerPaymentListPo> paymentListPoPage = new Page<>(regulatorWorkerPaymentDto.getPageNo(), regulatorWorkerPaymentDto.getPageSize());
         IPage<WorekerPaymentListPo> worekerPaymentListPoIPage = workerDao.selectRegulatorWorkerPaymentInfo(paymentListPoPage,

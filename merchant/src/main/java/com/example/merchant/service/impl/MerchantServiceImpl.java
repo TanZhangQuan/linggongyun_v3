@@ -18,7 +18,6 @@ import com.example.merchant.vo.merchant.HomePageMerchantVO;
 import com.example.merchant.vo.merchant.MerchantInfoVO;
 import com.example.merchant.vo.merchant.TaxVO;
 import com.example.merchant.vo.platform.*;
-import com.example.merchant.dto.platform.UpdateCompanyInfoDTO;
 import com.example.mybatis.entity.*;
 import com.example.mybatis.mapper.*;
 import com.example.mybatis.po.MerchantInfoPo;
@@ -523,9 +522,9 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
                 BeanUtils.copyProperties(updateCompanyTaxDTOList.get(i), companyTax);
                 companyTax.setCompanyId(updateCompanyDto.getUpdateCompanyInfoDto().getId());
                 companyTaxDao.updateById(companyTax);
-                List<UpdateCompanyLadderServiceDto> updateCompanyLadderServiceDtoList = updateCompanyTaxDtoList.get(i).getUpdateCompanyLadderServiceDtoList();
+                List<UpdateCompanyLadderServiceDTO> updateCompanyLadderServiceDtoList = updateCompanyTaxDTOList.get(i).getUpdateCompanyLadderServiceDTOList();
                 if (updateCompanyLadderServiceDtoList != null) {
-                    for (UpdateCompanyLadderServiceDto updateCompanyLadderServiceDto : updateCompanyLadderServiceDtoList) {
+                    for (UpdateCompanyLadderServiceDTO updateCompanyLadderServiceDto : updateCompanyLadderServiceDtoList) {
                         if (updateCompanyLadderServiceDto.getId() != null) {
                             CompanyLadderService companyLadderService = new CompanyLadderService();
                             BeanUtils.copyProperties(updateCompanyLadderServiceDto, companyLadderService);
@@ -544,9 +543,9 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
             if (updateCompanyTaxDTOList.get(i).getId() == null) {
                 companyTax = companyTaxDao.selectById(updateCompanyTaxDTOList.get(i).getId());
                 companyTaxDao.insert(companyTax);
-                List<UpdateCompanyLadderServiceDto> updateCompanyLadderServiceDtoList = updateCompanyTaxDtoList.get(i).getUpdateCompanyLadderServiceDtoList();
+                List<UpdateCompanyLadderServiceDTO> updateCompanyLadderServiceDtoList = updateCompanyTaxDTOList.get(i).getUpdateCompanyLadderServiceDTOList();
                 if (updateCompanyLadderServiceDtoList != null) {
-                    for (UpdateCompanyLadderServiceDto updateCompanyLadderServiceDto : updateCompanyLadderServiceDtoList) {
+                    for (UpdateCompanyLadderServiceDTO updateCompanyLadderServiceDto : updateCompanyLadderServiceDtoList) {
                         CompanyLadderService companyLadderService = new CompanyLadderService();
                         BeanUtils.copyProperties(updateCompanyLadderServiceDto, companyLadderService);
                         companyLadderService.setCompanyTaxId(companyTax.getId());

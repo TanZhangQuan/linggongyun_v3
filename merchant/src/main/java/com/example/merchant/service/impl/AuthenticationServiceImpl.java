@@ -88,7 +88,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ReturnJson saveBankInfo(WorkerBankDto workerBankDto, String workerId) {
+    public ReturnJson saveBankInfo(WorkerBankDTO workerBankDto, String workerId) {
         Worker worker = workerDao.selectById(workerId);
         if (worker == null) {
             return ReturnJson.error("您输入的用户不存在！");
