@@ -1,5 +1,6 @@
 package com.example.merchant.dto.platform;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -17,7 +18,7 @@ public class UpdateCompanyInfoDTO implements Serializable {
     private String id;
 
     @ApiModelProperty(value = "公司名称")
-    private String companySName;
+    private String companyName;
 
     @ApiModelProperty(value = "法人")
     private String companyMan;
@@ -26,6 +27,7 @@ public class UpdateCompanyInfoDTO implements Serializable {
     private BigDecimal registeredCapital;
 
     @ApiModelProperty(value = "成立日期")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
     private LocalDateTime companyCreateDate;
 
     @ApiModelProperty(value = "统一的社会信用代码")
