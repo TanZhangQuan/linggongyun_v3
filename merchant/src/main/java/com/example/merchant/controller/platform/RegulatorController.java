@@ -2,9 +2,9 @@ package com.example.merchant.controller.platform;
 
 
 import com.example.common.util.ReturnJson;
-import com.example.merchant.dto.platform.RegulatorDto;
-import com.example.merchant.dto.platform.RegulatorQueryDto;
-import com.example.merchant.dto.platform.AddRegulatorTaxDto;
+import com.example.merchant.dto.platform.AddRegulatorTaxDTO;
+import com.example.merchant.dto.platform.RegulatorDTO;
+import com.example.merchant.dto.platform.RegulatorQueryDTO;
 import com.example.merchant.service.RegulatorService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -39,15 +39,15 @@ public class RegulatorController {
 
     @PostMapping("/addRegulator")
     @ApiOperation(value = "添加监管部门", notes = "添加监管部门", httpMethod = "POST")
-    @ApiImplicitParams(value = {@ApiImplicitParam(name = "regulatorDto", value = "监管部门的信息", required = true, dataType = "RegulatorDto")})
-    public ReturnJson addRegulator(@Valid @RequestBody RegulatorDto regulatorDto) {
+    @ApiImplicitParams(value = {@ApiImplicitParam(name = "regulatorDto", value = "监管部门的信息", required = true, dataType = "RegulatorDTO")})
+    public ReturnJson addRegulator(@Valid @RequestBody RegulatorDTO regulatorDto) {
         return regulatorService.addRegulator(regulatorDto);
     }
 
     @PostMapping("/updateRegulator")
     @ApiOperation(value = "编辑监管部门", notes = "编辑监管部门", httpMethod = "POST")
-    @ApiImplicitParams(value = {@ApiImplicitParam(name = "regulatorDto", value = "监管部门的信息", required = true, dataType = "RegulatorDto")})
-    public ReturnJson updateRegulator(@Valid @RequestBody RegulatorDto regulatorDto) {
+    @ApiImplicitParams(value = {@ApiImplicitParam(name = "regulatorDto", value = "监管部门的信息", required = true, dataType = "RegulatorDTO")})
+    public ReturnJson updateRegulator(@Valid @RequestBody RegulatorDTO regulatorDto) {
         return regulatorService.updateRegulator(regulatorDto);
     }
 
@@ -60,8 +60,8 @@ public class RegulatorController {
 
     @PostMapping("/getRegulatorQuery")
     @ApiOperation(value = "按条件查询监管部门", notes = "按条件查询监管部门", httpMethod = "POST")
-    @ApiImplicitParams(value = {@ApiImplicitParam(name = "regulatorQueryDto", value = "查询监管部门的查询条件", dataType = "RegulatorQueryDto", required = true)})
-    public ReturnJson getRegulatorQuery(@Valid @RequestBody RegulatorQueryDto regulatorQueryDto) {
+    @ApiImplicitParams(value = {@ApiImplicitParam(name = "regulatorQueryDto", value = "查询监管部门的查询条件", dataType = "RegulatorQueryDTO", required = true)})
+    public ReturnJson getRegulatorQuery(@Valid @RequestBody RegulatorQueryDTO regulatorQueryDto) {
         return regulatorService.getRegulatorQuery(regulatorQueryDto);
     }
 
@@ -76,9 +76,9 @@ public class RegulatorController {
 
     @PostMapping("/addRegulatorTax")
     @ApiOperation(value = "添加监管服务商", notes = "添加监管服务商", httpMethod = "POST")
-    @ApiImplicitParams(value = {@ApiImplicitParam(name = "addRegulatorTaxDtos", value = "监管服务商的信息", required = true, allowMultiple = true, dataType = "AddRegulatorTaxDto")})
-    public ReturnJson addReulatorTax(@Valid @RequestBody List<AddRegulatorTaxDto> addRegulatorTaxDtos) {
-        return regulatorService.addRegulatorTax(addRegulatorTaxDtos);
+    @ApiImplicitParams(value = {@ApiImplicitParam(name = "addRegulatorTaxDTOS", value = "监管服务商的信息", required = true, allowMultiple = true, dataType = "AddRegulatorTaxDTO")})
+    public ReturnJson addReulatorTax(@Valid @RequestBody List<AddRegulatorTaxDTO> addRegulatorTaxDTOS) {
+        return regulatorService.addRegulatorTax(addRegulatorTaxDTOS);
     }
 
     @PostMapping("/getRegulatorPaymentCount")

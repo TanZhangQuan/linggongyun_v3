@@ -1,8 +1,8 @@
 package com.example.merchant.service;
 
 import com.example.common.util.ReturnJson;
-import com.example.merchant.dto.merchant.MerchantDto;
-import com.example.merchant.dto.platform.SaveManagersRoleDto;
+import com.example.merchant.dto.merchant.MerchantDTO;
+import com.example.merchant.dto.platform.SaveManagersRoleDTO;
 import com.example.mybatis.entity.Menu;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -37,7 +37,7 @@ public interface MenuService extends IService<Menu> {
      * @param merchantId
      * @return
      */
-    ReturnJson saveRole(MerchantDto merchantDto, String merchantId);
+    ReturnJson saveRole(MerchantDTO merchantDto, String merchantId);
 
     /**
      * 查看所有的账户权限
@@ -71,7 +71,7 @@ public interface MenuService extends IService<Menu> {
      * @param managersId
      * @return
      */
-    ReturnJson savePlatRole(SaveManagersRoleDto saveManagersRoleDto, String managersId);
+    ReturnJson savePlatRole(SaveManagersRoleDTO saveManagersRoleDto, String managersId);
 
     /**
      * 平台端查询用户对应的子账户

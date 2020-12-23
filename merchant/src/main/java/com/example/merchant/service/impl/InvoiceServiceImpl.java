@@ -164,7 +164,7 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
         Address address = addressDao.selectById(invoiceApplication.getApplicationAddress());
         AddressVO addressVo = new AddressVO();
         BeanUtils.copyProperties(address, addressVo);
-        queryApplicationInvoiceVo.setAddressVo(addressVo);
+        queryApplicationInvoiceVo.setAddressVO(addressVo);
         InvoiceCatalog invoiceCatalog = invoiceCatalogDao.selectById(invoiceApplication.getInvoiceCatalogType());
         InvoiceCatalogVO invoiceCatalogVo = new InvoiceCatalogVO();
         BeanUtils.copyProperties(invoiceCatalog, invoiceCatalogVo);

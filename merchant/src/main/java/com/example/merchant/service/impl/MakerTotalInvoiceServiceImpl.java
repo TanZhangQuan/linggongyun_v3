@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.common.util.DateUtil;
 import com.example.common.util.ReturnJson;
-import com.example.merchant.dto.MakerTotalInvoiceDto;
+import com.example.merchant.dto.MakerTotalInvoiceDTO;
 import com.example.merchant.vo.platform.MakerTotalInvoiceDetailsVO;
 import com.example.merchant.vo.platform.QueryMakerTotalInvoiceDetailVO;
 import com.example.merchant.service.MakerTotalInvoiceService;
@@ -54,7 +54,7 @@ public class MakerTotalInvoiceServiceImpl extends ServiceImpl<MakerTotalInvoiceD
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ReturnJson saveOrUpdateMakerTotalInvoice(MakerTotalInvoiceDto makerTotalInvoiceDto, String managerId) {
+    public ReturnJson saveOrUpdateMakerTotalInvoice(MakerTotalInvoiceDTO makerTotalInvoiceDto, String managerId) {
         ReturnJson returnJson = new ReturnJson("操作失败", 200);
         DateTimeFormatter dfd = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");//时间转换
         MakerTotalInvoice makerTotalInvoice = new MakerTotalInvoice();

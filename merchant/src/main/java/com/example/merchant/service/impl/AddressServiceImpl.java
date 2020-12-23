@@ -3,7 +3,7 @@ package com.example.merchant.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.common.util.ReturnJson;
-import com.example.merchant.dto.platform.AddressDto;
+import com.example.merchant.dto.platform.AddressDTO;
 import com.example.mybatis.entity.Address;
 import com.example.mybatis.entity.Merchant;
 import com.example.mybatis.mapper.AddressDao;
@@ -43,7 +43,7 @@ public class AddressServiceImpl extends ServiceImpl<AddressDao, Address> impleme
     }
 
     @Override
-    public ReturnJson addOrUpdataAddress(AddressDto addressDto, String merchantId) {
+    public ReturnJson addOrUpdataAddress(AddressDTO addressDto, String merchantId) {
         Merchant merchant = merchantDao.selectById(merchantId);
         if (merchant == null) {
             merchant = new Merchant();

@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
-@ApiModel(value = "商户的支付列表")
+@ApiModel(description = "商户的支付列表")
 public class SalesManPaymentListPO {
     @ApiModelProperty(value = "总包或众包的支付订单ID")
     private String paymentOrderId;

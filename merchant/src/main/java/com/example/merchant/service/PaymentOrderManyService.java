@@ -2,10 +2,10 @@ package com.example.merchant.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.common.util.ReturnJson;
+import com.example.merchant.dto.merchant.PaymentOrderMerchantDTO;
 import com.example.mybatis.dto.QueryCrowdSourcingDTO;
-import com.example.merchant.dto.platform.PaymentOrderDto;
-import com.example.merchant.dto.merchant.AddPaymentOrderManyDto;
-import com.example.merchant.dto.merchant.PaymentOrderMerchantDto;
+import com.example.merchant.dto.platform.PaymentOrderDTO;
+import com.example.merchant.dto.merchant.AddPaymentOrderManyDTO;
 import com.example.merchant.exception.CommonException;
 import com.example.mybatis.entity.PaymentOrderMany;
 
@@ -57,7 +57,7 @@ public interface PaymentOrderManyService extends IService<PaymentOrderMany> {
      * @param paymentOrderMerchantDto
      * @return
      */
-    ReturnJson getPaymentOrderMany(String merchantId,PaymentOrderMerchantDto paymentOrderMerchantDto);
+    ReturnJson getPaymentOrderMany(String merchantId, PaymentOrderMerchantDTO paymentOrderMerchantDto);
 
     /**
      * 众包支付订单详情
@@ -73,7 +73,7 @@ public interface PaymentOrderManyService extends IService<PaymentOrderMany> {
      * @param addPaymentOrderManyDto
      * @return
      */
-    ReturnJson saveOrUpdataPaymentOrderMany(AddPaymentOrderManyDto addPaymentOrderManyDto,String merchantId);
+    ReturnJson saveOrUpdataPaymentOrderMany(AddPaymentOrderManyDTO addPaymentOrderManyDto, String merchantId);
 
     /**
      * 众包线下支付
@@ -130,5 +130,5 @@ public interface PaymentOrderManyService extends IService<PaymentOrderMany> {
      * @param paymentOrderDto
      * @return
      */
-    ReturnJson getPaymentOrderManyPaas(PaymentOrderDto paymentOrderDto,String managersId) throws CommonException;
+    ReturnJson getPaymentOrderManyPaas(PaymentOrderDTO paymentOrderDto, String managersId) throws CommonException;
 }

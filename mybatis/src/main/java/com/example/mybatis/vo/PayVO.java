@@ -1,30 +1,22 @@
 package com.example.mybatis.vo;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
 
-/**
- * @Description
- * @Author JWei <jwei0401@163.com>
- * @Date 2020/12/8
- */
 @Data
+@ApiModel(description = "XXXXX")
 public class PayVO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    /**
-     * 支付ID
-     */
+    @ApiModelProperty(value = "支付ID")
     private String pId;
 
-    /**
-     * 支付清单
-     */
+    @ApiModelProperty(value = "支付清单")
     private String paymentTnventory;
 
-    /**
-     * 支付回单
-     */
+    @ApiModelProperty(value = "支付回单")
     private String subpackagePayment;
 }

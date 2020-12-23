@@ -1,7 +1,7 @@
 package com.example.merchant.service;
 
 import com.example.common.util.ReturnJson;
-import com.example.merchant.dto.platform.AddressDto;
+import com.example.merchant.dto.platform.AddressDTO;
 import com.example.mybatis.entity.Address;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -30,7 +30,7 @@ public interface AddressService extends IService<Address> {
      * @param merchantId
      * @return
      */
-    ReturnJson addOrUpdataAddress(AddressDto addressDto, String merchantId);
+    ReturnJson addOrUpdataAddress(AddressDTO addressDto, String merchantId);
 
     /**
      * 停用或启用地址

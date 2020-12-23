@@ -3,8 +3,8 @@ package com.example.merchant.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.example.common.util.MD5;
 import com.example.common.util.ReturnJson;
-import com.example.merchant.dto.merchant.MerchantDto;
-import com.example.merchant.dto.platform.SaveManagersRoleDto;
+import com.example.merchant.dto.merchant.MerchantDTO;
+import com.example.merchant.dto.platform.SaveManagersRoleDTO;
 import com.example.mybatis.entity.*;
 import com.example.mybatis.mapper.*;
 import com.example.merchant.service.MenuService;
@@ -73,7 +73,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ReturnJson saveRole(MerchantDto merchantDto, String merchantId) {
+    public ReturnJson saveRole(MerchantDTO merchantDto, String merchantId) {
         String token = redisDao.get(merchantId);
         if (token == null) {
             return ReturnJson.error("请先登录");
@@ -151,7 +151,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ReturnJson savePlatRole(SaveManagersRoleDto saveManagersRoleDto, String managersId) {
+    public ReturnJson savePlatRole(SaveManagersRoleDTO saveManagersRoleDto, String managersId) {
 
         Managers managersOne = managersDao.selectOne(new QueryWrapper<Managers>().eq("mobile_code",
                 saveManagersRoleDto.getMobileCode()));

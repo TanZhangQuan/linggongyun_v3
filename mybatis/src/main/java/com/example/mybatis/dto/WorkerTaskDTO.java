@@ -1,41 +1,29 @@
 package com.example.mybatis.dto;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
 
-/**
- * 派单dto
- */
 @Data
-@ApiModel
+@ApiModel(description = "XXXXX")
 public class WorkerTaskDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    /**
-     * 工单ID
-     */
+    @ApiModelProperty(value = "创客-任务ID")
     private String id;
 
-    /**
-     * 创客ID
-     */
+    @ApiModelProperty(value = "创客ID")
     private String workerId;
 
-    /**
-     * 任务ID
-     */
+    @ApiModelProperty(value = "任务ID")
     private String taskId;
 
-    /**
-     * 派单状态
-     */
+    @ApiModelProperty(value = "派单状态：0表示接单成功，1表示被剔除")
     private String taskStatus;
 
-    /**
-     * 任务接取时间
-     */
+    @ApiModelProperty(value = "任务接取时间")
     private String createDate;
 
 }

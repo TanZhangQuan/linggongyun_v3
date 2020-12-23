@@ -1,51 +1,37 @@
 package com.example.merchant.vo.platform;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
 
-/**
- * @author yixi
- */
 @Data
+@ApiModel(description = "XXXXX")
 public class CompanyTaxVO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    /**
-     * 公司ID
-     */
+    @ApiModelProperty(value = "公司ID")
     private String companyId;
 
-    /**
-     * 服务商ID
-     */
+    @ApiModelProperty(value = "服务商ID")
     private String taxId;
 
-    /**
-     * 费用类型0为一口价，1为梯度价
-     */
+    @ApiModelProperty(value = "费用类型0为一口价，1为梯度价")
     private Integer chargeStatus;
 
-    /**
-     * 一口价的服务费(如果为梯度价这为空)
-     */
+    @ApiModelProperty(value = "一口价的服务费(如果为梯度价这为空)")
     private BigDecimal serviceCharge;
 
-    /**
-     * 合作类型
-     */
+    @ApiModelProperty(value = "合作类型")
     private Integer packageStatus;
 
-    /**
-     * 合作合同地址
-     */
+    @ApiModelProperty(value = "合作合同地址")
     private String contract;
 
-    /**
-     * 梯度价
-     */
+    @ApiModelProperty(value = "总包信息")
     private List<CompanyLadderServiceVO> companyLadderServiceVOList;
 
 }

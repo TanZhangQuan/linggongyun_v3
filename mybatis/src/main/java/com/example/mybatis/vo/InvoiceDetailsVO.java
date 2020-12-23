@@ -1,80 +1,54 @@
 package com.example.mybatis.vo;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 
-/**
- * 众包开票明细
- */
 @Data
+@ApiModel(description = "众包开票明细")
 public class InvoiceDetailsVO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    /**
-     * 支付清单id
-     */
+    @ApiModelProperty(value = "支付清单ID")
     private String id;
 
-    /**
-     * 创客编号
-     */
+    @ApiModelProperty(value = "创客ID")
     private String workerId;
 
-    /**
-     * 创客名称
-     */
+    @ApiModelProperty(value = "创客名称")
     private String workerName;
 
-    /**
-     * 创客电话号码
-     */
+    @ApiModelProperty(value = "创客电话号码")
     private String mobileCode;
 
-    /**
-     * 创客身份证
-     */
+    @ApiModelProperty(value = "创客身份证")
     private String idCardCode;
 
-    /**
-     * 创客银行卡号
-     */
+    @ApiModelProperty(value = "创客银行卡号")
     private String bankCode;
 
-    /**
-     * 创客到手费用
-     */
+    @ApiModelProperty(value = "创客到手费用")
     private String realMoney;
 
-    /**
-     * 任务金额
-     */
+    @ApiModelProperty(value = "任务金额")
     private BigDecimal taskMoney;
 
-    /**
-     * 服务商id
-     */
+    @ApiModelProperty(value = "服务商ID")
     private String taxId;
 
-    /**
-     * 创客承担税率
-     */
+    @ApiModelProperty(value = "创客承担税率")
     private BigDecimal receviceTax;
 
-    /**
-     * 纳税金额
-     */
+    @ApiModelProperty(value = "纳税金额")
     private BigDecimal taxAmount;
 
-    /**
-     * 纳税率
-     */
+    @ApiModelProperty(value = "纳税率")
     private BigDecimal taxRate;
 
-    /**
-     * 个人服务费
-     */
+    @ApiModelProperty(value = "个人服务费")
     private BigDecimal personalServiceFee;
 
 }

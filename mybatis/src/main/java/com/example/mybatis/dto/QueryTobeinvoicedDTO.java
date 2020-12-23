@@ -1,40 +1,30 @@
 package com.example.mybatis.dto;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.validation.constraints.Min;
 import java.io.Serializable;
 
-/**
- * @Description
- * @Author JWei <jwei0401@163.com>
- * @Date 2020/12/2
- */
 @Data
+@ApiModel(description = "XXXXX")
 public class QueryTobeinvoicedDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    /**
-     * 平台服务商
-     */
+    @ApiModelProperty(value = "平台服务商")
     private String platformServiceProvider;
 
-    /**
-     * 创建时间1
-     */
+    @ApiModelProperty(value = "创建时间1,yyyy:HH:mm")
     private String applicationDateOne;
 
-    /**
-     * 创建时间2
-     */
+    @ApiModelProperty(value = "创建时间2,yyyy:HH:mm")
     private String applicationDateTwo;
 
-    /**
-     * 页码
-     */
+    @ApiModelProperty(value = "当前页默认第一页")
+    @Min(value = 1, message = "当前页最小为1")
     private Integer pageNo = 1;
 
-    /**
-     * 页大小
-     */
+    @ApiModelProperty(value = "每页大小默认为10")
     private Integer pageSize = 10;
 }

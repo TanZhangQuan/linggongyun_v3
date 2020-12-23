@@ -8,11 +8,11 @@ import com.example.common.util.ExpressLogisticsInfo;
 import com.example.common.util.KdniaoTrackQueryAPI;
 import com.example.common.util.ReturnJson;
 import com.example.common.util.VerificationCheck;
-import com.example.merchant.dto.merchant.AddPaymentOrderManyDto;
-import com.example.merchant.dto.merchant.PaymentOrderMerchantDto;
+import com.example.merchant.dto.merchant.AddPaymentOrderManyDTO;
+import com.example.merchant.dto.merchant.PaymentOrderMerchantDTO;
 import com.example.mybatis.dto.QueryCrowdSourcingDTO;
-import com.example.merchant.dto.platform.PaymentOrderDto;
-import com.example.merchant.dto.platform.PaymentOrderManyDto;
+import com.example.merchant.dto.platform.PaymentOrderDTO;
+import com.example.merchant.dto.platform.PaymentOrderManyDTO;
 import com.example.merchant.exception.CommonException;
 import com.example.merchant.service.PaymentInventoryService;
 import com.example.merchant.service.PaymentOrderManyService;
@@ -176,7 +176,7 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
     }
 
     @Override
-    public ReturnJson getPaymentOrderMany(String merchantId, PaymentOrderMerchantDto paymentOrderMerchantDto) {
+    public ReturnJson getPaymentOrderMany(String merchantId, PaymentOrderMerchantDTO paymentOrderMerchantDto) {
         Merchant merchant = merchantDao.selectById(merchantId);
         String companyId = merchant.getCompanyId();
         String paymentOrderId = paymentOrderMerchantDto.getPaymentOrderId();
@@ -218,9 +218,9 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ReturnJson saveOrUpdataPaymentOrderMany(AddPaymentOrderManyDto addPaymentOrderManyDto, String merchantId) {
+    public ReturnJson saveOrUpdataPaymentOrderMany(AddPaymentOrderManyDTO addPaymentOrderManyDto, String merchantId) {
         PaymentOrderMany paymentOrderMany = new PaymentOrderMany();
-        PaymentOrderManyDto paymentOrderManyDto = addPaymentOrderManyDto.getPaymentOrderManyDto();
+        PaymentOrderManyDTO paymentOrderManyDto = addPaymentOrderManyDto.getPaymentOrderManyDto();
         BeanUtils.copyProperties(paymentOrderManyDto, paymentOrderMany);
         Tax tax = taxDao.selectById(paymentOrderMany.getTaxId());
         paymentOrderMany.setPlatformServiceProvider(tax.getTaxName());
@@ -365,7 +365,7 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
     }
 
     @Override
-    public ReturnJson getPaymentOrderManyPaas(PaymentOrderDto paymentOrderDto, String managersId) throws CommonException {
+    public ReturnJson getPaymentOrderManyPaas(PaymentOrderDTO paymentOrderDto, String managersId) throws CommonException {
         List<String> merchantIds = acquireID.getCompanyIds(managersId);
         if (VerificationCheck.listIsNull(merchantIds)) {
             return ReturnJson.success("");

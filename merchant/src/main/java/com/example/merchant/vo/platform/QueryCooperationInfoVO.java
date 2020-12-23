@@ -1,40 +1,28 @@
 package com.example.merchant.vo.platform;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
 
-/**
- * @Description
- * @Author JWei <jwei0401@163.com>
- * @Date 2020/12/7
- */
 @Data
+@ApiModel(description = "合作信息")
 public class QueryCooperationInfoVO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    /**
-     * 商户Id
-     */
+    @ApiModelProperty(value = "商户ID")
     private String companyInfoId;
 
-    /**
-     * 业务员ID
-     */
+    @ApiModelProperty(value = "业务员ID")
     private String salesManId;
 
-    /**
-     * 业务员名称
-     */
+    @ApiModelProperty(value = "业务员名称")
     private String salesManName;
 
-    /**
-     * 代理商ID
-     */
+    @ApiModelProperty(value = "代理商ID")
     private String agentId;
 
-    /**
-     * 代理商名称
-     */
+    @ApiModelProperty(value = "代理商名称")
     private String agentName;
 }

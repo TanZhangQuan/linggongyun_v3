@@ -2,9 +2,9 @@ package com.example.merchant.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.common.util.ReturnJson;
-import com.example.merchant.dto.makerend.AddWorkerDto;
-import com.example.merchant.dto.merchant.WorkerDto;
-import com.example.merchant.dto.platform.WorkerQueryDto;
+import com.example.merchant.dto.makerend.AddWorkerDTO;
+import com.example.merchant.dto.merchant.WorkerDTO;
+import com.example.merchant.dto.platform.WorkerQueryDTO;
 import com.example.merchant.exception.CommonException;
 import com.example.mybatis.entity.Worker;
 
@@ -36,7 +36,7 @@ public interface WorkerService extends IService<Worker> {
      * @param workerDto
      * @return
      */
-    ReturnJson getByIdAndAccountNameAndMobile(String merchantId, WorkerDto workerDto);
+    ReturnJson getByIdAndAccountNameAndMobile(String merchantId, WorkerDTO workerDto);
 
     /**
      * 查询创客的基本信息
@@ -178,7 +178,7 @@ public interface WorkerService extends IService<Worker> {
      * @param addWorkerDto
      * @return
      */
-    ReturnJson registerWorker(AddWorkerDto addWorkerDto);
+    ReturnJson registerWorker(AddWorkerDTO addWorkerDto);
 
     /**
      * 功能描述: 按添加查询已认证的创客
@@ -189,7 +189,7 @@ public interface WorkerService extends IService<Worker> {
      * @Author 忆惜
      * @Date 2020/11/10 10:34
      */
-    ReturnJson getWorkerQuery(String managersId, WorkerQueryDto workerQueryDto) throws CommonException;
+    ReturnJson getWorkerQuery(String managersId, WorkerQueryDTO workerQueryDto) throws CommonException;
 
     /**
      * 功能描述: 按添加查询未认证的创客
@@ -200,7 +200,7 @@ public interface WorkerService extends IService<Worker> {
      * @Author 忆惜
      * @Date 2020/11/10 10:56
      */
-    ReturnJson getWorkerQueryNot(String managersId, WorkerQueryDto workerQueryDto) throws CommonException;
+    ReturnJson getWorkerQueryNot(String managersId, WorkerQueryDTO workerQueryDto) throws CommonException;
 
     /**
      * 查询创客统计信息

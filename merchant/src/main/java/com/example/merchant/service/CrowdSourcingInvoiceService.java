@@ -1,8 +1,8 @@
 package com.example.merchant.service;
 
 import com.example.common.util.ReturnJson;
-import com.example.merchant.dto.merchant.AddApplicationCrowdSourcingDto;
-import com.example.merchant.dto.platform.AddCrowdSourcingInvoiceDto;
+import com.example.merchant.dto.merchant.AddApplicationCrowdSourcingDTO;
+import com.example.merchant.dto.platform.AddCrowdSourcingInvoiceDTO;
 import com.example.mybatis.dto.QueryCrowdSourcingDTO;
 import com.example.mybatis.dto.TobeinvoicedDTO;
 
@@ -13,7 +13,7 @@ public interface CrowdSourcingInvoiceService {
      * @param addApplicationCrowdSourcingDto
      * @return
      */
-    ReturnJson addCrowdSourcingInvoice(AddApplicationCrowdSourcingDto addApplicationCrowdSourcingDto);
+    ReturnJson addCrowdSourcingInvoice(AddApplicationCrowdSourcingDTO addApplicationCrowdSourcingDto);
 
     /**
      * 众包发票详情信息
@@ -77,7 +77,7 @@ public interface CrowdSourcingInvoiceService {
      * @param addCrowdSourcingInvoiceDto
      * @return
      */
-    ReturnJson saveCrowdSourcingInvoice(AddCrowdSourcingInvoiceDto addCrowdSourcingInvoiceDto);
+    ReturnJson saveCrowdSourcingInvoice(AddCrowdSourcingInvoiceDTO addCrowdSourcingInvoiceDto);
 
     /**
      * 平台端查询众包已开票

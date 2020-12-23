@@ -1,6 +1,7 @@
 package com.example.merchant.vo.regulator;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -11,54 +12,34 @@ import java.time.LocalDateTime;
 public class RegulatorMerchantInfoVO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    /**
-     * 商户ID
-     */
+    @ApiModelProperty(value = "商户编号")
     private String id;
 
-    /**
-     * 公司名称
-     */
+    @ApiModelProperty(value = "公司名称")
     private String companyName;
 
-    /**
-     * 统一信用代码
-     */
+    @ApiModelProperty(value = "统一信用代码")
     private String creditCode;
 
-    /**
-     * 法人姓名
-     */
+    @ApiModelProperty(value = "法人姓名")
     private String companyMan;
 
-    /**
-     * 联系方式
-     */
+    @ApiModelProperty(value = "联系方式")
     private String linkMobile;
 
-    /**
-     * 银行账号
-     */
+    @ApiModelProperty(value = "银行账号")
     private String bankCode;
 
-    /**
-     * 开户行
-     */
+    @ApiModelProperty(value = "开户行")
     private String bankName;
 
-    /**
-     * 加盟合同
-     */
+    @ApiModelProperty(value = "加盟合同")
     private String contract;
 
-    /**
-     * 入驻时间
-     */
+    @ApiModelProperty(value = "入驻时间")
     private LocalDateTime createDate;
 
-    /**
-     * 公司状态
-     */
+    @ApiModelProperty(value = "公司状态")
     private String companyStatus;
 
 }

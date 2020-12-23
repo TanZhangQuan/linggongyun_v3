@@ -1,63 +1,43 @@
 package com.example.mybatis.vo;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
 
-/**
- * 我的任务
- */
 @Data
+@ApiModel(description = "创客任务")
 public class WorkerTaskVO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    /**
-     *任务id
-     */
+    @ApiModelProperty(value = "任务ID")
     private String taskId;
 
-    /**
-     * 任务对应创客id
-     */
+    @ApiModelProperty(value = "创客-任务ID")
     private String workerTaskId;
 
-    /**
-     * 任务名称
-     */
+    @ApiModelProperty(value = "任务名称")
     private String taskName;
 
-    /**
-     * 任务最小金额
-     */
+    @ApiModelProperty(value = "任务最小金额")
     private String taskCostMin;
 
-    /**
-     * 任务最高金额
-     */
+    @ApiModelProperty(value = "任务最高金额")
     private String taskCostMax;
 
-    /**
-     * 合作类型
-     */
+    @ApiModelProperty(value = "合作类型")
     private String cooperateMode;
 
-    /**
-     * 开始时间
-     */
+    @ApiModelProperty(value = "开始时间")
     private String releaseDate;
 
-    /**
-     * 截至时间
-     */
+    @ApiModelProperty(value = "截至时间")
     private String deadlineDate;
 
-    /**
-     * 行业类型
-     */
+    @ApiModelProperty(value = "行业类型")
     private String industryType;
 
-    /**
-     * 状态
-     */
+    @ApiModelProperty(value = "状态")
     private String status;
 }

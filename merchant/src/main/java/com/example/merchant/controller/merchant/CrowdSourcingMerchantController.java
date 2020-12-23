@@ -1,7 +1,7 @@
 package com.example.merchant.controller.merchant;
 
 import com.example.common.util.ReturnJson;
-import com.example.merchant.dto.merchant.AddApplicationCrowdSourcingDto;
+import com.example.merchant.dto.merchant.AddApplicationCrowdSourcingDTO;
 import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.CrowdSourcingInvoiceService;
 import com.example.merchant.service.MerchantService;
@@ -53,7 +53,7 @@ public class CrowdSourcingMerchantController {
 
     @ApiOperation("众包支付信息,申请开票")
     @PostMapping(value = "/addCrowdSourcingInvoice")
-    public ReturnJson addCrowdSourcingInvoice(@Valid @RequestBody AddApplicationCrowdSourcingDto addApplicationCrowdSourcingDto) {
+    public ReturnJson addCrowdSourcingInvoice(@Valid @RequestBody AddApplicationCrowdSourcingDTO addApplicationCrowdSourcingDto) {
         return crowdSourcingInvoiceService.addCrowdSourcingInvoice(addApplicationCrowdSourcingDto);
     }
 

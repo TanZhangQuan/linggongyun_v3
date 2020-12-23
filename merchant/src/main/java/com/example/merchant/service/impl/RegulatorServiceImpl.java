@@ -5,13 +5,13 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.common.util.*;
-import com.example.merchant.dto.platform.RegulatorDto;
-import com.example.merchant.dto.platform.RegulatorQueryDto;
-import com.example.merchant.dto.platform.AddRegulatorTaxDto;
-import com.example.merchant.dto.regulator.RegulatorMerchantDto;
-import com.example.merchant.dto.regulator.RegulatorMerchantPaymentOrderDto;
-import com.example.merchant.dto.regulator.RegulatorWorkerDto;
-import com.example.merchant.dto.regulator.RegulatorWorkerPaymentDto;
+import com.example.merchant.dto.platform.RegulatorDTO;
+import com.example.merchant.dto.platform.RegulatorQueryDTO;
+import com.example.merchant.dto.platform.AddRegulatorTaxDTO;
+import com.example.merchant.dto.regulator.RegulatorMerchantDTO;
+import com.example.merchant.dto.regulator.RegulatorMerchantPaymentOrderDTO;
+import com.example.merchant.dto.regulator.RegulatorWorkerDTO;
+import com.example.merchant.dto.regulator.RegulatorWorkerPaymentDTO;
 import com.example.merchant.service.MerchantService;
 import com.example.merchant.service.RegulatorService;
 import com.example.merchant.service.RegulatorTaxService;
@@ -102,7 +102,7 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
     private CompanyInfoDao companyInfoDao;
 
     @Override
-    public ReturnJson addRegulator(RegulatorDto regulatorDto) {
+    public ReturnJson addRegulator(RegulatorDTO regulatorDto) {
         if (StringUtils.isBlank(regulatorDto.getConfirmPassWord()) || StringUtils.isBlank(regulatorDto.getPassWord())) {
             return ReturnJson.error("密码不能为空！");
         }
@@ -117,7 +117,7 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
     }
 
     @Override
-    public ReturnJson updateRegulator(RegulatorDto regulatorDto) {
+    public ReturnJson updateRegulator(RegulatorDTO regulatorDto) {
         Regulator regulator = regulatorDao.selectById(regulatorDto.getId());
         if (regulator == null) {
             return ReturnJson.error("错误的监管信息，请重新输入");
@@ -142,7 +142,7 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
     }
 
     @Override
-    public ReturnJson getRegulatorQuery(RegulatorQueryDto regulatorQueryDto) {
+    public ReturnJson getRegulatorQuery(RegulatorQueryDTO regulatorQueryDto) {
         Page<Regulator> regulatorPage = new Page<>(regulatorQueryDto.getPageNo(), regulatorQueryDto.getPageSize());
         IPage<Regulator> regulatorIPage = regulatorDao.selectRegulator(regulatorPage, regulatorQueryDto.getRegulatorName(), regulatorQueryDto.getStartDate(), regulatorQueryDto.getEndDate());
         return ReturnJson.success(regulatorIPage);
@@ -156,9 +156,9 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
     }
 
     @Override
-    public ReturnJson addRegulatorTax(List<AddRegulatorTaxDto> addRegulatorTaxDtos) {
+    public ReturnJson addRegulatorTax(List<AddRegulatorTaxDTO> addRegulatorTaxDTOS) {
         List<RegulatorTax> regulatorTaxes = new ArrayList<>();
-        for (AddRegulatorTaxDto addRegulatorTaxDto : addRegulatorTaxDtos) {
+        for (AddRegulatorTaxDTO addRegulatorTaxDto : addRegulatorTaxDTOS) {
             RegulatorTax regulatorTax = new RegulatorTax();
             BeanUtils.copyProperties(addRegulatorTaxDto, regulatorTax);
             regulatorTaxes.add(regulatorTax);
@@ -256,7 +256,7 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
     }
 
     @Override
-    public ReturnJson getRegulatorWorker(RegulatorWorkerDto regulatorWorkerDto, String regulatorId) {
+    public ReturnJson getRegulatorWorker(RegulatorWorkerDTO regulatorWorkerDto, String regulatorId) {
         ReturnJson result = this.getPaymentOrderIds(regulatorId);
         if (result.getCode() == 300) {
             return result;
@@ -379,7 +379,7 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
     }
 
     @Override
-    public ReturnJson getRegulatorWorkerPaymentInfo(RegulatorWorkerPaymentDto regulatorWorkerPaymentDto, String regulatorId) {
+    public ReturnJson getRegulatorWorkerPaymentInfo(RegulatorWorkerPaymentDTO regulatorWorkerPaymentDto, String regulatorId) {
         ReturnJson result = this.getPaymentOrderIds(regulatorId);
         if (result.getCode() == 300) {
             return result;
@@ -481,7 +481,7 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
     }
 
     @Override
-    public ReturnJson getRegulatorMerchant(RegulatorMerchantDto regulatorMerchantDto, String regulatorId) {
+    public ReturnJson getRegulatorMerchant(RegulatorMerchantDTO regulatorMerchantDto, String regulatorId) {
         ReturnJson returnJson = this.getTaxIds(regulatorId);
         if (returnJson.getCode() == 300) {
             return returnJson;
@@ -646,7 +646,7 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
     }
 
     @Override
-    public ReturnJson getRegulatorMerchantPaymentOrder(RegulatorMerchantPaymentOrderDto regulatorMerchantPaymentOrderDto, String regulatorId) {
+    public ReturnJson getRegulatorMerchantPaymentOrder(RegulatorMerchantPaymentOrderDTO regulatorMerchantPaymentOrderDto, String regulatorId) {
         ReturnJson returnJson = this.getTaxIds(regulatorId);
         if (returnJson.getCode() == 300) {
             return returnJson;

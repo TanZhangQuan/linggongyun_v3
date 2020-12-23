@@ -1,35 +1,25 @@
 package com.example.merchant.vo.platform;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
 
-/**
- * @Description
- * @Author JWei <jwei0401@163.com>
- * @Date 2020/12/8
- */
 @Data
+@ApiModel(description = "XXXXX")
 public class AddressVO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    /**
-     * 地址ID
-     */
+    @ApiModelProperty(value = "地址ID")
     private String id;
 
-    /**
-     * 联系人
-     */
+    @ApiModelProperty(value = "联系人")
     private String linkName;
 
-    /**
-     * 联系电话
-     */
+    @ApiModelProperty(value = "联系电话")
     private String linkMobile;
 
-    /**
-     * 详细地址
-     */
+    @ApiModelProperty(value = "详细地址")
     private String addressName;
 }

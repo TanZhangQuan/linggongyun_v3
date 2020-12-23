@@ -1,8 +1,8 @@
 package com.example.merchant.controller.regulator;
 
 import com.example.common.util.ReturnJson;
-import com.example.merchant.dto.regulator.RegulatorMerchantDto;
-import com.example.merchant.dto.regulator.RegulatorMerchantPaymentOrderDto;
+import com.example.merchant.dto.regulator.RegulatorMerchantDTO;
+import com.example.merchant.dto.regulator.RegulatorMerchantPaymentOrderDTO;
 import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.RegulatorService;
 import io.swagger.annotations.*;
@@ -35,9 +35,9 @@ public class RegulatorMerchantController {
     @ApiOperation(value = "按条件查询所监管的商户", notes = "按条件查询所监管的商户", httpMethod = "POST")
     @LoginRequired
     @ApiImplicitParams(value = {
-            @ApiImplicitParam(name = "regulatorMerchantDto", value = "查询所监管的商户条件", required = true, dataType = "RegulatorMerchantDto")
+            @ApiImplicitParam(name = "regulatorMerchantDto", value = "查询所监管的商户条件", required = true, dataType = "RegulatorMerchantDTO")
     })
-    public ReturnJson getRegulatorMerchant(@Valid @RequestBody RegulatorMerchantDto regulatorMerchantDto, @ApiParam(hidden = true) @RequestAttribute(value = "userId", required = false) String regulatorId) {
+    public ReturnJson getRegulatorMerchant(@Valid @RequestBody RegulatorMerchantDTO regulatorMerchantDto, @ApiParam(hidden = true) @RequestAttribute(value = "userId", required = false) String regulatorId) {
         return regulatorService.getRegulatorMerchant(regulatorMerchantDto, regulatorId);
     }
 
@@ -65,9 +65,9 @@ public class RegulatorMerchantController {
     @ApiOperation(value = "查询所监管商户的支付订单", notes = "查询所监管商户的支付订单", httpMethod = "POST")
     @LoginRequired
     @ApiImplicitParams(value = {
-            @ApiImplicitParam(name = "regulatorMerchantPaymentOrderDto", value = "查询所监管商户的支付订单参数", required = true, dataType = "RegulatorMerchantPaymentOrderDto")
+            @ApiImplicitParam(name = "regulatorMerchantPaymentOrderDto", value = "查询所监管商户的支付订单参数", required = true, dataType = "RegulatorMerchantPaymentOrderDTO")
     })
-    public ReturnJson getRegulatorMerchantPaymentOrder(@Valid @RequestBody RegulatorMerchantPaymentOrderDto regulatorMerchantPaymentOrderDto, @ApiParam(hidden = true) @RequestAttribute(value = "userId", required = false) String regulatorId) {
+    public ReturnJson getRegulatorMerchantPaymentOrder(@Valid @RequestBody RegulatorMerchantPaymentOrderDTO regulatorMerchantPaymentOrderDto, @ApiParam(hidden = true) @RequestAttribute(value = "userId", required = false) String regulatorId) {
         return regulatorService.getRegulatorMerchantPaymentOrder(regulatorMerchantPaymentOrderDto, regulatorId);
     }
 

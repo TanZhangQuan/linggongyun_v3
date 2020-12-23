@@ -1,27 +1,22 @@
 package com.example.mybatis.vo;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
 
-/**
- * @Description
- * @Author JWei <jwei0401@163.com>
- * @Date 2020/12/2
- */
 @Data
+@ApiModel(description = "XXXXX")
 public class MenuVO implements Serializable {
     private static final long serialVersionUID = 1L;
 
+    @ApiModelProperty(value = "XXXXXX")
     private String id;
 
-    /**
-     * 菜单的英文名称
-     */
+    @ApiModelProperty(value = "菜单的英文名称")
     private String menuName;
 
-    /**
-     * 菜单的中文名称
-     */
+    @ApiModelProperty(value = "菜单的中文名称")
     private String menuZhname;
 }

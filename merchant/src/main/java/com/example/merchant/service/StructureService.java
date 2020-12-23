@@ -1,11 +1,9 @@
 package com.example.merchant.service;
 
 import com.example.common.util.ReturnJson;
-import com.example.merchant.dto.platform.AgentInfoDto;
-import com.example.merchant.dto.platform.ManagersDto;
+import com.example.merchant.dto.platform.AgentInfoDTO;
+import com.example.merchant.dto.platform.ManagersDTO;
 import com.example.merchant.exception.CommonException;
-
-import javax.servlet.http.HttpServletRequest;
 
 public interface StructureService {
     /**
@@ -14,7 +12,7 @@ public interface StructureService {
      * @param managersDto
      * @return
      */
-    ReturnJson addSalesMan(ManagersDto managersDto);
+    ReturnJson addSalesMan(ManagersDTO managersDto);
 
     /**
      * 编辑业务员
@@ -22,7 +20,7 @@ public interface StructureService {
      * @param managersDto
      * @return
      */
-    ReturnJson updateSalesMan(ManagersDto managersDto);
+    ReturnJson updateSalesMan(ManagersDTO managersDto);
 
     /**
      * 按ID查找业务员
@@ -91,7 +89,7 @@ public interface StructureService {
      * @param agentInfoDto
      * @return
      */
-    ReturnJson addAgent(AgentInfoDto agentInfoDto);
+    ReturnJson addAgent(AgentInfoDTO agentInfoDto);
 
     /**
      * 编辑代理商
@@ -99,7 +97,7 @@ public interface StructureService {
      * @param agentInfoDto
      * @return
      */
-    ReturnJson updataAgent(AgentInfoDto agentInfoDto);
+    ReturnJson updataAgent(AgentInfoDTO agentInfoDto);
 
     /**
      * 查询所以代理商

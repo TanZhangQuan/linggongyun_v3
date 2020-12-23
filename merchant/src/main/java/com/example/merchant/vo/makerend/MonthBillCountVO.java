@@ -1,6 +1,7 @@
 package com.example.merchant.vo.makerend;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -11,13 +12,9 @@ import java.math.BigDecimal;
 public class MonthBillCountVO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    /**
-     * 月账单的数量
-     */
+    @ApiModelProperty(value = "月账单的数量")
     private Integer monthOrderCount;
 
-    /**
-     * 月收入统计
-     */
+    @ApiModelProperty(value = "月收入统计")
     private BigDecimal monthBillMoney;
 }

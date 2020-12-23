@@ -8,11 +8,8 @@ import lombok.Data;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-/**
- * 创客详情中的商户支付列表明细
- */
 @Data
-@ApiModel(value = "创客详情中的商户支付列表明细")
+@ApiModel(description = "创客详情中的商户支付列表明细")
 public class WorekerPaymentListPo {
     @ApiModelProperty(value = "总包或众包的支付订单ID")
     private String paymentOrderId;

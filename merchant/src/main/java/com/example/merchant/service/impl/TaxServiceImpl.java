@@ -127,7 +127,7 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
     }
 
     @Override
-    public ReturnJson saveCatalog(AddInvoiceCatalogDto addInvoiceCatalogDto) {
+    public ReturnJson saveCatalog(AddInvoiceCatalogDTO addInvoiceCatalogDto) {
         InvoiceCatalog invoiceCatalog = new InvoiceCatalog();
         BeanUtils.copyProperties(addInvoiceCatalogDto, invoiceCatalog);
         int i = invoiceCatalogDao.insert(invoiceCatalog);
@@ -139,7 +139,7 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ReturnJson saveTax(TaxDto taxDto) throws Exception {
+    public ReturnJson saveTax(TaxDTO taxDto) throws Exception {
         if (taxDto.getId() != null) {
             invoiceLadderPriceService.remove(new QueryWrapper<InvoiceLadderPrice>().eq("tax_id", taxDto.getId()));
             taxPackageDao.delete(new QueryWrapper<TaxPackage>().eq("tax_id", taxDto.getId()));
@@ -149,16 +149,16 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
         BeanUtils.copyProperties(taxDto, tax);
         log.error(tax.toString());
         taxDao.insert(tax);
-        TaxPackageDto totalTaxPackageDto = taxDto.getTotalTaxPackage();
+        TaxPackageDTO totalTaxPackageDTO = taxDto.getTotalTaxPackage();
         //判断是否有总包，有总包就添加
-        if (totalTaxPackageDto != null) {
+        if (totalTaxPackageDTO != null) {
 
             TaxPackage totalTaxPackage = new TaxPackage();
-            BeanUtils.copyProperties(totalTaxPackageDto, totalTaxPackage);
+            BeanUtils.copyProperties(totalTaxPackageDTO, totalTaxPackage);
 
             totalTaxPackage.setTaxId(tax.getId());
             taxPackageDao.insert(totalTaxPackage);
-            List<InvoiceLadderPriceDto> totalLaddersDto = taxDto.getTotalLadders();
+            List<InvoiceLadderPriceDTO> totalLaddersDto = taxDto.getTotalLadders();
             List<InvoiceLadderPrice> totalLadders = new ArrayList<>();
             for (int i = 0; i < totalLaddersDto.size(); i++) {
                 InvoiceLadderPrice invoiceLadderPrice = new InvoiceLadderPrice();
@@ -187,16 +187,16 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
             }
 
         }
-        TaxPackageDto manyTaxPackageDto = taxDto.getManyTaxPackage();
+        TaxPackageDTO manyTaxPackageDTO = taxDto.getManyTaxPackage();
         //判断是否有众包，有众包就添加
-        if (manyTaxPackageDto != null) {
+        if (manyTaxPackageDTO != null) {
 
             TaxPackage manyTaxPackage = new TaxPackage();
-            BeanUtils.copyProperties(manyTaxPackageDto, manyTaxPackage);
+            BeanUtils.copyProperties(manyTaxPackageDTO, manyTaxPackage);
 
             manyTaxPackage.setTaxId(tax.getId());
             taxPackageDao.insert(manyTaxPackage);
-            List<InvoiceLadderPriceDto> manyLaddersDto = taxDto.getManyLadders();
+            List<InvoiceLadderPriceDTO> manyLaddersDto = taxDto.getManyLadders();
             List<InvoiceLadderPrice> manyLadders = new ArrayList<>();
             for (int i = 0; i < manyLaddersDto.size(); i++) {
                 InvoiceLadderPrice invoiceLadderPrice = new InvoiceLadderPrice();
@@ -228,7 +228,7 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
     }
 
     @Override
-    public ReturnJson getTaxList(TaxListDto taxListDto) {
+    public ReturnJson getTaxList(TaxListDTO taxListDto) {
         Page<TaxListPO> taxListPOPage = new Page<>(taxListDto.getPage(), taxListDto.getPageSize());
         IPage<TaxListPO> taxListPage = taxDao.selectTaxList(taxListPOPage, taxListDto.getTaxName(), taxListDto.getStartDate(), taxListDto.getEndDate());
         return ReturnJson.success(taxListPage);
