@@ -6,8 +6,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.common.util.MD5;
 import com.example.common.util.ReturnJson;
 import com.example.common.util.VerificationCheck;
-import com.example.merchant.dto.platform.AgentInfoDto;
-import com.example.merchant.dto.platform.ManagersDto;
+import com.example.merchant.dto.platform.AgentInfoDTO;
+import com.example.merchant.dto.platform.ManagersDTO;
 import com.example.merchant.exception.CommonException;
 import com.example.merchant.service.*;
 import com.example.merchant.util.AcquireID;
@@ -60,7 +60,7 @@ public class StructureServiceImpl implements StructureService {
     private String PWD_KEY;
 
     @Override
-    public ReturnJson addSalesMan(ManagersDto managersDto) {
+    public ReturnJson addSalesMan(ManagersDTO managersDto) {
         Managers managers = managersDao.selectById(managersDto.getId());
         if (managers == null) {
             managers = new Managers();
@@ -86,7 +86,7 @@ public class StructureServiceImpl implements StructureService {
      * @return
      */
     @Override
-    public ReturnJson updateSalesMan(ManagersDto managersDto) {
+    public ReturnJson updateSalesMan(ManagersDTO managersDto) {
         Managers managers = managersDao.selectById(managersDto.getId());
 
         return null;
@@ -166,7 +166,7 @@ public class StructureServiceImpl implements StructureService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ReturnJson addAgent(AgentInfoDto agentInfoDto) {
+    public ReturnJson addAgent(AgentInfoDTO agentInfoDto) {
         Managers managers = new Managers();
         Agent agent = new Agent();
         if (agentInfoDto.getAgentId() == "" && agentInfoDto.getAgentId().trim() == "") {
@@ -202,7 +202,7 @@ public class StructureServiceImpl implements StructureService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ReturnJson updataAgent(AgentInfoDto agentInfoDto) {
+    public ReturnJson updataAgent(AgentInfoDTO agentInfoDto) {
         return ReturnJson.success("编辑代理商成功!");
     }
 
@@ -216,7 +216,7 @@ public class StructureServiceImpl implements StructureService {
     @Override
     public ReturnJson findByAgentId(String agentId) {
         Agent agent = agentDao.selectOne(new QueryWrapper<Agent>().eq("managers_id", agentId));
-        AgentInfoDto agentInfoDto = new AgentInfoDto();
+        AgentInfoDTO agentInfoDto = new AgentInfoDTO();
         BeanUtils.copyProperties(agent, agentInfoDto);
 
         Managers managers = managersDao.selectById(agentId);

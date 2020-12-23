@@ -1,8 +1,8 @@
 package com.example.merchant.controller.platform;
 
 import com.example.common.util.ReturnJson;
-import com.example.merchant.dto.merchant.AddPaymentOrderManyDto;
-import com.example.merchant.dto.platform.PaymentOrderDto;
+import com.example.merchant.dto.merchant.AddPaymentOrderManyDTO;
+import com.example.merchant.dto.platform.PaymentOrderDTO;
 import com.example.merchant.exception.CommonException;
 import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.PaymentOrderManyService;
@@ -46,8 +46,8 @@ public class PaymentOrderManyPaasController {
     @LoginRequired
     @PostMapping("/getPaymentOrderManyAll")
     @ApiOperation(value = "查询众包订单", notes = "查询众包订单", httpMethod = "POST")
-    @ApiImplicitParams(value = {@ApiImplicitParam(name = "paymentOrderDto", value = "查询条件", required = true, dataType = "PaymentOrderDto")})
-    public ReturnJson getPaymentOrderManyAll(@Valid @RequestBody PaymentOrderDto paymentOrderDto, @RequestAttribute("userId") @ApiParam(hidden = true) String managersId) throws CommonException {
+    @ApiImplicitParams(value = {@ApiImplicitParam(name = "paymentOrderDto", value = "查询条件", required = true, dataType = "PaymentOrderDTO")})
+    public ReturnJson getPaymentOrderManyAll(@Valid @RequestBody PaymentOrderDTO paymentOrderDto, @RequestAttribute("userId") @ApiParam(hidden = true) String managersId) throws CommonException {
         return paymentOrderManyService.getPaymentOrderManyPaas(paymentOrderDto, managersId);
     }
 
@@ -60,8 +60,8 @@ public class PaymentOrderManyPaasController {
 
     @PostMapping("/saveOrUpdata")
     @ApiOperation(value = "创建或修改众包支付订单", notes = "创建或修改众包支付订单", httpMethod = "POST")
-    @ApiImplicitParams(value = {@ApiImplicitParam(name = "addPaymentOrderManyDto", value = "添加众包支付订单", required = true, dataType = "AddPaymentOrderManyDto")})
-    public ReturnJson saveOrUpdataPaymentOrderMany(@Valid @RequestBody AddPaymentOrderManyDto addPaymentOrderManyDto, @RequestParam String merchantId) {
+    @ApiImplicitParams(value = {@ApiImplicitParam(name = "addPaymentOrderManyDto", value = "添加众包支付订单", required = true, dataType = "AddPaymentOrderManyDTO")})
+    public ReturnJson saveOrUpdataPaymentOrderMany(@Valid @RequestBody AddPaymentOrderManyDTO addPaymentOrderManyDto, @RequestParam String merchantId) {
         return paymentOrderManyService.saveOrUpdataPaymentOrderMany(addPaymentOrderManyDto, merchantId);
     }
 

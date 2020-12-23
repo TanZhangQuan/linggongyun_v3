@@ -2,8 +2,8 @@ package com.example.merchant.controller.platform;
 
 
 import com.example.common.util.ReturnJson;
-import com.example.merchant.dto.MakerInvoiceDto;
-import com.example.merchant.dto.MakerTotalInvoiceDto;
+import com.example.merchant.dto.MakerInvoiceDTO;
+import com.example.merchant.dto.MakerTotalInvoiceDTO;
 import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.InvoiceService;
 import com.example.merchant.service.MakerInvoiceService;
@@ -89,7 +89,7 @@ public class InvoicePassController {
     @ApiOperation("汇总代开")
     @PostMapping("/saveOrUpdateMakerTotalInvoice")
     @LoginRequired
-    public ReturnJson saveOrUpdateMakerTotalInvoice(@Valid @RequestBody MakerTotalInvoiceDto makerTotalInvoiceDto,
+    public ReturnJson saveOrUpdateMakerTotalInvoice(@Valid @RequestBody MakerTotalInvoiceDTO makerTotalInvoiceDto,
                                                     @RequestAttribute("userId") @ApiParam(hidden = true) String managerId) {
         return makerTotalInvoiceService.saveOrUpdateMakerTotalInvoice(makerTotalInvoiceDto, managerId);
     }
@@ -102,7 +102,7 @@ public class InvoicePassController {
 
     @ApiOperation("门征单开,开票如果未开票先上传发票进这里开一张发票")
     @PostMapping("/saveMakerInvoice")
-    public ReturnJson saveMakerInvoice(@Valid @RequestBody MakerInvoiceDto makerInvoiceDto) {
+    public ReturnJson saveMakerInvoice(@Valid @RequestBody MakerInvoiceDTO makerInvoiceDto) {
         return makerInvoiceService.saveMakerInvoice(makerInvoiceDto);
     }
 

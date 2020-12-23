@@ -2,7 +2,7 @@ package com.example.merchant.controller.platform;
 
 
 import com.example.common.util.ReturnJson;
-import com.example.merchant.dto.platform.SaveManagersRoleDto;
+import com.example.merchant.dto.platform.SaveManagersRoleDTO;
 import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.MenuService;
 import io.swagger.annotations.*;
@@ -40,7 +40,7 @@ public class MenuPaasController {
     @ApiOperation("添加子用户or编辑")
     @PostMapping(value = "/addManagers")
     @LoginRequired
-    public ReturnJson addMerchant(@Valid @RequestBody SaveManagersRoleDto saveManagersRoleDto, @RequestAttribute(value = "userId") @ApiParam(hidden = true) String managersId) {
+    public ReturnJson addMerchant(@Valid @RequestBody SaveManagersRoleDTO saveManagersRoleDto, @RequestAttribute(value = "userId") @ApiParam(hidden = true) String managersId) {
         return menuService.savePlatRole(saveManagersRoleDto, managersId);
     }
 

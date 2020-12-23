@@ -9,8 +9,8 @@ import com.example.common.enums.UserType;
 import com.example.common.util.IdCardUtils;
 import com.example.common.util.JsonUtils;
 import com.example.common.util.ReturnJson;
-import com.example.merchant.dto.makerend.IdCardInfoDto;
-import com.example.merchant.dto.makerend.WorkerBankDto;
+import com.example.merchant.dto.makerend.IdCardInfoDTO;
+import com.example.merchant.dto.makerend.WorkerBankDTO;
 import com.example.merchant.service.AuthenticationService;
 import com.example.merchant.service.FileOperationService;
 import com.example.merchant.util.RealnameVerifyUtil;
@@ -68,7 +68,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public ReturnJson saveIdCardinfo(IdCardInfoDto idCardInfoDto, String workerId) throws Exception {
+    public ReturnJson saveIdCardinfo(IdCardInfoDTO idCardInfoDto, String workerId) throws Exception {
         Worker worker = workerDao.selectById(workerId);
         if (worker == null) {
             return ReturnJson.error("该创客不存在！");
@@ -86,7 +86,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public ReturnJson saveBankInfo(WorkerBankDto workerBankDto, String workerId) throws Exception {
+    public ReturnJson saveBankInfo(WorkerBankDTO workerBankDto, String workerId) throws Exception {
         Worker worker = workerDao.selectById(workerId);
         if (worker == null) {
             return ReturnJson.error("您输入的用户不存在！");

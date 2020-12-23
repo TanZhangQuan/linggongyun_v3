@@ -7,9 +7,9 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.common.sms.SenSMS;
 import com.example.common.util.*;
-import com.example.merchant.dto.makerend.AddWorkerDto;
-import com.example.merchant.dto.merchant.WorkerDto;
-import com.example.merchant.dto.platform.WorkerQueryDto;
+import com.example.merchant.dto.makerend.AddWorkerDTO;
+import com.example.merchant.dto.merchant.WorkerDTO;
+import com.example.merchant.dto.platform.WorkerQueryDTO;
 import com.example.merchant.exception.CommonException;
 import com.example.merchant.service.*;
 import com.example.merchant.util.AcquireID;
@@ -96,7 +96,7 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
 
 
     @Override
-    public ReturnJson getByIdAndAccountNameAndMobile(String merchantId, WorkerDto workerDto) {
+    public ReturnJson getByIdAndAccountNameAndMobile(String merchantId, WorkerDTO workerDto) {
         Merchant merchant = merchantDao.selectById(merchantId);
         Page<Worker> workerPage = new Page<>(workerDto.getPage(), workerDto.getPageSize());
         IPage<Worker> workerIPage = workerDao.selectByIdAndAccountNameAndMobile(workerPage, merchant.getCompanyId(), workerDto.getWorkerId(), workerDto.getAccountName(), workerDto.getMobileCode());
@@ -414,7 +414,7 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
     }
 
     @Override
-    public ReturnJson registerWorker(AddWorkerDto addWorkerDto) {
+    public ReturnJson registerWorker(AddWorkerDTO addWorkerDto) {
         Worker worker = workerDao.selectOne(new QueryWrapper<Worker>().eq("mobile_code", addWorkerDto.getMobileCode()));
         if (worker == null) {
             String redisCheckCode = redisDao.get(addWorkerDto.getMobileCode());
@@ -435,14 +435,14 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
     }
 
     @Override
-    public ReturnJson getWorkerQuery(String managersId, WorkerQueryDto workerQueryDto) throws CommonException {
+    public ReturnJson getWorkerQuery(String managersId, WorkerQueryDTO workerQueryDto) throws CommonException {
         List<String> companyIds = acquireID.getCompanyIds(managersId);
         IPage<Worker> workerIPage = workerDao.selectWorkerQuery(new Page(workerQueryDto.getPageNo(), workerQueryDto.getPageSize()), companyIds, workerQueryDto.getWorkerId(), workerQueryDto.getAccountName(), workerQueryDto.getMobileCode());
         return ReturnJson.success(workerIPage);
     }
 
     @Override
-    public ReturnJson getWorkerQueryNot(String managersId, WorkerQueryDto workerQueryDto) throws CommonException {
+    public ReturnJson getWorkerQueryNot(String managersId, WorkerQueryDTO workerQueryDto) throws CommonException {
         List<String> companyIds = acquireID.getCompanyIds(managersId);
         IPage<Worker> workerIPage = workerDao.selectWorkerQueryNot(new Page(workerQueryDto.getPageNo(), workerQueryDto.getPageSize()), companyIds, workerQueryDto.getWorkerId(), workerQueryDto.getAccountName(), workerQueryDto.getMobileCode());
         return ReturnJson.success(workerIPage);

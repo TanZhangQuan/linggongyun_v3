@@ -1,36 +1,26 @@
 package com.example.mybatis.vo;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 
-/**
- * @Description
- * @Author JWei <jwei0401@163.com>
- * @Date 2020/11/23
- */
 @Data
+@ApiModel(description = "XXXXX")
 public class WorkerInfoVO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    /**
-     * 总任务数
-     */
+    @ApiModelProperty(value = "总任务数")
     private Integer taskNumber;
 
-    /**
-     * 收入总额
-     */
+    @ApiModelProperty(value = "收入总额")
     private BigDecimal totalRevenue;
 
-    /**
-     * 纳税总额
-     */
+    @ApiModelProperty(value = "纳税总额")
     private BigDecimal totalTax;
 
-    /**
-     * 发票数
-     */
+    @ApiModelProperty(value = "发票数")
     private Integer invoiceNumber;
 }

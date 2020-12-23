@@ -1,57 +1,39 @@
 package com.example.merchant.dto.platform;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-/**
- * @Description
- * @Author JWei <jwei0401@163.com>
- * @Date 2020/12/7
- */
 @Data
-public class UpdateCompanyInfoDto {
+@ApiModel(description = "XXXXX")
+public class UpdateCompanyInfoDto implements Serializable {
+    private static final long serialVersionUID = 1L;
 
-    /**
-     * 商户id
-     */
+    @ApiModelProperty(value = "商户ID")
     private String id;
 
-    /**
-     * 公司名称
-     */
-    private String companyName;
+    @ApiModelProperty(value = "公司名称")
+    private String companySName;
 
-    /**
-     * 法人
-     */
+    @ApiModelProperty(value = "法人")
     private String companyMan;
 
-    /**
-     * 注册资本
-     */
+    @ApiModelProperty(value = "注册资本")
     private BigDecimal registeredCapital;
 
-    /**
-     * 成立日期
-     */
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
+    @ApiModelProperty(value = "成立日期")
     private LocalDateTime companyCreateDate;
 
-    /**
-     *统一的社会信用代码
-     */
+    @ApiModelProperty(value = "统一的社会信用代码")
     private String creditCode;
 
-    /**
-     * 公司的营业执照
-     */
+    @ApiModelProperty(value = "公司的营业执照")
     private String businessLicense;
 
-    /**
-     * 加盟合同地址
-     */
+    @ApiModelProperty(value = "加盟合同地址")
     private String contract;
 }

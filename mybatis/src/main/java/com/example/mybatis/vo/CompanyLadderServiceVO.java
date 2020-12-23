@@ -1,35 +1,25 @@
 package com.example.mybatis.vo;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
 
-/**
- * @Description
- * @Author JWei <jwei0401@163.com>
- * @Date 2020/12/10
- */
 @Data
+@ApiModel(description = "XXXXX")
 public class CompanyLadderServiceVO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    /**
-     * 服务费率Id
-     */
+    @ApiModelProperty(value = "服务费率ID")
     private String companyLadderServiceId;
 
-    /**
-     * 起始金额
-     */
+    @ApiModelProperty(value = "起始金额")
     private String startMoney;
 
-    /**
-     * 结束金额
-     */
+    @ApiModelProperty(value = "结束金额")
     private String endMoney;
 
-    /**
-     * 服务费率
-     */
+    @ApiModelProperty(value = "服务费率")
     private String serviceCharge;
 }

@@ -1,7 +1,7 @@
 package com.example.merchant.controller.regulator;
 
 import com.example.common.util.ReturnJson;
-import com.example.merchant.dto.regulator.PayInfoDto;
+import com.example.merchant.dto.regulator.PayInfoDTO;
 import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.RegulatorTaxService;
 import com.example.mybatis.dto.RegulatorTaxDTO;
@@ -52,8 +52,8 @@ public class RgeulatorServiceProviderController {
 
     @PostMapping("getPayInfo")
     @ApiOperation(value = "支付订单信息", notes = "支付订单信息", httpMethod = "POST")
-    @ApiImplicitParams(value = {@ApiImplicitParam(name = "payInfoDto", value = "支付订单信息查询", dataType = "PayInfoDto", required = true)})
-    public ReturnJson getPayInfo(@Valid @RequestBody PayInfoDto payInfoDto) {
+    @ApiImplicitParams(value = {@ApiImplicitParam(name = "payInfoDto", value = "支付订单信息查询", dataType = "PayInfoDTO", required = true)})
+    public ReturnJson getPayInfo(@Valid @RequestBody PayInfoDTO payInfoDto) {
         return regulatorTaxService.getPayInfo(payInfoDto);
     }
 

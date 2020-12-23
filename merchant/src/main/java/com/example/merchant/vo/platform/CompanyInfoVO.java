@@ -1,59 +1,41 @@
 package com.example.merchant.vo.platform;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-/**
- * @Description
- * @Author JWei <jwei0401@163.com>
- * @Date 2020/12/7
- */
 @Data
+@ApiModel(description = "XXXXX")
 public class CompanyInfoVO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    /**
-     * 商户id
-     */
+    @ApiModelProperty(value = "商户ID")
     private String id;
 
-    /**
-     * 公司名称
-     */
+    @ApiModelProperty(value = "公司名称")
     private String companyName;
 
-    /**
-     * 法人
-     */
+    @ApiModelProperty(value = "法人")
     private String companyMan;
 
-    /**
-     * 注册资本
-     */
+    @ApiModelProperty(value = "注册资本")
     private BigDecimal registeredCapital;
 
-    /**
-     * 成立日期
-     */
+    @ApiModelProperty(value = "成立日期")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private LocalDateTime companyCreateDate;
 
-    /**
-     *统一的社会信用代码
-     */
+    @ApiModelProperty(value = "统一的社会信用代码")
     private String creditCode;
 
-    /**
-     * 公司的营业执照
-     */
+    @ApiModelProperty(value = "公司的营业执照")
     private String businessLicense;
 
-    /**
-     * 加盟合同地址
-     */
+    @ApiModelProperty(value = "加盟合同地址")
     private String contract;
 }

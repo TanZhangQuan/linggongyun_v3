@@ -3,6 +3,7 @@ package com.example.merchant.vo;
 
 import com.example.common.util.ExpressLogisticsInfo;
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -14,18 +15,12 @@ import java.util.List;
 public class ExpressInfoVO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    /**
-     * 快递公司名称
-     */
+    @ApiModelProperty(value = "快递公司名称")
     private String expressCompanyName;
 
-    /**
-     * 快递单号
-     */
+    @ApiModelProperty(value = "快递单号")
     private String expressCode;
 
-    /**
-     * 快递物流信息
-     */
+    @ApiModelProperty(value = "快递物流信息")
     private List<ExpressLogisticsInfo> expressLogisticsInfos;
 }

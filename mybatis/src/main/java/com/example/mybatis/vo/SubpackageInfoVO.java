@@ -1,30 +1,25 @@
 package com.example.mybatis.vo;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
 
 @Data
+@ApiModel(description = "XXXXX")
 public class SubpackageInfoVO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    /**
-     * 开票类目
-     */
+    @ApiModelProperty(value = "开票类目")
     private String invoiceCategory;
 
-    /**
-     * 备注说明
-     */
+    @ApiModelProperty(value = "备注说明")
     private String makerInvoiceDesc;
 
-    /**
-     * 发票地址
-     */
+    @ApiModelProperty(value = "发票地址")
     private String makerInvoiceUrl;
 
-    /**
-     * 税票地址
-     */
+    @ApiModelProperty(value = "税票地址")
     private String makerTaxUrl;
 }

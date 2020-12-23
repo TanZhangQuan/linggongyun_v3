@@ -8,7 +8,7 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
-@ApiModel(value = "商户基本资料")
+@ApiModel(description = "商户基本资料")
 public class MerchantInfoPo {
     @ApiModelProperty(value = "商户ID")
     private String merchantId;

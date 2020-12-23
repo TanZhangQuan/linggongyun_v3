@@ -2,7 +2,7 @@ package com.example.merchant.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.common.util.ReturnJson;
-import com.example.merchant.dto.regulator.PayInfoDto;
+import com.example.merchant.dto.regulator.PayInfoDTO;
 import com.example.mybatis.dto.RegulatorTaxDTO;
 import com.example.mybatis.entity.RegulatorTax;
 
@@ -56,7 +56,7 @@ public interface RegulatorTaxService extends IService<RegulatorTax> {
      * @param payInfoDto
      * @return
      */
-    ReturnJson getPayInfo(PayInfoDto payInfoDto);
+    ReturnJson getPayInfo(PayInfoDTO payInfoDto);
 
     /**
      * 导出支付订单信息

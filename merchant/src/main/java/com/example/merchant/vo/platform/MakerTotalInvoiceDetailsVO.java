@@ -1,45 +1,31 @@
 package com.example.merchant.vo.platform;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
 
-/**
- * @Description
- * @Author JWei <jwei0401@163.com>
- * @Date 2020/12/11
- */
 @Data
+@ApiModel(description = "XXXXX")
 public class MakerTotalInvoiceDetailsVO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    /**
-     * 汇总代开发票ID
-     */
+    @ApiModelProperty(value = "汇总代开发票ID")
     private String id;
 
-    /**
-     * 备注
-     */
+    @ApiModelProperty(value = "备注")
     private String makerInvoiceDesc;
 
-    /**
-     * 分包发票url
-     */
+    @ApiModelProperty(value = "分包发票")
     private String makerInvoiceUrl;
 
-    /**
-     * 分包完税证明URL
-     */
+    @ApiModelProperty(value = "分包完税证明")
     private String makerTaxUrl;
 
-    /**
-     * 发票代码
-     */
+    @ApiModelProperty(value = "发票代码")
     private String invoiceTypeNo;
 
-    /**
-     * 发票号码
-     */
+    @ApiModelProperty(value = "发票号码")
     private String invoiceSerialNo;
 }

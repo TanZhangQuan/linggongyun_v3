@@ -2,9 +2,9 @@ package com.example.merchant.controller.platform;
 
 
 import com.example.common.util.ReturnJson;
-import com.example.merchant.dto.platform.AddInvoiceCatalogDto;
-import com.example.merchant.dto.platform.TaxDto;
-import com.example.merchant.dto.platform.TaxListDto;
+import com.example.merchant.dto.platform.AddInvoiceCatalogDTO;
+import com.example.merchant.dto.platform.TaxDTO;
+import com.example.merchant.dto.platform.TaxListDTO;
 import com.example.merchant.service.TaxService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -50,21 +50,21 @@ public class TaxPaasController {
 
     @PostMapping("/saveCatalog")
     @ApiOperation(value = "添加开票类目", notes = "添加开票类目", httpMethod = "POST")
-    public ReturnJson saveCatalog(@Valid @RequestBody AddInvoiceCatalogDto addInvoiceCatalogDto) {
+    public ReturnJson saveCatalog(@Valid @RequestBody AddInvoiceCatalogDTO addInvoiceCatalogDto) {
         return taxService.saveCatalog(addInvoiceCatalogDto);
     }
 
     @PostMapping("/saveTax")
     @ApiOperation(value = "添加或修改平台服务商", notes = "添加或修改平台服务商", httpMethod = "POST")
-    @ApiImplicitParams(value = {@ApiImplicitParam(name = "taxDto", value = "平台服务商的信息", required = true, dataType = "TaxDto")})
-    public ReturnJson saveTax(@Valid @RequestBody TaxDto taxDto) throws Exception {
+    @ApiImplicitParams(value = {@ApiImplicitParam(name = "taxDto", value = "平台服务商的信息", required = true, dataType = "TaxDTO")})
+    public ReturnJson saveTax(@Valid @RequestBody TaxDTO taxDto) throws Exception {
         return taxService.saveTax(taxDto);
     }
 
     @PostMapping("/getTaxList")
     @ApiOperation(value = "查询服务商列表", notes = "查询服务商列表", httpMethod = "POST")
-    @ApiImplicitParams(value = {@ApiImplicitParam(name = "taxListDto", value = "查询条件", dataType = "TaxListDto", paramType = "body")})
-    public ReturnJson getTaxList(@Valid @RequestBody TaxListDto taxListDto) {
+    @ApiImplicitParams(value = {@ApiImplicitParam(name = "taxListDto", value = "查询条件", dataType = "TaxListDTO", paramType = "body")})
+    public ReturnJson getTaxList(@Valid @RequestBody TaxListDTO taxListDto) {
         return taxService.getTaxList(taxListDto);
     }
 

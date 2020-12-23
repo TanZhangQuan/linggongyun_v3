@@ -19,10 +19,10 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 public class MerchantApplication {
 
 	public static void main(String[] args) {
-		log.info("服务正在启动");
+		log.info("服务正在启动--------------------------------------------------");
 		ConfigurableApplicationContext applicationContext = SpringApplication.run(MerchantApplication.class, args);
 		WebsocketServer.setApplicationContext(applicationContext);
-		log.info("服务启动完成");
+		log.info("服务启动完成--------------------------------------------------");
 	}
 
 }

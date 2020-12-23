@@ -1,6 +1,7 @@
 package com.example.mybatis.dto;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -10,33 +11,21 @@ import java.io.Serializable;
 public class RegulatorTaxDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    /**
-     * 服务商名称
-     */
+    @ApiModelProperty(value = "服务商名称")
     private String serviceProviderName;
 
-    /**
-     * 服务商ID
-     */
+    @ApiModelProperty(value = "服务商id")
     private String serviceProvideId;
 
-    /**
-     * 入驻时间，开始时间
-     */
+    @ApiModelProperty(value = "入驻时间，开始时间")
     private String startDate;
 
-    /**
-     * 入驻时间，结束时间
-     */
+    @ApiModelProperty(value = "入驻时间，结束时间")
     private String endDate;
 
-    /**
-     * 页码
-     */
+    @ApiModelProperty(value = "当前页数")
     private Integer pageNo = 1;
 
-    /**
-     * 页大小
-     */
+    @ApiModelProperty(value = "每页的条数")
     private Integer pageSize = 10;
 }

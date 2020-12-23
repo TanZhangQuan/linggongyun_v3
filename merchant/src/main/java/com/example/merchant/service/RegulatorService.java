@@ -2,13 +2,13 @@ package com.example.merchant.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.common.util.ReturnJson;
-import com.example.merchant.dto.platform.RegulatorDto;
-import com.example.merchant.dto.platform.RegulatorQueryDto;
-import com.example.merchant.dto.platform.AddRegulatorTaxDto;
-import com.example.merchant.dto.regulator.RegulatorMerchantDto;
-import com.example.merchant.dto.regulator.RegulatorMerchantPaymentOrderDto;
-import com.example.merchant.dto.regulator.RegulatorWorkerDto;
-import com.example.merchant.dto.regulator.RegulatorWorkerPaymentDto;
+import com.example.merchant.dto.platform.AddRegulatorTaxDTO;
+import com.example.merchant.dto.platform.RegulatorDTO;
+import com.example.merchant.dto.platform.RegulatorQueryDTO;
+import com.example.merchant.dto.regulator.RegulatorMerchantDTO;
+import com.example.merchant.dto.regulator.RegulatorMerchantPaymentOrderDTO;
+import com.example.merchant.dto.regulator.RegulatorWorkerDTO;
+import com.example.merchant.dto.regulator.RegulatorWorkerPaymentDTO;
 import com.example.mybatis.entity.Regulator;
 
 import javax.servlet.http.HttpServletResponse;
@@ -30,7 +30,7 @@ public interface RegulatorService extends IService<Regulator> {
      * @param regulatorDto
      * @return
      */
-    ReturnJson addRegulator(RegulatorDto regulatorDto);
+    ReturnJson addRegulator(RegulatorDTO regulatorDto);
 
     /**
      * 编辑监管部门
@@ -38,7 +38,7 @@ public interface RegulatorService extends IService<Regulator> {
      * @param regulatorDto
      * @return
      */
-    ReturnJson updateRegulator(RegulatorDto regulatorDto);
+    ReturnJson updateRegulator(RegulatorDTO regulatorDto);
 
     /**
      * 按ID查询监管部门
@@ -54,7 +54,7 @@ public interface RegulatorService extends IService<Regulator> {
      * @param regulatorQueryDto
      * @return
      */
-    ReturnJson getRegulatorQuery(RegulatorQueryDto regulatorQueryDto);
+    ReturnJson getRegulatorQuery(RegulatorQueryDTO regulatorQueryDto);
 
     /**
      * 查询服务商
@@ -68,10 +68,10 @@ public interface RegulatorService extends IService<Regulator> {
     /**
      * 添加监管服务商
      *
-     * @param addRegulatorTaxDtos
+     * @param addRegulatorTaxDTOS
      * @return
      */
-    ReturnJson addRegulatorTax(List<AddRegulatorTaxDto> addRegulatorTaxDtos);
+    ReturnJson addRegulatorTax(List<AddRegulatorTaxDTO> addRegulatorTaxDTOS);
 
     /**
      * 查询监管部门监管的服务商交易统计
@@ -125,7 +125,7 @@ public interface RegulatorService extends IService<Regulator> {
      * @param regulatorId
      * @return
      */
-    ReturnJson getRegulatorWorker(RegulatorWorkerDto regulatorWorkerDto, String regulatorId);
+    ReturnJson getRegulatorWorker(RegulatorWorkerDTO regulatorWorkerDto, String regulatorId);
 
     /**
      * 导出创客
@@ -158,7 +158,7 @@ public interface RegulatorService extends IService<Regulator> {
      * @param regulatorWorkerPaymentDto
      * @return
      */
-    ReturnJson getRegulatorWorkerPaymentInfo(RegulatorWorkerPaymentDto regulatorWorkerPaymentDto, String regulatorId);
+    ReturnJson getRegulatorWorkerPaymentInfo(RegulatorWorkerPaymentDTO regulatorWorkerPaymentDto, String regulatorId);
 
     /**
      * 导出所监管的创客支付明细
@@ -197,7 +197,7 @@ public interface RegulatorService extends IService<Regulator> {
      * @param regulatorId
      * @return
      */
-    ReturnJson getRegulatorMerchant(RegulatorMerchantDto regulatorMerchantDto, String regulatorId);
+    ReturnJson getRegulatorMerchant(RegulatorMerchantDTO regulatorMerchantDto, String regulatorId);
 
     /**
      * 导出所监管的商户
@@ -232,7 +232,7 @@ public interface RegulatorService extends IService<Regulator> {
      * @param regulatorMerchantPaymentOrderDto
      * @return
      */
-    ReturnJson getRegulatorMerchantPaymentOrder(RegulatorMerchantPaymentOrderDto regulatorMerchantPaymentOrderDto, String regulatorId);
+    ReturnJson getRegulatorMerchantPaymentOrder(RegulatorMerchantPaymentOrderDTO regulatorMerchantPaymentOrderDto, String regulatorId);
 
     /**
      * 导出所监管商户的支付订单

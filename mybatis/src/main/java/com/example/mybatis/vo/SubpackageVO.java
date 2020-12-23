@@ -1,89 +1,59 @@
 package com.example.mybatis.vo;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.util.List;
 
-/**
- * 分包待开显示
- */
 @Data
+@ApiModel(description = "XXXXX")
 public class SubpackageVO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    /**
-     * 发票ID
-     */
+    @ApiModelProperty(value = "发票ID")
     private String id;
 
-    /**
-     * 发票编号
-     */
+    @ApiModelProperty(value = "发票编号")
     private String invoiceCode;
 
-    /**
-     * 商户名称
-     */
+    @ApiModelProperty(value = "商户名称")
     private String companySName;
 
-    /**
-     * 服务商名称
-     */
+    @ApiModelProperty(value = "服务商名称")
     private String platformServiceProvider;
 
-    /**
-     * 总包发票
-     */
+    @ApiModelProperty(value = "总包发票")
     private String invoiceUrl;
 
-    /**
-     * 总包税票
-     */
+    @ApiModelProperty(value = "总包税票")
     private String taxReceiptUrl;
 
-    /**
-     * 分包发票
-     */
+    @ApiModelProperty(value = "分包发票")
     private String makerInvoiceUrl;
 
-    /**
-     * 分包税票
-     */
+    @ApiModelProperty(value = "分包税票")
     private String makerTaxUrl;
 
-    /**
-     * 是否申请开分包
-     */
+    @ApiModelProperty(value = "是否申请开分包")
     private Integer isSubpackage;
 
-    /**
-     * 开票时间
-     */
+    @ApiModelProperty(value = "开票时间")
     private String invoiceDate;
 
-    /**
-     * 支付状态
-     */
+    @ApiModelProperty(value = "支付状态")
     private Integer paymentOrderStatus;
 
-    /**
-     * 支付时间
-     */
+    @ApiModelProperty(value = "支付时间")
     private String paymentDate;
 
-    /**
-     * 税价合计
-     */
+    @ApiModelProperty(value = "税价合计")
     private Double totalAmount;
 
-    /**
-     * 对应的支付清单
-     */
+    @ApiModelProperty(value = "对应的支付清单")
     private List<OrderSubpackageVO> list;
 
-    /**
-     * 关联的任务
-     */
+    @ApiModelProperty(value = "关联的任务")
     private List<TaskVO> taskVOList;
 }

@@ -2,8 +2,8 @@ package com.example.merchant.controller.platform;
 
 
 import com.example.common.util.ReturnJson;
-import com.example.merchant.dto.merchant.AddPaymentOrderDto;
-import com.example.merchant.dto.platform.PaymentOrderDto;
+import com.example.merchant.dto.merchant.AddPaymentOrderDTO;
+import com.example.merchant.dto.platform.PaymentOrderDTO;
 import com.example.merchant.exception.CommonException;
 import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.PaymentOrderService;
@@ -36,8 +36,8 @@ public class PaymentOrderPaasController {
     @PostMapping("/getPaymentOrderAll")
     @LoginRequired
     @ApiOperation(value = "查询总包+分包支付订单", notes = "查询总包+分包支付订单", httpMethod = "POST")
-    @ApiImplicitParams(value = {@ApiImplicitParam(name = "paymentOrderDto", value = "查询条件", required = true, dataType = "PaymentOrderDto")})
-    public ReturnJson getPaymentOrderAll(@Valid @RequestBody PaymentOrderDto paymentOrderDto, @ApiParam(hidden = true) @RequestAttribute(value = "userId") String managersId) throws CommonException {
+    @ApiImplicitParams(value = {@ApiImplicitParam(name = "paymentOrderDto", value = "查询条件", required = true, dataType = "PaymentOrderDTO")})
+    public ReturnJson getPaymentOrderAll(@Valid @RequestBody PaymentOrderDTO paymentOrderDto, @ApiParam(hidden = true) @RequestAttribute(value = "userId") String managersId) throws CommonException {
         return paymentOrderService.getPaymentOrderPaas(paymentOrderDto, managersId);
     }
 
@@ -57,8 +57,8 @@ public class PaymentOrderPaasController {
 
     @PostMapping("/saveOrUpdata")
     @ApiOperation(value = "创建或修改总包+分包支付订单", notes = "创建或修改总包+分包支付订单", httpMethod = "POST")
-    @ApiImplicitParams(value = {@ApiImplicitParam(name = "addPaymentOrderDto", value = "新建或修改的支付订单", required = true, dataType = "AddPaymentOrderDto")})
-    public ReturnJson saveOrUpdataPaymentOrder(@Valid @RequestBody AddPaymentOrderDto addPaymentOrderDto, @RequestParam String merchantId) {
+    @ApiImplicitParams(value = {@ApiImplicitParam(name = "addPaymentOrderDto", value = "新建或修改的支付订单", required = true, dataType = "AddPaymentOrderDTO")})
+    public ReturnJson saveOrUpdataPaymentOrder(@Valid @RequestBody AddPaymentOrderDTO addPaymentOrderDto, @RequestParam String merchantId) {
         return paymentOrderService.saveOrUpdataPaymentOrder(addPaymentOrderDto, merchantId);
     }
 

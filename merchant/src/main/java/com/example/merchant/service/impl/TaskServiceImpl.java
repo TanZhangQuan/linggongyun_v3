@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.common.util.*;
 import com.example.merchant.dto.makerend.QueryMissionHall;
-import com.example.merchant.dto.merchant.AddTaskDto;
+import com.example.merchant.dto.merchant.AddTaskDTO;
 import com.example.merchant.service.WorkerTaskService;
 import com.example.mybatis.dto.PlatformTaskDTO;
 import com.example.mybatis.dto.TaskDTO;
@@ -73,7 +73,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ReturnJson saveTask(AddTaskDto addTaskDto, String userId) {
+    public ReturnJson saveTask(AddTaskDTO addTaskDto, String userId) {
         Merchant merchant = merchantDao.selectById(userId);
         DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         DateTimeFormatter df1 = DateTimeFormatter.ofPattern("HH:mm:ss");

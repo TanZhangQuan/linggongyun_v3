@@ -1,7 +1,7 @@
 package com.example.merchant.controller.platform;
 
 import com.example.common.util.ReturnJson;
-import com.example.merchant.dto.platform.AddCrowdSourcingInvoiceDto;
+import com.example.merchant.dto.platform.AddCrowdSourcingInvoiceDTO;
 import com.example.merchant.service.CrowdSourcingInvoiceService;
 import com.example.mybatis.dto.TobeinvoicedDTO;
 import io.swagger.annotations.Api;
@@ -51,7 +51,7 @@ public class CrowdSourcingPassController {
 
     @PostMapping("/saveCrowdSourcingInvoice")
     @ApiOperation(value = "众包开票详情页，开票")
-    public ReturnJson saveCrowdSourcingInvoice(@Valid @RequestBody AddCrowdSourcingInvoiceDto addCrowdSourcingInvoiceDto) {
+    public ReturnJson saveCrowdSourcingInvoice(@Valid @RequestBody AddCrowdSourcingInvoiceDTO addCrowdSourcingInvoiceDto) {
         return crowdSourcingInvoiceService.saveCrowdSourcingInvoice(addCrowdSourcingInvoiceDto);
     }
 

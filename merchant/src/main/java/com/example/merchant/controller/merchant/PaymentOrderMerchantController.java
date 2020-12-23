@@ -2,8 +2,8 @@ package com.example.merchant.controller.merchant;
 
 
 import com.example.common.util.ReturnJson;
-import com.example.merchant.dto.merchant.AddPaymentOrderDto;
-import com.example.merchant.dto.merchant.PaymentOrderMerchantDto;
+import com.example.merchant.dto.merchant.AddPaymentOrderDTO;
+import com.example.merchant.dto.merchant.PaymentOrderMerchantDTO;
 import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.PaymentOrderService;
 import io.swagger.annotations.*;
@@ -35,11 +35,11 @@ public class PaymentOrderMerchantController {
     @PostMapping("/getPaymentOrderAll")
     @ApiOperation(value = "查询总包+分包支付订单", notes = "查询总包+分包支付订单", httpMethod = "POST")
     @ApiImplicitParams(value = {
-            @ApiImplicitParam(name = "paymentOrderMerchantDto", value = "查询条件", required = true, dataType = "PaymentOrderMerchantDto")
+            @ApiImplicitParam(name = "paymentOrderMerchantDto", value = "查询条件", required = true, dataType = "PaymentOrderMerchantDTO")
     })
     @LoginRequired
     public ReturnJson getPaymentOrderAll(@ApiParam(hidden = true) @RequestAttribute("userId") String merchantId,
-                                         @Valid @RequestBody PaymentOrderMerchantDto paymentOrderMerchantDto) {
+                                         @Valid @RequestBody PaymentOrderMerchantDTO paymentOrderMerchantDto) {
         return paymentOrderService.getPaymentOrder(merchantId, paymentOrderMerchantDto);
     }
 
@@ -55,10 +55,10 @@ public class PaymentOrderMerchantController {
     @PostMapping("/saveOrUpdata")
     @ApiOperation(value = "创建或修改总包+分包支付订单", notes = "创建或修改总包+分包支付订单", httpMethod = "POST")
     @ApiImplicitParams(value = {
-            @ApiImplicitParam(name = "addPaymentOrderDto", value = "新建或修改的支付订单", required = true, dataType = "AddPaymentOrderDto")
+            @ApiImplicitParam(name = "addPaymentOrderDto", value = "新建或修改的支付订单", required = true, dataType = "AddPaymentOrderDTO")
     })
     @LoginRequired
-    public ReturnJson saveOrUpdataPaymentOrder(@Valid @RequestBody AddPaymentOrderDto addPaymentOrderDto,
+    public ReturnJson saveOrUpdataPaymentOrder(@Valid @RequestBody AddPaymentOrderDTO addPaymentOrderDto,
                                                @RequestAttribute(value = "userId") @ApiParam(hidden = true) String merchantId) {
         return paymentOrderService.saveOrUpdataPaymentOrder(addPaymentOrderDto, merchantId);
     }

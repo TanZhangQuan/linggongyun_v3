@@ -1,7 +1,7 @@
 package com.example.merchant.controller.makerend;
 
 import com.example.common.util.ReturnJson;
-import com.example.merchant.dto.makerend.AddWorkerDto;
+import com.example.merchant.dto.makerend.AddWorkerDTO;
 import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.WorkerService;
 import io.swagger.annotations.*;
@@ -89,7 +89,7 @@ public class WorkerMakerendController {
 
     @PostMapping("/registerWorker")
     @ApiOperation(value = "注册创客", notes = "注册创客", httpMethod = "POST")
-    public ReturnJson registerWorker(@RequestBody @Valid AddWorkerDto addWorkerDto) {
+    public ReturnJson registerWorker(@RequestBody @Valid AddWorkerDTO addWorkerDto) {
         return workerService.registerWorker(addWorkerDto);
     }
 }

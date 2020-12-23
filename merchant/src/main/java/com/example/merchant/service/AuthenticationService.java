@@ -3,8 +3,8 @@ package com.example.merchant.service;
 import com.example.common.contract.exception.DefineException;
 import com.example.common.enums.IdCardSide;
 import com.example.common.util.ReturnJson;
-import com.example.merchant.dto.makerend.IdCardInfoDto;
-import com.example.merchant.dto.makerend.WorkerBankDto;
+import com.example.merchant.dto.makerend.IdCardInfoDTO;
+import com.example.merchant.dto.makerend.WorkerBankDTO;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -27,7 +27,7 @@ public interface AuthenticationService {
      * @return
      * @throws Exception
      */
-    ReturnJson saveIdCardinfo(IdCardInfoDto idCardInfoDto, String workerId) throws Exception;
+    ReturnJson saveIdCardinfo(IdCardInfoDTO idCardInfoDto, String workerId) throws Exception;
 
     /**
      * 绑定银行卡号
@@ -37,7 +37,7 @@ public interface AuthenticationService {
      * @return
      * @throws Exception
      */
-    ReturnJson saveBankInfo(WorkerBankDto workerBankDto, String workerId) throws Exception;
+    ReturnJson saveBankInfo(WorkerBankDTO workerBankDto, String workerId) throws Exception;
 
     /**
      * 保存创客的活体视频信息

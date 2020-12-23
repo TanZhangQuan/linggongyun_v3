@@ -2,9 +2,9 @@ package com.example.merchant.controller.platform;
 
 
 import com.example.common.util.ReturnJson;
-import com.example.merchant.dto.platform.AddressDto;
-import com.example.merchant.dto.platform.CompanyDto;
-import com.example.merchant.dto.platform.UpdateCompanyDto;
+import com.example.merchant.dto.platform.AddressDTO;
+import com.example.merchant.dto.platform.CompanyDTO;
+import com.example.merchant.dto.platform.UpdateCompanyDTO;
 import com.example.merchant.exception.CommonException;
 import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.AddressService;
@@ -110,9 +110,9 @@ public class MerchantPaasController {
     @PostMapping("/addMerchant")
     @ApiOperation(value = "添加商户", notes = "添加商户", httpMethod = "POST")
     @ApiImplicitParams(value = {
-            @ApiImplicitParam(name = "companyDto", value = "商户ID", required = true, dataType = "CompanyDto")
+            @ApiImplicitParam(name = "companyDto", value = "商户ID", required = true, dataType = "CompanyDTO")
     })
-    public ReturnJson addMerchant(@Valid @RequestBody CompanyDto companyDto) throws Exception {
+    public ReturnJson addMerchant(@Valid @RequestBody CompanyDTO companyDto) throws Exception {
         return merchantService.addMerchant(companyDto);
     }
 
@@ -200,7 +200,7 @@ public class MerchantPaasController {
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "address", value = "快递地址信息", required = true, dataType = "Address")
     })
-    public ReturnJson addOrUpdataAddress(@Valid @RequestBody AddressDto addressDto, String merchantId) {
+    public ReturnJson addOrUpdataAddress(@Valid @RequestBody AddressDTO addressDto, String merchantId) {
         return addressService.addOrUpdataAddress(addressDto, merchantId);
     }
 
@@ -248,7 +248,7 @@ public class MerchantPaasController {
 
     @PostMapping("/updateCompanyInfo")
     @ApiOperation(value = "修改公司的信息", notes = "修改或忘记密码", httpMethod = "POST")
-    public ReturnJson updateCompanyInfo(@Valid @RequestBody UpdateCompanyDto updateCompanyDto) {
+    public ReturnJson updateCompanyInfo(@Valid @RequestBody UpdateCompanyDTO updateCompanyDto) {
         return merchantService.updateCompanyInfo(updateCompanyDto);
     }
 }

@@ -1,8 +1,8 @@
 package com.example.merchant.controller.regulator;
 
 import com.example.common.util.ReturnJson;
-import com.example.merchant.dto.regulator.RegulatorWorkerDto;
-import com.example.merchant.dto.regulator.RegulatorWorkerPaymentDto;
+import com.example.merchant.dto.regulator.RegulatorWorkerDTO;
+import com.example.merchant.dto.regulator.RegulatorWorkerPaymentDTO;
 import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.RegulatorService;
 import io.swagger.annotations.*;
@@ -28,8 +28,8 @@ public class RegulatorWorkerController {
     @PostMapping("/getRegulatorWorker")
     @LoginRequired
     @ApiOperation(value = "按条件查询所监管的创客", notes = "按条件查询所监管的创客", httpMethod = "POST")
-    @ApiImplicitParams(value = {@ApiImplicitParam(name = "regulatorWorkerDto", value = "监管部门的信息", required = true, dataType = "RegulatorWorkerDto")})
-    public ReturnJson getRegulatorWorker(@Valid @RequestBody RegulatorWorkerDto regulatorWorkerDto, @ApiParam(hidden = true) @RequestAttribute(value = "userId", required = false) String regulatorId) {
+    @ApiImplicitParams(value = {@ApiImplicitParam(name = "regulatorWorkerDto", value = "监管部门的信息", required = true, dataType = "RegulatorWorkerDTO")})
+    public ReturnJson getRegulatorWorker(@Valid @RequestBody RegulatorWorkerDTO regulatorWorkerDto, @ApiParam(hidden = true) @RequestAttribute(value = "userId", required = false) String regulatorId) {
         return regulatorService.getRegulatorWorker(regulatorWorkerDto, regulatorId);
     }
 
@@ -63,8 +63,8 @@ public class RegulatorWorkerController {
     @PostMapping("/getRegulatorWorkerPaymentInfo")
     @LoginRequired
     @ApiOperation(value = "查询所监管创客的支付明细", notes = "查询所监管创客的支付明细", httpMethod = "POST")
-    @ApiImplicitParams(value = {@ApiImplicitParam(name = "regulatorWorkerPaymentDto", value = "监管部门查询所监管创客的支付明细查询参数", dataType = "RegulatorWorkerPaymentDto", required = true)})
-    public ReturnJson getRegulatorWorkerPaymentInfo(@Valid @RequestBody RegulatorWorkerPaymentDto regulatorWorkerPaymentDto, @ApiParam(hidden = true) @RequestAttribute(value = "userId", required = false) String regulatorId) {
+    @ApiImplicitParams(value = {@ApiImplicitParam(name = "regulatorWorkerPaymentDto", value = "监管部门查询所监管创客的支付明细查询参数", dataType = "RegulatorWorkerPaymentDTO", required = true)})
+    public ReturnJson getRegulatorWorkerPaymentInfo(@Valid @RequestBody RegulatorWorkerPaymentDTO regulatorWorkerPaymentDto, @ApiParam(hidden = true) @RequestAttribute(value = "userId", required = false) String regulatorId) {
         return regulatorService.getRegulatorWorkerPaymentInfo(regulatorWorkerPaymentDto,regulatorId);
     }
 

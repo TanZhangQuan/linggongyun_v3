@@ -2,7 +2,7 @@ package com.example.merchant.controller.merchant;
 
 
 import com.example.common.util.ReturnJson;
-import com.example.merchant.dto.merchant.WorkerDto;
+import com.example.merchant.dto.merchant.WorkerDTO;
 import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.WorkerService;
 import com.example.merchant.service.WorkerTaskService;
@@ -56,8 +56,8 @@ public class WorkerMerchantController {
     @PostMapping("/getWorkerMany")
     @LoginRequired
     @ApiOperation(value = "按条件查询创客", notes = "按条件查询创客", httpMethod = "POST")
-    @ApiImplicitParams(value = {@ApiImplicitParam(name = "workerDto", value = "查询条件", dataType = "WorkerDto", required = true)})
-    public ReturnJson getWorkerMany(@Valid @RequestBody WorkerDto workerDto,@ApiParam(hidden = true) @RequestAttribute("userId") String merchantId) {
+    @ApiImplicitParams(value = {@ApiImplicitParam(name = "workerDto", value = "查询条件", dataType = "WorkerDTO", required = true)})
+    public ReturnJson getWorkerMany(@Valid @RequestBody WorkerDTO workerDto, @ApiParam(hidden = true) @RequestAttribute("userId") String merchantId) {
         return workerService.getByIdAndAccountNameAndMobile(merchantId, workerDto);
     }
 

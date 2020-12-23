@@ -2,11 +2,9 @@ package com.example.merchant.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.common.util.ReturnJson;
-import com.example.merchant.dto.platform.AddInvoiceCatalogDto;
-import com.example.merchant.dto.platform.TaxDto;
-import com.example.merchant.dto.platform.TaxListDto;
-import com.example.merchant.exception.CommonException;
-import com.example.mybatis.entity.InvoiceCatalog;
+import com.example.merchant.dto.platform.AddInvoiceCatalogDTO;
+import com.example.merchant.dto.platform.TaxDTO;
+import com.example.merchant.dto.platform.TaxListDTO;
 import com.example.mybatis.entity.Tax;
 
 /**
@@ -49,7 +47,7 @@ public interface TaxService extends IService<Tax> {
      * @param addInvoiceCatalogDto
      * @return
      */
-    ReturnJson saveCatalog(AddInvoiceCatalogDto addInvoiceCatalogDto);
+    ReturnJson saveCatalog(AddInvoiceCatalogDTO addInvoiceCatalogDto);
 
     /**
      * 添加服务商
@@ -57,7 +55,7 @@ public interface TaxService extends IService<Tax> {
      * @param taxDto
      * @return
      */
-    ReturnJson saveTax(TaxDto taxDto) throws Exception;
+    ReturnJson saveTax(TaxDTO taxDto) throws Exception;
 
     /**
      * 查询服务商列表
@@ -65,7 +63,7 @@ public interface TaxService extends IService<Tax> {
      * @param taxListDto
      * @return
      */
-    ReturnJson getTaxList(TaxListDto taxListDto);
+    ReturnJson getTaxList(TaxListDTO taxListDto);
 
     /**
      * 查询服务商详情

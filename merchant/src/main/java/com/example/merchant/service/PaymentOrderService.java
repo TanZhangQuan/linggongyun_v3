@@ -2,13 +2,11 @@ package com.example.merchant.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.common.util.ReturnJson;
-import com.example.merchant.dto.platform.PaymentOrderDto;
-import com.example.merchant.dto.merchant.AddPaymentOrderDto;
-import com.example.merchant.dto.merchant.PaymentOrderMerchantDto;
+import com.example.merchant.dto.merchant.AddPaymentOrderDTO;
+import com.example.merchant.dto.merchant.PaymentOrderMerchantDTO;
+import com.example.merchant.dto.platform.PaymentOrderDTO;
 import com.example.merchant.exception.CommonException;
 import com.example.mybatis.entity.PaymentOrder;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * <p>
@@ -34,7 +32,7 @@ public interface PaymentOrderService extends IService<PaymentOrder> {
      * @param paymentOrderMerchantDto
      * @return
      */
-    ReturnJson getPaymentOrder(String merchantId, PaymentOrderMerchantDto paymentOrderMerchantDto);
+    ReturnJson getPaymentOrder(String merchantId, PaymentOrderMerchantDTO paymentOrderMerchantDto);
 
     /**
      * 查询支付订单详情
@@ -50,7 +48,7 @@ public interface PaymentOrderService extends IService<PaymentOrder> {
      * @param addPaymentOrderDto
      * @return
      */
-    ReturnJson saveOrUpdataPaymentOrder(AddPaymentOrderDto addPaymentOrderDto, String merchantId);
+    ReturnJson saveOrUpdataPaymentOrder(AddPaymentOrderDTO addPaymentOrderDto, String merchantId);
 
     /**
      * 线下支付
@@ -115,7 +113,7 @@ public interface PaymentOrderService extends IService<PaymentOrder> {
      * @param paymentOrderDto
      * @return
      */
-    ReturnJson getPaymentOrderPaas(PaymentOrderDto paymentOrderDto, String managersId) throws CommonException;
+    ReturnJson getPaymentOrderPaas(PaymentOrderDTO paymentOrderDto, String managersId) throws CommonException;
 
     /**
      * 线下支付

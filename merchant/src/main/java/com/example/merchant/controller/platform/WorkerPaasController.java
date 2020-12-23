@@ -2,7 +2,7 @@ package com.example.merchant.controller.platform;
 
 
 import com.example.common.util.ReturnJson;
-import com.example.merchant.dto.platform.WorkerQueryDto;
+import com.example.merchant.dto.platform.WorkerQueryDTO;
 import com.example.merchant.exception.CommonException;
 import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.WorkerService;
@@ -42,14 +42,14 @@ public class WorkerPaasController {
     @PostMapping("/getWorkerQuery")
     @LoginRequired
     @ApiOperation(value = "按条件获取已认证的创客", notes = "按条件获取已认证的创客", httpMethod = "POST")
-    public ReturnJson getWorkerQuery(@ApiParam(hidden = true) @RequestAttribute("userId") String managersId, @Valid @RequestBody WorkerQueryDto workerQueryDto) throws CommonException {
+    public ReturnJson getWorkerQuery(@ApiParam(hidden = true) @RequestAttribute("userId") String managersId, @Valid @RequestBody WorkerQueryDTO workerQueryDto) throws CommonException {
         return workerService.getWorkerQuery(managersId, workerQueryDto);
     }
 
     @PostMapping("/getWorkerQueryNot")
     @LoginRequired
     @ApiOperation(value = "按条件获取所以未认证的创客", notes = "按条件获取所以未认证的创客", httpMethod = "POST")
-    public ReturnJson getWorkerQueryNot(@ApiParam(hidden = true) @RequestAttribute("userId") String managersId, @Valid @RequestBody WorkerQueryDto workerQueryDto) throws CommonException {
+    public ReturnJson getWorkerQueryNot(@ApiParam(hidden = true) @RequestAttribute("userId") String managersId, @Valid @RequestBody WorkerQueryDTO workerQueryDto) throws CommonException {
         return workerService.getWorkerQueryNot(managersId, workerQueryDto);
     }
 

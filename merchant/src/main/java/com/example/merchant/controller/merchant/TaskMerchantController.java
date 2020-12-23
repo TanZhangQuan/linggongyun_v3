@@ -2,7 +2,7 @@ package com.example.merchant.controller.merchant;
 
 
 import com.example.common.util.ReturnJson;
-import com.example.merchant.dto.merchant.AddTaskDto;
+import com.example.merchant.dto.merchant.AddTaskDTO;
 import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.TaskService;
 import com.example.mybatis.dto.TaskListDTO;
@@ -47,7 +47,7 @@ public class TaskMerchantController {
     @LoginRequired
     @ApiOperation("任务新增")
     @PostMapping(value = "/addTask")
-    public ReturnJson addTask(@Valid @RequestBody AddTaskDto addTaskDto, @RequestAttribute(value = "userId") @ApiParam(hidden = true) String userId) {
+    public ReturnJson addTask(@Valid @RequestBody AddTaskDTO addTaskDto, @RequestAttribute(value = "userId") @ApiParam(hidden = true) String userId) {
         return taskService.saveTask(addTaskDto, userId);
     }
 

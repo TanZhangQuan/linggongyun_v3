@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.common.util.DateUtil;
 import com.example.common.util.ReturnJson;
-import com.example.merchant.dto.MakerInvoiceDto;
+import com.example.merchant.dto.MakerInvoiceDTO;
 import com.example.merchant.service.MakerInvoiceService;
 import com.example.mybatis.entity.InvoiceLadderPrice;
 import com.example.mybatis.entity.MakerInvoice;
@@ -79,7 +79,7 @@ public class MakerInvoiceServiceImpl extends ServiceImpl<MakerInvoiceDao, MakerI
      * @return
      */
     @Override
-    public ReturnJson saveMakerInvoice(MakerInvoiceDto makerInvoiceDto) {
+    public ReturnJson saveMakerInvoice(MakerInvoiceDTO makerInvoiceDto) {
         ReturnJson returnJson = new ReturnJson("操作失败", 300);
         MakerInvoice makerInvoice = new MakerInvoice();
         DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");

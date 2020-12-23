@@ -1,8 +1,8 @@
 package com.example.merchant.controller.platform;
 
 import com.example.common.util.ReturnJson;
-import com.example.merchant.dto.platform.AgentInfoDto;
-import com.example.merchant.dto.platform.ManagersDto;
+import com.example.merchant.dto.platform.AgentInfoDTO;
+import com.example.merchant.dto.platform.ManagersDTO;
 import com.example.merchant.exception.CommonException;
 import com.example.merchant.service.StructureService;
 import io.swagger.annotations.Api;
@@ -29,18 +29,18 @@ public class StructureController {
     @PostMapping("/addSalesMan")
     @ApiOperation(value = "添加业务员or编辑业务员", notes = "添加或修改业务员", httpMethod = "POST")
     @ApiImplicitParams(value = {
-            @ApiImplicitParam(name = "managersDto", value = "业务员的信息", required = true, dataType = "ManagersDto")
+            @ApiImplicitParam(name = "managersDto", value = "业务员的信息", required = true, dataType = "ManagersDTO")
     })
-    public ReturnJson addSalesMan(@Valid @RequestBody ManagersDto managersDto) {
+    public ReturnJson addSalesMan(@Valid @RequestBody ManagersDTO managersDto) {
         return structureService.addSalesMan(managersDto);
     }
 
     @PostMapping("/updateSalesMan")
     @ApiOperation(value = "编辑业务员", notes = "编辑业务员", httpMethod = "POST")
     @ApiImplicitParams(value = {
-            @ApiImplicitParam(name = "managersDto", value = "业务员的信息", required = true, dataType = "ManagersDto")
+            @ApiImplicitParam(name = "managersDto", value = "业务员的信息", required = true, dataType = "ManagersDTO")
     })
-    public ReturnJson updateSalesMan(@Valid @RequestBody ManagersDto managersDto) {
+    public ReturnJson updateSalesMan(@Valid @RequestBody ManagersDTO managersDto) {
         return structureService.updateSalesMan(managersDto);
     }
 
@@ -116,18 +116,18 @@ public class StructureController {
     @PostMapping("/addAgent")
     @ApiOperation(value = "添加代理商or编辑代理商", notes = "添加代理商or编辑代理商", httpMethod = "POST")
     @ApiImplicitParams(value = {
-            @ApiImplicitParam(name = "agentInfoDto", value = "代理商的信息", required = true, dataType = "AgentInfoDto")
+            @ApiImplicitParam(name = "agentInfoDto", value = "代理商的信息", required = true, dataType = "AgentInfoDTO")
     })
-    public ReturnJson addAgent(@Valid @RequestBody AgentInfoDto agentInfoDto) {
+    public ReturnJson addAgent(@Valid @RequestBody AgentInfoDTO agentInfoDto) {
         return structureService.addAgent(agentInfoDto);
     }
 
     @PostMapping("/updataAgent")
     @ApiOperation(value = "编辑代理商", notes = "编辑代理商", httpMethod = "POST")
     @ApiImplicitParams(value = {
-            @ApiImplicitParam(name = "agentInfoDto", value = "代理商的信息", required = true, dataType = "AgentInfoDto")
+            @ApiImplicitParam(name = "agentInfoDto", value = "代理商的信息", required = true, dataType = "AgentInfoDTO")
     })
-    public ReturnJson updataAgent(@Valid @RequestBody AgentInfoDto agentInfoDto) {
+    public ReturnJson updataAgent(@Valid @RequestBody AgentInfoDTO agentInfoDto) {
         return structureService.updataAgent(agentInfoDto);
     }
 

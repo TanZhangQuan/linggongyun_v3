@@ -1,55 +1,37 @@
 package com.example.mybatis.vo;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
 
-/**
- * @Description
- * @Author JWei <jwei0401@163.com>
- * @Date 2020/12/4
- */
 @Data
+@ApiModel(description = "XXXXX")
 public class SendAndReceiveVO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    /**
-     * 物流公司
-     */
+    @ApiModelProperty(value = "物流公司")
     private String logisticsCompany;
 
-    /**
-     * 物流单号
-     */
+    @ApiModelProperty(value = "物流单号")
     private String logisticsOrderNo;
 
-    /**
-     * 收件地址
-     */
+    @ApiModelProperty(value = "收件地址")
     private String toAddress;
 
-    /**
-     * 收件人
-     */
+    @ApiModelProperty(value = "收件人")
     private String addressee;
 
-    /**
-     * 收件人电话
-     */
+    @ApiModelProperty(value = "收件人电话")
     private String addresseeTelephone;
 
-    /**
-     * 发件地址
-     */
+    @ApiModelProperty(value = "发件地址")
     private String  sendingAddress;
 
-    /**
-     * 发件人
-     */
+    @ApiModelProperty(value = "发件人")
     private String from;
 
-    /**
-     * 发件人电话
-     */
+    @ApiModelProperty(value = "发件人电话")
     private String fromTelephone;
 }

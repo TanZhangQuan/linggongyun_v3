@@ -2,25 +2,23 @@ package com.example.mybatis.vo;
 
 import com.example.mybatis.entity.Industry;
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.util.List;
 
-@ApiModel(value = "行业列表")
 @Data
+@ApiModel(description = "行业列表")
 public class IndustryVO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    /**
-     * 行业ID
-     */
+    @ApiModelProperty(value = "行业Id")
     private String id;
 
-    /**
-     * 行业类型
-     */
+    @ApiModelProperty(value = "行业类型")
     private String industryType;
 
+    @ApiModelProperty(value = "行业")
     private List<Industry> list;
 }

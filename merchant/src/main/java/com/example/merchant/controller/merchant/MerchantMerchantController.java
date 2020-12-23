@@ -1,7 +1,7 @@
 package com.example.merchant.controller.merchant;
 
 import com.example.common.util.ReturnJson;
-import com.example.merchant.dto.platform.AddressDto;
+import com.example.merchant.dto.platform.AddressDTO;
 import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.AddressService;
 import com.example.merchant.service.LinkmanService;
@@ -101,7 +101,7 @@ public class MerchantMerchantController {
             @ApiImplicitParam(name = "address", value = "快递地址信息", required = true, dataType = "Address")
     })
     @LoginRequired
-    public ReturnJson addOrUpdataAddress(@Valid @RequestBody AddressDto addressDto, @ApiParam(hidden = true) @RequestAttribute("userId") String merchantId) {
+    public ReturnJson addOrUpdataAddress(@Valid @RequestBody AddressDTO addressDto, @ApiParam(hidden = true) @RequestAttribute("userId") String merchantId) {
         return addressService.addOrUpdataAddress(addressDto, merchantId);
     }
 

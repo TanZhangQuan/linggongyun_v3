@@ -3,8 +3,8 @@ package com.example.merchant.controller.makerend;
 import com.example.common.contract.exception.DefineException;
 import com.example.common.enums.IdCardSide;
 import com.example.common.util.ReturnJson;
-import com.example.merchant.dto.makerend.IdCardInfoDto;
-import com.example.merchant.dto.makerend.WorkerBankDto;
+import com.example.merchant.dto.makerend.IdCardInfoDTO;
+import com.example.merchant.dto.makerend.WorkerBankDTO;
 import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.AuthenticationService;
 import io.swagger.annotations.*;
@@ -36,17 +36,17 @@ public class AuthenticationController {
 
     @PostMapping("/saveIdCardInfo")
     @ApiOperation(value = "保存创客的身份证信息", notes = "保存创客的身份证信息", httpMethod = "POST")
-    @ApiImplicitParams(value = {@ApiImplicitParam(name = "idCardInfoDto", value = "身份证信息", dataType = "IdCardInfoDto", required = true)})
+    @ApiImplicitParams(value = {@ApiImplicitParam(name = "idCardInfoDto", value = "身份证信息", dataType = "IdCardInfoDTO", required = true)})
     @LoginRequired
-    public ReturnJson saveIdCardInfo(@Valid @RequestBody IdCardInfoDto idCardInfoDto, @RequestAttribute(value = "userId") @ApiParam(hidden = true) String workerId) throws Exception {
+    public ReturnJson saveIdCardInfo(@Valid @RequestBody IdCardInfoDTO idCardInfoDto, @RequestAttribute(value = "userId") @ApiParam(hidden = true) String workerId) throws Exception {
         return authenticationService.saveIdCardinfo(idCardInfoDto, workerId);
     }
 
     @PostMapping("/saveBankInfo")
     @ApiOperation(value = "保存创客的银行卡信息", notes = "保存创客的银行卡信息", httpMethod = "POST")
-    @ApiImplicitParams(value = {@ApiImplicitParam(name = "workerBankDto", value = "银行卡信息", dataType = "WorkerBankDto", required = true)})
+    @ApiImplicitParams(value = {@ApiImplicitParam(name = "workerBankDto", value = "银行卡信息", dataType = "WorkerBankDTO", required = true)})
     @LoginRequired
-    public ReturnJson saveBankInfo(@Valid @RequestBody WorkerBankDto workerBankDto, @RequestAttribute(value = "userId") @ApiParam(hidden = true) String workerId) throws Exception {
+    public ReturnJson saveBankInfo(@Valid @RequestBody WorkerBankDTO workerBankDto, @RequestAttribute(value = "userId") @ApiParam(hidden = true) String workerId) throws Exception {
         return authenticationService.saveBankInfo(workerBankDto, workerId);
     }
 

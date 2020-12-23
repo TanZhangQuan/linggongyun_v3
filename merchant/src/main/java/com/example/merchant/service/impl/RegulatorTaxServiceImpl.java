@@ -7,7 +7,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.common.util.ExcelUtils;
 import com.example.common.util.ReturnJson;
 import com.example.common.util.VerificationCheck;
-import com.example.merchant.dto.regulator.PayInfoDto;
+import com.example.merchant.dto.regulator.PayInfoDTO;
 import com.example.mybatis.dto.RegulatorTaxDTO;
 import com.example.mybatis.entity.*;
 import com.example.mybatis.mapper.*;
@@ -195,7 +195,7 @@ public class RegulatorTaxServiceImpl extends ServiceImpl<RegulatorTaxDao, Regula
     }
 
     @Override
-    public ReturnJson getPayInfo(PayInfoDto payInfoDto) {
+    public ReturnJson getPayInfo(PayInfoDTO payInfoDto) {
         Page page = new Page(payInfoDto.getPageNo(), payInfoDto.getPageSize());
         IPage<RegulatorTaxPayInfoPo> infoPoIPage = taxDao.selectPayInfo(page, payInfoDto.getTaxId(), payInfoDto.getCompanySName(), payInfoDto.getStartDate(), payInfoDto.getEndDate());
         List<RegulatorTaxPayInfoPo> list = infoPoIPage.getRecords();

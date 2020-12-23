@@ -7,8 +7,8 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.common.util.DateUtil;
 import com.example.common.util.KdniaoTrackQueryAPI;
 import com.example.common.util.ReturnJson;
-import com.example.merchant.dto.merchant.AddApplicationCrowdSourcingDto;
-import com.example.merchant.dto.platform.AddCrowdSourcingInvoiceDto;
+import com.example.merchant.dto.merchant.AddApplicationCrowdSourcingDTO;
+import com.example.merchant.dto.platform.AddCrowdSourcingInvoiceDTO;
 import com.example.merchant.vo.platform.CrowdSourcingInvoiceVO;
 import com.example.merchant.vo.platform.QueryInvoicedVO;
 import com.example.merchant.service.CrowdSourcingInvoiceService;
@@ -63,7 +63,7 @@ public class CrowdSourcingInvoiceServiceImpl extends ServiceImpl<CrowdSourcingIn
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ReturnJson addCrowdSourcingInvoice(AddApplicationCrowdSourcingDto addApplicationCrowdSourcingDto) {
+    public ReturnJson addCrowdSourcingInvoice(AddApplicationCrowdSourcingDTO addApplicationCrowdSourcingDto) {
         CrowdSourcingApplication applicationCrowdSourcing = new CrowdSourcingApplication();
         BeanUtils.copyProperties(addApplicationCrowdSourcingDto, applicationCrowdSourcing);
         if (applicationCrowdSourcing.getId() == null) {
@@ -181,7 +181,7 @@ public class CrowdSourcingInvoiceServiceImpl extends ServiceImpl<CrowdSourcingIn
     }
 
     @Override
-    public ReturnJson saveCrowdSourcingInvoice(AddCrowdSourcingInvoiceDto addCrowdSourcingInvoiceDto) {
+    public ReturnJson saveCrowdSourcingInvoice(AddCrowdSourcingInvoiceDTO addCrowdSourcingInvoiceDto) {
         //时间转换
         DateTimeFormatter dfd = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         if (addCrowdSourcingInvoiceDto.getId() == null) {

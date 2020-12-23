@@ -8,10 +8,10 @@ import com.example.common.util.ExpressLogisticsInfo;
 import com.example.common.util.KdniaoTrackQueryAPI;
 import com.example.common.util.ReturnJson;
 import com.example.common.util.VerificationCheck;
-import com.example.merchant.dto.merchant.AddPaymentOrderDto;
-import com.example.merchant.dto.merchant.PaymentDto;
-import com.example.merchant.dto.merchant.PaymentOrderMerchantDto;
-import com.example.merchant.dto.platform.PaymentOrderDto;
+import com.example.merchant.dto.merchant.AddPaymentOrderDTO;
+import com.example.merchant.dto.merchant.PaymentDTO;
+import com.example.merchant.dto.merchant.PaymentOrderMerchantDTO;
+import com.example.merchant.dto.platform.PaymentOrderDTO;
 import com.example.merchant.exception.CommonException;
 import com.example.merchant.service.PaymentInventoryService;
 import com.example.merchant.service.PaymentOrderService;
@@ -138,7 +138,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
     }
 
     @Override
-    public ReturnJson getPaymentOrder(String merchantId, PaymentOrderMerchantDto paymentOrderMerchantDto) {
+    public ReturnJson getPaymentOrder(String merchantId, PaymentOrderMerchantDTO paymentOrderMerchantDto) {
         Merchant merchant = merchantDao.selectById(merchantId);
         String paymentOrderId = paymentOrderMerchantDto.getPaymentOrderId();
         String taxId = paymentOrderMerchantDto.getTaxId();
@@ -177,11 +177,11 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ReturnJson saveOrUpdataPaymentOrder(AddPaymentOrderDto addPaymentOrderDto, String merchantId) {
+    public ReturnJson saveOrUpdataPaymentOrder(AddPaymentOrderDTO addPaymentOrderDto, String merchantId) {
         if (addPaymentOrderDto.getPaymentInventories() == null) {
             return ReturnJson.error("支付清单不能为空！");
         }
-        PaymentDto paymentDto = addPaymentOrderDto.getPaymentDto();
+        PaymentDTO paymentDto = addPaymentOrderDto.getPaymentDto();
         PaymentOrder paymentOrder = new PaymentOrder();
         BeanUtils.copyProperties(paymentDto, paymentOrder);
         Tax tax = taxDao.selectById(paymentDto.getTaxId());
@@ -367,7 +367,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
     }
 
     @Override
-    public ReturnJson getPaymentOrderPaas(PaymentOrderDto paymentOrderDto, String managersId) throws CommonException {
+    public ReturnJson getPaymentOrderPaas(PaymentOrderDTO paymentOrderDto, String managersId) throws CommonException {
         List<String> merchantIds = acquireID.getCompanyIds(managersId);
         List<PaymentOrder> list;
         if (VerificationCheck.listIsNull(merchantIds)) {
