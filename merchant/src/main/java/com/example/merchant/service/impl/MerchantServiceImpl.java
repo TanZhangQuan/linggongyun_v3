@@ -18,6 +18,7 @@ import com.example.merchant.vo.merchant.HomePageMerchantVO;
 import com.example.merchant.vo.merchant.MerchantInfoVO;
 import com.example.merchant.vo.merchant.TaxVO;
 import com.example.merchant.vo.platform.*;
+import com.example.merchant.dto.platform.UpdateCompanyInfoDTO;
 import com.example.mybatis.entity.*;
 import com.example.mybatis.mapper.*;
 import com.example.mybatis.po.MerchantInfoPo;
