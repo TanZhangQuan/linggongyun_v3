@@ -7,10 +7,7 @@ import com.example.mybatis.entity.PaymentOrder;
 import com.example.mybatis.po.BillCountPO;
 import com.example.mybatis.po.BillPO;
 import com.example.mybatis.po.PaymentOrderInfoPO;
-import com.example.mybatis.vo.BillingInfoVO;
-import com.example.mybatis.vo.BuyerVO;
-import com.example.mybatis.vo.InvoiceListVO;
-import com.example.mybatis.vo.PaymentOrderVO;
+import com.example.mybatis.vo.*;
 import org.apache.ibatis.annotations.Param;
 
 import java.math.BigDecimal;
@@ -75,4 +72,6 @@ public interface PaymentOrderDao extends BaseMapper<PaymentOrder> {
     BuyerVO queryBuyer(String invoiceId);
 
     IPage<InvoiceListVO> queryMakerPaymentInventory(Page page, String invoiceId);
+
+    PayInfoVO queryPaymentInfo(String payId);
 }

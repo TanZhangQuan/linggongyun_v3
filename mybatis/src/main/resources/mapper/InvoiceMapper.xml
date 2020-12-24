@@ -411,20 +411,21 @@
     </resultMap>
 
     <select id="selectInvoiceInfoPO" resultMap="InvoiceInfoPO">
-        SELECT i.invoice_url,
-        i.express_company_name,
-        i.express_sheet_no,
-        mti.maker_invoice_url
-        FROM tb_payment_order po
-        JOIN tb_application_payment ap
-        ON po.id = ap.payment_order_id
-        JOIN tb_invoice i
-        ON i.application_id = ap.invoice_application_id
-        JOIN tb_invoice_list il
-        ON i.id = il.invoice_id
-        JOIN tb_maker_total_invoice mti
-        ON il.maker_total_invoice_id = mti.id
-        WHERE po.id = #{paymentOrderId}
+        SELECT
+            i.invoice_url,
+            i.express_company_name,
+            i.express_sheet_no,
+            mti.maker_invoice_url
+        FROM
+            tb_payment_order po
+        INNER JOIN tb_application_payment ap ON ap.payment_order_id = po.id
+        INNER JOIN tb_invoice_application ia ON ia.id = ap.invoice_application_id
+        INNER JOIN tb_invoice i ON i.application_id = ia.id
+        INNER JOIN tb_invoice_list il ON il.invoice_id = i.id
+        INNER JOIN tb_maker_total_invoice mti ON mti.id = il.maker_total_invoice_id
+        WHERE
+	        po.id = #{paymentOrderId}
+        LIMIT 0,1
     </select>
 
 </mapper>

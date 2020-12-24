@@ -25,5 +25,5 @@ public class UpdateCompanyDTO implements Serializable {
     private UpdateCooperationDTO updateCooperationDto;
 
     @ApiModelProperty(value = "合作信息")
-    List<UpdateCompanyTaxDTO> updateCompanyTaxDTOList;
+    List<UpdateCompanyTaxDTO> updateCompanyTaxDtoList;
 }

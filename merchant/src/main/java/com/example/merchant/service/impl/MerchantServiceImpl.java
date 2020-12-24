@@ -382,13 +382,13 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         companyInfoDao.insert(companyInfo);
         companyInvoiceInfo.setCompanyId(companyInfo.getId());
         companyInvoiceInfoDao.insert(companyInvoiceInfo);
-        List<CompanyTaxDTO> companyTaxDTOS = companyDto.getCompanyTaxDTOS();
+        List<CompanyTaxDTO> companyTaxDTOS = companyDto.getCompanyTaxDtos();
         for (CompanyTaxDTO companyTaxDto : companyTaxDTOS) {
             CompanyTax companyTax = new CompanyTax();
             BeanUtils.copyProperties(companyTaxDto, companyTax);
             companyTax.setCompanyId(companyInfo.getId());
             companyTaxDao.insert(companyTax);
-            List<AddCompanyLadderServiceDTO> companyLadderServiceDtoList = companyTaxDto.getAddCompanyLadderServiceDTOList();
+            List<AddCompanyLadderServiceDTO> companyLadderServiceDtoList = companyTaxDto.getAddCompanyLadderServiceDtoList();
             List<CompanyLadderService> companyLadderServices = new ArrayList<>();
             for (int i = 0; i < companyLadderServiceDtoList.size(); i++) {
                 CompanyLadderService companyLadderService = new CompanyLadderService();
@@ -511,7 +511,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         }
         BeanUtils.copyProperties(updateCompanyDto.getUpdateMerchantInfDto(), merchant);
         merchantDao.updateById(merchant);
-        List<UpdateCompanyTaxDTO> updateCompanyTaxDTOList = updateCompanyDto.getUpdateCompanyTaxDTOList();
+        List<UpdateCompanyTaxDTO> updateCompanyTaxDTOList = updateCompanyDto.getUpdateCompanyTaxDtoList();
         for (int i = 0; i < updateCompanyTaxDTOList.size(); i++) {
             CompanyTax companyTax;
             if (updateCompanyTaxDTOList.get(i).getId() != null) {
@@ -522,7 +522,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
                 BeanUtils.copyProperties(updateCompanyTaxDTOList.get(i), companyTax);
                 companyTax.setCompanyId(updateCompanyDto.getUpdateCompanyInfoDto().getId());
                 companyTaxDao.updateById(companyTax);
-                List<UpdateCompanyLadderServiceDTO> updateCompanyLadderServiceDtoList = updateCompanyTaxDTOList.get(i).getUpdateCompanyLadderServiceDTOList();
+                List<UpdateCompanyLadderServiceDTO> updateCompanyLadderServiceDtoList = updateCompanyTaxDTOList.get(i).getUpdateCompanyLadderServiceDtoList();
                 if (updateCompanyLadderServiceDtoList != null) {
                     for (UpdateCompanyLadderServiceDTO updateCompanyLadderServiceDto : updateCompanyLadderServiceDtoList) {
                         if (updateCompanyLadderServiceDto.getId() != null) {
@@ -543,7 +543,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
             if (updateCompanyTaxDTOList.get(i).getId() == null) {
                 companyTax = companyTaxDao.selectById(updateCompanyTaxDTOList.get(i).getId());
                 companyTaxDao.insert(companyTax);
-                List<UpdateCompanyLadderServiceDTO> updateCompanyLadderServiceDtoList = updateCompanyTaxDTOList.get(i).getUpdateCompanyLadderServiceDTOList();
+                List<UpdateCompanyLadderServiceDTO> updateCompanyLadderServiceDtoList = updateCompanyTaxDTOList.get(i).getUpdateCompanyLadderServiceDtoList();
                 if (updateCompanyLadderServiceDtoList != null) {
                     for (UpdateCompanyLadderServiceDTO updateCompanyLadderServiceDto : updateCompanyLadderServiceDtoList) {
                         CompanyLadderService companyLadderService = new CompanyLadderService();

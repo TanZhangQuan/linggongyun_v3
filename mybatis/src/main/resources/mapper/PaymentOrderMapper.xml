@@ -553,4 +553,33 @@
         INNER JOIN tb_payment_inventory pi ON pi.payment_order_id = po.id
         WHERE mti.id=#{param2}
     </select>
+
+    <resultMap id="paymentInfo" type="com.example.mybatis.vo.PayInfoVO">
+        <result column="payment_mode" property="paymentMode"/>
+        <result column="company_name" property="companyName"/>
+        <result column="bank_name" property="bankName"/>
+        <result column="bank_code" property="bankCode"/>
+        <result column="tax_name" property="taxName"/>
+        <result column="t_bank_name" property="tBankName"/>
+        <result column="t_bank_code" property="tBankCode"/>
+    </resultMap>
+
+    <select id="queryPaymentInfo" resultMap="paymentInfo">
+        SELECT
+            po.payment_mode,
+            ci.company_name,
+            ci.bank_name,
+            ci.bank_code,
+            t.tax_name,
+            tp.bank_name AS t_bank_name,
+            tp.bank_code AS t_bank_code
+        FROM
+            tb_payment_order po
+        INNER JOIN tb_company_info ci ON ci.id = po.company_id
+        INNER JOIN tb_tax t ON t.id = po.tax_id
+        INNER JOIN tb_tax_package tp ON tp.tax_id = t.id
+        AND tp.package_status = 0
+        WHERE
+            po.id = #{payId}
+    </select>
 </mapper>

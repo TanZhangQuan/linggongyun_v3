@@ -13,31 +13,31 @@ import java.util.Date;
 public class PaymentOrderVO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @ApiModelProperty(value = "XXXXXX")
+    @ApiModelProperty(value = "支付ID")
     private String id;
 
-    @ApiModelProperty(value = "XXXXXX")
+    @ApiModelProperty(value = "商户名称")
     private String companySName;
 
-    @ApiModelProperty(value = "XXXXXX")
+    @ApiModelProperty(value = "服务商名称")
     private String platformServiceProvider;
 
-    @ApiModelProperty(value = "XXXXXX")
+    @ApiModelProperty(value = "项目合同")
     private String acceptanceCertificate;
 
-    @ApiModelProperty(value = "XXXXXX")
+    @ApiModelProperty(value = "支付状态")
     private String paymentOrderStatus;
 
-    @ApiModelProperty(value = "XXXXXX")
+    @ApiModelProperty(value = "支付清单")
     private String paymentInventory;
 
-    @ApiModelProperty(value = "XXXXXX")
+    @ApiModelProperty(value = "支付时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date paymentDate;
 
-    @ApiModelProperty(value = "XXXXXX")
+    @ApiModelProperty(value = "分包支付回单")
     private String subpackagePayment;
 
-    @ApiModelProperty(value = "XXXXXX")
+    @ApiModelProperty(value = "任务信息")
     private TaskVO taskVo;
 }

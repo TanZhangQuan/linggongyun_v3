@@ -46,7 +46,7 @@ public class CompanyDTO implements Serializable {
 
     @ApiModelProperty(value = "服务商合作信息")
     @Valid
-    List<CompanyTaxDTO> companyTaxDTOS;
+    List<CompanyTaxDTO> companyTaxDtos;
 
     @ApiModelProperty(value = "商户公司的开票信息")
     private AddCompanyInvoiceInfoDTO addCompanyInvoiceInfoDto;
