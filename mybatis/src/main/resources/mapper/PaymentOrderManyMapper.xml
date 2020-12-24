@@ -427,6 +427,7 @@
         <result column="id" property="id"/>
         <result column="company_s_name" property="companySName"/>
         <result column="platform_service_provider" property="platformServiceProvider"/>
+        <result column="company_contract" property="companyContract"/>
         <result column="acceptance_certificate" property="acceptanceCertificate"/>
         <result column="payment_order_status" property="paymentOrderStatus"/>
         <result column="payment_inventory" property="paymentInventory"/>
@@ -894,6 +895,7 @@
             po.id,
             po.company_s_name,
             po.platform_service_provider,
+            po.company_contract,
             po.acceptance_certificate,
             po.payment_order_status,
             po.payment_inventory,

@@ -398,8 +398,6 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
         for (WorekerPaymentListPo worekerPaymentListPo : records) {
             RegulatorWorkerPaymentInfoVO regulatorWorkerPaymentInfoVO = new RegulatorWorkerPaymentInfoVO();
             BeanUtils.copyProperties(worekerPaymentListPo, regulatorWorkerPaymentInfoVO);
-            regulatorWorkerPaymentInfoVO.setPackageStatus(worekerPaymentListPo.getPackageStatus() == 0 ? "总包+分包" : "众包");
-            regulatorWorkerPaymentInfoVO.setInvoiceStatus(worekerPaymentListPo.getInvoiceStatus() == 0 ? "未开票" : "已完成");
             regulatorWorkerPaymentInfoVOS.add(regulatorWorkerPaymentInfoVO);
         }
         ReturnJson returnJson = ReturnJson.success(worekerPaymentListPoIPage);
@@ -413,9 +411,9 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
         if (VerificationCheck.listIsNull(worekerPaymentListPos)) {
             return ReturnJson.error("订单有误，请重试！");
         }
-        List<RegulatorWorkerPaymentInfoVO> regulatorWorkerPaymentInfoVOS = new ArrayList<>();
+        List<ExportRegulatorWorkerPaymentInfoVO> regulatorWorkerPaymentInfoVOS = new ArrayList<>();
         for (WorekerPaymentListPo worekerPaymentListPo : worekerPaymentListPos) {
-            RegulatorWorkerPaymentInfoVO regulatorWorkerPaymentInfoVO = new RegulatorWorkerPaymentInfoVO();
+            ExportRegulatorWorkerPaymentInfoVO regulatorWorkerPaymentInfoVO = new ExportRegulatorWorkerPaymentInfoVO();
             BeanUtils.copyProperties(worekerPaymentListPo, regulatorWorkerPaymentInfoVO);
             regulatorWorkerPaymentInfoVO.setPackageStatus(worekerPaymentListPo.getPackageStatus() == 0 ? "总包+分包" : "众包");
             regulatorWorkerPaymentInfoVO.setInvoiceStatus(worekerPaymentListPo.getInvoiceStatus() == 0 ? "未开票" : "已完成");

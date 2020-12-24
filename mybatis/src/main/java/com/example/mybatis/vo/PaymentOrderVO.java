@@ -23,6 +23,9 @@ public class PaymentOrderVO implements Serializable {
     private String platformServiceProvider;
 
     @ApiModelProperty(value = "项目合同")
+    private String companyContract;
+
+    @ApiModelProperty(value = "支付验收单")
     private String acceptanceCertificate;
 
     @ApiModelProperty(value = "支付状态")

@@ -33,6 +33,7 @@
         <result column="id" property="id"/>
         <result column="company_s_name" property="companySName"/>
         <result column="platform_service_provider" property="platformServiceProvider"/>
+        <result column="company_contract" property="companyContract"/>
         <result column="acceptance_certificate" property="acceptanceCertificate"/>
         <result column="payment_order_status" property="paymentOrderStatus"/>
         <result column="payment_inventory" property="paymentInventory"/>
@@ -206,7 +207,7 @@
         SELECT
         po.id,po.company_s_name,po.platform_service_provider,
         po.acceptance_certificate,po.payment_order_status,
-        po.payment_inventory,po.payment_date,po.subpackage_payment,
+        po.payment_inventory,po.payment_date,po.subpackage_payment,po.company_contract,
         t.task_code,t.task_name,t.release_date,t.deadline_date,t.industry_type
         FROM tb_payment_order AS po
         LEFT JOIN tb_task as t ON po.task_id=t.id

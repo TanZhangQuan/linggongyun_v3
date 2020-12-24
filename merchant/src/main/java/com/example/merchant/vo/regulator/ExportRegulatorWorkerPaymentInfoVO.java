@@ -10,9 +10,14 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+/**
+ * @Description
+ * @Author JWei <jwei0401@163.com>
+ * @Date 2020/12/24
+ */
 @Data
-@ApiModel(description = "创客详情中的商户支付列表明细")
-public class RegulatorWorkerPaymentInfoVO implements Serializable {
+@ApiModel("导出创客详情中的商户支付列表明细")
+public class ExportRegulatorWorkerPaymentInfoVO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty(value = "总包或众包的支付订单ID")
@@ -33,7 +38,7 @@ public class RegulatorWorkerPaymentInfoVO implements Serializable {
 
     @ApiModelProperty(value = "合作类型")
     @Excel(name = "合作类型")
-    private Integer packageStatus;
+    private String packageStatus;
 
     @ApiModelProperty(value = "交易流水")
     @Excel(name = "交易流水")
@@ -45,5 +50,5 @@ public class RegulatorWorkerPaymentInfoVO implements Serializable {
     private LocalDateTime paymentDate;
 
     @ApiModelProperty(value = "状态")
-    private Integer invoiceStatus;
+    private String invoiceStatus;
 }
