@@ -351,13 +351,16 @@
 
 
     <select id="selectInvoiceInfoPO" resultMap="InvoiceInfoPO">
-        SELECT csi.invoice_url,
-        csi.express_company_name,
-        csi.express_sheet_no
-        FROM tb_payment_order_many pom
-        JOIN tb_crowd_sourcing_invoice csi
-        ON pom.id = csi.payment_order_many_id
-        WHERE pom.id = #{paymentOrderId}
+        SELECT
+            csi.invoice_url,
+            csi.express_company_name,
+            csi.express_sheet_no
+        FROM
+            tb_payment_order_many pom
+        INNER JOIN tb_crowd_sourcing_application csa ON csa.payment_order_many_id=pom.id
+        INNER JOIN tb_crowd_sourcing_invoice csi ON csi.application_id=csa.id
+        WHERE
+	        pom.id = #{paymentOrderId}
     </select>
     <select id="getPaymentOrderManySPass" resultMap="PayOrderManyById">
         SELECT

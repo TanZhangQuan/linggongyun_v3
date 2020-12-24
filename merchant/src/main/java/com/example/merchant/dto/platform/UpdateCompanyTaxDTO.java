@@ -32,6 +32,6 @@ public class UpdateCompanyTaxDTO implements Serializable {
     private String contract;
 
     @ApiModelProperty(value = "总包信息")
-    private List<UpdateCompanyLadderServiceDTO> updateCompanyLadderServiceDTOList;
+    private List<UpdateCompanyLadderServiceDTO> updateCompanyLadderServiceDtoList;
 
 }

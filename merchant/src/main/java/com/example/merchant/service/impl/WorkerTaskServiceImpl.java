@@ -136,6 +136,10 @@ public class WorkerTaskServiceImpl extends ServiceImpl<WorkerTaskDao, WorkerTask
     @Override
     public ReturnJson acceptanceResults(String workerTaskId, String achievementDesc, String achievementFiles) {
         WorkerTask workerTask = workerTaskDao.selectById(workerTaskId);
+        Task task = taskDao.selectById(workerTask.getTaskId());
+        if (task.getState() != 1) {
+            return ReturnJson.error("任务还在开启状态不能提交工作成果！");
+        }
         workerTask.setAchievementDesc(achievementDesc);
         workerTask.setAchievementFiles(achievementFiles);
         //获取系统当前时间
@@ -143,10 +147,6 @@ public class WorkerTaskServiceImpl extends ServiceImpl<WorkerTaskDao, WorkerTask
         workerTask.setUpdateDate(LocalDateTime.now());
         workerTask.setStatus(3);
         workerTaskDao.updateById(workerTask);
-        Task task = taskDao.selectById(workerTask.getTaskId());
-        if (task.getState() != 1) {
-            return ReturnJson.error("任务还在开启状态不能提交工作成果！");
-        }
         if (task.getState() != 2) {
             task.setState(2);
             taskDao.updateById(task);

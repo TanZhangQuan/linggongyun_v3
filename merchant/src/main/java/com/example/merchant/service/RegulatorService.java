@@ -278,4 +278,13 @@ public interface RegulatorService extends IService<Regulator> {
      */
     ReturnJson getRegulatorInfo(String regulatorId);
 
+    /**
+     * 查询支付订单详情
+     *
+     * @param workerId
+     * @param paymentId
+     * @param packageStatus
+     * @return
+     */
+    ReturnJson queryPaymentOrderInfo(String workerId, String paymentId, Integer packageStatus);
 }
