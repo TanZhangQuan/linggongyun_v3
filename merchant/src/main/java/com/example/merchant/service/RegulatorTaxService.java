@@ -3,6 +3,7 @@ package com.example.merchant.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.regulator.PayInfoDTO;
+import com.example.merchant.exception.CommonException;
 import com.example.mybatis.dto.RegulatorTaxDTO;
 import com.example.mybatis.entity.RegulatorTax;
 
@@ -48,7 +49,7 @@ public interface RegulatorTaxService extends IService<RegulatorTax> {
      * @param taxIds 服务商id
      * @return
      */
-    ReturnJson batchExportTax(String taxIds, HttpServletResponse response);
+    ReturnJson batchExportTax(String taxIds, HttpServletResponse response) throws CommonException;
 
     /**
      * 支付订单信息
@@ -65,7 +66,7 @@ public interface RegulatorTaxService extends IService<RegulatorTax> {
      * @param response
      * @return
      */
-    ReturnJson batchExportPayInfo(String paymentOrderIds, HttpServletResponse response);
+    ReturnJson batchExportPayInfo(String paymentOrderIds, HttpServletResponse response) throws CommonException;
 
     /**
      * 支付清单明细查询

@@ -36,7 +36,7 @@ public class SubpackageServiceImpl implements SubpackageService {
     public ReturnJson getSummaryInfo(String id, String merchantId) {
         QuerySubInfoVO querySubInfoVo = new QuerySubInfoVO();
         List<PaymentOrderVO> paymentOrderVOList = subpackageDao.queryPaymentOrderInfo(id);
-        querySubInfoVo.setPaymentOrderVOS(paymentOrderVOList);
+        querySubInfoVo.setPaymentOrderVos(paymentOrderVOList);
         BuyerVO buyerVo = merchantDao.getBuyerById(id);
         querySubInfoVo.setBuyerVo(buyerVo);
         MakerTotalInvoice makerTotalInvoice = makerTotalInvoiceDao.selectById(id);

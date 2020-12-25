@@ -16,7 +16,7 @@ public class QueryMakerTotalInvoiceDetailVO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty(value = "支付信息")
-    private List<PaymentOrderVO> paymentOrderVOList;
+    private List<PaymentOrderVO> paymentOrderVoList;
 
     @ApiModelProperty(value = "购买信息")
     private BuyerVO queryBuyer;

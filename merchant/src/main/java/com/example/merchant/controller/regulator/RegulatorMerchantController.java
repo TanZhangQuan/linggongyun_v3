@@ -3,6 +3,7 @@ package com.example.merchant.controller.regulator;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.regulator.RegulatorMerchantDTO;
 import com.example.merchant.dto.regulator.RegulatorMerchantPaymentOrderDTO;
+import com.example.merchant.exception.CommonException;
 import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.RegulatorService;
 import io.swagger.annotations.*;
@@ -45,7 +46,7 @@ public class RegulatorMerchantController {
     @ApiOperation(value = "导出所监管的商户", notes = "导出所监管的商户", httpMethod = "POST")
     @LoginRequired
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "companyIds", value = "商户编号字符集，每个商户编号之间用英文逗号隔开", required = true)})
-    public ReturnJson exportRegulatorMerchant(@NotBlank(message = "导出的商户不能为空！") @RequestParam(required = false) String companyIds, @ApiParam(hidden = true) @RequestAttribute(value = "userId", required = false) String regulatorId, HttpServletResponse response) {
+    public ReturnJson exportRegulatorMerchant(@NotBlank(message = "导出的商户不能为空！") @RequestParam(required = false) String companyIds, @ApiParam(hidden = true) @RequestAttribute(value = "userId", required = false) String regulatorId, HttpServletResponse response) throws CommonException {
         ReturnJson returnJson = regulatorService.exportRegulatorMerchant(companyIds, regulatorId, response);
         if (returnJson.getCode() == 300) {
             return returnJson;
@@ -76,7 +77,7 @@ public class RegulatorMerchantController {
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "paymentOrderIds", value = "支付订单ID字符集，每个支付订单ID之间用英文逗号隔开", required = true)
     })
-    public ReturnJson exportRegulatorMerchantPaymentOrder(@NotBlank(message = "导出的数据不能为空！") @RequestParam(required = false) String paymentOrderIds, HttpServletResponse response) {
+    public ReturnJson exportRegulatorMerchantPaymentOrder(@NotBlank(message = "导出的数据不能为空！") @RequestParam(required = false) String paymentOrderIds, HttpServletResponse response) throws CommonException {
         return regulatorService.exportRegulatorMerchantPaymentOrder(paymentOrderIds, response);
     }
 

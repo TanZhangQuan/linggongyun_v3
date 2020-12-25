@@ -33,4 +33,10 @@ public class PayInfoVO {
 
     @ApiModelProperty(value = "收款方银行卡号")
     private String tBankCode;
+
+    @ApiModelProperty(value = "转账金额")
+    private String merchantPaymentMoney;
+
+    @ApiModelProperty(value = "总包支付回单")
+    private String turnkeyProjectPayment;
 }

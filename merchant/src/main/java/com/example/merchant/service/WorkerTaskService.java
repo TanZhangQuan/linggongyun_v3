@@ -41,7 +41,7 @@ public interface WorkerTaskService extends IService<WorkerTask> {
      * @param id
      * @return
      */
-    ReturnJson updateCheckMoney(String taskId, Double money, String id);
+    ReturnJson updateCheckMoney(String taskId, Double money, String id,String userId);
 
     /**
      * 修改验收

@@ -2,6 +2,7 @@ package com.example.merchant.controller.regulator;
 
 import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.regulator.PayInfoDTO;
+import com.example.merchant.exception.CommonException;
 import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.RegulatorTaxService;
 import com.example.mybatis.dto.RegulatorTaxDTO;
@@ -42,7 +43,7 @@ public class RgeulatorServiceProviderController {
     @PostMapping("/exportRegulatorTax")
     @ApiOperation(value = "导出所监管的服务商", notes = "导出所监管的服务商", httpMethod = "POST")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "taxIds", value = "服务商ID字符串，每个服务商ID之间用英文逗号隔开", required = true)})
-    public ReturnJson exportRegulatorTax(@NotBlank(message = "服务商Id不能为空！") @RequestParam String taxIds,  HttpServletResponse response) {
+    public ReturnJson exportRegulatorTax(@NotBlank(message = "服务商Id不能为空！") @RequestParam String taxIds,  HttpServletResponse response) throws CommonException {
         ReturnJson returnJson = regulatorTaxService.batchExportTax(taxIds, response);
         if (returnJson.getCode() == 300) {
             return returnJson;
@@ -61,7 +62,7 @@ public class RgeulatorServiceProviderController {
     @PostMapping("/exportRegulatorPayInfo")
     @ApiOperation(value = "导出所监管的服务商下的支付订单信息", notes = "导出所监管的服务商下的支付订单信息", httpMethod = "POST")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "paymentOrderIds", value = "支付订单ID字符串，每个支付订单ID之间用英文逗号隔开", required = true)})
-    public ReturnJson exportRegulatorPayInfo(@NotBlank(message = "支付订单Id不能为空！") @RequestParam String paymentOrderIds,  HttpServletResponse response) {
+    public ReturnJson exportRegulatorPayInfo(@NotBlank(message = "支付订单Id不能为空！") @RequestParam String paymentOrderIds,  HttpServletResponse response) throws CommonException {
         ReturnJson returnJson = regulatorTaxService.batchExportPayInfo(paymentOrderIds, response);
         if (returnJson.getCode() == 300) {
             return returnJson;

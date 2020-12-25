@@ -252,7 +252,7 @@
     <select id="selectRegulatorMerchant" resultMap="RegulatorMerchantInfoPO">
         <include refid="RegulatorMerchantSql"/>
         <where>
-            <if test="companyName != null and workerId != '' ">
+            <if test="companyName != null and companyName != '' ">
                 AND ci.company_name like CONCAR('%',#{companyName},'%')
             </if>
             <if test="companyId != null and companyId != '' ">

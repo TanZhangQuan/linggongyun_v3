@@ -563,6 +563,8 @@
         <result column="tax_name" property="taxName"/>
         <result column="t_bank_name" property="tBankName"/>
         <result column="t_bank_code" property="tBankCode"/>
+        <result column="real_money" property="merchantPaymentMoney"/>
+        <result column="turnkey_project_payment" property="turnkeyProjectPayment"/>
     </resultMap>
 
     <select id="queryPaymentInfo" resultMap="paymentInfo">
@@ -573,7 +575,9 @@
             ci.bank_code,
             t.tax_name,
             tp.bank_name AS t_bank_name,
-            tp.bank_code AS t_bank_code
+            tp.bank_code AS t_bank_code,
+            po.real_money,
+            po.turnkey_project_payment
         FROM
             tb_payment_order po
         INNER JOIN tb_company_info ci ON ci.id = po.company_id
@@ -581,6 +585,37 @@
         INNER JOIN tb_tax_package tp ON tp.tax_id = t.id
         AND tp.package_status = 0
         WHERE
-            po.id = #{payId}
+            po.id = #{param1}
+    </select>
+
+    <resultMap id="SubpackageInfo" type="com.example.mybatis.vo.QuerySubpackageInfoVO">
+        <result property="taxName" column="tax_name"/>
+        <result property="paymentMode" column="payment_mode"/>
+        <result property="bankName" column="bank_name"/>
+        <result property="bankCode" column="bank_code"/>
+        <result property="workerName" column="worker_name"/>
+        <result property="realMoney" column="real_money"/>
+        <result property="subpackagePayment" column="subpackage_payment"/>
+    </resultMap>
+
+    <select id="querySubpackageInfo" resultMap="SubpackageInfo">
+        SELECT
+            po.payment_mode,
+            t.tax_name,
+            tp.bank_name,
+            tp.bank_code,
+            pi.worker_name,
+            pi.real_money,
+            po.subpackage_payment
+        FROM
+            tb_payment_order po
+        INNER JOIN tb_company_info ci ON ci.id = po.company_id
+        INNER JOIN tb_tax t ON t.id = po.tax_id
+        INNER JOIN tb_tax_package tp ON tp.tax_id = t.id
+        AND tp.package_status = 0
+        INNER JOIN tb_payment_inventory pi ON pi.payment_order_id = po.id
+        WHERE
+            po.id = #{param1}
+        AND pi.worker_id = #{param2}
     </select>
 </mapper>

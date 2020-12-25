@@ -74,4 +74,6 @@ public interface PaymentOrderDao extends BaseMapper<PaymentOrder> {
     IPage<InvoiceListVO> queryMakerPaymentInventory(Page page, String invoiceId);
 
     PayInfoVO queryPaymentInfo(String payId);
+
+    QuerySubpackageInfoVO querySubpackageInfo(String payId,String workerId);
 }

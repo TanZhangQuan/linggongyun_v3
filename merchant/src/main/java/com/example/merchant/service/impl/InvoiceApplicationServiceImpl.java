@@ -103,13 +103,13 @@ public class InvoiceApplicationServiceImpl extends ServiceImpl<InvoiceApplicatio
                 return ReturnJson.error("合并开票失败，合并开票必须选择同一个服务商");
             }
         }
-        goApplicationInvoiceVo.setPaymentOrderVOList(paymentOrderVOList);
+        goApplicationInvoiceVo.setPaymentOrderVoList(paymentOrderVOList);
         List<BillingInfoVO> billingInfoVOList = new ArrayList<>();
         for (int i = 0; i < paymentOrderIds.length; i++) {
             BillingInfoVO billingInfo = paymentOrderDao.getBillingInfo(paymentOrderIds[i]);
             billingInfoVOList.add(billingInfo);
         }
-        goApplicationInvoiceVo.setBillingInfoVOList(billingInfoVOList);
+        goApplicationInvoiceVo.setBillingInfoVoList(billingInfoVOList);
         goApplicationInvoiceVo.setBuyerVo(merchantDao.getBuyerById(merchantId));
         goApplicationInvoiceVo.setSellerVo(taxDao.getSellerById(paymentOrderOne.getTaxId()));
         return ReturnJson.success(goApplicationInvoiceVo);
@@ -131,13 +131,13 @@ public class InvoiceApplicationServiceImpl extends ServiceImpl<InvoiceApplicatio
     public ReturnJson queryApplicationInfo(String applicationId, String userId) {
         QueryApplicationInvoiceVO queryApplicationInvoiceVo = new QueryApplicationInvoiceVO();
         List<PaymentOrderVO> paymentOrderVOList = paymentOrderDao.queryPaymentOrderInfo(applicationId);
-        queryApplicationInvoiceVo.setPaymentOrderVOList(paymentOrderVOList);
+        queryApplicationInvoiceVo.setPaymentOrderVoList(paymentOrderVOList);
         List<BillingInfoVO> billingInfoVOList = new ArrayList<>();
         for (int i = 0; i < paymentOrderVOList.size(); i++) {
             BillingInfoVO billingInfo = paymentOrderDao.getBillingInfo(paymentOrderVOList.get(i).getId());
             billingInfoVOList.add(billingInfo);
         }
-        queryApplicationInvoiceVo.setBillingInfoVOList(billingInfoVOList);
+        queryApplicationInvoiceVo.setBillingInfoVoList(billingInfoVOList);
         queryApplicationInvoiceVo.setBuyerVo(merchantDao.getBuyerById(userId));
         PaymentOrder paymentOrderOne = paymentOrderDao.selectById(paymentOrderVOList.get(0).getId());
         queryApplicationInvoiceVo.setSellerVo(taxDao.getSellerById(paymentOrderOne.getTaxId()));

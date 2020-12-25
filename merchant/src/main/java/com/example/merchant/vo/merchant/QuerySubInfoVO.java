@@ -15,7 +15,7 @@ public class QuerySubInfoVO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty(value = "支付信息")
-    private List<PaymentOrderVO> paymentOrderVOS;
+    private List<PaymentOrderVO> paymentOrderVos;
 
     @ApiModelProperty(value = "销售方信息")
     private BuyerVO buyerVo;

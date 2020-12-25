@@ -4,6 +4,7 @@ import com.example.merchant.vo.ExpressInfoVO;
 import com.example.mybatis.entity.PaymentInventory;
 import com.example.mybatis.vo.PayInfoVO;
 import com.example.mybatis.vo.PaymentOrderVO;
+import com.example.mybatis.vo.QuerySubpackageInfoVO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -18,6 +19,9 @@ public class QueryPaymentOrderInfoVO implements Serializable {
 
     @ApiModelProperty(value = "支付订单信息")
     private PaymentOrderVO paymentOrderVo;
+
+    @ApiModelProperty(value = "分包支付信息")
+    private QuerySubpackageInfoVO querySubpackageInfoVo;
 
     @ApiModelProperty(value = "支付明细")
     private List<PaymentInventory> paymentInventories;
