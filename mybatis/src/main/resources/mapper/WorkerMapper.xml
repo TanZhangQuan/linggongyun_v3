@@ -243,10 +243,12 @@
         (case when c.platform_service_provider is null then d.platform_service_provider else c.platform_service_provider
         end)as tax_name,
         (case when c.company_s_name is null then d.company_s_name else c.company_s_name end)as merchant_name,
-        a.worker_name, a.package_status, a.real_money,
+        w.account_name as worker_name, a.package_status, a.real_money,
         IFNULL((case when c.payment_date is null then d.payment_date else c.payment_date end),a.create_date) as
         'payment_date',
-        (case when b.id is null then 0 else 1 end)as invoice_status from tb_payment_inventory a
+        (case when b.id is null then 0 else 1 end)as invoice_status
+        from tb_payment_inventory a
+        INNER JOIN tb_worker w ON w.id=a.worker_id
         left join tb_invoice_payment_inventory b on a.id = b.payment_inventory_id
         left join tb_payment_order c on a.payment_order_id = c.id and c.payment_order_status &gt;= 2
         left join tb_payment_order_many d on a.payment_order_id = d.id and d.payment_order_status &gt;= 2

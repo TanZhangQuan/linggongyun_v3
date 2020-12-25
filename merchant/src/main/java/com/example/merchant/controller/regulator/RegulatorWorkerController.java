@@ -3,6 +3,7 @@ package com.example.merchant.controller.regulator;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.regulator.RegulatorWorkerDTO;
 import com.example.merchant.dto.regulator.RegulatorWorkerPaymentDTO;
+import com.example.merchant.exception.CommonException;
 import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.RegulatorService;
 import io.swagger.annotations.*;
@@ -37,7 +38,7 @@ public class RegulatorWorkerController {
     @LoginRequired
     @ApiOperation(value = "导出所监管的创客", notes = "导出所监管的创客", httpMethod = "POST")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "workerIds", value = "创客ID字符串，每个创客ID之间用英文逗号隔开", required = true)})
-    public ReturnJson exportRegulatorWorker(@NotBlank(message = "创客ID不能为空！") @RequestParam(required = false) String workerIds, @ApiParam(hidden = true) @RequestAttribute(value = "userId", required = false) String regulatorId, HttpServletResponse response) {
+    public ReturnJson exportRegulatorWorker(@NotBlank(message = "创客ID不能为空！") @RequestParam(required = false) String workerIds, @ApiParam(hidden = true) @RequestAttribute(value = "userId", required = false) String regulatorId, HttpServletResponse response) throws CommonException {
         ReturnJson returnJson = regulatorService.exportRegulatorWorker(workerIds, regulatorId, response);
         if (returnJson.getCode() == 300) {
             return returnJson;
@@ -72,7 +73,7 @@ public class RegulatorWorkerController {
     @ApiOperation(value = "导出所监管的创客支付明细", notes = "导出所监管的创客支付明细", httpMethod = "POST")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "workerId", value = "创客ID", required = true),
             @ApiImplicitParam(name = "paymentIds", value = "支付订单ID字符集,每个支付订单ID之间用英文逗号隔开", required = true)})
-    public ReturnJson exportRegulatorWorkerPaymentInfo(@NotBlank(message = "创客ID不能为空！") @RequestParam(required = false) String workerId, @NotBlank(message = "支付订单ID字符集！") @RequestParam(required = false) String paymentIds, HttpServletResponse response) {
+    public ReturnJson exportRegulatorWorkerPaymentInfo(@NotBlank(message = "创客ID不能为空！") @RequestParam(required = false) String workerId, @NotBlank(message = "支付订单ID字符集！") @RequestParam(required = false) String paymentIds, HttpServletResponse response) throws CommonException {
         ReturnJson returnJson = regulatorService.exportRegulatorWorkerPaymentInfo(workerId, paymentIds, response);
         if (returnJson.getCode() == 300) {
             return returnJson;

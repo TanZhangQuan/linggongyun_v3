@@ -10,6 +10,7 @@ import com.example.mybatis.po.TaxListPO;
 import com.example.mybatis.po.TaxPO;
 import com.example.mybatis.vo.CooperationInfoVO;
 import com.example.mybatis.vo.SellerVO;
+import com.example.mybatis.vo.TaxInfoVO;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -38,4 +39,6 @@ public interface TaxDao extends BaseMapper<Tax> {
     List<RegulatorTaxPayInfoPo> getPayInfoByIds(@Param("payIds") List<String> payIds);
 
     List<CooperationInfoVO> queryCooper(String companyId);
+
+    TaxInfoVO queryTaxInfoById(String taxId);
 }

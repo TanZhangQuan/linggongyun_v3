@@ -115,14 +115,16 @@ public class WorkerPaasController {
 
     @ApiOperation("修改验收金额")
     @PostMapping(value = "/updateCheckMoney")
+    @LoginRequired
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "taskId", value = "任务Id", required = true),
             @ApiImplicitParam(name = "money", value = "验收金额", required = true),
             @ApiImplicitParam(name = "workerId", value = "创客Id", required = true)})
     public ReturnJson updateCheckMoney(@NotBlank(message = "请选择任务") @ApiParam(value = "任务id") @RequestParam String taskId,
                                        @NotNull(message = "验收金额不能为空") @ApiParam(value = "验收金额") @RequestParam Double money,
-                                       @ApiParam(value = "创客Id") @RequestParam String workerId) {
-        return workerTaskService.updateCheckMoney(taskId, money, workerId);
+                                       @ApiParam(value = "创客Id") @RequestParam String workerId,
+                                       @ApiParam(hidden = true) @RequestAttribute("userId")String userId) {
+        return workerTaskService.updateCheckMoney(taskId, money, workerId,userId);
     }
 
     @ApiOperation("创客详情统计")

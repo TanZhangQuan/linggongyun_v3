@@ -17,10 +17,10 @@ public class QueryApplicationInvoiceVO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty(value = "支付信息")
-    private List<PaymentOrderVO> paymentOrderVOList;
+    private List<PaymentOrderVO> paymentOrderVoList;
 
     @ApiModelProperty(value = "开票信息")
-    private List<BillingInfoVO> billingInfoVOList;
+    private List<BillingInfoVO> billingInfoVoList;
 
     @ApiModelProperty(value = "购买方信息")
     private BuyerVO buyerVo;

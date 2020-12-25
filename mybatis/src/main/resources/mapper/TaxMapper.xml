@@ -163,12 +163,12 @@
     </select>
 
     <select id="selectPayInfo" resultMap="PayInfo">
-        SELECT id,platform_service_provider,company_s_name,if(TRUE,'总包+分包','众包') as type,company_contract,payment_inventory,real_money,payment_order_status,payment_date
+        SELECT id,platform_service_provider,company_s_name,if(TRUE,'0','1') as type,company_contract,payment_inventory,real_money,payment_order_status,payment_date
         from tb_payment_order
         WHERE tax_id=#{taxId}
         <include refid="que"/>
         UNION
-        SELECT id,platform_service_provider,company_s_name,if(FALSE,'总包+分包','众包') as type,company_contract,payment_inventory,real_money,payment_order_status,payment_date
+        SELECT id,platform_service_provider,company_s_name,if(FALSE,'0','1') as type,company_contract,payment_inventory,real_money,payment_order_status,payment_date
         FROM tb_payment_order_many
         WHERE tax_id=#{taxId}
         <include refid="que"/>
@@ -231,6 +231,38 @@
             IF (ct.package_status = 0, 0, 1)
         )
         where ci.id=#{companyId}
+    </select>
+
+    <resultMap id="taxInfo" type="com.example.mybatis.vo.TaxInfoVO">
+        <id column="id" property="id"/>
+        <result column="tax_name" property="taxName"/>
+        <result column="credit_code" property="creditCode"/>
+        <result column="tax_man" property="taxMan"/>
+        <result column="link_mobile" property="linkMobile"/>
+        <result column="bank_name" property="bankName"/>
+        <result column="bank_code" property="bankCode"/>
+        <result column="create_date" property="createDate"/>
+        <result column="tax_status" property="taxStatus"/>
+    </resultMap>
+
+    <select id="queryTaxInfoById" resultMap="taxInfo">
+        SELECT
+            t.id,
+            t.tax_name,
+            t.credit_code,
+            t.tax_man,
+            t.link_mobile,
+            tp.bank_name,
+            tp.bank_code,
+            t.create_date,
+            t.tax_status
+        FROM
+            tb_tax t
+        INNER JOIN tb_tax_package tp ON tp.tax_id = t.id
+        AND tp.package_status = 0
+        WHERE
+            t.id = #{taxId}
+        ORDER BY tp.id
     </select>
 
 

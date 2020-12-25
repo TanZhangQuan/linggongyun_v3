@@ -81,12 +81,17 @@ public class WorkerTaskServiceImpl extends ServiceImpl<WorkerTaskDao, WorkerTask
     }
 
     @Override
-    public ReturnJson updateCheckMoney(String taskId, Double money, String id) {
+    public ReturnJson updateCheckMoney(String taskId, Double money, String id,String userId) {
         ReturnJson returnJson;
         if (money == null) {
             returnJson = new ReturnJson("验收金额不能为空", 300);
         } else {
-            workerTaskDao.updateCheckMoney(money, id, taskId);
+            WorkerTask workerTask=workerTaskDao.selectOne(new QueryWrapper<WorkerTask>().eq("worker_id",id).eq("task_id",taskId));
+            workerTask.setCheckMoney(money);
+            workerTask.setStatus(4);
+            workerTask.setCheckDate(LocalDateTime.now());
+            workerTask.setCheckPerson(userId);
+            workerTaskDao.updateById(workerTask);
             List<WorkerTask> list = workerTaskDao.selectList(new QueryWrapper<WorkerTask>().
                     eq("task_id", taskId).eq("task_status", 0));
             int j = 0;
@@ -99,9 +104,9 @@ public class WorkerTaskServiceImpl extends ServiceImpl<WorkerTaskDao, WorkerTask
                 Task task = taskDao.selectById(taskId);
                 task.setState(3);
                 taskDao.updateById(task);
-                for (WorkerTask workerTask : list) {
-                    workerTask.setStatus(1);
-                    workerTaskDao.updateById(workerTask);
+                for (WorkerTask workerTask1 : list) {
+                    workerTask1.setStatus(1);
+                    workerTaskDao.updateById(workerTask1);
                 }
             }
             returnJson = new ReturnJson("修改成功", 200);
@@ -112,7 +117,7 @@ public class WorkerTaskServiceImpl extends ServiceImpl<WorkerTaskDao, WorkerTask
 
     @Override
     public ReturnJson updateCheck(String taskId, String id) {
-        int num = workerTaskDao.updateCheckMoney(null, id, taskId);
+        workerTaskDao.updateCheckMoney(null, id, taskId);
         List<WorkerTask> list = workerTaskDao.selectList(new QueryWrapper<WorkerTask>()
                 .eq("task_id", taskId).eq("task_status", 0));
         int j = 0;

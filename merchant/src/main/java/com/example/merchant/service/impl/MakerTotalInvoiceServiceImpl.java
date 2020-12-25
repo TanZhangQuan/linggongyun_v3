@@ -132,7 +132,7 @@ public class MakerTotalInvoiceServiceImpl extends ServiceImpl<MakerTotalInvoiceD
         if (paymentOrderVOList.size() == 0) {
             return ReturnJson.error("支付信息有误！");
         }
-        makerTotalInvoiceInfoVo.setPaymentOrderVOList(paymentOrderVOList);
+        makerTotalInvoiceInfoVo.setPaymentOrderVoList(paymentOrderVOList);
         PaymentOrder paymentOrder = paymentOrderDao.selectById(paymentOrderVOList.get(0).getId());
         BuyerVO buyerVo = new BuyerVO();
         Tax tax = taxDao.selectById(paymentOrder.getTaxId());
@@ -160,7 +160,7 @@ public class MakerTotalInvoiceServiceImpl extends ServiceImpl<MakerTotalInvoiceD
         BuyerVO queryBuyer = paymentOrderDao.queryBuyer(invoiceId);
         MakerTotalInvoice makerTotalInvoice = makerTotalInvoiceDao.selectById(invoiceId);
         QueryMakerTotalInvoiceDetailVO queryMakerTotalInvoiceDetail = new QueryMakerTotalInvoiceDetailVO();
-        queryMakerTotalInvoiceDetail.setPaymentOrderVOList(paymentOrderVOList);
+        queryMakerTotalInvoiceDetail.setPaymentOrderVoList(paymentOrderVOList);
         queryMakerTotalInvoiceDetail.setQueryBuyer(queryBuyer);
         MakerTotalInvoiceDetailsVO makerTotalInvoiceDetails = new MakerTotalInvoiceDetailsVO();
         BeanUtils.copyProperties(makerTotalInvoice, makerTotalInvoiceDetails);

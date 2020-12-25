@@ -8,12 +8,14 @@ import com.example.common.util.ExcelUtils;
 import com.example.common.util.ReturnJson;
 import com.example.common.util.VerificationCheck;
 import com.example.merchant.dto.regulator.PayInfoDTO;
+import com.example.merchant.exception.CommonException;
 import com.example.mybatis.dto.RegulatorTaxDTO;
 import com.example.mybatis.entity.*;
 import com.example.mybatis.mapper.*;
 import com.example.merchant.service.RegulatorTaxService;
 import com.example.mybatis.po.PaymentOrderInfoPO;
 import com.example.mybatis.po.RegulatorTaxPayInfoPo;
+import com.example.mybatis.vo.TaxInfoVO;
 import com.example.mybatis.vo.TaxVO;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
@@ -73,7 +75,6 @@ public class RegulatorTaxServiceImpl extends ServiceImpl<RegulatorTaxDao, Regula
         if (taxList.size() > 0) {
             taxCount = taxList.size();
             for (int i = 0; i < taxList.size(); i++) {
-                System.out.println(111 + "---------------------------1111--------------" + i);
                 List<String> paymentOrderIds = new ArrayList<>();
                 List<PaymentOrder> paymentOrders = paymentOrderDao.selectList(new QueryWrapper<PaymentOrder>().in("tax_id", taxList.get(i).getId()).ge("payment_order_status", 2));
                 paymentOrderCount = paymentOrders.size();
@@ -102,22 +103,22 @@ public class RegulatorTaxServiceImpl extends ServiceImpl<RegulatorTaxDao, Regula
                     }
                 }
             }
-            map.put("监管服务商数量", taxCount);
-            map.put("总包支付单数", paymentOrderCount);
-            map.put("众包支付单数", paymentOrderManyCount);
-            map.put("总包支付流水", paymentOrderNum);
-            map.put("众包支付流水", paymentOrderManyNum);
-            map.put("总包总纳税金额", paymentOrderTaxAmount);
-            map.put("众包总纳税金额", paymentOrderManyTaxAmount);
+            map.put("taxCount", taxCount);
+            map.put("paymentOrderCount", paymentOrderCount);
+            map.put("paymentOrderManyCount", paymentOrderManyCount);
+            map.put("paymentOrderNum", paymentOrderNum);
+            map.put("paymentOrderManyNum", paymentOrderManyNum);
+            map.put("paymentOrderTaxAmount", paymentOrderTaxAmount);
+            map.put("paymentOrderManyTaxAmount", paymentOrderManyTaxAmount);
             return ReturnJson.success(map);
         }
-        return ReturnJson.success("没有签约平台服务商");
+        return ReturnJson.error("没有签约平台服务商");
     }
 
     @Override
     public ReturnJson listTax(RegulatorTaxDTO regulatorTaxDto, String regulatorId) {
         Page page = new Page(regulatorTaxDto.getPageNo(), regulatorTaxDto.getPageSize());
-        IPage<TaxVO> taxIPage = regulatorTaxDao.selServiceProviders(page, regulatorTaxDto,regulatorId);
+        IPage<TaxVO> taxIPage = regulatorTaxDao.selServiceProviders(page, regulatorTaxDto, regulatorId);
         List<TaxVO> voList = taxIPage.getRecords();
         for (int i = 0; i < voList.size(); i++) {
             voList.get(i).setPaymentOrderCount(voList.get(i).getPaymentOrderNum() + "/" + voList.get(i).getPaymentOrderManyNum());
@@ -129,7 +130,7 @@ public class RegulatorTaxServiceImpl extends ServiceImpl<RegulatorTaxDao, Regula
 
     @Override
     public ReturnJson getTax(String taxId) {
-        Tax tax = taxDao.selectById(taxId);
+        TaxInfoVO tax = taxDao.queryTaxInfoById(taxId);
         Map<String, Object> map = new HashMap<>();
         BigDecimal paymentOrderNum = new BigDecimal("0.00");
         BigDecimal paymentOrderManyNum = new BigDecimal("0.00");
@@ -138,14 +139,16 @@ public class RegulatorTaxServiceImpl extends ServiceImpl<RegulatorTaxDao, Regula
         Integer paymentOrderCount = 0;
         Integer paymentOrderManyCount = 0;
         List<String> paymentOrderIds = new ArrayList<>();
-        List<PaymentOrder> paymentOrders = paymentOrderDao.selectList(new QueryWrapper<PaymentOrder>().in("tax_id", tax.getId()).ge("payment_order_status", 2));
+        List<PaymentOrder> paymentOrders = paymentOrderDao.selectList(new QueryWrapper<PaymentOrder>()
+                .in("tax_id", tax.getId()).ge("payment_order_status", 2));
         paymentOrderCount = paymentOrders.size();
         for (PaymentOrder paymentOrder : paymentOrders) {
             paymentOrderNum = paymentOrderNum.add(paymentOrder.getRealMoney());
             paymentOrderIds.add(paymentOrder.getId());
         }
 
-        List<PaymentOrderMany> paymentOrderManies = paymentOrderManyDao.selectList(new QueryWrapper<PaymentOrderMany>().in("tax_id", tax.getId()).ge("payment_order_status", 2));
+        List<PaymentOrderMany> paymentOrderManies = paymentOrderManyDao.selectList(new QueryWrapper<PaymentOrderMany>()
+                .in("tax_id", tax.getId()).ge("payment_order_status", 2));
         paymentOrderManyCount = paymentOrderManies.size();
         for (PaymentOrderMany paymentOrderMany : paymentOrderManies) {
             paymentOrderManyNum = paymentOrderManyNum.add(paymentOrderMany.getRealMoney());
@@ -153,7 +156,8 @@ public class RegulatorTaxServiceImpl extends ServiceImpl<RegulatorTaxDao, Regula
         }
 
         if (!VerificationCheck.listIsNull(paymentOrderIds)) {
-            List<PaymentInventory> paymentInventories = paymentInventoryDao.selectList(new QueryWrapper<PaymentInventory>().in("payment_order_id", paymentOrderIds));
+            List<PaymentInventory> paymentInventories = paymentInventoryDao.selectList(new QueryWrapper<PaymentInventory>()
+                    .in("payment_order_id", paymentOrderIds));
             if (!VerificationCheck.listIsNull(paymentInventories)) {
                 for (PaymentInventory paymentInventory : paymentInventories) {
                     if (paymentInventory.getPackageStatus() == 0) {
@@ -164,19 +168,19 @@ public class RegulatorTaxServiceImpl extends ServiceImpl<RegulatorTaxDao, Regula
                 }
             }
         }
-        map.put("服务商名称", tax.getTaxName());
-        map.put("总包支付单数", paymentOrderCount);
-        map.put("众包支付单数", paymentOrderManyCount);
-        map.put("总包支付流水", paymentOrderNum);
-        map.put("众包支付流水", paymentOrderManyNum);
-        map.put("总包总纳税金额", paymentOrderTaxAmount);
-        map.put("众包总纳税金额", paymentOrderManyTaxAmount);
-        map.put("服务商信息", tax);
+        map.put("taxName", tax.getTaxName());
+        map.put("paymentOrderCount", paymentOrderCount);
+        map.put("paymentOrderManyCount", paymentOrderManyCount);
+        map.put("paymentOrderNum", paymentOrderNum);
+        map.put("paymentOrderManyNum", paymentOrderManyNum);
+        map.put("paymentOrderTaxAmount", paymentOrderTaxAmount);
+        map.put("paymentOrderManyTaxAmount", paymentOrderManyTaxAmount);
+        map.put("tax", tax);
         return ReturnJson.success(map);
     }
 
     @Override
-    public ReturnJson batchExportTax(String taxIds, HttpServletResponse response) {
+    public ReturnJson batchExportTax(String taxIds, HttpServletResponse response) throws CommonException {
         List list = Arrays.asList(taxIds.split(","));
         List<TaxVO> taxVOS = regulatorTaxDao.selTaxListByIds(list);
         for (int i = 0; i < taxVOS.size(); i++) {
@@ -189,9 +193,10 @@ public class RegulatorTaxServiceImpl extends ServiceImpl<RegulatorTaxDao, Regula
                 return ReturnJson.success("服务商导出成功！");
             } catch (IOException e) {
                 log.error(e.toString() + ":" + e.getMessage());
+                throw new CommonException(300, "创客导出失败！");
             }
         }
-        return ReturnJson.error("创客导出失败！");
+        throw new CommonException(300, "创客导出失败！");
     }
 
     @Override
@@ -201,17 +206,23 @@ public class RegulatorTaxServiceImpl extends ServiceImpl<RegulatorTaxDao, Regula
         List<RegulatorTaxPayInfoPo> list = infoPoIPage.getRecords();
         for (int i = 0; i < list.size(); i++) {
             switch (list.get(i).getPaymentOrderStatus()) {
+                case -1:
+                    list.get(i).setPaymentOrderZNameStatus("支付失败");
+                    break;
                 case 0:
                     list.get(i).setPaymentOrderZNameStatus("申请中");
                     break;
                 case 1:
                     list.get(i).setPaymentOrderZNameStatus("待支付");
                     break;
-                case 3:
+                case 2:
                     list.get(i).setPaymentOrderZNameStatus("已支付");
                     break;
-                case 4:
+                case 3:
                     list.get(i).setPaymentOrderZNameStatus("已确认收款");
+                    break;
+                case 4:
+                    list.get(i).setPaymentOrderZNameStatus("支付中");
                     break;
                 default:
                     return ReturnJson.error("支付状态有误");
@@ -222,24 +233,30 @@ public class RegulatorTaxServiceImpl extends ServiceImpl<RegulatorTaxDao, Regula
     }
 
     @Override
-    public ReturnJson batchExportPayInfo(@NotNull String paymentOrderIds, HttpServletResponse response) {
+    public ReturnJson batchExportPayInfo(@NotNull String paymentOrderIds, HttpServletResponse response) throws CommonException {
         List<RegulatorTaxPayInfoPo> voList = taxDao.getPayInfoByIds(Arrays.asList(paymentOrderIds.split(",")));
         for (int i = 0; i < voList.size(); i++) {
             switch (voList.get(i).getPaymentOrderStatus()) {
+                case -1:
+                    voList.get(i).setPaymentOrderZNameStatus("支付失败");
+                    break;
                 case 0:
                     voList.get(i).setPaymentOrderZNameStatus("申请中");
                     break;
                 case 1:
                     voList.get(i).setPaymentOrderZNameStatus("待支付");
                     break;
-                case 3:
+                case 2:
                     voList.get(i).setPaymentOrderZNameStatus("已支付");
                     break;
-                case 4:
+                case 3:
                     voList.get(i).setPaymentOrderZNameStatus("已确认收款");
                     break;
+                case 4:
+                    voList.get(i).setPaymentOrderZNameStatus("支付中");
+                    break;
                 default:
-                    return ReturnJson.error("支付状态有误");
+                    throw new CommonException(300, "支付状态有误！");
             }
         }
         if (!VerificationCheck.listIsNull(voList)) {
@@ -248,9 +265,10 @@ public class RegulatorTaxServiceImpl extends ServiceImpl<RegulatorTaxDao, Regula
                 return ReturnJson.success("支付订单导出成功！");
             } catch (IOException e) {
                 log.error(e.toString() + ":" + e.getMessage());
+                throw new CommonException(300, "创客导出失败！");
             }
         }
-        return ReturnJson.error("创客导出失败！");
+        throw new CommonException(300, "创客导出失败！");
     }
 
     @Override
@@ -262,8 +280,7 @@ public class RegulatorTaxServiceImpl extends ServiceImpl<RegulatorTaxDao, Regula
 
     @Override
     public ReturnJson getPaymentOrderInfo(String paymentOrderId, Integer type) {
-        Map<String, Object> map = new HashMap();
-        PaymentOrderInfoPO paymentOrderInfoPO = null;
+        PaymentOrderInfoPO paymentOrderInfoPO;
         if (type == 0) {
             paymentOrderInfoPO = paymentOrderDao.selectPaymentOrderInfo(paymentOrderId);
         } else {

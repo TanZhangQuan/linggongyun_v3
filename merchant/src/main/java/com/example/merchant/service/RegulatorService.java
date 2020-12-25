@@ -9,6 +9,7 @@ import com.example.merchant.dto.regulator.RegulatorMerchantDTO;
 import com.example.merchant.dto.regulator.RegulatorMerchantPaymentOrderDTO;
 import com.example.merchant.dto.regulator.RegulatorWorkerDTO;
 import com.example.merchant.dto.regulator.RegulatorWorkerPaymentDTO;
+import com.example.merchant.exception.CommonException;
 import com.example.mybatis.entity.Regulator;
 
 import javax.servlet.http.HttpServletResponse;
@@ -133,7 +134,7 @@ public interface RegulatorService extends IService<Regulator> {
      * @param workerIds
      * @return
      */
-    ReturnJson exportRegulatorWorker(String workerIds, String regulatorId, HttpServletResponse response);
+    ReturnJson exportRegulatorWorker(String workerIds, String regulatorId, HttpServletResponse response) throws CommonException;
 
     /**
      * 获取所监管的创客的流水统计
@@ -168,7 +169,7 @@ public interface RegulatorService extends IService<Regulator> {
      * @param response
      * @return
      */
-    ReturnJson exportRegulatorWorkerPaymentInfo(String workerId, String paymentIds, HttpServletResponse response);
+    ReturnJson exportRegulatorWorkerPaymentInfo(String workerId, String paymentIds, HttpServletResponse response) throws CommonException;
 
     /**
      * 查询支付订单详情
@@ -207,7 +208,7 @@ public interface RegulatorService extends IService<Regulator> {
      * @param response
      * @return
      */
-    ReturnJson exportRegulatorMerchant(String companyIds, String regulatorId, HttpServletResponse response);
+    ReturnJson exportRegulatorMerchant(String companyIds, String regulatorId, HttpServletResponse response) throws CommonException;
 
     /**
      * 统计所监管的商户的流水
@@ -240,7 +241,7 @@ public interface RegulatorService extends IService<Regulator> {
      * @param paymentOrderIds
      * @return
      */
-    ReturnJson exportRegulatorMerchantPaymentOrder(String paymentOrderIds, HttpServletResponse response);
+    ReturnJson exportRegulatorMerchantPaymentOrder(String paymentOrderIds, HttpServletResponse response) throws CommonException;
 
     /**
      * 登录

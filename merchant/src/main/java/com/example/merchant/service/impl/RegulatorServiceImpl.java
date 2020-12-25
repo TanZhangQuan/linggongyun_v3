@@ -12,6 +12,7 @@ import com.example.merchant.dto.regulator.RegulatorMerchantDTO;
 import com.example.merchant.dto.regulator.RegulatorMerchantPaymentOrderDTO;
 import com.example.merchant.dto.regulator.RegulatorWorkerDTO;
 import com.example.merchant.dto.regulator.RegulatorWorkerPaymentDTO;
+import com.example.merchant.exception.CommonException;
 import com.example.merchant.service.MerchantService;
 import com.example.merchant.service.RegulatorService;
 import com.example.merchant.service.RegulatorTaxService;
@@ -26,6 +27,7 @@ import com.example.mybatis.mapper.*;
 import com.example.mybatis.po.*;
 import com.example.mybatis.vo.PayInfoVO;
 import com.example.mybatis.vo.PaymentOrderVO;
+import com.example.mybatis.vo.QuerySubpackageInfoVO;
 import com.example.mybatis.vo.TaxBriefVO;
 import com.example.redis.dao.RedisDao;
 import lombok.extern.slf4j.Slf4j;
@@ -285,10 +287,10 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
     }
 
     @Override
-    public ReturnJson exportRegulatorWorker(String workerIds, String regulatorId, HttpServletResponse response) {
+    public ReturnJson exportRegulatorWorker(String workerIds, String regulatorId, HttpServletResponse response) throws CommonException {
         ReturnJson result = this.getPaymentOrderIds(regulatorId);
         if (result.getCode() == 300) {
-            return result;
+            throw new CommonException(300, result.getMessage());
         }
         List<String> paymentOrderIds = (List<String>) result.getData();
         if (VerificationCheck.listIsNull(paymentOrderIds)) {
@@ -309,9 +311,10 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
                 return ReturnJson.success("创客导出成功！");
             } catch (IOException e) {
                 log.error(e.toString() + ":" + e.getMessage());
+                throw new CommonException(300, e.getMessage());
             }
         }
-        return ReturnJson.error("创客导出失败！");
+        throw new CommonException(300, "创客导出失败！");
     }
 
     @Override
@@ -398,8 +401,6 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
         for (WorekerPaymentListPo worekerPaymentListPo : records) {
             RegulatorWorkerPaymentInfoVO regulatorWorkerPaymentInfoVO = new RegulatorWorkerPaymentInfoVO();
             BeanUtils.copyProperties(worekerPaymentListPo, regulatorWorkerPaymentInfoVO);
-            regulatorWorkerPaymentInfoVO.setPackageStatus(worekerPaymentListPo.getPackageStatus() == 0 ? "总包+分包" : "众包");
-            regulatorWorkerPaymentInfoVO.setInvoiceStatus(worekerPaymentListPo.getInvoiceStatus() == 0 ? "未开票" : "已完成");
             regulatorWorkerPaymentInfoVOS.add(regulatorWorkerPaymentInfoVO);
         }
         ReturnJson returnJson = ReturnJson.success(worekerPaymentListPoIPage);
@@ -408,14 +409,14 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
     }
 
     @Override
-    public ReturnJson exportRegulatorWorkerPaymentInfo(String workerId, String paymentIds, HttpServletResponse response) {
+    public ReturnJson exportRegulatorWorkerPaymentInfo(String workerId, String paymentIds, HttpServletResponse response) throws CommonException {
         List<WorekerPaymentListPo> worekerPaymentListPos = workerDao.exportRegulatorWorkerPaymentInfo(Arrays.asList(paymentIds.split(",")), workerId);
         if (VerificationCheck.listIsNull(worekerPaymentListPos)) {
-            return ReturnJson.error("订单有误，请重试！");
+            throw new CommonException(300, "订单有误，请重试！");
         }
-        List<RegulatorWorkerPaymentInfoVO> regulatorWorkerPaymentInfoVOS = new ArrayList<>();
+        List<ExportRegulatorWorkerPaymentInfoVO> regulatorWorkerPaymentInfoVOS = new ArrayList<>();
         for (WorekerPaymentListPo worekerPaymentListPo : worekerPaymentListPos) {
-            RegulatorWorkerPaymentInfoVO regulatorWorkerPaymentInfoVO = new RegulatorWorkerPaymentInfoVO();
+            ExportRegulatorWorkerPaymentInfoVO regulatorWorkerPaymentInfoVO = new ExportRegulatorWorkerPaymentInfoVO();
             BeanUtils.copyProperties(worekerPaymentListPo, regulatorWorkerPaymentInfoVO);
             regulatorWorkerPaymentInfoVO.setPackageStatus(worekerPaymentListPo.getPackageStatus() == 0 ? "总包+分包" : "众包");
             regulatorWorkerPaymentInfoVO.setInvoiceStatus(worekerPaymentListPo.getInvoiceStatus() == 0 ? "未开票" : "已完成");
@@ -426,14 +427,14 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
             return ReturnJson.success("导出成功！");
         } catch (IOException e) {
             log.error(e.toString() + ":" + e.getMessage());
+            throw new CommonException(300, "导出失败！");
         }
-        return ReturnJson.error("导出失败！");
     }
 
     @Override
     public ReturnJson getPaymentOrderInfo(String workerId, String paymentId, Integer packageStatus) {
         PaymentOrderVO paymentOrderVO;
-        PayInfoVO payInfoVO = null;
+        PayInfoVO payInfoVO;
         QueryPaymentOrderInfoVO paymentOrderInfoVO = new QueryPaymentOrderInfoVO();
         ExpressInfoVO expressInfoVO = new ExpressInfoVO();
         if (packageStatus == 0) {
@@ -443,7 +444,9 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
                 return ReturnJson.error("订单编号有误，请重新输入！");
             }
             InvoiceInfoPO invoiceInfoPO = invoiceDao.selectInvoiceInfoPO(paymentId);
-            payInfoVO=paymentOrderDao.queryPaymentInfo(paymentId);
+            payInfoVO = paymentOrderDao.queryPaymentInfo(paymentId);
+            QuerySubpackageInfoVO querySubpackageInfoVo = paymentOrderDao.querySubpackageInfo(paymentId, workerId);
+            paymentOrderInfoVO.setQuerySubpackageInfoVo(querySubpackageInfoVo);
             if (invoiceInfoPO != null) {
                 //总包发票信息
                 paymentOrderInfoVO.setInvoice(invoiceInfoPO.getInvoiceUrl());
@@ -460,7 +463,7 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
                 return ReturnJson.error("订单编号有误，请重新输入！");
             }
             InvoiceInfoPO invoiceInfoPO = crowdSourcingInvoiceDao.selectInvoiceInfoPO(paymentId);
-            payInfoVO=paymentOrderManyDao.queryPaymentInfo(paymentId);
+            payInfoVO = paymentOrderManyDao.queryPaymentInfo(paymentId, workerId);
             if (invoiceInfoPO != null) {
                 //众包发票信息
                 paymentOrderInfoVO.setInvoice(invoiceInfoPO.getInvoiceUrl());
@@ -510,10 +513,10 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
     }
 
     @Override
-    public ReturnJson exportRegulatorMerchant(String companyIds, String regulatorId, HttpServletResponse response) {
+    public ReturnJson exportRegulatorMerchant(String companyIds, String regulatorId, HttpServletResponse response) throws CommonException {
         ReturnJson returnJson = this.getTaxIds(regulatorId);
         if (returnJson.getCode() == 300) {
-            return returnJson;
+            throw new CommonException(300, returnJson.getMessage());
         }
         List<String> taxIds = (List<String>) returnJson.getData();
         List<RegulatorMerchantInfoPO> regulatorMerchantInfoPOS = regulatorDao.selectExportRegulatorMerchant(Arrays.asList(companyIds.split(",")), taxIds);
@@ -533,9 +536,9 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
             ExcelUtils.exportExcel(regulatorMerchantVOS, "监管的商户", "商户信息", RegulatorMerchantVO.class, "RegulatorMerchant", true, response);
         } catch (IOException e) {
             log.error(e.toString() + ":" + e.getMessage());
-            return ReturnJson.error("导出失败，请重试！");
+            throw new CommonException(300, "导出失败，请重试！");
         }
-        return ReturnJson.success("");
+        return null;
     }
 
     @Override
@@ -667,8 +670,8 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
         for (CompanyPaymentOrderPO companyPaymentOrderPO : companyPaymentOrderPOS) {
             RegulatorMerchantPaymentOrderVO regulatorMerchantPaymentOrderVO = new RegulatorMerchantPaymentOrderVO();
             BeanUtils.copyProperties(companyPaymentOrderPO, regulatorMerchantPaymentOrderVO);
-            regulatorMerchantPaymentOrderVO.setPackageStatus(companyPaymentOrderPO.getPackageStatus() == 0 ? "总包+分包" : "众包");
-            regulatorMerchantPaymentOrderVO.setIsInvoice(companyPaymentOrderPO.getIsInvoice() == 0 ? "未开票" : "已完成");
+            regulatorMerchantPaymentOrderVO.setPackageStatus(companyPaymentOrderPO.getPackageStatus().toString());
+            regulatorMerchantPaymentOrderVO.setIsInvoice(companyPaymentOrderPO.getIsInvoice().toString());
             regulatorMerchantPaymentOrderVOS.add(regulatorMerchantPaymentOrderVO);
         }
         ReturnJson success = ReturnJson.success(companyPaymentOrderPOIPage);
@@ -677,12 +680,12 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
     }
 
     @Override
-    public ReturnJson exportRegulatorMerchantPaymentOrder(String paymentOrderIds, HttpServletResponse response) {
+    public ReturnJson exportRegulatorMerchantPaymentOrder(String paymentOrderIds, HttpServletResponse response) throws CommonException {
         List<CompanyPaymentOrderPO> companyPaymentOrderPOS = companyInfoDao.exportCompanyPaymentOrder(Arrays.asList(paymentOrderIds.split(",")));
 
         if (VerificationCheck.listIsNull(companyPaymentOrderPOS)) {
             log.error("数据库没有导出的数据！");
-            ReturnJson.error("导出失败，请重试！");
+            throw new CommonException(300, "导出失败，请重试！");
         }
 
         List<RegulatorMerchantPaymentOrderVO> regulatorMerchantPaymentOrderVOS = new ArrayList<>();
@@ -696,8 +699,7 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
         try {
             ExcelUtils.exportExcel(regulatorMerchantPaymentOrderVOS, "商户支付订单", "订单信息", RegulatorMerchantPaymentOrderVO.class, "MerchantPaymentOrder", true, response);
         } catch (IOException e) {
-            log.error(e + ":" + e.getMessage());
-            ReturnJson.error("导出失败，请重试！");
+            throw new CommonException(300, "参数有误！");
         }
         return null;
     }
@@ -745,9 +747,9 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
 
     @Override
     public ReturnJson getRegulatorInfo(String regulatorId) {
-        Regulator regulator=regulatorDao.selectById(regulatorId);
-        RegulatorInfoVO regulatorInfoVo=new RegulatorInfoVO();
-        BeanUtils.copyProperties(regulator,regulatorInfoVo);
+        Regulator regulator = regulatorDao.selectById(regulatorId);
+        RegulatorInfoVO regulatorInfoVo = new RegulatorInfoVO();
+        BeanUtils.copyProperties(regulator, regulatorInfoVo);
         return ReturnJson.success(regulatorInfoVo);
     }
 
