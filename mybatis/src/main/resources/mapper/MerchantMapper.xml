@@ -471,7 +471,7 @@
             tb_payment_order
         WHERE
             payment_order_status = 3
-        AND DATE(real_money) = DATE(NOW())
+        AND DATE(payment_date) = DATE(NOW())
         AND company_id =#{merchantId}
     </select>
 

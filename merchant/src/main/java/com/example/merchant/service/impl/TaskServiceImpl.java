@@ -80,8 +80,10 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
         if (merchant == null) {
             return ReturnJson.error("商户不存在！");
         }
-        if (addTaskDto.getTaskCostMax().compareTo(addTaskDto.getTaskCostMax()) == -1) {
-            return ReturnJson.error("结束金额必须大于起始金额");
+        if (addTaskDto.getTaskCostMax() != null && addTaskDto.getTaskCostMax() != null) {
+            if (addTaskDto.getTaskCostMax().compareTo(addTaskDto.getTaskCostMax()) == -1) {
+                return ReturnJson.error("结束金额必须大于起始金额");
+            }
         }
         Task task = taskDao.selectById(addTaskDto.getId());
         if (task != null) {
@@ -178,6 +180,11 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
         Task task = new Task();
         if (merchant == null) {
             return ReturnJson.error("商户不存在！");
+        }
+        if (taskDto.getTaskCostMax() != null && taskDto.getTaskCostMax() != null) {
+            if (taskDto.getTaskCostMax().compareTo(taskDto.getTaskCostMax()) == -1) {
+                return ReturnJson.error("结束金额必须大于起始金额");
+            }
         }
         if (taskDto.getTaskMode() == 0) {
             if (!VerificationCheck.isNull(taskDto.getMakerIds())) {

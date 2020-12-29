@@ -4,6 +4,8 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.io.Serializable;
+
 /**
  * @Description
  * @Author JWei <jwei0401@163.com>
@@ -11,7 +13,8 @@ import lombok.Data;
  */
 @Data
 @ApiModel(description = "服务商信息")
-public class TaxInfoVO {
+public class TaxInfoVO implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     @ApiModelProperty(value = "ID")
     private String id;

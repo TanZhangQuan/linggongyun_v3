@@ -7,13 +7,18 @@ import java.util.List;
 public class TestDete {
 
     public static void main(String[] args) {
-        List<Integer> list=new ArrayList<>();
+        List<Integer> list = new ArrayList<>();
         list.add(1);
         list.add(2);
         list.add(3);
         list.add(4);
         list.add(5);
-        list.parallelStream().forEach(integer -> System.out.println(integer.toString()));
+
+        list.forEach(integer -> System.out.println("forEach--------" + integer));
+        list.parallelStream().forEach(integer -> System.out.println("parallelStream--------" + integer));
+        list.stream().forEach(integer -> System.out.println("stream-------" + integer));
+
+        int i=0;
     }
 
     long f(int n) {

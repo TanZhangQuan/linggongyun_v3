@@ -23,9 +23,7 @@ import com.example.mybatis.entity.*;
 import com.example.mybatis.mapper.*;
 import com.example.mybatis.po.InvoiceInfoPO;
 import com.example.mybatis.po.PaymentOrderInfoPO;
-import com.example.mybatis.vo.CrowdSourcingInvoiceInfoVO;
-import com.example.mybatis.vo.InvoiceDetailsVO;
-import com.example.mybatis.vo.PaymentOrderManyVO;
+import com.example.mybatis.vo.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -378,8 +376,37 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
         String beginDate = paymentOrderDto.getBeginDate();
         String endDate = paymentOrderDto.getEndDate();
         Page<PaymentOrderMany> paymentOrderManyPage = new Page<>(page, pageSize);
-        IPage<PaymentOrderMany> paymentOrderManyIPage = paymentOrderManyDao.selectManyPaas(paymentOrderManyPage, merchantIds, merchantName, paymentOrderId, taxId, beginDate, endDate);
+        IPage<PaymentOrderMany> paymentOrderManyIPage = paymentOrderManyDao.selectManyPaas(paymentOrderManyPage,
+                merchantIds, merchantName, paymentOrderId, taxId, beginDate, endDate);
         return ReturnJson.success(paymentOrderManyIPage);
+    }
+
+    @Override
+    public ReturnJson getDayPaa(String merchantId) throws CommonException {
+        List<String> merchantIds = acquireID.getCompanyIds(merchantId);
+        TodayVO todayVO=paymentOrderManyDao.selectDaypaa(merchantIds);
+        return ReturnJson.success(todayVO);
+    }
+
+    @Override
+    public ReturnJson getWeekPaa(String merchantId) throws CommonException {
+        List<String> merchantIds = acquireID.getCompanyIds(merchantId);
+        WeekTradeVO weekTradeVO=paymentOrderManyDao.selectWeekpaa(merchantIds);
+        return ReturnJson.success(weekTradeVO);
+    }
+
+    @Override
+    public ReturnJson getMonthPaa(String merchantId) throws CommonException {
+        List<String> merchantIds = acquireID.getCompanyIds(merchantId);
+        MonthTradeVO monthTradeVO=paymentOrderManyDao.selectMonthpaa(merchantIds);
+        return ReturnJson.success(monthTradeVO);
+    }
+
+    @Override
+    public ReturnJson getYearPaa(String merchantId) throws CommonException {
+        List<String> merchantIds = acquireID.getCompanyIds(merchantId);
+        YearTradeVO yearTradeVO=paymentOrderManyDao.selectYearpaa(merchantIds);
+        return ReturnJson.success(yearTradeVO);
     }
 
     /**
