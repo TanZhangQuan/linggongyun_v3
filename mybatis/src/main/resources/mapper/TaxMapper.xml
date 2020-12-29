@@ -108,7 +108,7 @@
     <select id="selectTaxList" resultMap="TaxListPO" parameterType="list">
         select f.id,f.tax_name,e.total_status,e.many_status,f.tax_status,f.create_date from tb_tax f LEFT JOIN
         ((select (case when a.tax_id is null then b.tax_id else a.tax_id end) 'tax_id',
-        (case when a.id is null then 1 else 0 end) 'total_status',(case when b.id is null then 1 else 0 end)
+        (case when a.id is null then 0 else 1 end) 'total_status',(case when b.id is null then 0 else 1 end)
         'many_status' from
         (select * from tb_tax_package
         where package_status = 0) a
@@ -119,7 +119,7 @@
         )
         union
         (select (case when c.tax_id is null then d.tax_id else c.tax_id end) 'tax_id' ,
-        (case when c.id is null then 1 else 0 end) 'total_status',(case when d.id is null then 1 else 0 end)
+        (case when c.id is null then 0 else 1 end) 'total_status',(case when d.id is null then 0 else 1 end)
         'many_status' from
         (select * from tb_tax_package
         where package_status = 0) c

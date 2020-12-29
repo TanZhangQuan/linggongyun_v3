@@ -106,4 +106,12 @@ public interface PaymentOrderManyDao extends BaseMapper<PaymentOrderMany> {
     PaymentOrderVO queryPaymentOrderVO(String payId);
 
     PayInfoVO queryPaymentInfo(String payId, String workerId);
+
+    TodayVO selectDaypaa(List<String> merchantId);
+
+    WeekTradeVO selectWeekpaa(List<String> merchantId);
+
+    MonthTradeVO selectMonthpaa(List<String> merchantId);
+
+    YearTradeVO selectYearpaa(List<String> merchantId);
 }

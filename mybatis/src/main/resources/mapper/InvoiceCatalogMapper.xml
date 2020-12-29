@@ -24,8 +24,11 @@
             c.billing_category
         FROM
             tb_invoice_catalog AS c
-        LEFT JOIN tb_merchant_catalog AS mc ON mc.catalog_id = c.id
-        WHERE mc.merchant_id=#{id}
+        WHERE
+            c.id in
+        <foreach collection="list" index="index" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
     </select>
 
 </mapper>

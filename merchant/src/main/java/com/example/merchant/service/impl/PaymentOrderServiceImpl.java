@@ -23,8 +23,7 @@ import com.example.mybatis.entity.*;
 import com.example.mybatis.mapper.*;
 import com.example.mybatis.po.InvoiceInfoPO;
 import com.example.mybatis.po.PaymentOrderInfoPO;
-import com.example.mybatis.vo.BillingInfoVO;
-import com.example.mybatis.vo.PaymentOrderVO;
+import com.example.mybatis.vo.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -217,7 +216,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
         CompanyTax companyTax = companyTaxDao.selectOne(new QueryWrapper<CompanyTax>()
                 .eq("tax_id", paymentOrder.getTaxId())
                 .eq("company_id", paymentOrder.getCompanyId())
-                .eq("package_status", 1));
+                .eq("package_status", 0));
         Integer taxStatus = paymentOrder.getTaxStatus();
         //判断服务费是一口价还是梯度价
         if (companyTax.getChargeStatus() == 0) {
@@ -443,6 +442,50 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
         }
         paymentOrder.setSubpackagePayment(subpackagePayment);
         return ReturnJson.success(paymentOrder);
+    }
+
+    @Override
+    public ReturnJson getDaypaa(String merchantId) throws CommonException {
+        List<String> merchantIds = acquireID.getCompanyIds(merchantId);
+        List<PaymentOrder> list;
+        if (VerificationCheck.listIsNull(merchantIds)) {
+            return ReturnJson.success((List) null);
+        }
+        TodayVO todayVO=paymentOrderDao.selectDaypaa(merchantIds);
+        return ReturnJson.success(todayVO);
+    }
+
+    @Override
+    public ReturnJson getWeekPaa(String merchantId) throws CommonException {
+        List<String> merchantIds = acquireID.getCompanyIds(merchantId);
+        List<PaymentOrder> list;
+        if (VerificationCheck.listIsNull(merchantIds)) {
+            return ReturnJson.success((List) null);
+        }
+        WeekTradeVO weekTradeVO = paymentOrderDao.selectWeekpaa(merchantIds);
+        return ReturnJson.success(weekTradeVO);
+    }
+
+    @Override
+    public ReturnJson getMonthPaa(String merchantId) throws CommonException {
+        List<String> merchantIds = acquireID.getCompanyIds(merchantId);
+        List<PaymentOrder> list;
+        if (VerificationCheck.listIsNull(merchantIds)) {
+            return ReturnJson.success((List) null);
+        }
+        MonthTradeVO monthTradeVO = paymentOrderDao.selectMonthpaa(merchantIds);
+        return ReturnJson.success(monthTradeVO);
+    }
+
+    @Override
+    public ReturnJson getYearPaa(String merchantId) throws CommonException {
+        List<String> merchantIds = acquireID.getCompanyIds(merchantId);
+        List<PaymentOrder> list;
+        if (VerificationCheck.listIsNull(merchantIds)) {
+            return ReturnJson.success((List) null);
+        }
+        YearTradeVO yearTradeVO = paymentOrderDao.selectYearpaa(merchantIds);
+        return ReturnJson.success(yearTradeVO);
     }
 
     /**

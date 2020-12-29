@@ -131,4 +131,37 @@ public interface PaymentOrderManyService extends IService<PaymentOrderMany> {
      * @return
      */
     ReturnJson getPaymentOrderManyPaas(PaymentOrderDTO paymentOrderDto, String managersId) throws CommonException;
+
+
+    /**
+     * 众包今天的支付金额
+     *
+     * @param merchantId
+     * @return
+     */
+    ReturnJson getDayPaa(String merchantId) throws CommonException;
+
+    /**
+     * 众包本周的支付金额
+     *
+     * @param merchantId
+     * @return
+     */
+    ReturnJson getWeekPaa(String merchantId) throws CommonException;
+
+    /**
+     * 众包本月的支付金额
+     *
+     * @param merchantId
+     * @return
+     */
+    ReturnJson getMonthPaa(String merchantId) throws CommonException;
+
+    /**
+     * 众包今年的支付金额
+     *
+     * @param merchantId
+     * @return
+     */
+    ReturnJson getYearPaa(String merchantId) throws CommonException;
 }

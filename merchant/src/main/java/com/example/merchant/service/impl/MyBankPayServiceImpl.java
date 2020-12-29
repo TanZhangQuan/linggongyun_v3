@@ -87,7 +87,7 @@ public class MyBankPayServiceImpl implements MyBankPayService {
         List bInfoList_before = (List) balancebefore.get("account_list");
         if (!"F".equals(balancebefore.get("is_success").toString())) {
             if (bInfoList_before.size() > 0) {
-                Map<String, Object> bInfo = (Map) bInfoList_before.get(0);
+                Map bInfo = (Map) bInfoList_before.get(0);
                 balance_amount_before = new BigDecimal(bInfo.get("available_balance").toString());
             }
             //判断余额是否足够支付本次订单金额

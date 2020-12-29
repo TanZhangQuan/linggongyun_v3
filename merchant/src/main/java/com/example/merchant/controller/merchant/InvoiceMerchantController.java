@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 /**
  * <p>
@@ -98,9 +99,9 @@ public class InvoiceMerchantController {
 
     @ApiOperation("开票类目")
     @GetMapping(value = "/getListInv")
-    @LoginRequired
-    public ReturnJson getListInv(@RequestAttribute(value = "userId") @ApiParam(hidden = true) String id) {
-        return invoiceCatalogService.getListInv(id);
+    public ReturnJson getListInv(@NotBlank(message = "支付订单ID不能为空") @RequestParam String payId,
+                                 @NotNull(message = "0:总包+分包 or 1:众包") @RequestParam Integer packageStatus) {
+        return invoiceCatalogService.getListInv(payId,packageStatus);
     }
 
     @ApiOperation("判断是否为同一服务商,同时传入多个name")

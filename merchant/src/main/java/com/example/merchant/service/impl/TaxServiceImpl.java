@@ -224,7 +224,7 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
                 invoiceLadderPriceService.saveBatch(manyLadders);
             }
         }
-        return ReturnJson.success("添加成功！");
+        return ReturnJson.success("操作成功！");
     }
 
     @Override

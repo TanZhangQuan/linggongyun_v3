@@ -38,55 +38,55 @@ public class HomePagePaasController {
     @ApiOperation(value = "获取总包+分包今天的支付额", notes = "获取总包+分包今天的支付额", httpMethod = "POST")
     @LoginRequired
     public ReturnJson totalDayInfo(@RequestAttribute(value = "userId") @ApiParam(hidden = true) String userId) throws CommonException {
-        return paymentOrderService.getDayPaas(userId);
+        return paymentOrderService.getDaypaa(userId);
     }
 
     @PostMapping("/totalWeekInfo")
     @ApiOperation(value = "获取总包+分包本周的支付额", notes = "获取总包+分包本周的支付额", httpMethod = "POST")
     @LoginRequired
     public ReturnJson totalWeekInfo(@RequestAttribute(value = "userId") @ApiParam(hidden = true) String userId) throws CommonException {
-        return paymentOrderService.getWeekPaas(userId);
+        return paymentOrderService.getWeekPaa(userId);
     }
 
     @PostMapping("/totalMonthInfo")
     @ApiOperation(value = "获取总包+分包本月的支付额", notes = "获取总包+分包本月的支付额", httpMethod = "POST")
     @LoginRequired
     public ReturnJson totalMonthInfo(@RequestAttribute(value = "userId") @ApiParam(hidden = true) String userId) throws CommonException {
-        return paymentOrderService.getMonthPaas(userId);
+        return paymentOrderService.getMonthPaa(userId);
     }
 
     @PostMapping("/totalYearInfo")
     @ApiOperation(value = "获取总包+分包全年的支付额", notes = "获取总包+分包全年的支付额", httpMethod = "POST")
     @LoginRequired
     public ReturnJson totalYearInfo(@RequestAttribute(value = "userId") @ApiParam(hidden = true) String userId) throws CommonException {
-        return paymentOrderService.getYearPaas(userId);
+        return paymentOrderService.getYearPaa(userId);
     }
 
     @PostMapping("/manyDayInfo")
     @ApiOperation(value = "获取众包今天的支付额", notes = "获取众包今天的支付额", httpMethod = "POST")
     @LoginRequired
     public ReturnJson manyDayInfo(@RequestAttribute(value = "userId") @ApiParam(hidden = true) String userId) throws CommonException {
-        return paymentOrderManyService.getDayPaas(userId);
+        return paymentOrderManyService.getDayPaa(userId);
     }
 
     @PostMapping("/manyWeekInfo")
     @ApiOperation(value = "获取众包本周的支付额", notes = "获取众包本周的支付额", httpMethod = "POST")
     @LoginRequired
     public ReturnJson manyWeekInfo(@RequestAttribute(value = "userId") @ApiParam(hidden = true) String userId) throws CommonException {
-        return paymentOrderManyService.getWeekPaas(userId);
+        return paymentOrderManyService.getWeekPaa(userId);
     }
 
     @PostMapping("/manyMonthInfo")
     @ApiOperation(value = "获取众包本月的支付额", notes = "获取众包本月的支付额", httpMethod = "POST")
     @LoginRequired
     public ReturnJson manyMonthInfo(@RequestAttribute(value = "userId") @ApiParam(hidden = true) String userId) throws CommonException {
-        return paymentOrderManyService.getMonthPaas(userId);
+        return paymentOrderManyService.getMonthPaa(userId);
     }
 
     @PostMapping("/manyYearInfo")
     @ApiOperation(value = "获取众包全年的支付额", notes = "获取众包全年的支付额", httpMethod = "POST")
     @LoginRequired
     public ReturnJson manyYearInfo(@RequestAttribute(value = "userId") @ApiParam(hidden = true) String userId) throws CommonException {
-        return paymentOrderManyService.getYearPaas(userId);
+        return paymentOrderManyService.getYearPaa(userId);
     }
 }
