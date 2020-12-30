@@ -41,8 +41,9 @@ public class PaasLoginJWTInterceptor implements HandlerInterceptor {
             String token = null;
             try {
                 token = request.getHeader(TOKEN);
-            } catch (Exception e) {}
-            String userId = "";
+            } catch (Exception e) {
+
+            }
             if (!loginRequired.required()) {
                 return true;
             } else {
@@ -56,12 +57,12 @@ public class PaasLoginJWTInterceptor implements HandlerInterceptor {
                 if (jwtUtils.isTokenExpired(claim.getExpiration())) {
                     throw new CommonException(402, "你的登录以过期请重新登录！");
                 }
-                userId = claim.getSubject();
+                String userId = claim.getSubject();
                 String user = redisDao.get(userId);
                 if (StringUtils.isBlank(user)) {
                     throw new CommonException(402, "你的登录以过期请重新登录！");
                 }
-                request.setAttribute("userId",userId);
+                request.setAttribute("userId", userId);
                 return true;
             }
         }
@@ -69,12 +70,12 @@ public class PaasLoginJWTInterceptor implements HandlerInterceptor {
     }
 
     @Override
-    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
+    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) {
 
     }
 
     @Override
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
 
     }
 }
