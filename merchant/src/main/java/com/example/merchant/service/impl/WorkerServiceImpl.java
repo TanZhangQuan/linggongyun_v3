@@ -98,7 +98,7 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
     @Override
     public ReturnJson getByIdAndAccountNameAndMobile(String merchantId, WorkerDTO workerDto) {
         Merchant merchant = merchantDao.selectById(merchantId);
-        Page<Worker> workerPage = new Page<>(workerDto.getPage(), workerDto.getPageSize());
+        Page<Worker> workerPage = new Page<>(workerDto.getPageNo(), workerDto.getPageSize());
         IPage<Worker> workerIPage = workerDao.selectByIdAndAccountNameAndMobile(workerPage, merchant.getCompanyId(), workerDto.getWorkerId(), workerDto.getAccountName(), workerDto.getMobileCode());
         return ReturnJson.success(workerIPage);
     }
@@ -123,8 +123,7 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ReturnJson saveWorker(List<Worker> workers, String merchantId) throws Exception {
-        ReturnJson rj = null;
+    public ReturnJson saveWorker(List<Worker> workers, String merchantId) {
         List<CompanyWorker> companyWorkers = new ArrayList<>();
         Merchant merchant = merchantDao.selectById(merchantId);
         List<String> mobileCodes = new ArrayList<>();

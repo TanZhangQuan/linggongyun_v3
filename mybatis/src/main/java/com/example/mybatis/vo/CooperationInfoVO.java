@@ -43,5 +43,5 @@ public class CooperationInfoVO implements Serializable {
     private String bankName;
 
     @ApiModelProperty(value = "服务费率")
-    private List<CompanyLadderServiceVO> companyLadderServiceVOS;
+    private List<CompanyLadderServiceVO> companyLadderServiceVos;
 }

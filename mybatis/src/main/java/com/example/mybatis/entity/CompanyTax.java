@@ -1,6 +1,7 @@
 package com.example.mybatis.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -42,6 +43,16 @@ public class CompanyTax extends BaseEntity {
      * 合作类型
      */
     private Integer packageStatus;
+
+    /**
+     * 银行卡号
+     */
+    private String bankCode;
+
+    /**
+     * 开户行
+     */
+    private String bankName;
 
     /**
      * 合作合同地址

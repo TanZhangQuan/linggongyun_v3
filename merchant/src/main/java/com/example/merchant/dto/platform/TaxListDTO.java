@@ -23,7 +23,7 @@ public class TaxListDTO implements Serializable {
 
     @ApiModelProperty(value = "当前页数", required = true)
     @Min(value = 1, message = "必须是大于0的整数")
-    private Integer page = 1;
+    private Integer pageNo = 1;
 
     @ApiModelProperty(value = "一页的条数", required = true)
     @Min(value = 1, message = "必须是大于0的整数")

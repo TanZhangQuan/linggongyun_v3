@@ -7,6 +7,7 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -27,8 +28,7 @@ public class UpdateCompanyInfoDTO implements Serializable {
     private BigDecimal registeredCapital;
 
     @ApiModelProperty(value = "成立日期")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime companyCreateDate;
+    private LocalDate companyCreateDate;
 
     @ApiModelProperty(value = "统一的社会信用代码")
     private String creditCode;

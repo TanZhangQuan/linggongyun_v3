@@ -37,6 +37,6 @@ public class QueryApplicationVO implements Serializable {
     private InvoiceApplicationVO invoiceApplicationVo;
 
     @ApiModelProperty(value = "地址信息")
-    private AddressVO addressVO;
+    private AddressVO addressVo;
 
 }

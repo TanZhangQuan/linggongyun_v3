@@ -205,7 +205,7 @@
         WHERE po.payment_order_status = 3
         AND po.company_id=#{param3}
         <if test="param2.platformServiceProvider != null and param2.platformServiceProvider != ''">
-            AND po.platform_service_provider=#{param2.platformServiceProvider}
+            AND po.tax_id=#{param2.platformServiceProvider}
         </if>
         <if test="param2.applicationDateOne != null and param2.applicationDateOne != ''">
             AND invapp.application_date>=#{param2.applicationDateOne}
@@ -295,7 +295,7 @@
             AND po.company_s_name like CONCAT('%',#{tobeinvoicedDto.companySName},'%')
         </if>
         <if test="tobeinvoicedDto.platformServiceProvider != null and tobeinvoicedDto.platformServiceProvider != ''">
-            AND po.platform_service_provider=#{tobeinvoicedDto.platformServiceProvider}
+            AND po.tax_id=#{tobeinvoicedDto.platformServiceProvider}
         </if>
         <if test="tobeinvoicedDto.applicationDateOne != null and tobeinvoicedDto.applicationDateOne != ''">
             AND invapp.application_date>=#{tobeinvoicedDto.applicationDateOne}
@@ -332,7 +332,7 @@
             AND po.company_s_name like CONCAT('%',#{tobeinvoicedDto.companySName},'%')
         </if>
         <if test="tobeinvoicedDto.platformServiceProvider != null and tobeinvoicedDto.platformServiceProvider != ''">
-            AND po.platform_service_provider=#{tobeinvoicedDto.platformServiceProvider}
+            AND po.tax_id=#{tobeinvoicedDto.platformServiceProvider}
         </if>
         <if test="tobeinvoicedDto.applicationDateOne != null and tobeinvoicedDto.applicationDateOne != ''">
             AND invapp.application_date>=#{tobeinvoicedDto.applicationDateOne}
@@ -354,7 +354,7 @@
             AND po.company_s_name like CONCAT('%',#{tobeinvoicedDto.companySName},'%')
         </if>
         <if test="tobeinvoicedDto.platformServiceProvider != null and tobeinvoicedDto.platformServiceProvider != ''">
-            AND po.platform_service_provider=#{tobeinvoicedDto.platformServiceProvider}
+            AND po.tax_id=#{tobeinvoicedDto.platformServiceProvider}
         </if>
         <if test="tobeinvoicedDto.applicationDateOne != null and tobeinvoicedDto.applicationDateOne != ''">
             AND invapp.application_date>=#{tobeinvoicedDto.applicationDateOne}

@@ -16,7 +16,7 @@ public class QueryMakerTotalInvoiceDTO implements Serializable {
     private String companyId;
 
     @ApiModelProperty(value = "平台服务商")
-    private String taxId;
+    private String platformServiceProvider;
 
     @ApiModelProperty(value = "创建时间1,yyyy:HH:mm")
     private String applicationDateOne;

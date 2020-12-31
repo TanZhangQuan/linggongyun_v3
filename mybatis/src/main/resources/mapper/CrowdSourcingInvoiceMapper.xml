@@ -155,7 +155,7 @@
         INNER JOIN tb_payment_order_many pom ON pom.id = csa.payment_order_many_id
         AND pom.company_id=#{param3}
         <if test="param2.platformServiceProvider != null and param2.platformServiceProvider != ''">
-            AND pom.platform_service_provider=#{param2.platformServiceProvider}
+            AND pom.tax_id=#{param2.platformServiceProvider}
         </if>
         <if test="param2.applicationDateOne != null and param2.applicationDateOne != ''">
             AND csa.application_date>=#{param2.applicationDateOne}
@@ -177,7 +177,7 @@
             AND pom.company_s_name=#{tobeinvoicedDto.companySName}
         </if>
         <if test="tobeinvoicedDto.platformServiceProvider != null and tobeinvoicedDto.platformServiceProvider != ''">
-            AND pom.platform_service_provider=#{tobeinvoicedDto.platformServiceProvider}
+            AND pom.tax_id=#{tobeinvoicedDto.platformServiceProvider}
         </if>
         <if test="tobeinvoicedDto.applicationDateOne != null and tobeinvoicedDto.applicationDateOne != ''">
             AND csa.application_date>=#{tobeinvoicedDto.applicationDateOne}
@@ -240,7 +240,7 @@
             AND po.company_s_name like CONCAT('%',#{tobeinvoicedDto.companySName},'%')
         </if>
         <if test="tobeinvoicedDto.platformServiceProvider != null and tobeinvoicedDto.platformServiceProvider != ''">
-            AND pom.platform_service_provider=#{tobeinvoicedDto.platformServiceProvider}
+            AND pom.tax_id=#{tobeinvoicedDto.platformServiceProvider}
         </if>
         <if test="tobeinvoicedDto.applicationDateOne != null and tobeinvoicedDto.applicationDateOne != ''">
             AND csa.application_date>=#{tobeinvoicedDto.applicationDateOne}

@@ -68,7 +68,10 @@ public class MakerTotalInvoiceServiceImpl extends ServiceImpl<MakerTotalInvoiceD
             String[] taxAmounts = makerTotalInvoiceDto.getTaxAmount().split(",");
             BigDecimal taxAmount = new BigDecimal("0.00");
             for (int i = 0; i < taxAmounts.length; i++) {
-                taxAmount.add(new BigDecimal(taxAmounts[i]));
+                if (!"".equals(taxAmounts[i])) {
+                    taxAmount.add(new BigDecimal(taxAmounts[i]));
+                }
+                taxAmount.add(new BigDecimal("0.00"));
             }
             makerTotalInvoice.setTaxAmount(taxAmount);
             makerTotalInvoice.setInvoicePerson(managersDao.selectById(managerId).getRealName());
@@ -101,7 +104,7 @@ public class MakerTotalInvoiceServiceImpl extends ServiceImpl<MakerTotalInvoiceD
             }
         }
         if (makerTotalInvoiceDto.getId() != null) {
-            BeanUtils.copyProperties(makerTotalInvoiceDto,makerTotalInvoice);
+            BeanUtils.copyProperties(makerTotalInvoiceDto, makerTotalInvoice);
             makerTotalInvoice.setCreateDate(LocalDateTime.parse(DateUtil.getTime(), dfd));
             int num = makerTotalInvoiceDao.updateById(makerTotalInvoice);
             if (num > 0) {
@@ -179,7 +182,7 @@ public class MakerTotalInvoiceServiceImpl extends ServiceImpl<MakerTotalInvoiceD
         Map<String, Object> map = new HashMap<>(0);
         BigDecimal totalTaxPrice = new BigDecimal("0.00");
         for (InvoiceListVO invoiceListVo : invoiceListVoIPage.getRecords()) {
-            totalTaxPrice = totalTaxPrice.add(invoiceListVo.getTaskMoney());
+            totalTaxPrice = totalTaxPrice.add(invoiceListVo.getRealMoney());
         }
         map.put("invoiceListVoIPage", invoiceListVoIPage.getRecords());
         map.put("totalTaxPrice", totalTaxPrice);

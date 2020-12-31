@@ -14,7 +14,7 @@ public interface FileOperationService {
      * @param workerExcel
      * @return
      */
-    ReturnJson getExcelWorker(MultipartFile workerExcel);
+    ReturnJson getExcelWorker(MultipartFile workerExcel) throws IOException;
 
     /**
      * 上传JPG或PDF文件

@@ -78,7 +78,7 @@
             AND po.company_id=#{param3}
         </if>
         <if test="param2.platformServiceProvider != null and param2.platformServiceProvider != ''">
-            AND po.platform_service_provider=#{param2.platformServiceProvider}
+            AND po.tax_id=#{param2.platformServiceProvider}
         </if>
         <if test="param2.applicationDateOne != null and param2.applicationDateOne != ''">
             AND ia.application_date>=#{param2.applicationDateOne}

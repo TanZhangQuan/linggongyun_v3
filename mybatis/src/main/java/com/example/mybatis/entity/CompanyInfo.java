@@ -7,6 +7,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
@@ -99,7 +100,7 @@ public class CompanyInfo extends BaseEntity {
     /**
      * 公司的成立时间
      */
-    private LocalDateTime companyCreateDate;
+    private LocalDate companyCreateDate;
 
     /**
      * 开户行(银行名称)

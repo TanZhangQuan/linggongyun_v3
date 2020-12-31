@@ -26,5 +26,5 @@ public class CompanyVO implements Serializable {
     private QueryCooperationInfoVO queryCooperationInfoVo;
 
     @ApiModelProperty(value = "服务商合作信息")
-    private List<CooperationInfoVO> cooperationInfoVOList;
+    private List<CooperationInfoVO> cooperationInfoVoList;
 }

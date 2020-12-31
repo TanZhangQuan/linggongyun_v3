@@ -21,7 +21,7 @@ public class WorkerDTO implements Serializable {
     private String mobileCode;
 
     @ApiModelProperty(value = "当前页数")
-    private Integer page = 1;
+    private Integer pageNo = 1;
 
     @ApiModelProperty(value = "每页的条数")
     private Integer pageSize = 10;

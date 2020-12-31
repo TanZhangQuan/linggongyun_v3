@@ -93,8 +93,6 @@ public interface InvoiceService extends IService<Invoice> {
      */
     ReturnJson getListInvoicequery(TobeinvoicedDTO tobeinvoicedDto);
 
-    ReturnJson updateInvoiceById(AddInvoiceDTO addInvoiceDto);
-
     /**
      * 分包开票，待开票
      *

@@ -164,7 +164,7 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
         Address address = addressDao.selectById(invoiceApplication.getApplicationAddress());
         AddressVO addressVo = new AddressVO();
         BeanUtils.copyProperties(address, addressVo);
-        queryApplicationInvoiceVo.setAddressVO(addressVo);
+        queryApplicationInvoiceVo.setAddressVo(addressVo);
         InvoiceCatalog invoiceCatalog = invoiceCatalogDao.selectById(invoiceApplication.getInvoiceCatalogType());
         InvoiceCatalogVO invoiceCatalogVo = new InvoiceCatalogVO();
         BeanUtils.copyProperties(invoiceCatalog, invoiceCatalogVo);
@@ -245,12 +245,6 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
         Page page = new Page(tobeinvoicedDto.getPageNo(), tobeinvoicedDto.getPageSize());
         IPage<InvoiceVO> list = invoiceDao.getListInvoicequery(page, tobeinvoicedDto);
         return ReturnJson.success(list);
-    }
-
-    @Override
-    public ReturnJson updateInvoiceById(AddInvoiceDTO addInvoiceDto) {
-        ReturnJson returnJson = new ReturnJson("操作失败", 300);
-        return returnJson;
     }
 
     /**

@@ -1,7 +1,11 @@
 package com.example.merchant.service.impl;
 
+import com.alibaba.excel.EasyExcelFactory;
+import com.alibaba.excel.ExcelReader;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.example.common.util.*;
+import com.example.merchant.excel.MakerExcel;
+import com.example.merchant.excel.MakerReadListener;
 import com.example.merchant.service.FileOperationService;
 import com.example.merchant.service.WorkerService;
 import com.example.mybatis.entity.MakerInvoice;
@@ -10,6 +14,7 @@ import com.example.mybatis.entity.Worker;
 import com.example.mybatis.mapper.MakerInvoiceDao;
 import com.example.mybatis.mapper.WorkerDao;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -62,35 +67,52 @@ public class FileOperationServiceImpl implements FileOperationService {
 
 
     @Override
-    public ReturnJson getExcelWorker(MultipartFile workerExcel) {
+    public ReturnJson getExcelWorker(MultipartFile workerExcel) throws IOException {
         if (workerExcel.getSize() == 0) {
             return ReturnJson.error("上传文件内容不能为空！");
         }
-        List<Map<String, Object>> maps = ExcelResponseUtils.workerExcel(workerExcel);
-        List mobileCodes = new ArrayList();
-        for (Map<String, Object> map : maps) {
-            mobileCodes.add(map.get("MobileCode"));
+        // 查询上传文件的后缀
+        String suffix = workerExcel.getOriginalFilename();
+        if ((!StringUtils.endsWithIgnoreCase(suffix, ".xls") && !StringUtils.endsWithIgnoreCase(suffix, ".xlsx"))) {
+            return ReturnJson.error("请选择Excel文件");
         }
+
+        //MultipartFile转InputStream
+        InputStream inputStream = workerExcel.getInputStream();
+
+        //根据总包支付清单生成分包
+        MakerReadListener makerReadListener = new MakerReadListener();
+        ExcelReader excelReader = EasyExcelFactory.read(inputStream, MakerExcel.class, makerReadListener).headRowNumber(1).build();
+        excelReader.readAll();
+        List<MakerExcel> makerExcelList = makerReadListener.getList();
+
+
+        List mobileCodes = new ArrayList();
+        for (MakerExcel makerExcel : makerExcelList) {
+            mobileCodes.add(makerExcel.getPhoneNumber());
+        }
+
         List<Worker> workers = workerDao.selectList(new QueryWrapper<Worker>().in("mobile_code", mobileCodes));
         mobileCodes = new ArrayList();
         for (Worker worker : workers) {
             mobileCodes.add(worker.getMobileCode());
         }
-        for (Map<String, Object> map : maps) {
-            if (!mobileCodes.contains(map.get("MobileCode"))) {
+        for (MakerExcel makerExcel : makerExcelList) {
+            if (!mobileCodes.contains(makerExcel.getPhoneNumber())) {
                 Worker worker = new Worker();
-                String idCardCode = (String) map.get("IDCardCode");
-                String mobileCode = String.valueOf(map.get("MobileCode"));
-                worker.setAccountName((String) map.get("WorkerName"));
-                worker.setMobileCode(mobileCode);
-                worker.setIdcardBack(idCardCode);
-                worker.setBankCode((String) map.get("BankCode"));
-                worker.setUserName(mobileCode);
+                String idCardCode = makerExcel.getIdcardNo();
+                worker.setAccountName(makerExcel.getName());
+                worker.setMobileCode(makerExcel.getPhoneNumber());
+                worker.setIdcardCode(idCardCode);
+                worker.setBankName(makerExcel.getBankName());
+                worker.setBankCode(makerExcel.getBankCardNo());
+                worker.setUserName(makerExcel.getPhoneNumber());
                 worker.setWorkerStatus(1);
                 worker.setUserPwd(PWD_KEY + MD5.md5(idCardCode.substring(12)));
                 workers.add(worker);
             }
         }
+        excelReader.finish();
         return ReturnJson.success(workers);
     }
 
@@ -101,7 +123,7 @@ public class FileOperationServiceImpl implements FileOperationService {
         }
         String[] files = {"pdf", "jpg", "png", "rar", "zip", "7z", "arj"};
         String fileName = uploadJpgOrPdf.getOriginalFilename();
-        String suffixName = fileName.substring(fileName.indexOf(".") + 1);
+        String suffixName = fileName.substring(fileName.lastIndexOf(".") + 1);
         if (Arrays.asList(files).contains(suffixName.toLowerCase())) {
             String newFileName = UuidUtil.get32UUID() + "." + suffixName;
             File fileMkdir = new File(PathImage_KEY);
@@ -184,7 +206,7 @@ public class FileOperationServiceImpl implements FileOperationService {
         }
         String[] files = {"xlsx", "xls"};
         String fileName = uploadInvoice.getOriginalFilename();
-        String suffixName = fileName.substring(fileName.indexOf(".") + 1);
+        String suffixName = fileName.substring(fileName.lastIndexOf(".") + 1);
         if (Arrays.asList(files).contains(suffixName)) {
             List<Map<String, Object>> maps = ExcelResponseUtils.paymentInventoryExcel(uploadInvoice);
             List<PaymentInventory> paymentInventorys = new ArrayList<>();
@@ -248,7 +270,7 @@ public class FileOperationServiceImpl implements FileOperationService {
         }
         String[] files = {"pdf", "jpg", "png", "rar", "zip", "7z", "arj"};
         String fileName = uploadTaxReceipt.getOriginalFilename();
-        String suffixName = fileName.substring(fileName.indexOf(".") + 1);
+        String suffixName = fileName.substring(fileName.lastIndexOf(".") + 1);
         if (Arrays.asList(files).contains(suffixName.toLowerCase())) {
             String newFileName = UuidUtil.get32UUID() + "." + suffixName;
             File fileMkdir = new File(PathImage_KEY);
@@ -285,7 +307,7 @@ public class FileOperationServiceImpl implements FileOperationService {
         }
         String[] files = {"avi", "vavi", "mp4"};
         String fileName = uploadVideo.getOriginalFilename();
-        String suffixName = fileName.substring(fileName.indexOf(".") + 1);
+        String suffixName = fileName.substring(fileName.lastIndexOf(".") + 1);
         if (Arrays.asList(files).contains(suffixName.toLowerCase())) {
             String newFileName = UuidUtil.get32UUID() + "." + suffixName;
             File fileMkdir = new File(PathVideo_KEY);

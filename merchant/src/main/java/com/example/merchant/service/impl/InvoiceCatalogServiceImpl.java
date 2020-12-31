@@ -36,7 +36,7 @@ public class InvoiceCatalogServiceImpl implements InvoiceCatalogService {
     public ReturnJson getListInv(String id, Integer packageStatus) {
         List<String> list = Arrays.asList(id.split(","));
         if (packageStatus == 0) {
-            PaymentOrder paymentOrder = paymentOrderDao.selectById(list.get(1));
+            PaymentOrder paymentOrder = paymentOrderDao.selectById(list.get(0));
             String supportCategory = taxPackageDao.selectOne(new QueryWrapper<TaxPackage>()
                     .eq("tax_id", paymentOrder.getTaxId())
                     .eq("package_status", packageStatus)).getSupportCategory();

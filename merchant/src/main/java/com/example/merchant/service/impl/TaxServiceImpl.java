@@ -229,7 +229,7 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
 
     @Override
     public ReturnJson getTaxList(TaxListDTO taxListDto) {
-        Page<TaxListPO> taxListPOPage = new Page<>(taxListDto.getPage(), taxListDto.getPageSize());
+        Page<TaxListPO> taxListPOPage = new Page<>(taxListDto.getPageNo(), taxListDto.getPageSize());
         IPage<TaxListPO> taxListPage = taxDao.selectTaxList(taxListPOPage, taxListDto.getTaxName(), taxListDto.getStartDate(), taxListDto.getEndDate());
         return ReturnJson.success(taxListPage);
     }

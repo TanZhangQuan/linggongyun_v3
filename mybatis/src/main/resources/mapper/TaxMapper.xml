@@ -195,11 +195,11 @@
         <result column="payee" property="payee"/>
         <result column="bank_code" property="bankCode"/>
         <result column="bank_name" property="bankName"/>
-        <collection property="companyLadderServiceVOS" ofType="com.example.mybatis.vo.CompanyLadderServiceVO">
+        <collection property="companyLadderServiceVos" ofType="com.example.mybatis.vo.CompanyLadderServiceVO">
             <id column="cls_id" property="companyLadderServiceId"/>
             <result column="start_money" property="startMoney"/>
             <result column="end_money" property="endMoney"/>
-            <result column="service_charge" property="serviceCharge"/>
+            <result column="clsservice_charge" property="serviceCharge"/>
         </collection>
     </resultMap>
 
@@ -219,13 +219,13 @@
             cls.id as cls_id,
             cls.start_money,
             cls.end_money,
-            cls.service_charge
+            cls.service_charge as clsservice_charge
         FROM
             tb_company_info ci
         INNER JOIN tb_company_tax ct ON ct.company_id = ci.id
         INNER JOIN tb_tax t ON t.id = ct.tax_id
-        INNER JOIN tb_company_ladder_service cls ON cls.company_tax_id = ct.id
-        INNER JOIN tb_tax_package tp ON tp.tax_id = t.id
+        LEFT JOIN tb_company_ladder_service cls ON cls.company_tax_id = ct.id
+        LEFT JOIN tb_tax_package tp ON tp.tax_id = t.id
         AND tp.package_status = (
 
             IF (ct.package_status = 0, 0, 1)

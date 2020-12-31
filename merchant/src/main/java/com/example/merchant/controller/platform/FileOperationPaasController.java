@@ -27,7 +27,7 @@ public class FileOperationPaasController {
 
     @PostMapping("/uploadWorker")
     @ApiOperation(value = "导入创客Excel表", notes = "导入创客Excel表", httpMethod = "POST")
-    public ReturnJson uploadWorker(@ApiParam(value = "导入创客Excel表", required = true) @RequestParam("workerExcel") MultipartFile workerExcel) {
+    public ReturnJson uploadWorker(@ApiParam(value = "导入创客Excel表", required = true) @RequestParam("workerExcel") MultipartFile workerExcel) throws IOException {
         return fileOperationService.getExcelWorker(workerExcel);
     }
 

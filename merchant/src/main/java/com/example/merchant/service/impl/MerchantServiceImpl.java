@@ -487,7 +487,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         queryCooperationInfoVo.setCompanyInfoId(companyId);
         companyVo.setQueryCooperationInfoVo(queryCooperationInfoVo);
         List<CooperationInfoVO> cooperationInfoVOList = taxDao.queryCooper(companyId);
-        companyVo.setCooperationInfoVOList(cooperationInfoVOList);
+        companyVo.setCooperationInfoVoList(cooperationInfoVOList);
         return ReturnJson.success(companyVo);
     }
 
@@ -519,8 +519,8 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         merchantDao.updateById(merchant);
         List<UpdateCompanyTaxDTO> updateCompanyTaxDTOList = updateCompanyDto.getUpdateCompanyTaxDtoList();
         for (int i = 0; i < updateCompanyTaxDTOList.size(); i++) {
-            CompanyTax companyTax;
-            if (updateCompanyTaxDTOList.get(i).getId() != null) {
+            CompanyTax companyTax = new CompanyTax();
+            if (updateCompanyTaxDTOList.get(i).getId() != null && updateCompanyTaxDTOList.get(i).getId() != "") {
                 companyTax = companyTaxDao.selectById(updateCompanyTaxDTOList.get(i).getId());
                 if (companyTax == null) {
                     return ReturnJson.error("信息错误");
@@ -545,9 +545,9 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
                         }
                     }
                 }
-            }
-            if (updateCompanyTaxDTOList.get(i).getId() == null) {
-                companyTax = companyTaxDao.selectById(updateCompanyTaxDTOList.get(i).getId());
+            }else {
+                BeanUtils.copyProperties(updateCompanyTaxDTOList.get(i),companyTax);
+                companyTax.setCompanyId(updateCompanyDto.getUpdateCompanyInfoDto().getId());
                 companyTaxDao.insert(companyTax);
                 List<UpdateCompanyLadderServiceDTO> updateCompanyLadderServiceDtoList = updateCompanyTaxDTOList.get(i).getUpdateCompanyLadderServiceDtoList();
                 if (updateCompanyLadderServiceDtoList != null) {
