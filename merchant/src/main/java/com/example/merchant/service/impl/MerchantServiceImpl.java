@@ -374,10 +374,8 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         CompanyInvoiceInfo companyInvoiceInfo = new CompanyInvoiceInfo();
         BeanUtils.copyProperties(companyDto.getAddCompanyInvoiceInfoDto(), companyInvoiceInfo);
 
-        companyInfo.setBankName(companyInvoiceInfo.getBankName());
-        companyInfo.setBankCode(companyInvoiceInfo.getBankCode());
-        companyInfo.setTelephones(companyInvoiceInfo.getMobile());
-        companyInfo.setCompanyAddress(companyInvoiceInfo.getCompanyAddress());
+        companyInfo.setAddressAndTelephone(companyInvoiceInfo.getAddressAndTelephone());
+        companyInfo.setBankAndAccount(companyInvoiceInfo.getBankAndAccount());
 
         companyInfoDao.insert(companyInfo);
         companyInvoiceInfo.setCompanyId(companyInfo.getId());
@@ -475,16 +473,19 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         Merchant merchant = merchantDao.selectOne(new QueryWrapper<Merchant>().eq("company_id", companyId).eq("parent_id", 0));
         QueryMerchantInfoVO queryMerchantInfoVo = new QueryMerchantInfoVO();
         BeanUtils.copyProperties(merchant, queryMerchantInfoVo);
-        queryMerchantInfoVo.setPassWord("");
+        queryMerchantInfoVo.setPassWord(null);
+        queryMerchantInfoVo.setPayPwd(null);
         companyVo.setQueryMerchantInfoVo(queryMerchantInfoVo);
         QueryCooperationInfoVO queryCooperationInfoVo = new QueryCooperationInfoVO();
         queryCooperationInfoVo.setSalesManId(companyInfo.getSalesManId());
         queryCooperationInfoVo.setAgentId(companyInfo.getAgentId());
         Managers managers = managersDao.selectById(companyInfo.getSalesManId());
         queryCooperationInfoVo.setSalesManName(managers.getRealName());
-        managers = managersDao.selectById(companyInfo.getAgentId());
-        queryCooperationInfoVo.setAgentName(managers.getRealName());
-        queryCooperationInfoVo.setCompanyInfoId(companyId);
+        if (companyInfo.getAgentId() != null && companyInfo.getAgentId() == "") {
+            managers = managersDao.selectById(companyInfo.getAgentId());
+            queryCooperationInfoVo.setAgentName(managers.getRealName());
+            queryCooperationInfoVo.setCompanyInfoId(companyId);
+        }
         companyVo.setQueryCooperationInfoVo(queryCooperationInfoVo);
         List<CooperationInfoVO> cooperationInfoVOList = taxDao.queryCooper(companyId);
         companyVo.setCooperationInfoVoList(cooperationInfoVOList);
@@ -545,8 +546,8 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
                         }
                     }
                 }
-            }else {
-                BeanUtils.copyProperties(updateCompanyTaxDTOList.get(i),companyTax);
+            } else {
+                BeanUtils.copyProperties(updateCompanyTaxDTOList.get(i), companyTax);
                 companyTax.setCompanyId(updateCompanyDto.getUpdateCompanyInfoDto().getId());
                 companyTaxDao.insert(companyTax);
                 List<UpdateCompanyLadderServiceDTO> updateCompanyLadderServiceDtoList = updateCompanyTaxDTOList.get(i).getUpdateCompanyLadderServiceDtoList();

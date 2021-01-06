@@ -72,4 +72,10 @@ public class TaskMakerendController {
     public ReturnJson queryIndustryType() {
         return taskService.getindustryType();
     }
+
+    @ApiOperation(value = "待接单")
+    @GetMapping(value = "/getAllTask")
+    public ReturnJson getAllTask() {
+        return taskService.getAllTask();
+    }
 }

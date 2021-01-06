@@ -139,13 +139,11 @@ public class MakerTotalInvoiceServiceImpl extends ServiceImpl<MakerTotalInvoiceD
         PaymentOrder paymentOrder = paymentOrderDao.selectById(paymentOrderVOList.get(0).getId());
         BuyerVO buyerVo = new BuyerVO();
         Tax tax = taxDao.selectById(paymentOrder.getTaxId());
-        buyerVo.setCompanyAddress(tax.getTaxAddress());
+        buyerVo.setAddressAndTelephone(tax.getTaxAddress() + "," + tax.getLinkMobile());
         buyerVo.setCompanyName(tax.getTaxSName());
         buyerVo.setCreditCode(tax.getCreditCode());
-        buyerVo.setTelephones(tax.getLinkMobile());
         TaxPackage taxPackage = taxPackageDao.selectOne(new QueryWrapper<TaxPackage>().eq("tax_id", tax.getId()).eq("package_status", 0));
-        buyerVo.setBankCode(taxPackage.getBankCode());
-        buyerVo.setBankName(taxPackage.getBankName());
+        buyerVo.setBankAndAccount(taxPackage.getBankName() + "," + taxPackage.getBankCode());
         makerTotalInvoiceInfoVo.setBuyerVo(buyerVo);
         return ReturnJson.success(makerTotalInvoiceInfoVo);
     }

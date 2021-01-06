@@ -8,8 +8,12 @@ import com.example.mybatis.dto.PlatformTaskDTO;
 import com.example.mybatis.dto.TaskDTO;
 import com.example.mybatis.dto.TaskListDTO;
 import com.example.mybatis.entity.Task;
+import com.example.mybatis.vo.AssociatedTasksVO;
 import com.example.mybatis.vo.TaskInfoVO;
+import com.example.mybatis.vo.TaskWorkerVO;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * <p>
@@ -90,4 +94,8 @@ public interface TaskDao extends BaseMapper<Task> {
     int addPlatformTask(TaskDTO TaskDto);
 
     IPage<TaskInfoVO> setTask(Page page, @Param("industryType") String s);
+
+    List<TaskWorkerVO> getAllTask();
+
+    IPage<AssociatedTasksVO> getAssociatedTasks(Page page,String merchantId, Integer cooperateMode);
 }

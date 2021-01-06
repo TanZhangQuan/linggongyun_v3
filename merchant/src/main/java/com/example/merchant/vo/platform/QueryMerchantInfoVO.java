@@ -17,6 +17,9 @@ public class QueryMerchantInfoVO implements Serializable {
     @ApiModelProperty(value = "登录密码")
     private String passWord;
 
+    @ApiModelProperty(value = "支付密码")
+    private String payPwd;
+
     @ApiModelProperty(value = "登录时用的手机号码")
     private String loginMobile;
 

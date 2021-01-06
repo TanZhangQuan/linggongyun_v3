@@ -88,9 +88,14 @@ public class CompanyInfo extends BaseEntity {
     private String companyName;
 
     /**
-     * 公司的详细地址
+     * 开户行and账号
      */
-    private String companyAddress;
+    private String bankAndAccount;
+
+    /**
+     * 公司地址and电话
+     */
+    private String addressAndTelephone;
 
     /**
      * 公司的注册资本
@@ -101,16 +106,6 @@ public class CompanyInfo extends BaseEntity {
      * 公司的成立时间
      */
     private LocalDate companyCreateDate;
-
-    /**
-     * 开户行(银行名称)
-     */
-    private String bankName;
-
-    /**
-     * 银行账号
-     */
-    private String bankCode;
 
     /**
      * 网商银行会员号
@@ -126,11 +121,6 @@ public class CompanyInfo extends BaseEntity {
      * 网商银行绑定银行卡
      */
     private String bankId;
-
-    /**
-     * 公司电话(对外公共)
-     */
-    private String telephones;
 
     /**
      * 公司联系人

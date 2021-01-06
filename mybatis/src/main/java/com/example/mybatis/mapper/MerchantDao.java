@@ -33,6 +33,7 @@ public interface MerchantDao extends BaseMapper<Merchant> {
 
     /**
      * 查询商户今日成交总额
+     *
      * @param merchantId
      * @return
      */
@@ -40,6 +41,7 @@ public interface MerchantDao extends BaseMapper<Merchant> {
 
     /**
      * 查询商户本周成交总额
+     *
      * @param merchantId
      * @return
      */
@@ -47,6 +49,7 @@ public interface MerchantDao extends BaseMapper<Merchant> {
 
     /**
      * 查询商户本月成交总额
+     *
      * @param merchantId
      * @return
      */
@@ -54,6 +57,7 @@ public interface MerchantDao extends BaseMapper<Merchant> {
 
     /**
      * 查询商户本年成交总额
+     *
      * @param merchantId
      * @return
      */
@@ -64,7 +68,7 @@ public interface MerchantDao extends BaseMapper<Merchant> {
     /*----------平台端-------------*/
 
     IPage<MerchantInfoPo> selectMerchantInfoPo(Page page, @Param("merchantIds") List<String> merchantIds, @Param("merchantId") String merchantId,
-                                               @Param("merchantName") String merchantName, @Param("linkMobile") String linkMobile,@Param("auditStatus")Integer auditStatus);
+                                               @Param("merchantName") String merchantName, @Param("linkMobile") String linkMobile, @Param("auditStatus") Integer auditStatus);
 
     IPage<MerchantPaymentListPO> selectMerchantPaymentList(Page page, @Param("merchantId") String merchantId);
 }

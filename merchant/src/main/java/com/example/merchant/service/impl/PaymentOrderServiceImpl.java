@@ -8,6 +8,7 @@ import com.example.common.util.ExpressLogisticsInfo;
 import com.example.common.util.KdniaoTrackQueryAPI;
 import com.example.common.util.ReturnJson;
 import com.example.common.util.VerificationCheck;
+import com.example.merchant.dto.AssociatedTasksDTO;
 import com.example.merchant.dto.merchant.AddPaymentOrderDTO;
 import com.example.merchant.dto.merchant.PaymentDTO;
 import com.example.merchant.dto.merchant.PaymentOrderMerchantDTO;
@@ -82,6 +83,9 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
 
     @Resource
     private MerchantDao merchantDao;
+
+    @Resource
+    private TaskDao taskDao;
 
 
     /**
@@ -212,6 +216,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
         BigDecimal compositeTax = new BigDecimal("0");
         BigDecimal countMoney = new BigDecimal("0");
         BigDecimal countWorkerMoney = new BigDecimal("0");
+
 
         CompanyTax companyTax = companyTaxDao.selectOne(new QueryWrapper<CompanyTax>()
                 .eq("tax_id", paymentOrder.getTaxId())
@@ -486,6 +491,13 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
         }
         YearTradeVO yearTradeVO = paymentOrderDao.selectYearpaa(merchantIds);
         return ReturnJson.success(yearTradeVO);
+    }
+
+    @Override
+    public ReturnJson associatedTasks(String merchantId, AssociatedTasksDTO associatedTasksDto) {
+        Page page=new Page(associatedTasksDto.getPageNo(),associatedTasksDto.getPageSize());
+        IPage<AssociatedTasksVO> voiPage=taskDao.getAssociatedTasks(page,merchantId,associatedTasksDto.getCooperateMode());
+        return ReturnJson.success(voiPage);
     }
 
     /**

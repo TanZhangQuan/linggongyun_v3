@@ -97,11 +97,6 @@ public class PaymentOrder extends BaseEntity {
     private String taskName;
 
     /**
-     * 任务类型（行业类型）
-     */
-    private String taskType;
-
-    /**
      * 支付验收单（存储位置）
      */
     private String acceptanceCertificate;

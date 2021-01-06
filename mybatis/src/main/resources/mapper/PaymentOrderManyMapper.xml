@@ -329,8 +329,7 @@
         <result column="create_date" property="creatDate"/>
         <result column="many_payment" property="manyPayment"/>
         <result column="company_name" property="companyName"/>
-        <result column="payment_bank_name" property="paymentBankName"/>
-        <result column="payment_bank_code" property="paymentBankCode"/>
+        <result column="bank_and_account" property="bankAndAccount"/>
         <result column="payee" property="payee"/>
         <result column="payee_bank_name" property="payeeBankName"/>
         <result column="payee_bank_code" property="payeeBankCode"/>
@@ -441,7 +440,7 @@
         </association>
     </resultMap>
 
-    <!--查询总包订单信息-->
+    <!--查询众包订单信息-->
     <select id="selectPaymentOrderInfo" parameterType="string" resultMap="PaymentOrderInfoPOResultMap">
         SELECT
         pom.id,
@@ -456,10 +455,8 @@
         pom.create_date,
         pom.many_payment,
         pom.task_name,
-        pom.task_type,
         ci.company_name,
-        ci.bank_name AS payment_bank_name,
-        ci.bank_code AS payment_bank_code,
+        ci.bank_and_account,
         tp.payee,
         tp.bank_name AS payee_bank_name,
         tp.bank_code AS payee_bank_code

@@ -22,10 +22,8 @@
     <resultMap id="BuyerById" type="com.example.mybatis.vo.BuyerVO">
         <result column="company_name" property="companyName"/>
         <result column="credit_code" property="creditCode"/>
-        <result column="company_address" property="companyAddress"/>
-        <result column="telephones" property="telephones"/>
-        <result column="bank_name" property="bankName"/>
-        <result column="bank_code" property="bankCode"/>
+        <result column="address_and_telephone" property="addressAndTelephone"/>
+        <result column="bank_and_account" property="bankAndAccount"/>
     </resultMap>
 
     <resultMap type="com.example.mybatis.vo.TodayVO" id="dayTradeVO">
@@ -139,9 +137,14 @@
     </select>
 
     <select id="getBuyerById" resultMap="BuyerById">
-        SELECT m.company_name,ci.credit_code,ci.company_address,ci.telephones,ci.bank_name,ci.bank_code
-        FROM tb_merchant as m
-        LEFT JOIN tb_company_info as ci ON m.company_id=ci.id
+        SELECT
+            m.company_name,
+            ci.credit_code,
+            ci.address_and_telephone,
+            ci.bank_and_account
+        FROM
+            tb_merchant AS m
+        LEFT JOIN tb_company_info AS ci ON m.company_id = ci.id
         WHERE m.id=#{id}
     </select>
 
@@ -192,6 +195,7 @@
                 and b.link_mobile = #{linkMobile}
             </if>
         </where>
+        order by a.create_date desc
     </select>
 
     <!--商户支付列表-->

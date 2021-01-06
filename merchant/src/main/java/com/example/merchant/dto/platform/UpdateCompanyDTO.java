@@ -8,7 +8,7 @@ import java.io.Serializable;
 import java.util.List;
 
 @Data
-@ApiModel(description = "XXXXX")
+@ApiModel(description = "修改公司信息")
 public class UpdateCompanyDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 

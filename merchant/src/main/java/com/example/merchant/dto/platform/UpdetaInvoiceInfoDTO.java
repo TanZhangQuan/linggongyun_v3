@@ -17,18 +17,12 @@ public class UpdetaInvoiceInfoDTO implements Serializable {
     @ApiModelProperty(value = "公司全称")
     private String companyName;
 
-    @ApiModelProperty(value = "公司地址")
-    private String companyAddress;
-
     @ApiModelProperty(value = "纳税识别号")
     private String taxCode;
 
-    @ApiModelProperty(value = "开户行")
-    private String bankName;
+    @ApiModelProperty(value = "地址及电话")
+    private String addressAndTelephone;
 
-    @ApiModelProperty(value = "银行账号")
-    private String bankCode;
-
-    @ApiModelProperty(value = "电话")
-    private String mobile;
+    @ApiModelProperty(value = "开户行及账号")
+    private String bankAndAccount;
 }

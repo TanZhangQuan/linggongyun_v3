@@ -2,6 +2,7 @@ package com.example.merchant.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.common.util.ReturnJson;
+import com.example.merchant.dto.AssociatedTasksDTO;
 import com.example.merchant.dto.merchant.AddPaymentOrderDTO;
 import com.example.merchant.dto.merchant.PaymentOrderMerchantDTO;
 import com.example.merchant.dto.platform.PaymentOrderDTO;
@@ -182,4 +183,13 @@ public interface PaymentOrderService extends IService<PaymentOrder> {
      * @return
      */
     ReturnJson getYearPaa(String merchantId) throws CommonException;
+
+    /**
+     * 获取可关联的任务
+     *
+     * @param merchantId
+     * @param associatedTasksDTO
+     * @return
+     */
+    ReturnJson associatedTasks(String merchantId, AssociatedTasksDTO associatedTasksDTO);
 }

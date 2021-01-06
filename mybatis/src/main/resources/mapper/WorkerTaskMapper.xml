@@ -55,17 +55,34 @@
         <result column="task_cost_min" property="taskCostMin"/>
         <result column="task_cost_max" property="taskCostMax"/>
         <result column="cooperate_mode" property="cooperateMode"/>
-        <result column="release_date" property="releaseDate"/>
-        <result column="deadline_date" property="deadlineDate"/>
-        <result column="industry_type" property="industryType"/>
+        <result column="company_name" property="companyName"/>
+        <result column="upper_limit" property="upperLimit"/>
+        <result column="task_code" property="taskCode"/>
+        <result column="task_mode" property="taskMode"/>
+        <result column="available_time" property="availableTime"/>
+        <result column="create_date" property="createDate"/>
         <result column="status" property="status"/>
     </resultMap>
 
     <select id="myTask" resultMap="workerTask">
-        SELECT 	t.id as task_id,wt.id as worker_task_id,t.task_name,t.task_cost_min,t.task_cost_max, t.cooperate_mode,
-        t.release_date,t.deadline_date,t.industry_type,wt.`status`
-        FROM tb_task t
-        INNER JOIN tb_worker_task wt ON wt.task_id=t.id
+        SELECT
+            t.id AS task_id,
+            wt.id AS worker_task_id,
+            m.company_name,
+            t.task_name,
+            t.cooperate_mode,
+            t.task_mode,
+            t.create_date,
+            t.task_code,
+            t.upper_limit,
+            t.deadline_date - t.release_date AS available_time,
+            t.task_cost_min,
+            t.task_cost_max,
+            wt.`status`
+        FROM
+            tb_task t
+        INNER JOIN tb_worker_task wt ON wt.task_id = t.id
+        INNER JOIN tb_merchant m ON m.id = t.merchant_id
         WHERE wt.worker_id=#{workerId}
         <if test="status != null and status != ''">
             <if test="status ==0 ">
@@ -78,7 +95,7 @@
                 AND wt.`status` in(2)
             </if>
         </if>
-        ORDER BY wt.create_date desc
+        ORDER BY wt.create_date DESC
     </select>
     <select id="queryWorkerTaskInfo" resultMap="workerTaskInfo">
         SELECT

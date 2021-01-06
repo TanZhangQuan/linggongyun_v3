@@ -309,19 +309,15 @@
     <resultMap id="BuyerById" type="com.example.mybatis.vo.BuyerVO">
         <result column="company_name" property="companyName"/>
         <result column="credit_code" property="creditCode"/>
-        <result column="company_address" property="companyAddress"/>
-        <result column="telephones" property="telephones"/>
-        <result column="bank_name" property="bankName"/>
-        <result column="bank_code" property="bankCode"/>
+        <result column="address_and_telephone" property="addressAndTelephone"/>
+        <result column="bank_and_account" property="bankAndAccount"/>
     </resultMap>
     <select id="getBuyer" resultType="com.example.mybatis.vo.BuyerVO">
         SELECT
-        m.company_name,
-        ci.credit_code,
-        ci.company_address,
-        ci.telephones,
-        ci.bank_name,
-        ci.bank_code
+            m.company_name,
+            ci.credit_code,
+            ci.address_and_telephone,
+	        ci.bank_and_account
         FROM
             tb_merchant AS m
         LEFT JOIN tb_company_info AS ci ON m.company_id = ci.id

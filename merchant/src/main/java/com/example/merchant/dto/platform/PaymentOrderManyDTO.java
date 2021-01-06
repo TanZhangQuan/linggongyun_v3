@@ -18,9 +18,6 @@ public class PaymentOrderManyDTO implements Serializable {
     @ApiModelProperty(value = "任务名称")
     private String taskName;
 
-    @ApiModelProperty(value = "任务类型（行业类型）")
-    private String taskType;
-
     @ApiModelProperty(value = "平台服务商ID")
     @NotBlank(message = "平台服务商ID不能为空")
     private String taxId;
