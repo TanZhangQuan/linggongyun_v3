@@ -22,9 +22,6 @@ public class PaymentOrderInfoPO {
     @ApiModelProperty("任务名称")
     private String taskName;
 
-    @ApiModelProperty("任务类型")
-    private String taskType;
-
     @ApiModelProperty("服务商ID")
     private String taxId;
 
@@ -71,11 +68,8 @@ public class PaymentOrderInfoPO {
     @ApiModelProperty("商户名称（也是总包的支付方）")
     private String companyName;
 
-    @ApiModelProperty("支付方的开户行")
-    private String paymentBankName;
-
-    @ApiModelProperty("支付方的银行卡号")
-    private String paymentBankCode;
+    @ApiModelProperty("支付方的开户行及账号")
+    private String bankAndAccount;
 
     @ApiModelProperty("收款人（也是分包的支付人）")
     private String payee;

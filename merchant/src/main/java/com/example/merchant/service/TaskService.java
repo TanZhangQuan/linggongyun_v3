@@ -38,6 +38,7 @@ public interface TaskService extends IService<Task> {
 
     /**
      * 添加任务
+     *
      * @param addTaskDto
      * @param userId
      * @return
@@ -139,5 +140,12 @@ public interface TaskService extends IService<Task> {
      * @return
      */
     ReturnJson getindustryType();
+
+    /**
+     * 根据创客ID筛选创客未接单的任务
+     *
+     * @return
+     */
+    ReturnJson getAllTask();
 
 }

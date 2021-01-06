@@ -2,6 +2,7 @@ package com.example.merchant.controller.merchant;
 
 
 import com.example.common.util.ReturnJson;
+import com.example.merchant.dto.AssociatedTasksDTO;
 import com.example.merchant.dto.merchant.AddPaymentOrderDTO;
 import com.example.merchant.dto.merchant.PaymentOrderMerchantDTO;
 import com.example.merchant.interceptor.LoginRequired;
@@ -73,5 +74,13 @@ public class PaymentOrderMerchantController {
     public ReturnJson offlinePayment(@NotBlank @RequestParam(required = false) String paymentOrderId,
                                      @NotBlank @RequestParam(required = false) String turnkeyProjectPayment) {
         return paymentOrderService.offlinePayment(paymentOrderId, turnkeyProjectPayment);
+    }
+
+    @PostMapping("/associatedTasks")
+    @ApiOperation(value = "商户选择可关联任务", notes = "商户选择可关联任务", httpMethod = "POST")
+    @LoginRequired
+    public ReturnJson associatedTask(@RequestAttribute("userId") @ApiParam(hidden = true) String merchantId,
+                                      AssociatedTasksDTO associatedTasksDto) {
+        return paymentOrderService.associatedTasks(merchantId,associatedTasksDto);
     }
 }

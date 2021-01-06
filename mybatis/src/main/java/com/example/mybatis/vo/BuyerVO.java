@@ -17,15 +17,9 @@ public class BuyerVO implements Serializable {
     @ApiModelProperty(value = "纳税人识别号")
     private String creditCode;
 
-    @ApiModelProperty(value = "地址")
-    private String companyAddress;
+    @ApiModelProperty(value = "地址and电话")
+    private String addressAndTelephone;
 
-    @ApiModelProperty(value = "电话")
-    private String telephones;
-
-    @ApiModelProperty(value = "开户行")
-    private String bankName;
-
-    @ApiModelProperty(value = "卡号")
-    private String bankCode;
+    @ApiModelProperty(value = "开户行and卡号")
+    private String bankAndAccount;
 }

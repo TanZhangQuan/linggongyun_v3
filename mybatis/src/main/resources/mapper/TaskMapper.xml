@@ -166,6 +166,31 @@
         <result property="taskMode" column="task_mode"/>
     </resultMap>
 
+    <resultMap id="taskWorker" type="com.example.mybatis.vo.TaskWorkerVO">
+        <id property="id" column="id"/>
+        <result column="company_name" property="companyName"/>
+        <result column="task_name" property="taskName"/>
+        <result column="cooperate_mode" property="cooperateMode"/>
+        <result column="task_mode" property="taskMode"/>
+        <result column="create_date" property="createDate"/>
+        <result column="task_code" property="taskCode"/>
+        <result column="upper_limit" property="upperLimit"/>
+        <result column="available_time" property="availableTime"/>
+        <result column="task_cost_min" property="taskCostMin"/>
+        <result column="task_cost_max" property="taskCostMax"/>
+    </resultMap>
+
+    <resultMap id="associatedTasks" type="com.example.mybatis.vo.AssociatedTasksVO">
+        <id column="id" property="id"/>
+        <result column="task_code" property="taskCode"/>
+        <result column="task_name" property="taskName"/>
+        <result column="industry_type" property="industryType"/>
+        <result column="cooperate_mode" property="cooperateMode"/>
+        <result column="task_mode" property="taskMode"/>
+        <result column="state" property="state"/>
+        <result column="create_date" property="createDate"/>
+    </resultMap>
+
     <select id="setTask" resultMap="taskInfo">
         SELECT
             t.id,
@@ -189,5 +214,43 @@
         AND state = 0
         AND deadline_date > NOW()
         ORDER BY release_date DESC
+    </select>
+
+    <select id="getAllTask" resultMap="taskWorker">
+        SELECT
+            t.id,
+            m.company_name,
+            t.task_name,
+            t.cooperate_mode,
+            t.task_mode,
+            t.create_date,
+            t.task_code,
+            t.upper_limit,
+            t.deadline_date - t.release_date AS available_time,
+            t.task_cost_min,
+            t.task_cost_max
+        FROM
+            tb_task t
+        INNER JOIN tb_merchant m ON m.id = t.merchant_id
+        order by t.create_date desc
+    </select>
+
+    <select id="getAssociatedTasks" resultMap="associatedTasks">
+        SELECT
+            id,
+            task_code,
+            task_name,
+            industry_type,
+            cooperate_mode,
+            task_mode,
+            state,
+            create_date
+        FROM
+            tb_task
+        WHERE
+            merchant_id = #{param2}
+        AND cooperate_mode = #{param3}
+        AND state = 3
+        ORDER BY create_date DESC
     </select>
 </mapper>

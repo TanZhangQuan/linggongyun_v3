@@ -421,8 +421,7 @@
         <result column="company_name" property="companyName"/>
         <result column="subpackage_payment" property="subpackagePayment"/>
         <result column="turnkey_project_payment" property="turnkeyProjectPayment"/>
-        <result column="payment_bank_name" property="paymentBankName"/>
-        <result column="payment_bank_code" property="paymentBankCode"/>
+        <result column="bank_and_account" property="bankAndAccount"/>
         <result column="payee" property="payee"/>
         <result column="payee_bank_name" property="payeeBankName"/>
         <result column="payee_bank_code" property="payeeBankCode"/>
@@ -432,7 +431,6 @@
         <result column="composite_tax" property="compositeTax"/>
         <result column="tax_id" property="taxId"/>
         <result column="task_name" property="taskName"/>
-        <result column="task_type" property="taskType"/>
     </resultMap>
 
     <resultMap id="InvoiceListQuery" type="com.example.mybatis.vo.InvoiceListVO">
@@ -450,12 +448,11 @@
 
     <!--查询总包订单信息-->
     <select id="selectPaymentOrderInfo" parameterType="string" resultMap="PaymentOrderInfoPOResultMap">
-            SELECT
+        SELECT
             po.id,
             po.company_id,
             po.tax_id,
             po.task_name,
-            po.task_type,
             po.platform_service_provider,
             po.worker_money,
             po.company_contract,
@@ -473,8 +470,7 @@
             po.tax_status,
             po.composite_tax,
             ci.company_name,
-            ci.bank_name AS payment_bank_name,
-            ci.bank_code AS payment_bank_code,
+            ci.bank_and_account,
             tp.payee,
             tp.bank_name AS payee_bank_name,
             tp.bank_code AS payee_bank_code
@@ -589,20 +585,16 @@
      <resultMap id="BuyerById" type="com.example.mybatis.vo.BuyerVO">
         <result column="tax_name" property="companyName"/>
         <result column="credit_code" property="creditCode"/>
-        <result column="tax_address" property="companyAddress"/>
-        <result column="link_mobile" property="telephones"/>
-        <result column="bank_name" property="bankName"/>
-        <result column="bank_code" property="bankCode"/>
+        <result column="address_and_telephone" property="addressAndTelephone"/>
+        <result column="bank_and_account" property="bankAndAccount"/>
     </resultMap>
 
     <select id="queryBuyer" resultMap="BuyerById">
         SELECT
             t.tax_name,
             t.credit_code,
-            t.tax_address,
-            t.link_mobile,
-            tp.bank_name,
-            tp.bank_code
+           	CONCAT(t.tax_address,',',t.link_mobile)AS address_and_telephone,
+	        CONCAT(tp.bank_name,',',tp.bank_code)AS bank_and_account
         FROM
             tb_maker_total_invoice mti
         INNER JOIN tb_invoice_list il ON il.maker_total_invoice_id = mti.id

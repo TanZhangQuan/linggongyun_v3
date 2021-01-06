@@ -2,6 +2,7 @@ package com.example.merchant.controller.platform;
 
 
 import com.example.common.util.ReturnJson;
+import com.example.merchant.dto.AssociatedTasksDTO;
 import com.example.merchant.dto.merchant.AddPaymentOrderDTO;
 import com.example.merchant.dto.platform.PaymentOrderDTO;
 import com.example.merchant.exception.CommonException;
@@ -86,4 +87,10 @@ public class PaymentOrderPaasController {
         return paymentOrderService.confirmReceiptPaas(paymentOrderId);
     }
 
+    @PostMapping("/associatedTasks")
+    @ApiOperation(value = "商户选择可关联任务", notes = "商户选择可关联任务", httpMethod = "POST")
+    public ReturnJson associatedTasks(@NotBlank(message = "商户ID不能为空！") @RequestParam String merchantId,
+                                      AssociatedTasksDTO associatedTasksDto) {
+        return paymentOrderService.associatedTasks(merchantId,associatedTasksDto);
+    }
 }

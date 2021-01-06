@@ -81,6 +81,12 @@ public class PaymentOrderMany extends BaseEntity {
     private String taskId;
 
     /**
+     * 任务名称
+     */
+    @ApiModelProperty(notes = "任务名称", value = "任务名称")
+    private String taskName;
+
+    /**
      * 支付验收单（存储位置）
      */
     @ApiModelProperty(notes = "支付验收单", value = "支付验收单")

@@ -24,9 +24,6 @@ public class PaymentDTO implements Serializable {
     @ApiModelProperty(value = "任务名称")
     private String taskName;
 
-    @ApiModelProperty(value = "任务类型（行业类型）")
-    private String taskType;
-
     @ApiModelProperty(value = "商户的公司简称")
     private String companySName;
 

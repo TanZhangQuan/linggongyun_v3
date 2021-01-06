@@ -271,7 +271,7 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
         for (InvoiceListVO vo : voList) {
             PaymentInventory paymentInventory = new PaymentInventory();
             paymentInventory.setId(vo.getId());
-            totalTaxPrice = totalTaxPrice.add(vo.getTaskMoney());
+            totalTaxPrice = totalTaxPrice.add(vo.getRealMoney());
             List<InvoiceLadderPrice> invoiceLadderPrice = invoiceLadderPriceDao.selectList(new QueryWrapper<InvoiceLadderPrice>().eq("tax_id", vo.getTaxId()));
             if (invoiceLadderPrice != null) {
                 for (InvoiceLadderPrice price : invoiceLadderPrice) {

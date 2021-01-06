@@ -226,8 +226,8 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
         if (merchant != null) {
             paymentOrderMany.setCompanyId(merchant.getCompanyId());
             paymentOrderMany.setCompanySName(merchant.getCompanyName());
-        }else{
-            CompanyInfo companyInfo=companyInfoDao.selectById(merchantId);
+        } else {
+            CompanyInfo companyInfo = companyInfoDao.selectById(merchantId);
             paymentOrderMany.setCompanyId(companyInfo.getId());
             paymentOrderMany.setCompanySName(companyInfo.getCompanyName());
         }
@@ -243,7 +243,7 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
             this.removeById(id);
         }
 
-        BigDecimal receviceTax = new BigDecimal("0.00").divide(BigDecimal.valueOf(100));
+        BigDecimal receviceTax = new BigDecimal("100.00").divide(BigDecimal.valueOf(100));
         BigDecimal merchantTax = new BigDecimal("0.00").divide(BigDecimal.valueOf(100));
         BigDecimal compositeTax = new BigDecimal("0");
         BigDecimal countMoney = new BigDecimal("0");
@@ -252,7 +252,7 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
         CompanyTax companyTax = companyTaxDao.selectOne(new QueryWrapper<CompanyTax>().
                 eq("tax_id", paymentOrderMany.getTaxId()).
                 eq("company_id", paymentOrderMany.getCompanyId()).
-                eq("package_status",1));
+                eq("package_status", 1));
 
         if (companyTax.getChargeStatus() == 0) {
             compositeTax = companyTax.getServiceCharge().divide(BigDecimal.valueOf(100));
@@ -354,7 +354,7 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
     @Override
     public ReturnJson confirmPaymentManyPaas(String id) {
         PaymentOrderMany paymentOrderMany = paymentOrderManyDao.selectById(id);
-        if (paymentOrderMany==null){
+        if (paymentOrderMany == null) {
             return ReturnJson.error("不存在此众包支付信息！");
         }
         paymentOrderMany.setPaymentOrderStatus(3);
@@ -384,28 +384,28 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
     @Override
     public ReturnJson getDayPaa(String merchantId) throws CommonException {
         List<String> merchantIds = acquireID.getCompanyIds(merchantId);
-        TodayVO todayVO=paymentOrderManyDao.selectDaypaa(merchantIds);
+        TodayVO todayVO = paymentOrderManyDao.selectDaypaa(merchantIds);
         return ReturnJson.success(todayVO);
     }
 
     @Override
     public ReturnJson getWeekPaa(String merchantId) throws CommonException {
         List<String> merchantIds = acquireID.getCompanyIds(merchantId);
-        WeekTradeVO weekTradeVO=paymentOrderManyDao.selectWeekpaa(merchantIds);
+        WeekTradeVO weekTradeVO = paymentOrderManyDao.selectWeekpaa(merchantIds);
         return ReturnJson.success(weekTradeVO);
     }
 
     @Override
     public ReturnJson getMonthPaa(String merchantId) throws CommonException {
         List<String> merchantIds = acquireID.getCompanyIds(merchantId);
-        MonthTradeVO monthTradeVO=paymentOrderManyDao.selectMonthpaa(merchantIds);
+        MonthTradeVO monthTradeVO = paymentOrderManyDao.selectMonthpaa(merchantIds);
         return ReturnJson.success(monthTradeVO);
     }
 
     @Override
     public ReturnJson getYearPaa(String merchantId) throws CommonException {
         List<String> merchantIds = acquireID.getCompanyIds(merchantId);
-        YearTradeVO yearTradeVO=paymentOrderManyDao.selectYearpaa(merchantIds);
+        YearTradeVO yearTradeVO = paymentOrderManyDao.selectYearpaa(merchantIds);
         return ReturnJson.success(yearTradeVO);
     }
 

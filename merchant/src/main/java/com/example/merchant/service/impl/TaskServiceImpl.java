@@ -16,6 +16,7 @@ import com.example.mybatis.mapper.*;
 import com.example.merchant.service.TaskService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.mybatis.vo.TaskInfoVO;
+import com.example.mybatis.vo.TaskWorkerVO;
 import com.example.mybatis.vo.WorkerTaskVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -51,7 +52,10 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
     private WorkerDao workerDao;
     @Resource
     private IndustryDao industryDao;
-
+    @Resource
+    private CompanyInfoDao companyInfoDao;
+    @Resource
+    private CompanyTaxDao companyTaxDao;
 
     @Override
     public ReturnJson selectList(TaskListDTO taskListDto, String userId) {
@@ -75,6 +79,21 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
     @Transactional(rollbackFor = Exception.class)
     public ReturnJson saveTask(AddTaskDTO addTaskDto, String userId) {
         Merchant merchant = merchantDao.selectById(userId);
+        CompanyInfo companyInfo = companyInfoDao.selectById(merchant.getCompanyId());
+        List<CompanyTax> companyTaxList = companyTaxDao.selectList(new QueryWrapper<CompanyTax>()
+                .eq("company_id", companyInfo.getId()).eq("package_status", 0));
+        if (addTaskDto.getCooperateMode() == 0) {
+            if (companyTaxList == null) {
+                return ReturnJson.error("您还不能添加总包模式的任务信息！");
+            }
+        }
+        companyTaxList = companyTaxDao.selectList(new QueryWrapper<CompanyTax>()
+                .eq("company_id", companyInfo.getId()).eq("package_status", 1));
+        if (addTaskDto.getCooperateMode() == 1) {
+            if (companyTaxList == null) {
+                return ReturnJson.error("您还不能添加众包模式的任务信息！");
+            }
+        }
         DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         DateTimeFormatter df1 = DateTimeFormatter.ofPattern("HH:mm:ss");
         if (merchant == null) {
@@ -287,6 +306,12 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
     public ReturnJson getindustryType() {
         List<String> list = industryDao.getIndustryType();
         return ReturnJson.success(list);
+    }
+
+    @Override
+    public ReturnJson getAllTask() {
+        List<TaskWorkerVO> taskWorkerVOList = taskDao.getAllTask();
+        return ReturnJson.success(taskWorkerVOList);
     }
 
 }

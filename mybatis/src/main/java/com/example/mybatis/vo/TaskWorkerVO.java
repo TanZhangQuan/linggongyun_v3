@@ -6,18 +6,21 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
+/**
+ * @Description
+ * @Author JWei <jwei0401@163.com>
+ * @Date 2020/12/31
+ */
 @Data
-@ApiModel(description = "创客任务")
-public class WorkerTaskVO implements Serializable {
+@ApiModel("未接单任务")
+public class TaskWorkerVO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @ApiModelProperty(value = "任务ID")
-    private String taskId;
-
-    @ApiModelProperty(value = "创客-任务ID")
-    private String workerTaskId;
+    @ApiModelProperty(value = "ID")
+    private String id;
 
     @ApiModelProperty(value = "商户名称")
     private String companyName;
@@ -25,14 +28,8 @@ public class WorkerTaskVO implements Serializable {
     @ApiModelProperty(value = "任务名称")
     private String taskName;
 
-    @ApiModelProperty(value = "任务最小金额")
-    private String taskCostMin;
-
-    @ApiModelProperty(value = "任务最高金额")
-    private String taskCostMax;
-
     @ApiModelProperty(value = "合作类型")
-    private String cooperateMode;
+    private Integer cooperateMode;
 
     @ApiModelProperty(value = "工单模式")
     private Integer taskMode;
@@ -50,6 +47,9 @@ public class WorkerTaskVO implements Serializable {
     @ApiModelProperty(value = "一共时间天数")
     private Integer availableTime;
 
-    @ApiModelProperty(value = "状态")
-    private String status;
+    @ApiModelProperty(value = "任务最小金额")
+    private BigDecimal taskCostMin;
+
+    @ApiModelProperty(value = "任务最大金额")
+    private BigDecimal taskCostMax;
 }

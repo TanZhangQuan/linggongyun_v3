@@ -35,7 +35,7 @@ public class CompanyInvoiceInfo extends BaseEntity {
     /**
      * 公司地址
      */
-    private String companyAddress;
+    private String addressAndTelephone;
 
     /**
      * 纳税识别号
@@ -45,16 +45,5 @@ public class CompanyInvoiceInfo extends BaseEntity {
     /**
      * 开户行
      */
-    private String bankName;
-
-    /**
-     * 银行账号
-     */
-    private String bankCode;
-
-    /**
-     * 电话
-     */
-    private String mobile;
-
+    private String bankAndAccount;
 }
