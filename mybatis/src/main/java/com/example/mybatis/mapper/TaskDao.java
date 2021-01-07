@@ -25,8 +25,6 @@ import java.util.List;
  */
 public interface TaskDao extends BaseMapper<Task> {
 
-    int count(TaskListDTO taskListDto);
-
     IPage<Task> selectLists(Page page, @Param("taskListDto") TaskListDTO taskListDto, String userId);
 
     /**
@@ -36,14 +34,6 @@ public interface TaskDao extends BaseMapper<Task> {
      * @return
      */
     int delete(String id);
-
-    /**
-     * 添加任务信息
-     *
-     * @param TaskDto
-     * @return
-     */
-    int addTask(TaskDTO TaskDto);
 
     /**
      * 根据任务id查询任务
@@ -84,14 +74,6 @@ public interface TaskDao extends BaseMapper<Task> {
      * @return
      */
     IPage<Task> getPlatformTaskList(Page page, @Param("platformTaskDto") PlatformTaskDTO platformTaskDto);
-
-    /**
-     * 平台端添加任务信息
-     *
-     * @param TaskDto
-     * @return
-     */
-    int addPlatformTask(TaskDTO TaskDto);
 
     IPage<TaskInfoVO> setTask(Page page, @Param("industryType") String s);
 

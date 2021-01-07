@@ -335,10 +335,10 @@
             AND po.tax_id=#{tobeinvoicedDto.platformServiceProvider}
         </if>
         <if test="tobeinvoicedDto.applicationDateOne != null and tobeinvoicedDto.applicationDateOne != ''">
-            AND invapp.application_date>=#{tobeinvoicedDto.applicationDateOne}
+            AND ia.application_date>=#{tobeinvoicedDto.applicationDateOne}
         </if>
         <if test="tobeinvoicedDto.applicationDateTwo != null and tobeinvoicedDto.applicationDateTwo != ''">
-            AND invapp.application_date <![CDATA[<=]]> #{tobeinvoicedDto.applicationDateTwo}
+            AND ia.application_date <![CDATA[<=]]> #{tobeinvoicedDto.applicationDateTwo}
         </if>
         order by i.invoice_print_date desc
     </select>

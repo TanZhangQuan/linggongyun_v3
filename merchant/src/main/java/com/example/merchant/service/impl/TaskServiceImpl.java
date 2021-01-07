@@ -56,6 +56,8 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
     private CompanyInfoDao companyInfoDao;
     @Resource
     private CompanyTaxDao companyTaxDao;
+    @Resource
+    private CompanyWorkerDao companyWorkerDao;
 
     @Override
     public ReturnJson selectList(TaskListDTO taskListDto, String userId) {
@@ -107,10 +109,6 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
         Task task = taskDao.selectById(addTaskDto.getId());
         if (task != null) {
             BeanUtils.copyProperties(addTaskDto, task);
-            task.setReleaseDate(LocalDate.parse(addTaskDto.getReleaseDate(), df));
-            task.setReleaseTime(LocalTime.parse(addTaskDto.getReleaseTime(), df1));
-            task.setDeadlineDate(LocalDate.parse(addTaskDto.getDeadlineDate(), df));
-            task.setDeadlineTime(LocalTime.parse(addTaskDto.getDeadlineTime(), df1));
             taskDao.updateById(task);
             return ReturnJson.success("修改成功");
         } else {
@@ -119,17 +117,13 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
             task.setMerchantId(merchant.getId());
             task.setMerchantName(merchant.getCompanyName());
             if (addTaskDto.getTaskMode() == 0) {
-                if (!VerificationCheck.isNull(addTaskDto.getMakerIds())) {
+                if (!VerificationCheck.isNull(addTaskDto.getMakerIds()) || addTaskDto.getMakerIds() == "") {
                     return new ReturnJson("必须指定创客", 300);
                 }
                 if (addTaskDto.getUpperLimit() < Arrays.asList(addTaskDto.getMakerIds().split(",")).size()) {
                     return ReturnJson.error("派单任务人数不能超过上线人数");
                 }
             }
-            task.setReleaseDate(LocalDate.parse(addTaskDto.getReleaseDate(), df));
-            task.setReleaseTime(LocalTime.parse(addTaskDto.getReleaseTime(), df1));
-            task.setDeadlineDate(LocalDate.parse(addTaskDto.getDeadlineDate(), df));
-            task.setDeadlineTime(LocalTime.parse(addTaskDto.getDeadlineTime(), df1));
             String taskCode = this.getTaskCode();
             int code = Integer.valueOf(taskCode.substring(2)) + 1;
             task.setTaskCode("RW" + code);
@@ -211,10 +205,6 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
             }
         }
         BeanUtils.copyProperties(taskDto, task);
-        task.setReleaseDate(LocalDate.parse(taskDto.getReleaseDate(), df));
-        task.setReleaseTime(LocalTime.parse(taskDto.getReleaseTime(), df1));
-        task.setDeadlineDate(LocalDate.parse(taskDto.getDeadlineDate(), df));
-        task.setDeadlineTime(LocalTime.parse(taskDto.getDeadlineTime(), df1));
         String taskCode = this.getTaskCode();
         int code = Integer.valueOf(taskCode.substring(2)) + 1;
         task.setTaskCode("RW" + String.valueOf(code));
@@ -292,6 +282,14 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
             task.setState(1);
             taskDao.updateById(task);
         }
+        Merchant merchant = merchantDao.selectById(task.getMerchantId());
+
+        //抢单之后关联商户
+        CompanyWorker companyWorker = new CompanyWorker();
+        companyWorker.setCompanyId(merchant.getCompanyId());
+        companyWorker.setWorkerId(workerId);
+        companyWorkerDao.insert(companyWorker);
+
         return ReturnJson.success("恭喜,抢单成功！");
     }
 
