@@ -158,6 +158,13 @@
             <version>1.4.2</version>
             <scope>compile</scope>
         </dependency>
+
+		<!-- 银联jar包 -->
+		<dependency>
+			<groupId>com.alipay</groupId>
+			<artifactId>sdk-java</artifactId>
+			<version>20170612154830</version>
+		</dependency>
     </dependencies>
 
 <!--	<build>-->
