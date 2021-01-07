@@ -231,7 +231,7 @@ public class MerchantPaasController {
             @ApiImplicitParam(name = "newPassWord", value = "新密码", required = true)
     })
     public ReturnJson updataPassWord(@NotBlank(message = "手机号不能为空") @RequestParam(required = false) String loginMobile, @NotBlank(message = "验证码不能为空") @RequestParam(required = false) String checkCode, @NotBlank(message = "新密码不能为空") @RequestParam(required = false) String newPassWord) {
-        return merchantService.updataPassWord(loginMobile, checkCode, newPassWord);
+        return merchantService.updatePassWord(loginMobile, checkCode, newPassWord);
     }
 
     @GetMapping("/queryAgent")

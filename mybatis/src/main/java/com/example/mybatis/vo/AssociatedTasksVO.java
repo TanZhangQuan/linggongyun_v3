@@ -25,9 +25,6 @@ public class AssociatedTasksVO implements Serializable {
     @ApiModelProperty(value = "任务名称")
     private String taskName;
 
-    @ApiModelProperty(value = "行业类型")
-    private String industryType;
-
     @ApiModelProperty(value = "合作模式")
     private String cooperateMode;
 

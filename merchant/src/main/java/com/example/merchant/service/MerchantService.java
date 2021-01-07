@@ -55,10 +55,11 @@ public interface MerchantService extends IService<Merchant> {
 
     /**
      * 获取商户信息
+     *
      * @param merchantId
      * @return
      */
-    ReturnJson getmerchantCustomizedInfo(String merchantId);
+    ReturnJson getMerchantCustomizedInfo(String merchantId);
 
     /**
      * 获取商户信息
@@ -76,7 +77,16 @@ public interface MerchantService extends IService<Merchant> {
      * @param newPassWord
      * @return
      */
-    ReturnJson updataPassWord(String loginMobile, String checkCode, String newPassWord);
+    ReturnJson updatePassWord(String loginMobile, String checkCode, String newPassWord);
+
+    /**
+     * 修改头像
+     *
+     * @param userId
+     * @param headPortrait
+     * @return
+     */
+    ReturnJson updateHeadPortrait(String userId, String headPortrait);
 
     /**
      * 购买方信息

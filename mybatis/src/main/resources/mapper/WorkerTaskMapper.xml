@@ -59,7 +59,6 @@
         <result column="upper_limit" property="upperLimit"/>
         <result column="task_code" property="taskCode"/>
         <result column="task_mode" property="taskMode"/>
-        <result column="available_time" property="availableTime"/>
         <result column="create_date" property="createDate"/>
         <result column="status" property="status"/>
     </resultMap>
@@ -75,7 +74,6 @@
             t.create_date,
             t.task_code,
             t.upper_limit,
-            t.deadline_date - t.release_date AS available_time,
             t.task_cost_min,
             t.task_cost_max,
             wt.`status`

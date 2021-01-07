@@ -69,6 +69,11 @@ public class Merchant extends BaseEntity {
     private String loginMobile;
 
     /**
+     * 头像
+     */
+    private String headPortrait;
+
+    /**
      * 商户状态
      */
     private Integer status;

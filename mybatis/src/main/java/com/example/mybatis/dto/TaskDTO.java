@@ -33,9 +33,8 @@ public class TaskDTO implements Serializable {
     @NotNull(message = "任务说明文字不能为空")
     private String taskDesc;
 
-    @ApiModelProperty(value = "行业类型,俩个值拼接以/隔开")
-    @NotNull(message = "行业类型不能为空")
-    private String industryType;
+    @ApiModelProperty(value = "任务说明图文")
+    private String taskIllustration;
 
     @ApiModelProperty(value = "任务最低费用")
     @Min(value = 0, message = "费用下限不能小于0")
@@ -58,18 +57,6 @@ public class TaskDTO implements Serializable {
 
     @ApiModelProperty(value = "创客所需技能")
     private String taskSkill;
-
-    @ApiModelProperty(value = "任务发布时间,yyyy-MM-dd")
-    private String releaseDate;
-
-    @ApiModelProperty(value = "任务截至时间,yyyy-MM-dd")
-    private String deadlineDate;
-
-    @ApiModelProperty(value = "任务发布时间,HH:mm:ss")
-    private String releaseTime;
-
-    @ApiModelProperty(value = "任务截至时间,HH:mm:ss")
-    private String deadlineTime;
 
     @ApiModelProperty(value = "任务上线人数")
     private Integer upperLimit;
