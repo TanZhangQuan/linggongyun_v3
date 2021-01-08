@@ -20,6 +20,7 @@
         <result column="merchant_tax" property="merchantTax"/>
         <result column="recevice_tax" property="receviceTax"/>
         <result column="payment_order_status" property="paymentOrderStatus"/>
+        <result column="reasons_for_rejection" property="reasonsForRejection"/>
         <result column="payment_date" property="paymentDate"/>
         <result column="create_date" property="createDate"/>
         <result column="update_date" property="updateDate"/>

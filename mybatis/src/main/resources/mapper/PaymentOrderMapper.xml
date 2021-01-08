@@ -17,13 +17,13 @@
         <result column="subpackage_payment" property="subpackagePayment"/>
         <result column="task_id" property="taskId"/>
         <result column="task_name" property="taskName"/>
-        <result column="task_type" property="taskType"/>
         <result column="acceptance_certificate" property="acceptanceCertificate"/>
         <result column="tax_status" property="taxStatus"/>
         <result column="composite_tax" property="compositeTax"/>
         <result column="merchant_tax" property="merchantTax"/>
         <result column="recevice_tax" property="receviceTax"/>
         <result column="payment_order_status" property="paymentOrderStatus"/>
+        <result column="reasons_for_rejection" property="reasonsForRejection"/>
         <result column="payment_date" property="paymentDate"/>
         <result column="create_date" property="createDate"/>
         <result column="update_date" property="updateDate"/>
@@ -360,7 +360,8 @@
         <result column="company_contract" property="contract"/>
         <result column="payment_inventory" property="paymentInventory"/>
         <result column="subpackage_payment" property="paymentReceipt"/>
-        <result column="task_id" property="tastId"/>
+        <result column="task_id" property="taskId"/>
+        <result column="task_name" property="taskName"/>
         <result column="acceptance_certificate" property="acceptanceCertificate"/>
         <result column="payment_date" property="paymentDate"/>
         <result column="real_money" property="money"/>
@@ -515,6 +516,7 @@
         b.company_contract,
         b.payment_inventory,
         b.task_id,
+        b.task_name,
         b.acceptance_certificate,
         b.subpackage_payment,
         b.payment_date,
@@ -1053,7 +1055,7 @@
         FROM
             tb_payment_order
         WHERE
-            payment_order_status = 3
+            payment_order_status = 2
         AND WEEK (payment_date) = WEEK (NOW())
         AND company_id IN
          <foreach collection="list" index="index" item="merchantIds" open="(" separator="," close=")">
@@ -1078,7 +1080,7 @@
         IF(DAY(LAST_DAY(NOW())) >= 29, IFNULL(SUM(IF(DAY(payment_date) = 29, real_money, 0)), 0), NULL) AS twenty_nine_day_income,
         IF(DAY(LAST_DAY(NOW())) >= 30, IFNULL(SUM(IF(DAY(payment_date) = 30, real_money, 0)), 0), NULL) AS thirty_day_income,
 		IF(DAY(LAST_DAY(NOW())) >= 31, IFNULL(SUM(IF(DAY(payment_date) = 31, real_money, 0)), 0), NULL) AS thirty_one_day_income
-        FROM tb_payment_order WHERE payment_order_status=3 AND YEAR(payment_date) = YEAR(NOW())
+        FROM tb_payment_order WHERE payment_order_status=2 AND YEAR(payment_date) = YEAR(NOW())
 		AND MONTH(payment_date) = MONTH(NOW()) AND company_id IN
          <foreach collection="list" index="index" item="merchantIds" open="(" separator="," close=")">
             #{merchantIds}
@@ -1091,7 +1093,7 @@
         IFNULL(SUM(IF(MONTH(payment_date) = 7, real_money, 0)), 0) AS jul_income, IFNULL(SUM(IF(MONTH(payment_date) = 8, real_money, 0)), 0) AS aug_income,
         IFNULL(SUM(IF(MONTH(payment_date) = 9, real_money, 0)), 0) AS sep_income, IFNULL(SUM(IF(MONTH(payment_date) = 10, real_money, 0)), 0) AS oct_income,
         IFNULL(SUM(IF(MONTH(payment_date) = 11, real_money, 0)), 0) AS nov_income, IFNULL(SUM(IF(MONTH(payment_date) = 12, real_money, 0)), 0) AS dec_income
-        FROM tb_payment_order WHERE payment_order_status=3 AND YEAR(payment_date) = YEAR(NOW()) AND company_id IN
+        FROM tb_payment_order WHERE payment_order_status=2 AND YEAR(payment_date) = YEAR(NOW()) AND company_id IN
          <foreach collection="list" index="index" item="merchantIds" open="(" separator="," close=")">
             #{merchantIds}
         </foreach>

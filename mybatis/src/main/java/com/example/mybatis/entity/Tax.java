@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
@@ -53,7 +54,7 @@ public class Tax extends BaseEntity {
     /**
      * 公司的成立时间
      */
-    private LocalDateTime taxCreateDate;
+    private LocalDate taxCreateDate;
 
     /**
      * 公司联系人

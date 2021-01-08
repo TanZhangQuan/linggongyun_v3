@@ -125,7 +125,12 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
                 }
             }
             String taskCode = this.getTaskCode();
-            int code = Integer.valueOf(taskCode.substring(2)) + 1;
+            int code =0;
+            if (taskCode==null){
+                code = 001;
+            }else{
+                code = Integer.valueOf(taskCode.substring(2)) + 1;
+            }
             task.setTaskCode("RW" + code);
             int i = taskDao.insert(task);
             if (i > 0) {
@@ -267,6 +272,8 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
             return ReturnJson.error("您已经抢过这一单了！");
         }
         if (count >= task.getUpperLimit()) {
+            task.setState(1);
+            taskDao.updateById(task);
             return ReturnJson.error("任务所需人数已满！");
         }
         WorkerTask workerTask = new WorkerTask();

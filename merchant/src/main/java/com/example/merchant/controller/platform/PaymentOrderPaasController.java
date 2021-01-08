@@ -93,4 +93,15 @@ public class PaymentOrderPaasController {
                                       AssociatedTasksDTO associatedTasksDto) {
         return paymentOrderService.associatedTasks(merchantId,associatedTasksDto);
     }
+
+    @PostMapping("/reject")
+    @ApiOperation(value = "支付驳回", notes = "支付驳回", httpMethod = "POST")
+    @ApiImplicitParams(value = {@ApiImplicitParam(name = "paymentOrderId", value = "支付订单ID", required = true),
+            @ApiImplicitParam(name = "reasonsForRejection", value = "驳回理由", required = true)})
+    public ReturnJson reject(@NotBlank(message = "支付订单不能为空！") @RequestParam(required = false) String paymentOrderId,
+                             @NotBlank(message = "驳回理由不能为空！") @RequestParam(required = false) String reasonsForRejection) {
+        return paymentOrderService.reject(paymentOrderId,reasonsForRejection);
+    }
+
+
 }

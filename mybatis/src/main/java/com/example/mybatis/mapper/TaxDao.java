@@ -11,6 +11,7 @@ import com.example.mybatis.po.TaxPO;
 import com.example.mybatis.vo.CooperationInfoVO;
 import com.example.mybatis.vo.SellerVO;
 import com.example.mybatis.vo.TaxInfoVO;
+import com.example.mybatis.vo.TaxListVO;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -41,4 +42,6 @@ public interface TaxDao extends BaseMapper<Tax> {
     List<CooperationInfoVO> queryCooper(String companyId);
 
     TaxInfoVO queryTaxInfoById(String taxId);
+
+    List<TaxListVO> getTaxPaasList(Integer packageStatus);
 }

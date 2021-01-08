@@ -167,10 +167,11 @@ public interface MerchantService extends IService<Merchant> {
      * 添加商户
      *
      * @param companyDto
+     * @param userId
      * @return
      * @throws CommonException
      */
-    ReturnJson addMerchant(CompanyDTO companyDto) throws Exception;
+    ReturnJson addMerchant(CompanyDTO companyDto,String userId) throws Exception;
 
     /**
      * 退出登录

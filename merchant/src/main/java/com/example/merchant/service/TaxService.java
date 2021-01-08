@@ -106,4 +106,10 @@ public interface TaxService extends IService<Tax> {
      */
     ReturnJson getTaxPaasList();
 
+    /**
+     * 查询所有可用的服务商
+     *
+     * @return
+     */
+    ReturnJson getTaxList(Integer packageStatus);
 }

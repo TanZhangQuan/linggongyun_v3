@@ -229,7 +229,7 @@
         FROM
             tb_task t
         INNER JOIN tb_merchant m ON m.id = t.merchant_id
-        WHERE t.task_mode != 0
+        WHERE t.task_mode != 0 and state = 0
         order by t.create_date desc
     </select>
 

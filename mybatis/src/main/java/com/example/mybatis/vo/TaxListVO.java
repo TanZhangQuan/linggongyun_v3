@@ -1,4 +1,4 @@
-package com.example.merchant.vo.platform;
+package com.example.mybatis.vo;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -11,10 +11,10 @@ import java.io.Serializable;
 public class TaxListVO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @ApiModelProperty(value = "开票类目")
+    @ApiModelProperty(value = "ID")
     private String id;
 
-    @ApiModelProperty(value = "开票类目")
+    @ApiModelProperty(value = "商户名称")
     private String taxName;
 
 }

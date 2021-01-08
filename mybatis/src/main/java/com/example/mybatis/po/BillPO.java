@@ -28,7 +28,10 @@ public class BillPO {
     private String paymentInventory;
 
     @ApiModelProperty(notes = "任务ID",value = "任务ID")
-    private String tastId;
+    private String taskId;
+
+    @ApiModelProperty(notes = "任务名称",value = "任务名称")
+    private String taskName;
 
     @ApiModelProperty(notes = "验收单",value = "验收单")
     private String acceptanceCertificate;

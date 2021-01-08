@@ -123,6 +123,11 @@ public class PaymentOrderMany extends BaseEntity {
     private Integer paymentOrderStatus;
 
     /**
+     * 驳回理由
+     */
+    private String reasonsForRejection;
+
+    /**
      * 支付方式：0线下支付,1连连支付
      */
     private Integer paymentMode;

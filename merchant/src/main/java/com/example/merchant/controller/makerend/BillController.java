@@ -91,7 +91,7 @@ public class BillController {
     @ApiOperation(value = "查询账单统计详情", notes = "查询账单统计详情", httpMethod = "POST")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "id", value = "ID", required = true),
-            @ApiImplicitParam(name = "isNot", value = "0总包1分包，必填", required = true)
+            @ApiImplicitParam(name = "isNot", value = "0总包1众包，必填", required = true)
     })
     public ReturnJson queryBillInfo(@ApiParam(hidden = true) @RequestAttribute(value = "userId", required = false) @NotBlank(message = "您的登录以过期，请重新登录") String workerId, @NotBlank @RequestParam(required = false) String id, @NotNull(message = "0总包1分包，必填") @RequestParam Integer isNot) {
         return billService.queryBillInfo(workerId, id, isNot);

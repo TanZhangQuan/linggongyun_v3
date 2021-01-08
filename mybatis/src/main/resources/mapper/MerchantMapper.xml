@@ -475,7 +475,7 @@
         FROM
             tb_payment_order
         WHERE
-            payment_order_status = 3
+            payment_order_status = 2
         AND DATE(payment_date) = DATE(NOW())
         AND company_id =#{merchantId}
     </select>
@@ -562,7 +562,7 @@
         FROM
             tb_payment_order
         WHERE
-            payment_order_status = 3
+            payment_order_status = 2
         AND WEEK (payment_date) = WEEK (NOW())
         AND company_id = #{merchantId}
     </select>
@@ -584,7 +584,7 @@
         IF(DAY(LAST_DAY(NOW())) >= 29, IFNULL(SUM(IF(DAY(payment_date) = 29, real_money, 0)), 0), NULL) AS twenty_nine_day_income,
         IF(DAY(LAST_DAY(NOW())) >= 30, IFNULL(SUM(IF(DAY(payment_date) = 30, real_money, 0)), 0), NULL) AS thirty_day_income,
 		IF(DAY(LAST_DAY(NOW())) >= 31, IFNULL(SUM(IF(DAY(payment_date) = 31, real_money, 0)), 0), NULL) AS thirty_one_day_income
-        FROM tb_payment_order WHERE payment_order_status=3 AND YEAR(payment_date) = YEAR(NOW())
+        FROM tb_payment_order WHERE payment_order_status=2 AND YEAR(payment_date) = YEAR(NOW())
 		AND MONTH(payment_date) = MONTH(NOW()) AND company_id = #{merchantId}
     </select>
 
@@ -595,7 +595,7 @@
         IFNULL(SUM(IF(MONTH(payment_date) = 7, real_money, 0)), 0) AS jul_income, IFNULL(SUM(IF(MONTH(payment_date) = 8, real_money, 0)), 0) AS aug_income,
         IFNULL(SUM(IF(MONTH(payment_date) = 9, real_money, 0)), 0) AS sep_income, IFNULL(SUM(IF(MONTH(payment_date) = 10, real_money, 0)), 0) AS oct_income,
         IFNULL(SUM(IF(MONTH(payment_date) = 11, real_money, 0)), 0) AS nov_income, IFNULL(SUM(IF(MONTH(payment_date) = 12, real_money, 0)), 0) AS dec_income
-        FROM tb_payment_order WHERE payment_order_status=3 AND YEAR(payment_date) = YEAR(NOW()) AND company_id =#{merchantId}
+        FROM tb_payment_order WHERE payment_order_status=2 AND YEAR(payment_date) = YEAR(NOW()) AND company_id =#{merchantId}
     </select>
 
 
