@@ -5,15 +5,16 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * 支付订单的类型
+ * 交易状态
  */
 @Getter
 @AllArgsConstructor
 @SwaggerDisplayEnum()
-public enum OrderType {
-    TOTALORDER("TOTALORDER", "总包订单"),
-    MANYORDER("MANYORDER", "众包订单"),
-    INVENTORY("INVENTORY", "支付清单");
+public enum TradeStatus {
+    UNTRADE("UNTRADE", "未交易"),
+    TRADING("TRADING", "交易中"),
+    SUCCESS("SUCCESS", "交易成功"),
+    FAIL("FAIL", "交易失败");
 
     private final String value;
     private final String desc;

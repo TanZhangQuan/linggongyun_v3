@@ -21,7 +21,7 @@ public class CodeGenerator {
     private static final String author = "hzp";
     private static final String packageName = "com.example";
     private static final String moduleName = "merchant";
-    private static final String[] tableName = {"tb_payment_history"};
+    private static final String[] tableName = {"tb_company_unionpay", "tb_trade_record", "tb_tax_unionpay"};
     private static final String tablePrefix = "tb";
 
     public static void main(String[] args) {
@@ -69,7 +69,7 @@ public class CodeGenerator {
     private static DataSourceConfig getDataSourceConfig() {
         // 数据源配置
         DataSourceConfig dsc = new DataSourceConfig();
-        dsc.setUrl("jdbc:mysql://192.168.3.54:3306/linggongyun_v3?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&useSSL=false");
+        dsc.setUrl("jdbc:mysql://localhost:3306/linggongyun_v3?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&useSSL=false");
         // dsc.setSchemaName("public");
 //        String driverName = "com.mysql.jdbc.Driver";
         String driverName = "com.mysql.cj.jdbc.Driver";

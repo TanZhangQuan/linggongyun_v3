@@ -1,26 +1,94 @@
 /*
 Navicat MySQL Data Transfer
 
-Source Server         : fuwuqi
-Source Server Version : 50725
-Source Host           : rm-uf6w14g8ziqg8se61uo.mysql.rds.aliyuncs.com:3306
+Source Server         : local
+Source Server Version : 50717
+Source Host           : localhost:3306
 Source Database       : linggongyun_v3
 
 Target Server Type    : MYSQL
-Target Server Version : 50725
+Target Server Version : 50717
 File Encoding         : 65001
 
-Date: 2020-12-30 11:10:04
+Date: 2021-01-07 17:18:10
 */
 
 SET FOREIGN_KEY_CHECKS=0;
 
 -- ----------------------------
--- Table structure for tb_address
+-- Table structure for `tb_company_unionpay`
+-- ----------------------------
+DROP TABLE IF EXISTS `tb_company_unionpay`;
+CREATE TABLE `tb_company_unionpay` (
+  `id` varchar(50) NOT NULL COMMENT '主键',
+  `company_id` varchar(50) NOT NULL COMMENT '商户ID',
+  `tax_unionpay_id` varchar(50) NOT NULL COMMENT '服务商银联ID',
+  `sub_account_code` varchar(50) NOT NULL COMMENT '子账户账号',
+  `sub_account_name` varchar(50) NOT NULL COMMENT '子账号户名',
+  `in_bank_no` varchar(50) NOT NULL DEFAULT '' COMMENT '来款银行账号',
+  `create_date` datetime DEFAULT NULL COMMENT '创建时间',
+  `update_date` datetime DEFAULT NULL COMMENT '修改时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `UK_icr1qhlwx3lsd0terqn7w65k1` (`company_id`,`tax_unionpay_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='商户银联信息表';
+
+-- ----------------------------
+-- Records of tb_company_unionpay
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for `tb_trade_record`
+-- ----------------------------
+DROP TABLE IF EXISTS `tb_trade_record`;
+CREATE TABLE `tb_trade_record` (
+  `id` varchar(50) NOT NULL COMMENT '主键',
+  `payer_object` varchar(50) NOT NULL COMMENT '支付方身份',
+  `payer_id` varchar(50) NOT NULL COMMENT '支付方ID',
+  `payee_object` varchar(50) DEFAULT NULL COMMENT '收款方身份',
+  `payee_id` varchar(50) DEFAULT NULL COMMENT '收款方ID',
+  `trade_method` varchar(50) NOT NULL COMMENT '支付方式',
+  `trade_type` varchar(50) NOT NULL COMMENT '交易类型',
+  `amount` decimal(12,2) NOT NULL COMMENT '交易金额',
+  `outer_trade_no` varchar(50) NOT NULL COMMENT '订单流水号',
+  `trade_status` varchar(50) NOT NULL COMMENT '交易状态',
+  `create_date` datetime DEFAULT NULL COMMENT '创建时间',
+  `update_date` datetime DEFAULT NULL COMMENT '修改时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `UK_icr1qhlwx3lsd0terqn7w65k1` (`outer_trade_no`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='商户银联信息表';
+
+-- ----------------------------
+-- Records of tb_trade_record
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for `tb_tax_unionpay`
+-- ----------------------------
+DROP TABLE IF EXISTS `tb_tax_unionpay`;
+CREATE TABLE `tb_tax_unionpay` (
+  `id` varchar(50) NOT NULL COMMENT '主键',
+  `tax_id` varchar(50) NOT NULL COMMENT '服务商ID',
+  `unionpay_bank_type` varchar(50) NOT NULL COMMENT '银联银行类型',
+  `merchno` varchar(50) NOT NULL COMMENT '商户号',
+  `acctno` varchar(50) NOT NULL COMMENT '平台帐户账号',
+  `clear_no` varchar(50) NOT NULL DEFAULT '' COMMENT '清分子账户',
+  `service_charge_no` varchar(50) NOT NULL DEFAULT '' COMMENT '手续费子账户',
+  `create_date` datetime DEFAULT NULL COMMENT '创建时间',
+  `update_date` datetime DEFAULT NULL COMMENT '修改时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `UK_icr1qhlwx3lsd0terqn7w65k1` (`tax_id`,`unionpay_bank_type`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='服务商银联信息表';
+
+-- ----------------------------
+-- Records of tb_tax_unionpay
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for `tb_address`
 -- ----------------------------
 DROP TABLE IF EXISTS `tb_address`;
 CREATE TABLE `tb_address` (
-  `id` varchar(36) NOT NULL COMMENT 'id',
+  `id` varchar(50) NOT NULL COMMENT '主键',
   `company_id` varchar(255) NOT NULL COMMENT '公司id',
   `link_name` varchar(255) NOT NULL COMMENT '联系人',
   `link_mobile` varchar(40) NOT NULL COMMENT '联系电话',
@@ -33,11 +101,15 @@ CREATE TABLE `tb_address` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='地址表';
 
 -- ----------------------------
--- Table structure for tb_agent
+-- Records of tb_address
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for `tb_agent`
 -- ----------------------------
 DROP TABLE IF EXISTS `tb_agent`;
 CREATE TABLE `tb_agent` (
-  `id` varchar(36) NOT NULL COMMENT '代理商ID',
+  `id` varchar(50) NOT NULL COMMENT '主键',
   `managers_id` varchar(36) NOT NULL COMMENT '对应的管理人员',
   `sales_man_id` varchar(36) NOT NULL COMMENT '所属业务员(tb_managers表的ID)',
   `company_address` varchar(200) DEFAULT NULL COMMENT '代理商地址',
@@ -49,33 +121,36 @@ CREATE TABLE `tb_agent` (
   `create_date` datetime DEFAULT NULL COMMENT '创建时间',
   `update_date` datetime DEFAULT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`),
-  KEY `fk_managers` (`managers_id`) USING BTREE,
-  CONSTRAINT `tb_agent_ibfk_1` FOREIGN KEY (`managers_id`) REFERENCES `tb_managers` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='代理商信息\r\n';
+  UNIQUE KEY `UK_icr1qhlwx3lsd0terqn7w65k1` (`managers_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='代理商信息';
 
 -- ----------------------------
--- Table structure for tb_application_payment
+-- Records of tb_agent
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for `tb_application_payment`
 -- ----------------------------
 DROP TABLE IF EXISTS `tb_application_payment`;
 CREATE TABLE `tb_application_payment` (
-  `id` varchar(36) NOT NULL,
+  `id` varchar(50) NOT NULL COMMENT '主键',
   `invoice_application_id` varchar(36) DEFAULT NULL COMMENT '开票申请id',
   `payment_order_id` varchar(36) DEFAULT NULL COMMENT '支付id',
   `create_date` datetime DEFAULT NULL COMMENT '接单接单时间',
   `update_date` datetime DEFAULT NULL COMMENT '修改时间',
-  PRIMARY KEY (`id`),
-  KEY `invoice_application_id` (`invoice_application_id`) USING BTREE,
-  KEY `payment_order_id` (`payment_order_id`) USING BTREE,
-  CONSTRAINT `tb_application_payment_ibfk_1` FOREIGN KEY (`invoice_application_id`) REFERENCES `tb_invoice_application` (`id`),
-  CONSTRAINT `tb_application_payment_ibfk_2` FOREIGN KEY (`payment_order_id`) REFERENCES `tb_payment_order` (`id`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
--- Table structure for tb_common_message
+-- Records of tb_application_payment
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for `tb_common_message`
 -- ----------------------------
 DROP TABLE IF EXISTS `tb_common_message`;
 CREATE TABLE `tb_common_message` (
-  `id` bigint(50) NOT NULL,
+  `id` varchar(50) NOT NULL COMMENT '主键',
   `message` varchar(500) NOT NULL DEFAULT '' COMMENT '消息',
   `message_status` varchar(50) NOT NULL DEFAULT '0' COMMENT '消息状态：0未读，1已读',
   `no_order` varchar(50) NOT NULL DEFAULT '' COMMENT '支付订单号（可以是连连支付的订单号）',
@@ -89,11 +164,15 @@ CREATE TABLE `tb_common_message` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='消息表';
 
 -- ----------------------------
--- Table structure for tb_company_info
+-- Records of tb_common_message
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for `tb_company_info`
 -- ----------------------------
 DROP TABLE IF EXISTS `tb_company_info`;
 CREATE TABLE `tb_company_info` (
-  `id` varchar(36) NOT NULL,
+  `id` varchar(50) NOT NULL COMMENT '主键',
   `sales_man_id` varchar(36) NOT NULL COMMENT '业务员ID(tb_managers表中为业务员的ID)',
   `agent_id` varchar(36) DEFAULT NULL COMMENT '代理商ID(可以为空,tb_managers表中为代理商的ID)',
   `company_s_name` varchar(20) DEFAULT '''''' COMMENT '公司的简称',
@@ -106,16 +185,14 @@ CREATE TABLE `tb_company_info` (
   `business_license` varchar(250) DEFAULT NULL COMMENT '公司的营业执照',
   `company_desc` varchar(2000) DEFAULT NULL COMMENT '公司的简介',
   `company_name` varchar(40) DEFAULT NULL COMMENT '公司全称',
-  `company_address` varchar(200) DEFAULT NULL COMMENT '公司的详细地址',
+  `address_and_telephone` varchar(255) DEFAULT '' COMMENT '地址电话',
+  `bank_and_account` varchar(255) NOT NULL DEFAULT '' COMMENT '开户行及账号',
   `registered_capital` decimal(18,4) DEFAULT '0.0000' COMMENT '注册资本',
-  `company_create_date` datetime DEFAULT NULL COMMENT '公司的成立时间',
+  `company_create_date` date DEFAULT NULL COMMENT '公司的成立时间',
   `contract` varchar(100) DEFAULT NULL COMMENT '加盟合同地址',
-  `bank_name` varchar(80) DEFAULT NULL COMMENT '开户行(银行名称)',
-  `bank_code` varchar(40) DEFAULT NULL COMMENT '银行账号',
   `member_id` varchar(36) DEFAULT NULL COMMENT '网商银行会员号',
   `sub_account_no` varchar(36) DEFAULT NULL COMMENT '网商银行子账户(智能试别码)',
   `bank_id` varchar(36) DEFAULT '' COMMENT '网商银行银行卡号',
-  `telephones` varchar(40) DEFAULT NULL COMMENT '公司电话(对外公共)',
   `link_man` varchar(40) DEFAULT NULL COMMENT '公司联系人',
   `link_mobile` varchar(40) DEFAULT NULL COMMENT '公司联系电话',
   `credit_code` varchar(40) DEFAULT NULL COMMENT '统一的社会信用代码',
@@ -123,81 +200,100 @@ CREATE TABLE `tb_company_info` (
   `company_status` int(11) DEFAULT '0' COMMENT '公司状态0正常',
   `create_date` datetime DEFAULT NULL,
   `update_date` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `fk_ci_sales_man_id` (`sales_man_id`) USING BTREE,
-  KEY `fk_ci_agent_id` (`agent_id`) USING BTREE,
-  CONSTRAINT `tb_company_info_ibfk_2` FOREIGN KEY (`sales_man_id`) REFERENCES `tb_managers` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='公司信息\r\n';
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='公司信息';
 
 -- ----------------------------
--- Table structure for tb_company_invoice_info
+-- Records of tb_company_info
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for `tb_company_invoice_info`
 -- ----------------------------
 DROP TABLE IF EXISTS `tb_company_invoice_info`;
 CREATE TABLE `tb_company_invoice_info` (
-  `id` bigint(50) NOT NULL,
+  `id` varchar(50) NOT NULL COMMENT '主键',
   `company_id` varchar(36) DEFAULT NULL COMMENT '公司ID',
   `company_name` varchar(50) DEFAULT NULL COMMENT '公司全称',
-  `company_address` varchar(200) DEFAULT NULL COMMENT '公司地址',
+  `address_and_telephone` varchar(255) DEFAULT '' COMMENT '地址电话',
+  `bank_and_account` varchar(255) DEFAULT '' COMMENT '开户行及账号',
   `tax_code` varchar(40) DEFAULT NULL COMMENT '纳税识别号',
-  `bank_name` varchar(40) DEFAULT NULL COMMENT '开户行',
-  `bank_code` varchar(40) DEFAULT NULL COMMENT '银行账号',
-  `mobile` varchar(40) DEFAULT NULL COMMENT '电话',
   `create_date` datetime DEFAULT NULL,
   `update_date` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='公司的开票信息';
 
 -- ----------------------------
--- Table structure for tb_company_ladder_service
+-- Records of tb_company_invoice_info
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for `tb_company_ladder_service`
 -- ----------------------------
 DROP TABLE IF EXISTS `tb_company_ladder_service`;
 CREATE TABLE `tb_company_ladder_service` (
-  `id` bigint(50) unsigned NOT NULL,
+  `id` varchar(50) NOT NULL COMMENT '主键',
   `company_tax_id` varchar(36) DEFAULT NULL COMMENT '给商户的服务商ID',
-  `start_money` decimal(18,4) DEFAULT NULL COMMENT '开始的金额',
-  `end_money` decimal(18,4) DEFAULT NULL COMMENT '结束的金额',
-  `service_charge` decimal(18,4) DEFAULT NULL COMMENT '服务费（如7.5，不需把百分数换算成小数）',
+  `start_money` decimal(18,2) DEFAULT NULL COMMENT '开始的金额',
+  `end_money` decimal(18,2) DEFAULT NULL COMMENT '结束的金额',
+  `service_charge` decimal(18,2) DEFAULT NULL COMMENT '服务费（如7.5，不需把百分数换算成小数）',
   `create_date` datetime DEFAULT NULL,
   `update_date` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='服务商给商户的梯度价';
 
 -- ----------------------------
--- Table structure for tb_company_tax
+-- Records of tb_company_ladder_service
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for `tb_company_tax`
 -- ----------------------------
 DROP TABLE IF EXISTS `tb_company_tax`;
 CREATE TABLE `tb_company_tax` (
-  `id` varchar(36) DEFAULT NULL,
+  `id` varchar(50) NOT NULL COMMENT '主键',
   `company_id` varchar(36) NOT NULL,
   `tax_id` varchar(36) NOT NULL,
   `charge_status` int(2) DEFAULT '0' COMMENT '费用类型0为一口价，1为梯度价',
   `service_charge` decimal(18,2) DEFAULT NULL COMMENT '一口价的服务费(如果为梯度价这为空)',
   `package_status` int(2) NOT NULL DEFAULT '0' COMMENT '合作类型',
+  `bank_code` varchar(40) DEFAULT NULL COMMENT '银行账号',
+  `bank_name` varchar(80) DEFAULT NULL COMMENT '开户行(银行名称)',
   `contract` varchar(250) DEFAULT NULL COMMENT '合作合同地址',
   `create_date` datetime DEFAULT NULL,
   `update_date` datetime DEFAULT NULL,
-  PRIMARY KEY (`company_id`,`tax_id`,`package_status`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `UK_icr1qhlwx3lsd0terqn7w65k1` (`company_id`,`tax_id`,`package_status`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='公司与服务商的合作信息表';
 
 -- ----------------------------
--- Table structure for tb_company_worker
+-- Records of tb_company_tax
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for `tb_company_worker`
 -- ----------------------------
 DROP TABLE IF EXISTS `tb_company_worker`;
 CREATE TABLE `tb_company_worker` (
-  `id` varchar(36) NOT NULL,
+  `id` varchar(50) NOT NULL COMMENT '主键',
   `worker_id` varchar(36) NOT NULL COMMENT '创客id',
   `company_id` varchar(36) NOT NULL COMMENT '商户ID',
   `create_date` datetime DEFAULT NULL COMMENT '创建时间',
   `update_date` datetime DEFAULT NULL COMMENT '修改时间',
-  PRIMARY KEY (`worker_id`,`company_id`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `UK_icr1qhlwx3lsd0terqn7w65k1` (`worker_id`,`company_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='商户公司所拥有的创客';
 
 -- ----------------------------
--- Table structure for tb_crowd_sourcing_application
+-- Records of tb_company_worker
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for `tb_crowd_sourcing_application`
 -- ----------------------------
 DROP TABLE IF EXISTS `tb_crowd_sourcing_application`;
 CREATE TABLE `tb_crowd_sourcing_application` (
-  `id` varchar(36) NOT NULL COMMENT '众包开票申请id',
+  `id` varchar(50) NOT NULL COMMENT '主键',
   `payment_order_many_id` varchar(36) DEFAULT NULL COMMENT '众包支付id',
   `invoice_catalog_type` varchar(36) DEFAULT NULL COMMENT '开票类目',
   `application_address_id` varchar(36) DEFAULT NULL COMMENT '申请地址 对应地址表id',
@@ -207,16 +303,19 @@ CREATE TABLE `tb_crowd_sourcing_application` (
   `audit_desc` varchar(1000) DEFAULT NULL COMMENT '审核说明',
   `create_date` datetime DEFAULT NULL COMMENT '创建时间',
   `update_date` datetime DEFAULT NULL COMMENT '修改时间',
-  PRIMARY KEY (`id`),
-  KEY `invoice_catalog_id` (`invoice_catalog_type`) USING BTREE
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='众包开票申请';
 
 -- ----------------------------
--- Table structure for tb_crowd_sourcing_invoice
+-- Records of tb_crowd_sourcing_application
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for `tb_crowd_sourcing_invoice`
 -- ----------------------------
 DROP TABLE IF EXISTS `tb_crowd_sourcing_invoice`;
 CREATE TABLE `tb_crowd_sourcing_invoice` (
-  `id` varchar(36) NOT NULL COMMENT '众包开票主键',
+  `id` varchar(50) NOT NULL COMMENT '主键',
   `payment_order_many_id` varchar(36) DEFAULT NULL COMMENT '众包支付id未申请就使用',
   `application_id` varchar(36) DEFAULT NULL COMMENT '申请id',
   `invoice_code` varchar(200) DEFAULT NULL COMMENT '开票代码KP+0000',
@@ -240,11 +339,15 @@ CREATE TABLE `tb_crowd_sourcing_invoice` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
--- Table structure for tb_greetings
+-- Records of tb_crowd_sourcing_invoice
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for `tb_greetings`
 -- ----------------------------
 DROP TABLE IF EXISTS `tb_greetings`;
 CREATE TABLE `tb_greetings` (
-  `id` bigint(50) NOT NULL,
+  `id` varchar(50) NOT NULL COMMENT '主键',
   `time_quantum` int(6) NOT NULL DEFAULT '0' COMMENT '时间段：0早晨，1上午，2中午，3下午，4晚上',
   `greetings` varchar(100) DEFAULT '''''' COMMENT '问候语',
   `create_date` datetime DEFAULT NULL COMMENT '接单接单时间',
@@ -253,11 +356,15 @@ CREATE TABLE `tb_greetings` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='问候语表';
 
 -- ----------------------------
--- Table structure for tb_industry
+-- Records of tb_greetings
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for `tb_industry`
 -- ----------------------------
 DROP TABLE IF EXISTS `tb_industry`;
 CREATE TABLE `tb_industry` (
-  `id` bigint(50) NOT NULL COMMENT '行业id',
+  `id` varchar(50) NOT NULL COMMENT '主键',
   `industry_type` varchar(50) DEFAULT NULL COMMENT '行业类型',
   `one_level` varchar(255) DEFAULT NULL COMMENT '一级id',
   `create_date` datetime DEFAULT NULL,
@@ -266,11 +373,15 @@ CREATE TABLE `tb_industry` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='行业表';
 
 -- ----------------------------
--- Table structure for tb_invoice
+-- Records of tb_industry
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for `tb_invoice`
 -- ----------------------------
 DROP TABLE IF EXISTS `tb_invoice`;
 CREATE TABLE `tb_invoice` (
-  `id` varchar(36) NOT NULL COMMENT 'id',
+  `id` varchar(50) NOT NULL COMMENT '主键',
   `application_id` varchar(36) DEFAULT NULL COMMENT '申请开票id',
   `invoice_code` varchar(40) DEFAULT NULL COMMENT '发票编号，FP+0000',
   `invoice_print_date` datetime DEFAULT NULL COMMENT '开票时间',
@@ -283,7 +394,7 @@ CREATE TABLE `tb_invoice` (
   `invoice_catalog` varchar(200) DEFAULT NULL COMMENT '开票类目',
   `invoice_url` varchar(200) DEFAULT NULL COMMENT '发票地址',
   `tax_receipt_url` varchar(200) DEFAULT NULL COMMENT '税票地址',
-  `is_not_total` bigint(2) DEFAULT NULL COMMENT '是否为门征单开，0汇总代开，1门征单开',
+  `is_not_total` int(2) DEFAULT NULL COMMENT '是否为门征单开，0汇总代开，1门征单开',
   `express_sheet_no` varchar(100) DEFAULT NULL COMMENT '快递单号',
   `express_company_name` varchar(100) DEFAULT NULL COMMENT '快递公司',
   `express_update_datetime` datetime DEFAULT NULL COMMENT '快递更新时间',
@@ -292,16 +403,19 @@ CREATE TABLE `tb_invoice` (
   `invoice_desc` varchar(1000) DEFAULT NULL COMMENT '开票说明',
   `create_date` datetime DEFAULT NULL COMMENT '创建时间',
   `update_date` datetime DEFAULT NULL COMMENT '修改时间',
-  PRIMARY KEY (`id`),
-  KEY `invoice_catalog_id` (`invoice_catalog`) USING BTREE
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='总包发票';
 
 -- ----------------------------
--- Table structure for tb_invoice_application
+-- Records of tb_invoice
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for `tb_invoice_application`
 -- ----------------------------
 DROP TABLE IF EXISTS `tb_invoice_application`;
 CREATE TABLE `tb_invoice_application` (
-  `id` varchar(36) NOT NULL,
+  `id` varchar(50) NOT NULL COMMENT '主键',
   `application_date` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '申请时间',
   `application_person` varchar(255) DEFAULT NULL COMMENT '申请人',
   `invoice_total_amount` varchar(255) DEFAULT NULL COMMENT '开票总额',
@@ -312,17 +426,19 @@ CREATE TABLE `tb_invoice_application` (
   `application_handle_desc` varchar(255) DEFAULT NULL COMMENT '处理说明',
   `create_date` datetime DEFAULT NULL,
   `update_date` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `application_address` (`application_address`) USING BTREE,
-  KEY `invoice_catalogid` (`invoice_catalog_type`) USING BTREE
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
--- Table structure for tb_invoice_catalog
+-- Records of tb_invoice_application
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for `tb_invoice_catalog`
 -- ----------------------------
 DROP TABLE IF EXISTS `tb_invoice_catalog`;
 CREATE TABLE `tb_invoice_catalog` (
-  `id` varchar(36) DEFAULT NULL,
+  `id` varchar(50) NOT NULL COMMENT '主键',
   `service_type` varchar(255) DEFAULT NULL COMMENT '服务类型',
   `service_content` varchar(255) DEFAULT NULL COMMENT '具体服务内容',
   `billing_category` varchar(255) DEFAULT NULL COMMENT '开票类目',
@@ -332,11 +448,15 @@ CREATE TABLE `tb_invoice_catalog` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
--- Table structure for tb_invoice_ladder_price
+-- Records of tb_invoice_catalog
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for `tb_invoice_ladder_price`
 -- ----------------------------
 DROP TABLE IF EXISTS `tb_invoice_ladder_price`;
 CREATE TABLE `tb_invoice_ladder_price` (
-  `id` bigint(50) unsigned NOT NULL,
+  `id` varchar(50) NOT NULL COMMENT '主键',
   `tax_id` varchar(36) DEFAULT NULL COMMENT '服务商ID',
   `tax_package_id` varchar(36) DEFAULT NULL COMMENT '合作类型ID',
   `start_money` decimal(18,4) DEFAULT NULL COMMENT '开始的金额',
@@ -350,11 +470,15 @@ CREATE TABLE `tb_invoice_ladder_price` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='服务商发票税率梯度价';
 
 -- ----------------------------
--- Table structure for tb_invoice_list
+-- Records of tb_invoice_ladder_price
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for `tb_invoice_list`
 -- ----------------------------
 DROP TABLE IF EXISTS `tb_invoice_list`;
 CREATE TABLE `tb_invoice_list` (
-  `id` varchar(36) NOT NULL,
+  `id` varchar(50) NOT NULL COMMENT '主键',
   `invoice_id` varchar(36) DEFAULT NULL COMMENT '总包发票',
   `maker_total_invoice_id` varchar(36) DEFAULT NULL COMMENT '汇总代开发票id',
   `create_date` datetime DEFAULT NULL COMMENT '创建时间',
@@ -363,58 +487,70 @@ CREATE TABLE `tb_invoice_list` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
--- Table structure for tb_invoice_payment_inventory
+-- Records of tb_invoice_list
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for `tb_invoice_payment_inventory`
 -- ----------------------------
 DROP TABLE IF EXISTS `tb_invoice_payment_inventory`;
 CREATE TABLE `tb_invoice_payment_inventory` (
-  `id` varchar(36) NOT NULL COMMENT 'id',
+  `id` varchar(50) NOT NULL COMMENT '主键',
   `invoice_id` varchar(36) DEFAULT NULL COMMENT '发票id',
   `payment_inventory_id` varchar(36) DEFAULT NULL COMMENT '支付明细id',
   `create_date` datetime DEFAULT NULL COMMENT '创建时间',
   `update_date` datetime DEFAULT NULL COMMENT '修改时间',
-  PRIMARY KEY (`id`),
-  KEY `invoice_id` (`invoice_id`) USING BTREE,
-  KEY `payment_inventory_id` (`payment_inventory_id`) USING BTREE,
-  CONSTRAINT `tb_invoice_payment_inventory_ibfk_1` FOREIGN KEY (`invoice_id`) REFERENCES `tb_invoice` (`id`),
-  CONSTRAINT `tb_invoice_payment_inventory_ibfk_2` FOREIGN KEY (`payment_inventory_id`) REFERENCES `tb_payment_inventory` (`id`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='发票支付清单关联表';
 
 -- ----------------------------
--- Table structure for tb_lianlianpay
+-- Records of tb_invoice_payment_inventory
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for `tb_lianlianpay`
 -- ----------------------------
 DROP TABLE IF EXISTS `tb_lianlianpay`;
 CREATE TABLE `tb_lianlianpay` (
-  `id` bigint(50) NOT NULL,
+  `id` varchar(50) NOT NULL COMMENT '主键',
   `company_id` varchar(50) NOT NULL COMMENT '商户的企业ID',
   `oid_partner` varchar(50) NOT NULL COMMENT '连连商户号',
   `private_key` varchar(1000) NOT NULL COMMENT '连连商户号的私钥',
   `create_date` datetime DEFAULT NULL,
   `update_date` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `tb_lianlianpay` (`company_id`) USING BTREE
+  UNIQUE KEY `UK_icr1qhlwx3lsd0terqn7w65k1` (`company_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='商户的企业连连支付账户信息表';
 
 -- ----------------------------
--- Table structure for tb_lianlianpay_tax
+-- Records of tb_lianlianpay
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for `tb_lianlianpay_tax`
 -- ----------------------------
 DROP TABLE IF EXISTS `tb_lianlianpay_tax`;
 CREATE TABLE `tb_lianlianpay_tax` (
-  `id` bigint(50) NOT NULL,
+  `id` varchar(50) NOT NULL COMMENT '主键',
   `tax_id` varchar(50) NOT NULL COMMENT '商户的企业ID',
   `oid_partner` varchar(50) NOT NULL COMMENT '连连商户号',
   `private_key` varchar(1000) NOT NULL COMMENT '连连商户号的私钥',
   `create_date` datetime DEFAULT NULL,
   `update_date` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `tb_lianlianpay` (`tax_id`) USING BTREE
+  UNIQUE KEY `UK_icr1qhlwx3lsd0terqn7w65k1` (`tax_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='服务商连连支付账户信息表';
 
 -- ----------------------------
--- Table structure for tb_linkman
+-- Records of tb_lianlianpay_tax
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for `tb_linkman`
 -- ----------------------------
 DROP TABLE IF EXISTS `tb_linkman`;
 CREATE TABLE `tb_linkman` (
-  `id` varchar(36) NOT NULL COMMENT 'id',
+  `id` varchar(50) NOT NULL COMMENT '主键',
   `company_id` varchar(36) DEFAULT NULL COMMENT '商户ID',
   `link_name` varchar(20) DEFAULT NULL COMMENT '联系人',
   `link_mobile` varchar(40) DEFAULT NULL COMMENT '联系电话',
@@ -428,11 +564,15 @@ CREATE TABLE `tb_linkman` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='联系人表';
 
 -- ----------------------------
--- Table structure for tb_maker_invoice
+-- Records of tb_linkman
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for `tb_maker_invoice`
 -- ----------------------------
 DROP TABLE IF EXISTS `tb_maker_invoice`;
 CREATE TABLE `tb_maker_invoice` (
-  `id` varchar(36) NOT NULL COMMENT '门征单开主键',
+  `id` varchar(50) NOT NULL COMMENT '主键',
   `payment_inventory_id` varchar(36) DEFAULT NULL COMMENT '创客支付ID',
   `invoice_type_no` varchar(50) DEFAULT NULL COMMENT '发票代码',
   `invoice_serial_no` varchar(50) DEFAULT NULL COMMENT '发票号码',
@@ -454,11 +594,15 @@ CREATE TABLE `tb_maker_invoice` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
--- Table structure for tb_maker_total_invoice
+-- Records of tb_maker_invoice
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for `tb_maker_total_invoice`
 -- ----------------------------
 DROP TABLE IF EXISTS `tb_maker_total_invoice`;
 CREATE TABLE `tb_maker_total_invoice` (
-  `id` varchar(36) NOT NULL COMMENT '汇总代开id',
+  `id` varchar(50) NOT NULL COMMENT '主键',
   `invoice_type_no` varchar(100) DEFAULT NULL COMMENT '发票代码',
   `invoice_serial_no` varchar(100) DEFAULT NULL COMMENT '发票号码',
   `invoice_date` datetime DEFAULT NULL COMMENT '开票日期',
@@ -477,11 +621,15 @@ CREATE TABLE `tb_maker_total_invoice` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
--- Table structure for tb_managers
+-- Records of tb_maker_total_invoice
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for `tb_managers`
 -- ----------------------------
 DROP TABLE IF EXISTS `tb_managers`;
 CREATE TABLE `tb_managers` (
-  `id` varchar(36) NOT NULL,
+  `id` varchar(50) NOT NULL COMMENT '主键',
   `parent_id` varchar(36) DEFAULT '0' COMMENT '判断是否为子账号0则不是',
   `role_name` varchar(36) DEFAULT NULL COMMENT '角色名称',
   `real_name` varchar(20) DEFAULT NULL COMMENT '真实姓名',
@@ -501,11 +649,15 @@ CREATE TABLE `tb_managers` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='管理员表';
 
 -- ----------------------------
--- Table structure for tb_menu
+-- Records of tb_managers
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for `tb_menu`
 -- ----------------------------
 DROP TABLE IF EXISTS `tb_menu`;
 CREATE TABLE `tb_menu` (
-  `id` int(36) unsigned NOT NULL AUTO_INCREMENT COMMENT '菜单ID',
+  `id` varchar(50) NOT NULL COMMENT '主键',
   `menu_name` varchar(50) DEFAULT NULL COMMENT '菜单的名称',
   `menu_zhname` varchar(50) DEFAULT NULL COMMENT '中文',
   `menu_parent` int(36) DEFAULT NULL COMMENT '菜单的父菜单',
@@ -513,14 +665,18 @@ CREATE TABLE `tb_menu` (
   `create_date` datetime DEFAULT NULL COMMENT '创建时间',
   `update_date` datetime DEFAULT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
--- Table structure for tb_merchant
+-- Records of tb_menu
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for `tb_merchant`
 -- ----------------------------
 DROP TABLE IF EXISTS `tb_merchant`;
 CREATE TABLE `tb_merchant` (
-  `id` varchar(36) NOT NULL COMMENT '商户ID',
+  `id` varchar(50) NOT NULL COMMENT '主键',
   `parent_id` varchar(60) DEFAULT '0' COMMENT '等为主账号时为0，为子账号时是主账号的id',
   `company_id` varchar(36) NOT NULL COMMENT '公司ID（用来关联公司获取所属公司的信息）',
   `company_name` varchar(40) DEFAULT NULL COMMENT '商户公司名称',
@@ -531,78 +687,92 @@ CREATE TABLE `tb_merchant` (
   `real_name` varchar(20) DEFAULT NULL COMMENT '真实姓名',
   `pass_word` varchar(40) DEFAULT NULL COMMENT '登录密码',
   `login_mobile` varchar(40) DEFAULT NULL COMMENT '登录时用的手机号码',
+  `head_portrait` varchar(255) DEFAULT '' COMMENT '头像',
   `status` int(11) DEFAULT '0' COMMENT '商户状态0正常，1停用',
   `create_date` datetime DEFAULT NULL COMMENT '用户创建时间',
   `update_date` datetime DEFAULT NULL COMMENT '用户修改时间',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `merchant_unique_user_naem` (`user_name`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='商户信息\r\n';
+  UNIQUE KEY `UK_icr1qhlwx3lsd0terqn7w65k1` (`user_name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='商户信息';
 
 -- ----------------------------
--- Table structure for tb_merchant_catalog
+-- Records of tb_merchant
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for `tb_merchant_catalog`
 -- ----------------------------
 DROP TABLE IF EXISTS `tb_merchant_catalog`;
 CREATE TABLE `tb_merchant_catalog` (
-  `id` varchar(36) NOT NULL,
+  `id` varchar(50) NOT NULL COMMENT '主键',
   `merchant_id` varchar(36) DEFAULT NULL COMMENT '商户id',
   `catalog_id` varchar(36) DEFAULT NULL COMMENT '类目id',
   `create_date` datetime DEFAULT NULL COMMENT '添加时间',
   `update_date` datetime DEFAULT NULL COMMENT '修改时间',
-  PRIMARY KEY (`id`),
-  KEY `merchant_id` (`merchant_id`) USING BTREE,
-  KEY `catalog_id` (`catalog_id`) USING BTREE,
-  CONSTRAINT `tb_merchant_catalog_ibfk_1` FOREIGN KEY (`merchant_id`) REFERENCES `tb_merchant` (`id`),
-  CONSTRAINT `tb_merchant_catalog_ibfk_2` FOREIGN KEY (`catalog_id`) REFERENCES `tb_invoice_catalog` (`id`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='商户&类目';
 
 -- ----------------------------
--- Table structure for tb_merchant_role
+-- Records of tb_merchant_catalog
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for `tb_merchant_role`
 -- ----------------------------
 DROP TABLE IF EXISTS `tb_merchant_role`;
 CREATE TABLE `tb_merchant_role` (
-  `id` varchar(36) NOT NULL COMMENT '角色id',
+  `id` varchar(50) NOT NULL COMMENT '主键',
   `role_name` varchar(50) DEFAULT NULL COMMENT '角色名称',
   `role_position` varchar(200) DEFAULT NULL COMMENT '角色的职位',
   `create_date` datetime DEFAULT NULL COMMENT '创建时间',
   `update_date` datetime DEFAULT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='商户角色信息\r\n';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='商户角色信息';
 
 -- ----------------------------
--- Table structure for tb_merchant_role_menu
+-- Records of tb_merchant_role
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for `tb_merchant_role_menu`
 -- ----------------------------
 DROP TABLE IF EXISTS `tb_merchant_role_menu`;
 CREATE TABLE `tb_merchant_role_menu` (
-  `id` varchar(36) NOT NULL COMMENT '权限id',
+  `id` varchar(50) NOT NULL COMMENT '主键',
   `menu_id` varchar(36) DEFAULT NULL COMMENT '菜单ID',
   `merchant_role_id` varchar(36) DEFAULT NULL COMMENT '角色ID',
   `create_date` datetime DEFAULT NULL COMMENT '接单接单时间',
   `update_date` datetime DEFAULT NULL COMMENT '修改时间',
-  PRIMARY KEY (`id`),
-  KEY `menu_id` (`menu_id`) USING BTREE,
-  KEY `merchant_role_id` (`merchant_role_id`) USING BTREE
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
--- Table structure for tb_object_menu
+-- Records of tb_merchant_role_menu
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for `tb_object_menu`
 -- ----------------------------
 DROP TABLE IF EXISTS `tb_object_menu`;
 CREATE TABLE `tb_object_menu` (
-  `id` varchar(36) NOT NULL COMMENT '权限id',
+  `id` varchar(50) NOT NULL COMMENT '主键',
   `menu_id` varchar(36) DEFAULT NULL COMMENT '菜单ID',
   `object_user_id` varchar(255) DEFAULT NULL COMMENT '用户',
   `create_date` datetime DEFAULT NULL,
   `update_date` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `menu_id` (`menu_id`) USING BTREE
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
--- Table structure for tb_payment_history
+-- Records of tb_object_menu
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for `tb_payment_history`
 -- ----------------------------
 DROP TABLE IF EXISTS `tb_payment_history`;
 CREATE TABLE `tb_payment_history` (
-  `id` bigint(50) NOT NULL,
+  `id` varchar(50) NOT NULL COMMENT '主键',
   `payment_order_id` varchar(50) NOT NULL DEFAULT '' COMMENT '支付订单号',
   `order_type` varchar(50) NOT NULL DEFAULT '' COMMENT '订单类型（总包，分包，支付清单）',
   `payment_type` varchar(50) NOT NULL DEFAULT '' COMMENT '支付方式',
@@ -618,11 +788,15 @@ CREATE TABLE `tb_payment_history` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='第三方支付记录';
 
 -- ----------------------------
--- Table structure for tb_payment_inventory
+-- Records of tb_payment_history
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for `tb_payment_inventory`
 -- ----------------------------
 DROP TABLE IF EXISTS `tb_payment_inventory`;
 CREATE TABLE `tb_payment_inventory` (
-  `id` varchar(36) NOT NULL COMMENT '支付清单ID',
+  `id` varchar(50) NOT NULL COMMENT '主键',
   `payment_order_id` varchar(36) NOT NULL COMMENT '支付单ID',
   `worker_id` varchar(36) NOT NULL COMMENT '创客ID',
   `worker_name` varchar(36) DEFAULT '''''' COMMENT '创客姓名',
@@ -643,14 +817,18 @@ CREATE TABLE `tb_payment_inventory` (
   `create_date` datetime DEFAULT NULL COMMENT '创建时间',
   `update_date` datetime DEFAULT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='支付清单明细\r\n';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='支付清单明细';
 
 -- ----------------------------
--- Table structure for tb_payment_order
+-- Records of tb_payment_inventory
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for `tb_payment_order`
 -- ----------------------------
 DROP TABLE IF EXISTS `tb_payment_order`;
 CREATE TABLE `tb_payment_order` (
-  `id` varchar(36) NOT NULL COMMENT '支付订单ID',
+  `id` varchar(50) NOT NULL COMMENT '主键',
   `company_id` varchar(36) NOT NULL DEFAULT '""' COMMENT '商户的公司ID',
   `company_s_name` varchar(36) DEFAULT NULL COMMENT '商户的公司简称',
   `real_money` decimal(18,2) DEFAULT '0.00' COMMENT '商家的支付金额',
@@ -666,7 +844,6 @@ CREATE TABLE `tb_payment_order` (
   `is_not_invoice` tinyint(1) DEFAULT NULL COMMENT '是否开票',
   `task_id` varchar(36) DEFAULT '''''' COMMENT '关联的任务(可以不关联)',
   `task_name` varchar(255) DEFAULT NULL COMMENT '任务名称',
-  `task_type` varchar(255) DEFAULT NULL COMMENT '任务类型（行业类型）',
   `acceptance_certificate` varchar(100) DEFAULT NULL COMMENT '支付验收单（存储位置）',
   `tax_status` int(6) DEFAULT '0' COMMENT '0商户承担，1创客承担，2商户创客共同承担',
   `composite_tax` decimal(18,2) DEFAULT NULL COMMENT '综合税率',
@@ -678,19 +855,19 @@ CREATE TABLE `tb_payment_order` (
   `payment_date` datetime DEFAULT NULL COMMENT '支付时间',
   `create_date` datetime DEFAULT NULL COMMENT '支付订单的创建时间',
   `update_date` datetime DEFAULT NULL COMMENT '支付订单的修改时间',
-  PRIMARY KEY (`id`),
-  KEY `fk_po_company_id` (`company_id`) USING BTREE,
-  KEY `fk_po_tax_id` (`tax_id`) USING BTREE,
-  CONSTRAINT `tb_payment_order_ibfk_1` FOREIGN KEY (`company_id`) REFERENCES `tb_company_info` (`id`),
-  CONSTRAINT `tb_payment_order_ibfk_2` FOREIGN KEY (`tax_id`) REFERENCES `tb_tax` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='支付单信息\r\n';
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='支付单信息';
 
 -- ----------------------------
--- Table structure for tb_payment_order_many
+-- Records of tb_payment_order
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for `tb_payment_order_many`
 -- ----------------------------
 DROP TABLE IF EXISTS `tb_payment_order_many`;
 CREATE TABLE `tb_payment_order_many` (
-  `id` varchar(36) NOT NULL COMMENT '支付订单ID',
+  `id` varchar(50) NOT NULL COMMENT '主键',
   `company_id` varchar(36) NOT NULL COMMENT '商户的公司ID',
   `company_s_name` varchar(36) DEFAULT NULL COMMENT '商户的公司简称',
   `real_money` decimal(18,2) DEFAULT '0.00' COMMENT '支付金额',
@@ -700,7 +877,6 @@ CREATE TABLE `tb_payment_order_many` (
   `payment_inventory` varchar(255) DEFAULT NULL COMMENT '支付清单（存储位置）',
   `many_payment` varchar(255) DEFAULT NULL COMMENT '众包支付回单（存储位置）',
   `task_id` varchar(36) DEFAULT '''''' COMMENT '关联的任务(可以不关联)',
-  `task_type` varchar(255) DEFAULT NULL COMMENT '任务类型（行业类型）',
   `task_name` varchar(255) DEFAULT NULL COMMENT '任务名称',
   `acceptance_certificate` varchar(255) DEFAULT NULL COMMENT '支付验收单（存储位置）',
   `tax_status` int(6) DEFAULT '0' COMMENT '0商户承担，1创客承担，2商户创客共同承担',
@@ -715,19 +891,19 @@ CREATE TABLE `tb_payment_order_many` (
   `is_not_invoice` tinyint(1) DEFAULT NULL COMMENT '是否开票',
   `create_date` datetime DEFAULT NULL COMMENT '支付订单的创建时间',
   `update_date` datetime DEFAULT NULL COMMENT '支付订单的修改时间',
-  PRIMARY KEY (`id`),
-  KEY `fk_pom_company_id` (`company_id`) USING BTREE,
-  KEY `fk_pom_tax_id` (`tax_id`) USING BTREE,
-  CONSTRAINT `tb_payment_order_many_ibfk_1` FOREIGN KEY (`company_id`) REFERENCES `tb_company_info` (`id`),
-  CONSTRAINT `tb_payment_order_many_ibfk_2` FOREIGN KEY (`tax_id`) REFERENCES `tb_tax` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='众包支付单信息\r\n';
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='众包支付单信息';
 
 -- ----------------------------
--- Table structure for tb_payment_order_subpackage
+-- Records of tb_payment_order_many
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for `tb_payment_order_subpackage`
 -- ----------------------------
 DROP TABLE IF EXISTS `tb_payment_order_subpackage`;
 CREATE TABLE `tb_payment_order_subpackage` (
-  `id` varchar(36) NOT NULL COMMENT '支付订单ID',
+  `id` varchar(50) NOT NULL COMMENT '主键',
   `payment_inventory_id` varchar(36) DEFAULT NULL COMMENT '支付明细ID',
   `company_id` varchar(36) NOT NULL COMMENT '商户的公司ID',
   `real_money` decimal(18,2) DEFAULT '0.00' COMMENT '支付金额',
@@ -740,14 +916,18 @@ CREATE TABLE `tb_payment_order_subpackage` (
   `create_date` datetime DEFAULT NULL COMMENT '支付订单的创建时间',
   `update_date` datetime DEFAULT NULL COMMENT '支付订单的修改时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='支付单信息\r\n';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='支付单信息';
 
 -- ----------------------------
--- Table structure for tb_regulator
+-- Records of tb_payment_order_subpackage
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for `tb_regulator`
 -- ----------------------------
 DROP TABLE IF EXISTS `tb_regulator`;
 CREATE TABLE `tb_regulator` (
-  `id` bigint(50) NOT NULL COMMENT '监管部门ID',
+  `id` varchar(50) NOT NULL COMMENT '主键',
   `regulator_name` varchar(100) NOT NULL COMMENT '监管部门名称',
   `address` varchar(200) NOT NULL COMMENT '地址',
   `linkman` varchar(20) NOT NULL COMMENT '联系人',
@@ -758,17 +938,21 @@ CREATE TABLE `tb_regulator` (
   `create_date` datetime DEFAULT NULL COMMENT '创建时间',
   `update_date` datetime DEFAULT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `unique_regulator_user_name` (`user_name`) USING BTREE
+  UNIQUE KEY `UK_icr1qhlwx3lsd0terqn7w65k1` (`user_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='监管部门';
 
 -- ----------------------------
--- Table structure for tb_regulator_tax
+-- Records of tb_regulator
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for `tb_regulator_tax`
 -- ----------------------------
 DROP TABLE IF EXISTS `tb_regulator_tax`;
 CREATE TABLE `tb_regulator_tax` (
-  `id` bigint(50) NOT NULL,
+  `id` varchar(50) NOT NULL COMMENT '主键',
   `tax_id` varchar(36) NOT NULL COMMENT '服务商ID',
-  `regulator_id` bigint(50) NOT NULL COMMENT '监管部门ID',
+  `regulator_id` varchar(50) NOT NULL COMMENT '监管部门ID',
   `status` int(6) NOT NULL DEFAULT '0' COMMENT '状态0开启监管，1关闭监管',
   `create_date` datetime NOT NULL COMMENT '开始监管时间',
   `update_date` datetime NOT NULL,
@@ -776,42 +960,43 @@ CREATE TABLE `tb_regulator_tax` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='监管部门监管的服务商';
 
 -- ----------------------------
--- Table structure for tb_task
+-- Records of tb_regulator_tax
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for `tb_task`
 -- ----------------------------
 DROP TABLE IF EXISTS `tb_task`;
 CREATE TABLE `tb_task` (
-  `id` varchar(36) NOT NULL COMMENT '任务id',
+  `id` varchar(50) NOT NULL COMMENT '主键',
   `merchant_id` varchar(36) DEFAULT NULL COMMENT '商户ID(用来判断是哪个商户发布的任务)',
   `invoice_id` varchar(36) DEFAULT NULL COMMENT '任务的发票信息',
   `task_code` varchar(200) DEFAULT NULL COMMENT '任务编号',
   `task_name` varchar(200) DEFAULT NULL COMMENT '任务名称',
-  `release_date` date DEFAULT NULL COMMENT '发布时间',
-  `deadline_date` date DEFAULT NULL COMMENT '截至时间',
   `task_desc` text COMMENT '任务说明',
-  `industry_type` varchar(200) DEFAULT NULL COMMENT '行业类型',
+  `task_illustration` varchar(200) DEFAULT NULL COMMENT '任务说明图文',
   `task_cost_min` decimal(18,2) DEFAULT NULL COMMENT '最小费用',
   `task_cost_max` decimal(18,2) DEFAULT NULL COMMENT '最大费用',
   `task_skill` varchar(255) DEFAULT NULL COMMENT '创客所需技能',
-  `release_time` time DEFAULT NULL COMMENT '任务开始时间',
-  `deadline_time` time DEFAULT NULL COMMENT '任务结束时间',
   `upper_limit` int(6) DEFAULT NULL COMMENT '任务所需人数',
   `cooperate_mode` varchar(50) DEFAULT NULL COMMENT '合作类型0,总包+分包  1众包',
   `task_mode` varchar(50) DEFAULT NULL COMMENT '任务模式0派单，1抢单，2混合',
   `state` int(20) DEFAULT '0' COMMENT '任务状态,0发布中,1已关单,2验收中,3已完毕,4已作废',
   `create_date` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_date` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '修改时间',
-  PRIMARY KEY (`id`),
-  KEY `merchant_id` (`merchant_id`) USING BTREE,
-  KEY `invoice_id` (`invoice_id`) USING BTREE,
-  CONSTRAINT `tb_task_ibfk_1` FOREIGN KEY (`merchant_id`) REFERENCES `tb_merchant` (`id`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='任务表';
 
 -- ----------------------------
--- Table structure for tb_tax
+-- Records of tb_task
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for `tb_tax`
 -- ----------------------------
 DROP TABLE IF EXISTS `tb_tax`;
 CREATE TABLE `tb_tax` (
-  `id` varchar(36) NOT NULL,
+  `id` varchar(50) NOT NULL COMMENT '主键',
   `tax_s_name` varchar(20) DEFAULT NULL COMMENT '公司的简称',
   `tax_man` varchar(20) DEFAULT NULL COMMENT '公司的法定人',
   `business_license` varchar(100) DEFAULT NULL COMMENT '公司的营业执照',
@@ -827,14 +1012,18 @@ CREATE TABLE `tb_tax` (
   `create_date` datetime DEFAULT NULL,
   `update_date` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='服务商公司信息\r\n';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='服务商公司信息';
 
 -- ----------------------------
--- Table structure for tb_tax_package
+-- Records of tb_tax
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for `tb_tax_package`
 -- ----------------------------
 DROP TABLE IF EXISTS `tb_tax_package`;
 CREATE TABLE `tb_tax_package` (
-  `id` varchar(36) NOT NULL,
+  `id` varchar(50) NOT NULL COMMENT '主键',
   `tax_id` varchar(36) DEFAULT NULL COMMENT '对应的服务商',
   `invoice_taxno` varchar(100) DEFAULT NULL COMMENT '税号',
   `tax_price` decimal(18,4) DEFAULT '0.0000' COMMENT '税费率成本',
@@ -851,11 +1040,15 @@ CREATE TABLE `tb_tax_package` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='服务商的总包众包信息';
 
 -- ----------------------------
--- Table structure for tb_worker
+-- Records of tb_tax_package
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for `tb_worker`
 -- ----------------------------
 DROP TABLE IF EXISTS `tb_worker`;
 CREATE TABLE `tb_worker` (
-  `id` varchar(36) NOT NULL COMMENT '创客id',
+  `id` varchar(50) NOT NULL COMMENT '主键',
   `wx_id` varchar(36) DEFAULT NULL COMMENT '微信关联ID(openid)',
   `wx_name` varchar(40) DEFAULT NULL COMMENT '微信名称',
   `worker_name` varchar(200) DEFAULT NULL COMMENT '创客姓名',
@@ -885,15 +1078,19 @@ CREATE TABLE `tb_worker` (
   `create_date` datetime DEFAULT NULL COMMENT '创建时间',
   `update_date` datetime DEFAULT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `unique_user_name` (`user_name`) USING BTREE
+  UNIQUE KEY `UK_icr1qhlwx3lsd0terqn7w65k1` (`user_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='创客表';
 
 -- ----------------------------
--- Table structure for tb_worker_bank
+-- Records of tb_worker
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for `tb_worker_bank`
 -- ----------------------------
 DROP TABLE IF EXISTS `tb_worker_bank`;
 CREATE TABLE `tb_worker_bank` (
-  `id` bigint(50) NOT NULL,
+  `id` varchar(50) NOT NULL COMMENT '主键',
   `worker_id` varchar(50) DEFAULT NULL COMMENT '创客ID',
   `real_name` varchar(20) DEFAULT NULL COMMENT '户名',
   `bank_name` varchar(40) DEFAULT NULL COMMENT '开户行',
@@ -901,17 +1098,19 @@ CREATE TABLE `tb_worker_bank` (
   `sort` int(2) DEFAULT '0' COMMENT '优先度（越小越先）',
   `create_date` datetime DEFAULT NULL COMMENT '接单接单时间',
   `update_date` datetime DEFAULT NULL COMMENT '修改时间',
-  PRIMARY KEY (`id`),
-  KEY `fk_worker_bank_worker_id` (`worker_id`) USING BTREE,
-  CONSTRAINT `tb_worker_bank_ibfk_1` FOREIGN KEY (`worker_id`) REFERENCES `tb_worker` (`id`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='创客绑定的银行卡号';
 
 -- ----------------------------
--- Table structure for tb_worker_task
+-- Records of tb_worker_bank
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for `tb_worker_task`
 -- ----------------------------
 DROP TABLE IF EXISTS `tb_worker_task`;
 CREATE TABLE `tb_worker_task` (
-  `id` varchar(36) NOT NULL COMMENT 'id',
+  `id` varchar(50) NOT NULL COMMENT '主键',
   `worker_id` varchar(36) DEFAULT NULL COMMENT '创客id',
   `task_id` varchar(36) DEFAULT NULL COMMENT '任务id',
   `task_status` int(36) DEFAULT '0' COMMENT '逻辑删除0表示接单成功，1表示被剔除',
@@ -926,13 +1125,15 @@ CREATE TABLE `tb_worker_task` (
   `arrange_person` varchar(100) DEFAULT NULL COMMENT '派单人员',
   `create_date` datetime DEFAULT NULL COMMENT '接单接单时间',
   `update_date` datetime DEFAULT NULL COMMENT '修改时间',
-  PRIMARY KEY (`id`),
-  KEY `fk_worker` (`worker_id`) USING BTREE,
-  KEY `fk_task` (`task_id`) USING BTREE
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
--- View structure for tb_merchant_payment_list
+-- Records of tb_worker_task
+-- ----------------------------
+
+-- ----------------------------
+-- View structure for `tb_merchant_payment_list`
 -- ----------------------------
 DROP VIEW IF EXISTS `tb_merchant_payment_list`;
 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`%` SQL SECURITY DEFINER VIEW `tb_merchant_payment_list` AS (select `b`.`id` AS `payment_order_id`,`b`.`company_id` AS `company_id`,`b`.`company_s_name` AS `merchant_name`,`b`.`platform_service_provider` AS `tax_name`,(case when isnull(`b`.`id`) then 1 else 0 end) AS `package_status`,`b`.`real_money` AS `real_money`,`b`.`is_invoice` AS `is_invoice`,`b`.`payment_date` AS `payment_date` from (`tb_payment_order` `b` left join `tb_merchant` `a` on((`a`.`company_id` = `b`.`company_id`)))) union (select `b`.`id` AS `payment_order_id`,`b`.`company_id` AS `company_id`,`b`.`company_s_name` AS `merchant_name`,`b`.`platform_service_provider` AS `tax_name`,(case when isnull(`b`.`id`) then 0 else 1 end) AS `package_status`,`b`.`real_money` AS `real_money`,`b`.`is_application` AS `is_invoice`,`b`.`payment_date` AS `payment_date` from (`tb_payment_order_many` `b` left join `tb_merchant` `a` on((`a`.`company_id` = `b`.`company_id`)))) ;
