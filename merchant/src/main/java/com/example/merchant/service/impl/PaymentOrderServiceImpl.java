@@ -461,7 +461,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
     }
 
     @Override
-    public ReturnJson gradientPrice(String merchantId, String taxId) {
+    public ReturnJson gradientPrice(String merchantId, String taxId, Integer packageStatus) {
         CompanyInfo companyInfo = companyInfoDao.selectById(merchantId);
         if (companyInfo == null) {
             Merchant merchant = merchantDao.selectById(merchantId);
@@ -471,8 +471,14 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
             return ReturnJson.error("商户信息错误请重新选择");
         }
         CompanyTax companyTax = companyTaxDao.selectOne(new QueryWrapper<CompanyTax>()
-                .eq("company_id", merchantId).eq("tax_id", taxId));
-        return null;
+                .eq("company_id", companyInfo.getId()).eq("tax_id", taxId));
+        if (companyTax.getChargeStatus() == 0) {
+            Integer serviceCharge = companyTaxDao.getCompanyTax(companyInfo.getId(), taxId, packageStatus);
+            return ReturnJson.success(serviceCharge);
+        } else {
+            List<CompanyTaxMoneyVO> list = companyTaxDao.getCompanyTaxMoney(companyInfo.getId(), taxId, packageStatus);
+            return ReturnJson.success(list);
+        }
     }
 
     /**

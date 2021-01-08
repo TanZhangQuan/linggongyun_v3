@@ -200,7 +200,8 @@ public interface PaymentOrderService extends IService<PaymentOrder> {
      *
      * @param merchantId
      * @param taxId
+     * @param chargeStatus
      * @return
      */
-    ReturnJson gradientPrice(String merchantId,String taxId);
+    ReturnJson gradientPrice(String merchantId,String taxId,Integer chargeStatus);
 }
