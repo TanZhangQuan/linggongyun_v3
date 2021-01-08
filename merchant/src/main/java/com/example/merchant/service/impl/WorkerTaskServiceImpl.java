@@ -59,9 +59,10 @@ public class WorkerTaskServiceImpl extends ServiceImpl<WorkerTaskDao, WorkerTask
                 task.setState(1);
                 taskDao.updateById(task);
             }
+        }else{
+            task.setState(1);
+            taskDao.updateById(task);
         }
-        task.setState(1);
-        taskDao.updateById(task);
         return ReturnJson.success("添加成功");
     }
 
