@@ -209,9 +209,11 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         MerchantInfoVO merchantInfoVO = new MerchantInfoVO();
         BeanUtils.copyProperties(companyInfo, merchantInfoVO);
         BeanUtils.copyProperties(merchant, merchantInfoVO);
-        merchantInfoVO.setTaxVOList(taxVOS);
+        merchantInfoVO.setTaxVoList(taxVOS);
         try {
             merchantInfoVO.setSalesManNmae(salesMan.getRealName());
+            merchantInfoVO.setAgentName(agent.getRealName());
+            merchantInfoVO.setCompanyInvoiceInfo(companyInvoiceInfo);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -375,7 +377,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ReturnJson addMerchant(CompanyDTO companyDto) throws Exception {
+    public ReturnJson addMerchant(CompanyDTO companyDto, String userId) throws Exception {
         CompanyInfo companyInfo = new CompanyInfo();
         BeanUtils.copyProperties(companyDto, companyInfo);
 
@@ -385,6 +387,10 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         companyInfo.setAddressAndTelephone(companyInvoiceInfo.getAddressAndTelephone());
         companyInfo.setBankAndAccount(companyInvoiceInfo.getBankAndAccount());
 
+        Managers managers = managersDao.selectById(userId);
+        if (managers.getUserSign() == 3) {
+            companyInfo.setAuditStatus(1);
+        }
         companyInfoDao.insert(companyInfo);
         companyInvoiceInfo.setCompanyId(companyInfo.getId());
         companyInvoiceInfoDao.insert(companyInvoiceInfo);
@@ -430,7 +436,12 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         address.setStatus(0);
         addressDao.insert(address);
 
-        Merchant merchant = new Merchant();
+        Merchant merchant = merchantDao.selectOne(new QueryWrapper<Merchant>()
+                .eq("user_name", companyDto.getAddMerchantDto().getUserName()));
+        if (merchant != null) {
+            return ReturnJson.success("登录账号存在相同的，请修改后重新操作！");
+        }
+        merchant = new Merchant();
         BeanUtils.copyProperties(companyDto.getAddMerchantDto(), merchant);
         merchant.setPayPwd(PWD_KEY + MD5.md5(companyDto.getAddMerchantDto().getPayPwd()));
         merchant.setPassWord(PWD_KEY + MD5.md5(companyDto.getAddMerchantDto().getPassWord()));

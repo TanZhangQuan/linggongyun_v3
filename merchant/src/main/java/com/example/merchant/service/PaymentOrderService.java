@@ -19,13 +19,6 @@ import com.example.mybatis.entity.PaymentOrder;
  * @since 2020-09-07
  */
 public interface PaymentOrderService extends IService<PaymentOrder> {
-    ReturnJson getDay(String merchantId);
-
-    ReturnJson getWeek(String merchantId);
-
-    ReturnJson getMonth(String merchantId);
-
-    ReturnJson getYear(String merchantId);
 
     /**
      * 查询总包+分包的支付订单
@@ -192,4 +185,23 @@ public interface PaymentOrderService extends IService<PaymentOrder> {
      * @return
      */
     ReturnJson associatedTasks(String merchantId, AssociatedTasksDTO associatedTasksDTO);
+
+    /**
+     * 驳回支付信息
+     *
+     * @param paymentOrderId
+     * @param reasonsForRejection
+     * @return
+     */
+    ReturnJson reject(String paymentOrderId,String reasonsForRejection);
+
+    /**
+     * 获取梯度价
+     *
+     * @param merchantId
+     * @param taxId
+     * @param chargeStatus
+     * @return
+     */
+    ReturnJson gradientPrice(String merchantId,String taxId,Integer chargeStatus);
 }

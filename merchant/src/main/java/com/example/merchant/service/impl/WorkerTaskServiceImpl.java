@@ -53,8 +53,13 @@ public class WorkerTaskServiceImpl extends ServiceImpl<WorkerTaskDao, WorkerTask
             workerTask.setArrangePerson(map.get("arrangePerson").toString());
             workerTaskDao.addWorkerTask(workerTask);
         }
-        int count = workerTaskDao.selectCount(new QueryWrapper<WorkerTask>().eq("task_id", map.get("taskId").toString()).eq("task_status", 0));
-        if (count == task.getUpperLimit()) {
+        if (task.getTaskMode() == 2) {
+            int count = workerTaskDao.selectCount(new QueryWrapper<WorkerTask>().eq("task_id", map.get("taskId").toString()).eq("task_status", 0));
+            if (count == task.getUpperLimit()) {
+                task.setState(1);
+                taskDao.updateById(task);
+            }
+        }else{
             task.setState(1);
             taskDao.updateById(task);
         }
@@ -81,12 +86,12 @@ public class WorkerTaskServiceImpl extends ServiceImpl<WorkerTaskDao, WorkerTask
     }
 
     @Override
-    public ReturnJson updateCheckMoney(String taskId, Double money, String id,String userId) {
+    public ReturnJson updateCheckMoney(String taskId, Double money, String id, String userId) {
         ReturnJson returnJson;
         if (money == null) {
             returnJson = new ReturnJson("验收金额不能为空", 300);
         } else {
-            WorkerTask workerTask=workerTaskDao.selectOne(new QueryWrapper<WorkerTask>().eq("worker_id",id).eq("task_id",taskId));
+            WorkerTask workerTask = workerTaskDao.selectOne(new QueryWrapper<WorkerTask>().eq("worker_id", id).eq("task_id", taskId));
             workerTask.setCheckMoney(money);
             workerTask.setStatus(4);
             workerTask.setCheckDate(LocalDateTime.now());

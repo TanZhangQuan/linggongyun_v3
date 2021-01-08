@@ -112,8 +112,10 @@ public class MerchantPaasController {
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "companyDto", value = "商户ID", required = true, dataType = "CompanyDTO")
     })
-    public ReturnJson addMerchant(@Valid @RequestBody CompanyDTO companyDto) throws Exception {
-        return merchantService.addMerchant(companyDto);
+    @LoginRequired
+    public ReturnJson addMerchant(@Valid @RequestBody CompanyDTO companyDto
+            ,@RequestAttribute("userId") @ApiParam(hidden = true)String userId) throws Exception {
+        return merchantService.addMerchant(companyDto,userId);
     }
 
     @PostMapping("/getMerchantPaymentList")

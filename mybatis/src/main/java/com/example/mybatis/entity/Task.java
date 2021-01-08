@@ -110,7 +110,7 @@ public class Task extends BaseEntity {
     private Integer taskMode;
 
     /**
-     * 任务状态:0发布中,1已接单,2交付中,3已完毕,4已关闭
+     * 任务状态,0发布中,1已关单,2验收中,3已完毕,4已作废
      */
     @ApiModelProperty("任务状态")
     private Integer state;

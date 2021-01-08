@@ -90,8 +90,15 @@ public class TaxPaasController {
     }
 
     @GetMapping("/queryTaxPaasList")
-    @ApiOperation(value = "查询服务商列表（添加商户）", notes = "查询服务商列表（添加商户）", httpMethod = "GET")
+    @ApiOperation(value = "查询服务商列表", notes = "查询服务商列表", httpMethod = "POST")
     public ReturnJson getTaxPaasList() {
         return taxService.getTaxPaasList();
+    }
+
+    @PostMapping("/queryTaxList")
+    @ApiOperation(value = "查询服务商列表（添加商户）", notes = "查询服务商列表（添加商户）", httpMethod = "POST")
+    @ApiImplicitParams(value = {@ApiImplicitParam(name = "packageStatus", value = "服务商类型0总包 1众包")})
+    public ReturnJson getTaxPaasList(@NotNull(message = "服务商类型不能为空！") @RequestParam Integer packageStatus) {
+        return taxService.getTaxList(packageStatus);
     }
 }
