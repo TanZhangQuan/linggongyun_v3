@@ -79,7 +79,7 @@ mybatis-plus:
     map-underscore-to-camel-case: true
     auto-mapping-behavior: full
     # sql 打印
-    #log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
   mapper-locations: classpath*:mapper/*Mapper.xml
   type-aliases-package: classpath*:com.example.mybatis.entity
 
