@@ -8,7 +8,7 @@ import java.io.Serializable;
 import java.util.List;
 
 @Data
-@ApiModel(description = "XXXXX")
+@ApiModel(description = "分包开票列表")
 public class SubpackageVO implements Serializable {
     private static final long serialVersionUID = 1L;
 

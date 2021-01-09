@@ -19,14 +19,4 @@ public class TaskVO implements Serializable {
     @ApiModelProperty(value = "任务名称")
     private String taskName;
 
-    @ApiModelProperty(value = "开始时间")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    private LocalDateTime releaseDate;
-
-    @ApiModelProperty(value = "结束时间")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    private LocalDateTime deadlineDate;
-
-    @ApiModelProperty(value = "任务类型")
-    private String industryType;
 }
