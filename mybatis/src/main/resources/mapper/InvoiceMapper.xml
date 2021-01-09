@@ -96,39 +96,6 @@
         id, application_id, invoice_code, invoice_print_date, invoice_number, invoice_codeNo, invoice_print_person, application_invoice_person, invoice_numbers, invoice_money, invoice_catalog_id, invoice_url, tax_receipt_url, express_sheet_no, express_company_name, express_update_datetime, express_update_person, express_update_person_tel, invoice_desc, create_date, update_date
     </sql>
 
-
-    <!--商户端查询条件-->
-    <sql id="que">
-        <if test="tobeinvoicedDto.merchantId != null and tobeinvoicedDto.merchantId != ''">
-            AND po.company_s_name=#{tobeinvoicedDto.merchantId}
-        </if>
-        <if test="tobeinvoicedDto.platformServiceProvider != null and tobeinvoicedDto.platformServiceProvider != ''">
-            AND po.platform_service_provider=#{tobeinvoicedDto.platformServiceProvider}
-        </if>
-        <if test="tobeinvoicedDto.applicationDateOne != null and tobeinvoicedDto.applicationDateOne != ''">
-            AND ia.invapp.application_date>=#{tobeinvoicedDto.applicationDateOne}
-        </if>
-        <if test="tobeinvoicedDto.applicationDateTwo != null and tobeinvoicedDto.applicationDateTwo != ''">
-            AND ia.invapp.application_date <![CDATA[<=]]> #{tobeinvoicedDto.applicationDateTwo}
-        </if>
-    </sql>
-
-    <!--平台端通用查询-->
-    <sql id="que2">
-        <if test="tobeinvoicedDto.companySName != null and tobeinvoicedDto.companySName != ''">
-            AND po.company_s_name like CONCAT('%',#{tobeinvoicedDto.companySName},'%')
-        </if>
-        <if test="tobeinvoicedDto.platformServiceProvider != null and tobeinvoicedDto.platformServiceProvider != ''">
-            AND po.platform_service_provider=#{tobeinvoicedDto.platformServiceProvider}
-        </if>
-        <if test="tobeinvoicedDto.applicationDateOne != null and tobeinvoicedDto.applicationDateOne != ''">
-            AND invapp.invapp.application_date>=#{tobeinvoicedDto.applicationDateOne}
-        </if>
-        <if test="tobeinvoicedDto.applicationDateTwo != null and tobeinvoicedDto.applicationDateTwo != ''">
-            AND invapp.invapp.application_date <![CDATA[<=]]> #{tobeinvoicedDto.applicationDateTwo}
-        </if>
-    </sql>
-
     <resultMap id="InvoiceMoney" type="com.example.mybatis.po.InvoicePO">
         <result column="count" property="count" />
         <result column="total_money" property="totalMoney" />
@@ -202,7 +169,7 @@
         LEFT JOIN tb_application_payment AS app ON app.payment_order_id = po.id
         LEFT JOIN tb_invoice_application as invapp ON invapp.id=app.invoice_application_id
         LEFT JOIN tb_invoice as i ON i.application_id=invapp.id
-        WHERE po.payment_order_status = 2
+        WHERE po.payment_order_status = 6
         AND po.company_id=#{param3}
         <if test="param2.platformServiceProvider != null and param2.platformServiceProvider != ''">
             AND po.tax_id=#{param2.platformServiceProvider}
@@ -236,7 +203,7 @@
         LEFT JOIN tb_application_payment AS app ON app.payment_order_id = po.id
         LEFT JOIN tb_invoice_application as invapp ON invapp.id=app.invoice_application_id
         LEFT JOIN tb_invoice as i ON i.application_id=invapp.id
-        WHERE po.payment_order_status = 2 and invapp.application_state=3
+        WHERE po.payment_order_status = 6 and invapp.application_state=3
          AND po.company_id=#{param3}
         <if test="param2.platformServiceProvider != null and param2.platformServiceProvider != ''">
             AND po.platform_service_provider=#{param2.platformServiceProvider}
@@ -290,7 +257,7 @@
 	    tb_invoice_application invapp
         INNER JOIN tb_application_payment app ON app.invoice_application_id = invapp.id
         INNER JOIN tb_payment_order po ON po.id = app.payment_order_id
-        WHERE invapp.application_state!=3
+        WHERE invapp.application_state != 3
         <if test="tobeinvoicedDto.companySName != null and tobeinvoicedDto.companySName != ''">
             AND po.company_s_name like CONCAT('%',#{tobeinvoicedDto.companySName},'%')
         </if>

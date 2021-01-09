@@ -42,9 +42,6 @@
         <association property="taskVo" javaType="com.example.mybatis.vo.TaskVO">
             <result column="task_code" property="taskCode"/>
             <result column="task_name" property="taskName"/>
-            <result column="release_date" property="releaseDate"/>
-            <result column="deadline_date" property="deadlineDate"/>
-            <result column="industry_type" property="industryType"/>
         </association>
     </resultMap>
 
@@ -294,7 +291,7 @@
         po.id,po.company_s_name,po.platform_service_provider,
         po.acceptance_certificate,po.payment_order_status,
         po.payment_inventory,po.payment_date,po.subpackage_payment,po.company_contract,
-        t.task_code,t.task_name,t.release_date,t.deadline_date,t.industry_type
+        t.task_code,t.task_name
         FROM tb_payment_order AS po
         LEFT JOIN tb_task as t ON po.task_id=t.id
         WHERE po.id=#{id}
@@ -494,10 +491,7 @@
             po.payment_date,
             po.subpackage_payment,
             t.task_code,
-            t.task_name,
-            t.release_date,
-            t.deadline_date,
-            t.industry_type
+            t.task_name
         FROM
             tb_invoice_application ia
         INNER JOIN tb_application_payment ap ON ap.invoice_application_id = ia.id
@@ -543,10 +537,7 @@
             po.payment_date,
             po.subpackage_payment,
             t.task_code,
-            t.task_name,
-            t.release_date,
-            t.deadline_date,
-            t.industry_type
+            t.task_name
         FROM tb_invoice i
         INNER JOIN tb_invoice_application ia ON ia.id = i.application_id
         INNER JOIN tb_application_payment ap ON ia.id = ap.invoice_application_id
@@ -568,10 +559,7 @@
             po.payment_date,
             po.subpackage_payment,
             t.task_code,
-            t.task_name,
-            t.release_date,
-            t.deadline_date,
-            t.industry_type
+            t.task_name
         FROM
             tb_maker_total_invoice mti
         INNER JOIN tb_invoice_list il ON il.maker_total_invoice_id = mti.id

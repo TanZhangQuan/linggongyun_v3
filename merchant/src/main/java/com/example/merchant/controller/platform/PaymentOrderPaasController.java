@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 /**
  * <p>
@@ -91,7 +92,7 @@ public class PaymentOrderPaasController {
     @ApiOperation(value = "商户选择可关联任务", notes = "商户选择可关联任务", httpMethod = "POST")
     public ReturnJson associatedTasks(@NotBlank(message = "商户ID不能为空！") @RequestParam String merchantId,
                                       AssociatedTasksDTO associatedTasksDto) {
-        return paymentOrderService.associatedTasks(merchantId,associatedTasksDto);
+        return paymentOrderService.associatedTasks(merchantId, associatedTasksDto);
     }
 
     @PostMapping("/reject")
@@ -100,8 +101,18 @@ public class PaymentOrderPaasController {
             @ApiImplicitParam(name = "reasonsForRejection", value = "驳回理由", required = true)})
     public ReturnJson reject(@NotBlank(message = "支付订单不能为空！") @RequestParam(required = false) String paymentOrderId,
                              @NotBlank(message = "驳回理由不能为空！") @RequestParam(required = false) String reasonsForRejection) {
-        return paymentOrderService.reject(paymentOrderId,reasonsForRejection);
+        return paymentOrderService.reject(paymentOrderId, reasonsForRejection);
     }
 
+    @PostMapping("/gradientPrice")
+    @ApiOperation(value = "获取梯度价", notes = "获取梯度价", httpMethod = "POST")
+    @ApiImplicitParams(value = {@ApiImplicitParam(name = "merchantId", value = "商户ID", required = true),
+            @ApiImplicitParam(name = "taxId", value = "服务商ID", required = true),
+            @ApiImplicitParam(name = "packageStatus", value = "支付类型0总包 1 众包", required = true)})
+    public ReturnJson gradientPrice(@NotBlank(message = "商户ID") @RequestParam(required = false) String merchantId,
+                                    @NotBlank(message = "服务商ID不能为空") @RequestParam(required = false) String taxId,
+                                    @NotNull(message = "支付类型不能为空") @RequestParam(required = false) Integer packageStatus) {
+        return paymentOrderService.gradientPrice(merchantId, taxId, packageStatus);
+    }
 
 }

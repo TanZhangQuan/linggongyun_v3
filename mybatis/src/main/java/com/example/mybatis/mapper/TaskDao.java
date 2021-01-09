@@ -80,4 +80,6 @@ public interface TaskDao extends BaseMapper<Task> {
     List<TaskWorkerVO> getAllTask();
 
     IPage<AssociatedTasksVO> getAssociatedTasks(Page page,String merchantId, Integer cooperateMode);
+
+    IPage<AssociatedTasksVO> getAssociatedTask(Page page,String merchantId, Integer cooperateMode);
 }

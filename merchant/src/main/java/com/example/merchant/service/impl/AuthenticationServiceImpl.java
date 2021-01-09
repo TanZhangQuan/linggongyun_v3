@@ -1,5 +1,6 @@
 package com.example.merchant.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.example.common.contract.SignAContractUtils;
 import com.example.common.contract.exception.DefineException;
 import com.example.common.contract.helper.SignHelper;
@@ -73,6 +74,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         Worker worker = workerDao.selectById(workerId);
         if (worker == null) {
             return ReturnJson.error("该创客不存在！");
+        }
+        worker = workerDao.selectOne(new QueryWrapper<Worker>()
+                .eq("idcard_code", idCardInfoDto.getIdCard())
+                .eq("agreementSign", 2));
+        if (worker != null) {
+            return ReturnJson.error("该身份证已存在签约创客，请更换身份证或者联系管理员");
         }
         worker.setAccountName(idCardInfoDto.getRealName());
         worker.setIdcardCode(idCardInfoDto.getIdCard());

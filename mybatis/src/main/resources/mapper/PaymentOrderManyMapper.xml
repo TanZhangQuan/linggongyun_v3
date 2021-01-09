@@ -111,16 +111,13 @@
         <association property="taskVo" javaType="com.example.mybatis.vo.TaskVO">
             <result column="task_code" property="taskCode"/>
             <result column="task_name" property="taskName"/>
-            <result column="release_date" property="releaseDate"/>
-            <result column="deadline_date" property="deadlineDate"/>
-            <result column="industry_type" property="industryType"/>
         </association>
     </resultMap>
 
     <select id="getPayOrderManyById" resultMap="PayOrderManyById">
         SELECT pom.id,pom.company_s_name,pom.platform_service_provider,pom.payment_inventory,
         pom.acceptance_certificate,pom.many_payment,pom.payment_order_status,pom.payment_date,pom.real_money,
-        t.task_code,t.task_name,t.release_date,t.deadline_date,t.industry_type
+        t.task_code,t.task_name
         FROM tb_payment_order_many as pom
         LEFT JOIN tb_task as t ON pom.task_id=t.id
         WHERE pom.id=#{id}
@@ -435,9 +432,6 @@
         <association property="taskVo" javaType="com.example.mybatis.vo.TaskVO">
             <result column="task_code" property="taskCode"/>
             <result column="task_name" property="taskName"/>
-            <result column="release_date" property="releaseDate"/>
-            <result column="deadline_date" property="deadlineDate"/>
-            <result column="industry_type" property="industryType"/>
         </association>
     </resultMap>
 
@@ -739,7 +733,7 @@
         FROM
             tb_payment_order_many
         WHERE
-            payment_order_status = 3
+            payment_order_status = 5
         AND DATE(real_money) = DATE(NOW())
         AND company_id =#{merchantId}
     </select>
@@ -896,10 +890,7 @@
             po.payment_inventory,
             po.payment_date,
             t.task_code,
-            t.task_name,
-            t.release_date,
-            t.deadline_date,
-            t.industry_type
+            t.task_name
         FROM
             tb_payment_order_many AS po
         LEFT JOIN tb_task AS t ON po.task_id = t.id
