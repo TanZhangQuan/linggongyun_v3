@@ -250,4 +250,30 @@
         AND state = 3
         ORDER BY create_date DESC
     </select>
+
+    <select id="getAssociatedTask" resultMap="associatedTasks">
+        SELECT
+            t.id,
+            t.task_code,
+            t.task_name,
+            t.cooperate_mode,
+            t.task_mode,
+            t.state,
+            t.create_date
+        FROM
+            tb_task t
+        WHERE
+            t.merchant_id IN (
+                SELECT
+                    id
+                FROM
+                    tb_merchant
+                WHERE
+                    company_id = #{param2}
+            )
+        AND t.cooperate_mode = #{param3}
+        AND t.state = 3
+        ORDER BY
+            t.create_date DESC
+    </select>
 </mapper>

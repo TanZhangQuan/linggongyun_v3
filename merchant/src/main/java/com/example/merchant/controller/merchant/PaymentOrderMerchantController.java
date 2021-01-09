@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 /**
  * <p>
@@ -80,7 +81,18 @@ public class PaymentOrderMerchantController {
     @ApiOperation(value = "商户选择可关联任务", notes = "商户选择可关联任务", httpMethod = "POST")
     @LoginRequired
     public ReturnJson associatedTask(@RequestAttribute("userId") @ApiParam(hidden = true) String merchantId,
-                                      AssociatedTasksDTO associatedTasksDto) {
-        return paymentOrderService.associatedTasks(merchantId,associatedTasksDto);
+                                     AssociatedTasksDTO associatedTasksDto) {
+        return paymentOrderService.associatedTasks(merchantId, associatedTasksDto);
+    }
+
+    @PostMapping("/gradientPrice")
+    @LoginRequired
+    @ApiOperation(value = "获取梯度价", notes = "获取梯度价", httpMethod = "POST")
+    @ApiImplicitParams(value = {@ApiImplicitParam(name = "taxId", value = "服务商ID", required = true),
+            @ApiImplicitParam(name = "packageStatus", value = "支付类型0总包 1 众包", required = true)})
+    public ReturnJson gradientPrice(@RequestAttribute("userId") @ApiParam(hidden = true) String merchantId,
+                                    @NotBlank(message = "服务商ID不能为空") @RequestParam(required = false) String taxId,
+                                    @NotNull(message = "支付类型不能为空！") @RequestParam(required = false) Integer packageStatus) {
+        return paymentOrderService.gradientPrice(merchantId, taxId, packageStatus);
     }
 }

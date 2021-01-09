@@ -445,7 +445,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
     @Override
     public ReturnJson associatedTasks(String merchantId, AssociatedTasksDTO associatedTasksDto) {
         Page page = new Page(associatedTasksDto.getPageNo(), associatedTasksDto.getPageSize());
-        IPage<AssociatedTasksVO> voiPage = taskDao.getAssociatedTasks(page, merchantId, associatedTasksDto.getCooperateMode());
+        IPage<AssociatedTasksVO> voiPage = taskDao.getAssociatedTask(page, merchantId, associatedTasksDto.getCooperateMode());
         return ReturnJson.success(voiPage);
     }
 
