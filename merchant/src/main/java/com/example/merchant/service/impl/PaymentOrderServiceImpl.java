@@ -472,8 +472,11 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
         }
         CompanyTax companyTax = companyTaxDao.selectOne(new QueryWrapper<CompanyTax>()
                 .eq("company_id", companyInfo.getId()).eq("tax_id", taxId));
+        if (companyTax == null) {
+            return ReturnJson.error("此商户还未和此服务商取得合作！");
+        }
         if (companyTax.getChargeStatus() == 0) {
-            Integer serviceCharge = companyTaxDao.getCompanyTax(companyInfo.getId(), taxId, packageStatus);
+            Double serviceCharge = companyTaxDao.getCompanyTax(companyInfo.getId(), taxId, packageStatus);
             return ReturnJson.success(serviceCharge);
         } else {
             List<CompanyTaxMoneyVO> list = companyTaxDao.getCompanyTaxMoney(companyInfo.getId(), taxId, packageStatus);

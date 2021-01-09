@@ -248,7 +248,7 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
         BigDecimal compositeTax = new BigDecimal("0");
         BigDecimal countMoney = new BigDecimal("0");
         Integer taxStatus = paymentOrderMany.getTaxStatus();
-
+        paymentOrderMany.setReceviceTax(receviceTax);
         CompanyTax companyTax = companyTaxDao.selectOne(new QueryWrapper<CompanyTax>().
                 eq("tax_id", paymentOrderMany.getTaxId()).
                 eq("company_id", paymentOrderMany.getCompanyId()).

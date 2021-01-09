@@ -27,7 +27,7 @@
     <sql id="Base_Column_List">
         id, company_id, tax_id, charge_status, service_charge, package_status, contract, create_date, update_date
     </sql>
-    <select id="getCompanyTax" resultType="int">
+    <select id="getCompanyTax" resultType="double">
         SELECT
             ct.service_charge
         FROM

@@ -16,7 +16,7 @@ import java.util.List;
  */
 public interface CompanyTaxDao extends BaseMapper<CompanyTax> {
 
-    int getCompanyTax(String merchantId,String taxId,Integer packageStatus);
+    Double getCompanyTax(String merchantId,String taxId,Integer packageStatus);
 
     List<CompanyTaxMoneyVO> getCompanyTaxMoney(String merchantId,String taxId,Integer packageStatus);
 }

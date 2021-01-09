@@ -3,7 +3,7 @@ package com.example.mybatis.mapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.mybatis.dto.QueryCrowdSourcingDTO;
-import com.example.mybatis.dto.TobeinvoicedDTO;
+import com.example.mybatis.dto.TobeInvoicedDTO;
 import com.example.mybatis.entity.ApplicationCrowdSourcing;
 import com.example.mybatis.entity.CrowdSourcingInvoice;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -40,7 +40,7 @@ public interface CrowdSourcingInvoiceDao extends BaseMapper<CrowdSourcingInvoice
     BuyerVO getBuyer(String id);
 
     /** ----平台端---- **/
-    IPage<CrowdSourcingInvoiceInfoVO> getCrowdSourcingInvoicePass(Page page, @Param("tobeinvoicedDto") TobeinvoicedDTO tobeinvoicedDto);
+    IPage<CrowdSourcingInvoiceInfoVO> getCrowdSourcingInvoicePass(Page page, @Param("tobeinvoicedDto") TobeInvoicedDTO tobeinvoicedDto);
 
     PaymentOrderManyVO getPaymentOrderManyPass(String appcationId);
 
@@ -48,7 +48,7 @@ public interface CrowdSourcingInvoiceDao extends BaseMapper<CrowdSourcingInvoice
 
     String getCrowdInvoiceCode();
 
-    IPage<CrowdSourcingInfoVO> getCrowdSourcingInfoPass(Page page, @Param("tobeinvoicedDto") TobeinvoicedDTO tobeinvoicedDto);
+    IPage<CrowdSourcingInfoVO> getCrowdSourcingInfoPass(Page page, @Param("tobeinvoicedDto") TobeInvoicedDTO tobeinvoicedDto);
 
     IPage<InvoiceDetailsVO> getPaymentInventoryInfoPass(Page page, String invoiceId);
 
