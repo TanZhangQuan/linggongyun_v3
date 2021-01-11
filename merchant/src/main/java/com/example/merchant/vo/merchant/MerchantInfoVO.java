@@ -31,6 +31,12 @@ public class MerchantInfoVO implements Serializable {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate companyCreateDate;
 
+    @ApiModelProperty(value = "开户行")
+    private String bankName;
+
+    @ApiModelProperty(value = "银行卡号")
+    private String bankCode;
+
     @ApiModelProperty(value = "公司的营业执照")
     private String businessLicense;
 

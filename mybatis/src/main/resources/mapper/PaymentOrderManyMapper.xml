@@ -329,7 +329,8 @@
         <result column="create_date" property="creatDate"/>
         <result column="many_payment" property="manyPayment"/>
         <result column="company_name" property="companyName"/>
-        <result column="bank_and_account" property="bankAndAccount"/>
+        <result column="bank_code" property="bankCode"/>
+        <result column="bank_name" property="bankName"/>
         <result column="payee" property="payee"/>
         <result column="payee_bank_name" property="payeeBankName"/>
         <result column="payee_bank_code" property="payeeBankCode"/>
@@ -453,7 +454,8 @@
         pom.many_payment,
         pom.task_name,
         ci.company_name,
-        ci.bank_and_account,
+        ci.bank_name,
+        ci.bank_code,
         tp.payee,
         tp.bank_name AS payee_bank_name,
         tp.bank_code AS payee_bank_code
