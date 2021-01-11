@@ -7,7 +7,7 @@ import lombok.Data;
 import java.io.Serializable;
 
 @Data
-@ApiModel(description = "XXXXX")
+@ApiModel(description = "修改组织结构信息")
 public class UpdateCooperationDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 

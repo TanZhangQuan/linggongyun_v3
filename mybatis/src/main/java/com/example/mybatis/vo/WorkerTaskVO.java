@@ -47,6 +47,9 @@ public class WorkerTaskVO implements Serializable {
     @ApiModelProperty(value = "所需人数")
     private Integer upperLimit;
 
+    @ApiModelProperty(value = "任务状态")
+    private Integer state;
+
     @ApiModelProperty(value = "状态")
     private String status;
 }

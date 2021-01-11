@@ -77,7 +77,7 @@ public interface TaskDao extends BaseMapper<Task> {
 
     IPage<TaskInfoVO> setTask(Page page, @Param("industryType") String s);
 
-    List<TaskWorkerVO> getAllTask();
+    List<TaskWorkerVO> getAllTask(String workerId);
 
     IPage<AssociatedTasksVO> getAssociatedTasks(Page page,String merchantId, Integer cooperateMode);
 

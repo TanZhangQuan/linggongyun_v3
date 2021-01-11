@@ -146,6 +146,6 @@ public interface TaskService extends IService<Task> {
      *
      * @return
      */
-    ReturnJson getAllTask();
+    ReturnJson getAllTask(String workerId);
 
 }

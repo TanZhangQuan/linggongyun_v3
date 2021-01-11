@@ -31,7 +31,7 @@ public class InvoiceDetailsVO implements Serializable {
     private String bankCode;
 
     @ApiModelProperty(value = "创客到手费用")
-    private String realMoney;
+    private BigDecimal realMoney;
 
     @ApiModelProperty(value = "任务金额")
     private BigDecimal taskMoney;
@@ -44,6 +44,9 @@ public class InvoiceDetailsVO implements Serializable {
 
     @ApiModelProperty(value = "纳税金额")
     private BigDecimal taxAmount;
+
+    @ApiModelProperty(value = "服务费")
+    private BigDecimal serviceMoney;
 
     @ApiModelProperty(value = "纳税率")
     private BigDecimal taxRate;

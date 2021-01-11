@@ -60,6 +60,7 @@
         <result column="task_code" property="taskCode"/>
         <result column="task_mode" property="taskMode"/>
         <result column="create_date" property="createDate"/>
+        <result column="state" property="state"/>
         <result column="status" property="status"/>
     </resultMap>
 
@@ -76,6 +77,7 @@
             t.upper_limit,
             t.task_cost_min,
             t.task_cost_max,
+            t.state,
             wt.`status`
         FROM
             tb_task t

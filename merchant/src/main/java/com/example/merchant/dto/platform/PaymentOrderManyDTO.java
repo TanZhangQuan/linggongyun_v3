@@ -8,14 +8,15 @@ import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 
 @Data
-@ApiModel(description = "XXXXX")
+@ApiModel(description = "众包支付参数")
 public class PaymentOrderManyDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @ApiModelProperty(value = "XXXXX")
+    @ApiModelProperty(value = "主键ID")
     private String id;
 
     @ApiModelProperty(value = "任务名称")
+    @NotBlank(message = "任务名称不能为空")
     private String taskName;
 
     @ApiModelProperty(value = "平台服务商ID")

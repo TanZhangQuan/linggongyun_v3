@@ -21,12 +21,6 @@ public class MakerTotalInvoiceDTO implements Serializable {
     @ApiModelProperty(value = "总包支付id,多个以，隔开")
     private String paymentOrderId;
 
-    @ApiModelProperty(value = "发票代码")
-    private String invoiceTypeNo;
-
-    @ApiModelProperty(value = "发票号码")
-    private String invoiceSerialNo;
-
     @ApiModelProperty(value = "服务类型")
     private String invoiceCategory;
 

@@ -400,7 +400,7 @@
                 WHERE
                     pi.payment_order_id = id
                     <if test="param3 != null and param3 !=''">
-                     and pi.company_id = #{param3}
+                     and company_id = #{param3}
                     </if>
             ),
             (
@@ -411,7 +411,7 @@
                 WHERE
                     pi.payment_order_id = id
                     <if test="param3 != null and param3 !=''">
-                     and pi.company_id = #{param3}
+                     and company_id = #{param3}
                     </if>
             )
         ) AS company_s_name,

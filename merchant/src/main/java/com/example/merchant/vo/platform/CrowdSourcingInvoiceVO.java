@@ -14,12 +14,6 @@ public class CrowdSourcingInvoiceVO implements Serializable {
     @ApiModelProperty(value = "众包ID")
     private String id;
 
-    @ApiModelProperty(value = "发票数字")
-    private String invoiceNumber;
-
-    @ApiModelProperty(value = "发票代码")
-    private String invoiceCodeno;
-
     @ApiModelProperty(value = "发票")
     private String invoiceUrl;
 
