@@ -204,4 +204,13 @@ public interface PaymentOrderService extends IService<PaymentOrder> {
      * @return
      */
     ReturnJson gradientPrice(String merchantId,String taxId,Integer packageStatus);
+
+    /**
+     * 获取可关联的任务
+     *
+     * @param merchantId
+     * @param associatedTasksDTO
+     * @return
+     */
+    ReturnJson associatedTask(String merchantId, AssociatedTasksDTO associatedTasksDTO);
 }

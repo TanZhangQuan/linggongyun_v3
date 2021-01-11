@@ -125,10 +125,10 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
                 }
             }
             String taskCode = this.getTaskCode();
-            int code =0;
-            if (taskCode==null){
+            int code = 0;
+            if (taskCode == null) {
                 code = 001;
-            }else{
+            } else {
                 code = Integer.valueOf(taskCode.substring(2)) + 1;
             }
             task.setTaskCode("RW" + code);
@@ -292,11 +292,14 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
         Merchant merchant = merchantDao.selectById(task.getMerchantId());
 
         //抢单之后关联商户
-        CompanyWorker companyWorker = new CompanyWorker();
-        companyWorker.setCompanyId(merchant.getCompanyId());
-        companyWorker.setWorkerId(workerId);
-        companyWorkerDao.insert(companyWorker);
-
+        CompanyWorker companyWorker = companyWorkerDao.selectOne(new QueryWrapper<CompanyWorker>()
+                .eq("company_id", merchant.getCompanyId())
+                .eq("worker_id", workerId));
+        if (companyWorker == null) {
+            companyWorker.setCompanyId(merchant.getCompanyId());
+            companyWorker.setWorkerId(workerId);
+            companyWorkerDao.insert(companyWorker);
+        }
         return ReturnJson.success("恭喜,抢单成功！");
     }
 

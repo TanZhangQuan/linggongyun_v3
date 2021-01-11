@@ -24,7 +24,7 @@ public class MakerPanymentExcel implements Serializable {
     @ExcelProperty("身份证号")
     private String idCardCode;
 
-    @ExcelProperty("开户行全称")
+    @ExcelProperty("开户行")
     private String bankName;
 
     @ExcelProperty("收款方账号")

@@ -185,8 +185,8 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
                     paymentInventory.setServiceMoney(realMoney.multiply(compositeTax));
                     paymentInventory.setRealMoney(realMoney.subtract(realMoney.multiply(compositeTax)));
                 } else {
-                    paymentInventory.setMerchantPaymentMoney(realMoney.multiply(compositeTax.subtract(merchantTax).add(new BigDecimal("1"))));
-                    paymentInventory.setRealMoney(realMoney.subtract(realMoney.multiply(compositeTax.subtract(receviceTax))));
+                    paymentInventory.setMerchantPaymentMoney(realMoney.multiply(compositeTax.multiply(merchantTax).add(new BigDecimal("1"))));
+                    paymentInventory.setRealMoney(realMoney.subtract(realMoney.multiply(compositeTax.multiply(receviceTax))));
                     paymentInventory.setServiceMoney(realMoney.multiply(compositeTax));
                 }
                 countMoney = countMoney.add(paymentInventory.getMerchantPaymentMoney());
@@ -208,8 +208,8 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
                     paymentInventory.setServiceMoney(realMoney.multiply(compositeTax));
                     paymentInventory.setRealMoney(realMoney.subtract(realMoney.multiply(compositeTax)));
                 } else {
-                    paymentInventory.setMerchantPaymentMoney(realMoney.multiply(compositeTax.subtract(merchantTax).add(new BigDecimal("1"))));
-                    paymentInventory.setRealMoney(realMoney.subtract(realMoney.multiply(compositeTax.subtract(receviceTax))));
+                    paymentInventory.setMerchantPaymentMoney(realMoney.multiply(compositeTax.multiply(merchantTax).add(new BigDecimal("1"))));
+                    paymentInventory.setRealMoney(realMoney.subtract(realMoney.multiply(compositeTax.multiply(receviceTax))));
                     paymentInventory.setServiceMoney(realMoney.multiply(compositeTax));
                 }
                 countMoney = countMoney.add(paymentInventory.getMerchantPaymentMoney());
@@ -471,7 +471,9 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
             return ReturnJson.error("商户信息错误请重新选择");
         }
         CompanyTax companyTax = companyTaxDao.selectOne(new QueryWrapper<CompanyTax>()
-                .eq("company_id", companyInfo.getId()).eq("tax_id", taxId));
+                .eq("company_id", companyInfo.getId())
+                .eq("tax_id", taxId)
+                .eq("package_status",packageStatus));
         if (companyTax == null) {
             return ReturnJson.error("此商户还未和此服务商取得合作！");
         }
@@ -482,6 +484,13 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
             List<CompanyTaxMoneyVO> list = companyTaxDao.getCompanyTaxMoney(companyInfo.getId(), taxId, packageStatus);
             return ReturnJson.success(list);
         }
+    }
+
+    @Override
+    public ReturnJson associatedTask(String merchantId, AssociatedTasksDTO associatedTasksDto) {
+        Page page = new Page(associatedTasksDto.getPageNo(), associatedTasksDto.getPageSize());
+        IPage<AssociatedTasksVO> voiPage = taskDao.getAssociatedTasks(page, merchantId, associatedTasksDto.getCooperateMode());
+        return ReturnJson.success(voiPage);
     }
 
     /**

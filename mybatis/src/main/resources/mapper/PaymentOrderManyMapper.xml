@@ -272,7 +272,8 @@
         <result column="company_contract" property="contract"/>
         <result column="payment_inventory" property="paymentInventory"/>
         <result column="many_payment" property="paymentReceipt"/>
-        <result column="task_id" property="tastId"/>
+        <result column="task_id" property="taskId"/>
+        <result column="task_name" property="taskName"/>
         <result column="acceptance_certificate" property="acceptanceCertificate"/>
         <result column="payment_date" property="paymentDate"/>
         <result column="real_money" property="money"/>
@@ -287,6 +288,7 @@
         b.company_contract,
         b.payment_inventory,
         b.task_id,
+        b.task_name,
         b.acceptance_certificate,
         b.many_payment,
         b.payment_date,
@@ -733,7 +735,7 @@
         FROM
             tb_payment_order_many
         WHERE
-            payment_order_status = 5
+            payment_order_status = 3
         AND DATE(real_money) = DATE(NOW())
         AND company_id =#{merchantId}
     </select>
@@ -869,6 +871,7 @@
         b.company_contract,
         b.payment_inventory,
         b.task_id,
+        b.task_name,
         b.acceptance_certificate,
         b.many_payment,
         b.payment_date,

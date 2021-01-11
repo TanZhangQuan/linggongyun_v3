@@ -87,6 +87,11 @@ public class PaymentOrder extends BaseEntity {
     private Integer isSubpackage;
 
     /**
+     * 是否开票 0 已开， 1 未开
+     */
+    private Integer isNotInvoice;
+
+    /**
      * 关联的任务(可以不关联)
      */
     private String taskId;
