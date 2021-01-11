@@ -192,24 +192,22 @@
 
     <profiles>
         <profile>
-            <!--开发-->
-            <id>本地开发环境</id>
+            <id>开发环境</id>
             <activation>
                 <!--默认开发环境-->
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
-                <activatedProperties>local</activatedProperties>
+                <activatedProperties>dev</activatedProperties>
             </properties>
             <build>
                 <finalName>linggongyun_v3</finalName>
             </build>
         </profile>
         <profile>
-            <!--开发-->
-            <id>测试环境</id>
+            <id>生产环境</id>
             <properties>
-                <activatedProperties>dev</activatedProperties>
+                <activatedProperties>prod</activatedProperties>
             </properties>
             <build>
                 <finalName>linggongyun_v3</finalName>

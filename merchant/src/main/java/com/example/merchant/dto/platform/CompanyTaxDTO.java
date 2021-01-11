@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Data
-@ApiModel(description = "公司服务商合作信息")
+@ApiModel(description = "服务商合作信息DTO")
 public class CompanyTaxDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -38,6 +38,12 @@ public class CompanyTaxDTO implements Serializable {
     @ApiModelProperty(value = "合作合同地址")
     @NotBlank(message = "合同地址不能为空")
     private String contract;
+
+    @ApiModelProperty(value = "银联支付银行")
+    private List<UnionpayBankType> unionpayBankTypeList;
+
+    @ApiModelProperty(value = "来款银行账号(盛京银行必传)")
+    private String inBankNo;
 
     @ApiModelProperty(value = "总包信息")
     @Valid

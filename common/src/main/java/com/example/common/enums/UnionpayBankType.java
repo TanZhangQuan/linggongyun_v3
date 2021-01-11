@@ -5,15 +5,16 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * 支付订单的类型
+ * 银联银行类型
  */
 @Getter
 @AllArgsConstructor
 @SwaggerDisplayEnum()
-public enum OrderType {
-    TOTALORDER("TOTALORDER", "总包订单"),
-    MANYORDER("MANYORDER", "众包订单"),
-    INVENTORY("INVENTORY", "支付清单");
+public enum UnionpayBankType {
+    SJBK("SJBK", "盛京银行"),
+    PABK("PABK", "平安银行"),
+    WSBK("WSBK", "网商银行"),
+    ZSBK("ZSBK", "招商银行");
 
     private final String value;
     private final String desc;

@@ -13,6 +13,7 @@ import lombok.Getter;
 public enum UnionpayMethod {
     MB010("MB010", "子账户申请开户"),
     COM02("COM02", "卡BIN查询"),
+    AC021("AC021", "子账户更换绑卡"),
     AC041("AC041", "提现出款"),
     AC042("AC042", "提现结果查询"),
     AC051("AC051", "清分交易"),

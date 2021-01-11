@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mybatis.mapper.TaxUnionpayDao">
+
+    <resultMap id="taxUnionpayListVO" type="com.example.mybatis.vo.TaxUnionpayListVO">
+        <id column="id" property="id" />
+        <result column="unionpay_bank_type" property="unionpayBankType" />
+        <result column="merchno" property="merchno" />
+        <result column="acctno" property="acctno" />
+        <result column="clear_no" property="clearNo" />
+        <result column="service_charge_no" property="serviceChargeNo" />
+        <result column="bool_enable" property="boolEnable" />
+        <result column="create_date" property="createDate" />
+    </resultMap>
+
+    <select id="queryTaxUnionpayList" resultType="com.example.mybatis.vo.TaxUnionpayListVO">
+        SELECT id, unionpay_bank_type, merchno, acctno, clear_no, service_charge_no, bool_enable, create_date FROM tb_tax_unionpay t1 WHERE t1.tax_id = #{taxId}
+    </select>
+
+    <select id="queryTaxUnionpayMethod" resultType="com.example.common.enums.UnionpayBankType">
+        SELECT unionpay_bank_type FROM tb_tax_unionpay t1 WHERE t1.bool_enable = 1 AND t1.tax_id = #{taxId}
+    </select>
+
+</mapper>

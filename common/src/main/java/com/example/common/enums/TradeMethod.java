@@ -5,15 +5,14 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * 支付订单的类型
+ * 支付方式
  */
 @Getter
 @AllArgsConstructor
 @SwaggerDisplayEnum()
-public enum OrderType {
-    TOTALORDER("TOTALORDER", "总包订单"),
-    MANYORDER("MANYORDER", "众包订单"),
-    INVENTORY("INVENTORY", "支付清单");
+public enum TradeMethod {
+    UNIONPAY("UNIONPAY", "银联支付"),
+    ALIPAY("ALIPAY", "支付宝");
 
     private final String value;
     private final String desc;

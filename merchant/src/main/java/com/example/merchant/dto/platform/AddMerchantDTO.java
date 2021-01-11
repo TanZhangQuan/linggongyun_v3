@@ -8,7 +8,7 @@ import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 
 @Data
-@ApiModel(description = "商户子账号添加")
+@ApiModel(description = "商户的登录信息DTO")
 public class AddMerchantDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 

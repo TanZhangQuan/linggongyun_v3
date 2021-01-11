@@ -202,5 +202,5 @@ public interface MerchantService extends IService<Merchant> {
      * @param updateCompanyDto
      * @return
      */
-    ReturnJson updateCompanyInfo(UpdateCompanyDTO updateCompanyDto);
+    ReturnJson updateCompanyInfo(UpdateCompanyDTO updateCompanyDto) throws Exception;
 }

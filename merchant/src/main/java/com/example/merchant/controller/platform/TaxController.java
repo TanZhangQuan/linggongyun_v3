@@ -3,18 +3,18 @@ package com.example.merchant.controller.platform;
 
 import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.platform.AddInvoiceCatalogDTO;
+import com.example.merchant.dto.platform.AddOrUpdateTaxUnionpayDTO;
 import com.example.merchant.dto.platform.TaxDTO;
 import com.example.merchant.dto.platform.TaxListDTO;
 import com.example.merchant.service.TaxService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import com.example.merchant.service.TaxUnionpayService;
+import io.swagger.annotations.*;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
@@ -30,10 +30,12 @@ import javax.validation.constraints.NotNull;
 @RestController
 @RequestMapping("/platform/tax")
 @Validated
-public class TaxPaasController {
+public class TaxController {
 
     @Resource
     private TaxService taxService;
+    @Resource
+    private TaxUnionpayService taxUnionpayService;
 
     @GetMapping("/getTaxAll")
     @ApiOperation(value = "获取商户可用的平台服务商(平台端帮助商户创建支付订单时，通过选择的商户获取商户的服务商)", notes = "获取商户可用的平台服务商(平台端帮助商户创建支付订单时，通过选择的商户获取商户的服务商)", httpMethod = "GET")
@@ -101,4 +103,25 @@ public class TaxPaasController {
     public ReturnJson getTaxPaasList(@NotNull(message = "服务商类型不能为空！") @RequestParam Integer packageStatus) {
         return taxService.getTaxList(packageStatus);
     }
+
+    @PostMapping("/addOrUpdateTaxUnionpay")
+    @ApiOperation(value = "添加或修改服务商银联", notes = "添加或修改服务商银联", httpMethod = "POST")
+    public ReturnJson addOrUpdateTaxUnionpay(@Valid @RequestBody AddOrUpdateTaxUnionpayDTO addOrUpdateTaxUnionpayDTO) {
+        return taxUnionpayService.addOrUpdateTaxUnionpay(addOrUpdateTaxUnionpayDTO);
+    }
+
+    @PostMapping("/boolEnableTaxUnionpay")
+    @ApiOperation(value = "开启或关闭服务商银联", notes = "开启或关闭服务商银联", httpMethod = "POST")
+    public ReturnJson boolEnableTaxUnionpay(@ApiParam(value = "服务商银联") @NotBlank(message = "请选择服务商银联") @RequestParam(required = false) String taxUnionpayId, @ApiParam(value = "是否开启") @NotBlank(message = "请选择是否开启") @RequestParam(required = false) Boolean boolEnable) {
+        return taxUnionpayService.boolEnableTaxUnionpay(taxUnionpayId, boolEnable);
+    }
+
+    @GetMapping("/queryTaxUnionpayList")
+    @ApiOperation(value = "查询服务商银联列表", notes = "查询服务商银联列表", httpMethod = "GET")
+    public ReturnJson queryTaxUnionpayList(@ApiParam(value = "服务商") @NotNull(message = "请选择服务商") @RequestParam(required = false) String taxId,
+                                           @ApiParam(value = "当前页") @Min(value = 1, message = "当前页数最小为1") @RequestParam(required = false) long pageNo,
+                                           @ApiParam(value = "每页条数") @Min(value = 1, message = "每页页数最小为1") @RequestParam(required = false) long pageSize) {
+        return taxUnionpayService.queryTaxUnionpayList(taxId, pageNo, pageSize);
+    }
+
 }
