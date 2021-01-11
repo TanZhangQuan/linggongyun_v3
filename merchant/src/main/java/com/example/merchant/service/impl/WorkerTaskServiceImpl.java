@@ -6,8 +6,10 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.service.WorkerTaskService;
+import com.example.mybatis.entity.Merchant;
 import com.example.mybatis.entity.Task;
 import com.example.mybatis.entity.WorkerTask;
+import com.example.mybatis.mapper.MerchantDao;
 import com.example.mybatis.mapper.TaskDao;
 import com.example.mybatis.mapper.WorkerDao;
 import com.example.mybatis.mapper.WorkerTaskDao;
@@ -38,6 +40,9 @@ public class WorkerTaskServiceImpl extends ServiceImpl<WorkerTaskDao, WorkerTask
     private TaskDao taskDao;
     @Resource
     private WorkerDao workerDao;
+
+    @Resource
+    private MerchantDao merchantDao;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -184,7 +189,15 @@ public class WorkerTaskServiceImpl extends ServiceImpl<WorkerTaskDao, WorkerTask
     @Override
     public ReturnJson queryWorkerPayInfo(String workerId, Integer pageNo, Integer pageSize) {
         Page page = new Page(pageNo, pageSize);
-        IPage<WorkerPayInfoVO> iPage = workerDao.queryWorkerPayInfo(page, workerId);
+        IPage<WorkerPayInfoVO> iPage = workerDao.queryWorkerPayInfo(page, workerId,null);
+        return ReturnJson.success(iPage);
+    }
+
+    @Override
+    public ReturnJson queryMerchantWorkerPayInfo(String workerId, String merchantId, Integer pageNo, Integer pageSize) {
+        Merchant merchant = merchantDao.selectById(merchantId);
+        Page page = new Page(pageNo, pageSize);
+        IPage<WorkerPayInfoVO> iPage = workerDao.queryWorkerPayInfo(page, workerId,merchant.getCompanyId());
         return ReturnJson.success(iPage);
     }
 
