@@ -7,7 +7,7 @@ import lombok.Data;
 import java.io.Serializable;
 
 @Data
-@ApiModel(description = "XXXXX")
+@ApiModel(description = "商户公司的联系人DTO")
 public class AddLinkmanDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 

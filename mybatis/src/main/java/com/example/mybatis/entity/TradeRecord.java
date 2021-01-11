@@ -1,16 +1,16 @@
 package com.example.mybatis.entity;
 
-import java.math.BigDecimal;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.annotation.IdType;
-import java.time.LocalDateTime;
-import com.baomidou.mybatisplus.annotation.TableId;
-import java.io.Serializable;
-
+import com.example.common.enums.TradeMethod;
+import com.example.common.enums.TradeObject;
+import com.example.common.enums.TradeStatus;
+import com.example.common.enums.TradeType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+
+import java.math.BigDecimal;
 
 /**
  * <p>
@@ -31,7 +31,7 @@ public class TradeRecord extends BaseEntity {
     /**
      * 支付方身份
      */
-    private String payerObject;
+    private TradeObject payerObject;
 
     /**
      * 支付方ID
@@ -41,7 +41,7 @@ public class TradeRecord extends BaseEntity {
     /**
      * 收款方身份
      */
-    private String payeeObject;
+    private TradeObject payeeObject;
 
     /**
      * 收款方ID
@@ -51,12 +51,12 @@ public class TradeRecord extends BaseEntity {
     /**
      * 支付方式
      */
-    private String tradeMethod;
+    private TradeMethod tradeMethod;
 
     /**
      * 交易类型
      */
-    private String tradeType;
+    private TradeType tradeType;
 
     /**
      * 交易金额
@@ -71,6 +71,6 @@ public class TradeRecord extends BaseEntity {
     /**
      * 交易状态
      */
-    private String tradeStatus;
+    private TradeStatus tradeStatus;
 
 }

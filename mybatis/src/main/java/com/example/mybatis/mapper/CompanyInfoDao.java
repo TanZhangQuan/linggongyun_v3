@@ -19,6 +19,7 @@ import java.util.List;
  * @since 2020-09-07
  */
 public interface CompanyInfoDao extends BaseMapper<CompanyInfo> {
+
     IPage<CompanyPaymentOrderPO> selectCompanyPaymentOrder(Page page, @Param("taxIds") List<String> taxIds, @Param("companyId") String companyId, @Param("taxName") String taxName, @Param("startDate") String startDate, @Param("endDate") String endDate);
 
     List<CompanyPaymentOrderPO> exportCompanyPaymentOrder(@Param("paymentOrderIds") List<String> paymentOrderIds);

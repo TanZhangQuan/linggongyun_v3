@@ -1,5 +1,6 @@
 package com.example.merchant.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.merchant.service.CompanyUnionpayService;
 import com.example.mybatis.entity.CompanyUnionpay;
@@ -17,4 +18,13 @@ import org.springframework.stereotype.Service;
 @Service
 public class CompanyUnionpayServiceImpl extends ServiceImpl<CompanyUnionpayDao, CompanyUnionpay> implements CompanyUnionpayService {
 
+    @Override
+    public CompanyUnionpay queryCompanyUnionpay(String companyId, String taxUnionpayId) {
+
+        QueryWrapper<CompanyUnionpay> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(CompanyUnionpay::getCompanyId, companyId)
+                .eq(CompanyUnionpay::getTaxUnionpayId, taxUnionpayId);
+
+        return baseMapper.selectOne(queryWrapper);
+    }
 }

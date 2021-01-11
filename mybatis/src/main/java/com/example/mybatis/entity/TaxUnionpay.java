@@ -1,11 +1,7 @@
 package com.example.mybatis.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.annotation.IdType;
-import java.time.LocalDateTime;
-import com.baomidou.mybatisplus.annotation.TableId;
-import java.io.Serializable;
-
+import com.example.common.enums.UnionpayBankType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -35,7 +31,17 @@ public class TaxUnionpay extends BaseEntity {
     /**
      * 银联银行类型
      */
-    private String unionpayBankType;
+    private UnionpayBankType unionpayBankType;
+
+    /**
+     * 平台公钥
+     */
+    private String pfmpubkey;
+
+    /**
+     * 合作方私钥
+     */
+    private String prikey;
 
     /**
      * 商户号
@@ -56,5 +62,10 @@ public class TaxUnionpay extends BaseEntity {
      * 手续费子账户
      */
     private String serviceChargeNo;
+
+    /**
+     * 是否启用
+     */
+    private Boolean boolEnable;
 
 }

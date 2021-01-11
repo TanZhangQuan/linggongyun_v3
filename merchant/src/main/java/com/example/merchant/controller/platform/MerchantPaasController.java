@@ -10,6 +10,7 @@ import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.AddressService;
 import com.example.merchant.service.LinkmanService;
 import com.example.merchant.service.MerchantService;
+import com.example.merchant.service.TaxUnionpayService;
 import com.example.mybatis.entity.Linkman;
 import io.swagger.annotations.*;
 import org.springframework.validation.annotation.Validated;
@@ -43,6 +44,9 @@ public class MerchantPaasController {
 
     @Resource
     private AddressService addressService;
+
+    @Resource
+    private TaxUnionpayService taxUnionpayService;
 
     @ApiOperation("商户列表")
     @GetMapping(value = "/getIdAndName")
@@ -105,6 +109,12 @@ public class MerchantPaasController {
     })
     public ReturnJson merchantInfo(@NotBlank(message = "商户ID不能为空！") @RequestParam(required = false) String merchantId) {
         return merchantService.merchantInfoPaas(merchantId);
+    }
+
+    @GetMapping("/queryTaxUnionpayMethod")
+    @ApiOperation(value = "查询服务商拥有的银联支付方式", notes = "查询服务商拥有的银联支付方式")
+    public ReturnJson queryTaxUnionpayMethod(@ApiParam(value = "服务商") @NotBlank(message = "请选择服务商") @RequestParam(required = false) String taxId) {
+        return taxUnionpayService.queryTaxUnionpayMethod(taxId);
     }
 
     @PostMapping("/addMerchant")
@@ -248,7 +258,7 @@ public class MerchantPaasController {
 
     @PostMapping("/updateCompanyInfo")
     @ApiOperation(value = "修改公司的信息", notes = "修改或忘记密码", httpMethod = "POST")
-    public ReturnJson updateCompanyInfo(@Valid @RequestBody UpdateCompanyDTO updateCompanyDto) {
+    public ReturnJson updateCompanyInfo(@Valid @RequestBody UpdateCompanyDTO updateCompanyDto) throws Exception {
         return merchantService.updateCompanyInfo(updateCompanyDto);
     }
 }

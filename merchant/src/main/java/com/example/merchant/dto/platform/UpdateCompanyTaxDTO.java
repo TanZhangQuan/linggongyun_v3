@@ -1,5 +1,6 @@
 package com.example.merchant.dto.platform;
 
+import com.example.common.enums.UnionpayBankType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -9,7 +10,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Data
-@ApiModel(description = "XXXXX")
+@ApiModel(description = "服务商合作信息DTO")
 public class UpdateCompanyTaxDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -36,6 +37,12 @@ public class UpdateCompanyTaxDTO implements Serializable {
 
     @ApiModelProperty(value = "银行账号")
     private String bankCode;
+
+    @ApiModelProperty(value = "银联支付银行")
+    private List<UnionpayBankType> unionpayBankTypeList;
+
+    @ApiModelProperty(value = "来款银行账号(盛京银行必传)")
+    private String inBankNo;
 
     @ApiModelProperty(value = "总包信息")
     private List<UpdateCompanyLadderServiceDTO> updateCompanyLadderServiceDtoList;

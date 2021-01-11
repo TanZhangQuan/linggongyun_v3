@@ -28,6 +28,7 @@ public interface RedisDao {
      * 设置过期时间
      */
     public boolean setExpire(String key, long expire, TimeUnit timeUnit);
+
     /**
      * 删除数据
      */
@@ -35,9 +36,27 @@ public interface RedisDao {
 
     /**
      * 自增操作
+     *
      * @param key
      * @param delta 自增步长
      * @return
      */
     Long increment(String key, long delta);
+
+    /**
+     * 加锁
+     *
+     * @param lockKey   加锁的Key
+     * @param timeStamp 时间戳：当前时间+超时时间
+     * @return
+     */
+    boolean lock(String lockKey, long timeStamp);
+
+    /**
+     * 释放锁
+     *
+     * @param lockKey
+     * @param timeStamp
+     */
+    void release(String lockKey, long timeStamp);
 }

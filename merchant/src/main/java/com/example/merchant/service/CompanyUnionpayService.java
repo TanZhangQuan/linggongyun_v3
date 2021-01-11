@@ -14,4 +14,13 @@ import com.example.mybatis.entity.CompanyUnionpay;
  */
 public interface CompanyUnionpayService extends IService<CompanyUnionpay> {
 
+    /**
+     * 查询商户-服务商银联银行记录
+     *
+     * @param companyId
+     * @param taxUnionpayId
+     * @return
+     */
+    CompanyUnionpay queryCompanyUnionpay(String companyId, String taxUnionpayId);
+
 }

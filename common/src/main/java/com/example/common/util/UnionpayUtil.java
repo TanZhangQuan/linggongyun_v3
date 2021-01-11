@@ -29,7 +29,7 @@ public class UnionpayUtil {
      *
      * @throws Exception
      */
-    public static JSONObject MB010(String uid, String acctName, String companyTaxUum, String inBankNo) throws Exception {
+    public static JSONObject MB010(String merchNo, String acctNo, String pfmpubkey, String prikey, String uid, String acctName, String companyTaxUum, String inBankNo) throws Exception {
         Map<String, String> content = Maps.newHashMap();
         content.put("uid", uid); //外部会员标识
         content.put("acct_type", "01");  //账户性质（01:企业子账户, 02:功能子账户）
@@ -37,12 +37,34 @@ public class UnionpayUtil {
         content.put("company_tax_num", companyTaxUum);   //企业税号
         //盛京平台户必填
         if (StringUtils.isNotBlank(inBankNo)) {
-            content.put("in_bank_code", COM02(inBankNo));  //来款银行编码，网商平台户无需填写，盛京平台户必填
+            //获取银行bin
+            JSONObject jsonObject = COM02(merchNo, acctNo, pfmpubkey, prikey, inBankNo);
+            if (jsonObject == null){
+                log.error("请求获取银行bin失败");
+                return null;
+            }
+
+            Boolean boolSuccess = jsonObject.getBoolean("success");
+            if (boolSuccess == null || !boolSuccess) {
+                String errMsg = jsonObject.getString("err_msg");
+                log.error("{}卡BIN查询失败：{}", acctNo, errMsg);
+                return jsonObject;
+            }
+
+            JSONObject returnValue = jsonObject.getJSONObject("return_value");
+            String rtnCode = returnValue.getString("rtn_code");
+            if (!("S00000".equals(rtnCode))) {
+                String errMsg = returnValue.getString("err_msg");
+                log.error("{}卡BIN查询失败：{}", acctNo, errMsg);
+                return returnValue;
+            }
+
+            content.put("in_bank_code", returnValue.getString("card_bin"));  //来款银行编码，网商平台户无需填写，盛京平台户必填
             content.put("in_bank_no", inBankNo);    //来款银行账号，网商平台户无需填写，盛京平台户必填
         }
         content.put("desc", "子账户申请开户");  //摘要信息
         //银联请求
-        return unionpay(UnionpayMethod.MB010, content);
+        return unionpay(merchNo, UnionpayMethod.MB010, acctNo, content, pfmpubkey, prikey);
     }
 
     /**
@@ -50,32 +72,43 @@ public class UnionpayUtil {
      *
      * @throws Exception
      */
-    public static String COM02(String bankAcctNo) throws Exception {
+    public static JSONObject COM02(String merchNo, String acctNo, String pfmpubkey, String prikey, String bankAcctNo) throws Exception {
         Map<String, String> content = Maps.newHashMap();
         content.put("bank_acct_no", bankAcctNo); //银行账户
-
         //银联请求
-        JSONObject jsonObject = unionpay(UnionpayMethod.COM02, content);
-        if (jsonObject == null) {
-            return "";
+        return unionpay(merchNo, UnionpayMethod.COM02, acctNo, content, pfmpubkey, prikey);
+    }
+
+    /**
+     * 子账户更换绑卡
+     *
+     * @throws Exception
+     */
+    public static JSONObject AC021(String merchNo, String acctNo, String pfmpubkey, String prikey, String uid, String inBankNo) throws Exception {
+        Map<String, String> content = Maps.newHashMap();
+        content.put("uid", uid);  //外部会员标识
+
+        //获取银行bin
+        JSONObject jsonObject = COM02(merchNo, acctNo, pfmpubkey, prikey, inBankNo);
+        String rtnCode = jsonObject.getString("rtn_code");
+        if (StringUtils.isNotBlank(rtnCode) && !("S00000".equals(rtnCode))) {
+            String errMsg = jsonObject.getString("err_msg");
+            log.error("{}卡BIN查询失败：{}", acctNo, errMsg);
+            return jsonObject;
         }
 
-        //请求是否成功
-        boolean boolSuccess = jsonObject.getBooleanValue("success");
-        if (!boolSuccess) {
-            return "";
-        }
-
-        //业务请求是否成功
         JSONObject returnValue = jsonObject.getJSONObject("return_value");
-        String rtnCode = returnValue.getString("rtn_code");
+        rtnCode = returnValue.getString("rtn_code");
         if (!("S00000".equals(rtnCode))) {
             String errMsg = returnValue.getString("err_msg");
-            log.error("卡BIN查询失败：{}", errMsg);
-            return "";
+            log.error("{}卡BIN查询失败：{}", acctNo, errMsg);
+            return returnValue;
         }
 
-        return returnValue.getString("card_bin");
+        content.put("in_bank_code", returnValue.getString("card_bin"));  //来款银行编码，网商平台户无需填写，盛京平台户必填
+        content.put("in_bank_no", inBankNo);    //来款银行账号，网商平台户无需填写，盛京平台户必填
+        //银联请求
+        return unionpay(merchNo, UnionpayMethod.AC041, acctNo, content, pfmpubkey, prikey);
     }
 
     /**
@@ -83,7 +116,7 @@ public class UnionpayUtil {
      *
      * @throws Exception
      */
-    public static JSONObject AC041(String outerTradeNo, String uid, String amount, String destAcctName, String destAcctNo) throws Exception {
+    public static JSONObject AC041(String merchNo, String acctNo, String pfmpubkey, String prikey, String outerTradeNo, String uid, String amount, String destAcctName, String destAcctNo) throws Exception {
         Map<String, String> content = Maps.newHashMap();
         content.put("outer_trade_no", outerTradeNo); //合作方业务平台订单号
         content.put("uid", uid);  //外部会员标识
@@ -96,7 +129,7 @@ public class UnionpayUtil {
         content.put("tx_call_back_addr", UnionpayConstant.TXCALLBACKADDR);   //交易回调地址
         content.put("remark", "提现出款");   //摘要信息
         //银联请求
-        return unionpay(UnionpayMethod.AC041, content);
+        return unionpay(merchNo, UnionpayMethod.AC041, acctNo, content, pfmpubkey, prikey);
     }
 
     /**
@@ -104,11 +137,11 @@ public class UnionpayUtil {
      *
      * @throws Exception
      */
-    public static JSONObject AC042(String outerTradeNo) throws Exception {
+    public static JSONObject AC042(String merchNo, String acctNo, String pfmpubkey, String prikey, String outerTradeNo) throws Exception {
         Map<String, String> content = Maps.newHashMap();
         content.put("outer_trade_no", outerTradeNo); //合作方业务平台订单号
         //银联请求
-        return unionpay(UnionpayMethod.AC042, content);
+        return unionpay(merchNo, UnionpayMethod.AC042, acctNo, content, pfmpubkey, prikey);
     }
 
     /**
@@ -116,7 +149,7 @@ public class UnionpayUtil {
      *
      * @throws Exception
      */
-    public static JSONObject AC051(String outerTradeNo, String destUid, String amount) throws Exception {
+    public static JSONObject AC051(String merchNo, String acctNo, String pfmpubkey, String prikey, String outerTradeNo, String destUid, String amount) throws Exception {
         Map<String, String> content = Maps.newHashMap();
         content.put("outer_trade_no", outerTradeNo); //合作方业务平台订单号
         content.put("remark", "清分交易");   //摘要信息
@@ -124,7 +157,7 @@ public class UnionpayUtil {
         content.put("amount", amount);  //提现金额
         content.put("fee", "0");   //提现手续费，暂不支持，目前暂时请传入0
         //银联请求
-        return unionpay(UnionpayMethod.AC051, content);
+        return unionpay(merchNo, UnionpayMethod.AC051, acctNo, content, pfmpubkey, prikey);
     }
 
     /**
@@ -132,7 +165,7 @@ public class UnionpayUtil {
      *
      * @throws Exception
      */
-    public static JSONObject AC054(String outerTradeNo, String uid, String destUid, String amount) throws Exception {
+    public static JSONObject AC054(String merchNo, String acctNo, String pfmpubkey, String prikey, String outerTradeNo, String uid, String destUid, String amount) throws Exception {
         Map<String, String> content = Maps.newHashMap();
         content.put("outer_trade_no", outerTradeNo); //合作方业务平台订单号
         content.put("remark", "会员间交易");  //摘要信息
@@ -141,7 +174,7 @@ public class UnionpayUtil {
         content.put("amount", amount);  //交易金额
         content.put("fee", "0");   //交易手续费，暂不支持，目前暂时请传入0
         //银联请求
-        return unionpay(UnionpayMethod.AC054, content);
+        return unionpay(merchNo, UnionpayMethod.AC054, acctNo, content, pfmpubkey, prikey);
     }
 
     /**
@@ -149,11 +182,11 @@ public class UnionpayUtil {
      *
      * @throws Exception
      */
-    public static JSONObject AC058(String outerTradeNo) throws Exception {
+    public static JSONObject AC058(String merchNo, String acctNo, String pfmpubkey, String prikey, String outerTradeNo) throws Exception {
         Map<String, String> content = Maps.newHashMap();
         content.put("outer_trade_no", outerTradeNo); //合作方业务平台订单号
         //银联请求
-        return unionpay(UnionpayMethod.AC058, content);
+        return unionpay(merchNo, UnionpayMethod.AC058, acctNo, content, pfmpubkey, prikey);
     }
 
     /**
@@ -161,11 +194,11 @@ public class UnionpayUtil {
      *
      * @throws Exception
      */
-    public static JSONObject AC081(String uid) throws Exception {
+    public static JSONObject AC081(String merchNo, String acctNo, String pfmpubkey, String prikey, String uid) throws Exception {
         Map<String, String> content = Maps.newHashMap();
         content.put("uid", uid); //外部会员标识
         //银联请求
-        return unionpay(UnionpayMethod.AC081, content);
+        return unionpay(merchNo, UnionpayMethod.AC081, acctNo, content, pfmpubkey, prikey);
     }
 
     /**
@@ -173,24 +206,24 @@ public class UnionpayUtil {
      *
      * @throws Exception
      */
-    public static JSONObject AC091(Date date) throws Exception {
+    public static JSONObject AC091(String merchNo, String acctNo, String pfmpubkey, String prikey, Date date) throws Exception {
         Map<String, String> content = Maps.newHashMap();
         content.put("file_type", "BIL"); //文件类型 BIL:平台户电子对账单
         content.put("biz_date", new SimpleDateFormat("yyyyMMdd").format(date)); //交易日期
         //银联请求
-        return unionpay(UnionpayMethod.AC091, content);
+        return unionpay(merchNo, UnionpayMethod.AC091, acctNo, content, pfmpubkey, prikey);
     }
 
-    private static JSONObject unionpay(UnionpayMethod unionPayMethod, Map<String, String> content) throws Exception {
+    private static JSONObject unionpay(String merchNo, UnionpayMethod unionPayMethod, String acctNo, Map<String, String> content, String pfmpubkey, String prikey) throws Exception {
         Map<String, String> params = Maps.newHashMap();
-        params.put("merch_no", UnionpayConstant.MERCHNO);//商户号
+        params.put("merch_no", merchNo);//商户号
         params.put("method", unionPayMethod.getValue());
         params.put("version", "1.0");
-        params.put("acct_no", UnionpayConstant.ACCTNO);//平台账户账号
+        params.put("acct_no", acctNo);//平台账户账号
         //加密业务参数
-        String encrypt = AlipaySignature.rsaEncrypt(JSON.toJSONString(content), UnionpayConstant.PFMPUBKEY, "utf-8");
+        String encrypt = AlipaySignature.rsaEncrypt(JSON.toJSONString(content), pfmpubkey, "utf-8");
         params.put("content", encrypt);
-        params.put("sign", createSign(params));
+        params.put("sign", createSign(prikey, params));
         log.info("请求参数：{}", JSON.toJSONString(params));
 
         //请求银联接口
@@ -207,7 +240,7 @@ public class UnionpayUtil {
      * @return
      * @throws Exception
      */
-    public static String createSign(Map<String, String> params) throws Exception {
+    public static String createSign(String prikey, Map<String, String> params) throws Exception {
         // map类型转换
         Map<String, String> map = new HashMap<>(params.size());
         for (String key : params.keySet()) {
@@ -219,7 +252,7 @@ public class UnionpayUtil {
         map.remove("sign");
         map.remove("sign_type");
 
-        return AlipaySignature.rsaSign(map, UnionpayConstant.PRIKEY, "utf-8");
+        return AlipaySignature.rsaSign(map, prikey, "utf-8");
     }
 
     /**
@@ -241,7 +274,11 @@ public class UnionpayUtil {
     }
 
     public static void main(String[] args) throws Exception {
-        MB010("uid", "acctName", "companyTaxUum", "8888888793632850");
+        String merchNo = "121818722";
+        String acctNo = "0880200707000000333";
+        String pfmpubkey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQClPrAIo8gh9HCMniYWJxxws4KK4pfi4th4Sh8/FLGNUNGZd+o9oMzbzRyXUOs5fsBiAGGBuHGuhi0visTm6m5JYt4uLiNfQP/y/aGxbtYVBCE1BS1PF9MDSsfBqUA58JyOmF/WFjjwR1EpKMbGh2Db/K2wSC+qiR6ZSWDGSs2BNQIDAQAB";
+        String prikey = "MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBAIFTR+zckPF0h0PKQ2IQD5IGQbaUChkTgHVzbFJjc6U4BJLCAmp+yTTM7jqtEMvAyBmLjhwKU/VEVWnqZCJP69kHUaBRcNeoSO8ES5bjjgFO6uaRI1Fb8TCdrtKfHUeMSJHeQDjvRerx42KT9048J5l9jo6mMG2CkZ0vH/33fj/RAgMBAAECgYBRzkyBGETXd87Youlc7qvqwupug9afZiasJQcwVpigun6qFu9QTkMYk0le9HrbaGcrQYvzUNUrIL6m8Q3GZqfZCo8GHd8sJFzYwxSBd47+ktoT3FIGulQXQDljg8xBfR8ENDIqyrrX6dtxYTj6CZ545uIZqh8JRWfgCpnjSZaEwQJBAMHgzdmK1NgIhpNhJpRm3lkzLf1QCPExvvMb/sda2NQ6dUSvPmG5DYn2Adjnyh1fwos6NpgvcIPXj88mE3558fsCQQCqw2rw/7ykITQsqM4ZGr+NU+NR4xKXcGQzzsc2nMF1XA891lhWL3qsFLsoE2YRY7xvJjMG1hYpmbW4iq0YIPejAkAIkHSnanGShXXkZsM8hPrHd/JNIU7z0J29wXvUtJelcFujyBX6XSFS+dIFEeAkwgkm+1BUEqxmtov8u5La4GonAkBGoKDAoOWC9QDBX+guVfPYHlQs8EAmRqQLEYEvw1H4mmTrbJYIv4Z7We+2uZ9Dnf638hK0xyNPfXW9qA3Dpw8FAkEAuqsoLuPyoOTDBQ1XjajzYFLknVEWClTnGLnV5r1retxr0PLAO8hq1A4fpgmPMKBCzMpzIGDRzjZdiVdJxkJKoA==";
+        MB010(merchNo, acctNo, pfmpubkey, prikey, "88888888", "88888888", "8888888", "8888888793632850");
     }
 
 }

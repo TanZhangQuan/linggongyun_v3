@@ -373,7 +373,6 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
     @Override
     public ReturnJson getPaymentOrderPaas(PaymentOrderDTO paymentOrderDto, String managersId) throws CommonException {
         List<String> merchantIds = acquireID.getCompanyIds(managersId);
-        List<PaymentOrder> list;
         if (VerificationCheck.listIsNull(merchantIds)) {
             return ReturnJson.success((List) null);
         }
@@ -456,7 +455,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
         if (VerificationCheck.listIsNull(merchantIds)) {
             return ReturnJson.success((List) null);
         }
-        TodayVO todayVO=paymentOrderDao.selectDaypaa(merchantIds);
+        TodayVO todayVO = paymentOrderDao.selectDaypaa(merchantIds);
         return ReturnJson.success(todayVO);
     }
 
@@ -495,8 +494,8 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
 
     @Override
     public ReturnJson associatedTasks(String merchantId, AssociatedTasksDTO associatedTasksDto) {
-        Page page=new Page(associatedTasksDto.getPageNo(),associatedTasksDto.getPageSize());
-        IPage<AssociatedTasksVO> voiPage=taskDao.getAssociatedTasks(page,merchantId,associatedTasksDto.getCooperateMode());
+        Page page = new Page(associatedTasksDto.getPageNo(), associatedTasksDto.getPageSize());
+        IPage<AssociatedTasksVO> voiPage = taskDao.getAssociatedTasks(page, merchantId, associatedTasksDto.getCooperateMode());
         return ReturnJson.success(voiPage);
     }
 

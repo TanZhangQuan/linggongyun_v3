@@ -7,7 +7,7 @@ import lombok.Data;
 import java.io.Serializable;
 
 @Data
-@ApiModel(description = "XXXXX")
+@ApiModel(description = "商户的登录信息DTO")
 public class AddMerchantDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
