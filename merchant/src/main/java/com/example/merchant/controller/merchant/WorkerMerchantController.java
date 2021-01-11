@@ -141,5 +141,16 @@ public class WorkerMerchantController {
                                    @RequestParam(defaultValue = "10") Integer pageSize) {
         return workerService.queryWorkerCompanyByID(merchantId, pageNo, pageSize);
     }
+
+
+    @ApiOperation("创客支付列表信息")
+    @LoginRequired
+    @PostMapping(value = "/queryWorkerPayInfo")
+    public ReturnJson queryWorkerPayInfo(@NotNull(message = "当前页不能为空") @ApiParam(value = "当前页") @RequestParam Integer pageNo,
+                                         @NotNull(message = "页大小不能为空") @ApiParam(value = "页大小") @RequestParam Integer pageSize,
+                                         @NotBlank(message = "创客Id不能为空") @ApiParam(value = "创客Id") @RequestParam String workerId,
+                                         @ApiParam(hidden = true) @RequestAttribute("userId") String merchantId) {
+        return workerTaskService.queryMerchantWorkerPayInfo(workerId,merchantId, pageNo, pageSize);
+    }
 }
 
