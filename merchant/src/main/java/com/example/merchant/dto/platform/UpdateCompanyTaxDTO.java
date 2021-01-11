@@ -31,12 +31,6 @@ public class UpdateCompanyTaxDTO implements Serializable {
     @ApiModelProperty(value = "合作合同地址")
     private String contract;
 
-    @ApiModelProperty(value = "开户行")
-    private String bankName;
-
-    @ApiModelProperty(value = "银行账号")
-    private String bankCode;
-
     @ApiModelProperty(value = "总包信息")
     private List<UpdateCompanyLadderServiceDTO> updateCompanyLadderServiceDtoList;
 

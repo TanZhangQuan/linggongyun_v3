@@ -34,6 +34,12 @@ public class CompanyInfoVO implements Serializable {
     @ApiModelProperty(value = "统一的社会信用代码")
     private String creditCode;
 
+    @ApiModelProperty(value = "开户行")
+    private String bankName;
+
+    @ApiModelProperty(value = "银行卡号")
+    private String bankCode;
+
     @ApiModelProperty(value = "公司的营业执照")
     private String businessLicense;
 

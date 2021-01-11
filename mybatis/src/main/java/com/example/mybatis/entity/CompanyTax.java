@@ -45,16 +45,6 @@ public class CompanyTax extends BaseEntity {
     private Integer packageStatus;
 
     /**
-     * 银行卡号
-     */
-    private String bankCode;
-
-    /**
-     * 开户行
-     */
-    private String bankName;
-
-    /**
      * 合作合同地址
      */
     private String contract;
