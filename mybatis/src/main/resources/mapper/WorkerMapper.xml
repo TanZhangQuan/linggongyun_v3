@@ -399,6 +399,9 @@
                     tb_payment_order
                 WHERE
                     pi.payment_order_id = id
+                    <if test="param3 != null and param3 !=''">
+                     and pi.company_id = #{param3}
+                    </if>
             ),
             (
                 SELECT
@@ -407,6 +410,9 @@
                     tb_payment_order_many
                 WHERE
                     pi.payment_order_id = id
+                    <if test="param3 != null and param3 !=''">
+                     and pi.company_id = #{param3}
+                    </if>
             )
         ) AS company_s_name,
         IF (

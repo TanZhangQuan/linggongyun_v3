@@ -44,9 +44,6 @@ public class TaskWorkerVO implements Serializable {
     @ApiModelProperty(value = "所需人数")
     private Integer upperLimit;
 
-    @ApiModelProperty(value = "一共时间天数")
-    private Integer availableTime;
-
     @ApiModelProperty(value = "任务最小金额")
     private BigDecimal taskCostMin;
 

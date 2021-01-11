@@ -73,15 +73,15 @@ TemplateFile:
   #  合同模板
   Contract: "/root/linggongyun_v3/TemplateFile/test.pdf"
   #  总包+分包支付明细模板
-  TotalPayInventory: "/root/linggongyun_v3/TemplateFile/inventory.xlsx"
+  TotalPayInventory: "/root/linggongyun_v3/TemplateFile/支付清单模板.xlsx"
   #  众包支付明细模板
-  ManyPayInventory: "/root/linggongyun_v3/TemplateFile/inventory.xlsx"
+  ManyPayInventory: "/root/linggongyun_v3/TemplateFile/支付清单模板.xlsx"
   #  总包+分包交付支付验收单
-  TotalAcceptanceCertificate: "/root/linggongyun_v3/TemplateFile/acceptanceCertificate.xlsx"
+  TotalAcceptanceCertificate: "/root/linggongyun_v3/TemplateFile/交付支付验收单模板.xlsx"
   #  众包交付支付验收单
-  ManyAcceptanceCertificate: "/root/linggongyun_v3/TemplateFile/acceptanceCertificate.xlsx"
+  ManyAcceptanceCertificate: "/root/linggongyun_v3/TemplateFile/交付支付验收单模板.xlsx"
   #  导入创客的模板
-  ImportWorker: "/root/linggongyun_v3/TemplateFile/importWorker.xlsx"
+  ImportWorker: "/root/linggongyun_v3/TemplateFile/创客模板.xlsx"
   #  模板文件夹路径
   Path: "/root/linggongyun_v3/TemplateFile/"
   #  模板访问路径

@@ -2,4 +2,52 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.mybatis.mapper.CompanyTaxDao">
 
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.example.mybatis.entity.CompanyTax">
+        <id column="company_id" property="companyId" />
+        <result column="id" property="id" />
+        <result column="tax_id" property="taxId" />
+        <result column="charge_status" property="chargeStatus" />
+        <result column="service_charge" property="serviceCharge" />
+        <result column="package_status" property="packageStatus" />
+        <result column="contract" property="contract" />
+        <result column="create_date" property="createDate" />
+        <result column="update_date" property="updateDate" />
+    </resultMap>
+
+    <resultMap id="companyTaxMoney" type="com.example.mybatis.vo.CompanyTaxMoneyVO">
+        <result column="start_money" property="startMoney"/>
+        <result column="end_money" property="endMoney"/>
+        <result column="service_charge" property="serviceCharge"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, company_id, tax_id, charge_status, service_charge, package_status, contract, create_date, update_date
+    </sql>
+    <select id="getCompanyTax" resultType="double">
+        SELECT
+            ct.service_charge
+        FROM
+            tb_company_tax ct
+        WHERE
+            ct.company_id = #{param1}
+        AND ct.tax_id = #{param2}
+        AND ct.package_status = #{param3}
+    </select>
+
+    <select id="getCompanyTaxMoney" resultMap="companyTaxMoney">
+        SELECT
+            cls.start_money,
+            cls.end_money,
+            cls.service_charge
+        FROM
+            tb_company_tax ct
+        INNER JOIN tb_company_ladder_service cls ON cls.company_tax_id = ct.id
+        WHERE
+            ct.company_id = #{param1}
+        AND ct.tax_id = #{param2}
+        AND ct.package_status = #{param3}
+    </select>
+
 </mapper>

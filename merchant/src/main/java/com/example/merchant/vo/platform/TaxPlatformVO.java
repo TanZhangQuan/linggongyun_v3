@@ -2,11 +2,13 @@ package com.example.merchant.vo.platform;
 
 import com.example.mybatis.entity.InvoiceLadderPrice;
 import com.example.mybatis.entity.TaxPackage;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -35,7 +37,8 @@ public class TaxPlatformVO implements Serializable {
     private String taxAddress;
 
     @ApiModelProperty(value = "公司的成立时间")
-    private LocalDateTime taxCreateDate;
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate taxCreateDate;
 
     @ApiModelProperty(value = "公司联系人")
     private String linkMan;

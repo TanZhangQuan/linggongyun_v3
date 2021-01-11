@@ -17,13 +17,13 @@
         <result column="subpackage_payment" property="subpackagePayment"/>
         <result column="task_id" property="taskId"/>
         <result column="task_name" property="taskName"/>
-        <result column="task_type" property="taskType"/>
         <result column="acceptance_certificate" property="acceptanceCertificate"/>
         <result column="tax_status" property="taxStatus"/>
         <result column="composite_tax" property="compositeTax"/>
         <result column="merchant_tax" property="merchantTax"/>
         <result column="recevice_tax" property="receviceTax"/>
         <result column="payment_order_status" property="paymentOrderStatus"/>
+        <result column="reasons_for_rejection" property="reasonsForRejection"/>
         <result column="payment_date" property="paymentDate"/>
         <result column="create_date" property="createDate"/>
         <result column="update_date" property="updateDate"/>
@@ -42,9 +42,6 @@
         <association property="taskVo" javaType="com.example.mybatis.vo.TaskVO">
             <result column="task_code" property="taskCode"/>
             <result column="task_name" property="taskName"/>
-            <result column="release_date" property="releaseDate"/>
-            <result column="deadline_date" property="deadlineDate"/>
-            <result column="industry_type" property="industryType"/>
         </association>
     </resultMap>
 
@@ -294,7 +291,7 @@
         po.id,po.company_s_name,po.platform_service_provider,
         po.acceptance_certificate,po.payment_order_status,
         po.payment_inventory,po.payment_date,po.subpackage_payment,po.company_contract,
-        t.task_code,t.task_name,t.release_date,t.deadline_date,t.industry_type
+        t.task_code,t.task_name
         FROM tb_payment_order AS po
         LEFT JOIN tb_task as t ON po.task_id=t.id
         WHERE po.id=#{id}
@@ -360,7 +357,8 @@
         <result column="company_contract" property="contract"/>
         <result column="payment_inventory" property="paymentInventory"/>
         <result column="subpackage_payment" property="paymentReceipt"/>
-        <result column="task_id" property="tastId"/>
+        <result column="task_id" property="taskId"/>
+        <result column="task_name" property="taskName"/>
         <result column="acceptance_certificate" property="acceptanceCertificate"/>
         <result column="payment_date" property="paymentDate"/>
         <result column="real_money" property="money"/>
@@ -419,9 +417,10 @@
         <result column="real_money" property="realMoney"/>
         <result column="create_date" property="creatDate"/>
         <result column="company_name" property="companyName"/>
+        <result column="bank_code" property="bankCode"/>
+        <result column="bank_name" property="bankName"/>
         <result column="subpackage_payment" property="subpackagePayment"/>
         <result column="turnkey_project_payment" property="turnkeyProjectPayment"/>
-        <result column="bank_and_account" property="bankAndAccount"/>
         <result column="payee" property="payee"/>
         <result column="payee_bank_name" property="payeeBankName"/>
         <result column="payee_bank_code" property="payeeBankCode"/>
@@ -470,7 +469,8 @@
             po.tax_status,
             po.composite_tax,
             ci.company_name,
-            ci.bank_and_account,
+            ci.bank_name,
+            ci.bank_code,
             tp.payee,
             tp.bank_name AS payee_bank_name,
             tp.bank_code AS payee_bank_code
@@ -493,10 +493,7 @@
             po.payment_date,
             po.subpackage_payment,
             t.task_code,
-            t.task_name,
-            t.release_date,
-            t.deadline_date,
-            t.industry_type
+            t.task_name
         FROM
             tb_invoice_application ia
         INNER JOIN tb_application_payment ap ON ap.invoice_application_id = ia.id
@@ -515,6 +512,7 @@
         b.company_contract,
         b.payment_inventory,
         b.task_id,
+        b.task_name,
         b.acceptance_certificate,
         b.subpackage_payment,
         b.payment_date,
@@ -541,10 +539,7 @@
             po.payment_date,
             po.subpackage_payment,
             t.task_code,
-            t.task_name,
-            t.release_date,
-            t.deadline_date,
-            t.industry_type
+            t.task_name
         FROM tb_invoice i
         INNER JOIN tb_invoice_application ia ON ia.id = i.application_id
         INNER JOIN tb_application_payment ap ON ia.id = ap.invoice_application_id
@@ -566,10 +561,7 @@
             po.payment_date,
             po.subpackage_payment,
             t.task_code,
-            t.task_name,
-            t.release_date,
-            t.deadline_date,
-            t.industry_type
+            t.task_name
         FROM
             tb_maker_total_invoice mti
         INNER JOIN tb_invoice_list il ON il.maker_total_invoice_id = mti.id
@@ -964,7 +956,7 @@
         FROM
             tb_payment_order
         WHERE
-            payment_order_status = 3
+            payment_order_status = 6
         AND DATE(payment_date) = DATE(NOW())
         AND company_id IN
          <foreach collection="list" index="index" item="merchantIds" open="(" separator="," close=")">
@@ -1053,7 +1045,7 @@
         FROM
             tb_payment_order
         WHERE
-            payment_order_status = 3
+            payment_order_status = 6
         AND WEEK (payment_date) = WEEK (NOW())
         AND company_id IN
          <foreach collection="list" index="index" item="merchantIds" open="(" separator="," close=")">
@@ -1078,7 +1070,7 @@
         IF(DAY(LAST_DAY(NOW())) >= 29, IFNULL(SUM(IF(DAY(payment_date) = 29, real_money, 0)), 0), NULL) AS twenty_nine_day_income,
         IF(DAY(LAST_DAY(NOW())) >= 30, IFNULL(SUM(IF(DAY(payment_date) = 30, real_money, 0)), 0), NULL) AS thirty_day_income,
 		IF(DAY(LAST_DAY(NOW())) >= 31, IFNULL(SUM(IF(DAY(payment_date) = 31, real_money, 0)), 0), NULL) AS thirty_one_day_income
-        FROM tb_payment_order WHERE payment_order_status=3 AND YEAR(payment_date) = YEAR(NOW())
+        FROM tb_payment_order WHERE payment_order_status=6 AND YEAR(payment_date) = YEAR(NOW())
 		AND MONTH(payment_date) = MONTH(NOW()) AND company_id IN
          <foreach collection="list" index="index" item="merchantIds" open="(" separator="," close=")">
             #{merchantIds}
@@ -1091,7 +1083,7 @@
         IFNULL(SUM(IF(MONTH(payment_date) = 7, real_money, 0)), 0) AS jul_income, IFNULL(SUM(IF(MONTH(payment_date) = 8, real_money, 0)), 0) AS aug_income,
         IFNULL(SUM(IF(MONTH(payment_date) = 9, real_money, 0)), 0) AS sep_income, IFNULL(SUM(IF(MONTH(payment_date) = 10, real_money, 0)), 0) AS oct_income,
         IFNULL(SUM(IF(MONTH(payment_date) = 11, real_money, 0)), 0) AS nov_income, IFNULL(SUM(IF(MONTH(payment_date) = 12, real_money, 0)), 0) AS dec_income
-        FROM tb_payment_order WHERE payment_order_status=3 AND YEAR(payment_date) = YEAR(NOW()) AND company_id IN
+        FROM tb_payment_order WHERE payment_order_status=6 AND YEAR(payment_date) = YEAR(NOW()) AND company_id IN
          <foreach collection="list" index="index" item="merchantIds" open="(" separator="," close=")">
             #{merchantIds}
         </foreach>

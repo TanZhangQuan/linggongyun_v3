@@ -7,18 +7,13 @@
         <id column="id" property="id"/>
         <result column="merchant_id" property="merchantId"/>
         <result column="merchant_name" property="merchantName"/>
-        <result column="invoice_id" property="invoiceId"/>
         <result column="task_code" property="taskCode"/>
         <result column="task_name" property="taskName"/>
-        <result column="release_date" property="releaseDate"/>
-        <result column="deadline_date" property="deadlineDate"/>
         <result column="task_desc" property="taskDesc"/>
-        <result column="industry_type" property="industryType"/>
+        <result column="task_illustration" property="taskIllustration"/>
         <result column="task_cost_min" property="taskCostMin"/>
         <result column="task_cost_max" property="taskCostMax"/>
         <result column="task_skill" property="taskSkill"/>
-        <result column="release_time" property="releaseTime"/>
-        <result column="deadline_time" property="deadlineTime"/>
         <result column="upper_limit" property="upperLimit"/>
         <result column="cooperate_mode" property="cooperateMode"/>
         <result column="task_mode" property="taskMode"/>
@@ -43,12 +38,6 @@
 
     </sql>
 
-    <!--查询总条数/* LIMIT #{currPage},#{pageSize}*/-->
-    <select id="count" resultType="int">
-        select count(1) from tb_task
-        <include refid="query"/>
-    </select>
-
     <!--查询所有的任务列表-->
     <select id="selectLists" resultMap="BaseResultMap">
         select * from tb_task
@@ -64,10 +53,10 @@
             AND cooperate_mode= #{taskListDto.cooperateMode}
         </if>
         <if test="taskListDto.releaseDate != null and taskListDto.releaseDate != ''">
-            AND release_date >= #{taskListDto.releaseDate}
+            AND create_date >= #{taskListDto.releaseDate}
         </if>
         <if test="taskListDto.deadlineDate != null and taskListDto.deadlineDate != ''">
-            AND deadline_date <![CDATA[<=]]> #{taskListDto.deadlineDate}
+            AND create_date <![CDATA[<=]]> #{taskListDto.deadlineDate}
         </if>
         order by create_date desc
     </select>
@@ -77,20 +66,31 @@
         DELETE FROM tb_task WHERE id=#{id}
     </delete>
 
-    <!--添加任务详情-->
-    <insert id="addTask" parameterType="com.example.mybatis.dto.TaskDTO">
-        INSERT INTO tb_task (id,merchant_id,task_name,task_code,
-        release_date,deadline_date,task_desc,industry_type,task_cost_min,
-        task_cost_max,task_skill,release_time,deadline_time,upper_limit,cooperate_mode,task_mode,state)
-        VALUES (#{id},#{merchantId},#{taskName},#{taskCode}
-        ,#{releaseDate},#{deadlineDate},#{taskDesc},#{industryType},#{taskCostMin},
-        #{taskCostMax},#{taskSkill},#{releaseTime},#{deadlineTime},#{upperLimit},#{cooperateMode},#{taskMode},#{state})
-    </insert>
-
     <!--根据任务id查询任务详情-->
     <select id="setTaskById" resultMap="BaseResultMap">
-        SELECT task_code,(SELECT company_name FROM tb_merchant WHERE id=merchant_id) as merchant_name,task_name,task_desc,industry_type,task_cost_min,task_cost_max,task_skill,release_date,deadline_date,upper_limit,cooperate_mode,task_mode,state,create_date
-        FROM tb_task where id=#{id}
+        SELECT
+            task_code,
+            (
+                SELECT
+                    company_name
+                FROM
+                    tb_merchant
+                WHERE
+                    id = merchant_id
+            ) AS merchant_name,
+            task_name,
+            task_desc,
+            task_illustration,
+            task_cost_min,
+            task_cost_max,
+            task_skill,
+            upper_limit,
+            cooperate_mode,
+            task_mode,
+            state,
+            create_date
+        FROM
+	        tb_task where id=#{id}
     </select>
 
     <select id="getTaskCode" resultType="java.lang.String">
@@ -114,9 +114,6 @@
         <result column="task_code" property="taskCode"/>
         <result column="merchant_name" property="merchantName"/>
         <result column="task_name" property="taskName"/>
-        <result column="release_date" property="releaseDate"/>
-        <result column="industry_type" property="industryType"/>
-        <result column="release_time" property="releaseTime"/>
         <result column="cooperate_mode" property="cooperateMode"/>
         <result column="task_mode" property="taskMode"/>
     </resultMap>
@@ -124,7 +121,7 @@
     <select id="getPlatformTaskList" resultMap="BaseResultMap">
         SELECT id,task_code,
         (SELECT company_name FROM tb_merchant WHERE id=merchant_id) as merchant_name,
-        task_name,release_date,industry_type,release_time,cooperate_mode,task_mode,state
+        task_name,cooperate_mode,task_mode,state,create_date
         FROM tb_task
         WHERE 1=1
         <if test="platformTaskDto.merchantName != null and platformTaskDto.merchantName != ''">
@@ -137,22 +134,13 @@
             AND cooperate_mode=#{platformTaskDto.cooperateMode}
         </if>
         <if test="platformTaskDto.releaseDate != null and platformTaskDto.releaseDate != ''">
-            AND release_date >= #{platformTaskDto.releaseDate}
+            AND create_date >= #{platformTaskDto.releaseDate}
         </if>
         <if test="platformTaskDto.deadlineDate != null and platformTaskDto.deadlineDate != ''">
-            AND deadline_date <![CDATA[<=]]> #{platformTaskDto.deadlineDate}
+            AND create_date <![CDATA[<=]]> #{platformTaskDto.deadlineDate}
         </if>
         order by create_date desc
     </select>
-
-    <insert id="addPlatformTask" parameterType="com.example.mybatis.dto.TaskDTO">
-        INSERT INTO tb_task (id,merchant_id,task_name,task_code,
-        release_date,deadline_date,task_desc,industry_type,task_cost_min,
-        task_cost_max,task_skill,release_time,deadline_time,upper_limit,cooperate_mode,task_mode,state)
-        VALUES (#{id},#{merchantId},#{taskName},#{taskCode}
-        ,#{releaseDate},#{deadlineDate},#{taskDesc},#{industryType},#{taskCostMin},
-        #{taskCostMax},#{taskSkill},#{releaseTime},#{deadlineTime},#{upperLimit},#{cooperateMode},#{taskMode},#{state})
-    </insert>
 
     <resultMap id="taskInfo" type="com.example.mybatis.vo.TaskInfoVO">
         <id property="id" column="id"/>
@@ -162,7 +150,6 @@
         <result property="taskCostMin" column="task_cost_min"/>
         <result property="taskCostMax" column="task_cost_max"/>
         <result property="cooperateMode" column="cooperate_mode"/>
-        <result property="releaseDate" column="release_date"/>
         <result property="taskMode" column="task_mode"/>
     </resultMap>
 
@@ -175,7 +162,6 @@
         <result column="create_date" property="createDate"/>
         <result column="task_code" property="taskCode"/>
         <result column="upper_limit" property="upperLimit"/>
-        <result column="available_time" property="availableTime"/>
         <result column="task_cost_min" property="taskCostMin"/>
         <result column="task_cost_max" property="taskCostMax"/>
     </resultMap>
@@ -184,7 +170,6 @@
         <id column="id" property="id"/>
         <result column="task_code" property="taskCode"/>
         <result column="task_name" property="taskName"/>
-        <result column="industry_type" property="industryType"/>
         <result column="cooperate_mode" property="cooperateMode"/>
         <result column="task_mode" property="taskMode"/>
         <result column="state" property="state"/>
@@ -200,11 +185,7 @@
             t.task_cost_min,
             t.task_cost_max,
             t.cooperate_mode,
-            CONCAT(
-                DATE(release_date),
-                ' ',
-                TIME(release_time)
-            ) AS release_date,
+            t.create_date AS release_date,
             t.task_mode
         FROM
             tb_task t
@@ -212,8 +193,8 @@
         WHERE
             task_mode != 0
         AND state = 0
-        AND deadline_date > NOW()
-        ORDER BY release_date DESC
+        AND create_date > NOW()
+        ORDER BY create_date DESC
     </select>
 
     <select id="getAllTask" resultMap="taskWorker">
@@ -226,12 +207,12 @@
             t.create_date,
             t.task_code,
             t.upper_limit,
-            t.deadline_date - t.release_date AS available_time,
             t.task_cost_min,
             t.task_cost_max
         FROM
             tb_task t
         INNER JOIN tb_merchant m ON m.id = t.merchant_id
+        WHERE t.task_mode != 0 and state = 0
         order by t.create_date desc
     </select>
 
@@ -240,7 +221,6 @@
             id,
             task_code,
             task_name,
-            industry_type,
             cooperate_mode,
             task_mode,
             state,
@@ -252,5 +232,31 @@
         AND cooperate_mode = #{param3}
         AND state = 3
         ORDER BY create_date DESC
+    </select>
+
+    <select id="getAssociatedTask" resultMap="associatedTasks">
+        SELECT
+            t.id,
+            t.task_code,
+            t.task_name,
+            t.cooperate_mode,
+            t.task_mode,
+            t.state,
+            t.create_date
+        FROM
+            tb_task t
+        WHERE
+            t.merchant_id IN (
+                SELECT
+                    id
+                FROM
+                    tb_merchant
+                WHERE
+                    company_id = #{param2}
+            )
+        AND t.cooperate_mode = #{param3}
+        AND t.state = 3
+        ORDER BY
+            t.create_date DESC
     </select>
 </mapper>

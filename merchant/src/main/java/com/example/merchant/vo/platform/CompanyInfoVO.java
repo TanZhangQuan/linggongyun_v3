@@ -7,6 +7,7 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -27,11 +28,17 @@ public class CompanyInfoVO implements Serializable {
     private BigDecimal registeredCapital;
 
     @ApiModelProperty(value = "成立日期")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    private LocalDateTime companyCreateDate;
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
+    private LocalDate companyCreateDate;
 
     @ApiModelProperty(value = "统一的社会信用代码")
     private String creditCode;
+
+    @ApiModelProperty(value = "开户行")
+    private String bankName;
+
+    @ApiModelProperty(value = "银行卡号")
+    private String bankCode;
 
     @ApiModelProperty(value = "公司的营业执照")
     private String businessLicense;

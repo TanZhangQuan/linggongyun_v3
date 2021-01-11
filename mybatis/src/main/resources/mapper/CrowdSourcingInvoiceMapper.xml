@@ -56,13 +56,9 @@
         <result column="payment_order_status" property="paymentOrderStatus"/>
         <result column="payment_inventory" property="paymentInventory"/>
         <result column="payment_date" property="paymentDate"/>
-        <result column="real_money" property="realMoney"/>
         <association property="taskVo" javaType="com.example.mybatis.vo.TaskVO">
             <result column="task_code" property="taskCode"/>
             <result column="task_name" property="taskName"/>
-            <result column="release_date" property="releaseDate"/>
-            <result column="deadline_date" property="deadlineDate"/>
-            <result column="industry_type" property="industryType"/>
         </association>
     </resultMap>
     <!--查询条件-->
@@ -262,10 +258,7 @@
             pom.payment_order_status,
             pom.payment_date,
             t.task_code,
-            t.task_name,
-            t.release_date,
-            t.deadline_date,
-            t.industry_type
+            t.task_name
         FROM
             tb_crowd_sourcing_application csa
         INNER JOIN tb_payment_order_many pom ON pom.id = csa.payment_order_many_id
@@ -369,10 +362,7 @@
             pom.payment_order_status,
             pom.payment_date,
             t.task_code,
-            t.task_name,
-            t.release_date,
-            t.deadline_date,
-            t.industry_type
+            t.task_name
         FROM
             tb_crowd_sourcing_invoice csi
         INNER JOIN tb_crowd_sourcing_application csa ON csa.id = csi.application_id

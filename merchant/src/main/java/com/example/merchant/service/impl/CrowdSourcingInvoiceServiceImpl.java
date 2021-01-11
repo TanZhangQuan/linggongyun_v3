@@ -17,7 +17,7 @@ import com.example.merchant.vo.merchant.InvoiceVO;
 import com.example.merchant.vo.platform.AddressVO;
 import com.example.merchant.vo.platform.QueryNotInvoicedVO;
 import com.example.mybatis.dto.QueryCrowdSourcingDTO;
-import com.example.mybatis.dto.TobeinvoicedDTO;
+import com.example.mybatis.dto.TobeInvoicedDTO;
 import com.example.mybatis.entity.*;
 import com.example.mybatis.mapper.*;
 import com.example.mybatis.vo.*;
@@ -107,7 +107,7 @@ public class CrowdSourcingInvoiceServiceImpl extends ServiceImpl<CrowdSourcingIn
     }
 
     @Override
-    public ReturnJson getTobeCrowdSourcingInvoice(TobeinvoicedDTO tobeinvoicedDto) {
+    public ReturnJson getTobeCrowdSourcingInvoice(TobeInvoicedDTO tobeinvoicedDto) {
         Page page = new Page(tobeinvoicedDto.getPageNo(), tobeinvoicedDto.getPageSize());
         IPage<CrowdSourcingInvoiceInfoVO> list = crowdSourcingInvoiceDao.
                 getCrowdSourcingInvoicePass(page, tobeinvoicedDto);
@@ -230,7 +230,7 @@ public class CrowdSourcingInvoiceServiceImpl extends ServiceImpl<CrowdSourcingIn
     }
 
     @Override
-    public ReturnJson getCrowdSourcingInfoPass(TobeinvoicedDTO tobeinvoicedDto) {
+    public ReturnJson getCrowdSourcingInfoPass(TobeInvoicedDTO tobeinvoicedDto) {
         Page page = new Page(tobeinvoicedDto.getPageNo(), tobeinvoicedDto.getPageSize());
         IPage<CrowdSourcingInfoVO> vos = crowdSourcingInvoiceDao.getCrowdSourcingInfoPass(page, tobeinvoicedDto);
         return ReturnJson.success(vos);

@@ -6,8 +6,10 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.service.WorkerTaskService;
+import com.example.mybatis.entity.Merchant;
 import com.example.mybatis.entity.Task;
 import com.example.mybatis.entity.WorkerTask;
+import com.example.mybatis.mapper.MerchantDao;
 import com.example.mybatis.mapper.TaskDao;
 import com.example.mybatis.mapper.WorkerDao;
 import com.example.mybatis.mapper.WorkerTaskDao;
@@ -39,6 +41,9 @@ public class WorkerTaskServiceImpl extends ServiceImpl<WorkerTaskDao, WorkerTask
     @Resource
     private WorkerDao workerDao;
 
+    @Resource
+    private MerchantDao merchantDao;
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ReturnJson seavWorkerTask(Map map) {
@@ -53,8 +58,13 @@ public class WorkerTaskServiceImpl extends ServiceImpl<WorkerTaskDao, WorkerTask
             workerTask.setArrangePerson(map.get("arrangePerson").toString());
             workerTaskDao.addWorkerTask(workerTask);
         }
-        int count = workerTaskDao.selectCount(new QueryWrapper<WorkerTask>().eq("task_id", map.get("taskId").toString()).eq("task_status", 0));
-        if (count == task.getUpperLimit()) {
+        if (task.getTaskMode() == 2) {
+            int count = workerTaskDao.selectCount(new QueryWrapper<WorkerTask>().eq("task_id", map.get("taskId").toString()).eq("task_status", 0));
+            if (count == task.getUpperLimit()) {
+                task.setState(1);
+                taskDao.updateById(task);
+            }
+        }else{
             task.setState(1);
             taskDao.updateById(task);
         }
@@ -81,12 +91,12 @@ public class WorkerTaskServiceImpl extends ServiceImpl<WorkerTaskDao, WorkerTask
     }
 
     @Override
-    public ReturnJson updateCheckMoney(String taskId, Double money, String id,String userId) {
+    public ReturnJson updateCheckMoney(String taskId, Double money, String id, String userId) {
         ReturnJson returnJson;
         if (money == null) {
             returnJson = new ReturnJson("验收金额不能为空", 300);
         } else {
-            WorkerTask workerTask=workerTaskDao.selectOne(new QueryWrapper<WorkerTask>().eq("worker_id",id).eq("task_id",taskId));
+            WorkerTask workerTask = workerTaskDao.selectOne(new QueryWrapper<WorkerTask>().eq("worker_id", id).eq("task_id", taskId));
             workerTask.setCheckMoney(money);
             workerTask.setStatus(4);
             workerTask.setCheckDate(LocalDateTime.now());
@@ -179,7 +189,15 @@ public class WorkerTaskServiceImpl extends ServiceImpl<WorkerTaskDao, WorkerTask
     @Override
     public ReturnJson queryWorkerPayInfo(String workerId, Integer pageNo, Integer pageSize) {
         Page page = new Page(pageNo, pageSize);
-        IPage<WorkerPayInfoVO> iPage = workerDao.queryWorkerPayInfo(page, workerId);
+        IPage<WorkerPayInfoVO> iPage = workerDao.queryWorkerPayInfo(page, workerId,null);
+        return ReturnJson.success(iPage);
+    }
+
+    @Override
+    public ReturnJson queryMerchantWorkerPayInfo(String workerId, String merchantId, Integer pageNo, Integer pageSize) {
+        Merchant merchant = merchantDao.selectById(merchantId);
+        Page page = new Page(pageNo, pageSize);
+        IPage<WorkerPayInfoVO> iPage = workerDao.queryWorkerPayInfo(page, workerId,merchant.getCompanyId());
         return ReturnJson.success(iPage);
     }
 

@@ -149,12 +149,12 @@
         <result column="package_status" property="packageStatus"/>
         <result column="real_money" property="realMoney"/>
         <result column="is_invoice" property="isInvoice"/>
-        <result column="payment_sate" property="paymentDate"/>
+        <result column="payment_date" property="paymentDate"/>
     </resultMap>
 
     <!--服务商的交易流水-->
     <select id="selectTaxPaymentList" parameterType="list" resultMap="MerchantPaymentList">
-        select * from tb_merchant_payment_list
+        select payment_order_id,merchant_name,tax_name,package_status,real_money,is_invoice,payment_date from tb_merchant_payment_list
         where payment_order_id in
         <foreach collection="paymentOrderIds" index="index" item="item" open="(" separator="," close=")">
             #{item}
@@ -263,6 +263,26 @@
         WHERE
             t.id = #{taxId}
         ORDER BY tp.id
+    </select>
+
+    <resultMap id="taxPaasList" type="com.example.mybatis.vo.TaxListVO">
+        <id column="id" property="id"/>
+        <result column="tax_name" property="taxName"/>
+        <result column="bank_name" property="bankName"/>
+        <result column="bank_code" property="bankCode"/>
+    </resultMap>
+
+    <select id="getTaxPaasList" resultMap="taxPaasList">
+        SELECT
+            t.id,
+            t.tax_name,
+            tp.bank_code,
+	        tp.bank_name
+        FROM
+            tb_tax t
+        LEFT JOIN tb_tax_package tp ON tp.tax_id = t.id
+        WHERE
+            tp.package_status = #{packageStatus}
     </select>
 
 

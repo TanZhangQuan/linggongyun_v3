@@ -68,8 +68,11 @@ public class PaymentOrderInfoPO {
     @ApiModelProperty("商户名称（也是总包的支付方）")
     private String companyName;
 
-    @ApiModelProperty("支付方的开户行及账号")
-    private String bankAndAccount;
+    @ApiModelProperty(value = "开户行")
+    private String bankName;
+
+    @ApiModelProperty(value = "银行卡号")
+    private String bankCode;
 
     @ApiModelProperty("收款人（也是分包的支付人）")
     private String payee;

@@ -87,6 +87,11 @@ public class PaymentOrder extends BaseEntity {
     private Integer isSubpackage;
 
     /**
+     * 是否开票 0 已开， 1 未开
+     */
+    private Integer isNotInvoice;
+
+    /**
      * 关联的任务(可以不关联)
      */
     private String taskId;
@@ -125,6 +130,11 @@ public class PaymentOrder extends BaseEntity {
      * 支付订单的状态
      */
     private Integer paymentOrderStatus;
+
+    /**
+     * 驳回理由
+     */
+    private String reasonsForRejection;
 
     /**
      * 支付方式：0线下支付,1连连支付,2网商银行支付

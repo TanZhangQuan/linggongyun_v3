@@ -62,19 +62,6 @@ public class Task extends BaseEntity {
     private String taskName;
 
     /**
-     * 发布时间
-     */
-    @ApiModelProperty("发布时间")
-    private LocalDate releaseDate;
-
-    /**
-     * 截止时间
-     */
-    @ApiModelProperty("截止时间")
-    private LocalDate deadlineDate;
-
-
-    /**
      * 任务说明
      */
     @ApiModelProperty("任务说明")
@@ -84,7 +71,7 @@ public class Task extends BaseEntity {
      * 行业id
      */
     @ApiModelProperty("行业类型")
-    private String industryType;
+    private String taskIllustration;
 
     /**
      * 最小费用
@@ -105,18 +92,6 @@ public class Task extends BaseEntity {
     private String taskSkill;
 
     /**
-     * 任务开始时间
-     */
-    @ApiModelProperty("任务开始时间")
-    private LocalTime releaseTime;
-
-    /**
-     * 任务结束时间
-     */
-    @ApiModelProperty("任务结束时间")
-    private LocalTime deadlineTime;
-
-    /**
      * 任务上线人数
      */
     @ApiModelProperty("任务上线人数")
@@ -135,7 +110,7 @@ public class Task extends BaseEntity {
     private Integer taskMode;
 
     /**
-     * 任务状态:0发布中,1已接单,2交付中,3已完毕,4已关闭
+     * 任务状态,0发布中,1已关单,2验收中,3已完毕,4已作废
      */
     @ApiModelProperty("任务状态")
     private Integer state;

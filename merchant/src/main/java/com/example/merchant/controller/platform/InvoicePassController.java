@@ -10,7 +10,7 @@ import com.example.merchant.service.MakerInvoiceService;
 import com.example.merchant.service.MakerTotalInvoiceService;
 import com.example.mybatis.dto.AddInvoiceDTO;
 import com.example.mybatis.dto.QueryMakerTotalInvoiceDTO;
-import com.example.mybatis.dto.TobeinvoicedDTO;
+import com.example.mybatis.dto.TobeInvoicedDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -46,7 +46,7 @@ public class InvoicePassController {
 
     @ApiOperation("总包开票，待开票")
     @PostMapping("/getPlaInvoiceList")
-    public ReturnJson getPlaInvoiceList(@Valid @RequestBody TobeinvoicedDTO tobeinvoicedDto) {
+    public ReturnJson getPlaInvoiceList(@Valid @RequestBody TobeInvoicedDTO tobeinvoicedDto) {
         return invoiceService.getPlaInvoiceList(tobeinvoicedDto);
     }
 
@@ -70,13 +70,13 @@ public class InvoicePassController {
 
     @ApiOperation("总包开票，以开票")
     @PostMapping("/listInvoiceQuery")
-    public ReturnJson listInvoiceQuery(@Valid @RequestBody TobeinvoicedDTO tobeinvoicedDto) {
+    public ReturnJson listInvoiceQuery(@Valid @RequestBody TobeInvoicedDTO tobeinvoicedDto) {
         return invoiceService.getListInvoicequery(tobeinvoicedDto);
     }
 
     @ApiOperation("分包开票，待开票")
     @PostMapping("/listSubQuery")
-    public ReturnJson listSubQuery(@Valid @RequestBody TobeinvoicedDTO tobeinvoicedDto) {
+    public ReturnJson listSubQuery(@Valid @RequestBody TobeInvoicedDTO tobeinvoicedDto) {
         return invoiceService.getListSubQuery(tobeinvoicedDto);
     }
 

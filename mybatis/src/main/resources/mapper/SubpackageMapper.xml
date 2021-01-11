@@ -38,9 +38,6 @@
         <collection property="taskVOList" ofType="com.example.mybatis.vo.TaskVO">
             <result column="task_code" property="taskCode"/>
             <result column="task_name" property="taskName"/>
-            <result column="release_date" property="releaseDate"/>
-            <result column="deadline_date" property="deadlineDate"/>
-            <result column="industry_type" property="industryType"/>
         </collection>
     </resultMap>
 
@@ -73,7 +70,7 @@
         INNER JOIN tb_invoice_application as ia ON ia.id= ap.invoice_application_id
         INNER JOIN tb_payment_order as po ON po.id=ap.payment_order_id
         INNER JOIN tb_invoice as i ON ia.id=i.application_id
-        WHERE po.is_subpackage=1
+        WHERE po.is_subpackage = 1
         <if test="param3 != null and param3 != ''">
             AND po.company_id=#{param3}
         </if>
@@ -86,14 +83,14 @@
         <if test="param2.applicationDateTwo != null and param2.applicationDateTwo != ''">
             AND ia.application_date <![CDATA[<=]]> #{param2.applicationDateTwo}
         </if>
-        order by mti.invoice_date desc
+        order by mti.invoice_date DESC
     </select>
 
 
     <select id="getSummary" resultMap="summary">
         SELECT mti.id,po.company_s_name,po.platform_service_provider,mti.maker_tax_url,mti.maker_invoice_url,mti.total_amount,po.payment_date,
         po.payment_order_status,mti.invoice_date,po.id as pid,po.payment_inventory,po.turnkey_project_payment,po.acceptance_certificate,
-        po.subpackage_payment,t.task_code,t.task_name,t.release_date,t.deadline_date,t.industry_type
+        po.subpackage_payment,t.task_code,t.task_name
         FROM tb_maker_total_invoice as mti
         INNER JOIN tb_application_payment as ap ON ap.payment_order_id
         INNER JOIN tb_invoice_application as ia ON ia.id= ap.invoice_application_id
@@ -132,9 +129,6 @@
         <association property="taskVo" javaType="com.example.mybatis.vo.TaskVO">
             <result column="task_code" property="taskCode"/>
             <result column="task_name" property="taskName"/>
-            <result column="release_date" property="releaseDate"/>
-            <result column="deadline_date" property="deadlineDate"/>
-            <result column="industry_type" property="industryType"/>
         </association>
     </resultMap>
 
@@ -149,10 +143,7 @@
             po.payment_date,
             po.subpackage_payment,
             t.task_code,
-            t.task_name,
-            t.release_date,
-            t.deadline_date,
-            t.industry_type
+            t.task_name
         FROM
             tb_maker_total_invoice mti
         INNER JOIN tb_invoice_list il ON il.maker_total_invoice_id = mti.id
@@ -163,5 +154,4 @@
         LEFT JOIN tb_task t ON t.id = po.task_id
         where mti.id=#{invoiceId}
     </select>
-
 </mapper>

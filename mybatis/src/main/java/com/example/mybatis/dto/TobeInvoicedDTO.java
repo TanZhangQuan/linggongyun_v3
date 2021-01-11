@@ -9,7 +9,7 @@ import java.io.Serializable;
 
 @Data
 @ApiModel(description = "开票列表查询")
-public class TobeinvoicedDTO implements Serializable {
+public class TobeInvoicedDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty(value = "商户ID")

@@ -14,7 +14,7 @@ import com.example.mybatis.dto.QueryTobeinvoicedDTO;
 import com.example.merchant.service.InvoiceApplicationService;
 import com.example.merchant.service.InvoiceService;
 import com.example.mybatis.dto.AddInvoiceDTO;
-import com.example.mybatis.dto.TobeinvoicedDTO;
+import com.example.mybatis.dto.TobeInvoicedDTO;
 import com.example.mybatis.entity.*;
 import com.example.mybatis.mapper.*;
 import com.example.mybatis.vo.*;
@@ -137,7 +137,7 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
 
 
     @Override
-    public ReturnJson getPlaInvoiceList(TobeinvoicedDTO tobeinvoicedDto) {
+    public ReturnJson getPlaInvoiceList(TobeInvoicedDTO tobeinvoicedDto) {
         Page page = new Page(tobeinvoicedDto.getPageNo(), tobeinvoicedDto.getPageSize());
         IPage<PlaInvoiceListVO> list = invoiceDao.getPlaInvoiceList(page, tobeinvoicedDto);
         return ReturnJson.success(list);
@@ -181,7 +181,7 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
         if (addInvoiceDto.getId() == null) {
             InvoiceApplication invoiceApplication = invoiceApplicationDao.selectById(addInvoiceDto.getApplicationId());
             if (invoiceApplication.getApplicationState() == 3) {
-                return ReturnJson.error("已近开过票了，请勿重复提交");
+                return ReturnJson.error("已经开过票了，请勿重复提交");
             }
             invoice.setApplicationId(addInvoiceDto.getApplicationId());
             String invoiceCode = this.getInvoiceCode();
@@ -210,6 +210,12 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
             if (num > 0) {
                 int num2 = invoiceApplicationService.updateById(addInvoiceDto.getApplicationId(), 3);
                 if (num2 > 0) {
+                    List<String> list = invoiceDao.selectInvoiceListPayId(addInvoiceDto.getApplicationId());
+                    for (int i = 0; i < list.size(); i++) {
+                        PaymentOrder paymentOrder=paymentOrderDao.selectById(list.get(i));
+                        paymentOrder.setIsNotInvoice(1);
+                        paymentOrderDao.updateById(paymentOrder);
+                    }
                     returnJson = new ReturnJson("添加成功", 200);
                 }
             }
@@ -241,7 +247,7 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
     }
 
     @Override
-    public ReturnJson getListInvoicequery(TobeinvoicedDTO tobeinvoicedDto) {
+    public ReturnJson getListInvoicequery(TobeInvoicedDTO tobeinvoicedDto) {
         Page page = new Page(tobeinvoicedDto.getPageNo(), tobeinvoicedDto.getPageSize());
         IPage<InvoiceVO> list = invoiceDao.getListInvoicequery(page, tobeinvoicedDto);
         return ReturnJson.success(list);
@@ -254,7 +260,7 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
      * @return
      */
     @Override
-    public ReturnJson getListSubQuery(TobeinvoicedDTO tobeinvoicedDto) {
+    public ReturnJson getListSubQuery(TobeInvoicedDTO tobeinvoicedDto) {
         Page page = new Page(tobeinvoicedDto.getPageNo(), tobeinvoicedDto.getPageSize());
         IPage<ToSubcontractInvoiceVO> list = invoiceDao.getListSubQuery(page, tobeinvoicedDto);
         return ReturnJson.success(list);
@@ -317,8 +323,8 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
         InvoiceCatalogVO invoiceCatalogVo = new InvoiceCatalogVO();
         BeanUtils.copyProperties(invoiceCatalog, invoiceCatalogVo);
         queryApplicationInvoiceVo.setInvoiceCatalogVo(invoiceCatalogVo);
-        PlaInvoiceInfoVO invoiceInfoVo= new PlaInvoiceInfoVO();
-        BeanUtils.copyProperties(invoice,invoiceInfoVo);
+        PlaInvoiceInfoVO invoiceInfoVo = new PlaInvoiceInfoVO();
+        BeanUtils.copyProperties(invoice, invoiceInfoVo);
         queryApplicationInvoiceVo.setPlaInvoiceInfoVo(invoiceInfoVo);
         return ReturnJson.success(queryApplicationInvoiceVo);
     }

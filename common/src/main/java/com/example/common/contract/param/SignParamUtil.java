@@ -34,7 +34,7 @@ public class SignParamUtil {
 
 	/**
 	 * @description 签署流程创建 参数设置
-	 * 
+	 *
 	 * @return
 	 * @date 2019年7月17日 下午3:05:14
 	 * @author 宫清
@@ -45,11 +45,11 @@ public class SignParamUtil {
 
 	/**
 	 * @description 签署流程撤销 参数设置
-	 * 
+	 *
 	 *              待填充参数：
 	 *              <p>
 	 *              revokeReason:撤销原因，默认“撤销”【可空】
-	 * 
+	 *
 	 * @param revokeReason
 	 * @return
 	 * @date 2019年7月18日 下午3:07:50
@@ -66,12 +66,12 @@ public class SignParamUtil {
 
 	/**
 	 * @description 流程文档添加 参数设置
-	 * 
-	 * 
+	 *
+	 *
 	 *              说明：
 	 *              <p>
 	 *              可添加多个流程文档，这里只添加一个作为示例
-	 * 
+	 *
 	 *              待填充参数：
 	 *              <p>
 	 *              fileId:文档id【必填】
@@ -81,7 +81,7 @@ public class SignParamUtil {
 	 *              fileName：文档名称，默认文件名称
 	 *              <p>
 	 *              filePassword:文档密码，如果encryption为1，文档密码不能为空，默认没有密码【可空】
-	 * 
+	 *
 	 * @param fileIds 多个fileId拼接，英文"," 隔开
 	 * @throws DefineException
 	 * @return
@@ -115,18 +115,18 @@ public class SignParamUtil {
 
 	/**
 	 * @description 流程附件添加
-	 * 
-	 * 
+	 *
+	 *
 	 *              说明：
 	 *              <p>
 	 *              可添加多个流程附件，这里只添加一个作为示例
-	 * 
+	 *
 	 *              待填充参数：
 	 *              <p>
 	 *              attachmentName:附件名称【必填】
 	 *              <p>
 	 *              fileId:附件id【必填】
-	 * 
+	 *
 	 * @param fileIds     文件ID列表
 	 * @param attachNames 附件名称列表，其元素与fileIds一一对应
 	 * @return
@@ -218,7 +218,7 @@ public class SignParamUtil {
 
 	/**
 	 * @description 流程签署人催签 参数设置
-	 * 
+	 *
 	 *              待填充参数：
 	 *              <p>
 	 *              accountId:催签人账户id【可空】
@@ -226,7 +226,7 @@ public class SignParamUtil {
 	 *              noticeTypes: 通知方式，逗号分割，1-短信，2-邮件 3-支付宝 4-钉钉，默认按照走流程设置【可空】
 	 *              <p>
 	 *              rushsignAccountId: 被催签人账号id，为空表示：催签当前轮到签署但还未签署的所有签署人【可空】
-	 * 
+	 *
 	 * @param accoundId
 	 * @param noticeTypes
 	 * @param rushsignAccountId
@@ -250,34 +250,34 @@ public class SignParamUtil {
 
 	/**
 	 * @description 组装签署流程创建的对象（参数只做参考）
-	 * 
+	 *
 	 *              涉及对象：cn.tign.hz.domain.signflow包下
 	 *              <p>
 	 *              {@link ConfigInfo} 任务配置信息
 	 *              <p>
 	 *              {@link SignFlowStart} 签署流程参数信息
-	 * 
-	 * 
+	 *
+	 *
 	 * @return
 	 * @date 2019年7月17日 下午2:17:40
 	 * @author 宫清
 	 */
 	private static SignFlowStart createSignFlowStart() {
-		ConfigInfo cfgInfo = new ConfigInfo("http://2181s627z8.qicp.vip/makerend/authentication/callBackSignAContract", "1,2", null, null);
+		ConfigInfo cfgInfo = new ConfigInfo("https://lgy-v3.lgyun.com.cn/makerend/authentication/callBackSignAContract", "1,2", null, null);
 		SignFlowStart sfs = new SignFlowStart(null, "签署流程开启", null, null, null, null, null, cfgInfo);
 		return sfs;
 	}
 
 	/**
 	 * @description 构建平台自动签署区列表数据
-	 * 
+	 *
 	 *              设计对象：cn.tign.hz.domain.signarea 包下
 	 *              <p>
 	 *              {@link PosBean} 签署位置信息
 	 *              <p>
 	 *              {@link Signfield} 签署区数据信息
-	 * 
-	 * 
+	 *
+	 *
 	 * @param fileIds 文件file id列表
 	 * @param sealIds 印章id列表，与fileIds一一对应
 	 * @return
@@ -307,14 +307,14 @@ public class SignParamUtil {
 
 	/**
 	 * @description 构建用户自动签署签署区列表数据
-	 * 
+	 *
 	 *              设计对象：cn.tign.hz.domain.signarea 包下
 	 *              <p>
 	 *              {@link PosBean} 签署位置信息
 	 *              <p>
 	 *              {@link Signfield} 签署区数据信息
-	 * 
-	 * 
+	 *
+	 *
 	 * @param fileIds              文件file id列表
 	 * @param authorizedAccountIds 签约主体id列表
 	 * @param sealIds              印章id列表，与fileIds、authorizedAccountIds 一一对应
@@ -347,14 +347,14 @@ public class SignParamUtil {
 
 	/**
 	 * @description 构建用户手动签署签署区列表数据
-	 * 
+	 *
 	 *              设计对象：cn.tign.hz.domain.signarea 包下
 	 *              <p>
 	 *              {@link PosBean} 签署位置信息
 	 *              <p>
 	 *              {@link Signfield} 签署区数据信息
-	 * 
-	 * 
+	 *
+	 *
 	 * @param fileIds              文件file id列表
 	 * @param authorizedAccountIds 签约主体id列表
 	 * @param signerAccountIds     签署人账号ID列表，与fileIds、authorizedAccountIds 一一对应

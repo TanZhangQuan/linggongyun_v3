@@ -5,6 +5,8 @@ import com.alibaba.excel.ExcelReader;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.example.common.util.*;
 import com.example.merchant.excel.MakerExcel;
+import com.example.merchant.excel.MakerPanymentExcel;
+import com.example.merchant.excel.MakerPanymentReadListener;
 import com.example.merchant.excel.MakerReadListener;
 import com.example.merchant.service.FileOperationService;
 import com.example.merchant.service.WorkerService;
@@ -37,9 +39,6 @@ public class FileOperationServiceImpl implements FileOperationService {
 
     @Resource
     private WorkerDao workerDao;
-
-    @Resource
-    private WorkerService workerService;
 
     @Resource
     private MakerInvoiceDao makerInvoiceDao;
@@ -208,16 +207,23 @@ public class FileOperationServiceImpl implements FileOperationService {
         String fileName = uploadInvoice.getOriginalFilename();
         String suffixName = fileName.substring(fileName.lastIndexOf(".") + 1);
         if (Arrays.asList(files).contains(suffixName)) {
-            List<Map<String, Object>> maps = ExcelResponseUtils.paymentInventoryExcel(uploadInvoice);
+            //MultipartFile转InputStream
+            InputStream inputStream = uploadInvoice.getInputStream();
+
+            //根据总包支付清单生成分包
+            MakerPanymentReadListener makerPanymentReadListener = new MakerPanymentReadListener();
+            ExcelReader excelReader = EasyExcelFactory.read(inputStream, MakerPanymentExcel.class, makerPanymentReadListener).headRowNumber(1).build();
+            excelReader.readAll();
+            List<MakerPanymentExcel> makerPanymentExcels = makerPanymentReadListener.getList();
+
             List<PaymentInventory> paymentInventorys = new ArrayList<>();
-            List<Worker> workers = new ArrayList<>();
-            for (Map<String, Object> map : maps) {
-                String idCardCode = (String) map.get("IDCardCode");
-                String mobileCode = (String) map.get("MobileCode");
-                String workerName = (String) map.get("WorkerName");
-                String bankCode = (String) map.get("BankCode");
-                BigDecimal realMoney = BigDecimal.valueOf(Double.valueOf((String) map.get("RealMoney")));
-                String bankName = (String) map.get("BankName");
+            for (MakerPanymentExcel makerPanymentExcel : makerPanymentExcels) {
+                String idCardCode = makerPanymentExcel.getIdCardCode();
+                String mobileCode = makerPanymentExcel.getPhoneNumber();
+                String workerName = makerPanymentExcel.getPayeeName();
+                String bankCode = makerPanymentExcel.getBankCardNo();
+                BigDecimal realMoney = BigDecimal.valueOf(Double.valueOf(makerPanymentExcel.getRealMoney()));
+                String bankName = makerPanymentExcel.getBankName();
                 Worker worker = workerDao.selectOne(new QueryWrapper<Worker>().eq("mobile_code", mobileCode));
                 if (worker != null) {
                     PaymentInventory paymentInventory = new PaymentInventory();
@@ -232,17 +238,22 @@ public class FileOperationServiceImpl implements FileOperationService {
                     paymentInventorys.add(paymentInventory);
                 } else {
                     worker = new Worker();
-                    worker.setAccountName((String) map.get("WorkerName"));
+                    worker.setAccountName(makerPanymentExcel.getPayeeName());
                     worker.setMobileCode(mobileCode);
                     worker.setIdcardBack(idCardCode);
-                    worker.setBankCode((String) map.get("BankCode"));
+                    worker.setBankCode(makerPanymentExcel.getBankCardNo());
                     worker.setUserName(mobileCode);
                     worker.setWorkerStatus(2);
                     worker.setUserPwd(PWD_KEY + MD5.md5(idCardCode.substring(12)));
-                    workers.add(worker);
+                    workerDao.insert(worker);
+                }
+                if (worker.getAttestation() == 0) {
+                    return ReturnJson.error("创客需要认证才能进行发放！");
+                }
+                if (worker.getAgreementSign() != 2) {
+                    return ReturnJson.error("创客需要签约才能进行发放！");
                 }
             }
-            workerService.saveBatch(workers);
             String newFileName = UuidUtil.get32UUID() + "." + suffixName;
             File fileMkdir = new File(PathExcel_KEY);
             // 判断目录是否存在

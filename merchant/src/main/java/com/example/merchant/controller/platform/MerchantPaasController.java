@@ -122,8 +122,10 @@ public class MerchantPaasController {
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "companyDto", value = "商户ID", required = true, dataType = "CompanyDTO")
     })
-    public ReturnJson addMerchant(@Valid @RequestBody CompanyDTO companyDto) throws Exception {
-        return merchantService.addMerchant(companyDto);
+    @LoginRequired
+    public ReturnJson addMerchant(@Valid @RequestBody CompanyDTO companyDto
+            ,@RequestAttribute("userId") @ApiParam(hidden = true)String userId) throws Exception {
+        return merchantService.addMerchant(companyDto,userId);
     }
 
     @PostMapping("/getMerchantPaymentList")
@@ -241,7 +243,7 @@ public class MerchantPaasController {
             @ApiImplicitParam(name = "newPassWord", value = "新密码", required = true)
     })
     public ReturnJson updataPassWord(@NotBlank(message = "手机号不能为空") @RequestParam(required = false) String loginMobile, @NotBlank(message = "验证码不能为空") @RequestParam(required = false) String checkCode, @NotBlank(message = "新密码不能为空") @RequestParam(required = false) String newPassWord) {
-        return merchantService.updataPassWord(loginMobile, checkCode, newPassWord);
+        return merchantService.updatePassWord(loginMobile, checkCode, newPassWord);
     }
 
     @GetMapping("/queryAgent")

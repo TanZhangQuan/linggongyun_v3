@@ -87,59 +87,6 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
     @Resource
     private TaskDao taskDao;
 
-
-    /**
-     * 获取今天的支付总额
-     *
-     * @param merchantId
-     * @return
-     */
-    @Override
-    public ReturnJson getDay(String merchantId) {
-        Merchant merchant = merchantDao.selectById(merchantId);
-        List<PaymentOrder> list = paymentOrderDao.selectDay(merchantId);
-        return ReturnJson.success(list);
-    }
-
-    /**
-     * 获取本周的支付总额
-     *
-     * @param merchantId
-     * @return
-     */
-    @Override
-    public ReturnJson getWeek(String merchantId) {
-        Merchant merchant = merchantDao.selectById(merchantId);
-        List<PaymentOrder> list = paymentOrderDao.selectWeek(merchant.getCompanyId());
-        return ReturnJson.success(list);
-    }
-
-    /**
-     * 获取本月的支付总额
-     *
-     * @param merchantId
-     * @return
-     */
-    @Override
-    public ReturnJson getMonth(String merchantId) {
-        Merchant merchant = merchantDao.selectById(merchantId);
-        List<PaymentOrder> list = paymentOrderDao.selectMonth(merchant.getCompanyId());
-        return ReturnJson.success(list);
-    }
-
-    /**
-     * 获取今年的支付总额
-     *
-     * @param merchantId
-     * @return
-     */
-    @Override
-    public ReturnJson getYear(String merchantId) {
-        Merchant merchant = merchantDao.selectById(merchantId);
-        List<PaymentOrder> list = paymentOrderDao.selectYear(merchant.getCompanyId());
-        return ReturnJson.success(list);
-    }
-
     @Override
     public ReturnJson getPaymentOrder(String merchantId, PaymentOrderMerchantDTO paymentOrderMerchantDto) {
         Merchant merchant = merchantDao.selectById(merchantId);
@@ -238,8 +185,8 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
                     paymentInventory.setServiceMoney(realMoney.multiply(compositeTax));
                     paymentInventory.setRealMoney(realMoney.subtract(realMoney.multiply(compositeTax)));
                 } else {
-                    paymentInventory.setMerchantPaymentMoney(realMoney.multiply(compositeTax.subtract(merchantTax).add(new BigDecimal("1"))));
-                    paymentInventory.setRealMoney(realMoney.subtract(realMoney.multiply(compositeTax.subtract(receviceTax))));
+                    paymentInventory.setMerchantPaymentMoney(realMoney.multiply(compositeTax.multiply(merchantTax).add(new BigDecimal("1"))));
+                    paymentInventory.setRealMoney(realMoney.subtract(realMoney.multiply(compositeTax.multiply(receviceTax))));
                     paymentInventory.setServiceMoney(realMoney.multiply(compositeTax));
                 }
                 countMoney = countMoney.add(paymentInventory.getMerchantPaymentMoney());
@@ -261,8 +208,8 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
                     paymentInventory.setServiceMoney(realMoney.multiply(compositeTax));
                     paymentInventory.setRealMoney(realMoney.subtract(realMoney.multiply(compositeTax)));
                 } else {
-                    paymentInventory.setMerchantPaymentMoney(realMoney.multiply(compositeTax.subtract(merchantTax).add(new BigDecimal("1"))));
-                    paymentInventory.setRealMoney(realMoney.subtract(realMoney.multiply(compositeTax.subtract(receviceTax))));
+                    paymentInventory.setMerchantPaymentMoney(realMoney.multiply(compositeTax.multiply(merchantTax).add(new BigDecimal("1"))));
+                    paymentInventory.setRealMoney(realMoney.subtract(realMoney.multiply(compositeTax.multiply(receviceTax))));
                     paymentInventory.setServiceMoney(realMoney.multiply(compositeTax));
                 }
                 countMoney = countMoney.add(paymentInventory.getMerchantPaymentMoney());
@@ -293,7 +240,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
         paymentOrder.setId(paymentOrderId);
         paymentOrder.setTurnkeyProjectPayment(turnkeyProjectPayment);
         paymentOrder.setPaymentDate(LocalDateTime.now());
-        paymentOrder.setPaymentOrderStatus(2);
+        paymentOrder.setPaymentOrderStatus(4);
         int i = paymentOrderDao.updateById(paymentOrder);
         if (i == 1) {
             return ReturnJson.success("支付成功！");
@@ -406,7 +353,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
     public ReturnJson confirmReceiptPaas(String paymentOrderId) {
         PaymentOrder paymentOrder = new PaymentOrder();
         paymentOrder.setId(paymentOrderId);
-        paymentOrder.setPaymentOrderStatus(3);
+        paymentOrder.setPaymentOrderStatus(2);
         boolean flag = this.updateById(paymentOrder);
         if (flag) {
             return ReturnJson.success("确认收款成功！");
@@ -418,7 +365,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
     public ReturnJson findMerchantPaas(String managersId) {
         Managers managers = managersDao.selectById(managersId);
         Integer userSign = managers.getUserSign();
-        List<CompanyInfo> companyInfos = null;
+        List<CompanyInfo> companyInfos;
         //管理人员为代理商
         if (userSign == 1) {
             companyInfos = companyInfoDao.selectList(new QueryWrapper<CompanyInfo>().eq("agent_id", managers.getId()));
@@ -444,7 +391,9 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
             log.error("订单号不存在!");
             return ReturnJson.error("你输入的订单号不存在！");
         }
+        paymentOrder.setPaymentOrderStatus(6);
         paymentOrder.setSubpackagePayment(subpackagePayment);
+        paymentOrderDao.updateById(paymentOrder);
         return ReturnJson.success(paymentOrder);
     }
 
@@ -494,6 +443,50 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
 
     @Override
     public ReturnJson associatedTasks(String merchantId, AssociatedTasksDTO associatedTasksDto) {
+        Page page = new Page(associatedTasksDto.getPageNo(), associatedTasksDto.getPageSize());
+        IPage<AssociatedTasksVO> voiPage = taskDao.getAssociatedTask(page, merchantId, associatedTasksDto.getCooperateMode());
+        return ReturnJson.success(voiPage);
+    }
+
+    @Override
+    public ReturnJson reject(String paymentOrderId, String reasonsForRejection) {
+        PaymentOrder paymentOrder = paymentOrderDao.selectById(paymentOrderId);
+        if (paymentOrder == null) {
+            return ReturnJson.error("支付信息错误，请重新选择！");
+        }
+        paymentOrder.setReasonsForRejection(reasonsForRejection);
+        paymentOrderDao.updateById(paymentOrder);
+        return ReturnJson.success("驳回成功");
+    }
+
+    @Override
+    public ReturnJson gradientPrice(String merchantId, String taxId, Integer packageStatus) {
+        CompanyInfo companyInfo = companyInfoDao.selectById(merchantId);
+        if (companyInfo == null) {
+            Merchant merchant = merchantDao.selectById(merchantId);
+            companyInfo = companyInfoDao.selectById(merchant.getCompanyId());
+        }
+        if (companyInfo == null) {
+            return ReturnJson.error("商户信息错误请重新选择");
+        }
+        CompanyTax companyTax = companyTaxDao.selectOne(new QueryWrapper<CompanyTax>()
+                .eq("company_id", companyInfo.getId())
+                .eq("tax_id", taxId)
+                .eq("package_status",packageStatus));
+        if (companyTax == null) {
+            return ReturnJson.error("此商户还未和此服务商取得合作！");
+        }
+        if (companyTax.getChargeStatus() == 0) {
+            Double serviceCharge = companyTaxDao.getCompanyTax(companyInfo.getId(), taxId, packageStatus);
+            return ReturnJson.success(serviceCharge);
+        } else {
+            List<CompanyTaxMoneyVO> list = companyTaxDao.getCompanyTaxMoney(companyInfo.getId(), taxId, packageStatus);
+            return ReturnJson.success(list);
+        }
+    }
+
+    @Override
+    public ReturnJson associatedTask(String merchantId, AssociatedTasksDTO associatedTasksDto) {
         Page page = new Page(associatedTasksDto.getPageNo(), associatedTasksDto.getPageSize());
         IPage<AssociatedTasksVO> voiPage = taskDao.getAssociatedTasks(page, merchantId, associatedTasksDto.getCooperateMode());
         return ReturnJson.success(voiPage);

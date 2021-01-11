@@ -20,6 +20,7 @@
         <result column="merchant_tax" property="merchantTax"/>
         <result column="recevice_tax" property="receviceTax"/>
         <result column="payment_order_status" property="paymentOrderStatus"/>
+        <result column="reasons_for_rejection" property="reasonsForRejection"/>
         <result column="payment_date" property="paymentDate"/>
         <result column="create_date" property="createDate"/>
         <result column="update_date" property="updateDate"/>
@@ -110,16 +111,13 @@
         <association property="taskVo" javaType="com.example.mybatis.vo.TaskVO">
             <result column="task_code" property="taskCode"/>
             <result column="task_name" property="taskName"/>
-            <result column="release_date" property="releaseDate"/>
-            <result column="deadline_date" property="deadlineDate"/>
-            <result column="industry_type" property="industryType"/>
         </association>
     </resultMap>
 
     <select id="getPayOrderManyById" resultMap="PayOrderManyById">
         SELECT pom.id,pom.company_s_name,pom.platform_service_provider,pom.payment_inventory,
         pom.acceptance_certificate,pom.many_payment,pom.payment_order_status,pom.payment_date,pom.real_money,
-        t.task_code,t.task_name,t.release_date,t.deadline_date,t.industry_type
+        t.task_code,t.task_name
         FROM tb_payment_order_many as pom
         LEFT JOIN tb_task as t ON pom.task_id=t.id
         WHERE pom.id=#{id}
@@ -274,7 +272,8 @@
         <result column="company_contract" property="contract"/>
         <result column="payment_inventory" property="paymentInventory"/>
         <result column="many_payment" property="paymentReceipt"/>
-        <result column="task_id" property="tastId"/>
+        <result column="task_id" property="taskId"/>
+        <result column="task_name" property="taskName"/>
         <result column="acceptance_certificate" property="acceptanceCertificate"/>
         <result column="payment_date" property="paymentDate"/>
         <result column="real_money" property="money"/>
@@ -289,6 +288,7 @@
         b.company_contract,
         b.payment_inventory,
         b.task_id,
+        b.task_name,
         b.acceptance_certificate,
         b.many_payment,
         b.payment_date,
@@ -329,7 +329,8 @@
         <result column="create_date" property="creatDate"/>
         <result column="many_payment" property="manyPayment"/>
         <result column="company_name" property="companyName"/>
-        <result column="bank_and_account" property="bankAndAccount"/>
+        <result column="bank_code" property="bankCode"/>
+        <result column="bank_name" property="bankName"/>
         <result column="payee" property="payee"/>
         <result column="payee_bank_name" property="payeeBankName"/>
         <result column="payee_bank_code" property="payeeBankCode"/>
@@ -434,9 +435,6 @@
         <association property="taskVo" javaType="com.example.mybatis.vo.TaskVO">
             <result column="task_code" property="taskCode"/>
             <result column="task_name" property="taskName"/>
-            <result column="release_date" property="releaseDate"/>
-            <result column="deadline_date" property="deadlineDate"/>
-            <result column="industry_type" property="industryType"/>
         </association>
     </resultMap>
 
@@ -456,7 +454,8 @@
         pom.many_payment,
         pom.task_name,
         ci.company_name,
-        ci.bank_and_account,
+        ci.bank_name,
+        ci.bank_code,
         tp.payee,
         tp.bank_name AS payee_bank_name,
         tp.bank_code AS payee_bank_code
@@ -874,6 +873,7 @@
         b.company_contract,
         b.payment_inventory,
         b.task_id,
+        b.task_name,
         b.acceptance_certificate,
         b.many_payment,
         b.payment_date,
@@ -895,10 +895,7 @@
             po.payment_inventory,
             po.payment_date,
             t.task_code,
-            t.task_name,
-            t.release_date,
-            t.deadline_date,
-            t.industry_type
+            t.task_name
         FROM
             tb_payment_order_many AS po
         LEFT JOIN tb_task AS t ON po.task_id = t.id

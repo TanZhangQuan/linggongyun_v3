@@ -3,7 +3,7 @@ package com.example.merchant.service;
 import com.example.common.util.ReturnJson;
 import com.example.mybatis.dto.QueryTobeinvoicedDTO;
 import com.example.mybatis.dto.AddInvoiceDTO;
-import com.example.mybatis.dto.TobeinvoicedDTO;
+import com.example.mybatis.dto.TobeInvoicedDTO;
 import com.example.mybatis.entity.Invoice;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -60,7 +60,7 @@ public interface InvoiceService extends IService<Invoice> {
      * @param tobeinvoicedDto
      * @return
      */
-    ReturnJson getPlaInvoiceList(TobeinvoicedDTO tobeinvoicedDto);
+    ReturnJson getPlaInvoiceList(TobeInvoicedDTO tobeinvoicedDto);
 
     /**
      * 平台查询发票信息
@@ -91,7 +91,7 @@ public interface InvoiceService extends IService<Invoice> {
      * @param tobeinvoicedDto
      * @return
      */
-    ReturnJson getListInvoicequery(TobeinvoicedDTO tobeinvoicedDto);
+    ReturnJson getListInvoicequery(TobeInvoicedDTO tobeinvoicedDto);
 
     /**
      * 分包开票，待开票
@@ -99,7 +99,7 @@ public interface InvoiceService extends IService<Invoice> {
      * @param tobeinvoicedDto
      * @return
      */
-    ReturnJson getListSubQuery(TobeinvoicedDTO tobeinvoicedDto);
+    ReturnJson getListSubQuery(TobeInvoicedDTO tobeinvoicedDto);
 
     /**
      * 汇总开票详情数据

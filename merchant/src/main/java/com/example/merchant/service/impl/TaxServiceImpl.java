@@ -12,7 +12,7 @@ import com.example.merchant.service.InvoiceLadderPriceService;
 import com.example.merchant.service.TaxService;
 import com.example.mybatis.vo.TaxBriefVO;
 import com.example.merchant.vo.platform.HomePageVO;
-import com.example.merchant.vo.platform.TaxListVO;
+import com.example.mybatis.vo.TaxListVO;
 import com.example.merchant.vo.platform.TaxPlatformVO;
 import com.example.mybatis.entity.*;
 import com.example.mybatis.mapper.*;
@@ -321,6 +321,12 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
             BeanUtils.copyProperties(taxList.get(i), taxListVo);
             taxListVOS.add(taxListVo);
         }
+        return ReturnJson.success(taxListVOS);
+    }
+
+    @Override
+    public ReturnJson getTaxList(Integer packageStatus) {
+        List<TaxListVO> taxListVOS=taxDao.getTaxPaasList(packageStatus);
         return ReturnJson.success(taxListVOS);
     }
 

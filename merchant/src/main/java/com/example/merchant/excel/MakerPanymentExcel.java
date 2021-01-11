@@ -12,22 +12,25 @@ import java.io.Serializable;
  * @since 2020/12/30 11:34
  */
 @Data
-public class MakerExcel implements Serializable {
+public class MakerPanymentExcel implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @ExcelProperty("姓名")
-    private String name;
+    @ExcelProperty("收款方姓名")
+    private String payeeName;
 
-    @ExcelProperty("身份证号码")
-    private String idcardNo;
-
-    @ExcelProperty("手机号码")
+    @ExcelProperty("实名手机")
     private String phoneNumber;
+
+    @ExcelProperty("身份证号")
+    private String idCardCode;
 
     @ExcelProperty("开户行")
     private String bankName;
 
-    @ExcelProperty("卡号")
+    @ExcelProperty("收款方账号")
     private String bankCardNo;
+
+    @ExcelProperty("实发金额")
+    private String realMoney;
 
 }
