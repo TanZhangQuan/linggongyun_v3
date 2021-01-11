@@ -82,7 +82,7 @@ public class PaymentOrderMerchantController {
     @LoginRequired
     public ReturnJson associatedTask(@RequestAttribute("userId") @ApiParam(hidden = true) String merchantId,
                                      AssociatedTasksDTO associatedTasksDto) {
-        return paymentOrderService.associatedTasks(merchantId, associatedTasksDto);
+        return paymentOrderService.associatedTask(merchantId, associatedTasksDto);
     }
 
     @PostMapping("/gradientPrice")

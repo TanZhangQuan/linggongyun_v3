@@ -41,9 +41,6 @@ public class FileOperationServiceImpl implements FileOperationService {
     private WorkerDao workerDao;
 
     @Resource
-    private WorkerService workerService;
-
-    @Resource
     private MakerInvoiceDao makerInvoiceDao;
 
     @Value("${PWD_KEY}")

@@ -83,7 +83,7 @@
         <if test="param2.applicationDateTwo != null and param2.applicationDateTwo != ''">
             AND ia.application_date <![CDATA[<=]]> #{param2.applicationDateTwo}
         </if>
-        ORDER BY mti.invoice_date DESC
+        order by mti.invoice_date DESC
     </select>
 
 
@@ -154,5 +154,4 @@
         LEFT JOIN tb_task t ON t.id = po.task_id
         where mti.id=#{invoiceId}
     </select>
-
 </mapper>

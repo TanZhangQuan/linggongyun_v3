@@ -15,7 +15,13 @@ import java.util.List;
  * 分包发票接口
  */
 public interface SubpackageDao {
-    //汇总代开
+    /**
+     * 汇总代开
+     * @param page
+     * @param querySubpackageDto
+     * @param merchantId
+     * @return
+     */
     IPage<SubpackageVO> getSummaryList(Page page, QuerySubpackageDTO querySubpackageDto, String merchantId);
 
     //根据发票id查询单个发票对应支付信息
@@ -27,4 +33,5 @@ public interface SubpackageDao {
     IPage<InvoiceDetailsVO> getListById(Page page, @Param("invoiceId") String invoiceId);
 
     List<PaymentOrderVO> queryPaymentOrderInfo(String invoiceId);
+
 }

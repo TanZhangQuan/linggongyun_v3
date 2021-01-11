@@ -24,7 +24,7 @@ public class MakerExcel implements Serializable {
     @ExcelProperty("手机号码")
     private String phoneNumber;
 
-    @ExcelProperty("开户行全名")
+    @ExcelProperty("开户行")
     private String bankName;
 
     @ExcelProperty("卡号")

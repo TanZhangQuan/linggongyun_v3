@@ -98,6 +98,16 @@ public class CompanyInfo extends BaseEntity {
     private String addressAndTelephone;
 
     /**
+     * 开户行名称
+     */
+    private String bankName;
+
+    /**
+     * 银行卡号
+     */
+    private String bankCode;
+
+    /**
      * 公司的注册资本
      */
     private BigDecimal registeredCapital;

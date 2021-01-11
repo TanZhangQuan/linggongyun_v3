@@ -55,4 +55,6 @@ public interface InvoiceDao extends BaseMapper<Invoice> {
 
     //根据支付订单ID查找发票信息
     InvoiceInfoPO selectInvoiceInfoPO(String paymentOrderId);
+
+    List<String> selectInvoiceListPayId(String applicationId);
 }

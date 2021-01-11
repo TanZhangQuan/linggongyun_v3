@@ -181,7 +181,7 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
         if (addInvoiceDto.getId() == null) {
             InvoiceApplication invoiceApplication = invoiceApplicationDao.selectById(addInvoiceDto.getApplicationId());
             if (invoiceApplication.getApplicationState() == 3) {
-                return ReturnJson.error("已近开过票了，请勿重复提交");
+                return ReturnJson.error("已经开过票了，请勿重复提交");
             }
             invoice.setApplicationId(addInvoiceDto.getApplicationId());
             String invoiceCode = this.getInvoiceCode();
@@ -210,6 +210,12 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
             if (num > 0) {
                 int num2 = invoiceApplicationService.updateById(addInvoiceDto.getApplicationId(), 3);
                 if (num2 > 0) {
+                    List<String> list = invoiceDao.selectInvoiceListPayId(addInvoiceDto.getApplicationId());
+                    for (int i = 0; i < list.size(); i++) {
+                        PaymentOrder paymentOrder=paymentOrderDao.selectById(list.get(i));
+                        paymentOrder.setIsNotInvoice(1);
+                        paymentOrderDao.updateById(paymentOrder);
+                    }
                     returnJson = new ReturnJson("添加成功", 200);
                 }
             }
@@ -317,8 +323,8 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
         InvoiceCatalogVO invoiceCatalogVo = new InvoiceCatalogVO();
         BeanUtils.copyProperties(invoiceCatalog, invoiceCatalogVo);
         queryApplicationInvoiceVo.setInvoiceCatalogVo(invoiceCatalogVo);
-        PlaInvoiceInfoVO invoiceInfoVo= new PlaInvoiceInfoVO();
-        BeanUtils.copyProperties(invoice,invoiceInfoVo);
+        PlaInvoiceInfoVO invoiceInfoVo = new PlaInvoiceInfoVO();
+        BeanUtils.copyProperties(invoice, invoiceInfoVo);
         queryApplicationInvoiceVo.setPlaInvoiceInfoVo(invoiceInfoVo);
         return ReturnJson.success(queryApplicationInvoiceVo);
     }

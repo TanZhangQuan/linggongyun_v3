@@ -300,6 +300,7 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
             return ReturnJson.error("订单创建失败！");
         }
         for (PaymentInventory paymentInventory : paymentInventories) {
+
             paymentInventory.setPaymentOrderId(paymentOrderMany.getId());
             paymentInventory.setPackageStatus(1);
         }
