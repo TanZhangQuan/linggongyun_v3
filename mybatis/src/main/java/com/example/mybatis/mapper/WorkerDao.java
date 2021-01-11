@@ -59,7 +59,7 @@ public interface WorkerDao extends BaseMapper<Worker> {
      * @param workerId
      * @return
      */
-    IPage<WorkerPayInfoVO> queryWorkerPayInfo(Page page, String workerId);
+    IPage<WorkerPayInfoVO> queryWorkerPayInfo(Page page, String workerId,String companyId);
 
     IPage<WorkerCompanyVO> queryWorkerCompanyByID(Page page, String companyId);
 }
