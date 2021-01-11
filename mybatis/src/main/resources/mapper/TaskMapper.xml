@@ -213,6 +213,7 @@
             tb_task t
         INNER JOIN tb_merchant m ON m.id = t.merchant_id
         WHERE t.task_mode != 0 and state = 0
+        and NOT EXISTS(SELECT task_id FROM tb_worker_task WHERE task_status = 0 AND task_id = t.id AND worker_id = #{workerId})
         order by t.create_date desc
     </select>
 

@@ -20,14 +20,6 @@ public class AddInvoiceDTO implements Serializable {
     @NotNull(message = "申请开票ID不能为空")
     private String applicationId;
 
-    @ApiModelProperty(value = "发票数字")
-    @NotNull(message = "发票代码不能为空")
-    private String invoiceNumber;
-
-    @ApiModelProperty(value = "发票代码")
-    @NotNull(message = "发票代码不能为空")
-    private String invoiceCodeNo;
-
     @ApiModelProperty(value = "开票人,销售方")
     @NotNull(message = "开票人不能为空")
     private String invoicePrintPerson;
@@ -35,9 +27,6 @@ public class AddInvoiceDTO implements Serializable {
     @ApiModelProperty(value = "申请开票人,购买方")
     @NotNull(message = "申请开票人不能为空")
     private String applicationInvoicePerson;
-
-    @ApiModelProperty(value = "发票张数,当前默认为1")
-    private Integer invoiceNumbers=1;
 
     @ApiModelProperty(value = "发票金额")
     @NotNull(message = "发票金额不能为空")
@@ -51,7 +40,6 @@ public class AddInvoiceDTO implements Serializable {
     @NotNull(message = "发票不能为空")
     private String invoiceUrl;
 
-    @NotNull(message = "税票不能为空")
     @ApiModelProperty(value = "税票")
     private String taxReceiptUrl;
 

@@ -85,7 +85,7 @@
         pom.id,pom.payment_inventory,pom.many_payment,csi.id as application_id,csi.application_date,pom.is_application
         FROM tb_payment_order_many as pom
         LEFT JOIN tb_crowd_sourcing_application as csi ON csi.payment_order_many_id=pom.id
-        WHERE pom.payment_order_status=3
+        WHERE pom.payment_order_status=3 AND pom.is_not_invoice is NULL
         and pom.company_id=#{param3}
         <if test="param2.platformServiceProvider != null and param2.platformServiceProvider != ''">
             AND pom.tax_id=#{param2.platformServiceProvider}
@@ -130,11 +130,12 @@
         <result column="id_card_code" property="idCardCode"/>
         <result column="bank_code" property="bankCode"/>
         <result column="real_money" property="realMoney"/>
+        <result column="serivce_money" property="serviceMoney"/>
     </resultMap>
 
 
     <select id="getInvoiceDetailsByPayId" resultMap="InvoiceDetailsByPayId">
-        SELECT  worker_id,worker_name,mobile_code,id_card_code,bank_code,real_money
+        SELECT  worker_id,worker_name,mobile_code,id_card_code,bank_code,real_money,serivce_money
         FROM tb_payment_inventory
         WHERE payment_order_id=#{id}
     </select>

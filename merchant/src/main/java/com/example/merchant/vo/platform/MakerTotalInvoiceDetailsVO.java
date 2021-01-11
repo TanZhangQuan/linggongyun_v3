@@ -23,9 +23,4 @@ public class MakerTotalInvoiceDetailsVO implements Serializable {
     @ApiModelProperty(value = "分包完税证明")
     private String makerTaxUrl;
 
-    @ApiModelProperty(value = "发票代码")
-    private String invoiceTypeNo;
-
-    @ApiModelProperty(value = "发票号码")
-    private String invoiceSerialNo;
 }

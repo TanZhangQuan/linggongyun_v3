@@ -132,19 +132,19 @@
 
     <select id="getCrowdSourcingInfo" resultMap="CrowdSourcingInfo">
         SELECT
-        csi.id,
-        pom.company_id,
-        csi.invoice_code,
-        pom.company_s_name,
-        pom.platform_service_provider,
-        pom.id as pom_id,
-        pom.payment_inventory,
-        pom.many_payment,
-        pom.is_application,
-        csi.invoice_url,
-        csi.tax_receipt_url,
-        csi.invoice_print_date,
-        IF (csi.id IS NOT NULL, '0', '1') AS invoice_stute
+            csi.id,
+            pom.company_id,
+            csi.invoice_code,
+            pom.company_s_name,
+            pom.platform_service_provider,
+            pom.id as pom_id,
+            pom.payment_inventory,
+            pom.many_payment,
+            pom.is_application,
+            csi.invoice_url,
+            csi.tax_receipt_url,
+            csi.invoice_print_date,
+            pom.is_not_invoice invoice_stute
         FROM
             tb_crowd_sourcing_invoice csi
         INNER JOIN tb_crowd_sourcing_application csa ON csa.id = csi.application_id
@@ -164,7 +164,7 @@
 
     <select id="getCrowdSourcingInfoPass" resultMap="CrowdSourcingInfo">
         SELECT csi.id,pom.company_id,csi.invoice_code,pom.company_s_name,pom.platform_service_provider,pom.id as pom_id,pom.payment_inventory,pom.many_payment,
-        pom.is_application,csi.invoice_url,csi.tax_receipt_url,csi.invoice_print_date,if(csi.id is not null,'1','0')as invoice_stute
+        pom.is_application,csi.invoice_url,csi.tax_receipt_url,csi.invoice_print_date,pom.is_not_invoice invoice_stute
         FROM tb_crowd_sourcing_invoice csi
         LEFT JOIN tb_crowd_sourcing_application csa ON csa.id=csi.application_id
         LEFT JOIN tb_payment_order_many pom ON csa.payment_order_many_id=pom.id and csi.payment_order_many_id=pom.id
@@ -276,6 +276,7 @@
         <result column="bank_code" property="bankCode"/>
         <result column="real_money" property="realMoney"/>
         <result column="task_money" property="taskMoney"/>
+        <result column="service_money" property="serviceMoney"/>
         <result column="tax_rate" property="taxRate"/>
         <result column="tax_id" property="taxId"/>
         <result column="tax_amount" property="taxAmount"/>
@@ -291,6 +292,7 @@
             pi.bank_code,
             pi.real_money,
             pi.task_money,
+            pi.service_money,
             pom.tax_id,
             pom.recevice_tax
         FROM tb_crowd_sourcing_application csa
@@ -325,7 +327,19 @@
     </select>
 
     <select id="getPaymentInventoryInfoPass" resultMap="InvoiceListQuery">
-        SELECT pi.id,pi.worker_id,pi.worker_name,pi.mobile_code,pi.id_card_code,pi.bank_code,pi.real_money,pi.task_money,pi.tax_rate,pi.tax_amount,pom.recevice_tax
+        SELECT
+            pi.id,
+            pi.worker_id,
+            pi.worker_name,
+            pi.mobile_code,
+            pi.id_card_code,
+            pi.bank_code,
+            pi.real_money,
+            pi.task_money,
+            pi.service_money,
+            pi.tax_rate,
+            pi.tax_amount,
+            pom.recevice_tax
         from tb_crowd_sourcing_invoice csi
         inner JOIN tb_payment_inventory pi ON pi.payment_order_id=csi.payment_order_many_id
         inner JOIN tb_payment_order_many pom ON pom.id=csi.payment_order_many_id

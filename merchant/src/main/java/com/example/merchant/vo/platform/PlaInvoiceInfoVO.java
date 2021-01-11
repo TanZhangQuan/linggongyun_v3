@@ -18,20 +18,11 @@ public class PlaInvoiceInfoVO implements Serializable {
     @ApiModelProperty(value = "申请开票id")
     private String applicationId;
 
-    @ApiModelProperty(value = "发票数字")
-    private String invoiceNumber;
-
-    @ApiModelProperty(value = "发票代码")
-    private String invoiceCodeNo;
-
     @ApiModelProperty(value = "开票人,销售方")
     private String invoicePrintPerson;
 
     @ApiModelProperty(value = "申请开票人,购买方")
     private String applicationInvoicePerson;
-
-    @ApiModelProperty(value = "发票张数,当前默认为1")
-    private Integer invoiceNumbers = 1;
 
     @ApiModelProperty(value = "发票金额")
     private BigDecimal invoiceMoney;

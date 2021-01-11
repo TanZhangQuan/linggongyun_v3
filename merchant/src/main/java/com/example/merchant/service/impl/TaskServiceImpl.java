@@ -296,6 +296,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
                 .eq("company_id", merchant.getCompanyId())
                 .eq("worker_id", workerId));
         if (companyWorker == null) {
+            companyWorker=new CompanyWorker();
             companyWorker.setCompanyId(merchant.getCompanyId());
             companyWorker.setWorkerId(workerId);
             companyWorkerDao.insert(companyWorker);
@@ -317,8 +318,8 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
     }
 
     @Override
-    public ReturnJson getAllTask() {
-        List<TaskWorkerVO> taskWorkerVOList = taskDao.getAllTask();
+    public ReturnJson getAllTask(String workerId) {
+        List<TaskWorkerVO> taskWorkerVOList = taskDao.getAllTask(workerId);
         return ReturnJson.success(taskWorkerVOList);
     }
 

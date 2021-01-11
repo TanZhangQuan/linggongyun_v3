@@ -16,6 +16,7 @@ public class AddApplicationCrowdSourcingDTO implements Serializable {
     private String id;
 
     @ApiModelProperty("众包支付ID")
+    @NotBlank(message = "众包支付ID能为空")
     private String paymentOrderManyId;
 
     @ApiModelProperty("开票类目ID")

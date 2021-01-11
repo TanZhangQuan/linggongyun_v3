@@ -75,7 +75,8 @@ public class TaskMakerendController {
 
     @ApiOperation(value = "待接单")
     @GetMapping(value = "/getAllTask")
-    public ReturnJson getAllTask() {
-        return taskService.getAllTask();
+    @LoginRequired
+    public ReturnJson getAllTask( @ApiParam(value = "创客id", hidden = true) @RequestAttribute(value = "userId") String workerId) {
+        return taskService.getAllTask(workerId);
     }
 }

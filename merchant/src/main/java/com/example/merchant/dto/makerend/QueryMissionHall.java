@@ -13,8 +13,7 @@ import java.io.Serializable;
 public class QueryMissionHall implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @ApiModelProperty(value = "XXXXX")
-    @ApiParam(value = "任务行业类型")
+    @ApiModelProperty(value = "任务行业类型")
     private String industryType;
 
     @ApiModelProperty(value = "页码")

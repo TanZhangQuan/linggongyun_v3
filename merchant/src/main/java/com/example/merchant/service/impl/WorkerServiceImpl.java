@@ -171,9 +171,9 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
 
     @Override
     public ReturnJson getWorkerPaymentListPaas(String id, Integer page, Integer pageSize) {
-        Page<WorekerPaymentListPo> worekerPaymentListPoPage = new Page<>(page, pageSize);
-        IPage<WorekerPaymentListPo> worekerPaymentListPoIPage = workerDao.workerPaymentList(worekerPaymentListPoPage, id);
-        return ReturnJson.success(worekerPaymentListPoIPage);
+        Page<WorekerPaymentListPo> workerPaymentListPoPage = new Page<>(page, pageSize);
+        IPage<WorekerPaymentListPo> workerPaymentListPoIPage = workerDao.workerPaymentList(workerPaymentListPoPage, id);
+        return ReturnJson.success(workerPaymentListPoIPage);
     }
 
 

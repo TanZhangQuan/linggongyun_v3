@@ -60,8 +60,6 @@ public class MakerTotalInvoiceServiceImpl extends ServiceImpl<MakerTotalInvoiceD
         MakerTotalInvoice makerTotalInvoice = new MakerTotalInvoice();
         if (makerTotalInvoiceDto.getId() == null) {
             makerTotalInvoice.setId(makerTotalInvoiceDto.getId());
-            makerTotalInvoice.setInvoiceTypeNo(makerTotalInvoiceDto.getInvoiceTypeNo());
-            makerTotalInvoice.setInvoiceSerialNo(makerTotalInvoiceDto.getInvoiceSerialNo());
             makerTotalInvoice.setInvoiceDate(LocalDateTime.parse(DateUtil.getTime(), dfd));
             makerTotalInvoice.setInvoiceCategory(makerTotalInvoiceDto.getInvoiceCategory());
             makerTotalInvoice.setTotalAmount(makerTotalInvoiceDto.getTotalAmount());
