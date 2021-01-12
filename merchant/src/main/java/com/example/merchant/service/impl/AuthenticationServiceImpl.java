@@ -81,6 +81,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         if (worker != null) {
             return ReturnJson.error("该身份证已存在签约创客，请更换身份证或者联系管理员");
         }
+        worker=workerDao.selectById(workerId);
         worker.setAccountName(idCardInfoDto.getRealName());
         worker.setIdcardCode(idCardInfoDto.getIdCard());
         worker.setIdcardFront(idCardInfoDto.getIdCardFront());

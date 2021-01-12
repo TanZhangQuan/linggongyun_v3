@@ -128,17 +128,22 @@
         on c.tax_id = d.tax_id
         ))e
         on f.id = e.tax_id
-        <where>
-            <if test="taxName != null and taxName != '' ">
-                and tax_name like CONCAT('%',#{taxName},'%')
-            </if>
-            <if test="startDate != null and startDate != ''">
-                and date(create_date) &gt;= #{startDate}
-            </if>
-            <if test="endDate != null and endDate != ''">
-                and date(create_date) &lt;= #{endDate}
-            </if>
-        </where>
+        <if test="merchantId != null and merchantId != ''">
+        INNER JOIN tb_company_tax ct ON ct.tax_id=f.id
+        </if>
+        where 1=1
+        <if test="merchantId != null and merchantId != ''">
+            and ct.company_id=#{merchantId}
+        </if>
+        <if test="taxName != null and taxName != '' ">
+            and tax_name like CONCAT('%',#{taxName},'%')
+        </if>
+        <if test="startDate != null and startDate != ''">
+            and date(create_date) &gt;= #{startDate}
+        </if>
+        <if test="endDate != null and endDate != ''">
+            and date(create_date) &lt;= #{endDate}
+        </if>
     </select>
 
     <resultMap id="MerchantPaymentList" type="com.example.mybatis.po.MerchantPaymentListPO">
