@@ -127,9 +127,9 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ReturnJson saveOrUpdataPaymentOrder(AddPaymentOrderDTO addPaymentOrderDto, String merchantId) {
+    public ReturnJson saveOrUpdataPaymentOrder(AddPaymentOrderDTO addPaymentOrderDto, String merchantId) throws CommonException {
         if (addPaymentOrderDto.getPaymentInventories() == null) {
-            return ReturnJson.error("支付清单不能为空！");
+            throw new CommonException(300,"支付清单不能为空！");
         }
         PaymentDTO paymentDto = addPaymentOrderDto.getPaymentDto();
         PaymentOrder paymentOrder = new PaymentOrder();
@@ -223,7 +223,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
         //生成总包支付订单
         boolean b = this.saveOrUpdate(paymentOrder);
         if (!b) {
-            return ReturnJson.error("订单创建失败！");
+            throw new CommonException(300,"订单创建失败！");
         }
         for (PaymentInventory paymentInventory : paymentInventories) {
             paymentInventory.setPaymentOrderId(paymentOrder.getId());

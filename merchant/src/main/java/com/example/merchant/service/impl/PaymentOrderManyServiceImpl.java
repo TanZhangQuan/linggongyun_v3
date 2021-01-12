@@ -216,7 +216,7 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ReturnJson saveOrUpdataPaymentOrderMany(AddPaymentOrderManyDTO addPaymentOrderManyDto, String merchantId) {
+    public ReturnJson saveOrUpdataPaymentOrderMany(AddPaymentOrderManyDTO addPaymentOrderManyDto, String merchantId) throws CommonException {
         PaymentOrderMany paymentOrderMany = new PaymentOrderMany();
         PaymentOrderManyDTO paymentOrderManyDto = addPaymentOrderManyDto.getPaymentOrderManyDto();
         BeanUtils.copyProperties(paymentOrderManyDto, paymentOrderMany);
@@ -297,7 +297,7 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
         paymentOrderMany.setRealMoney(countMoney);
         boolean b = this.saveOrUpdate(paymentOrderMany);
         if (!b) {
-            return ReturnJson.error("订单创建失败！");
+            throw new CommonException(300,"订单创建失败！");
         }
         for (PaymentInventory paymentInventory : paymentInventories) {
 
