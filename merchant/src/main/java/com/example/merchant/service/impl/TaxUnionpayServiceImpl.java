@@ -41,6 +41,7 @@ public class TaxUnionpayServiceImpl extends ServiceImpl<TaxUnionpayDao, TaxUnion
     public ReturnJson addOrUpdateTaxUnionpay(AddOrUpdateTaxUnionpayDTO addOrUpdateTaxUnionpayDTO) {
 
         TaxUnionpay taxUnionpay;
+        int count;
         if (StringUtils.isNotBlank(addOrUpdateTaxUnionpayDTO.getTaxUnionpayId())) {
 
             taxUnionpay = getById(addOrUpdateTaxUnionpayDTO.getTaxUnionpayId());
@@ -57,9 +58,15 @@ public class TaxUnionpayServiceImpl extends ServiceImpl<TaxUnionpayDao, TaxUnion
             }
 
             //判断是否已存在相同服务商-银联银行记录
-            int taxUnionpayCount = queryTaxUnionpayCount(taxUnionpay.getId(), addOrUpdateTaxUnionpayDTO.getTaxId(), addOrUpdateTaxUnionpayDTO.getUnionpayBankType());
-            if (taxUnionpayCount > 0) {
+            count = queryTaxUnionpayCount(taxUnionpay.getId(), addOrUpdateTaxUnionpayDTO.getTaxId(), addOrUpdateTaxUnionpayDTO.getUnionpayBankType());
+            if (count > 0) {
                 return ReturnJson.error("已存在相同银联银行的服务商银联记录");
+            }
+
+            //判断是否已存在相同服务商-银联银行记录
+            count = queryTaxUnionpayMerchNoCount(taxUnionpay.getId(), addOrUpdateTaxUnionpayDTO.getMerchno());
+            if (count > 0) {
+                return ReturnJson.error("已存在相同商户号");
             }
 
             //填充参数
@@ -86,9 +93,15 @@ public class TaxUnionpayServiceImpl extends ServiceImpl<TaxUnionpayDao, TaxUnion
             }
 
             //判断是否已存在相同服务商-银联银行记录
-            int taxUnionpayCount = queryTaxUnionpayCount(null, addOrUpdateTaxUnionpayDTO.getTaxId(), addOrUpdateTaxUnionpayDTO.getUnionpayBankType());
-            if (taxUnionpayCount > 0) {
+            count = queryTaxUnionpayCount(null, addOrUpdateTaxUnionpayDTO.getTaxId(), addOrUpdateTaxUnionpayDTO.getUnionpayBankType());
+            if (count > 0) {
                 return ReturnJson.error("已存在相同银联银行的服务商银联记录");
+            }
+
+            //判断是否已存在相同商户号
+            count = queryTaxUnionpayMerchNoCount(null, addOrUpdateTaxUnionpayDTO.getMerchno());
+            if (count > 0) {
+                return ReturnJson.error("已存在相同商户号");
             }
 
             taxUnionpay = new TaxUnionpay();
@@ -126,11 +139,30 @@ public class TaxUnionpayServiceImpl extends ServiceImpl<TaxUnionpayDao, TaxUnion
     }
 
     @Override
+    public int queryTaxUnionpayMerchNoCount(String taxUnionpayId, String merchNo) {
+
+        QueryWrapper<TaxUnionpay> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().ne(StringUtils.isNotBlank(taxUnionpayId), TaxUnionpay::getId, taxUnionpayId)
+                .eq(TaxUnionpay::getMerchno, merchNo);
+
+        return baseMapper.selectCount(queryWrapper);
+    }
+
+    @Override
     public TaxUnionpay queryTaxUnionpay(String taxId, UnionpayBankType unionpayBankType) {
 
         QueryWrapper<TaxUnionpay> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda().eq(TaxUnionpay::getTaxId, taxId)
                 .eq(TaxUnionpay::getUnionpayBankType, unionpayBankType);
+
+        return baseMapper.selectOne(queryWrapper);
+    }
+
+    @Override
+    public TaxUnionpay queryTaxUnionpayByMerchNo(String merchNo) {
+
+        QueryWrapper<TaxUnionpay> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(TaxUnionpay::getMerchno, merchNo);
 
         return baseMapper.selectOne(queryWrapper);
     }

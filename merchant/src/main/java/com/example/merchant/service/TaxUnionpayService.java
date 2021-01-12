@@ -46,6 +46,15 @@ public interface TaxUnionpayService extends IService<TaxUnionpay> {
     int queryTaxUnionpayCount(String taxUnionpayId, String taxId, UnionpayBankType unionpayBankType);
 
     /**
+     * 根据商户号查询服务商银联记录数
+     *
+     * @param taxUnionpayId
+     * @param merchNo
+     * @return
+     */
+    int queryTaxUnionpayMerchNoCount(String taxUnionpayId, String merchNo);
+
+    /**
      * 查询服务商-银联银行记录
      *
      * @param taxId
@@ -53,6 +62,14 @@ public interface TaxUnionpayService extends IService<TaxUnionpay> {
      * @return
      */
     TaxUnionpay queryTaxUnionpay(String taxId, UnionpayBankType unionpayBankType);
+
+    /**
+     * 根据商户号查询服务商银联记录
+     *
+     * @param merchNo
+     * @return
+     */
+    TaxUnionpay queryTaxUnionpayByMerchNo(String merchNo);
 
     /**
      * 查询服务商-银联银行记录
