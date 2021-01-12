@@ -267,41 +267,53 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
         Task task = taskDao.selectById(taskId);
         int count = workerTaskDao.selectCount(new QueryWrapper<WorkerTask>().eq("task_id", taskId).eq("task_status", 0));
         //用户是否已经抢过这一单
-        int count1 = workerTaskDao.selectCount(new QueryWrapper<WorkerTask>().eq("task_id", taskId).eq("worker_id", workerId));
-        if (count1 > 0) {
-            return ReturnJson.error("您已经抢过这一单了！");
-        }
+        WorkerTask workerTask = workerTaskDao.selectOne(new QueryWrapper<WorkerTask>().eq("task_id", taskId).eq("worker_id", workerId));
         if (count >= task.getUpperLimit()) {
             task.setState(1);
             taskDao.updateById(task);
             return ReturnJson.error("任务所需人数已满！");
         }
-        WorkerTask workerTask = new WorkerTask();
-        workerTask.setTaskId(taskId);
-        workerTask.setWorkerId(workerId);
-        workerTask.setTaskStatus(0);
-        workerTask.setGetType(0);
-        workerTask.setStatus(0);
-        workerTask.setCreateDate(LocalDateTime.now());
-        workerTaskDao.insert(workerTask);
-        count = workerTaskDao.selectCount(new QueryWrapper<WorkerTask>().eq("task_id", taskId).eq("task_status", 0));
-        if (count == task.getUpperLimit()) {
-            task.setState(1);
-            taskDao.updateById(task);
-        }
-        Merchant merchant = merchantDao.selectById(task.getMerchantId());
+        if (workerTask != null) {
+            if (workerTask.getTaskStatus() == 1) {
+                workerTask.setTaskStatus(0);
+                workerTaskDao.updateById(workerTask);
 
-        //抢单之后关联商户
-        CompanyWorker companyWorker = companyWorkerDao.selectOne(new QueryWrapper<CompanyWorker>()
-                .eq("company_id", merchant.getCompanyId())
-                .eq("worker_id", workerId));
-        if (companyWorker == null) {
-            companyWorker=new CompanyWorker();
-            companyWorker.setCompanyId(merchant.getCompanyId());
-            companyWorker.setWorkerId(workerId);
-            companyWorkerDao.insert(companyWorker);
+                count = workerTaskDao.selectCount(new QueryWrapper<WorkerTask>().eq("task_id", taskId).eq("task_status", 0));
+                if (count == task.getUpperLimit()) {
+                    task.setState(1);
+                    taskDao.updateById(task);
+                }
+                return ReturnJson.success("恭喜,抢单成功！");
+            }
+            return ReturnJson.error("您已经抢过这一单了！");
+        } else {
+            workerTask = new WorkerTask();
+            workerTask.setTaskId(taskId);
+            workerTask.setWorkerId(workerId);
+            workerTask.setTaskStatus(0);
+            workerTask.setGetType(0);
+            workerTask.setStatus(0);
+            workerTask.setCreateDate(LocalDateTime.now());
+            workerTaskDao.insert(workerTask);
+            count = workerTaskDao.selectCount(new QueryWrapper<WorkerTask>().eq("task_id", taskId).eq("task_status", 0));
+            if (count == task.getUpperLimit()) {
+                task.setState(1);
+                taskDao.updateById(task);
+            }
+            Merchant merchant = merchantDao.selectById(task.getMerchantId());
+
+            //抢单之后关联商户
+            CompanyWorker companyWorker = companyWorkerDao.selectOne(new QueryWrapper<CompanyWorker>()
+                    .eq("company_id", merchant.getCompanyId())
+                    .eq("worker_id", workerId));
+            if (companyWorker == null) {
+                companyWorker = new CompanyWorker();
+                companyWorker.setCompanyId(merchant.getCompanyId());
+                companyWorker.setWorkerId(workerId);
+                companyWorkerDao.insert(companyWorker);
+            }
+            return ReturnJson.success("恭喜,抢单成功！");
         }
-        return ReturnJson.success("恭喜,抢单成功！");
     }
 
     @Override
