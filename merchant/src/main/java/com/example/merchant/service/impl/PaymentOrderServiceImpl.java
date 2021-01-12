@@ -118,7 +118,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
             List<ExpressLogisticsInfo> expressLogisticsInfos = KdniaoTrackQueryAPI.getExpressInfo(invoiceInfoPO.getExpressCompanyName(), invoiceInfoPO.getExpressSheetNo());
             expressInfoVO.setExpressLogisticsInfos(expressLogisticsInfos);
         }
-        List<PaymentInventory> paymentInventories = paymentInventoryDao.selectPaymentInventoryList(id, null);
+        List<PaymentInventoryVO> paymentInventories = paymentInventoryDao.selectPaymentInventoryList(id, null);
         paymentOrderInfoVO.setPaymentInventories(paymentInventories);
         paymentOrderInfoVO.setPaymentOrderInfoPO(paymentOrderInfoPO);
         paymentOrderInfoVO.setExpressInfoVO(expressInfoVO);
@@ -176,6 +176,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
             paymentOrder.setCompositeTax(compositeTax.multiply(BigDecimal.valueOf(100)));
             for (PaymentInventory paymentInventory : paymentInventories) {
                 BigDecimal realMoney = paymentInventory.getRealMoney();
+                paymentInventory.setTaskMoney(realMoney);
                 paymentInventory.setCompositeTax(compositeTax.multiply(BigDecimal.valueOf(100)));
                 if (taxStatus == 0) {
                     paymentInventory.setMerchantPaymentMoney(realMoney.multiply(compositeTax.add(new BigDecimal(1))));
@@ -200,6 +201,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
                 compositeTax = this.getCompositeTax(companyLadderServices, realMoney);
                 paymentInventory.setCompositeTax(compositeTax.multiply(BigDecimal.valueOf(100)));
                 compositeTaxCount = compositeTaxCount.add(compositeTax);
+                paymentInventory.setTaskMoney(realMoney);
                 if (taxStatus == 0) {
                     paymentInventory.setMerchantPaymentMoney(realMoney.multiply(compositeTax.add(new BigDecimal(1))));
                     paymentInventory.setServiceMoney(realMoney.multiply(compositeTax));
