@@ -49,6 +49,9 @@ public class PaymentOrderInfoPO {
     @ApiModelProperty("支付方式（总包分包支付方式相同）")
     private String paymentMode;
 
+    @ApiModelProperty("驳回理由")
+    private String reasonsForRejection;
+
     @ApiModelProperty("总包支付金额")
     private BigDecimal realMoney;
 

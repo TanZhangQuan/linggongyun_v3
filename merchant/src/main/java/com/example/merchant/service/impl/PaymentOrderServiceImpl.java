@@ -129,7 +129,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
     @Transactional(rollbackFor = Exception.class)
     public ReturnJson saveOrUpdataPaymentOrder(AddPaymentOrderDTO addPaymentOrderDto, String merchantId) throws CommonException {
         if (addPaymentOrderDto.getPaymentInventories() == null) {
-            throw new CommonException(300,"支付清单不能为空！");
+            throw new CommonException(300, "支付清单不能为空！");
         }
         PaymentDTO paymentDto = addPaymentOrderDto.getPaymentDto();
         PaymentOrder paymentOrder = new PaymentOrder();
@@ -223,9 +223,12 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
         paymentOrder.setRealMoney(countMoney);
         paymentOrder.setWorkerMoney(countWorkerMoney);
         //生成总包支付订单
+        if (paymentOrder.getPaymentOrderStatus() == 5) {
+            paymentOrder.setPaymentOrderStatus(0);
+        }
         boolean b = this.saveOrUpdate(paymentOrder);
         if (!b) {
-            throw new CommonException(300,"订单创建失败！");
+            throw new CommonException(300, "订单创建失败！");
         }
         for (PaymentInventory paymentInventory : paymentInventories) {
             paymentInventory.setPaymentOrderId(paymentOrder.getId());
@@ -456,6 +459,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
         if (paymentOrder == null) {
             return ReturnJson.error("支付信息错误，请重新选择！");
         }
+        paymentOrder.setPaymentOrderStatus(5);
         paymentOrder.setReasonsForRejection(reasonsForRejection);
         paymentOrderDao.updateById(paymentOrder);
         return ReturnJson.success("驳回成功");
@@ -474,7 +478,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
         CompanyTax companyTax = companyTaxDao.selectOne(new QueryWrapper<CompanyTax>()
                 .eq("company_id", companyInfo.getId())
                 .eq("tax_id", taxId)
-                .eq("package_status",packageStatus));
+                .eq("package_status", packageStatus));
         if (companyTax == null) {
             return ReturnJson.error("此商户还未和此服务商取得合作！");
         }
