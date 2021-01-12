@@ -15,7 +15,6 @@ public class UpdateCompanyLadderServiceDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty(value = "梯度价ID")
-    @NotBlank(message = "梯度价ID不能为空")
     private String id;
 
     @ApiModelProperty(value = "开始的金额")

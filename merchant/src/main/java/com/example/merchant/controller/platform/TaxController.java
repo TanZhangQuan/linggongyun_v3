@@ -5,7 +5,7 @@ import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.platform.AddInvoiceCatalogDTO;
 import com.example.merchant.dto.platform.AddOrUpdateTaxUnionpayDTO;
 import com.example.merchant.dto.platform.TaxDTO;
-import com.example.merchant.dto.platform.TaxListDTO;
+import com.example.merchant.dto.TaxListDTO;
 import com.example.merchant.service.TaxService;
 import com.example.merchant.service.TaxUnionpayService;
 import io.swagger.annotations.*;
@@ -66,7 +66,7 @@ public class TaxController {
     @ApiOperation(value = "查询服务商列表", notes = "查询服务商列表", httpMethod = "POST")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "taxListDto", value = "查询条件", dataType = "TaxListDTO", paramType = "body")})
     public ReturnJson getTaxList(@Valid @RequestBody TaxListDTO taxListDto) {
-        return taxService.getTaxList(taxListDto);
+        return taxService.getTaxList(taxListDto, null);
     }
 
     @GetMapping("/getTaxInfo")

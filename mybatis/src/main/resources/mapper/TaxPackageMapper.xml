@@ -10,9 +10,6 @@
         <result column="tax_price" property="taxPrice" />
         <result column="tax_min_price" property="taxMinPrice" />
         <result column="tax_max_price" property="taxMaxPrice" />
-        <result column="payee" property="payee" />
-        <result column="bank_name" property="bankName" />
-        <result column="bank_code" property="bankCode" />
         <result column="package_status" property="packageStatus" />
         <result column="support_category" property="supportCategory" />
         <result column="create_date" property="createDate" />

@@ -1,5 +1,6 @@
 package com.example.merchant.dto.platform;
 
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -43,6 +44,10 @@ public class CompanyDTO implements Serializable {
     @ApiModelProperty(value = "公司的注册资本")
     @NotBlank(message = "注册资本不能为空")
     private BigDecimal registeredCapital;
+
+    @ApiModelProperty(value = "账户名称")
+    @NotBlank(message = "账户名称不能为空")
+    private String titleOfAccount;
 
     @ApiModelProperty(value = "开户行")
     @NotBlank(message = "开户行不能为空")

@@ -50,21 +50,6 @@ public class TaxPackage extends BaseEntity {
     private BigDecimal taxMaxPrice;
 
     /**
-     * 收款方户名
-     */
-    private String payee;
-
-    /**
-     * 银行名称
-     */
-    private String bankName;
-
-    /**
-     * 银行账号
-     */
-    private String bankCode;
-
-    /**
      * 0总包，1众包
      */
     private Integer packageStatus;

@@ -58,8 +58,9 @@ public class MerchantMerchantController {
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "linkman", value = "联系人信息", required = true, dataType = "Linkman")
     })
-    public ReturnJson addOrUpdataLinkman(@Valid @RequestBody Linkman linkman) {
-        return linkmanService.addOrUpdataLinkman(linkman);
+    @LoginRequired
+    public ReturnJson addOrUpdataLinkman(@Valid @RequestBody Linkman linkman,@RequestAttribute("userId")@ApiParam(hidden = true)String merchantId) {
+        return linkmanService.addOrUpdataLinkman(linkman,merchantId);
     }
 
     @PostMapping("/updataLinkmanStatus")

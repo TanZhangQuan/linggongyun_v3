@@ -108,6 +108,11 @@ public class CompanyInfo extends BaseEntity {
     private String bankCode;
 
     /**
+     * 账户名称
+     */
+    private String titleOfAccount;
+
+    /**
      * 公司的注册资本
      */
     private BigDecimal registeredCapital;

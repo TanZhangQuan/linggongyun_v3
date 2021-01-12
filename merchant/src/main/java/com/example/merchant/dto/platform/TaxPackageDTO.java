@@ -29,18 +29,6 @@ public class TaxPackageDTO implements Serializable {
     @NotNull(message = "建议市场价最大值不能为空")
     private BigDecimal taxMaxPrice;
 
-    @ApiModelProperty(value = "收款方户名")
-    @NotBlank(message = "收款方户名不能为空")
-    private String payee;
-
-    @ApiModelProperty(value = "银行名称")
-    @NotBlank(message = "银行名称不能为空")
-    private String bankName;
-
-    @ApiModelProperty(value = "银行账号")
-    @NotBlank(message = "银行账号不能为空")
-    private String bankCode;
-
     @ApiModelProperty(value = "0总包，1众包")
     @NotNull(message = "请选择总包或者众包")
     private Integer packageStatus;

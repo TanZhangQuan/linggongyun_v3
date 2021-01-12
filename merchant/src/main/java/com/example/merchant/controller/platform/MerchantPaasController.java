@@ -169,7 +169,7 @@ public class MerchantPaasController {
             @ApiImplicitParam(name = "linkman", value = "联系人信息", required = true, dataType = "Linkman")
     })
     public ReturnJson addOrUpdataLinkman(@Valid @RequestBody Linkman linkman) {
-        return linkmanService.addOrUpdataLinkman(linkman);
+        return linkmanService.addOrUpdataLinkman(linkman,null);
     }
 
     @PostMapping("/updataLinkmanStatus")
