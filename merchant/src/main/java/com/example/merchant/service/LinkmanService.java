@@ -13,8 +13,11 @@ import com.example.mybatis.entity.Linkman;
  * @since 2020-09-14
  */
 public interface LinkmanService extends IService<Linkman> {
-    ReturnJson addOrUpdataLinkman(Linkman linkman);
+    ReturnJson addOrUpdataLinkman(Linkman linkman, String merchantId);
+
     ReturnJson getLinkmanAll(String merchantId);
+
     ReturnJson updataStatus(String linkmanId, Integer status);
+
     ReturnJson removeLinkmenById(String linkmanId);
 }

@@ -140,8 +140,7 @@ public class MakerTotalInvoiceServiceImpl extends ServiceImpl<MakerTotalInvoiceD
         buyerVo.setAddressAndTelephone(tax.getTaxAddress() + "," + tax.getLinkMobile());
         buyerVo.setCompanyName(tax.getTaxSName());
         buyerVo.setCreditCode(tax.getCreditCode());
-        TaxPackage taxPackage = taxPackageDao.selectOne(new QueryWrapper<TaxPackage>().eq("tax_id", tax.getId()).eq("package_status", 0));
-        buyerVo.setBankAndAccount(taxPackage.getBankName() + "," + taxPackage.getBankCode());
+        buyerVo.setBankAndAccount(tax.getBankName() + "," + tax.getBankCode());
         makerTotalInvoiceInfoVo.setBuyerVo(buyerVo);
         return ReturnJson.success(makerTotalInvoiceInfoVo);
     }

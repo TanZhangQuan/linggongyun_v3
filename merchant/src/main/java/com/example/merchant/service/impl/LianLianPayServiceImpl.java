@@ -37,9 +37,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 
@@ -52,7 +50,7 @@ public class LianLianPayServiceImpl extends ServiceImpl<LianlianpayDao, Lianlian
     private MerchantDao merchantDao;
 
     @Resource
-    private TaxPackageDao taxPackageDao;
+    private TaxDao taxDao;
 
     @Resource
     private PaymentOrderDao paymentOrderDao;
@@ -160,8 +158,8 @@ public class LianLianPayServiceImpl extends ServiceImpl<LianlianpayDao, Lianlian
             return ReturnJson.error("请先添加连连商户号和私钥");
         }
 
-        TaxPackage taxPackage = taxPackageDao.selectOne(new QueryWrapper<TaxPackage>().lambda().eq(TaxPackage::getTaxId, paymentOrder.getTaxId()).eq(TaxPackage::getPackageStatus, 0));
-        if (taxPackage == null) {
+        Tax tax=taxDao.selectById(paymentOrder.getTaxId());
+        if (tax == null) {
             log.error("服务商不存在！");
             return ReturnJson.error("您输入的服务商不存在，请联系客服！");
         }
@@ -188,8 +186,8 @@ public class LianLianPayServiceImpl extends ServiceImpl<LianlianpayDao, Lianlian
         paymentRequestBean.setNo_order(no_order);
         paymentRequestBean.setDt_order(DateUtil.format(new Date(), DatePattern.PURE_DATETIME_PATTERN));
         paymentRequestBean.setMoney_order(paymentOrder.getRealMoney().setScale(2, BigDecimal.ROUND_DOWN).toString());
-        paymentRequestBean.setCard_no(taxPackage.getBankCode());
-        paymentRequestBean.setAcct_name(taxPackage.getPayee());
+        paymentRequestBean.setCard_no(tax.getBankCode());
+        paymentRequestBean.setAcct_name(tax.getTitleOfAccount());
         paymentRequestBean.setInfo_order("付款");
         paymentRequestBean.setFlag_card("0");
         paymentRequestBean.setMemo("付款");
@@ -526,8 +524,8 @@ public class LianLianPayServiceImpl extends ServiceImpl<LianlianpayDao, Lianlian
             return ReturnJson.error("请先添加连连商户号和私钥");
         }
 
-        TaxPackage taxPackage = taxPackageDao.selectOne(new QueryWrapper<TaxPackage>().lambda().eq(TaxPackage::getTaxId, paymentOrderMany.getTaxId()).eq(TaxPackage::getPackageStatus, 1));
-        if (taxPackage == null) {
+        Tax tax=taxDao.selectById(paymentOrderMany.getTaxId());
+        if (tax == null) {
             log.error("服务商不存在！");
             return ReturnJson.error("您输入的服务商不存在，请联系客服！");
         }
@@ -554,8 +552,8 @@ public class LianLianPayServiceImpl extends ServiceImpl<LianlianpayDao, Lianlian
         paymentRequestBean.setNo_order(no_order);
         paymentRequestBean.setDt_order(DateUtil.format(new Date(), DatePattern.PURE_DATETIME_PATTERN));
         paymentRequestBean.setMoney_order(paymentOrderMany.getRealMoney().setScale(2, BigDecimal.ROUND_DOWN).toString());
-        paymentRequestBean.setCard_no(taxPackage.getBankCode());
-        paymentRequestBean.setAcct_name(taxPackage.getPayee());
+        paymentRequestBean.setCard_no(tax.getBankCode());
+        paymentRequestBean.setAcct_name(tax.getTitleOfAccount());
         paymentRequestBean.setInfo_order("付款");
         paymentRequestBean.setFlag_card("0");
         paymentRequestBean.setMemo("付款");

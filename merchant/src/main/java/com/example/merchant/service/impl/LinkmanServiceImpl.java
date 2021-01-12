@@ -34,7 +34,11 @@ public class LinkmanServiceImpl extends ServiceImpl<LinkmanDao, Linkman> impleme
      * @return
      */
     @Override
-    public ReturnJson addOrUpdataLinkman(Linkman linkman) {
+    public ReturnJson addOrUpdataLinkman(Linkman linkman, String merchantId) {
+        if (merchantId != null) {
+            Merchant merchant=merchantDao.selectById(merchantId);
+            linkman.setCompanyId(merchant.getCompanyId());
+        }
         if (linkman.getIsNot() == 0) {
             Linkman linkmanOne = this.getOne(new QueryWrapper<Linkman>().eq("company_id", linkman.getCompanyId()).eq("is_not", 0));
             if (linkmanOne != null) {
@@ -56,7 +60,7 @@ public class LinkmanServiceImpl extends ServiceImpl<LinkmanDao, Linkman> impleme
         if (merchant == null) {
             list = this.list(new QueryWrapper<Linkman>().eq("company_id", merchantId).orderByAsc("is_not"));
         }
-        if (merchant != null){
+        if (merchant != null) {
             list = this.list(new QueryWrapper<Linkman>().eq("company_id", merchant.getCompanyId()).orderByAsc("is_not"));
         }
         return ReturnJson.success(list);

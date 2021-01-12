@@ -17,9 +17,4 @@ public class TaxListVO implements Serializable {
     @ApiModelProperty(value = "商户名称")
     private String taxName;
 
-    @ApiModelProperty(value = "开户行")
-    private String bankName;
-
-    @ApiModelProperty(value = "银行卡号")
-    private String bankCode;
 }

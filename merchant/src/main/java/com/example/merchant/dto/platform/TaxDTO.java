@@ -48,6 +48,18 @@ public class TaxDTO implements Serializable {
     @NotBlank(message = "社会信用代码不能为空")
     private String creditCode;
 
+    @ApiModelProperty(value = "开户银行")
+    @NotBlank(message = "开户行不能为空")
+    private String bankName;
+
+    @ApiModelProperty(value = "账户号码")
+    @NotBlank(message = "银行号码不能为空")
+    private String bankCode;
+
+    @ApiModelProperty(value = "账户名称")
+    @NotBlank(message = "收款名称不能为空")
+    private String titleOfAccount;
+
     @ApiModelProperty(value = "公司状态0正常，1停用")
     private Integer taxStatus;
 

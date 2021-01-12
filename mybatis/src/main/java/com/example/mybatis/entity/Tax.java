@@ -72,6 +72,21 @@ public class Tax extends BaseEntity {
     private String creditCode;
 
     /**
+     * 开户行名称
+     */
+    private String bankName;
+
+    /**
+     * 银行卡号
+     */
+    private String bankCode;
+
+    /**
+     * 账户名称
+     */
+    private String titleOfAccount;
+
+    /**
      * 网商银行会员号
      */
     @TableField("member_id")
