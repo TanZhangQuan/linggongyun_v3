@@ -22,16 +22,46 @@
         <result column="update_date" property="updateDate"/>
     </resultMap>
 
+    <resultMap id="PaymentInventoryVOMap" type="com.example.mybatis.vo.PaymentInventoryVO">
+        <id column="id" property="id"/>
+        <result column="payment_order_id" property="paymentOrderId"/>
+        <result column="worker_id" property="workerId"/>
+        <result column="worker_name" property="workerName"/>
+        <result column="mobile_code" property="mobileCode"/>
+        <result column="id_card_code" property="idCardCode"/>
+        <result column="bank_name" property="bankName"/>
+        <result column="bank_code" property="bankCode"/>
+        <result column="real_money" property="realMoney"/>
+        <result column="service_money" property="serviceMoney"/>
+        <result column="composite_tax" property="compositeTax"/>
+        <result column="merchant_payment_money" property="merchantPaymentMoney"/>
+        <result column="attestation" property="attestation"/>
+        <result column="package_status" property="packageStatus"/>
+        <result column="create_date" property="createDate"/>
+        <result column="update_date" property="updateDate"/>
+        <result column="merchant_tax" property="merchantTax"/>
+        <result column="recevice_tax" property="receviceTax"/>
+    </resultMap>
+
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id, payment_order_id, worker_id, worker_name, mobile_code, id_card_code, bank_name, bank_code, real_money, service_money, composite_tax, merchant_payment_money, attestation, create_date, update_date
     </sql>
 
-    <select id="selectPaymentInventoryList" resultMap="BaseResultMap" parameterType="string">
-        SELECT * FROM tb_payment_inventory
-        WHERE payment_order_id = #{paymentOrderId}
+    <select id="selectPaymentInventoryList" resultMap="PaymentInventoryVOMap" parameterType="string">
+        SELECT t2.*,t1.merchant_tax,t1.recevice_tax FROM tb_payment_order t1 INNER JOIN tb_payment_inventory t2 on t1.id = t2.payment_order_id
+        WHERE t2.payment_order_id = #{paymentOrderId}
         <if test="workerId != null and workerId != ''">
-            ORDER BY CASE WHEN worker_id = #{workerId} THEN 0 ELSE 1 END
+            ORDER BY CASE WHEN t2.worker_id = #{workerId} THEN 0 ELSE 1 END
+        </if>
+        LIMIT 0,10
+    </select>
+
+    <select id="selectPaymentOrderManyInfo" resultMap="PaymentInventoryVOMap" parameterType="string">
+        SELECT t2.*,t1.merchant_tax,t1.recevice_tax FROM tb_payment_order_many t1 INNER JOIN tb_payment_inventory t2 on t1.id = t2.payment_order_id
+        WHERE t2.payment_order_id = #{paymentOrderId}
+        <if test="workerId != null and workerId != ''">
+            ORDER BY CASE WHEN t2.worker_id = #{workerId} THEN 0 ELSE 1 END
         </if>
         LIMIT 0,10
     </select>
