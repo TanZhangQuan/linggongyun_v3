@@ -17,15 +17,15 @@ import javax.validation.constraints.NotBlank;
 
 /**
  * <p>
- * 商户端银联支付相关接口（移动到服务商Controller）
+ * 商户端支付方式相关接口（移动到服务商Controller）
  * </p>
  *
  * @author hzp
  * @since 2020-09-07
  */
-@Api(value = "商户端银联支付相关接口", tags = "商户端银联支付相关接口")
+@Api(value = "商户端支付方式相关接口", tags = "商户端支付方式相关接口")
 @RestController
-@RequestMapping("/merchant/unionpay")
+@RequestMapping("/merchant/paymethod")
 @Validated
 public class MerchantUnionpayController {
 

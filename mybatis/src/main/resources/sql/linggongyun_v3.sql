@@ -81,7 +81,8 @@ CREATE TABLE `tb_tax_unionpay` (
   `create_date` datetime DEFAULT NULL COMMENT '创建时间',
   `update_date` datetime DEFAULT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `UK_icr1qhlwx3lsd0terqn7w65k1` (`tax_id`,`unionpay_bank_type`)
+  UNIQUE KEY `UK_icr1qhlwx3lsd0terqn7w65k1` (`tax_id`,`unionpay_bank_type`),
+  UNIQUE KEY `UK_icr1qhlwx3lsd0terqn7w65k2` (`merchno`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='服务商银联信息表';
 
 -- ----------------------------
