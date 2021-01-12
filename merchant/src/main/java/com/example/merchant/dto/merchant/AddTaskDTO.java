@@ -35,14 +35,10 @@ public class AddTaskDTO implements Serializable {
 
     @ApiModelProperty(value = "任务合作类型")
     @NotNull(message = "合作类型不能为空")
-    @Min(value = 0, message = "合作类型不能小于0")
-    @Max(value = 1, message = "合作类型不能大于1")
     private Integer cooperateMode;
 
     @ApiModelProperty(value = "任务模式")
     @NotNull(message = "任务模式不能为空")
-    @Min(value = 0, message = "任务模式不能小于0")
-    @Max(value = 2, message = "任务模式不能大于2")
     private Integer taskMode;
 
     @ApiModelProperty(value = "最大费用")
@@ -52,6 +48,7 @@ public class AddTaskDTO implements Serializable {
     private String taskSkill;
 
     @ApiModelProperty(value = "任务上线人数")
+    @NotNull(message = "所需人数最少一人")
     private Integer upperLimit;
 
     @ApiModelProperty(value = "创客ids,多个id以逗号隔开")

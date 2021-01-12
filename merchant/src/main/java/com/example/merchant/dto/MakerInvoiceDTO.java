@@ -20,14 +20,6 @@ public class MakerInvoiceDTO implements Serializable {
     @NotNull(message = "创客支付ID，不能为空")
     private String paymentInventoryId;
 
-    @ApiModelProperty(value = "发票代码")
-    @NotNull(message = "发票代码不能为空")
-    private String invoiceTypeNo;
-
-    @ApiModelProperty(value = "发票号码")
-    @NotNull(message = "发票号码不能为空")
-    private String invoiceSerialNo;
-
     @ApiModelProperty(value = "服务名称")
     @NotNull(message = "服务名称不能为空")
     private String invoiceCategory;

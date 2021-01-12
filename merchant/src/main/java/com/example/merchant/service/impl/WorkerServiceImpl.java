@@ -123,7 +123,7 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ReturnJson saveWorker(List<Worker> workers, String merchantId) {
+    public ReturnJson saveWorker(List<Worker> workers, String merchantId) throws CommonException {
         List<CompanyWorker> companyWorkers = new ArrayList<>();
         Merchant merchant = merchantDao.selectById(merchantId);
         List<String> mobileCodes = new ArrayList<>();
@@ -141,7 +141,7 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
         if (b) {
             return ReturnJson.success("导入成功！");
         }
-        return ReturnJson.error("导入失败！");
+        throw new CommonException(300,"导入失败！");
     }
 
 
@@ -171,9 +171,9 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
 
     @Override
     public ReturnJson getWorkerPaymentListPaas(String id, Integer page, Integer pageSize) {
-        Page<WorekerPaymentListPo> worekerPaymentListPoPage = new Page<>(page, pageSize);
-        IPage<WorekerPaymentListPo> worekerPaymentListPoIPage = workerDao.workerPaymentList(worekerPaymentListPoPage, id);
-        return ReturnJson.success(worekerPaymentListPoIPage);
+        Page<WorekerPaymentListPo> workerPaymentListPoPage = new Page<>(page, pageSize);
+        IPage<WorekerPaymentListPo> workerPaymentListPoIPage = workerDao.workerPaymentList(workerPaymentListPoPage, id);
+        return ReturnJson.success(workerPaymentListPoIPage);
     }
 
 

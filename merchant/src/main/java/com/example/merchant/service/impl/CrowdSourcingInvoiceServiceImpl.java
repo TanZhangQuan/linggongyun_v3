@@ -9,6 +9,7 @@ import com.example.common.util.KdniaoTrackQueryAPI;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.merchant.AddApplicationCrowdSourcingDTO;
 import com.example.merchant.dto.platform.AddCrowdSourcingInvoiceDTO;
+import com.example.merchant.exception.CommonException;
 import com.example.merchant.vo.platform.CrowdSourcingInvoiceVO;
 import com.example.merchant.vo.platform.QueryInvoicedVO;
 import com.example.merchant.service.CrowdSourcingInvoiceService;
@@ -63,14 +64,14 @@ public class CrowdSourcingInvoiceServiceImpl extends ServiceImpl<CrowdSourcingIn
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ReturnJson addCrowdSourcingInvoice(AddApplicationCrowdSourcingDTO addApplicationCrowdSourcingDto) {
+    public ReturnJson addCrowdSourcingInvoice(AddApplicationCrowdSourcingDTO addApplicationCrowdSourcingDto) throws CommonException {
         CrowdSourcingApplication applicationCrowdSourcing = new CrowdSourcingApplication();
         BeanUtils.copyProperties(addApplicationCrowdSourcingDto, applicationCrowdSourcing);
         if (applicationCrowdSourcing.getId() == null) {
             PaymentOrderMany paymentOrderMany = paymentOrderManyDao.selectById(addApplicationCrowdSourcingDto.
                     getPaymentOrderManyId());
             if (paymentOrderMany == null) {
-                return ReturnJson.error("不存在此众包订单");
+                throw new CommonException(300,"不存在此众包订单");
             }
             applicationCrowdSourcing.setApplicationState(1);
             applicationCrowdSourcing.setApplicationDate(new Date());
@@ -130,7 +131,7 @@ public class CrowdSourcingInvoiceServiceImpl extends ServiceImpl<CrowdSourcingIn
         Map<String, Object> map = new HashMap(0);
         List<InvoiceDetailsVO> list = crowdSourcingInvoiceDao.getPaymentInventoryPass(invoiceId);
         for (InvoiceDetailsVO vo : list) {
-            totalTaxPrice = totalTaxPrice.add(vo.getTaskMoney());
+            totalTaxPrice = totalTaxPrice.add(vo.getRealMoney()).add(vo.getServiceMoney());
             PaymentInventory paymentInventory = new PaymentInventory();
             paymentInventory.setId(vo.getId());
             List<InvoiceLadderPrice> invoiceLadderPrice = invoiceLadderPriceDao.
@@ -195,7 +196,10 @@ public class CrowdSourcingInvoiceServiceImpl extends ServiceImpl<CrowdSourcingIn
                 crowdSourcingInvoice.setInvoicePrintDate(LocalDateTime.parse(DateUtil.getTime(), dfd));
             }
             String invoiceCode = crowdSourcingInvoiceDao.getCrowdInvoiceCode();
-            int code = Integer.valueOf(invoiceCode.substring(2)) + 1;
+            if (invoiceCode == null) {
+                invoiceCode = "001";
+            }
+            Integer code = Integer.valueOf(invoiceCode.substring(2)) + 1;
             String codes = String.valueOf(code);
             if (codes.length() < 4) {
                 if (codes.length() == 1) {
@@ -240,15 +244,16 @@ public class CrowdSourcingInvoiceServiceImpl extends ServiceImpl<CrowdSourcingIn
     public ReturnJson getPaymentInventoryInfoPass(String invoiceId, Integer pageNo, Integer pageSize) {
         Page page = new Page(pageNo, pageSize);
         IPage<InvoiceDetailsVO> list = crowdSourcingInvoiceDao.getPaymentInventoryInfoPass(page, invoiceId);
+
         return ReturnJson.success(list);
     }
 
     @Override
-    public ReturnJson queryApplicationInfo(String applicationId, String merchantId) {
+    public ReturnJson queryApplicationInfo(String applicationId, String merchantId) throws CommonException {
         QueryApplicationInfoVO queryApplicationInfo = new QueryApplicationInfoVO();
         CrowdSourcingApplication crowdSourcingApplication = crowdSourcingApplicationDao.selectById(applicationId);
         if (crowdSourcingApplication == null) {
-            return ReturnJson.error("此申请不存在！");
+            throw new CommonException(300,"此申请不存在！");
         }
         PaymentOrderManyVO paymentOrderManyVo = paymentOrderManyDao.getPayOrderManyById(crowdSourcingApplication.
                 getPaymentOrderManyId());
@@ -359,7 +364,7 @@ public class CrowdSourcingInvoiceServiceImpl extends ServiceImpl<CrowdSourcingIn
                 eq("payment_order_id", crowdSourcingApplication.getPaymentOrderManyId()));
         BigDecimal totalTaxPrice = new BigDecimal("0.00");
         for (int i = 0; i < paymentInventoryList.size(); i++) {
-            totalTaxPrice = totalTaxPrice.add(paymentInventoryList.get(i).getTaskMoney());
+            totalTaxPrice = totalTaxPrice.add(paymentInventoryList.get(i).getRealMoney()).add(paymentInventoryList.get(i).getServiceMoney());
         }
         queryInvoicedVo.setTotalTaxPrice(totalTaxPrice);
         return ReturnJson.success(queryInvoicedVo);

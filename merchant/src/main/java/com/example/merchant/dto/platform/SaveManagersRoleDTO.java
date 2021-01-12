@@ -8,11 +8,11 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @Data
-@ApiModel(description = "XXXXX")
+@ApiModel(description = "添加管理员子账号")
 public class SaveManagersRoleDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @ApiModelProperty(value = "XXXXX")
+    @ApiModelProperty(value = "主键ID")
     private String id;
 
     @ApiModelProperty(value = "姓名")

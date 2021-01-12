@@ -85,8 +85,6 @@ public class MakerInvoiceServiceImpl extends ServiceImpl<MakerInvoiceDao, MakerI
         DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         makerInvoice.setId(makerInvoiceDto.getId());
         makerInvoice.setPaymentInventoryId(makerInvoiceDto.getPaymentInventoryId());
-        makerInvoice.setInvoiceTypeNo(makerInvoiceDto.getInvoiceTypeNo());
-        makerInvoice.setInvoiceSerialNo(makerInvoiceDto.getInvoiceSerialNo());
         //开发票时间为空则给系统当前时间
         makerInvoice.setMakerVoiceGetDateTime(LocalDateTime.parse(DateUtil.getTime(), df));
         makerInvoice.setInvoiceCategory(makerInvoiceDto.getInvoiceCategory());

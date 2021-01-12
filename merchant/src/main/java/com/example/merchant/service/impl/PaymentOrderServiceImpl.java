@@ -118,7 +118,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
             List<ExpressLogisticsInfo> expressLogisticsInfos = KdniaoTrackQueryAPI.getExpressInfo(invoiceInfoPO.getExpressCompanyName(), invoiceInfoPO.getExpressSheetNo());
             expressInfoVO.setExpressLogisticsInfos(expressLogisticsInfos);
         }
-        List<PaymentInventory> paymentInventories = paymentInventoryDao.selectPaymentInventoryList(id, null);
+        List<PaymentInventoryVO> paymentInventories = paymentInventoryDao.selectPaymentInventoryList(id, null);
         paymentOrderInfoVO.setPaymentInventories(paymentInventories);
         paymentOrderInfoVO.setPaymentOrderInfoPO(paymentOrderInfoPO);
         paymentOrderInfoVO.setExpressInfoVO(expressInfoVO);
@@ -127,9 +127,9 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ReturnJson saveOrUpdataPaymentOrder(AddPaymentOrderDTO addPaymentOrderDto, String merchantId) {
+    public ReturnJson saveOrUpdataPaymentOrder(AddPaymentOrderDTO addPaymentOrderDto, String merchantId) throws CommonException {
         if (addPaymentOrderDto.getPaymentInventories() == null) {
-            return ReturnJson.error("支付清单不能为空！");
+            throw new CommonException(300,"支付清单不能为空！");
         }
         PaymentDTO paymentDto = addPaymentOrderDto.getPaymentDto();
         PaymentOrder paymentOrder = new PaymentOrder();
@@ -176,6 +176,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
             paymentOrder.setCompositeTax(compositeTax.multiply(BigDecimal.valueOf(100)));
             for (PaymentInventory paymentInventory : paymentInventories) {
                 BigDecimal realMoney = paymentInventory.getRealMoney();
+                paymentInventory.setTaskMoney(realMoney);
                 paymentInventory.setCompositeTax(compositeTax.multiply(BigDecimal.valueOf(100)));
                 if (taxStatus == 0) {
                     paymentInventory.setMerchantPaymentMoney(realMoney.multiply(compositeTax.add(new BigDecimal(1))));
@@ -200,6 +201,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
                 compositeTax = this.getCompositeTax(companyLadderServices, realMoney);
                 paymentInventory.setCompositeTax(compositeTax.multiply(BigDecimal.valueOf(100)));
                 compositeTaxCount = compositeTaxCount.add(compositeTax);
+                paymentInventory.setTaskMoney(realMoney);
                 if (taxStatus == 0) {
                     paymentInventory.setMerchantPaymentMoney(realMoney.multiply(compositeTax.add(new BigDecimal(1))));
                     paymentInventory.setServiceMoney(realMoney.multiply(compositeTax));
@@ -223,7 +225,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
         //生成总包支付订单
         boolean b = this.saveOrUpdate(paymentOrder);
         if (!b) {
-            return ReturnJson.error("订单创建失败！");
+            throw new CommonException(300,"订单创建失败！");
         }
         for (PaymentInventory paymentInventory : paymentInventories) {
             paymentInventory.setPaymentOrderId(paymentOrder.getId());

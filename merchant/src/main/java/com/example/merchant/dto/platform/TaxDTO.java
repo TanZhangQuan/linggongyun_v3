@@ -4,6 +4,8 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
@@ -23,9 +25,11 @@ public class TaxDTO implements Serializable {
     private String taxMan;
 
     @ApiModelProperty(value = "公司的营业执照")
+    @NotBlank(message = "营业执照不能为空")
     private String businessLicense;
 
     @ApiModelProperty(value = "公司全称")
+    @NotBlank(message = "公司全称不能为空")
     private String taxName;
 
     @ApiModelProperty(value = "公司的详细地址")
@@ -41,6 +45,7 @@ public class TaxDTO implements Serializable {
     private String linkMobile;
 
     @ApiModelProperty(value = "统一的社会信用代码")
+    @NotBlank(message = "社会信用代码不能为空")
     private String creditCode;
 
     @ApiModelProperty(value = "公司状态0正常，1停用")
@@ -53,8 +58,10 @@ public class TaxDTO implements Serializable {
     private TaxPackageDTO manyTaxPackage;
 
     @ApiModelProperty(value = "总包税率梯度价")
+    @Valid
     private List<InvoiceLadderPriceDTO> totalLadders;
 
     @ApiModelProperty(value = "众包税率梯度价")
+    @Valid
     private List<InvoiceLadderPriceDTO> manyLadders;
 }

@@ -1,8 +1,8 @@
 package com.example.merchant.vo.regulator;
 
 import com.example.merchant.vo.ExpressInfoVO;
-import com.example.mybatis.entity.PaymentInventory;
 import com.example.mybatis.vo.PayInfoVO;
+import com.example.mybatis.vo.PaymentInventoryVO;
 import com.example.mybatis.vo.PaymentOrderVO;
 import com.example.mybatis.vo.QuerySubpackageInfoVO;
 import io.swagger.annotations.ApiModel;
@@ -24,7 +24,7 @@ public class QueryPaymentOrderInfoVO implements Serializable {
     private QuerySubpackageInfoVO querySubpackageInfoVo;
 
     @ApiModelProperty(value = "支付明细")
-    private List<PaymentInventory> paymentInventories;
+    private List<PaymentInventoryVO> paymentInventories;
 
     @ApiModelProperty(value = "支付信息")
     private PayInfoVO payInfoVo;

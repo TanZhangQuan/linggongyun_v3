@@ -193,11 +193,8 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
             }
             //输入时间不正确给系统当前默认时间
             invoice.setInvoicePrintDate(LocalDateTime.parse(DateUtil.getTime(), df));
-            invoice.setInvoiceNumber(addInvoiceDto.getInvoiceNumber());
-            invoice.setInvoiceCodeNo(addInvoiceDto.getInvoiceCodeNo());
             invoice.setInvoicePrintPerson(addInvoiceDto.getInvoicePrintPerson());
             invoice.setApplicationInvoicePerson(addInvoiceDto.getApplicationInvoicePerson());
-            invoice.setInvoiceNumbers(addInvoiceDto.getInvoiceNumbers());
             invoice.setInvoiceMoney(addInvoiceDto.getInvoiceMoney());
             invoice.setInvoiceCatalog(addInvoiceDto.getInvoiceCatalog());
             invoice.setInvoiceUrl(addInvoiceDto.getInvoiceUrl());
@@ -222,9 +219,6 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
             return returnJson;
         } else {
             invoice.setId(addInvoiceDto.getId());
-            invoice.setInvoiceNumber(addInvoiceDto.getInvoiceNumber());
-            invoice.setInvoiceCodeNo(addInvoiceDto.getInvoiceCodeNo());
-            invoice.setInvoiceNumbers(addInvoiceDto.getInvoiceNumbers());
             invoice.setInvoiceCatalog(addInvoiceDto.getInvoiceCatalog());
             invoice.setInvoiceUrl(addInvoiceDto.getInvoiceUrl());
             invoice.setTaxReceiptUrl(addInvoiceDto.getTaxReceiptUrl());

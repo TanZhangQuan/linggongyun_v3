@@ -22,6 +22,7 @@ public class PaymentDTO implements Serializable {
     private String id;
 
     @ApiModelProperty(value = "任务名称")
+    @NotBlank(message = "任务名称不能为空")
     private String taskName;
 
     @ApiModelProperty(value = "商户的公司简称")

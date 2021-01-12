@@ -2,6 +2,7 @@ package com.example.mybatis.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.example.mybatis.entity.PaymentInventory;
+import com.example.mybatis.vo.PaymentInventoryVO;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -16,5 +17,19 @@ import java.util.List;
  * @since 2020-09-07
  */
 public interface PaymentInventoryDao extends BaseMapper<PaymentInventory> {
-    List<PaymentInventory> selectPaymentInventoryList(@Param("paymentOrderId") String paymentOrderId, @Param("workerId") String workerId);
+    /**
+     * 查询总包+分包的
+     * @param paymentOrderId
+     * @param workerId
+     * @return
+     */
+    List<PaymentInventoryVO> selectPaymentInventoryList(@Param("paymentOrderId") String paymentOrderId, @Param("workerId") String workerId);
+
+    /**
+     * 众包
+     * @param paymentOrderId
+     * @param workerId
+     * @return
+     */
+    List<PaymentInventoryVO> selectPaymentOrderManyInfo(@Param("paymentOrderId") String paymentOrderId, @Param("workerId") String workerId);
 }

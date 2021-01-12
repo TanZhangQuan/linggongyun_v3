@@ -19,11 +19,9 @@ public class PaymentOrderMerchantDTO implements Serializable {
     private String taxId;
 
     @ApiModelProperty(value = "页数")
-    @NotNull(message = "页数不能为空")
     private Integer pageNo = 1;
 
     @ApiModelProperty(value = "一页多少条数据")
-    @NotNull(message = "每页的条数不能为空")
     private Integer pageSize = 10;
 
     @ApiModelProperty(value = "开始时间")

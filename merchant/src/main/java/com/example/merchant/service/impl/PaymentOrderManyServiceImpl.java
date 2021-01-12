@@ -207,7 +207,7 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
             List<ExpressLogisticsInfo> expressLogisticsInfos = KdniaoTrackQueryAPI.getExpressInfo(invoiceInfoPO.getExpressCompanyName(), invoiceInfoPO.getExpressSheetNo());
             expressInfoVO.setExpressLogisticsInfos(expressLogisticsInfos);
         }
-        List<PaymentInventory> paymentInventories = paymentInventoryDao.selectPaymentInventoryList(id, null);
+        List<PaymentInventoryVO> paymentInventories = paymentInventoryDao.selectPaymentOrderManyInfo(id, null);
         paymentOrderInfoVO.setPaymentInventories(paymentInventories);
         paymentOrderInfoVO.setPaymentOrderInfoPO(paymentOrderInfoPO);
         paymentOrderInfoVO.setExpressInfoVO(expressInfoVO);
@@ -216,7 +216,7 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ReturnJson saveOrUpdataPaymentOrderMany(AddPaymentOrderManyDTO addPaymentOrderManyDto, String merchantId) {
+    public ReturnJson saveOrUpdataPaymentOrderMany(AddPaymentOrderManyDTO addPaymentOrderManyDto, String merchantId) throws CommonException {
         PaymentOrderMany paymentOrderMany = new PaymentOrderMany();
         PaymentOrderManyDTO paymentOrderManyDto = addPaymentOrderManyDto.getPaymentOrderManyDto();
         BeanUtils.copyProperties(paymentOrderManyDto, paymentOrderMany);
@@ -243,11 +243,12 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
             this.removeById(id);
         }
 
-        BigDecimal receviceTax = new BigDecimal("100.00").divide(BigDecimal.valueOf(100));
-        BigDecimal merchantTax = new BigDecimal("0.00").divide(BigDecimal.valueOf(100));
+        BigDecimal merchantTax = new BigDecimal("100.00");
+        BigDecimal receviceTax = new BigDecimal("0.00");
         BigDecimal compositeTax = new BigDecimal("0");
         BigDecimal countMoney = new BigDecimal("0");
         Integer taxStatus = paymentOrderMany.getTaxStatus();
+        paymentOrderMany.setMerchantTax(merchantTax);
         paymentOrderMany.setReceviceTax(receviceTax);
         CompanyTax companyTax = companyTaxDao.selectOne(new QueryWrapper<CompanyTax>().
                 eq("tax_id", paymentOrderMany.getTaxId()).
@@ -258,6 +259,7 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
             compositeTax = companyTax.getServiceCharge().divide(BigDecimal.valueOf(100));
             for (PaymentInventory paymentInventory : paymentInventories) {
                 BigDecimal realMoney = paymentInventory.getRealMoney();
+                paymentInventory.setTaskMoney(realMoney);
                 paymentInventory.setCompositeTax(compositeTax);
                 if (taxStatus == 0) {
                     paymentInventory.setMerchantPaymentMoney(realMoney.multiply(compositeTax));
@@ -277,6 +279,7 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
             List<CompanyLadderService> companyLadderServices = companyLadderServiceDao.selectList(new QueryWrapper<CompanyLadderService>().eq("company_tax_id", companyTax.getId()).orderByAsc("start_money"));
             for (PaymentInventory paymentInventory : paymentInventories) {
                 BigDecimal realMoney = paymentInventory.getRealMoney();
+                paymentInventory.setTaskMoney(realMoney);
                 compositeTax = this.getCompositeTax(companyLadderServices, realMoney);
                 paymentInventory.setCompositeTax(compositeTax);
                 if (taxStatus == 0) {
@@ -297,7 +300,7 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
         paymentOrderMany.setRealMoney(countMoney);
         boolean b = this.saveOrUpdate(paymentOrderMany);
         if (!b) {
-            return ReturnJson.error("订单创建失败！");
+            throw new CommonException(300,"订单创建失败！");
         }
         for (PaymentInventory paymentInventory : paymentInventories) {
 

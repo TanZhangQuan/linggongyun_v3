@@ -25,10 +25,7 @@ import com.example.merchant.vo.regulator.*;
 import com.example.mybatis.entity.*;
 import com.example.mybatis.mapper.*;
 import com.example.mybatis.po.*;
-import com.example.mybatis.vo.PayInfoVO;
-import com.example.mybatis.vo.PaymentOrderVO;
-import com.example.mybatis.vo.QuerySubpackageInfoVO;
-import com.example.mybatis.vo.TaxBriefVO;
+import com.example.mybatis.vo.*;
 import com.example.redis.dao.RedisDao;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -473,7 +470,7 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
                 expressInfoVO.setExpressLogisticsInfos(expressLogisticsInfos);
             }
         }
-        List<PaymentInventory> paymentInventories = paymentInventoryDao.selectPaymentInventoryList(paymentId, workerId);
+        List<PaymentInventoryVO> paymentInventories = paymentInventoryDao.selectPaymentInventoryList(paymentId, workerId);
         paymentOrderInfoVO.setPaymentInventories(paymentInventories);
         paymentOrderInfoVO.setPaymentOrderVo(paymentOrderVO);
         paymentOrderInfoVO.setExpressInfoVO(expressInfoVO);

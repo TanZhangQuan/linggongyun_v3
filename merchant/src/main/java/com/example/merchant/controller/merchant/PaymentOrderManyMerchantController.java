@@ -3,6 +3,7 @@ package com.example.merchant.controller.merchant;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.merchant.AddPaymentOrderManyDTO;
 import com.example.merchant.dto.merchant.PaymentOrderMerchantDTO;
+import com.example.merchant.exception.CommonException;
 import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.PaymentOrderManyService;
 import io.swagger.annotations.*;
@@ -56,7 +57,7 @@ public class PaymentOrderManyMerchantController {
             @ApiImplicitParam(name = "addPaymentOrderManyDto", value = "添加众包支付订单的内容", required = true, dataType = "AddPaymentOrderManyDTO")
     })
     @LoginRequired
-    public ReturnJson saveOrUpdataPaymentOrderMany(@Valid @RequestBody AddPaymentOrderManyDTO addPaymentOrderManyDto, @ApiParam(hidden = true) @RequestAttribute("userId") String merchantId) {
+    public ReturnJson saveOrUpdataPaymentOrderMany(@Valid @RequestBody AddPaymentOrderManyDTO addPaymentOrderManyDto, @ApiParam(hidden = true) @RequestAttribute("userId") String merchantId) throws CommonException {
         return paymentOrderManyService.saveOrUpdataPaymentOrderMany(addPaymentOrderManyDto, merchantId);
     }
 

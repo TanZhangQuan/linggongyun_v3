@@ -519,6 +519,38 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
             }
         }
 
+        Linkman linkman = new Linkman();
+        BeanUtils.copyProperties(companyDto.getAddLinkmanDto(), linkman);
+        linkman.setCompanyId(companyInfo.getId());
+        linkman.setStatus(0);
+        linkmanDao.insert(linkman);
+
+        Address address = new Address();
+        BeanUtils.copyProperties(companyDto.getAddressDto(), address);
+        address.setCompanyId(companyInfo.getId());
+        address.setStatus(0);
+        addressDao.insert(address);
+
+        Merchant merchant = merchantDao.selectOne(new QueryWrapper<Merchant>()
+                .eq("user_name", companyDto.getAddMerchantDto().getUserName()));
+        if (merchant != null) {
+            return ReturnJson.success("登录账号存在相同的，请修改后重新操作！");
+        }
+        merchant = new Merchant();
+        BeanUtils.copyProperties(companyDto.getAddMerchantDto(), merchant);
+        merchant.setPayPwd(PWD_KEY + MD5.md5(companyDto.getAddMerchantDto().getPayPwd()));
+        merchant.setPassWord(PWD_KEY + MD5.md5(companyDto.getAddMerchantDto().getPassWord()));
+        merchant.setCompanyId(companyInfo.getId());
+        merchant.setCompanyName(companyInfo.getCompanyName());
+        merchant.setRoleName("admin");
+        merchantDao.insert(merchant);
+        List<MenuListVO> listVos = menuDao.getMenuList();
+        for (int i = 0; i < listVos.size(); i++) {
+            ObjectMenu objectMenu = new ObjectMenu();
+            objectMenu.setMenuId(listVos.get(i).getId());
+            objectMenu.setObjectUserId(merchant.getId());
+            objectMenuDao.insert(objectMenu);
+        }
         return ReturnJson.success("添加商户成功！");
     }
 
@@ -580,7 +612,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
     public ReturnJson updateCompanyInfo(UpdateCompanyDTO updateCompanyDto) throws Exception {
         CompanyInfo companyInfo = companyInfoDao.selectById(updateCompanyDto.getUpdateCompanyInfoDto().getId());
         if (companyInfo == null) {
-            return ReturnJson.error("商户信息不正确！");
+            throw new CommonException(300, "商户信息不正确！");
         }
         BeanUtils.copyProperties(updateCompanyDto.getUpdateCompanyInfoDto(), companyInfo);
         companyInfo.setAgentId(updateCompanyDto.getUpdateCooperationDto().getAgentId());
@@ -591,7 +623,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         companyInvoiceInfoDao.updateById(companyInvoiceInfo);
         Merchant merchant = merchantDao.selectById(updateCompanyDto.getUpdateMerchantInfDto().getId());
         if (merchant == null) {
-            return ReturnJson.error("商户账户信息不正确！");
+            throw new CommonException(300, "商户账户信息不正确！");
         }
         BeanUtils.copyProperties(updateCompanyDto.getUpdateMerchantInfDto(), merchant);
         if (StringUtils.isBlank(updateCompanyDto.getUpdateMerchantInfDto().getPassWord())) {
@@ -613,7 +645,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
             if (StringUtils.isNotBlank(updateCompanyTaxDTO.getId())) {
                 companyTax = companyTaxDao.selectById(updateCompanyTaxDTO.getId());
                 if (companyTax == null) {
-                    return ReturnJson.error("信息错误");
+                    throw new CommonException(300, "信息错误");
                 }
                 BeanUtils.copyProperties(updateCompanyTaxDTO, companyTax);
                 companyTax.setCompanyId(updateCompanyDto.getUpdateCompanyInfoDto().getId());
@@ -624,8 +656,8 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
                     for (UpdateCompanyLadderServiceDTO updateCompanyLadderServiceDto : updateCompanyLadderServiceDtoList) {
                         if (j != 0) {
                             BigDecimal endMoney = updateCompanyLadderServiceDtoList.get(j - 1).getEndMoney();
-                            if (updateCompanyLadderServiceDto.getStartMoney().compareTo(endMoney) < 0) {
-                                return ReturnJson.error("上梯度结束金额应小于下梯度起始金额");
+                            if (updateCompanyLadderServiceDto.getStartMoney().compareTo(endMoney) == -1) {
+                                throw new CommonException(300, "上梯度结束金额应小于下梯度起始金额");
                             }
                         }
                         if (updateCompanyLadderServiceDto.getId() != null) {
@@ -653,8 +685,8 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
                     for (UpdateCompanyLadderServiceDTO updateCompanyLadderServiceDto : updateCompanyLadderServiceDtoList) {
                         if (j != 0) {
                             BigDecimal endMoney = updateCompanyLadderServiceDtoList.get(j - 1).getEndMoney();
-                            if (updateCompanyLadderServiceDto.getStartMoney().compareTo(endMoney) < 0) {
-                                return ReturnJson.error("上梯度结束金额应小于下梯度起始金额");
+                            if (updateCompanyLadderServiceDto.getStartMoney().compareTo(endMoney) == -1) {
+                                throw new CommonException(300, "上梯度结束金额应小于下梯度起始金额");
                             }
                         }
                         CompanyLadderService companyLadderService = new CompanyLadderService();
