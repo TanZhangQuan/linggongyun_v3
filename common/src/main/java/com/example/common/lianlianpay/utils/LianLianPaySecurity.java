@@ -55,14 +55,4 @@ public class LianLianPaySecurity {
         return str == null || str.equalsIgnoreCase("NULL") || str.equals("");
     }
 
-    public static void main(String[] args) throws Exception {
-        String private_key = "RSA私钥";
-        String public_key = "RSA公钥";
-        String encryptStr = encrypt("{\"id_type\":\"0\",\"id_no\":\"410382198912131344\",\"card_no\":\"6244660060887777\",\"acct_name\":\"港澳通行证\"}", public_key);
-        System.out.println(encryptStr);
-        boolean isvalidate = isvalidate(encryptStr, private_key);
-        System.out.println(isvalidate);
-        String decryptStr = decrypt(encryptStr, private_key);
-        System.out.println(decryptStr);
-    }
 }

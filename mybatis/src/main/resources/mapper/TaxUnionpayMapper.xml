@@ -13,7 +13,7 @@
         <result column="create_date" property="createDate" />
     </resultMap>
 
-    <select id="queryTaxUnionpayList" resultType="com.example.mybatis.vo.TaxUnionpayListVO">
+    <select id="queryTaxUnionpayList" resultMap="taxUnionpayListVO">
         SELECT id, unionpay_bank_type, merchno, acctno, clear_no, service_charge_no, bool_enable, create_date FROM tb_tax_unionpay t1 WHERE t1.tax_id = #{taxId}
     </select>
 

@@ -96,8 +96,4 @@ public class MD5 {
 		}
 	}
 
-	public static void main(String[] args) {
-		System.out.println(md5("31119@qq.com"+"123456"));
-		System.out.println(md5("mj1"));
-	}
 }

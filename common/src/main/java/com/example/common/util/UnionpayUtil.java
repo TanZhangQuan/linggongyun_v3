@@ -260,13 +260,11 @@ public class UnionpayUtil {
      *
      * @param map
      * @param publicKey
-     * @param charset
-     * @param signType
      * @return
      */
-    public static boolean checkSign(Map<String, String> map, String publicKey, String charset, String signType) {
+    public static boolean checkSign(Map<String, String> map, String publicKey) {
         try {
-            return AlipaySignature.rsaCheckV1(map, publicKey, charset, signType);
+            return AlipaySignature.rsaCheckV1(map, publicKey, "utf-8", "RSA");
         } catch (AlipayApiException e) {
             log.error(e.toString());
         }

@@ -155,7 +155,4 @@ public class RSAUtil {
         }
     }
 
-    public static void main(String[] args) {
-        RSAUtil.getInstance().generateKeyPair("D:\\CertFiles\\inpour\\", "usersite");
-    }
 }

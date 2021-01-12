@@ -16,24 +16,26 @@ Date: 2021-01-07 17:18:10
 SET FOREIGN_KEY_CHECKS=0;
 
 -- ----------------------------
--- Table structure for `tb_company_unionpay`
+-- Table structure for `tb_merchant_unionpay`
 -- ----------------------------
-DROP TABLE IF EXISTS `tb_company_unionpay`;
-CREATE TABLE `tb_company_unionpay` (
+DROP TABLE IF EXISTS `tb_merchant_unionpay`;
+CREATE TABLE `tb_merchant_unionpay` (
   `id` varchar(50) NOT NULL COMMENT '主键',
-  `company_id` varchar(50) NOT NULL COMMENT '商户ID',
+  `merchant_id` varchar(50) NOT NULL COMMENT '商户ID',
   `tax_unionpay_id` varchar(50) NOT NULL COMMENT '服务商银联ID',
+  `uid` varchar(50) NOT NULL COMMENT '会员标识',
   `sub_account_code` varchar(50) NOT NULL COMMENT '子账户账号',
   `sub_account_name` varchar(50) NOT NULL COMMENT '子账号户名',
   `in_bank_no` varchar(50) NOT NULL DEFAULT '' COMMENT '来款银行账号',
   `create_date` datetime DEFAULT NULL COMMENT '创建时间',
   `update_date` datetime DEFAULT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `UK_icr1qhlwx3lsd0terqn7w65k1` (`company_id`,`tax_unionpay_id`)
+  UNIQUE KEY `UK_icr1qhlwx3lsd0terqn7w65k1` (`merchant_id`,`tax_unionpay_id`),
+  UNIQUE KEY `UK_icr1qhlwx3lsd0terqn7w65k2` (`uid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='商户银联信息表';
 
 -- ----------------------------
--- Records of tb_company_unionpay
+-- Records of tb_merchant_unionpay
 -- ----------------------------
 
 -- ----------------------------

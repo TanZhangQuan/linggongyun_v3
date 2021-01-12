@@ -3,27 +3,15 @@ package com.example.common.contract;
 import com.alibaba.fastjson.JSONObject;
 import com.example.common.contract.exception.DefineException;
 import com.example.common.contract.helper.*;
-import com.example.common.contract.param.AccountParamUtil;
 import com.example.common.util.ReturnJson;
 import com.example.common.util.UuidUtil;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
 @Slf4j
 public class SignAContractUtils {
-
-    public static void main(String[] args) {
-        try {
-            Map<String, Object> map = bank3Factors("", "", "");
-            System.out.println(map.toString());
-        } catch (DefineException e) {
-            e.printStackTrace();
-        }
-    }
 
     /**
      * 功能描述: 银行卡号3要素验证

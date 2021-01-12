@@ -6,6 +6,8 @@ import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.platform.AddOrUpdateTaxUnionpayDTO;
 import com.example.mybatis.entity.TaxUnionpay;
 
+import java.util.List;
+
 /**
  * <p>
  * 服务商银联信息表 服务类
@@ -53,14 +55,20 @@ public interface TaxUnionpayService extends IService<TaxUnionpay> {
     TaxUnionpay queryTaxUnionpay(String taxId, UnionpayBankType unionpayBankType);
 
     /**
+     * 查询服务商-银联银行记录
+     *
+     * @param taxId
+     * @return
+     */
+    List<TaxUnionpay> queryTaxUnionpay(String taxId);
+
+    /**
      * 查询服务商银联列表
      *
      * @param taxId
-     * @param pageNo
-     * @param pageSize
      * @return
      */
-    ReturnJson queryTaxUnionpayList(String taxId, long pageNo, long pageSize);
+    ReturnJson queryTaxUnionpayList(String taxId);
 
     /**
      * 查询服务商拥有的银联支付方式

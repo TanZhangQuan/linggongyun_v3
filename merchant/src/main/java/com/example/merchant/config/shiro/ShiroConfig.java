@@ -65,7 +65,6 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/merchant/login", "anon");
         //放行所有模板的下载
         filterChainDefinitionMap.put("/templateFile/**", "anon");
-
         //放行所以功能（测试完后删除）
         filterChainDefinitionMap.put("/regulator/**", "anon");
         filterChainDefinitionMap.put("/platform/**", "anon");

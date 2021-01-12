@@ -7,10 +7,7 @@ import com.example.merchant.dto.platform.CompanyDTO;
 import com.example.merchant.dto.platform.UpdateCompanyDTO;
 import com.example.merchant.exception.CommonException;
 import com.example.merchant.interceptor.LoginRequired;
-import com.example.merchant.service.AddressService;
-import com.example.merchant.service.LinkmanService;
-import com.example.merchant.service.MerchantService;
-import com.example.merchant.service.TaxUnionpayService;
+import com.example.merchant.service.*;
 import com.example.mybatis.entity.Linkman;
 import io.swagger.annotations.*;
 import org.springframework.validation.annotation.Validated;
@@ -18,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
@@ -47,6 +45,12 @@ public class MerchantPaasController {
 
     @Resource
     private TaxUnionpayService taxUnionpayService;
+
+    @Resource
+    private MerchantUnionpayService merchantUnionpayService;
+
+    @Resource
+    private TaxService taxService;
 
     @ApiOperation("商户列表")
     @GetMapping(value = "/getIdAndName")
@@ -123,9 +127,8 @@ public class MerchantPaasController {
             @ApiImplicitParam(name = "companyDto", value = "商户ID", required = true, dataType = "CompanyDTO")
     })
     @LoginRequired
-    public ReturnJson addMerchant(@Valid @RequestBody CompanyDTO companyDto
-            ,@RequestAttribute("userId") @ApiParam(hidden = true)String userId) throws Exception {
-        return merchantService.addMerchant(companyDto,userId);
+    public ReturnJson addMerchant(@Valid @RequestBody CompanyDTO companyDto, @RequestAttribute("userId") @ApiParam(hidden = true) String userId) throws Exception {
+        return merchantService.addMerchant(companyDto, userId);
     }
 
     @PostMapping("/getMerchantPaymentList")
@@ -197,7 +200,6 @@ public class MerchantPaasController {
         return linkmanService.getLinkmanAll(merchantId);
     }
 
-
     @GetMapping("/getAddressAll")
     @ApiOperation(value = "查询商户的快递地址信息", notes = "查询商户的快递地址信息", httpMethod = "GET")
     @ApiImplicitParams(value = {
@@ -263,4 +265,41 @@ public class MerchantPaasController {
     public ReturnJson updateCompanyInfo(@Valid @RequestBody UpdateCompanyDTO updateCompanyDto) throws Exception {
         return merchantService.updateCompanyInfo(updateCompanyDto);
     }
+
+    @GetMapping("/queryOfflineTaxList")
+    @ApiOperation(value = "查询线下支付关联的服务商", notes = "查询线下支付关联的服务商")
+    public ReturnJson queryOfflineTaxList(@ApiParam(value = "商户ID") @NotBlank(message = "请选择商户") @RequestAttribute(required = false) String merchantId,
+                                          @ApiParam(value = "当前页") @Min(value = 1, message = "当前页数最小为1") @RequestParam(required = false) long pageNo,
+                                          @ApiParam(value = "每页条数") @Min(value = 1, message = "每页页数最小为1") @RequestParam(required = false) long pageSize) {
+        return merchantUnionpayService.queryOfflineTaxList(merchantId, pageNo, pageSize);
+    }
+
+    @GetMapping("/queryUninopayTaxList")
+    @ApiOperation(value = "查询银联支付关联的服务商", notes = "查询银联支付关联的服务商")
+    public ReturnJson queryUninopayTaxList(@ApiParam(value = "商户ID") @NotBlank(message = "请选择商户") @RequestAttribute(required = false) String merchantId,
+                                           @ApiParam(value = "当前页") @Min(value = 1, message = "当前页数最小为1") @RequestParam(required = false) long pageNo,
+                                           @ApiParam(value = "每页条数") @Min(value = 1, message = "每页页数最小为1") @RequestParam(required = false) long pageSize) {
+        return merchantUnionpayService.queryUninopayTaxList(merchantId, pageNo, pageSize);
+    }
+
+    @GetMapping("/queryCompanyTaxInfo")
+    @ApiOperation(value = "查询商户服务商合作信息", notes = "查询商户服务商合作信息")
+    public ReturnJson queryCompanyTaxList(@ApiParam(value = "商户ID") @NotBlank(message = "请选择商户") @RequestAttribute(required = false) String merchantId,
+                                          @ApiParam(value = "服务商ID") @NotBlank(message = "请选择服务商") @RequestAttribute(required = false) String taxId) {
+        return merchantService.queryCompanyTaxInfo(merchantId, taxId);
+    }
+
+    @GetMapping("/queryTaxInBankInfo")
+    @ApiOperation(value = "查询服务商线下来款银行账号信息", notes = "查询服务商线下来款银行账号信息")
+    public ReturnJson queryTaxInBankInfo(@ApiParam(value = "服务商ID") @NotBlank(message = "请选择服务商") @RequestAttribute(required = false) String taxId) {
+        return taxService.queryTaxInBankInfo(taxId);
+    }
+
+    @GetMapping("/queryCompanyUnionpayBalance")
+    @ApiOperation(value = "查询商户银联详情", notes = "查询商户银联详情")
+    public ReturnJson queryCompanyUnionpayBalance(@ApiParam(value = "商户ID") @NotBlank(message = "请选择商户") @RequestAttribute(required = false) String merchantId,
+                                                  @ApiParam(value = "服务商ID") @NotBlank(message = "请选择服务商") @RequestAttribute(required = false) String taxId) throws Exception {
+        return merchantUnionpayService.queryCompanyUnionpayDetail(merchantId, taxId);
+    }
+
 }

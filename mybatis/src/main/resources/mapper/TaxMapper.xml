@@ -30,6 +30,12 @@
         <result column="payment_date" property="paymentDate"/>
     </resultMap>
 
+    <resultMap id="taxInBankInfoVO" type="com.example.mybatis.vo.TaxInBankInfoVO">
+        <id column="bank_name" property="bankName"/>
+        <result column="bank_code" property="bankCode"/>
+        <result column="title_of_account" property="titleOfAccount"/>
+    </resultMap>
+
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id, tax_s_name, tax_man, business_license, tax_name, tax_address, tax_create_date, link_man, link_mobile, credit_code, tax_status, create_date, update_date
@@ -231,6 +237,9 @@
             IF (ct.package_status = 0, 0, 1)
         )
         where ci.id=#{companyId}
+        <if test="taxId != null and taxId != ''">
+            AND ct.tax_id = #{taxId}
+        </if>
     </select>
 
     <resultMap id="taxInfo" type="com.example.mybatis.vo.TaxInfoVO">
@@ -285,5 +294,8 @@
             tp.package_status = #{packageStatus}
     </select>
 
+    <select id="queryTaxInBankInfo" resultMap="taxInBankInfoVO">
+        SELECT t1.bank_name, t1.bank_code, t1.title_of_account FROM tb_tax t1 WHERE t1.id = #{taxId}
+    </select>
 
 </mapper>

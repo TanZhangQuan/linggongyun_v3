@@ -1,16 +1,14 @@
 package com.example.merchant.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.common.enums.UnionpayBankType;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.platform.AddOrUpdateTaxUnionpayDTO;
-import com.example.merchant.service.CompanyUnionpayService;
 import com.example.merchant.service.TaxUnionpayService;
-import com.example.mybatis.entity.CompanyUnionpay;
+import com.example.mybatis.entity.MerchantUnionpay;
 import com.example.mybatis.entity.TaxUnionpay;
+import com.example.mybatis.mapper.MerchantUnionpayDao;
 import com.example.mybatis.mapper.TaxUnionpayDao;
 import com.example.mybatis.vo.TaxUnionpayListVO;
 import org.apache.commons.lang3.StringUtils;
@@ -34,8 +32,9 @@ public class TaxUnionpayServiceImpl extends ServiceImpl<TaxUnionpayDao, TaxUnion
 
     @Resource
     private TaxUnionpayDao taxUnionpayDao;
+
     @Resource
-    private CompanyUnionpayService companyUnionpayService;
+    private MerchantUnionpayDao merchantUnionpayDao;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -50,10 +49,10 @@ public class TaxUnionpayServiceImpl extends ServiceImpl<TaxUnionpayDao, TaxUnion
             }
 
             //查询是否有子账号，存在子账号则不可修改，只能启用或停用
-            QueryWrapper<CompanyUnionpay> queryWrapper = new QueryWrapper<>();
-            queryWrapper.lambda().eq(CompanyUnionpay::getTaxUnionpayId, addOrUpdateTaxUnionpayDTO.getTaxUnionpayId());
-            List<CompanyUnionpay> companyUnionpayList = companyUnionpayService.list(queryWrapper);
-            if (companyUnionpayList != null && companyUnionpayList.size() > 0) {
+            QueryWrapper<MerchantUnionpay> queryWrapper = new QueryWrapper<>();
+            queryWrapper.lambda().eq(MerchantUnionpay::getTaxUnionpayId, addOrUpdateTaxUnionpayDTO.getTaxUnionpayId());
+            int merchantUnionpayCount = merchantUnionpayDao.selectCount(queryWrapper);
+            if (merchantUnionpayCount > 0) {
                 return ReturnJson.error("服务商银联存在子账号，不可编辑");
             }
 
@@ -137,8 +136,17 @@ public class TaxUnionpayServiceImpl extends ServiceImpl<TaxUnionpayDao, TaxUnion
     }
 
     @Override
-    public ReturnJson queryTaxUnionpayList(String taxId, long pageNo, long pageSize) {
-        IPage<TaxUnionpayListVO> taxUnionpayList = taxUnionpayDao.queryTaxUnionpayList(new Page<>(pageNo, pageSize), taxId);
+    public List<TaxUnionpay> queryTaxUnionpay(String taxId) {
+
+        QueryWrapper<TaxUnionpay> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(TaxUnionpay::getTaxId, taxId);
+
+        return baseMapper.selectList(queryWrapper);
+    }
+
+    @Override
+    public ReturnJson queryTaxUnionpayList(String taxId) {
+        List<TaxUnionpayListVO> taxUnionpayList = taxUnionpayDao.queryTaxUnionpayList(taxId);
         return ReturnJson.success(taxUnionpayList);
     }
 

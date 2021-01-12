@@ -1,10 +1,8 @@
 package com.example.common.util;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.client.methods.CloseableHttpResponse;
 
 import java.net.URLEncoder;
-import java.util.Map;
 
 /**
  * 身份证识别
@@ -35,9 +33,4 @@ public class Idcard {
         return result;
     }
 
-    public static void main(String[] args) throws Exception {
-        String auth = AuthService.getAuth();
-        String front = Idcard.idcard("http://diyi-cr.oss-cn-shanghai.aliyuncs.com/upload/20201103/2dc6c1dc5c4d4e2da868fd32069348c3.png", auth, "front");
-        System.out.println(front);
-    }
 }
