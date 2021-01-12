@@ -14,6 +14,9 @@
         <result column="link_man" property="linkMan"/>
         <result column="link_mobile" property="linkMobile"/>
         <result column="credit_code" property="creditCode"/>
+        <result column="bank_name" property="bankName"/>
+        <result column="bank_code" property="bankCode"/>
+        <result column="title_of_account" property="titleOfAccount"/>
         <result column="tax_status" property="taxStatus"/>
         <result column="create_date" property="createDate"/>
         <result column="update_date" property="updateDate"/>
@@ -57,7 +60,7 @@
     </resultMap>
 
     <select id="getSellerById" resultMap="SellerById">
-        SELECT t.tax_s_name,t.credit_code,t.tax_address,t.link_mobile,tp.bank_code,tp.bank_name
+        SELECT t.tax_s_name,t.credit_code,t.tax_address,t.link_mobile,t.bank_code,t.bank_name
         FROM tb_tax t
         LEFT JOIN tb_tax_package tp ON tp.tax_id=t.id AND tp.package_status=0
         WHERE t.id=#{id}
@@ -84,15 +87,11 @@
         ct.package_status,
         ct.service_charge,
         ct.contract,
-        tp.payee,
-        tp.bank_name,
-        tp.bank_code
+        t.title_of_account as payee,
+        t.bank_name,
+        t.bank_code
         FROM tb_company_tax as ct
-        LEFT JOIN tb_tax as t
-        ON ct.tax_id = t.id
-        LEFT JOIN tb_tax_package as tp
-        ON ct.package_status = tp.package_status
-        AND t.id = tp.tax_id
+        LEFT JOIN tb_tax as t ON ct.tax_id = t.id
         WHERE ct.company_id = #{companyId}
     </select>
 
@@ -213,9 +212,9 @@
             ct.service_charge,
             ct.service_charge as service,
             ct.contract,
-            tp.payee,
-            tp.bank_code,
-            tp.bank_name,
+            t.title_of_account as payee,
+            t.bank_code,
+            t.bank_name,
             cls.id as cls_id,
             cls.start_money,
             cls.end_money,
@@ -225,11 +224,6 @@
         INNER JOIN tb_company_tax ct ON ct.company_id = ci.id
         INNER JOIN tb_tax t ON t.id = ct.tax_id
         LEFT JOIN tb_company_ladder_service cls ON cls.company_tax_id = ct.id
-        LEFT JOIN tb_tax_package tp ON tp.tax_id = t.id
-        AND tp.package_status = (
-
-            IF (ct.package_status = 0, 0, 1)
-        )
         where ci.id=#{companyId}
     </select>
 
@@ -252,32 +246,26 @@
             t.credit_code,
             t.tax_man,
             t.link_mobile,
-            tp.bank_name,
-            tp.bank_code,
+            t.bank_name,
+            t.bank_code,
             t.create_date,
             t.tax_status
         FROM
             tb_tax t
-        INNER JOIN tb_tax_package tp ON tp.tax_id = t.id
-        AND tp.package_status = 0
         WHERE
             t.id = #{taxId}
-        ORDER BY tp.id
+        ORDER BY t.id
     </select>
 
     <resultMap id="taxPaasList" type="com.example.mybatis.vo.TaxListVO">
         <id column="id" property="id"/>
         <result column="tax_name" property="taxName"/>
-        <result column="bank_name" property="bankName"/>
-        <result column="bank_code" property="bankCode"/>
     </resultMap>
 
     <select id="getTaxPaasList" resultMap="taxPaasList">
         SELECT
             t.id,
-            t.tax_name,
-            tp.bank_code,
-	        tp.bank_name
+            t.tax_name
         FROM
             tb_tax t
         LEFT JOIN tb_tax_package tp ON tp.tax_id = t.id

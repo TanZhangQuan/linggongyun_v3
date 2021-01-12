@@ -471,13 +471,12 @@
             ci.company_name,
             ci.bank_name,
             ci.bank_code,
-            tp.payee,
-            tp.bank_name AS payee_bank_name,
-            tp.bank_code AS payee_bank_code
+            t.title_of_account as payee,
+            t.bank_name AS payee_bank_name,
+            t.bank_code AS payee_bank_code
         FROM
             tb_payment_order po
-        LEFT JOIN tb_tax_package tp ON po.tax_id = tp.tax_id
-        AND tp.package_status = 0
+        LEFT JOIN tb_tax t ON po.tax_id = t.tax_id
         LEFT JOIN tb_company_info ci ON po.company_id = ci.id
         WHERE po.id = #{paymentOrderId}
     </select>
@@ -586,7 +585,7 @@
             t.tax_name,
             t.credit_code,
            	CONCAT(t.tax_address,',',t.link_mobile)AS address_and_telephone,
-	        CONCAT(tp.bank_name,',',tp.bank_code)AS bank_and_account
+	        CONCAT(t.bank_name,',',t.bank_code)AS bank_and_account
         FROM
             tb_maker_total_invoice mti
         INNER JOIN tb_invoice_list il ON il.maker_total_invoice_id = mti.id
@@ -595,8 +594,6 @@
         INNER JOIN tb_application_payment ap ON ap.invoice_application_id = ia.id
         INNER JOIN tb_payment_order po ON po.id = ap.payment_order_id
         INNER JOIN tb_tax t ON t.id = po.tax_id
-        INNER JOIN tb_tax_package tp ON tp.tax_id = t.id
-        AND tp.package_status = 0
         WHERE
             mti.id = #{invoiceId}
         LIMIT 0,1
@@ -644,16 +641,14 @@
             ci.bank_name,
             ci.bank_code,
             t.tax_name,
-            tp.bank_name AS t_bank_name,
-            tp.bank_code AS t_bank_code,
+            t.bank_name AS t_bank_name,
+            t.bank_code AS t_bank_code,
             po.real_money,
             po.turnkey_project_payment
         FROM
             tb_payment_order po
         INNER JOIN tb_company_info ci ON ci.id = po.company_id
         INNER JOIN tb_tax t ON t.id = po.tax_id
-        INNER JOIN tb_tax_package tp ON tp.tax_id = t.id
-        AND tp.package_status = 0
         WHERE
             po.id = #{param1}
     </select>
@@ -672,8 +667,8 @@
         SELECT
             po.payment_mode,
             t.tax_name,
-            tp.bank_name,
-            tp.bank_code,
+            t.bank_name,
+            t.bank_code,
             pi.worker_name,
             pi.real_money,
             po.subpackage_payment
@@ -681,8 +676,6 @@
             tb_payment_order po
         INNER JOIN tb_company_info ci ON ci.id = po.company_id
         INNER JOIN tb_tax t ON t.id = po.tax_id
-        INNER JOIN tb_tax_package tp ON tp.tax_id = t.id
-        AND tp.package_status = 0
         INNER JOIN tb_payment_inventory pi ON pi.payment_order_id = po.id
         WHERE
             po.id = #{param1}

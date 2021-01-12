@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.common.util.ReturnJson;
 import com.example.common.util.VerificationCheck;
+import com.example.merchant.dto.TaxListDTO;
 import com.example.merchant.dto.platform.*;
 import com.example.merchant.exception.CommonException;
 import com.example.merchant.service.InvoiceLadderPriceService;
@@ -228,7 +229,10 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
     }
 
     @Override
-    public ReturnJson getTaxList(TaxListDTO taxListDto) {
+    public ReturnJson getTaxList(TaxListDTO taxListDto, String merchantId) {
+        if (merchantId != null) {
+            Merchant merchant = merchantDao.selectById(merchantId);
+        }
         Page<TaxListPO> taxListPOPage = new Page<>(taxListDto.getPageNo(), taxListDto.getPageSize());
         IPage<TaxListPO> taxListPage = taxDao.selectTaxList(taxListPOPage, taxListDto.getTaxName(), taxListDto.getStartDate(), taxListDto.getEndDate());
         return ReturnJson.success(taxListPage);
@@ -326,7 +330,7 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
 
     @Override
     public ReturnJson getTaxList(Integer packageStatus) {
-        List<TaxListVO> taxListVOS=taxDao.getTaxPaasList(packageStatus);
+        List<TaxListVO> taxListVOS = taxDao.getTaxPaasList(packageStatus);
         return ReturnJson.success(taxListVOS);
     }
 

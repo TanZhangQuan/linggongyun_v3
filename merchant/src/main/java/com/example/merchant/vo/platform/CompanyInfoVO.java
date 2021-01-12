@@ -8,7 +8,6 @@ import lombok.Data;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Data
 @ApiModel(description = "XXXXX")
@@ -33,6 +32,9 @@ public class CompanyInfoVO implements Serializable {
 
     @ApiModelProperty(value = "统一的社会信用代码")
     private String creditCode;
+
+    @ApiModelProperty(value = "账户名称")
+    private String titleOfAccount;
 
     @ApiModelProperty(value = "开户行")
     private String bankName;

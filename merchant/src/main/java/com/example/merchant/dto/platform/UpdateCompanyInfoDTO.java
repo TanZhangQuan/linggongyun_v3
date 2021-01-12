@@ -18,7 +18,6 @@ public class UpdateCompanyInfoDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty(value = "商户ID")
-    @NotBlank(message = "商户ID不能为空")
     private String id;
 
     @ApiModelProperty(value = "公司名称")
@@ -40,6 +39,10 @@ public class UpdateCompanyInfoDTO implements Serializable {
     @ApiModelProperty(value = "统一的社会信用代码")
     @NotBlank(message = "社会信用代码不能为空")
     private String creditCode;
+
+    @ApiModelProperty(value = "账户名称")
+    @NotBlank(message = "账户名称不能为空")
+    private String titleOfAccount;
 
     @ApiModelProperty(value = "开户行")
     @NotBlank(message = "开户行不能为空")

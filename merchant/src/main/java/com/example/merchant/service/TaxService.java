@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.platform.AddInvoiceCatalogDTO;
 import com.example.merchant.dto.platform.TaxDTO;
-import com.example.merchant.dto.platform.TaxListDTO;
+import com.example.merchant.dto.TaxListDTO;
 import com.example.mybatis.entity.Tax;
 
 /**
@@ -63,7 +63,7 @@ public interface TaxService extends IService<Tax> {
      * @param taxListDto
      * @return
      */
-    ReturnJson getTaxList(TaxListDTO taxListDto);
+    ReturnJson getTaxList(TaxListDTO taxListDto,String merchantId);
 
     /**
      * 查询服务商详情

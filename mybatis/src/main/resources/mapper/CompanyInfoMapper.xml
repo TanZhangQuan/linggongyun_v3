@@ -23,6 +23,7 @@
         <result column="bank_code" property="bankCode"/>
         <result column="bank_name" property="bankName"/>
         <result column="bank_code" property="bankCode"/>
+        <result column="title_of_account" property="titleOfAccount"/>
         <result column="link_man" property="linkMan"/>
         <result column="link_mobile" property="linkMobile"/>
         <result column="contract" property="contract"/>

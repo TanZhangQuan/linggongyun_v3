@@ -130,12 +130,12 @@
         <result column="id_card_code" property="idCardCode"/>
         <result column="bank_code" property="bankCode"/>
         <result column="real_money" property="realMoney"/>
-        <result column="serivce_money" property="serviceMoney"/>
+        <result column="service_money" property="serviceMoney"/>
     </resultMap>
 
 
     <select id="getInvoiceDetailsByPayId" resultMap="InvoiceDetailsByPayId">
-        SELECT  worker_id,worker_name,mobile_code,id_card_code,bank_code,real_money,serivce_money
+        SELECT  worker_id,worker_name,mobile_code,id_card_code,bank_code,real_money,service_money
         FROM tb_payment_inventory
         WHERE payment_order_id=#{id}
     </select>
@@ -457,9 +457,9 @@
         ci.company_name,
         ci.bank_name,
         ci.bank_code,
-        tp.payee,
-        tp.bank_name AS payee_bank_name,
-        tp.bank_code AS payee_bank_code
+        t.title_of_account as payee,
+        t.bank_name AS payee_bank_name,
+        t.bank_code AS payee_bank_code
         FROM tb_payment_order_many pom
         LEFT JOIN tb_tax_package tp
         ON pom.tax_id = tp.tax_id
@@ -923,17 +923,15 @@
             ci.bank_name,
             ci.bank_code,
             t.tax_name,
-            tp.bank_name AS t_bank_name,
-            tp.bank_code AS t_bank_code,
+            t.bank_name AS t_bank_name,
+            t.bank_code AS t_bank_code,
             pi.merchant_payment_money,
             po.many_payment
         FROM
             tb_payment_order_many po
         INNER JOIN tb_company_info ci ON ci.id = po.company_id
         INNER JOIN tb_tax t ON t.id = po.tax_id
-        INNER JOIN tb_tax_package tp ON tp.tax_id = t.id
         INNER JOIN tb_payment_inventory pi ON pi.payment_order_id = po.id
-        AND tp.package_status = 1
         WHERE
             po.id = #{param1}
         AND pi.worker_id = #{param2}
