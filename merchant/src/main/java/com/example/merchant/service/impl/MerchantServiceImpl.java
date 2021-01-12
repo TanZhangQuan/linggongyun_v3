@@ -424,6 +424,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         merchant.setPassWord(PWD_KEY + MD5.md5(companyDto.getAddMerchantDto().getPassWord()));
         merchant.setCompanyId(companyInfo.getId());
         merchant.setCompanyName(companyInfo.getCompanyName());
+        merchant.setRoleName("admin");
         merchantDao.insert(merchant);
         List<MenuListVO> listVos = menuDao.getMenuList();
         for (int i = 0; i < listVos.size(); i++) {
@@ -519,38 +520,6 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
             }
         }
 
-        Linkman linkman = new Linkman();
-        BeanUtils.copyProperties(companyDto.getAddLinkmanDto(), linkman);
-        linkman.setCompanyId(companyInfo.getId());
-        linkman.setStatus(0);
-        linkmanDao.insert(linkman);
-
-        Address address = new Address();
-        BeanUtils.copyProperties(companyDto.getAddressDto(), address);
-        address.setCompanyId(companyInfo.getId());
-        address.setStatus(0);
-        addressDao.insert(address);
-
-        Merchant merchant = merchantDao.selectOne(new QueryWrapper<Merchant>()
-                .eq("user_name", companyDto.getAddMerchantDto().getUserName()));
-        if (merchant != null) {
-            return ReturnJson.success("登录账号存在相同的，请修改后重新操作！");
-        }
-        merchant = new Merchant();
-        BeanUtils.copyProperties(companyDto.getAddMerchantDto(), merchant);
-        merchant.setPayPwd(PWD_KEY + MD5.md5(companyDto.getAddMerchantDto().getPayPwd()));
-        merchant.setPassWord(PWD_KEY + MD5.md5(companyDto.getAddMerchantDto().getPassWord()));
-        merchant.setCompanyId(companyInfo.getId());
-        merchant.setCompanyName(companyInfo.getCompanyName());
-        merchant.setRoleName("admin");
-        merchantDao.insert(merchant);
-        List<MenuListVO> listVos = menuDao.getMenuList();
-        for (int i = 0; i < listVos.size(); i++) {
-            ObjectMenu objectMenu = new ObjectMenu();
-            objectMenu.setMenuId(listVos.get(i).getId());
-            objectMenu.setObjectUserId(merchant.getId());
-            objectMenuDao.insert(objectMenu);
-        }
         return ReturnJson.success("添加商户成功！");
     }
 
