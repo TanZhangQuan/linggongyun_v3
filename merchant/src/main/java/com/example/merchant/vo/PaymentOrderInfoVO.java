@@ -1,7 +1,7 @@
 package com.example.merchant.vo;
 
-import com.example.mybatis.entity.PaymentInventory;
 import com.example.mybatis.po.PaymentOrderInfoPO;
+import com.example.mybatis.vo.PaymentInventoryVO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -18,7 +18,7 @@ public class PaymentOrderInfoVO implements Serializable {
     private PaymentOrderInfoPO paymentOrderInfoPO;
 
     @ApiModelProperty(value = "支付明细")
-    private List<PaymentInventory> paymentInventories;
+    private List<PaymentInventoryVO> paymentInventories;
 
     @ApiModelProperty(value = "总包或众包发票")
     private String invoice;

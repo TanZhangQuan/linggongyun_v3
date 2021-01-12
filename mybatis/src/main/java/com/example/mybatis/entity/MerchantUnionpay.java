@@ -1,11 +1,6 @@
 package com.example.mybatis.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.annotation.IdType;
-import java.time.LocalDateTime;
-import com.baomidou.mybatisplus.annotation.TableId;
-import java.io.Serializable;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -23,19 +18,24 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
-@TableName("tb_company_unionpay")
-public class CompanyUnionpay extends BaseEntity {
+@TableName("tb_merchant_unionpay")
+public class MerchantUnionpay extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
     /**
      * 商户ID
      */
-    private String companyId;
+    private String merchantId;
 
     /**
      * 服务商银联ID
      */
     private String taxUnionpayId;
+
+    /**
+     * 会员标识
+     */
+    private String uid;
 
     /**
      * 子账户账号

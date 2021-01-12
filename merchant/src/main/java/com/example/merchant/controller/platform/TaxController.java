@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
@@ -104,24 +103,22 @@ public class TaxController {
         return taxService.getTaxList(packageStatus);
     }
 
+    @GetMapping("/queryTaxUnionpayList")
+    @ApiOperation(value = "查询服务商银联", notes = "查询服务商银联")
+    public ReturnJson queryTaxUnionpayList(@ApiParam(value = "服务商") @NotNull(message = "请选择服务商") @RequestParam(required = false) String taxId) {
+        return taxUnionpayService.queryTaxUnionpayList(taxId);
+    }
+
     @PostMapping("/addOrUpdateTaxUnionpay")
-    @ApiOperation(value = "添加或修改服务商银联", notes = "添加或修改服务商银联", httpMethod = "POST")
+    @ApiOperation(value = "添加或修改服务商银联", notes = "添加或修改服务商银联")
     public ReturnJson addOrUpdateTaxUnionpay(@Valid @RequestBody AddOrUpdateTaxUnionpayDTO addOrUpdateTaxUnionpayDTO) {
         return taxUnionpayService.addOrUpdateTaxUnionpay(addOrUpdateTaxUnionpayDTO);
     }
 
     @PostMapping("/boolEnableTaxUnionpay")
-    @ApiOperation(value = "开启或关闭服务商银联", notes = "开启或关闭服务商银联", httpMethod = "POST")
+    @ApiOperation(value = "开启或关闭服务商银联", notes = "开启或关闭服务商银联")
     public ReturnJson boolEnableTaxUnionpay(@ApiParam(value = "服务商银联") @NotBlank(message = "请选择服务商银联") @RequestParam(required = false) String taxUnionpayId, @ApiParam(value = "是否开启") @NotBlank(message = "请选择是否开启") @RequestParam(required = false) Boolean boolEnable) {
         return taxUnionpayService.boolEnableTaxUnionpay(taxUnionpayId, boolEnable);
-    }
-
-    @GetMapping("/queryTaxUnionpayList")
-    @ApiOperation(value = "查询服务商银联列表", notes = "查询服务商银联列表", httpMethod = "GET")
-    public ReturnJson queryTaxUnionpayList(@ApiParam(value = "服务商") @NotNull(message = "请选择服务商") @RequestParam(required = false) String taxId,
-                                           @ApiParam(value = "当前页") @Min(value = 1, message = "当前页数最小为1") @RequestParam(required = false) long pageNo,
-                                           @ApiParam(value = "每页条数") @Min(value = 1, message = "每页页数最小为1") @RequestParam(required = false) long pageSize) {
-        return taxUnionpayService.queryTaxUnionpayList(taxId, pageNo, pageSize);
     }
 
 }

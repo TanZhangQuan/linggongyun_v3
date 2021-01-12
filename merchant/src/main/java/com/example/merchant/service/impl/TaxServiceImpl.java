@@ -11,9 +11,7 @@ import com.example.merchant.dto.platform.*;
 import com.example.merchant.exception.CommonException;
 import com.example.merchant.service.InvoiceLadderPriceService;
 import com.example.merchant.service.TaxService;
-import com.example.mybatis.vo.TaxBriefVO;
 import com.example.merchant.vo.platform.HomePageVO;
-import com.example.mybatis.vo.TaxListVO;
 import com.example.merchant.vo.platform.TaxPlatformVO;
 import com.example.mybatis.entity.*;
 import com.example.mybatis.mapper.*;
@@ -21,6 +19,9 @@ import com.example.mybatis.po.InvoicePO;
 import com.example.mybatis.po.MerchantPaymentListPO;
 import com.example.mybatis.po.TaxListPO;
 import com.example.mybatis.vo.SellerVO;
+import com.example.mybatis.vo.TaxBriefVO;
+import com.example.mybatis.vo.TaxInBankInfoVO;
+import com.example.mybatis.vo.TaxListVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -336,6 +337,12 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
     public ReturnJson getTaxList(Integer packageStatus) {
         List<TaxListVO> taxListVOS = taxDao.getTaxPaasList(packageStatus);
         return ReturnJson.success(taxListVOS);
+    }
+
+    @Override
+    public ReturnJson queryTaxInBankInfo(String taxId) {
+        TaxInBankInfoVO taxInBankInfoVO = taxDao.queryTaxInBankInfo(taxId);
+        return ReturnJson.success(taxInBankInfoVO);
     }
 
 }

@@ -112,4 +112,12 @@ public interface TaxService extends IService<Tax> {
      * @return
      */
     ReturnJson getTaxList(Integer packageStatus);
+
+    /**
+     * 查询服务商线下来款银行账号信息
+     *
+     * @param taxId
+     * @return
+     */
+    ReturnJson queryTaxInBankInfo(String taxId);
 }

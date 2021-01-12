@@ -12,7 +12,7 @@ import lombok.Getter;
 @SwaggerDisplayEnum()
 public enum TradeObject {
     TAX("TAX", "服务商"),
-    COMPANY("COMPANY", "商户"),
+    MERCHANT("MERCHANT", "商户"),
     WORKER("WORKER", "创客");
 
     private final String value;

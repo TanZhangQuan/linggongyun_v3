@@ -8,10 +8,7 @@ import com.example.mybatis.po.MerchantPaymentListPO;
 import com.example.mybatis.po.RegulatorTaxPayInfoPo;
 import com.example.mybatis.po.TaxListPO;
 import com.example.mybatis.po.TaxPO;
-import com.example.mybatis.vo.CooperationInfoVO;
-import com.example.mybatis.vo.SellerVO;
-import com.example.mybatis.vo.TaxInfoVO;
-import com.example.mybatis.vo.TaxListVO;
+import com.example.mybatis.vo.*;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -26,7 +23,7 @@ import java.util.List;
  * @since 2020-09-21
  */
 public interface TaxDao extends BaseMapper<Tax> {
-    //销售方查询
+
     SellerVO getSellerById(String id);
 
     List<TaxPO> selectByMerchantId(String companyId);
@@ -39,9 +36,11 @@ public interface TaxDao extends BaseMapper<Tax> {
 
     List<RegulatorTaxPayInfoPo> getPayInfoByIds(@Param("payIds") List<String> payIds);
 
-    List<CooperationInfoVO> queryCooper(String companyId);
+    List<CooperationInfoVO> queryCooper(@Param("companyId") String companyId, @Param("taxId") String taxId);
 
     TaxInfoVO queryTaxInfoById(String taxId);
 
     List<TaxListVO> getTaxPaasList(Integer packageStatus);
+
+    TaxInBankInfoVO queryTaxInBankInfo(String taxId);
 }

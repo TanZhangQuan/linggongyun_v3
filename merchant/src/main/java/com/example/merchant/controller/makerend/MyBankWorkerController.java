@@ -50,8 +50,7 @@ public class MyBankWorkerController {
     @PostMapping("/bankCardBind")
     @LoginRequired
     @ApiOperation(value = "绑定网商银行卡", notes = "绑定网商银行卡", httpMethod = "POST")
-    public ReturnJson bankCardBind(@Valid @RequestBody BankCardBind bankCardBind,
-                                   @RequestAttribute(value = "userId") @ApiParam(hidden = true) String userId) throws Exception {
+    public ReturnJson bankCardBind(@Valid @RequestBody BankCardBind bankCardBind, @ApiParam(hidden = true) @RequestAttribute(value = "userId") String userId) throws Exception {
         return myBankWorkerService.bankCardBind(bankCardBind, userId);
     }
 

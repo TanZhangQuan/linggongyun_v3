@@ -171,7 +171,7 @@ public interface MerchantService extends IService<Merchant> {
      * @return
      * @throws CommonException
      */
-    ReturnJson addMerchant(CompanyDTO companyDto,String userId) throws Exception;
+    ReturnJson addMerchant(CompanyDTO companyDto, String userId) throws Exception;
 
     /**
      * 退出登录
@@ -203,4 +203,12 @@ public interface MerchantService extends IService<Merchant> {
      * @return
      */
     ReturnJson updateCompanyInfo(UpdateCompanyDTO updateCompanyDto) throws Exception;
+
+    /**
+     * 查询商户服务商合作信息
+     *
+     * @param merchantId
+     * @return
+     */
+    ReturnJson queryCompanyTaxInfo(String merchantId, String taxId);
 }
