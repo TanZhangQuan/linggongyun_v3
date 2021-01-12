@@ -9,6 +9,7 @@ import com.example.common.util.KdniaoTrackQueryAPI;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.merchant.AddApplicationCrowdSourcingDTO;
 import com.example.merchant.dto.platform.AddCrowdSourcingInvoiceDTO;
+import com.example.merchant.exception.CommonException;
 import com.example.merchant.vo.platform.CrowdSourcingInvoiceVO;
 import com.example.merchant.vo.platform.QueryInvoicedVO;
 import com.example.merchant.service.CrowdSourcingInvoiceService;
@@ -63,14 +64,14 @@ public class CrowdSourcingInvoiceServiceImpl extends ServiceImpl<CrowdSourcingIn
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ReturnJson addCrowdSourcingInvoice(AddApplicationCrowdSourcingDTO addApplicationCrowdSourcingDto) {
+    public ReturnJson addCrowdSourcingInvoice(AddApplicationCrowdSourcingDTO addApplicationCrowdSourcingDto) throws CommonException {
         CrowdSourcingApplication applicationCrowdSourcing = new CrowdSourcingApplication();
         BeanUtils.copyProperties(addApplicationCrowdSourcingDto, applicationCrowdSourcing);
         if (applicationCrowdSourcing.getId() == null) {
             PaymentOrderMany paymentOrderMany = paymentOrderManyDao.selectById(addApplicationCrowdSourcingDto.
                     getPaymentOrderManyId());
             if (paymentOrderMany == null) {
-                return ReturnJson.error("不存在此众包订单");
+                throw new CommonException(300,"不存在此众包订单");
             }
             applicationCrowdSourcing.setApplicationState(1);
             applicationCrowdSourcing.setApplicationDate(new Date());
@@ -248,11 +249,11 @@ public class CrowdSourcingInvoiceServiceImpl extends ServiceImpl<CrowdSourcingIn
     }
 
     @Override
-    public ReturnJson queryApplicationInfo(String applicationId, String merchantId) {
+    public ReturnJson queryApplicationInfo(String applicationId, String merchantId) throws CommonException {
         QueryApplicationInfoVO queryApplicationInfo = new QueryApplicationInfoVO();
         CrowdSourcingApplication crowdSourcingApplication = crowdSourcingApplicationDao.selectById(applicationId);
         if (crowdSourcingApplication == null) {
-            return ReturnJson.error("此申请不存在！");
+            throw new CommonException(300,"此申请不存在！");
         }
         PaymentOrderManyVO paymentOrderManyVo = paymentOrderManyDao.getPayOrderManyById(crowdSourcingApplication.
                 getPaymentOrderManyId());

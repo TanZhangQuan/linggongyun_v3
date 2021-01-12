@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.makerend.QueryMissionHall;
 import com.example.merchant.dto.merchant.AddTaskDTO;
+import com.example.merchant.exception.CommonException;
 import com.example.mybatis.dto.PlatformTaskDTO;
 import com.example.mybatis.dto.TaskDTO;
 import com.example.mybatis.dto.TaskListDTO;
@@ -43,7 +44,7 @@ public interface TaskService extends IService<Task> {
      * @param userId
      * @return
      */
-    ReturnJson saveTask(AddTaskDTO addTaskDto, String userId);
+    ReturnJson saveTask(AddTaskDTO addTaskDto, String userId) throws CommonException;
 
     /**
      * 查看任务详情
@@ -123,7 +124,7 @@ public interface TaskService extends IService<Task> {
      * @param workerId
      * @return
      */
-    ReturnJson orderGrabbing(String taskId, String workerId);
+    ReturnJson orderGrabbing(String taskId, String workerId) throws CommonException;
 
     /**
      * 我的任务,某个创客的所有任务

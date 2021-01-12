@@ -84,7 +84,7 @@ public class FileOperationServiceImpl implements FileOperationService {
         ExcelReader excelReader = EasyExcelFactory.read(inputStream, MakerExcel.class, makerReadListener).headRowNumber(1).build();
         excelReader.readAll();
         List<MakerExcel> makerExcelList = makerReadListener.getList();
-
+        excelReader.finish();
 
         List mobileCodes = new ArrayList();
         for (MakerExcel makerExcel : makerExcelList) {
@@ -111,7 +111,6 @@ public class FileOperationServiceImpl implements FileOperationService {
                 workers.add(worker);
             }
         }
-        excelReader.finish();
         return ReturnJson.success(workers);
     }
 
@@ -215,9 +214,14 @@ public class FileOperationServiceImpl implements FileOperationService {
             ExcelReader excelReader = EasyExcelFactory.read(inputStream, MakerPanymentExcel.class, makerPanymentReadListener).headRowNumber(1).build();
             excelReader.readAll();
             List<MakerPanymentExcel> makerPanymentExcels = makerPanymentReadListener.getList();
+            excelReader.finish();
 
             List<PaymentInventory> paymentInventorys = new ArrayList<>();
             for (MakerPanymentExcel makerPanymentExcel : makerPanymentExcels) {
+                //判断金额 金额为null自动去除这个人
+                if (makerPanymentExcel.getRealMoney()==null){
+                    continue;
+                }
                 String idCardCode = makerPanymentExcel.getIdCardCode();
                 String mobileCode = makerPanymentExcel.getPhoneNumber();
                 String workerName = makerPanymentExcel.getPayeeName();

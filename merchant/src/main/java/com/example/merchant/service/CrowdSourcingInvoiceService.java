@@ -3,6 +3,7 @@ package com.example.merchant.service;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.merchant.AddApplicationCrowdSourcingDTO;
 import com.example.merchant.dto.platform.AddCrowdSourcingInvoiceDTO;
+import com.example.merchant.exception.CommonException;
 import com.example.mybatis.dto.QueryCrowdSourcingDTO;
 import com.example.mybatis.dto.TobeInvoicedDTO;
 
@@ -13,7 +14,7 @@ public interface CrowdSourcingInvoiceService {
      * @param addApplicationCrowdSourcingDto
      * @return
      */
-    ReturnJson addCrowdSourcingInvoice(AddApplicationCrowdSourcingDTO addApplicationCrowdSourcingDto);
+    ReturnJson addCrowdSourcingInvoice(AddApplicationCrowdSourcingDTO addApplicationCrowdSourcingDto) throws CommonException;
 
     /**
      * 众包发票详情信息
@@ -102,7 +103,7 @@ public interface CrowdSourcingInvoiceService {
      * @param applicationId
      * @return
      */
-    ReturnJson queryApplicationInfo(String applicationId, String merchantId);
+    ReturnJson queryApplicationInfo(String applicationId, String merchantId) throws CommonException;
 
     /**
      * 查看已开票的发票信息

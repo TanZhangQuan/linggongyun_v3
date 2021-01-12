@@ -510,6 +510,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         merchant.setPassWord(PWD_KEY + MD5.md5(companyDto.getAddMerchantDto().getPassWord()));
         merchant.setCompanyId(companyInfo.getId());
         merchant.setCompanyName(companyInfo.getCompanyName());
+        merchant.setRoleName("admin");
         merchantDao.insert(merchant);
         List<MenuListVO> listVos = menuDao.getMenuList();
         for (int i = 0; i < listVos.size(); i++) {
@@ -579,7 +580,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
     public ReturnJson updateCompanyInfo(UpdateCompanyDTO updateCompanyDto) throws Exception {
         CompanyInfo companyInfo = companyInfoDao.selectById(updateCompanyDto.getUpdateCompanyInfoDto().getId());
         if (companyInfo == null) {
-            return ReturnJson.error("商户信息不正确！");
+            throw new CommonException(300, "商户信息不正确！");
         }
         BeanUtils.copyProperties(updateCompanyDto.getUpdateCompanyInfoDto(), companyInfo);
         companyInfo.setAgentId(updateCompanyDto.getUpdateCooperationDto().getAgentId());
@@ -590,7 +591,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         companyInvoiceInfoDao.updateById(companyInvoiceInfo);
         Merchant merchant = merchantDao.selectById(updateCompanyDto.getUpdateMerchantInfDto().getId());
         if (merchant == null) {
-            return ReturnJson.error("商户账户信息不正确！");
+            throw new CommonException(300, "商户账户信息不正确！");
         }
         BeanUtils.copyProperties(updateCompanyDto.getUpdateMerchantInfDto(), merchant);
         if (StringUtils.isBlank(updateCompanyDto.getUpdateMerchantInfDto().getPassWord())) {
@@ -612,7 +613,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
             if (StringUtils.isNotBlank(updateCompanyTaxDTO.getId())) {
                 companyTax = companyTaxDao.selectById(updateCompanyTaxDTO.getId());
                 if (companyTax == null) {
-                    return ReturnJson.error("信息错误");
+                    throw new CommonException(300, "信息错误");
                 }
                 BeanUtils.copyProperties(updateCompanyTaxDTO, companyTax);
                 companyTax.setCompanyId(updateCompanyDto.getUpdateCompanyInfoDto().getId());
@@ -624,7 +625,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
                         if (j != 0) {
                             BigDecimal endMoney = updateCompanyLadderServiceDtoList.get(j - 1).getEndMoney();
                             if (updateCompanyLadderServiceDto.getStartMoney().compareTo(endMoney) == -1) {
-                                return ReturnJson.error("上梯度结束金额应小于下梯度起始金额");
+                                throw new CommonException(300, "上梯度结束金额应小于下梯度起始金额");
                             }
                         }
                         if (updateCompanyLadderServiceDto.getId() != null) {
@@ -653,7 +654,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
                         if (j != 0) {
                             BigDecimal endMoney = updateCompanyLadderServiceDtoList.get(j - 1).getEndMoney();
                             if (updateCompanyLadderServiceDto.getStartMoney().compareTo(endMoney) == -1) {
-                                return ReturnJson.error("上梯度结束金额应小于下梯度起始金额");
+                                throw new CommonException(300, "上梯度结束金额应小于下梯度起始金额");
                             }
                         }
                         CompanyLadderService companyLadderService = new CompanyLadderService();
@@ -691,7 +692,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
                     //检查盛京银行来款银行账号是否变动
                     if (UnionpayBankType.SJBK.equals(unionpayBankType) && !(companyUnionpay.getInBankNo().equals(updateCompanyTaxDTO.getInBankNo()))) {
                         //修改盛京来款银行账号
-                        JSONObject jsonObject = UnionpayUtil.AC021(taxUnionpay.getMerchno(),  taxUnionpay.getAcctno(),  taxUnionpay.getPfmpubkey(),  taxUnionpay.getPrikey(),  companyUnionpay.getCompanyId(),  updateCompanyTaxDTO.getInBankNo());
+                        JSONObject jsonObject = UnionpayUtil.AC021(taxUnionpay.getMerchno(), taxUnionpay.getAcctno(), taxUnionpay.getPfmpubkey(), taxUnionpay.getPrikey(), companyUnionpay.getCompanyId(), updateCompanyTaxDTO.getInBankNo());
 
                         if (jsonObject == null) {
                             throw new CommonException(300, tax.getTaxName() + "服务商" + unionpayBankType.getDesc() + "银联支付子账户更换绑卡失败");

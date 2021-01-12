@@ -54,7 +54,7 @@ public class WorkerTaskServiceImpl extends ServiceImpl<WorkerTaskDao, WorkerTask
             WorkerTask workerTask = new WorkerTask();
             workerTask.setTaskId(map.get("taskId").toString());
             workerTask.setWorkerId(workerIds[i]);
-            workerTask.setGetType(2);
+            workerTask.setGetType(1);
             workerTask.setArrangePerson(map.get("arrangePerson").toString());
             workerTaskDao.addWorkerTask(workerTask);
         }
@@ -64,7 +64,7 @@ public class WorkerTaskServiceImpl extends ServiceImpl<WorkerTaskDao, WorkerTask
                 task.setState(1);
                 taskDao.updateById(task);
             }
-        }else{
+        } else {
             task.setState(1);
             taskDao.updateById(task);
         }
@@ -81,6 +81,9 @@ public class WorkerTaskServiceImpl extends ServiceImpl<WorkerTaskDao, WorkerTask
                 .eq("worker_id", workerId).eq("task_id", taskId));
         if (workerTask.getStatus() != 0) {
             return ReturnJson.error("该创客已经完成了该任务不能进行剔除！");
+        }
+        if (workerTask.getGetType() == 1) {
+            return ReturnJson.success("此创客为派单获取此任务不能剔除");
         }
         if (task.getState() == 0 && task.getState() == 1) {
             return ReturnJson.error("必须在发布中或已接单才能剔除", 300);
@@ -189,7 +192,7 @@ public class WorkerTaskServiceImpl extends ServiceImpl<WorkerTaskDao, WorkerTask
     @Override
     public ReturnJson queryWorkerPayInfo(String workerId, Integer pageNo, Integer pageSize) {
         Page page = new Page(pageNo, pageSize);
-        IPage<WorkerPayInfoVO> iPage = workerDao.queryWorkerPayInfo(page, workerId,null);
+        IPage<WorkerPayInfoVO> iPage = workerDao.queryWorkerPayInfo(page, workerId, null);
         return ReturnJson.success(iPage);
     }
 
@@ -197,7 +200,7 @@ public class WorkerTaskServiceImpl extends ServiceImpl<WorkerTaskDao, WorkerTask
     public ReturnJson queryMerchantWorkerPayInfo(String workerId, String merchantId, Integer pageNo, Integer pageSize) {
         Merchant merchant = merchantDao.selectById(merchantId);
         Page page = new Page(pageNo, pageSize);
-        IPage<WorkerPayInfoVO> iPage = workerDao.queryWorkerPayInfo(page, workerId,merchant.getCompanyId());
+        IPage<WorkerPayInfoVO> iPage = workerDao.queryWorkerPayInfo(page, workerId, merchant.getCompanyId());
         return ReturnJson.success(iPage);
     }
 

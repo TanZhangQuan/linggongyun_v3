@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.common.util.*;
 import com.example.merchant.dto.makerend.QueryMissionHall;
 import com.example.merchant.dto.merchant.AddTaskDTO;
+import com.example.merchant.exception.CommonException;
 import com.example.merchant.service.WorkerTaskService;
 import com.example.mybatis.dto.PlatformTaskDTO;
 import com.example.mybatis.dto.TaskDTO;
@@ -79,31 +80,31 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ReturnJson saveTask(AddTaskDTO addTaskDto, String userId) {
+    public ReturnJson saveTask(AddTaskDTO addTaskDto, String userId) throws CommonException {
         Merchant merchant = merchantDao.selectById(userId);
         CompanyInfo companyInfo = companyInfoDao.selectById(merchant.getCompanyId());
         List<CompanyTax> companyTaxList = companyTaxDao.selectList(new QueryWrapper<CompanyTax>()
                 .eq("company_id", companyInfo.getId()).eq("package_status", 0));
         if (addTaskDto.getCooperateMode() == 0) {
             if (companyTaxList == null) {
-                return ReturnJson.error("您还不能添加总包模式的任务信息！");
+                throw new CommonException(300,"您还不能添加总包模式的任务信息！");
             }
         }
         companyTaxList = companyTaxDao.selectList(new QueryWrapper<CompanyTax>()
                 .eq("company_id", companyInfo.getId()).eq("package_status", 1));
         if (addTaskDto.getCooperateMode() == 1) {
             if (companyTaxList == null) {
-                return ReturnJson.error("您还不能添加众包模式的任务信息！");
+                throw new CommonException(300,"您还不能添加众包模式的任务信息！");
             }
         }
         DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         DateTimeFormatter df1 = DateTimeFormatter.ofPattern("HH:mm:ss");
         if (merchant == null) {
-            return ReturnJson.error("商户不存在！");
+            throw new CommonException(300,"商户不存在！");
         }
         if (addTaskDto.getTaskCostMax() != null && addTaskDto.getTaskCostMax() != null) {
             if (addTaskDto.getTaskCostMax().compareTo(addTaskDto.getTaskCostMax()) == -1) {
-                return ReturnJson.error("结束金额必须大于起始金额");
+                throw new CommonException(300,"结束金额必须大于起始金额");
             }
         }
         Task task = taskDao.selectById(addTaskDto.getId());
@@ -118,10 +119,10 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
             task.setMerchantName(merchant.getCompanyName());
             if (addTaskDto.getTaskMode() == 0) {
                 if (!VerificationCheck.isNull(addTaskDto.getMakerIds()) || addTaskDto.getMakerIds() == "") {
-                    return new ReturnJson("必须指定创客", 300);
+                    throw new CommonException(300,"必须指定创客");
                 }
                 if (addTaskDto.getUpperLimit() < Arrays.asList(addTaskDto.getMakerIds().split(",")).size()) {
-                    return ReturnJson.error("派单任务人数不能超过上线人数");
+                    throw new CommonException(300,"派单任务人数不能超过上线人数");
                 }
             }
             String taskCode = this.getTaskCode();
@@ -256,52 +257,64 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public synchronized ReturnJson orderGrabbing(String taskId, String workerId) {
+    public synchronized ReturnJson orderGrabbing(String taskId, String workerId) throws CommonException {
         Worker worker = workerDao.selectOne(new QueryWrapper<Worker>().eq("id", workerId));
         if (worker.getAttestation() != 1) {
-            return ReturnJson.error("您还未实名,请前往实名认证！");
+            throw new CommonException(300,"您还未实名,请前往实名认证！");
         }
         if (worker.getAgreementSign() != 2) {
-            return ReturnJson.error("您还未签约,请前往签约！");
+            throw new CommonException(300,"您还未签约,请前往签约！");
         }
         Task task = taskDao.selectById(taskId);
         int count = workerTaskDao.selectCount(new QueryWrapper<WorkerTask>().eq("task_id", taskId).eq("task_status", 0));
         //用户是否已经抢过这一单
-        int count1 = workerTaskDao.selectCount(new QueryWrapper<WorkerTask>().eq("task_id", taskId).eq("worker_id", workerId));
-        if (count1 > 0) {
-            return ReturnJson.error("您已经抢过这一单了！");
-        }
+        WorkerTask workerTask = workerTaskDao.selectOne(new QueryWrapper<WorkerTask>().eq("task_id", taskId).eq("worker_id", workerId));
         if (count >= task.getUpperLimit()) {
             task.setState(1);
             taskDao.updateById(task);
-            return ReturnJson.error("任务所需人数已满！");
+            throw new CommonException(300,"任务所需人数已满！");
         }
-        WorkerTask workerTask = new WorkerTask();
-        workerTask.setTaskId(taskId);
-        workerTask.setWorkerId(workerId);
-        workerTask.setTaskStatus(0);
-        workerTask.setGetType(0);
-        workerTask.setStatus(0);
-        workerTask.setCreateDate(LocalDateTime.now());
-        workerTaskDao.insert(workerTask);
-        count = workerTaskDao.selectCount(new QueryWrapper<WorkerTask>().eq("task_id", taskId).eq("task_status", 0));
-        if (count == task.getUpperLimit()) {
-            task.setState(1);
-            taskDao.updateById(task);
-        }
-        Merchant merchant = merchantDao.selectById(task.getMerchantId());
+        if (workerTask != null) {
+            if (workerTask.getTaskStatus() == 1) {
+                workerTask.setTaskStatus(0);
+                workerTaskDao.updateById(workerTask);
 
-        //抢单之后关联商户
-        CompanyWorker companyWorker = companyWorkerDao.selectOne(new QueryWrapper<CompanyWorker>()
-                .eq("company_id", merchant.getCompanyId())
-                .eq("worker_id", workerId));
-        if (companyWorker == null) {
-            companyWorker=new CompanyWorker();
-            companyWorker.setCompanyId(merchant.getCompanyId());
-            companyWorker.setWorkerId(workerId);
-            companyWorkerDao.insert(companyWorker);
+                count = workerTaskDao.selectCount(new QueryWrapper<WorkerTask>().eq("task_id", taskId).eq("task_status", 0));
+                if (count == task.getUpperLimit()) {
+                    task.setState(1);
+                    taskDao.updateById(task);
+                }
+                return ReturnJson.success("恭喜,抢单成功！");
+            }
+            throw new CommonException(300,"您已经抢过这一单了！");
+        } else {
+            workerTask = new WorkerTask();
+            workerTask.setTaskId(taskId);
+            workerTask.setWorkerId(workerId);
+            workerTask.setTaskStatus(0);
+            workerTask.setGetType(0);
+            workerTask.setStatus(0);
+            workerTask.setCreateDate(LocalDateTime.now());
+            workerTaskDao.insert(workerTask);
+            count = workerTaskDao.selectCount(new QueryWrapper<WorkerTask>().eq("task_id", taskId).eq("task_status", 0));
+            if (count == task.getUpperLimit()) {
+                task.setState(1);
+                taskDao.updateById(task);
+            }
+            Merchant merchant = merchantDao.selectById(task.getMerchantId());
+
+            //抢单之后关联商户
+            CompanyWorker companyWorker = companyWorkerDao.selectOne(new QueryWrapper<CompanyWorker>()
+                    .eq("company_id", merchant.getCompanyId())
+                    .eq("worker_id", workerId));
+            if (companyWorker == null) {
+                companyWorker = new CompanyWorker();
+                companyWorker.setCompanyId(merchant.getCompanyId());
+                companyWorker.setWorkerId(workerId);
+                companyWorkerDao.insert(companyWorker);
+            }
+            return ReturnJson.success("恭喜,抢单成功！");
         }
-        return ReturnJson.success("恭喜,抢单成功！");
     }
 
     @Override

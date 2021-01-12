@@ -2,6 +2,7 @@ package com.example.merchant.controller.makerend;
 
 import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.makerend.QueryMissionHall;
+import com.example.merchant.exception.CommonException;
 import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.TaskService;
 import com.example.merchant.service.WorkerTaskService;
@@ -63,7 +64,7 @@ public class TaskMakerendController {
     @GetMapping(value = "/orderGrabbing")
     @LoginRequired
     public ReturnJson orderGrabbing(@ApiParam(value = "任务id", required = true) @RequestParam("taskId") String taskId,
-                                    @ApiParam(value = "创客id", hidden = true) @RequestAttribute(value = "userId") String workerId) {
+                                    @ApiParam(value = "创客id", hidden = true) @RequestAttribute(value = "userId") String workerId) throws CommonException {
         return taskService.orderGrabbing(taskId, workerId);
     }
 
