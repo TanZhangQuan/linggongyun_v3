@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/makerend/applet")
 @Validated
-public class AppletController {
+public class AppletMakerendController {
 
 
 }

@@ -463,4 +463,13 @@
         AND w.attestation = 1
         AND w.agreementSign = 2
     </select>
+
+    <select id="queryWorkerCount" resultType="int">
+        <if test="param1 != null and param1 != ''">
+            SELECT COUNT(DISTINCT id)as countWorker from tb_company_worker WHERE company_id in (SELECT company_id from tb_company_tax where tax_id = #{param1})
+        </if>
+        <if test="param2 != null and param2 != ''">
+            SELECT COUNT(DISTINCT id) as countWorker FROM tb_company_worker where company_id = #{param2}
+        </if>
+    </select>
 </mapper>

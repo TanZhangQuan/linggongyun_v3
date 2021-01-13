@@ -52,6 +52,12 @@ public class MerchantPaasController {
     @Resource
     private TaxService taxService;
 
+    @Resource
+    private PaymentOrderManyService paymentOrderManyService;
+
+    @Resource
+    private PaymentOrderService paymentOrderService;
+
     @ApiOperation("商户列表")
     @GetMapping(value = "/getIdAndName")
     public ReturnJson getIdAndName() {
@@ -139,7 +145,7 @@ public class MerchantPaasController {
             @ApiImplicitParam(name = "pageSize", value = "每页的条数", required = true)
     })
     public ReturnJson getMerchantPaymentList(@NotBlank(message = "商户ID不能为空！") @RequestParam(required = false) String merchantId, @RequestParam(defaultValue = "1") Integer pageNo, @RequestParam(defaultValue = "10") Integer pageSize) {
-        return merchantService.getMerchantPaymentList(merchantId, pageNo, pageSize);
+        return merchantService.getMerchantPaymentList(merchantId,null, pageNo, pageSize);
     }
 
     @PostMapping("/getMerchantPaymentInfo")
@@ -300,6 +306,56 @@ public class MerchantPaasController {
     public ReturnJson queryCompanyUnionpayBalance(@ApiParam(value = "商户ID") @NotBlank(message = "请选择商户") @RequestAttribute(required = false) String merchantId,
                                                   @ApiParam(value = "服务商ID") @NotBlank(message = "请选择服务商") @RequestAttribute(required = false) String taxId) throws Exception {
         return merchantUnionpayService.queryCompanyUnionpayDetail(merchantId, taxId);
+    }
+
+
+
+
+
+    @PostMapping("/queryTaxTransactionFlow")
+    @ApiOperation(value = "查询商户交易流水", notes = "查询商户交易流水", httpMethod = "POST")
+    @ApiImplicitParams(value = {@ApiImplicitParam(name = "taxId", value = "商户ID"), @ApiImplicitParam(name = "pageNo", value = "页数"), @ApiImplicitParam(name = "pageSize", value = "一页的条数")})
+    public ReturnJson queryTaxTransactionFlow(@NotBlank(message = "商户ID不能为空！") @RequestParam String merchantId, @RequestParam(defaultValue = "1") Integer pageNo, @RequestParam(defaultValue = "10") Integer pageSize) {
+        return merchantService.queryMerchantTransactionFlow(merchantId, pageNo, pageSize);
+    }
+
+    @GetMapping("/getTaxInfo")
+    @ApiOperation(value = "查询服务商信息", notes = "查询服务商信息", httpMethod = "GET")
+    @ApiImplicitParams(value = {@ApiImplicitParam(name = "taxId", value = "服务商ID")})
+    public ReturnJson getTaxInfo(@NotBlank(message = "服务商ID不能为空！") @RequestParam String taxId) {
+        return taxService.getTaxInfo(taxId);
+    }
+
+    @PostMapping("/taxMerchantInfoPaas")
+    @ApiOperation(value = "获取服务商流水信息", notes = "获取服务商流水信息", httpMethod = "POST")
+    public ReturnJson merchantInfo(@NotBlank(message = "商户ID不能为空！") @RequestParam String merchantId,@NotBlank(message = "服务商ID不能为空！") @RequestParam String taxId) {
+        return taxService.transactionRecordCount(taxId);
+    }
+
+    @PostMapping("/transactionRecord")
+    @ApiOperation(value = "查询服务商交易流水", notes = "查询服务商交易流水", httpMethod = "POST")
+    @ApiImplicitParams(value = {@ApiImplicitParam(name = "taxId", value = "服务商ID"), @ApiImplicitParam(name = "pageNo", value = "页数"), @ApiImplicitParam(name = "pageSize", value = "一页的条数")})
+    public ReturnJson transactionRecord(@NotBlank(message = "服务商ID不能为空！") @RequestParam String taxId,@NotBlank(message = "商户ID不能为空！") @RequestParam String merchantId, @RequestParam(defaultValue = "1") Integer pageNo, @RequestParam(defaultValue = "10") Integer pageSize) {
+        return taxService.transactionRecord(taxId,merchantId, pageNo, pageSize);
+    }
+
+
+    @GetMapping("/getPaymentOrderInfo")
+    @ApiOperation(value = "查询总包+分包支付订单详情", notes = "查询总包+分包支付订单详情", httpMethod = "GET")
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(name = "id", value = "总包+分包支付订单ID", required = true)
+    })
+    public ReturnJson getPaymentOrderInfo(@NotBlank(message = "支付订单ID不能为空") @RequestParam(required = false) String id) {
+        return paymentOrderService.getPaymentOrderInfo(id);
+    }
+
+    @GetMapping("/getPaymentOrderManyInfo")
+    @ApiOperation(value = "查询众包支付订单详情", notes = "查询众包支付订单详情", httpMethod = "GET")
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(name = "id", value = "支付订单ID", required = true)
+    })
+    public ReturnJson getPaymentOrderManyInfo(@NotBlank(message = "支付订单ID不能为空") @RequestParam(required = false) String id) {
+        return paymentOrderManyService.getPaymentOrderManyInfo(id);
     }
 
 }

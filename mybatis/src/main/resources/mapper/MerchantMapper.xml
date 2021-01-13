@@ -114,6 +114,20 @@
         <result property="decIncome" column="dec_income"/>
     </resultMap>
 
+    <resultMap id="TaxTransactionFlowVOMap" type="com.example.mybatis.vo.TaxTransactionFlowVO">
+        <result column="company_id" property="companyId"/>
+        <result column="tax_id" property="taxId"/>
+        <result column="company_name" property="merchantName"/>
+        <result column="tax_name" property="taxName"/>
+        <result column="total_package_money" property="totalPackageMoney"/>
+        <result column="many_package_money" property="manyPackageMoney"/>
+        <result column="total_package_count" property="totalPackageCount"/>
+        <result column="many_package_count" property="manyPackageCount"/>
+        <result column="cooperation_state" property="cooperationState"/>
+        <result column="start_cooperation_date" property="startCooperationDate"/>
+        <result column="lately_cooperation_date" property="latelyCooperationDate"/>
+    </resultMap>
+
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id, company_id,company_name, role_id, user_name, pay_pwd, real_name, pass_word, parent_id, login_mobile, status, create_date, update_date
@@ -204,6 +218,63 @@
         select * from tb_merchant_payment_list
         where company_id = #{merchantId}
         ORDER BY payment_date desc
+    </select>
+
+    <select id="selectTaxMerchantPaymentList" parameterType="list" resultMap="MerchantPaymentList">
+        SELECT
+	        payment_order_id, company_id, merchant_name, tax_name, package_status, real_money, is_invoice, payment_date
+        FROM
+	(
+		SELECT
+			b.id AS payment_order_id,
+			b.company_id AS company_id,
+			b.company_s_name AS merchant_name,
+			b.platform_service_provider AS tax_name,
+			b.tax_id AS tax_id,
+			(
+				CASE
+				WHEN isnull(b.id) THEN
+					1
+				ELSE
+					0
+				END
+			) AS package_status,
+			b.real_money AS real_money,
+			b.is_invoice AS is_invoice,
+			b.payment_date AS payment_date
+		FROM
+			(
+				tb_payment_order b
+				LEFT JOIN tb_merchant a ON (
+					(a.company_id = b.company_id)
+				)
+			)
+		UNION
+			SELECT
+				b.id AS payment_order_id,
+				b.company_id AS company_id,
+				b.company_s_name AS merchant_name,
+				b.platform_service_provider AS tax_name,
+				b.tax_id AS tax_id,
+				(
+					CASE
+					WHEN isnull(b.id) THEN
+						0
+					ELSE
+						1
+					END
+				) AS package_status,
+				b.real_money AS real_money,
+				b.is_application AS is_invoice,
+				b.payment_date AS payment_date
+			FROM
+				(
+					tb_payment_order_many b
+					LEFT JOIN tb_merchant a ON (
+						(a.company_id = b.company_id)
+					)
+				)
+	) AS tmp where tmp.company_id = #{merchantId} and tmp.tax_id = #{taxId}
     </select>
 
     <select id="getTodayById" resultMap="dayTradeVO" >
@@ -599,4 +670,25 @@
     </select>
 
 
+    <select id="queryMerchantTransactionFlow" resultMap="TaxTransactionFlowVOMap">
+        SELECT
+        t1.id as tax_id ,
+         t3.id as company_id,
+         t1.tax_name,
+         t3.company_name,
+            (SELECT SUM(real_money) from tb_payment_order where tax_id = t1.id and company_id = t3.id) as total_package_money,
+        (SELECT SUM(real_money) from tb_payment_order_many where tax_id = t1.id and company_id = t3.id) as many_package_money,
+        (SELECT COUNT(id) from tb_payment_order where tax_id = t1.id and company_id = t3.id) as total_package_count,
+        (SELECT COUNT(id) from tb_payment_order_many where tax_id = t1.id and company_id = t3.id) as many_package_count,
+        1 as cooperation_state,
+        t2.create_date as start_cooperation_date,
+        if(DATE_FORMAT((SELECT create_date FROM tb_payment_order where tax_id = t1.id and company_id = t3.id ORDER BY create_date desc LIMIT 1), 'MM-dd-yyyy hh:mm:ss') > DATE_FORMAT((SELECT create_date FROM tb_payment_order_many where tax_id = t1.id and company_id = t3.id ORDER BY create_date desc LIMIT 1), 'MM-dd-yyyy hh:mm:ss'),(SELECT create_date FROM tb_payment_order where tax_id = t1.id and company_id = t3.id ORDER BY create_date desc LIMIT 1),(SELECT create_date FROM tb_payment_order_many where tax_id = t1.id and company_id = t3.id ORDER BY create_date desc LIMIT 1)) as lately_cooperation_date
+        FROM
+         tb_tax t1
+        INNER JOIN tb_company_tax t2 on t2.tax_id = t1.id
+        INNER JOIN tb_company_info t3 on t3.id = t2.company_id
+        where t3.id = #{param1}
+        GROUP BY
+         t1.id
+    </select>
 </mapper>

@@ -242,7 +242,7 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
 
     @Override
     public ReturnJson getRegulatorTaxPaymentList(String taxId, Integer page, Integer pageSize) {
-        return taxService.transactionRecord(taxId, page, pageSize);
+        return taxService.transactionRecord(taxId,null, page, pageSize);
     }
 
     @Override
