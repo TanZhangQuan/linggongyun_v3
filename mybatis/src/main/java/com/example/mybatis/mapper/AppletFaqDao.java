@@ -6,6 +6,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.mybatis.entity.AppletFaq;
 import com.example.mybatis.vo.AppletFaqVO;
 
+import java.util.List;
+
 /**
  * <p>
  * 小程序常见问题 Mapper 接口
@@ -23,4 +25,11 @@ public interface AppletFaqDao extends BaseMapper<AppletFaq> {
      * @return
      */
     IPage<AppletFaqVO> selectAppletFaq(Page page);
+
+    /**
+     * 查看所有小程序常见问题
+     *
+     * @return
+     */
+    List<AppletFaqVO> queryAppletFaq();
 }

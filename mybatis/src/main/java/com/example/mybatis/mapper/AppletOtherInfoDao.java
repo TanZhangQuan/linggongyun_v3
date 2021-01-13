@@ -17,7 +17,7 @@ import com.example.mybatis.vo.AppletOtherVO;
 public interface AppletOtherInfoDao extends BaseMapper<AppletOtherInfo> {
 
     /**
-     * 查看所有小程序轮播图
+     * 查看所有小程序其他问题
      *
      * @param page
      * @return

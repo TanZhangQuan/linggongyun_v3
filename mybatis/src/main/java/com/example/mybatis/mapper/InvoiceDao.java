@@ -23,6 +23,7 @@ import java.util.List;
  */
 public interface InvoiceDao extends BaseMapper<Invoice> {
     InvoicePO selectInvoiceMoney(String merchantId);
+
     InvoicePO selectInvoiceMoneyPaas(List<String> merchantId);
 
     IPage<TobeinvoicedVO> selectTobeinvoiced(Page page, QueryTobeinvoicedDTO queryTobeinvoicedDto, String companyId);

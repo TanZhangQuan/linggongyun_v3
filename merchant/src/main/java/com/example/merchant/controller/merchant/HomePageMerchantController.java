@@ -30,7 +30,7 @@ public class HomePageMerchantController {
     @ApiOperation(value = "获取首页基本信息", notes = "获取首页基本信息", httpMethod = "POST")
     @LoginRequired
     public ReturnJson myWorker(@RequestAttribute("userId") @ApiParam(hidden = true) String merchantId) {
-        return homePageService.getHomePageInof(merchantId);
+        return homePageService.getHomePageInfo(merchantId);
     }
 
     @PostMapping("/totalDayInfo")

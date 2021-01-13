@@ -55,7 +55,10 @@ public class RegulatorTaxServiceImpl extends ServiceImpl<RegulatorTaxDao, Regula
     @Override
     public ReturnJson homeFourData(String regulatorId) {
         Map<String, Object> map = new HashMap<>();
-        List<RegulatorTax> taxIds = regulatorTaxDao.selectList(new QueryWrapper<RegulatorTax>().select("tax_id").eq("regulator_id", regulatorId));//监管区服务商数量
+        List<RegulatorTax> taxIds = regulatorTaxDao.selectList(
+                new QueryWrapper<RegulatorTax>().select("tax_id").
+                        eq("regulator_id", regulatorId)
+                        .eq("status",0));//监管区服务商数量
 
         List<String> ids = new ArrayList<>();
 
@@ -224,6 +227,12 @@ public class RegulatorTaxServiceImpl extends ServiceImpl<RegulatorTaxDao, Regula
                 case 4:
                     list.get(i).setPaymentOrderZNameStatus("支付中");
                     break;
+                case 5:
+                    list.get(i).setPaymentOrderZNameStatus("已驳回");
+                    break;
+                case 6:
+                    list.get(i).setPaymentOrderZNameStatus("已完成");
+                    break;
                 default:
                     return ReturnJson.error("支付状态有误");
             }
@@ -254,6 +263,12 @@ public class RegulatorTaxServiceImpl extends ServiceImpl<RegulatorTaxDao, Regula
                     break;
                 case 4:
                     voList.get(i).setPaymentOrderZNameStatus("支付中");
+                    break;
+                case 5:
+                    voList.get(i).setPaymentOrderZNameStatus("已驳回");
+                    break;
+                case 6:
+                    voList.get(i).setPaymentOrderZNameStatus("已完成");
                     break;
                 default:
                     throw new CommonException(300, "支付状态有误！");

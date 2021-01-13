@@ -31,5 +31,14 @@
         ORDER BY serial_number
     </select>
 
+    <select id="queryAppletBanner" resultType="java.lang.String">
+        SELECT
+            picture
+        FROM
+            tb_applet_banner
+        ORDER BY
+            create_date DESC
+    </select>
+
 
 </mapper>
