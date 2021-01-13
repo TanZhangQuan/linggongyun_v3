@@ -20,6 +20,7 @@ import com.example.mybatis.mapper.CompanyInfoDao;
 import com.example.mybatis.mapper.ManagersDao;
 import com.example.mybatis.po.AgentListPO;
 import com.example.mybatis.po.SalesManPaymentListPO;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -169,7 +170,7 @@ public class StructureServiceImpl implements StructureService {
     public ReturnJson addAgent(AgentInfoDTO agentInfoDto) {
         Managers managers = new Managers();
         Agent agent = new Agent();
-        if (agentInfoDto.getAgentId() == "" && agentInfoDto.getAgentId().trim() == "") {
+        if (StringUtils.isEmpty(agentInfoDto.getAgentId())) {
             managers.setPassWord(PWD_KEY + MD5.md5(agentInfoDto.getInitPassWord()));
             managers.setRealName(agentInfoDto.getAgentName());
             managers.setUserName(agentInfoDto.getUserName());
