@@ -294,7 +294,6 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
             workerTask.setTaskStatus(0);
             workerTask.setGetType(0);
             workerTask.setStatus(0);
-            workerTask.setCreateDate(LocalDateTime.now());
             workerTaskDao.insert(workerTask);
             count = workerTaskDao.selectCount(new QueryWrapper<WorkerTask>().eq("task_id", taskId).eq("task_status", 0));
             if (count == task.getUpperLimit()) {

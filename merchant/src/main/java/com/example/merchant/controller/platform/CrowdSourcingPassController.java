@@ -6,6 +6,7 @@ import com.example.merchant.service.CrowdSourcingInvoiceService;
 import com.example.mybatis.dto.TobeInvoicedDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -14,6 +15,7 @@ import javax.validation.Valid;
 @Api(value = "平台端众包发票关操作接口", tags = {"平台端众包发票关操作接口"})
 @RestController
 @RequestMapping("/platform/crowdSourcing")
+@Validated
 public class CrowdSourcingPassController {
 
     @Resource
