@@ -62,4 +62,9 @@ public interface WorkerDao extends BaseMapper<Worker> {
     IPage<WorkerPayInfoVO> queryWorkerPayInfo(Page page, String workerId,String companyId);
 
     IPage<WorkerCompanyVO> queryWorkerCompanyByID(Page page, String companyId);
+
+    /**
+     * 根据服务商或商户获取创客数
+     */
+   Integer queryWorkerCount(String taxId,String companyId);
 }

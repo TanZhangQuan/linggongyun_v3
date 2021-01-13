@@ -89,7 +89,7 @@ public interface TaxService extends IService<Tax> {
      * @param pageSize
      * @return
      */
-    ReturnJson transactionRecord(String taxId, Integer page, Integer pageSize);
+    ReturnJson transactionRecord(String taxId,String merchantId, Integer page, Integer pageSize);
 
     /**
      * 销售方信息
@@ -120,4 +120,10 @@ public interface TaxService extends IService<Tax> {
      * @return
      */
     ReturnJson queryTaxInBankInfo(String taxId);
+
+
+    /**
+     *
+     */
+    ReturnJson queryTaxTransactionFlow(String taxId, Integer page, Integer pageSize);
 }

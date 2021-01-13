@@ -220,6 +220,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
                     paymentInventory.setRealMoney(realMoney.subtract(realMoney.multiply(compositeTax.multiply(receviceTax))));
                     paymentInventory.setServiceMoney(realMoney.multiply(compositeTax));
                 }
+
                 countMoney = countMoney.add(paymentInventory.getMerchantPaymentMoney());
                 countWorkerMoney = countWorkerMoney.add(paymentInventory.getRealMoney());
             }

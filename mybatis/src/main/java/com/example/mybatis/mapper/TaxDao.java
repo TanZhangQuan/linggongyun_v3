@@ -43,4 +43,9 @@ public interface TaxDao extends BaseMapper<Tax> {
     List<TaxListVO> getTaxPaasList(Integer packageStatus);
 
     TaxInBankInfoVO queryTaxInBankInfo(String taxId);
+
+    /**
+     *
+     */
+    List<TaxTransactionFlowVO> queryTaxTransactionFlow(String taxId,Page page);
 }
