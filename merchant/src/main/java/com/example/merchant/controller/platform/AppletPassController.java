@@ -27,7 +27,7 @@ import javax.validation.constraints.NotBlank;
 @RestController
 @RequestMapping("/platform/applet")
 @Validated
-public class AppletController {
+public class AppletPassController {
 
     @Resource
     private AppletFaqService appletFaqService;

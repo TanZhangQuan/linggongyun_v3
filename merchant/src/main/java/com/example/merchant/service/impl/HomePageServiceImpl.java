@@ -75,7 +75,7 @@ public class HomePageServiceImpl implements HomePageService {
      * @return
      */
     @Override
-    public ReturnJson getHomePageInof(String merchantId) {
+    public ReturnJson getHomePageInfo(String merchantId) {
         Merchant merchant = merchantDao.selectById(merchantId);
         String companyId = merchant.getCompanyId();
         HomePageMerchantVO homePageMerchantVO = new HomePageMerchantVO();
@@ -104,7 +104,6 @@ public class HomePageServiceImpl implements HomePageService {
         } catch (Exception e) {
             log.info(e.toString() + ":" + e.getMessage());
         }
-
 
         InvoicePO invoicePOCrow = crowdSourcingInvoiceDao.selectCrowdInvoiceMoney(companyId);
 

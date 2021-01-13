@@ -15,7 +15,7 @@ public interface HomePageService {
      * @param merchantId
      * @return
      */
-    ReturnJson getHomePageInof(String merchantId);
+    ReturnJson getHomePageInfo(String merchantId);
 
     /**
      * 平台端获取首页内容

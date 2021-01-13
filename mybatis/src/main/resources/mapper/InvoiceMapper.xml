@@ -109,7 +109,7 @@
 
     <!--查询总包的发票数量和发票金额-->
     <select id="selectInvoiceMoney" parameterType="string" resultMap="InvoiceMoney">
-        select SUM(d.invoice_numbers) 'count', SUM(d.invoice_money) 'total_money' from tb_company_info a RIGHT JOIN tb_payment_order b on a.id = b.company_id
+        select count(d.id) 'count', SUM(d.invoice_money) 'total_money' from tb_company_info a RIGHT JOIN tb_payment_order b on a.id = b.company_id
         RIGHT join
         (select * from tb_application_payment
         GROUP BY invoice_application_id)
@@ -119,7 +119,7 @@
     </select>
 
     <select id="selectInvoiceMoneyPaas" parameterType="string" resultMap="InvoiceMoney">
-        select SUM(d.invoice_numbers) 'count', SUM(d.invoice_money) 'total_money' from tb_company_info a RIGHT JOIN tb_payment_order b on a.id = b.company_id
+        select count(d.id) 'count', SUM(d.invoice_money) 'total_money' from tb_company_info a RIGHT JOIN tb_payment_order b on a.id = b.company_id
         RIGHT join
         (select * from tb_application_payment
         GROUP BY invoice_application_id)

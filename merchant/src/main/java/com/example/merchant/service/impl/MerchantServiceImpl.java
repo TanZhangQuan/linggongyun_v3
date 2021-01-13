@@ -336,7 +336,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
     @Override
     public ReturnJson merchantInfoPaas(String merchantId) {
         Merchant merchant = merchantDao.selectOne(new QueryWrapper<Merchant>().eq("company_id", merchantId).eq("parent_id", 0));
-        ReturnJson returnJson = homePageService.getHomePageInof(merchant.getId());
+        ReturnJson returnJson = homePageService.getHomePageInfo(merchant.getId());
         HomePageVO homePageVO = new HomePageVO();
         HomePageMerchantVO homePageMerchantVO = (HomePageMerchantVO) returnJson.getObj();
         BeanUtils.copyProperties(homePageMerchantVO, homePageVO);

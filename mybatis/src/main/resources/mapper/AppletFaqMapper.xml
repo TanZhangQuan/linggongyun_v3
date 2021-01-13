@@ -33,4 +33,12 @@
         ORDER BY serial_number
     </select>
 
+    <select id="queryAppletFaq" resultMap="appletFaqVo">
+        SELECT
+            id,serial_number,title,content,create_date
+        FROM
+            tb_applet_faq
+        ORDER BY serial_number
+    </select>
+
 </mapper>

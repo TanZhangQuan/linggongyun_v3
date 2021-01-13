@@ -6,6 +6,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.mybatis.entity.AppletBanner;
 import com.example.mybatis.vo.AppletBannerVO;
 
+import java.util.List;
+
 /**
  * <p>
  * 小程序轮播图 Mapper 接口
@@ -23,4 +25,11 @@ public interface AppletBannerDao extends BaseMapper<AppletBanner> {
      * @return
      */
     IPage<AppletBannerVO> selectAppletBanner(Page page);
+
+    /**
+     * 查询所有轮播图
+     *
+     * @return
+     */
+    List<String> queryAppletBanner();
 }
