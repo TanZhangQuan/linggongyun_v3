@@ -145,4 +145,12 @@ public class PaymentInventoryVO implements Serializable {
      */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private LocalDateTime updateDate;
+
+    public void setMerchantTax(BigDecimal merchantTax) {
+        this.merchantTax = this.compositeTax.multiply(merchantTax).divide(new BigDecimal("100"),2);
+    }
+
+    public void setReceviceTax(BigDecimal receviceTax) {
+        this.receviceTax = this.compositeTax.multiply(receviceTax).divide(new BigDecimal("100"),2);
+    }
 }

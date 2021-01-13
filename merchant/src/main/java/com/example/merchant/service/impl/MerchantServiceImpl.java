@@ -26,6 +26,7 @@ import com.example.mybatis.po.TaxPO;
 import com.example.mybatis.vo.BuyerVO;
 import com.example.mybatis.vo.CooperationInfoVO;
 import com.example.mybatis.vo.MenuListVO;
+import com.example.mybatis.vo.TaxTransactionFlowVO;
 import com.example.redis.dao.RedisDao;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
@@ -342,21 +343,27 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         BeanUtils.copyProperties(homePageMerchantVO, homePageVO);
         Integer taxTotal = companyTaxDao.selectCount(new QueryWrapper<CompanyTax>().eq("company_id", merchant.getCompanyId()));
         homePageVO.setTaxTotal(taxTotal);
-        ReturnJson merchantPaymentList = this.getMerchantPaymentList(merchantId, 1, 10);
+        ReturnJson merchantPaymentList = this.getMerchantPaymentList(merchantId,null, 1, 10);
         List data = (List) merchantPaymentList.getData();
         returnJson.setData(data);
         return returnJson;
     }
 
     @Override
-    public ReturnJson getMerchantPaymentList(String merchantId, Integer page, Integer pageSize) {
+    public ReturnJson getMerchantPaymentList(String merchantId,String taxId, Integer page, Integer pageSize) {
         Merchant merchant = merchantDao.selectById(merchantId);
         if (merchant == null) {
             merchant = new Merchant();
             merchant.setCompanyId(merchantId);
         }
         Page<MerchantPaymentListPO> paymentListPage = new Page(page, pageSize);
-        IPage<MerchantPaymentListPO> merchantPaymentListIPage = merchantDao.selectMerchantPaymentList(paymentListPage, merchant.getCompanyId());
+        IPage<MerchantPaymentListPO> merchantPaymentListIPage = null;
+        if(StringUtils.isBlank(taxId)){
+            merchantPaymentListIPage = merchantDao.selectMerchantPaymentList(paymentListPage, merchant.getCompanyId());
+        }else{
+            merchantPaymentListIPage = merchantDao.selectTaxMerchantPaymentList(paymentListPage, merchant.getCompanyId(),taxId);
+        }
+
         return ReturnJson.success(merchantPaymentListIPage);
     }
 
@@ -754,6 +761,18 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         }
 
         return ReturnJson.success("操作成功");
+    }
+
+    @Override
+    public ReturnJson taxMerchantInfoPaas(String merchantId, String taxId) {
+        return homePageService.getHomePageInof(merchantId);
+    }
+
+    @Override
+    public ReturnJson queryMerchantTransactionFlow(String merchantId, Integer pageNo, Integer pageSize) {
+        Page<TaxTransactionFlowVO> merchantPage = new Page<>(pageNo, pageSize);
+        List<TaxTransactionFlowVO> taxTransactionFlowVOS = merchantDao.queryMerchantTransactionFlow(merchantId,merchantPage);
+        return ReturnJson.success(taxTransactionFlowVOS);
     }
 
     @Override
