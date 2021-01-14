@@ -175,6 +175,12 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
         BigDecimal countMoney = new BigDecimal("0");
         BigDecimal countWorkerMoney = new BigDecimal("0");
 
+        if (paymentDto.getTaxStatus() == 0) {
+            merchantTax = new BigDecimal("100");
+        }
+        if (paymentDto.getTaxStatus() == 1) {
+            receviceTax = new BigDecimal("100");
+        }
 
         CompanyTax companyTax = companyTaxDao.selectOne(new QueryWrapper<CompanyTax>()
                 .eq("tax_id", paymentOrder.getTaxId())
@@ -225,6 +231,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
                     paymentInventory.setRealMoney(realMoney.subtract(realMoney.multiply(compositeTax.multiply(receviceTax))));
                     paymentInventory.setServiceMoney(realMoney.multiply(compositeTax));
                 }
+
                 countMoney = countMoney.add(paymentInventory.getMerchantPaymentMoney());
                 countWorkerMoney = countWorkerMoney.add(paymentInventory.getRealMoney());
             }
@@ -234,6 +241,9 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
         paymentOrder.setRealMoney(countMoney);
         paymentOrder.setWorkerMoney(countWorkerMoney);
         //生成总包支付订单
+        if (paymentOrder.getPaymentOrderStatus() == 5) {
+            paymentOrder.setPaymentOrderStatus(0);
+        }
         boolean b = this.saveOrUpdate(paymentOrder);
         if (!b) {
             throw new CommonException(300, "订单创建失败！");
@@ -397,11 +407,15 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
         paymentOrder.setTurnkeyProjectPayment(turnkeyProjectPayment);
         paymentOrder.setPaymentDate(LocalDateTime.now());
         paymentOrder.setPaymentOrderStatus(2);
-        int i = paymentOrderDao.updateById(paymentOrder);
-        if (i == 1) {
-            return ReturnJson.success("支付成功！");
+        paymentOrderDao.updateById(paymentOrder);
+        List<PaymentInventory> list = paymentInventoryDao.selectList(
+                new QueryWrapper<PaymentInventory>().eq("payment_order_id", paymentOrderId));
+        for (int i = 0; i < list.size(); i++) {
+            PaymentInventory paymentInventory=list.get(i);
+            paymentInventory.setPaymentStatus(1);
+            paymentInventoryDao.updateById(paymentInventory);
         }
-        return ReturnJson.error("支付失败，请重试！");
+        return ReturnJson.error("支付失败成功");
     }
 
     @Override

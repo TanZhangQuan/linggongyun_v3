@@ -141,37 +141,37 @@
     <select id="selectBy30Day" parameterType="java.lang.String" resultType="decimal">
         select SUM(real_money) 'total_money' from tb_payment_order where
         date_sub(curdate(), INTERVAL 30 DAY) &lt;= date(`payment_date`)
-        and payment_order_status &gt;= 2 and company_id = #{merchantId}
+        and payment_order_status = 6 and company_id = #{merchantId}
     </select>
 
     <!--查询总支付-->
     <select id="selectTotal" parameterType="java.lang.String" resultType="decimal">
         select SUM(real_money) 'total_money' from tb_payment_order where
-        payment_order_status &gt;= 2 and company_id = #{merchantId}
+        payment_order_status = 6 and company_id = #{merchantId}
     </select>
 
     <!--查询今天已支付订单-->
     <select id="selectDay" parameterType="list" resultMap="BaseResultMap">
         select * from tb_payment_order where date(payment_date) = date(now())
-        and payment_order_status &gt;= 2 and company_id = #{merchantId}
+        and payment_order_status = 6 and company_id = #{merchantId}
     </select>
 
     <!--查询本周已支付的订单-->
     <select id="selectWeek" parameterType="list" resultMap="BaseResultMap">
       SELECT * FROM tb_payment_order WHERE YEARWEEK(date_format(payment_date,'%Y-%m-%d')) = YEARWEEK(now())
-      and payment_order_status &gt;= 2 and company_id = #{merchantId}
+      and payment_order_status  = 6 and company_id = #{merchantId}
     </select>
 
     <!--查询本月已支付的订单-->
     <select id="selectMonth" parameterType="list" resultMap="BaseResultMap">
         SELECT * FROM tb_payment_order WHERE DATE_FORMAT( payment_date, '%Y%m' ) = DATE_FORMAT( CURDATE( ) , '%Y%m' )
-        and payment_order_status &gt;= 2 and company_id = #{merchantId}
+        and payment_order_status  = 6 and company_id = #{merchantId}
     </select>
 
     <!--查询今年已支付的订单-->
     <select id="selectYear" parameterType="list" resultMap="BaseResultMap">
          select * from `tb_payment_order` where YEAR(payment_date)=YEAR(NOW())
-         and payment_order_status &gt;= 2 and company_id = #{merchantId}
+         and payment_order_status  = 6 and company_id = #{merchantId}
     </select>
 
     <!--多条件查询-->
@@ -250,7 +250,7 @@
     <!--查询今年已支付的订单-->
     <select id="selectYearpaas" parameterType="list" resultMap="BaseResultMap">
         select * from `tb_payment_order` where YEAR(payment_date)=YEAR(NOW())
-        and payment_order_status &gt;= 2 and company_id in
+        and payment_order_status = 2 or payment_order_status = 6 and company_id in
         <foreach collection="list" index="index" item="merchantIds" open="(" separator="," close=")">
             #{merchantIds}
         </foreach>
@@ -332,7 +332,7 @@
     <select id="selectBy30DayPaasRegulator" parameterType="list" resultType="decimal">
         select SUM(real_money) 'total_money' from tb_payment_order_many where
         date_sub(curdate(), INTERVAL 30 DAY) &lt;= date(`payment_date`)
-        and payment_order_status &gt;= 2
+        and payment_order_status = 3
         and tax_id in
         <foreach collection="taxIds" index="index" item="item" open="(" separator="," close=")">
             #{item}
@@ -342,7 +342,7 @@
     <!--查询总支付-->
     <select id="selectTotalPaasRegulator" parameterType="list" resultType="decimal">
         select SUM(real_money) 'total_money' from tb_payment_order_many where
-        payment_order_status &gt;= 2
+        payment_order_status = 3
         and tax_id in
         <foreach collection="taxIds" index="index" item="item" open="(" separator="," close=")">
             #{item}
@@ -430,6 +430,7 @@
         <result column="composite_tax" property="compositeTax"/>
         <result column="tax_id" property="taxId"/>
         <result column="task_name" property="taskName"/>
+        <result column="reasons_for_rejection" property="reasonsForRejection"/>
     </resultMap>
 
     <resultMap id="InvoiceListQuery" type="com.example.mybatis.vo.InvoiceListVO">
@@ -468,6 +469,7 @@
             po.merchant_tax,
             po.tax_status,
             po.composite_tax,
+            po.reasons_for_rejection,
             ci.company_name,
             ci.bank_name,
             ci.bank_code,
@@ -476,7 +478,7 @@
             t.bank_code AS payee_bank_code
         FROM
             tb_payment_order po
-        LEFT JOIN tb_tax t ON po.tax_id = t.tax_id
+        LEFT JOIN tb_tax t ON po.tax_id = t.id
         LEFT JOIN tb_company_info ci ON po.company_id = ci.id
         WHERE po.id = #{paymentOrderId}
     </select>

@@ -22,7 +22,10 @@ import com.example.mybatis.vo.SellerVO;
 import com.example.mybatis.vo.TaxBriefVO;
 import com.example.mybatis.vo.TaxInBankInfoVO;
 import com.example.mybatis.vo.TaxListVO;
+import com.example.mybatis.vo.TaxTransactionFlowVO;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -72,6 +75,9 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
 
     @Resource
     private MerchantDao merchantDao;
+
+    @Resource
+    private WorkerDao workerDao;
 
 
     @Override
@@ -285,21 +291,33 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
         InvoicePO manyInvoice = crowdSourcingInvoiceDao.selectCrowdInvoiceMoneyPaasTax(taxId);
         homePageVO.setInvoiceManyCount(manyInvoice.getCount());
         homePageVO.setInvoiceManyMoney(manyInvoice.getTotalMoney());
+
+        //商户数
+        Integer count = companyTaxDao.selectCount(new QueryWrapper<CompanyTax>().eq("tax_id", taxId));
+        homePageVO.setMerchantTotal(count);
+        //创客数
+        Integer countWorker = workerDao.queryWorkerCount(taxId, null);
+        homePageVO.setWorkerTotal(countWorker);
+
         //获取10条具体的交易流水
-        ReturnJson returnJson = this.transactionRecord(taxId, 1, 10);
+        ReturnJson returnJson = this.transactionRecord(taxId,null, 1, 10);
         returnJson.setObj(homePageVO);
         return returnJson;
     }
 
     @Override
-    public ReturnJson transactionRecord(String taxId, Integer page, Integer pageSize) {
+    public ReturnJson transactionRecord(String taxId,String merchantId, Integer page, Integer pageSize) {
         List<String> ids = new ArrayList<>();
-        List<PaymentOrder> paymentOrders = paymentOrderDao.selectList(new QueryWrapper<PaymentOrder>().eq("tax_id", taxId));
+        QueryWrapper<PaymentOrder> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(PaymentOrder::getTaxId, taxId).eq(StringUtils.isNotBlank(merchantId), PaymentOrder::getMerchantId, merchantId);
+        List<PaymentOrder> paymentOrders = paymentOrderDao.selectList(queryWrapper);
         for (PaymentOrder paymentOrder : paymentOrders) {
             ids.add(paymentOrder.getId());
         }
 
-        List<PaymentOrderMany> paymentOrderManies = paymentOrderManyDao.selectList(new QueryWrapper<PaymentOrderMany>().eq("tax_id", taxId));
+        QueryWrapper<PaymentOrderMany> queryWrapperMany = new QueryWrapper<>();
+        queryWrapperMany.lambda().eq(PaymentOrderMany::getTaxId, taxId).eq(StringUtils.isNotBlank(merchantId), PaymentOrderMany::getMerchantId, merchantId);
+        List<PaymentOrderMany> paymentOrderManies = paymentOrderManyDao.selectList(queryWrapperMany);
         for (PaymentOrderMany paymentOrderMany : paymentOrderManies) {
             ids.add(paymentOrderMany.getId());
         }
@@ -337,6 +355,13 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
     public ReturnJson getTaxList(Integer packageStatus) {
         List<TaxListVO> taxListVOS = taxDao.getTaxPaasList(packageStatus);
         return ReturnJson.success(taxListVOS);
+    }
+
+    @Override
+    public ReturnJson queryTaxTransactionFlow(String taxId, Integer page, Integer pageSize) {
+        Page<TaxTransactionFlowVO> taxPage = new Page<>(page, pageSize);
+        List<TaxTransactionFlowVO> taxTransactionFlowVOS = taxDao.queryTaxTransactionFlow(taxId,taxPage);
+        return ReturnJson.success(taxTransactionFlowVOS);
     }
 
     @Override

@@ -51,7 +51,7 @@ public class RgeulatorServiceProviderController {
         return null;
     }
 
-    @PostMapping("getPayInfo")
+    @PostMapping("/getPayInfo")
     @ApiOperation(value = "支付订单信息", notes = "支付订单信息")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "payInfoDto", value = "支付订单信息查询", dataType = "PayInfoDTO", required = true)})
     public ReturnJson getPayInfo(@Valid @RequestBody PayInfoDTO payInfoDto) {

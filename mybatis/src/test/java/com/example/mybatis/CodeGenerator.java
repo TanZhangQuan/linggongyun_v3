@@ -18,10 +18,10 @@ public class CodeGenerator {
     private static final String projectPath = System.getProperty("user.dir");
     private static final String outPutDir = projectPath + "/src/main/java";
     // 自定义
-    private static final String author = "hzp";
+    private static final String author = "xjw";
     private static final String packageName = "com.example";
     private static final String moduleName = "merchant";
-    private static final String[] tableName = {"tb_company_unionpay", "tb_tax_unionpay"};
+    private static final String[] tableName = {"tb_applet_banner", "tb_applet_faq", "tb_applet_other_info"};
     private static final String tablePrefix = "tb";
 
     public static void main(String[] args) {
@@ -69,13 +69,13 @@ public class CodeGenerator {
     private static DataSourceConfig getDataSourceConfig() {
         // 数据源配置
         DataSourceConfig dsc = new DataSourceConfig();
-        dsc.setUrl("jdbc:mysql://localhost:3306/linggongyun_v3?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&useSSL=false");
+        dsc.setUrl("jdbc:mysql://rm-uf6w14g8ziqg8se61uo.mysql.rds.aliyuncs.com:3306/linggongyun_v3?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&useSSL=false");
         // dsc.setSchemaName("public");
 //        String driverName = "com.mysql.jdbc.Driver";
         String driverName = "com.mysql.cj.jdbc.Driver";
         dsc.setDriverName(driverName);
         dsc.setUsername("root");
-        dsc.setPassword("123456");
+        dsc.setPassword("Slc_mysql@19");
         return dsc;
     }
 

@@ -61,7 +61,7 @@ public interface PaymentOrderManyDao extends BaseMapper<PaymentOrderMany> {
     YearTradeVO getYearTradeById(String merchantId);
 
     //根据商户id查众包待开票数据
-    IPage<CrowdSourcingInvoiceInfoVO> getListCSIByID(Page page, QueryCrowdSourcingDTO queryCrowdSourcingDto, String userId);
+    IPage<CrowdSourcingInvoiceInfoVO>   getListCSIByID(Page page, QueryCrowdSourcingDTO queryCrowdSourcingDto, String userId);
 
     //根据支付id查询众包支付信息
     PaymentOrderManyVO getPayOrderManyById(String id);

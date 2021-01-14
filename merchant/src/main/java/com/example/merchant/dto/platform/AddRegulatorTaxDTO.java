@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @Data
@@ -20,7 +21,7 @@ public class AddRegulatorTaxDTO implements Serializable {
 
     @ApiModelProperty(value = "监管部门ID", required = true)
     @JsonSerialize(using = ToStringSerializer.class)
-    @NotBlank(message = "监管部门ID不能为空")
+    @NotNull(message = "监管部门ID不能为空")
     private Long regulatorId;
 
     @ApiModelProperty(value = "状态0开启监管，1关闭监管")

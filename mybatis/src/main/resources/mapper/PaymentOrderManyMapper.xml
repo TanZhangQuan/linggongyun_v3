@@ -35,13 +35,13 @@
     <select id="selectBy30Day" parameterType="java.lang.String" resultType="decimal">
         select SUM(real_money) 'total_money' from tb_payment_order_many where
         date_sub(curdate(), INTERVAL 30 DAY) &lt;= date(`payment_date`)
-        and payment_order_status &gt;= 2 and company_id = #{merchantId}
+        and payment_order_status = 3 and company_id = #{merchantId}
     </select>
 
     <!--查询众包总支付-->
     <select id="selectTotal" parameterType="java.lang.String" resultType="decimal">
         select SUM(real_money) 'total_money' from tb_payment_order_many where
-        payment_order_status &gt;= 2 and company_id = #{merchantId}
+        payment_order_status  = 3 and company_id = #{merchantId}
 
     </select>
 
@@ -149,7 +149,7 @@
     <select id="selectBy30Daypaas" parameterType="list" resultType="decimal">
         select SUM(real_money) 'total_money' from tb_payment_order_many where
         date_sub(curdate(), INTERVAL 30 DAY) &lt;= date(`payment_date`)
-        and payment_order_status &gt;= 2 and company_id in
+        and payment_order_status  = 3 and company_id in
         <foreach collection="list" index="index" item="merchantIds" open="(" separator="," close=")">
             #{merchantIds}
         </foreach>
@@ -158,7 +158,7 @@
     <!--查询总支付-->
     <select id="selectTotalpaas" parameterType="list" resultType="decimal">
         select SUM(real_money) 'total_money' from tb_payment_order_many where
-        payment_order_status &gt;= 2 and company_id in
+        payment_order_status = 3 and company_id in
         <foreach collection="list" index="index" item="merchantIds" open="(" separator="," close=")">
             #{merchantIds}
         </foreach>
@@ -169,7 +169,7 @@
     <!--查询今天已支付订单-->
     <select id="selectDaypaas" parameterType="list" resultMap="BaseResultMap">
         select * from tb_payment_order_many where date(payment_date) = date(now())
-        and payment_order_status &gt;= 2 and company_id in
+        and payment_order_status = 3 and company_id in
         <foreach collection="list" index="index" item="merchantIds" open="(" separator="," close=")">
             #{merchantIds}
         </foreach>
@@ -178,7 +178,7 @@
     <!--查询本周已支付的订单-->
     <select id="selectWeekpaas" parameterType="list" resultMap="BaseResultMap">
         SELECT * FROM tb_payment_order_many WHERE YEARWEEK(date_format(payment_date,'%Y-%m-%d')) = YEARWEEK(now())
-        and payment_order_status &gt;= 2 and company_id in
+        and payment_order_status = 3 and company_id in
         <foreach collection="list" index="index" item="merchantIds" open="(" separator="," close=")">
             #{merchantIds}
         </foreach>
@@ -187,7 +187,7 @@
     <!--查询本月已支付的订单-->
     <select id="selectMonthpaas" parameterType="list" resultMap="BaseResultMap">
         SELECT * FROM tb_payment_order_many WHERE DATE_FORMAT( payment_date, '%Y%m' ) = DATE_FORMAT( CURDATE( ) , '%Y%m' )
-        and payment_order_status &gt;= 2 and company_id in
+        and payment_order_status = 3 and company_id in
         <foreach collection="list" index="index" item="merchantIds" open="(" separator="," close=")">
             #{merchantIds}
         </foreach>
@@ -196,7 +196,7 @@
     <!--查询今年已支付的订单-->
     <select id="selectYearpaas" parameterType="list" resultMap="BaseResultMap">
         select * from tb_payment_order_many where YEAR(payment_date)=YEAR(NOW())
-        and payment_order_status &gt;= 2 and company_id in
+        and payment_order_status = 3 and company_id in
         <foreach collection="list" index="index" item="merchantIds" open="(" separator="," close=")">
             #{merchantIds}
         </foreach>
@@ -247,7 +247,7 @@
     <select id="selectBy30DayPaasRegulator" parameterType="list" resultType="decimal">
         select SUM(real_money) 'total_money' from tb_payment_order where
         date_sub(curdate(), INTERVAL 30 DAY) &lt;= date(`payment_date`)
-        and payment_order_status &gt;= 2
+        and payment_order_status = 6
         and tax_id in
         <foreach collection="taxIds" index="index" item="item" open="(" separator="," close=")">
             #{item}
@@ -257,7 +257,7 @@
     <!--查询总支付-->
     <select id="selectTotalPaasRegulator" parameterType="list" resultType="decimal">
         select SUM(real_money) 'total_money' from tb_payment_order where
-        payment_order_status &gt;= 2
+        payment_order_status = 6
         and tax_id in
         <foreach collection="taxIds" index="index" item="item" open="(" separator="," close=")">
             #{item}
@@ -461,11 +461,8 @@
         t.bank_name AS payee_bank_name,
         t.bank_code AS payee_bank_code
         FROM tb_payment_order_many pom
-        LEFT JOIN tb_tax_package tp
-        ON pom.tax_id = tp.tax_id
-        AND tp.package_status = 1
-        LEFT JOIN tb_company_info ci
-        ON pom.company_id = ci.id
+        LEFT JOIN tb_tax t ON pom.tax_id = t.id
+        LEFT JOIN tb_company_info ci ON pom.company_id = ci.id
         WHERE pom.id = #{paymentOrderId}
     </select>
 

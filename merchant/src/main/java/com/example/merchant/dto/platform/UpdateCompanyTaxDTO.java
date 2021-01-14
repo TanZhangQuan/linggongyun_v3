@@ -18,7 +18,6 @@ public class UpdateCompanyTaxDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty(value = "合作ID")
-    @NotBlank(message = "合作ID不能为空")
     private String id;
 
     @ApiModelProperty(value = "服务商ID")

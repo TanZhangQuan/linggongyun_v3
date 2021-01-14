@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mybatis.mapper.AppletBannerDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.example.mybatis.entity.AppletBanner">
+        <id column="id" property="id" />
+        <result column="serial_number" property="serialNumber" />
+        <result column="picture" property="picture" />
+        <result column="create_date" property="createDate" />
+        <result column="update_date" property="updateDate" />
+    </resultMap>
+
+    <resultMap id="appletBannerVo" type="com.example.mybatis.vo.AppletBannerVO">
+        <id column="id" property="id"/>
+        <result column="serial_number" property="serialNumber"/>
+        <result column="picture" property="picture"/>
+        <result column="create_date" property="createDate"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, serial_number, picture, create_date, update_date, bool_deleted
+    </sql>
+
+    <select id="selectAppletBanner" resultMap="appletBannerVo">
+        SELECT
+            id,serial_number,picture,create_date
+        FROM
+            tb_applet_banner
+        ORDER BY serial_number
+    </select>
+
+    <select id="queryAppletBanner" resultType="java.lang.String">
+        SELECT
+            picture
+        FROM
+            tb_applet_banner
+        ORDER BY
+            create_date DESC
+    </select>
+
+
+</mapper>

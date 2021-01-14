@@ -33,10 +33,10 @@
         (SELECT SUM(real_money) FROM tb_payment_order WHERE tax_id=t.id) as payment_order_money,
         (SELECT COUNT(1) FROM tb_payment_order_many WHERE tax_id=t.id) as payment_order_many_num,
         (SELECT SUM(real_money) FROM tb_payment_order_many WHERE tax_id=t.id) as payment_order_many_money,
-        t.tax_status,t.create_date
+        rt.`status` as tax_status,t.create_date
         from tb_regulator_tax rt
         INNER JOIN tb_tax t ON t.id=rt.tax_id
-        where rt.regulator_id=#{regulatorId}
+        where rt.regulator_id=#{regulatorId} and rt.`status`!=1
         <if test="tax.serviceProviderName !=null and tax.serviceProviderName != '' " >
             AND t.tax_name like CONCAR('%',#{tax.serviceProviderName},'%')
         </if>

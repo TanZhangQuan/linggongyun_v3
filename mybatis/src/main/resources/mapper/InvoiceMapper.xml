@@ -109,7 +109,7 @@
 
     <!--查询总包的发票数量和发票金额-->
     <select id="selectInvoiceMoney" parameterType="string" resultMap="InvoiceMoney">
-        select SUM(d.invoice_numbers) 'count', SUM(d.invoice_money) 'total_money' from tb_company_info a RIGHT JOIN tb_payment_order b on a.id = b.company_id
+        select count(d.id) 'count', SUM(d.invoice_money) 'total_money' from tb_company_info a RIGHT JOIN tb_payment_order b on a.id = b.company_id
         RIGHT join
         (select * from tb_application_payment
         GROUP BY invoice_application_id)
@@ -119,7 +119,7 @@
     </select>
 
     <select id="selectInvoiceMoneyPaas" parameterType="string" resultMap="InvoiceMoney">
-        select SUM(d.invoice_numbers) 'count', SUM(d.invoice_money) 'total_money' from tb_company_info a RIGHT JOIN tb_payment_order b on a.id = b.company_id
+        select count(d.id) 'count', SUM(d.invoice_money) 'total_money' from tb_company_info a RIGHT JOIN tb_payment_order b on a.id = b.company_id
         RIGHT join
         (select * from tb_application_payment
         GROUP BY invoice_application_id)
@@ -169,7 +169,7 @@
         LEFT JOIN tb_application_payment AS app ON app.payment_order_id = po.id
         LEFT JOIN tb_invoice_application as invapp ON invapp.id=app.invoice_application_id
         LEFT JOIN tb_invoice as i ON i.application_id=invapp.id
-        WHERE po.payment_order_status = 6 and is_not_invoice = 1
+        WHERE po.payment_order_status = 6 and is_not_invoice is null
         AND po.company_id=#{param3}
         <if test="param2.platformServiceProvider != null and param2.platformServiceProvider != ''">
             AND po.tax_id=#{param2.platformServiceProvider}
