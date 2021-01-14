@@ -150,6 +150,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
         List<PaymentInventory> paymentInventories = addPaymentOrderDto.getPaymentInventories();
         String id = paymentOrder.getId();
         paymentOrder.setMerchantId(merchantId);
+        paymentOrder.setTradeNo(OrderTradeNo.GetRandom() + "PO");
         CompanyInfo companyInfo = companyInfoDao.selectById(merchantId);
         if (companyInfo == null) {
             Merchant merchant = merchantDao.selectById(merchantId);
@@ -174,7 +175,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
             paymentOrder.setMerchantTax(new BigDecimal("100"));
         }
         if (paymentDto.getTaxStatus() == 1) {
-           paymentOrder.setReceviceTax(new BigDecimal("100"));
+            paymentOrder.setReceviceTax(new BigDecimal("100"));
         }
 
         BigDecimal receviceTax = paymentOrder.getReceviceTax().divide(BigDecimal.valueOf(100));
@@ -182,6 +183,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
         BigDecimal compositeTax = new BigDecimal("0");
         BigDecimal countMoney = new BigDecimal("0");
         BigDecimal countWorkerMoney = new BigDecimal("0");
+        BigDecimal countServiceMoney = new BigDecimal("0");
 
         CompanyTax companyTax = companyTaxDao.selectOne(new QueryWrapper<CompanyTax>()
                 .eq("tax_id", paymentOrder.getTaxId())
@@ -210,6 +212,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
                 }
                 countMoney = countMoney.add(paymentInventory.getMerchantPaymentMoney());
                 countWorkerMoney = countWorkerMoney.add(paymentInventory.getRealMoney());
+                countServiceMoney = countServiceMoney.add(paymentInventory.getServiceMoney());
             }
         } else {
             List<CompanyLadderService> companyLadderServices = companyLadderServiceDao.selectList(new QueryWrapper<CompanyLadderService>().eq("company_tax_id", companyTax.getId()).orderByAsc("start_money"));
@@ -235,11 +238,13 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
 
                 countMoney = countMoney.add(paymentInventory.getMerchantPaymentMoney());
                 countWorkerMoney = countWorkerMoney.add(paymentInventory.getRealMoney());
+                countServiceMoney = countServiceMoney.add(paymentInventory.getServiceMoney());
             }
             //算平均税率
             paymentOrder.setCompositeTax(compositeTaxCount.multiply(new BigDecimal(100).divide(new BigDecimal(paymentInventories.size()))));
         }
         paymentOrder.setRealMoney(countMoney);
+        paymentOrder.setServiceMoney(countServiceMoney);
         paymentOrder.setWorkerMoney(countWorkerMoney);
         //生成总包支付订单
         if (paymentOrder.getPaymentOrderStatus() == 5) {
@@ -252,6 +257,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
         for (PaymentInventory paymentInventory : paymentInventories) {
             paymentInventory.setPaymentOrderId(paymentOrder.getId());
             //生成支付明细
+            paymentInventory.setTradeNo(OrderTradeNo.GetRandom() + "PI");
             paymentInventory.setPackageStatus(0);
             paymentInventoryService.saveOrUpdate(paymentInventory);
         }
@@ -664,7 +670,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
                 //修改分包状态为支付成功
                 List<PaymentInventory> list = paymentInventoryDao.selectList(new QueryWrapper<PaymentInventory>().eq("payment_order_id", paymentOrderId));
                 for (int i = 0; i < list.size(); i++) {
-                    PaymentInventory paymentInventory=list.get(i);
+                    PaymentInventory paymentInventory = list.get(i);
                     paymentInventory.setPaymentStatus(1);
                     paymentInventoryDao.updateById(paymentInventory);
                 }

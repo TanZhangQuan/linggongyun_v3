@@ -7,25 +7,8 @@ import java.util.List;
 public class TestDete {
 
     public static void main(String[] args) {
-        List<Integer> list = new ArrayList<>();
-        list.add(1);
-        list.add(2);
-        list.add(3);
-        list.add(4);
-        list.add(5);
 
-        list.forEach(integer -> System.out.println("forEach--------" + integer));
-        list.parallelStream().forEach(integer -> System.out.println("parallelStream--------" + integer));
-        list.stream().forEach(integer -> System.out.println("stream-------" + integer));
-
-        int i=0;
+        System.out.println();
     }
 
-    long f(int n) {
-        if (n == 1) {
-            return 1;
-        }
-        // 相同重复逻辑，缩小问题的规模
-        return n * f(n - 1);
-    }
 }

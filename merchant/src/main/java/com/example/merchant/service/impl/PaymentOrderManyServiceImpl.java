@@ -230,6 +230,7 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
         PaymentOrderMany paymentOrderMany = new PaymentOrderMany();
         PaymentOrderManyDTO paymentOrderManyDto = addPaymentOrderManyDto.getPaymentOrderManyDto();
         BeanUtils.copyProperties(paymentOrderManyDto, paymentOrderMany);
+        paymentOrderMany.setTradeNo(OrderTradeNo.GetRandom()+"PM");
         Tax tax = taxDao.selectById(paymentOrderMany.getTaxId());
         paymentOrderMany.setPlatformServiceProvider(tax.getTaxName());
         Merchant merchant = merchantDao.selectById(merchantId);
@@ -257,6 +258,8 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
         BigDecimal receviceTax = new BigDecimal("0.00");
         BigDecimal compositeTax;
         BigDecimal countMoney = new BigDecimal("0");
+        BigDecimal countServiceMoney = new BigDecimal("0");
+
         Integer taxStatus = paymentOrderMany.getTaxStatus();
         paymentOrderMany.setMerchantTax(merchantTax);
         paymentOrderMany.setReceviceTax(receviceTax);
@@ -284,6 +287,7 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
                     paymentInventory.setServiceMoney(realMoney.multiply(compositeTax));
                 }
                 countMoney = countMoney.add(paymentInventory.getMerchantPaymentMoney());
+                countServiceMoney = countServiceMoney.add(paymentInventory.getServiceMoney());
             }
         } else {
             List<CompanyLadderService> companyLadderServices = companyLadderServiceDao.selectList(new QueryWrapper<CompanyLadderService>().eq("company_tax_id", companyTax.getId()).orderByAsc("start_money"));
@@ -305,15 +309,17 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
                     paymentInventory.setServiceMoney(realMoney.multiply(compositeTax));
                 }
                 countMoney = countMoney.add(paymentInventory.getMerchantPaymentMoney());
+                countServiceMoney = countServiceMoney.add(paymentInventory.getServiceMoney());
             }
         }
+        paymentOrderMany.setServiceMoney(countServiceMoney);
         paymentOrderMany.setRealMoney(countMoney);
         boolean b = this.saveOrUpdate(paymentOrderMany);
         if (!b) {
             throw new CommonException(300, "订单创建失败！");
         }
         for (PaymentInventory paymentInventory : paymentInventories) {
-
+            paymentInventory.setTradeNo(OrderTradeNo.GetRandom()+"PI");
             paymentInventory.setPaymentOrderId(paymentOrderMany.getId());
             paymentInventory.setPackageStatus(1);
         }
