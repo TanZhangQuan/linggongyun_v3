@@ -30,7 +30,7 @@ public class LianLianPayTaxController {
     }
 
     @RequestMapping("/workerNotifyUrl")
-    @ApiOperation(value = "支付创客回调接口", notes = "商户支付回调接口", hidden = true, httpMethod = "POST")
+    @ApiOperation(value = "支付创客回调接口", notes = "商户支付回调接口", hidden = true)
     public Map<String, String> workerNotifyUrl(HttpServletRequest request) {
 
         LianLianPayTaxService.workerNotifyUrl(request);
@@ -42,7 +42,7 @@ public class LianLianPayTaxController {
 
     @LoginRequired
     @PostMapping("/taxPay")
-    @ApiOperation(value = "服务商支付接口", notes = "服务商支付接口", httpMethod = "POST")
+    @ApiOperation(value = "服务商支付接口", notes = "服务商支付接口")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "paymentInventoryIds", value = "支付清单ID字符集，每个ID之间英文逗号隔开", required = true)
     })

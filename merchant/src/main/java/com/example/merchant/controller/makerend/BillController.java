@@ -24,7 +24,7 @@ public class BillController {
 
     @LoginRequired
     @PostMapping("/getTotalMonthBill")
-    @ApiOperation(value = "查询总包月账单", notes = "查询总包月账单", httpMethod = "POST")
+    @ApiOperation(value = "查询总包月账单", notes = "查询总包月账单")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "year", value = "年份（如2020）", paramType = "query", required = true),
             @ApiImplicitParam(name = "month", value = "月份（1-12月）", paramType = "query", required = true)
@@ -35,7 +35,7 @@ public class BillController {
 
     @LoginRequired
     @PostMapping("/getTotalMonthBillInfo")
-    @ApiOperation(value = "查询总包月账单明细", notes = "查询总包月账单明细", httpMethod = "POST")
+    @ApiOperation(value = "查询总包月账单明细", notes = "查询总包月账单明细")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "year", value = "年份（如2020）", paramType = "query", required = true),
             @ApiImplicitParam(name = "month", value = "月份（1-12月）", paramType = "query", required = true)
@@ -46,7 +46,7 @@ public class BillController {
 
     @LoginRequired
     @PostMapping("/getManyMonthBill")
-    @ApiOperation(value = "查询众包月账单", notes = "查询众包月账单", httpMethod = "POST")
+    @ApiOperation(value = "查询众包月账单", notes = "查询众包月账单")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "year", value = "年份（如2020）", paramType = "query", required = true),
             @ApiImplicitParam(name = "month", value = "月份（1-12月）", paramType = "query", required = true)
@@ -57,7 +57,7 @@ public class BillController {
 
     @LoginRequired
     @PostMapping("/getManyMonthBillInfo")
-    @ApiOperation(value = "查询众包月账单明细", notes = "查询众包月账单明细", httpMethod = "POST")
+    @ApiOperation(value = "查询众包月账单明细", notes = "查询众包月账单明细")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "year", value = "年份（如2020）", paramType = "query", required = true),
             @ApiImplicitParam(name = "month", value = "月份（1-12月）", paramType = "query", required = true)
@@ -68,7 +68,7 @@ public class BillController {
 
     @LoginRequired
     @PostMapping("/getTotalYearBillCount")
-    @ApiOperation(value = "查询总包年账单统计", notes = "查询总包年账单统计", httpMethod = "POST")
+    @ApiOperation(value = "查询总包年账单统计", notes = "查询总包年账单统计")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "year", value = "年份（如2020）", paramType = "query", required = true)
     })
@@ -78,7 +78,7 @@ public class BillController {
 
     @LoginRequired
     @PostMapping("/getManyYearBillCount")
-    @ApiOperation(value = "查询众包年账单统计", notes = "查询众包年账单统计", httpMethod = "POST")
+    @ApiOperation(value = "查询众包年账单统计", notes = "查询众包年账单统计")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "year", value = "年份（如2020）", paramType = "query", required = true)
     })
@@ -88,7 +88,7 @@ public class BillController {
 
     @LoginRequired
     @PostMapping("/queryBillInfo")
-    @ApiOperation(value = "查询账单统计详情", notes = "查询账单统计详情", httpMethod = "POST")
+    @ApiOperation(value = "查询账单统计详情", notes = "查询账单统计详情")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "id", value = "ID", required = true),
             @ApiImplicitParam(name = "isNot", value = "0总包1众包，必填", required = true)

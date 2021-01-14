@@ -45,7 +45,7 @@ public class UpdateCompanyTaxDTO implements Serializable {
     @ApiModelProperty(value = "来款银行账号(盛京银行必传)")
     private String inBankNo;
 
-    @ApiModelProperty(value = "总包信息")
+    @ApiModelProperty(value = "修改商户的梯度价")
     @Valid
     private List<UpdateCompanyLadderServiceDTO> updateCompanyLadderServiceDtoList;
 

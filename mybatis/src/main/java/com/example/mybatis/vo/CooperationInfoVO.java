@@ -1,5 +1,6 @@
 package com.example.mybatis.vo;
 
+import com.example.common.enums.UnionpayBankType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -33,6 +34,12 @@ public class CooperationInfoVO implements Serializable {
     @ApiModelProperty(value = "合作合同地址")
     private String contract;
 
+    @ApiModelProperty(value = "银联支付银行")
+    private List<UnionpayBankType> unionpayBankTypeList;
+
+    @ApiModelProperty(value = "来款银行账号(盛京银行必传)")
+    private String inBankNo;
+
     @ApiModelProperty(value = "账户")
     private String payee;
 
@@ -42,6 +49,6 @@ public class CooperationInfoVO implements Serializable {
     @ApiModelProperty(value = "银行名称")
     private String bankName;
 
-    @ApiModelProperty(value = "服务费率")
+    @ApiModelProperty(value = "商户的梯度价")
     private List<CompanyLadderServiceVO> companyLadderServiceVos;
 }

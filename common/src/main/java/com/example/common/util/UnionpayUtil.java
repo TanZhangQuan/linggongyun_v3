@@ -10,6 +10,8 @@ import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -39,7 +41,7 @@ public class UnionpayUtil {
         if (StringUtils.isNotBlank(inBankNo)) {
             //获取银行bin
             JSONObject jsonObject = COM02(merchNo, acctNo, pfmpubkey, prikey, inBankNo);
-            if (jsonObject == null){
+            if (jsonObject == null) {
                 log.error("请求获取银行bin失败");
                 return null;
             }
@@ -116,11 +118,11 @@ public class UnionpayUtil {
      *
      * @throws Exception
      */
-    public static JSONObject AC041(String merchNo, String acctNo, String pfmpubkey, String prikey, String outerTradeNo, String uid, String amount, String destAcctName, String destAcctNo) throws Exception {
+    public static JSONObject AC041(String merchNo, String acctNo, String pfmpubkey, String prikey, String outerTradeNo, String uid, BigDecimal amount, String destAcctName, String destAcctNo) throws Exception {
         Map<String, String> content = Maps.newHashMap();
         content.put("outer_trade_no", outerTradeNo); //合作方业务平台订单号
         content.put("uid", uid);  //外部会员标识
-        content.put("amount", amount);  //提现金额
+        content.put("amount", String.valueOf(amount.setScale(2, RoundingMode.HALF_UP)));  //提现金额
         content.put("fee", "0");   //提现手续费，暂不支持，目前暂时请传入0
         content.put("dest_acct_type", "02");  //目标账户性质，01 对公，02 对私
         content.put("dest_acct_kind", "01");   //目标账户类型 01 银行卡 11 支付宝
@@ -149,12 +151,12 @@ public class UnionpayUtil {
      *
      * @throws Exception
      */
-    public static JSONObject AC051(String merchNo, String acctNo, String pfmpubkey, String prikey, String outerTradeNo, String destUid, String amount) throws Exception {
+    public static JSONObject AC051(String merchNo, String acctNo, String pfmpubkey, String prikey, String outerTradeNo, String destUid, BigDecimal amount) throws Exception {
         Map<String, String> content = Maps.newHashMap();
         content.put("outer_trade_no", outerTradeNo); //合作方业务平台订单号
         content.put("remark", "清分交易");   //摘要信息
         content.put("dest_uid", destUid);  //外部会员标识
-        content.put("amount", amount);  //提现金额
+        content.put("amount", String.valueOf(amount.setScale(2, RoundingMode.HALF_UP)));  //提现金额
         content.put("fee", "0");   //提现手续费，暂不支持，目前暂时请传入0
         //银联请求
         return unionpay(merchNo, UnionpayMethod.AC051, acctNo, content, pfmpubkey, prikey);
@@ -165,13 +167,13 @@ public class UnionpayUtil {
      *
      * @throws Exception
      */
-    public static JSONObject AC054(String merchNo, String acctNo, String pfmpubkey, String prikey, String outerTradeNo, String uid, String destUid, String amount) throws Exception {
+    public static JSONObject AC054(String merchNo, String acctNo, String pfmpubkey, String prikey, String outerTradeNo, String uid, String destUid, BigDecimal amount) throws Exception {
         Map<String, String> content = Maps.newHashMap();
         content.put("outer_trade_no", outerTradeNo); //合作方业务平台订单号
         content.put("remark", "会员间交易");  //摘要信息
         content.put("uid", uid);  //转出会员标识
         content.put("dest_uid", destUid);   //转入会员标识
-        content.put("amount", amount);  //交易金额
+        content.put("amount", String.valueOf(amount.setScale(2, RoundingMode.HALF_UP)));  //交易金额
         content.put("fee", "0");   //交易手续费，暂不支持，目前暂时请传入0
         //银联请求
         return unionpay(merchNo, UnionpayMethod.AC054, acctNo, content, pfmpubkey, prikey);
@@ -221,13 +223,24 @@ public class UnionpayUtil {
         params.put("version", "1.0");
         params.put("acct_no", acctNo);//平台账户账号
         //加密业务参数
-        String encrypt = AlipaySignature.rsaEncrypt(JSON.toJSONString(content), pfmpubkey, "utf-8");
+        String encrypt;
+        JSONObject jsonObject;
+        try {
+             encrypt = AlipaySignature.rsaEncrypt(JSON.toJSONString(content), pfmpubkey, "utf-8");
+        } catch (Exception e) {
+            log.error("加密业务参数异常", e);
+            jsonObject = new JSONObject();
+            jsonObject.put("success", false);
+            jsonObject.put("err_msg", "平台公钥不正确");
+            return jsonObject;
+        }
+
         params.put("content", encrypt);
         params.put("sign", createSign(prikey, params));
         log.info("请求参数：{}", JSON.toJSONString(params));
 
         //请求银联接口
-        JSONObject jsonObject = JSON.parseObject(HttpUtil.post(UnionpayConstant.GATEWAYURL, params));
+        jsonObject = JSON.parseObject(HttpUtil.post(UnionpayConstant.GATEWAYURL, params));
         log.info("请求结果：{}", jsonObject);
 
         return jsonObject;
@@ -262,9 +275,9 @@ public class UnionpayUtil {
      * @param publicKey
      * @return
      */
-    public static boolean checkSign(Map<String, String> map, String publicKey) {
+    public static boolean checkSign(Map<String, String> map, String publicKey, String charset, String signType) {
         try {
-            return AlipaySignature.rsaCheckV1(map, publicKey, "GBK", "RSA");
+            return AlipaySignature.rsaCheckV1(map, publicKey, charset, signType);
         } catch (AlipayApiException e) {
             log.error(e.toString());
         }

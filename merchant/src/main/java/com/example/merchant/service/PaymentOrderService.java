@@ -5,6 +5,7 @@ import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.AssociatedTasksDTO;
 import com.example.merchant.dto.merchant.AddPaymentOrderDTO;
 import com.example.merchant.dto.merchant.PaymentOrderMerchantDTO;
+import com.example.merchant.dto.merchant.PaymentOrderPayDTO;
 import com.example.merchant.dto.platform.PaymentOrderDTO;
 import com.example.merchant.exception.CommonException;
 import com.example.mybatis.entity.PaymentOrder;
@@ -45,13 +46,12 @@ public interface PaymentOrderService extends IService<PaymentOrder> {
     ReturnJson saveOrUpdataPaymentOrder(AddPaymentOrderDTO addPaymentOrderDto, String merchantId) throws CommonException;
 
     /**
-     * 线下支付
+     * 商户总包+分包支付
      *
-     * @param paymentOrderId
-     * @param turnkeyProjectPayment
+     * @param paymentOrderPayDTO
      * @return
      */
-    ReturnJson offlinePayment(String paymentOrderId, String turnkeyProjectPayment);
+    ReturnJson paymentOrderPay(PaymentOrderPayDTO paymentOrderPayDTO);
 
     /**
      * 总包支付信息
@@ -110,21 +110,15 @@ public interface PaymentOrderService extends IService<PaymentOrder> {
     ReturnJson getPaymentOrderPaas(PaymentOrderDTO paymentOrderDto, String managersId) throws CommonException;
 
     /**
-     * 线下支付
+     * 总包+分包审核
      *
      * @param paymentOrderId
-     * @param turnkeyProjectPayment
+     * @param boolPass
+     * @param reasonsForRejection
      * @return
+     * @throws Exception
      */
-    ReturnJson offlinePaymentPaas(String paymentOrderId, String turnkeyProjectPayment);
-
-    /**
-     * 确认支付
-     *
-     * @param paymentOrderId
-     * @return
-     */
-    ReturnJson confirmReceiptPaas(String paymentOrderId);
+    ReturnJson paymentOrderAudit(String paymentOrderId, Boolean boolPass, String reasonsForRejection) throws Exception;
 
     /**
      * 查询商户
@@ -135,13 +129,13 @@ public interface PaymentOrderService extends IService<PaymentOrder> {
     ReturnJson findMerchantPaas(String managersId);
 
     /**
-     * 平台分包支付
+     * 分包支付
      *
      * @param paymentOrderId
      * @param subpackagePayment
      * @return
      */
-    ReturnJson subpackagePayPaas(String paymentOrderId, String subpackagePayment);
+    ReturnJson subpackagePay(String paymentOrderId, String subpackagePayment) throws Exception;
 
     /**
      * 获取今天的支付总额
@@ -187,15 +181,6 @@ public interface PaymentOrderService extends IService<PaymentOrder> {
     ReturnJson associatedTasks(String merchantId, AssociatedTasksDTO associatedTasksDTO);
 
     /**
-     * 驳回支付信息
-     *
-     * @param paymentOrderId
-     * @param reasonsForRejection
-     * @return
-     */
-    ReturnJson reject(String paymentOrderId,String reasonsForRejection);
-
-    /**
      * 获取梯度价
      *
      * @param merchantId
@@ -203,7 +188,7 @@ public interface PaymentOrderService extends IService<PaymentOrder> {
      * @param packageStatus
      * @return
      */
-    ReturnJson gradientPrice(String merchantId,String taxId,Integer packageStatus);
+    ReturnJson gradientPrice(String merchantId, String taxId, Integer packageStatus);
 
     /**
      * 获取可关联的任务
@@ -213,4 +198,13 @@ public interface PaymentOrderService extends IService<PaymentOrder> {
      * @return
      */
     ReturnJson associatedTask(String merchantId, AssociatedTasksDTO associatedTasksDTO);
+
+    /**
+     * 根据订单号查询总包+分包
+     *
+     * @param tradeNo
+     * @return
+     */
+    PaymentOrder queryPaymentOrderByTradeNo(String tradeNo);
+
 }

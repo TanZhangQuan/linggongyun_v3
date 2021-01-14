@@ -1322,8 +1322,9 @@ SELECT
             #{merchantIds}
         </foreach>
     </select>
+
     <select id="selectYearpaa" resultMap="yearTradeVO">
-SELECT IFNULL(SUM(IF(MONTH(payment_date) = 1, real_money, 0)), 0) AS jan_income, IFNULL(SUM(IF(MONTH(payment_date) = 2, real_money, 0)), 0) AS feb_income,
+        SELECT IFNULL(SUM(IF(MONTH(payment_date) = 1, real_money, 0)), 0) AS jan_income, IFNULL(SUM(IF(MONTH(payment_date) = 2, real_money, 0)), 0) AS feb_income,
         IFNULL(SUM(IF(MONTH(payment_date) = 3, real_money, 0)), 0) AS mar_income, IFNULL(SUM(IF(MONTH(payment_date) = 4, real_money, 0)), 0) AS apr_income,
         IFNULL(SUM(IF(MONTH(payment_date) = 5, real_money, 0)), 0) AS may_income, IFNULL(SUM(IF(MONTH(payment_date) = 6, real_money, 0)), 0) AS jun_income,
         IFNULL(SUM(IF(MONTH(payment_date) = 7, real_money, 0)), 0) AS jul_income, IFNULL(SUM(IF(MONTH(payment_date) = 8, real_money, 0)), 0) AS aug_income,
@@ -1334,4 +1335,5 @@ SELECT IFNULL(SUM(IF(MONTH(payment_date) = 1, real_money, 0)), 0) AS jan_income,
             #{merchantIds}
         </foreach>
     </select>
+
 </mapper>

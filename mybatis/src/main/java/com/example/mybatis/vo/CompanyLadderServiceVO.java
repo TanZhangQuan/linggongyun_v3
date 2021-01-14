@@ -7,7 +7,7 @@ import lombok.Data;
 import java.io.Serializable;
 
 @Data
-@ApiModel(description = "XXXXX")
+@ApiModel(description = "商户的梯度价")
 public class CompanyLadderServiceVO implements Serializable {
     private static final long serialVersionUID = 1L;
 

@@ -26,14 +26,14 @@ public class RegulatorMerchantController {
     private RegulatorService regulatorService;
 
     @PostMapping("/getCountRegulatorMerchant")
-    @ApiOperation(value = "统计所监管的商户的流水", notes = "统计所监管的商户的流水", httpMethod = "POST")
+    @ApiOperation(value = "统计所监管的商户的流水", notes = "统计所监管的商户的流水")
     @LoginRequired
     public ReturnJson getCountRegulatorMerchant(@NotBlank(message = "管理部门ID不能为空！") @ApiParam(hidden = true) @RequestAttribute(value = "userId", required = false) String regulatorId) {
         return regulatorService.getCountRegulatorMerchant(regulatorId);
     }
 
     @PostMapping("/getRegulatorMerchant")
-    @ApiOperation(value = "按条件查询所监管的商户", notes = "按条件查询所监管的商户", httpMethod = "POST")
+    @ApiOperation(value = "按条件查询所监管的商户", notes = "按条件查询所监管的商户")
     @LoginRequired
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "regulatorMerchantDto", value = "查询所监管的商户条件", required = true, dataType = "RegulatorMerchantDTO")
@@ -43,7 +43,7 @@ public class RegulatorMerchantController {
     }
 
     @PostMapping("/exportRegulatorMerchant")
-    @ApiOperation(value = "导出所监管的商户", notes = "导出所监管的商户", httpMethod = "POST")
+    @ApiOperation(value = "导出所监管的商户", notes = "导出所监管的商户")
     @LoginRequired
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "companyIds", value = "商户编号字符集，每个商户编号之间用英文逗号隔开", required = true)})
     public ReturnJson exportRegulatorMerchant(@NotBlank(message = "导出的商户不能为空！") @RequestParam(required = false) String companyIds, @ApiParam(hidden = true) @RequestAttribute(value = "userId", required = false) String regulatorId, HttpServletResponse response) throws CommonException {
@@ -55,7 +55,7 @@ public class RegulatorMerchantController {
     }
 
     @PostMapping("/getRegulatorMerchantParticulars")
-    @ApiOperation(value = "查询所监管的公司详情", notes = "查询所监管的公司详情", httpMethod = "POST")
+    @ApiOperation(value = "查询所监管的公司详情", notes = "查询所监管的公司详情")
     @LoginRequired
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "companyId", value = "公司ID", required = true)})
     public ReturnJson getRegulatorMerchantParticulars(@NotBlank(message = "公司ID不能为空！") @RequestParam(required = false) String companyId, @ApiParam(hidden = true) @RequestAttribute(value = "userId", required = false) String regulatorId) {
@@ -63,7 +63,7 @@ public class RegulatorMerchantController {
     }
 
     @PostMapping("/getRegulatorMerchantPaymentOrder")
-    @ApiOperation(value = "查询所监管商户的支付订单", notes = "查询所监管商户的支付订单", httpMethod = "POST")
+    @ApiOperation(value = "查询所监管商户的支付订单", notes = "查询所监管商户的支付订单")
     @LoginRequired
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "regulatorMerchantPaymentOrderDto", value = "查询所监管商户的支付订单参数", required = true, dataType = "RegulatorMerchantPaymentOrderDTO")
@@ -73,7 +73,7 @@ public class RegulatorMerchantController {
     }
 
     @PostMapping("/exportRegulatorMerchantPaymentOrder")
-    @ApiOperation(value = "导出所监管商户的支付订单", notes = "导出所监管商户的支付订单", httpMethod = "POST")
+    @ApiOperation(value = "导出所监管商户的支付订单", notes = "导出所监管商户的支付订单")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "paymentOrderIds", value = "支付订单ID字符集，每个支付订单ID之间用英文逗号隔开", required = true)
     })
@@ -82,7 +82,7 @@ public class RegulatorMerchantController {
     }
 
     @PostMapping("/getPaymentOrderInfo")
-    @ApiOperation(value = "查询支付订单详情", notes = "查询支付订单详情", httpMethod = "POST")
+    @ApiOperation(value = "查询支付订单详情", notes = "查询支付订单详情")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "paymentId", value = "支付订单ID", required = true),
             @ApiImplicitParam(name = "packageStatus", value = "合作类型", required = true)
@@ -92,7 +92,7 @@ public class RegulatorMerchantController {
     }
 
     @PostMapping("/getPaymentInventory")
-    @ApiOperation(value = "查询支付订单的支付明细", notes = "查询支付订单的支付明细", httpMethod = "POST")
+    @ApiOperation(value = "查询支付订单的支付明细", notes = "查询支付订单的支付明细")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "paymentOrderId", value = "支付订单ID", required = true),
             @ApiImplicitParam(name = "pageNo", value = "当前页数", required = true),

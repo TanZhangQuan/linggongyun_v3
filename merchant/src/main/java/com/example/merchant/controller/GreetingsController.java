@@ -18,7 +18,7 @@ public class GreetingsController {
     private GreetingsService greetingsService;
 
     @GetMapping("/getGreetings")
-    @ApiOperation(value = "获取问候语", notes = "获取问候语", httpMethod = "GET")
+    @ApiOperation(value = "获取问候语", notes = "获取问候语")
     public ReturnJson getTotalPayInventory() {
         return greetingsService.getGreetings();
     }

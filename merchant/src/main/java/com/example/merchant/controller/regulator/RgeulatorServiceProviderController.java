@@ -27,21 +27,21 @@ public class RgeulatorServiceProviderController {
 
     @PostMapping("getListServiceProvider")
     @LoginRequired
-    @ApiOperation(value = "查询服务商列表", notes = "查询服务商列表", httpMethod = "POST")
+    @ApiOperation(value = "查询服务商列表", notes = "查询服务商列表")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "regulatorTaxDto", value = "监管服务商查询", dataType = "RegulatorTaxDTO", required = true)})
     public ReturnJson getListServiceProvider(@Valid @RequestBody RegulatorTaxDTO regulatorTaxDto, @ApiParam(hidden = true) @RequestAttribute(value = "userId", required = false) String regulatorId) {
         return regulatorTaxService.listTax(regulatorTaxDto, regulatorId);
     }
 
     @PostMapping("getServiceProvider")
-    @ApiOperation(value = "查询服务商信息", notes = "查询服务商信息", httpMethod = "POST")
+    @ApiOperation(value = "查询服务商信息", notes = "查询服务商信息")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "taxId", value = "查询服务商信息", required = true)})
     public ReturnJson getListServiceProvider(@NotBlank(message = "taxId不能为空") @RequestParam(required = false) String taxId) {
         return regulatorTaxService.getTax(taxId);
     }
 
     @PostMapping("/exportRegulatorTax")
-    @ApiOperation(value = "导出所监管的服务商", notes = "导出所监管的服务商", httpMethod = "POST")
+    @ApiOperation(value = "导出所监管的服务商", notes = "导出所监管的服务商")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "taxIds", value = "服务商ID字符串，每个服务商ID之间用英文逗号隔开", required = true)})
     public ReturnJson exportRegulatorTax(@NotBlank(message = "服务商Id不能为空！") @RequestParam String taxIds,  HttpServletResponse response) throws CommonException {
         ReturnJson returnJson = regulatorTaxService.batchExportTax(taxIds, response);
@@ -52,7 +52,7 @@ public class RgeulatorServiceProviderController {
     }
 
     @PostMapping("/getPayInfo")
-    @ApiOperation(value = "支付订单信息", notes = "支付订单信息", httpMethod = "POST")
+    @ApiOperation(value = "支付订单信息", notes = "支付订单信息")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "payInfoDto", value = "支付订单信息查询", dataType = "PayInfoDTO", required = true)})
     public ReturnJson getPayInfo(@Valid @RequestBody PayInfoDTO payInfoDto) {
         return regulatorTaxService.getPayInfo(payInfoDto);
@@ -60,7 +60,7 @@ public class RgeulatorServiceProviderController {
 
 
     @PostMapping("/exportRegulatorPayInfo")
-    @ApiOperation(value = "导出所监管的服务商下的支付订单信息", notes = "导出所监管的服务商下的支付订单信息", httpMethod = "POST")
+    @ApiOperation(value = "导出所监管的服务商下的支付订单信息", notes = "导出所监管的服务商下的支付订单信息")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "paymentOrderIds", value = "支付订单ID字符串，每个支付订单ID之间用英文逗号隔开", required = true)})
     public ReturnJson exportRegulatorPayInfo(@NotBlank(message = "支付订单Id不能为空！") @RequestParam String paymentOrderIds,  HttpServletResponse response) throws CommonException {
         ReturnJson returnJson = regulatorTaxService.batchExportPayInfo(paymentOrderIds, response);
@@ -71,7 +71,7 @@ public class RgeulatorServiceProviderController {
     }
 
     @PostMapping("/getPaymentInventory")
-    @ApiOperation(value = "查询支付订单的支付明细", notes = "查询支付订单的支付明细", httpMethod = "POST")
+    @ApiOperation(value = "查询支付订单的支付明细", notes = "查询支付订单的支付明细")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "paymentOrderId", value = "支付订单ID", required = true),
             @ApiImplicitParam(name = "pageNo", value = "当前页数"),
             @ApiImplicitParam(name = "pageSize", value = "每页显示的条数")})
@@ -81,13 +81,13 @@ public class RgeulatorServiceProviderController {
 
     @PostMapping("/homeFourData")
     @LoginRequired
-    @ApiOperation(value = "监管服务商流水信息", notes = "监管服务商流水信息", httpMethod = "POST")
+    @ApiOperation(value = "监管服务商流水信息", notes = "监管服务商流水信息")
     public ReturnJson getHomeFourData(@ApiParam(hidden = true) @RequestAttribute(value = "userId", required = false) String regulatorId) {
         return regulatorTaxService.homeFourData(regulatorId);
     }
 
     @PostMapping("/getPaymentOrderInfo")
-    @ApiOperation(value = "查询支付订单的信息", notes = "查询支付订单的信息", httpMethod = "POST")
+    @ApiOperation(value = "查询支付订单的信息", notes = "查询支付订单的信息")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "paymentOrderId", value = "支付订单ID", required = true),
             @ApiImplicitParam(name = "type", value = "支付订单类型", required = true)})
     public ReturnJson getPaymentOrderInfo(@NotBlank(message = "支付订单ID不能为空！") @RequestParam String paymentOrderId,@NotNull(message = "支付订单类型不能为空！") @RequestParam Integer type) {

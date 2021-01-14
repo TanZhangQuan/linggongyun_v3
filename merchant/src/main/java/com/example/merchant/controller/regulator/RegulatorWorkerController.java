@@ -28,7 +28,7 @@ public class RegulatorWorkerController {
 
     @PostMapping("/getRegulatorWorker")
     @LoginRequired
-    @ApiOperation(value = "按条件查询所监管的创客", notes = "按条件查询所监管的创客", httpMethod = "POST")
+    @ApiOperation(value = "按条件查询所监管的创客", notes = "按条件查询所监管的创客")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "regulatorWorkerDto", value = "监管部门的信息", required = true, dataType = "RegulatorWorkerDTO")})
     public ReturnJson getRegulatorWorker(@Valid @RequestBody RegulatorWorkerDTO regulatorWorkerDto, @ApiParam(hidden = true) @RequestAttribute(value = "userId", required = false) String regulatorId) {
         return regulatorService.getRegulatorWorker(regulatorWorkerDto, regulatorId);
@@ -36,7 +36,7 @@ public class RegulatorWorkerController {
 
     @PostMapping("/exportRegulatorWorker")
     @LoginRequired
-    @ApiOperation(value = "导出所监管的创客", notes = "导出所监管的创客", httpMethod = "POST")
+    @ApiOperation(value = "导出所监管的创客", notes = "导出所监管的创客")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "workerIds", value = "创客ID字符串，每个创客ID之间用英文逗号隔开", required = true)})
     public ReturnJson exportRegulatorWorker(@NotBlank(message = "创客ID不能为空！") @RequestParam(required = false) String workerIds, @ApiParam(hidden = true) @RequestAttribute(value = "userId", required = false) String regulatorId, HttpServletResponse response) throws CommonException {
         ReturnJson returnJson = regulatorService.exportRegulatorWorker(workerIds, regulatorId, response);
@@ -48,14 +48,14 @@ public class RegulatorWorkerController {
 
     @PostMapping("/countRegulatorWorker")
     @LoginRequired
-    @ApiOperation(value = "获取所监管的创客的流水统计", notes = "获取所监管的创客的流水统计", httpMethod = "POST")
+    @ApiOperation(value = "获取所监管的创客的流水统计", notes = "获取所监管的创客的流水统计")
     public ReturnJson countRegulatorWorker(@ApiParam(hidden = true) @RequestAttribute(value = "userId", required = false) String regulatorId) {
         return regulatorService.countRegulatorWorker(regulatorId);
     }
 
     @PostMapping("/countRegulatorWorkerInfo")
     @LoginRequired
-    @ApiOperation(value = "获取所监管的创客的详情", notes = "获取所监管的创客的流水统计", httpMethod = "POST")
+    @ApiOperation(value = "获取所监管的创客的详情", notes = "获取所监管的创客的流水统计")
     @ApiImplicitParams(value = { @ApiImplicitParam(name = "workerId", value = "创客ID", required = true)})
     public ReturnJson countRegulatorWorkerInfo(@ApiParam(hidden = true) @RequestAttribute(value = "userId", required = false) String regulatorId, @NotBlank(message = "创客ID不能为空！") @RequestParam(required = false) String workerId) {
         return regulatorService.countRegulatorWorkerInfo(regulatorId, workerId);
@@ -63,14 +63,14 @@ public class RegulatorWorkerController {
 
     @PostMapping("/getRegulatorWorkerPaymentInfo")
     @LoginRequired
-    @ApiOperation(value = "查询所监管创客的支付明细", notes = "查询所监管创客的支付明细", httpMethod = "POST")
+    @ApiOperation(value = "查询所监管创客的支付明细", notes = "查询所监管创客的支付明细")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "regulatorWorkerPaymentDto", value = "监管部门查询所监管创客的支付明细查询参数", dataType = "RegulatorWorkerPaymentDTO", required = true)})
     public ReturnJson getRegulatorWorkerPaymentInfo(@Valid @RequestBody RegulatorWorkerPaymentDTO regulatorWorkerPaymentDto, @ApiParam(hidden = true) @RequestAttribute(value = "userId", required = false) String regulatorId) {
         return regulatorService.getRegulatorWorkerPaymentInfo(regulatorWorkerPaymentDto,regulatorId);
     }
 
     @PostMapping("/exportRegulatorWorkerPaymentInfo")
-    @ApiOperation(value = "导出所监管的创客支付明细", notes = "导出所监管的创客支付明细", httpMethod = "POST")
+    @ApiOperation(value = "导出所监管的创客支付明细", notes = "导出所监管的创客支付明细")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "workerId", value = "创客ID", required = true),
             @ApiImplicitParam(name = "paymentIds", value = "支付订单ID字符集,每个支付订单ID之间用英文逗号隔开", required = true)})
     public ReturnJson exportRegulatorWorkerPaymentInfo(@NotBlank(message = "创客ID不能为空！") @RequestParam(required = false) String workerId, @NotBlank(message = "支付订单ID字符集！") @RequestParam(required = false) String paymentIds, HttpServletResponse response) throws CommonException {
@@ -82,7 +82,7 @@ public class RegulatorWorkerController {
     }
 
     @PostMapping("/getPaymentOrderInfo")
-    @ApiOperation(value = "查询支付订单详情", notes = "查询支付订单详情", httpMethod = "POST")
+    @ApiOperation(value = "查询支付订单详情", notes = "查询支付订单详情")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "workerId", value = "创客ID", required = true),
             @ApiImplicitParam(name = "paymentId", value = "支付订单ID", required = true),
             @ApiImplicitParam(name = "packageStatus", value = "合作类型", required = true)})
@@ -91,7 +91,7 @@ public class RegulatorWorkerController {
     }
 
     @PostMapping("/getPaymentInventory")
-    @ApiOperation(value = "查询支付订单的支付明细", notes = "查询支付订单的支付明细", httpMethod = "POST")
+    @ApiOperation(value = "查询支付订单的支付明细", notes = "查询支付订单的支付明细")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "paymentOrderId", value = "支付订单ID", required = true),
             @ApiImplicitParam(name = "pageNo", value = "当前页数", required = true),
             @ApiImplicitParam(name = "pageSize", value = "每页显示的条数", required = true)})

@@ -4,10 +4,15 @@ import com.example.common.mybank.entity.Enterprise;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.MyBankPayService;
-import com.example.merchant.service.MyBankService;
-import io.swagger.annotations.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotBlank;
@@ -24,7 +29,7 @@ public class MyBankController {
 
     @LoginRequired
     @RequestMapping("/paymentOrderByPayId")
-    @ApiOperation(value = "商户总包支付", notes = "商户总包支付", httpMethod = "POST")
+    @ApiOperation(value = "商户总包支付", notes = "商户总包支付")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "paymentOrderId", value = "支付订单ID", required = true)
     })
@@ -35,7 +40,7 @@ public class MyBankController {
 
     @LoginRequired
     @RequestMapping("/paymentOrderManyByPayId")
-    @ApiOperation(value = "商户众包支付", notes = "商户众包支付", httpMethod = "POST")
+    @ApiOperation(value = "商户众包支付", notes = "商户众包支付")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "paymentOrderId", value = "支付订单ID", required = true)
     })
@@ -44,7 +49,7 @@ public class MyBankController {
     }
 
     @RequestMapping("/merchantNotifyUrl")
-    @ApiOperation(value = "商户总包支付回调接口", notes = "商户总包支付回调接口", hidden = true, httpMethod = "POST")
+    @ApiOperation(value = "商户总包支付回调接口", notes = "商户总包支付回调接口", hidden = true)
     public Map<String, String> merchantNotifyUrl(HttpServletRequest request) {
         myBankPayService.myBankPayNotifyUrl(request);
         Map<String, String> map = new HashMap<>();
@@ -54,7 +59,7 @@ public class MyBankController {
     }
 
     @RequestMapping("/merchantManyNotifyUrl")
-    @ApiOperation(value = "商户众包支付回调接口", notes = "商户众包支付回调接口", hidden = true, httpMethod = "POST")
+    @ApiOperation(value = "商户众包支付回调接口", notes = "商户众包支付回调接口", hidden = true)
     public Map<String, String> merchantManyNotifyUrl(HttpServletRequest request) {
         myBankPayService.myBankPayManyNotifyUrl(request);
         Map<String, String> map = new HashMap<>();
@@ -65,7 +70,7 @@ public class MyBankController {
 
     @LoginRequired
     @RequestMapping("/enterpriseRegister")
-    @ApiOperation(value = "商户注册企业会员信息", notes = "商户注册企业会员信息", httpMethod = "POST")
+    @ApiOperation(value = "商户注册企业会员信息", notes = "商户注册企业会员信息")
     public ReturnJson enterpriseRegister(Enterprise enterprise, @RequestAttribute("userId") String userId) throws Exception {
         return myBankPayService.enterpriseRegister(enterprise, userId);
     }
@@ -73,7 +78,7 @@ public class MyBankController {
 
     @LoginRequired
     @RequestMapping("/enterpriseInfoModify")
-    @ApiOperation(value = "商户修改企业会员信息", notes = "商户修改企业会员信息", httpMethod = "POST")
+    @ApiOperation(value = "商户修改企业会员信息", notes = "商户修改企业会员信息")
     public ReturnJson enterpriseInfoModify(Enterprise enterprise, @RequestAttribute("userId") String userId) throws Exception {
         return myBankPayService.enterpriseInfoModify(enterprise, userId);
     }

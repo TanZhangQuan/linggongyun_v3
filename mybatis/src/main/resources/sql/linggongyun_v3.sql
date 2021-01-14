@@ -16,12 +16,12 @@ Date: 2021-01-07 17:18:10
 SET FOREIGN_KEY_CHECKS=0;
 
 -- ----------------------------
--- Table structure for `tb_merchant_unionpay`
+-- Table structure for `tb_company_unionpay`
 -- ----------------------------
-DROP TABLE IF EXISTS `tb_merchant_unionpay`;
-CREATE TABLE `tb_merchant_unionpay` (
+DROP TABLE IF EXISTS `tb_company_unionpay`;
+CREATE TABLE `tb_company_unionpay` (
   `id` varchar(50) NOT NULL COMMENT '主键',
-  `merchant_id` varchar(50) NOT NULL COMMENT '商户ID',
+  `company_id` varchar(50) NOT NULL COMMENT '商户ID',
   `tax_unionpay_id` varchar(50) NOT NULL COMMENT '服务商银联ID',
   `uid` varchar(50) NOT NULL COMMENT '会员标识',
   `sub_account_code` varchar(50) NOT NULL COMMENT '子账户账号',
@@ -35,32 +35,7 @@ CREATE TABLE `tb_merchant_unionpay` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='商户银联信息表';
 
 -- ----------------------------
--- Records of tb_merchant_unionpay
--- ----------------------------
-
--- ----------------------------
--- Table structure for `tb_trade_record`
--- ----------------------------
-DROP TABLE IF EXISTS `tb_trade_record`;
-CREATE TABLE `tb_trade_record` (
-  `id` varchar(50) NOT NULL COMMENT '主键',
-  `payer_object` varchar(50) NOT NULL COMMENT '支付方身份',
-  `payer_id` varchar(50) NOT NULL COMMENT '支付方ID',
-  `payee_object` varchar(50) DEFAULT NULL COMMENT '收款方身份',
-  `payee_id` varchar(50) DEFAULT NULL COMMENT '收款方ID',
-  `trade_method` varchar(50) NOT NULL COMMENT '支付方式',
-  `trade_type` varchar(50) NOT NULL COMMENT '交易类型',
-  `amount` decimal(12,2) NOT NULL COMMENT '交易金额',
-  `outer_trade_no` varchar(50) NOT NULL COMMENT '订单流水号',
-  `trade_status` varchar(50) NOT NULL COMMENT '交易状态',
-  `create_date` datetime DEFAULT NULL COMMENT '创建时间',
-  `update_date` datetime DEFAULT NULL COMMENT '修改时间',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `UK_icr1qhlwx3lsd0terqn7w65k1` (`outer_trade_no`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='商户银联信息表';
-
--- ----------------------------
--- Records of tb_trade_record
+-- Records of tb_company_unionpay
 -- ----------------------------
 
 -- ----------------------------
@@ -77,7 +52,7 @@ CREATE TABLE `tb_tax_unionpay` (
   `acctno` varchar(50) NOT NULL COMMENT '平台帐户账号',
   `clear_no` varchar(50) NOT NULL COMMENT '清分子账户',
   `service_charge_no` varchar(50) NOT NULL COMMENT '手续费子账户',
-  `bool_enable` bit(50) NOT NULL COMMENT '是否启用',
+  `bool_enable` bit(1) NOT NULL COMMENT '是否启用',
   `create_date` datetime DEFAULT NULL COMMENT '创建时间',
   `update_date` datetime DEFAULT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`),
@@ -820,9 +795,12 @@ CREATE TABLE `tb_payment_inventory` (
   `attestation` int(11) DEFAULT '0' COMMENT '实名认证状态(0未认证，1已认证)',
   `payment_status` int(6) NOT NULL DEFAULT '0' COMMENT '支付状态：-1支付失败，0未支付，1支付成功',
   `package_status` int(1) DEFAULT '0' COMMENT '0总包，1众包',
+  `trade_no` varchar(50) NOT NULL COMMENT '订单号',
+  `trade_fail_reason` varchar(100) NOT NULL DEFAULT '' COMMENT '交易失败原因',
   `create_date` datetime DEFAULT NULL COMMENT '创建时间',
   `update_date` datetime DEFAULT NULL COMMENT '修改时间',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `UK_icr1qhlwx3lsd0terqn7w65k1` (`trade_no`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='支付清单明细';
 
 -- ----------------------------
@@ -837,8 +815,9 @@ CREATE TABLE `tb_payment_order` (
   `id` varchar(50) NOT NULL COMMENT '主键',
   `company_id` varchar(36) NOT NULL DEFAULT '""' COMMENT '商户的公司ID',
   `company_s_name` varchar(36) DEFAULT NULL COMMENT '商户的公司简称',
-  `real_money` decimal(18,2) DEFAULT '0.00' COMMENT '商家的支付金额',
-  `worker_money` decimal(18,2) DEFAULT NULL COMMENT '付给创客的金额(分包总金额)',
+  `real_money` decimal(18,2) NOT NULL DEFAULT '0.00' COMMENT '商户支付总金额',
+  `service_money` decimal(18,2) NOT NULL DEFAULT '0.00' COMMENT '总服务费',
+  `worker_money` decimal(18,2) NOT NULL DEFAULT NULL COMMENT '付给创客的金额(分包总金额)',
   `tax_id` varchar(36) DEFAULT '""' COMMENT '平台服务商ID',
   `platform_service_provider` varchar(50) DEFAULT NULL COMMENT '平台服务商名称',
   `company_contract` varchar(255) DEFAULT NULL COMMENT '项目合同（存储位置）',
@@ -856,12 +835,16 @@ CREATE TABLE `tb_payment_order` (
   `merchant_tax` decimal(18,2) DEFAULT NULL COMMENT '商户承担的税率的百分比（如50，不需要把百分比换算成小数）',
   `recevice_tax` decimal(18,2) DEFAULT NULL COMMENT '创客承担的税率的百分比（如50，不需要把百分比换算成小数）',
   `payment_mode` int(6) DEFAULT '0' COMMENT '0线下支付',
-  `payment_order_status` int(11) DEFAULT '0' COMMENT '支付订单的状态-1支付失败,0申请中，1待支付，2已支付，3已确认收款,4支付中（可能支付失败，用来避免重复支付）',
+  `payment_order_status` int(11) DEFAULT '0' COMMENT '支付订单的状态-1支付失败,0申请中，1待支付，2已支付，3已确认收款,4支付中（可能支付失败，用来避免重复支付）5已驳回 6已完成',
   `merchant_id` varchar(50) DEFAULT '' COMMENT '支付人ID',
   `payment_date` datetime DEFAULT NULL COMMENT '支付时间',
+  `trade_no` varchar(50) NOT NULL COMMENT '订单号',
+  `reasons_for_rejection` varchar(100) NOT NULL DEFAULT '' COMMENT '驳回理由',
+  `trade_fail_reason` varchar(100) NOT NULL DEFAULT '' COMMENT '交易失败原因',
   `create_date` datetime DEFAULT NULL COMMENT '支付订单的创建时间',
   `update_date` datetime DEFAULT NULL COMMENT '支付订单的修改时间',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `UK_icr1qhlwx3lsd0terqn7w65k1` (`trade_no`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='支付单信息';
 
 -- ----------------------------
@@ -876,8 +859,9 @@ CREATE TABLE `tb_payment_order_many` (
   `id` varchar(50) NOT NULL COMMENT '主键',
   `company_id` varchar(36) NOT NULL COMMENT '商户的公司ID',
   `company_s_name` varchar(36) DEFAULT NULL COMMENT '商户的公司简称',
-  `real_money` decimal(18,2) DEFAULT '0.00' COMMENT '支付金额',
-  `tax_id` varchar(36) DEFAULT '""' COMMENT '平台服务商ID',
+  `real_money` decimal(18,2) NOT NULL DEFAULT '0.00' COMMENT '支付金额',
+  `service_money` decimal(18,2) NOT NULL DEFAULT '0.00' COMMENT '总服务费',
+  `tax_id` varchar(36) DEFAULT '' COMMENT '平台服务商ID',
   `platform_service_provider` varchar(50) DEFAULT NULL COMMENT '平台服务商',
   `company_contract` varchar(255) DEFAULT NULL COMMENT '项目合同（存储位置）',
   `payment_inventory` varchar(255) DEFAULT NULL COMMENT '支付清单（存储位置）',
@@ -890,14 +874,18 @@ CREATE TABLE `tb_payment_order_many` (
   `merchant_tax` decimal(18,2) DEFAULT NULL COMMENT '商户承担的税率的百分比（如50，不需要把百分比换算成小数）',
   `recevice_tax` decimal(18,2) DEFAULT NULL COMMENT '创客承担的税率的百分比（如50，不需要把百分比换算成小数）',
   `payment_mode` int(6) DEFAULT '0' COMMENT '支付方式：0线下支付',
-  `payment_order_status` int(11) DEFAULT '0' COMMENT '支付订单的状态0申请中，1待支付，2已支付，3已确认收款，4已取消',
+  `payment_order_status` int(11) DEFAULT '0' COMMENT '支付订单的状态 0申请中，1待支付，2支付中，3已完成，4已取消',
   `merchant_id` varchar(50) DEFAULT '' COMMENT '付款的商户ID',
   `payment_date` datetime DEFAULT NULL COMMENT '支付时间',
   `is_application` tinyint(1) DEFAULT '0' COMMENT '是否申请,0未申请，1已申请',
   `is_not_invoice` tinyint(1) DEFAULT NULL COMMENT '是否开票',
+  `trade_no` varchar(50) NOT NULL COMMENT '订单号',
+  `reasons_for_rejection` varchar(100) NOT NULL DEFAULT '' COMMENT '驳回理由',
+  `trade_fail_reason` varchar(100) NOT NULL DEFAULT '' COMMENT '交易失败原因',
   `create_date` datetime DEFAULT NULL COMMENT '支付订单的创建时间',
   `update_date` datetime DEFAULT NULL COMMENT '支付订单的修改时间',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `UK_icr1qhlwx3lsd0terqn7w65k1` (`trade_no`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='众包支付单信息';
 
 -- ----------------------------

@@ -2,6 +2,7 @@ package com.example.merchant.controller.merchant;
 
 import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.merchant.AddPaymentOrderManyDTO;
+import com.example.merchant.dto.merchant.PaymentOrderManyPayDTO;
 import com.example.merchant.dto.merchant.PaymentOrderMerchantDTO;
 import com.example.merchant.exception.CommonException;
 import com.example.merchant.interceptor.LoginRequired;
@@ -34,7 +35,7 @@ public class PaymentOrderManyMerchantController {
 
     @PostMapping("/getPaymentOrderManyAll")
     @LoginRequired
-    @ApiOperation(value = "查询众包订单", notes = "查询众包订单", httpMethod = "POST")
+    @ApiOperation(value = "查询众包订单", notes = "查询众包订单")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "paymentOrderMerchantDto", value = "查询条件", required = true, dataType = "PaymentOrderMerchantDTO")
     })
@@ -43,7 +44,7 @@ public class PaymentOrderManyMerchantController {
     }
 
     @GetMapping("/getPaymentOrderManyInfo")
-    @ApiOperation(value = "查询众包支付订单详情", notes = "查询众包支付订单详情", httpMethod = "GET")
+    @ApiOperation(value = "查询众包支付订单详情", notes = "查询众包支付订单详情")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "id", value = "支付订单ID", required = true)
     })
@@ -52,7 +53,7 @@ public class PaymentOrderManyMerchantController {
     }
 
     @PostMapping("/saveOrUpdata")
-    @ApiOperation(value = "创建或修改众包支付订单", notes = "创建或修改众包支付订单", httpMethod = "POST")
+    @ApiOperation(value = "创建或修改众包支付订单", notes = "创建或修改众包支付订单")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "addPaymentOrderManyDto", value = "添加众包支付订单的内容", required = true, dataType = "AddPaymentOrderManyDTO")
     })
@@ -61,13 +62,9 @@ public class PaymentOrderManyMerchantController {
         return paymentOrderManyService.saveOrUpdataPaymentOrderMany(addPaymentOrderManyDto, merchantId);
     }
 
-    @PostMapping("/offlinePayment")
-    @ApiOperation(value = "众包支付订单线下支付", notes = "众包支付订单线下支付", httpMethod = "POST")
-    @ApiImplicitParams(value = {
-            @ApiImplicitParam(name = "id", value = "支付订单ID", required = true),
-            @ApiImplicitParam(name = "manyPayment", value = "支付回单地址", required = true)
-    })
-    public ReturnJson offlinePayment(@NotBlank @RequestParam(required = false) String id, @NotBlank @RequestParam(required = false) String manyPayment) {
-        return paymentOrderManyService.offlinePayment(id, manyPayment);
+    @PostMapping("/paymentOrderManyPay")
+    @ApiOperation(value = "商户众包支付", notes = "商户众包支付")
+    public ReturnJson paymentOrderManyPay(@Valid @RequestBody PaymentOrderManyPayDTO paymentOrderManyPayDTO) {
+        return paymentOrderManyService.paymentOrderManyPay(paymentOrderManyPayDTO);
     }
 }

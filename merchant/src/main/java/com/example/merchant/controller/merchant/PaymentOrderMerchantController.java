@@ -5,6 +5,7 @@ import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.AssociatedTasksDTO;
 import com.example.merchant.dto.merchant.AddPaymentOrderDTO;
 import com.example.merchant.dto.merchant.PaymentOrderMerchantDTO;
+import com.example.merchant.dto.merchant.PaymentOrderPayDTO;
 import com.example.merchant.exception.CommonException;
 import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.PaymentOrderService;
@@ -36,7 +37,7 @@ public class PaymentOrderMerchantController {
     private PaymentOrderService paymentOrderService;
 
     @PostMapping("/getPaymentOrderAll")
-    @ApiOperation(value = "查询总包+分包支付订单", notes = "查询总包+分包支付订单", httpMethod = "POST")
+    @ApiOperation(value = "查询总包+分包支付订单", notes = "查询总包+分包支付订单")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "paymentOrderMerchantDto", value = "查询条件", required = true, dataType = "PaymentOrderMerchantDTO")
     })
@@ -47,7 +48,7 @@ public class PaymentOrderMerchantController {
     }
 
     @GetMapping("/getPaymentOrderInfo")
-    @ApiOperation(value = "查询总包+分包支付订单详情", notes = "查询总包+分包支付订单详情", httpMethod = "GET")
+    @ApiOperation(value = "查询总包+分包支付订单详情", notes = "查询总包+分包支付订单详情")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "id", value = "总包+分包支付订单ID", required = true)
     })
@@ -56,7 +57,7 @@ public class PaymentOrderMerchantController {
     }
 
     @PostMapping("/saveOrUpdata")
-    @ApiOperation(value = "创建或修改总包+分包支付订单", notes = "创建或修改总包+分包支付订单", httpMethod = "POST")
+    @ApiOperation(value = "创建或修改总包+分包支付订单", notes = "创建或修改总包+分包支付订单")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "addPaymentOrderDto", value = "新建或修改的支付订单", required = true, dataType = "AddPaymentOrderDTO")
     })
@@ -66,20 +67,14 @@ public class PaymentOrderMerchantController {
         return paymentOrderService.saveOrUpdataPaymentOrder(addPaymentOrderDto, merchantId);
     }
 
-
-    @PostMapping("/offlinePayment")
-    @ApiOperation(value = "线下支付", notes = "线下支付", httpMethod = "POST")
-    @ApiImplicitParams(value = {
-            @ApiImplicitParam(name = "paymentOrderId", value = "支付订单ID", required = true),
-            @ApiImplicitParam(name = "turnkeyProjectPayment", value = "支付回单存储地址", required = true)
-    })
-    public ReturnJson offlinePayment(@NotBlank @RequestParam(required = false) String paymentOrderId,
-                                     @NotBlank @RequestParam(required = false) String turnkeyProjectPayment) {
-        return paymentOrderService.offlinePayment(paymentOrderId, turnkeyProjectPayment);
+    @PostMapping("/paymentOrderPay")
+    @ApiOperation(value = "商户总包支付", notes = "商户总包支付")
+    public ReturnJson paymentOrderPay(@Valid @RequestBody PaymentOrderPayDTO paymentOrderPayDTO) {
+        return paymentOrderService.paymentOrderPay(paymentOrderPayDTO);
     }
 
     @PostMapping("/associatedTasks")
-    @ApiOperation(value = "商户选择可关联任务", notes = "商户选择可关联任务", httpMethod = "POST")
+    @ApiOperation(value = "商户选择可关联任务", notes = "商户选择可关联任务")
     @LoginRequired
     public ReturnJson associatedTask(@RequestAttribute("userId") @ApiParam(hidden = true) String merchantId,
                                      AssociatedTasksDTO associatedTasksDto) {
@@ -88,7 +83,7 @@ public class PaymentOrderMerchantController {
 
     @PostMapping("/gradientPrice")
     @LoginRequired
-    @ApiOperation(value = "获取梯度价", notes = "获取梯度价", httpMethod = "POST")
+    @ApiOperation(value = "获取梯度价", notes = "获取梯度价")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "taxId", value = "服务商ID", required = true),
             @ApiImplicitParam(name = "packageStatus", value = "支付类型0总包 1 众包", required = true)})
     public ReturnJson gradientPrice(@RequestAttribute("userId") @ApiParam(hidden = true) String merchantId,

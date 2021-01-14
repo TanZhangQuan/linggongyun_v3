@@ -66,6 +66,6 @@ public class TaxUnionpay extends BaseEntity {
     /**
      * 是否启用
      */
-    private Boolean boolEnable;
+    private Boolean boolEnable = true;
 
 }

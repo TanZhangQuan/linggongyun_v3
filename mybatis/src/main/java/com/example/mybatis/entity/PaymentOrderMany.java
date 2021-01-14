@@ -46,6 +46,11 @@ public class PaymentOrderMany extends BaseEntity {
     private BigDecimal realMoney;
 
     /**
+     * 总服务费
+     */
+    private BigDecimal serviceMoney;
+
+    /**
      * 平台服务商ID
      */
     @ApiModelProperty(notes = "平台服务商ID", value = "平台服务商ID", required = true)
@@ -117,7 +122,7 @@ public class PaymentOrderMany extends BaseEntity {
     private BigDecimal receviceTax;
 
     /**
-     * 支付订单的状态
+     * 支付订单的状态 -1支付失败 0申请中，1待支付，2支付中，3已完成，4已取消
      */
     @ApiModelProperty(notes = "支付订单的状态", value = "支付订单的状态")
     private Integer paymentOrderStatus;
@@ -128,7 +133,12 @@ public class PaymentOrderMany extends BaseEntity {
     private String reasonsForRejection;
 
     /**
-     * 支付方式：0线下支付,1连连支付
+     * 交易失败理由
+     */
+    private String tradeFailReason;
+
+    /**
+     * 支付方式：0线下支付,1连连支付,2网商银行支付,3银联盛京银行,4银联平安银行,5银联网商银行,6银联招商银行
      */
     private Integer paymentMode;
 
@@ -152,5 +162,10 @@ public class PaymentOrderMany extends BaseEntity {
      */
     @ApiModelProperty(notes = "支付时间", value = "支付时间", hidden = true)
     private LocalDateTime paymentDate;
+
+    /**
+     * 订单号
+     */
+    private String tradeNo;
 
 }

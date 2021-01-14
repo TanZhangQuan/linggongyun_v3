@@ -21,7 +21,7 @@ public class MerchantLogController {
     private MerchantService merchantService;
 
     @PostMapping("/login")
-    @ApiOperation(value = "账号密码登录", notes = "账号密码登录", httpMethod = "POST")
+    @ApiOperation(value = "账号密码登录", notes = "账号密码登录")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "username", value = "登录账号", required = true),
             @ApiImplicitParam(name = "password", value = "登录密码", required = true)})
     public ReturnJson merchantLogin(@NotBlank(message = "用户名不能为空") @RequestParam(required = false) String username,
@@ -30,21 +30,21 @@ public class MerchantLogController {
     }
 
     @PostMapping("/senSMS")
-    @ApiOperation(value = "发送验证码", notes = "发送验证码", httpMethod = "POST")
+    @ApiOperation(value = "发送验证码", notes = "发送验证码")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "mobileCode", value = "手机号码", required = true)})
     public ReturnJson senSMS(@NotBlank(message = "手机号不能为空") @RequestParam(required = false) String mobileCode) {
         return merchantService.senSMS(mobileCode);
     }
 
     @PostMapping("/merchantLogout")
-    @ApiOperation(value = "登出", notes = "登出", httpMethod = "POST")
+    @ApiOperation(value = "登出", notes = "登出")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "merchantId", value = "登录的商户id", required = true)})
     public ReturnJson merchantLogout(@NotNull(message = "商户id不能为空") @RequestParam(required = false) String merchantId) {
         return merchantService.logout(merchantId);
     }
 
     @PostMapping("/updataPassWord")
-    @ApiOperation(value = "修改或忘记密码", notes = "修改或忘记密码", httpMethod = "POST")
+    @ApiOperation(value = "修改或忘记密码", notes = "修改或忘记密码")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "loginMobile", value = "登录用的手机号码", required = true),
             @ApiImplicitParam(name = "checkCode", value = "验证码", required = true), @ApiImplicitParam(name = "newPassWord", value = "新密码", required = true)})
     public ReturnJson updatePassWord(@NotBlank(message = "手机号不能为空") @RequestParam(required = false) String loginMobile,
@@ -54,7 +54,7 @@ public class MerchantLogController {
     }
 
     @PostMapping("/loginMobile")
-    @ApiOperation(value = "手机号登录", notes = "手机号登录", httpMethod = "POST")
+    @ApiOperation(value = "手机号登录", notes = "手机号登录")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "loginMobile", value = "登录用的手机号码", required = true),
             @ApiImplicitParam(name = "checkCode", value = "验证码", required = true)
@@ -67,14 +67,14 @@ public class MerchantLogController {
 
 
     @PostMapping("/getmerchantCustomizedInfo")
-    @ApiOperation(value = "获取当前用用户信息", notes = "获取当前用用户信息", httpMethod = "POST")
+    @ApiOperation(value = "获取当前用用户信息", notes = "获取当前用用户信息")
     @LoginRequired
     public ReturnJson getMerchantCustomizedInfo(@RequestAttribute(value = "userId") @ApiParam(hidden = true) String merchantId) {
         return merchantService.getMerchantCustomizedInfo(merchantId);
     }
 
     @PostMapping("/updateHeadPortrait")
-    @ApiOperation(value = "修改头像", notes = "修改头像", httpMethod = "POST")
+    @ApiOperation(value = "修改头像", notes = "修改头像")
     @LoginRequired
     public ReturnJson updateHeadPortrait(@RequestAttribute(value = "userId") @ApiParam(hidden = true) String merchantId,
                                          @RequestParam(name = "headPortrait") String headPortrait) {

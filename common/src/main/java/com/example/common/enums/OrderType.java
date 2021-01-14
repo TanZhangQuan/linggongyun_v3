@@ -11,9 +11,9 @@ import lombok.Getter;
 @AllArgsConstructor
 @SwaggerDisplayEnum()
 public enum OrderType {
-    TOTALORDER("TOTALORDER", "总包订单"),
-    MANYORDER("MANYORDER", "众包订单"),
-    INVENTORY("INVENTORY", "支付清单");
+    TOTALORDER("TOTALORDER", "总包支付订单"),
+    MANYORDER("MANYORDER", "众包支付订单"),
+    INVENTORY("INVENTORY", "分包支付订单");
 
     private final String value;
     private final String desc;

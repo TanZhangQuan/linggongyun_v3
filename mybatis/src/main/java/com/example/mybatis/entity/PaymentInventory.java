@@ -61,6 +61,7 @@ public class PaymentInventory extends BaseEntity {
      */
     @ApiModelProperty("银行名称")
     private String bankName;
+
     /**
      * 创客的银行账号
      */
@@ -118,12 +119,22 @@ public class PaymentInventory extends BaseEntity {
     /**
      * 支付状态
      */
-    @ApiModelProperty("支付状态(-1支付失败，0未支付，1已支付)")
+    @ApiModelProperty("支付状态：-1支付失败，0未支付，1支付成功")
     private Integer paymentStatus;
 
     /**
      * 合作类型0总包，1众包
      */
     private Integer packageStatus;
+
+    /**
+     * 订单号
+     */
+    private String tradeNo;
+
+    /**
+     * 交易失败理由
+     */
+    private String tradeFailReason;
 
 }

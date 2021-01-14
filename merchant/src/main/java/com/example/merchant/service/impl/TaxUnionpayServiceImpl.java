@@ -6,9 +6,9 @@ import com.example.common.enums.UnionpayBankType;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.platform.AddOrUpdateTaxUnionpayDTO;
 import com.example.merchant.service.TaxUnionpayService;
-import com.example.mybatis.entity.MerchantUnionpay;
+import com.example.mybatis.entity.CompanyUnionpay;
 import com.example.mybatis.entity.TaxUnionpay;
-import com.example.mybatis.mapper.MerchantUnionpayDao;
+import com.example.mybatis.mapper.CompanyUnionpayDao;
 import com.example.mybatis.mapper.TaxUnionpayDao;
 import com.example.mybatis.vo.TaxUnionpayListVO;
 import org.apache.commons.lang3.StringUtils;
@@ -34,7 +34,7 @@ public class TaxUnionpayServiceImpl extends ServiceImpl<TaxUnionpayDao, TaxUnion
     private TaxUnionpayDao taxUnionpayDao;
 
     @Resource
-    private MerchantUnionpayDao merchantUnionpayDao;
+    private CompanyUnionpayDao companyUnionpayDao;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -50,9 +50,9 @@ public class TaxUnionpayServiceImpl extends ServiceImpl<TaxUnionpayDao, TaxUnion
             }
 
             //查询是否有子账号，存在子账号则不可修改，只能启用或停用
-            QueryWrapper<MerchantUnionpay> queryWrapper = new QueryWrapper<>();
-            queryWrapper.lambda().eq(MerchantUnionpay::getTaxUnionpayId, addOrUpdateTaxUnionpayDTO.getTaxUnionpayId());
-            int merchantUnionpayCount = merchantUnionpayDao.selectCount(queryWrapper);
+            QueryWrapper<CompanyUnionpay> queryWrapper = new QueryWrapper<>();
+            queryWrapper.lambda().eq(CompanyUnionpay::getTaxUnionpayId, addOrUpdateTaxUnionpayDTO.getTaxUnionpayId());
+            int merchantUnionpayCount = companyUnionpayDao.selectCount(queryWrapper);
             if (merchantUnionpayCount > 0) {
                 return ReturnJson.error("服务商银联存在子账号，不可编辑");
             }
@@ -122,7 +122,7 @@ public class TaxUnionpayServiceImpl extends ServiceImpl<TaxUnionpayDao, TaxUnion
         }
 
         taxUnionpay.setBoolEnable(boolEnable);
-        save(taxUnionpay);
+        updateById(taxUnionpay);
 
         return ReturnJson.success("操作成功");
     }

@@ -14,16 +14,28 @@ import javax.servlet.http.HttpServletRequest;
 @Slf4j
 @Api(value = "异步回调相关接口", tags = "异步回调相关接口")
 @RestController
-@RequestMapping("/common")
+@RequestMapping("/notice")
 public class NotifyController {
 
     @Resource
     private NotifyService notifyService;
 
-    @PostMapping("/unionpay/notify")
+    @PostMapping("/unionpay/depositNotice")
     @ApiOperation(value = "银联入金回调接收", notes = "银联入金回调接收")
-    public String depositNotice(HttpServletRequest request) throws Exception {
+    public String depositNotice(HttpServletRequest request) {
         return notifyService.depositNotice(request);
+    }
+
+    @PostMapping("/unionpay/txResult")
+    @ApiOperation(value = "银联提现到卡回调接收", notes = "银联提现到卡回调接收")
+    public String txResult(HttpServletRequest request) {
+        return notifyService.txResult(request);
+    }
+
+    @PostMapping("/unionpay/transferResult")
+    @ApiOperation(value = "银联内部转账回调接收(清分接口，会员间交易)", notes = "银联内部转账回调接收(清分接口，会员间交易)")
+    public String transferResult(HttpServletRequest request) {
+        return notifyService.transferResult(request);
     }
 
 }

@@ -60,7 +60,6 @@ public interface PaymentOrderManyDao extends BaseMapper<PaymentOrderMany> {
      */
     YearTradeVO getYearTradeById(String merchantId);
 
-
     //根据商户id查众包待开票数据
     IPage<CrowdSourcingInvoiceInfoVO>   getListCSIByID(Page page, QueryCrowdSourcingDTO queryCrowdSourcingDto, String userId);
 
@@ -94,7 +93,6 @@ public interface PaymentOrderManyDao extends BaseMapper<PaymentOrderMany> {
 
     List<PaymentOrderMany> selectYearpaas(List<String> merchantId);
 
-
     List<BillPO> selectMonthBill(@Param("workerId") String workerId, @Param("year") Integer year, @Param("month") Integer month);
 
     BillCountPO selectYearCount(@Param("workerId") String workerId, @Param("year") Integer year);
@@ -114,4 +112,5 @@ public interface PaymentOrderManyDao extends BaseMapper<PaymentOrderMany> {
     MonthTradeVO selectMonthpaa(List<String> merchantId);
 
     YearTradeVO selectYearpaa(List<String> merchantId);
+
 }

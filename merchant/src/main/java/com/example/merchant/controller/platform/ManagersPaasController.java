@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 @Api(value = "平台端登录接口", tags = {"平台端登录接口"})
@@ -24,7 +23,7 @@ public class ManagersPaasController {
     private ManagersService managersService;
 
     @PostMapping("/passLogin")
-    @ApiOperation(value = "账号密码登录", notes = "账号密码登录", httpMethod = "POST")
+    @ApiOperation(value = "账号密码登录", notes = "账号密码登录")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "username", value = "登录账号", required = true),
             @ApiImplicitParam(name = "password", value = "登录密码", required = true)
@@ -35,7 +34,7 @@ public class ManagersPaasController {
     }
 
     @PostMapping("/senSMS")
-    @ApiOperation(value = "发送手机验证码", notes = "发送手机验证码", httpMethod = "POST")
+    @ApiOperation(value = "发送手机验证码", notes = "发送手机验证码")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "mobileCode", value = "手机号码", required = true)
     })
@@ -46,7 +45,7 @@ public class ManagersPaasController {
     }
 
     @PostMapping("/mobileLogin")
-    @ApiOperation(value = "手机验证码登录", notes = "手机验证码登录", httpMethod = "POST")
+    @ApiOperation(value = "手机验证码登录", notes = "手机验证码登录")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "mobileCode", value = "手机号码", required = true),
             @ApiImplicitParam(name = "checkCode", value = "验证码", required = true)
@@ -60,21 +59,21 @@ public class ManagersPaasController {
     }
 
     @PostMapping("/getCustomizedInfo")
-    @ApiOperation(value = "获取当前用用户信息", notes = "获取当前用用户信息", httpMethod = "POST")
+    @ApiOperation(value = "获取当前用用户信息", notes = "获取当前用用户信息")
     @LoginRequired
     public ReturnJson getCustomizedInfo(@RequestAttribute(value = "userId") @ApiParam(hidden = true) String merchantId) {
         return managersService.getCustomizedInfo(merchantId);
     }
 
     @PostMapping("/managerLogout")
-    @ApiOperation(value = "登出", notes = "登出", httpMethod = "POST")
+    @ApiOperation(value = "登出", notes = "登出")
     @LoginRequired
     public ReturnJson managerLogout(@RequestAttribute(value = "userId") @ApiParam(hidden = true) String merchantId) {
         return managersService.logout(merchantId);
     }
 
     @PostMapping("/updataPassWord")
-    @ApiOperation(value = "修改或忘记密码", notes = "修改或忘记密码", httpMethod = "POST")
+    @ApiOperation(value = "修改或忘记密码", notes = "修改或忘记密码")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "loginMobile", value = "登录用的手机号码", required = true),
             @ApiImplicitParam(name = "checkCode", value = "验证码", required = true), @ApiImplicitParam(name = "newPassWord", value = "新密码", required = true)})
     public ReturnJson updataPassWord(@NotBlank(message = "手机号不能为空") @RequestParam(required = false) String loginMobile,

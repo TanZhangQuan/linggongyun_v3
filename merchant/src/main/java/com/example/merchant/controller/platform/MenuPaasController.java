@@ -51,14 +51,12 @@ public class MenuPaasController {
         return menuService.getPassAllRole(managersId);
     }
 
-
     @ApiOperation("权限管理，删除子账户")
     @PostMapping(value = "/daleteRole")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "managersId", value = "子账户Id", required = true)})
     public ReturnJson daleteRole(@NotBlank(message = "子账户Id不能为空") @RequestParam String managersId) {
         return menuService.daletePassRole(managersId);
     }
-
 
     @ApiOperation("权限管理，修改子用户状态")
     @PostMapping(value = "/updataRoleStatus")

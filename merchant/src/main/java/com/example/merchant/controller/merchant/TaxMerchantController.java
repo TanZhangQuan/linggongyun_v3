@@ -33,7 +33,7 @@ public class TaxMerchantController {
 
     @GetMapping("/getTaxAll")
     @LoginRequired
-    @ApiOperation(value = "获取商户可用的平台服务商", notes = "获取商户可用的平台服务商", httpMethod = "GET")
+    @ApiOperation(value = "获取商户可用的平台服务商", notes = "获取商户可用的平台服务商")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "packageStatus", value = "合作类型0为总包，1为众包", required = true)
     })
@@ -43,7 +43,7 @@ public class TaxMerchantController {
 
     @PostMapping("/queryTaxAll")
     @LoginRequired
-    @ApiOperation(value = "获取商户可用的平台服务商", notes = "获取商户可用的平台服务商", httpMethod = "POST")
+    @ApiOperation(value = "获取商户可用的平台服务商", notes = "获取商户可用的平台服务商")
     public ReturnJson queryTaxAll(@ApiParam(hidden = true) @RequestAttribute(value = "userId") String merchantId, @Valid @RequestBody TaxListDTO taxListDto) {
         return taxService.getTaxList(taxListDto, merchantId);
     }

@@ -2,11 +2,12 @@ package com.example.merchant.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.common.util.ReturnJson;
-import com.example.merchant.dto.merchant.PaymentOrderMerchantDTO;
-import com.example.mybatis.dto.QueryCrowdSourcingDTO;
-import com.example.merchant.dto.platform.PaymentOrderDTO;
 import com.example.merchant.dto.merchant.AddPaymentOrderManyDTO;
+import com.example.merchant.dto.merchant.PaymentOrderManyPayDTO;
+import com.example.merchant.dto.merchant.PaymentOrderMerchantDTO;
+import com.example.merchant.dto.platform.PaymentOrderDTO;
 import com.example.merchant.exception.CommonException;
+import com.example.mybatis.dto.QueryCrowdSourcingDTO;
 import com.example.mybatis.entity.PaymentOrderMany;
 
 /**
@@ -29,6 +30,7 @@ public interface PaymentOrderManyService extends IService<PaymentOrderMany> {
 
     /**
      * 根据商户id查众包待开票数据
+     *
      * @param queryCrowdSourcingDto
      * @param userId
      * @return
@@ -37,6 +39,7 @@ public interface PaymentOrderManyService extends IService<PaymentOrderMany> {
 
     /**
      * 根据支付id查询众包支付信息
+     *
      * @param id
      * @return
      */
@@ -49,7 +52,7 @@ public interface PaymentOrderManyService extends IService<PaymentOrderMany> {
      * @param pageNo
      * @return
      */
-    ReturnJson getInvoiceDetailsByPayId(String id, Integer pageNo,Integer pageSize);
+    ReturnJson getInvoiceDetailsByPayId(String id, Integer pageNo, Integer pageSize);
 
     /**
      * 查询众包的支付订单
@@ -76,13 +79,12 @@ public interface PaymentOrderManyService extends IService<PaymentOrderMany> {
     ReturnJson saveOrUpdataPaymentOrderMany(AddPaymentOrderManyDTO addPaymentOrderManyDto, String merchantId) throws CommonException;
 
     /**
-     * 众包线下支付
+     * 商户众包支付
      *
-     * @param id
-     * @param manyPayment
+     * @param paymentOrderManyPayDTO
      * @return
      */
-    ReturnJson offlinePayment(String id, String manyPayment);
+    ReturnJson paymentOrderManyPay(PaymentOrderManyPayDTO paymentOrderManyPayDTO);
 
     /**
      * 众包今天的支付金额
@@ -117,12 +119,15 @@ public interface PaymentOrderManyService extends IService<PaymentOrderMany> {
     ReturnJson getYearPaas(String merchantId) throws CommonException;
 
     /**
-     * 众包确认收款
+     * 众包审核
      *
-     * @param id
+     * @param paymentOrderId
+     * @param boolPass
+     * @param reasonsForRejection
      * @return
+     * @throws Exception
      */
-    ReturnJson confirmPaymentManyPaas(String id);
+    ReturnJson paymentOrderManyAudit(String paymentOrderId, Boolean boolPass, String reasonsForRejection) throws Exception;
 
     /**
      * 查询众包的支付订单
@@ -164,4 +169,12 @@ public interface PaymentOrderManyService extends IService<PaymentOrderMany> {
      * @return
      */
     ReturnJson getYearPaa(String merchantId) throws CommonException;
+
+    /**
+     * 根据订单号查询众包
+     *
+     * @param tradeNo
+     * @return
+     */
+    PaymentOrderMany queryPaymentOrderManyByTradeNo(String tradeNo);
 }
