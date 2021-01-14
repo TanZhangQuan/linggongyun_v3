@@ -7,6 +7,7 @@ import lombok.Data;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -30,7 +31,7 @@ public class CompanyDTO implements Serializable {
     private String contract;
 
     @ApiModelProperty(value = "公司的成立时间")
-    @NotBlank(message = "成立时间不能为空")
+    @NotNull(message = "成立时间不能为空")
     private LocalDate companyCreateDate;
 
     @ApiModelProperty(value = "社会统一信用代码")
@@ -42,7 +43,7 @@ public class CompanyDTO implements Serializable {
     private String businessLicense;
 
     @ApiModelProperty(value = "公司的注册资本")
-    @NotBlank(message = "注册资本不能为空")
+    @NotNull(message = "注册资本不能为空")
     private BigDecimal registeredCapital;
 
     @ApiModelProperty(value = "账户名称")

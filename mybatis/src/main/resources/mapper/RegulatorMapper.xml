@@ -99,7 +99,7 @@
         )
         UNION (
         SELECT
-        c.worker_id,
+        d.worker_id,
         IFNULL(total_order_count,0) AS 'total_order_count',
         IFNULL(total_money,0) AS 'total_money',
         IFNULL(many_order_count,0) AS 'many_order_count',
@@ -219,14 +219,14 @@
         SELECT ci.id,
         ci.company_name,
         ci.contract,
-        po.count_total_order,
-        po.count_total_money,
-        pom.count_many_order,
-        pom.count_many_money,
+       	if(po.count_total_order is null,0,po.count_total_order)as count_total_order,
+        if(po.count_total_money is null,0,po.count_total_money)as count_total_money,
+        if(pom.count_many_order is null,0,pom.count_many_order)as count_many_order,
+        if(pom.count_many_money is null,0,pom.count_many_money)as count_many_money,
         ci.audit_status,
         ci.create_date
         FROM tb_company_info ci
-        JOIN (SELECT COUNT(1) AS 'count_total_order',
+        LEFT JOIN (SELECT COUNT(1) AS 'count_total_order',
         SUM(real_money) AS 'count_total_money',
         company_id
         FROM tb_payment_order
@@ -236,7 +236,7 @@
         </foreach>
         GROUP BY company_id) po
         ON ci.id = po.company_id
-        JOIN (SELECT COUNT(1) AS 'count_many_order',
+        LEFT JOIN (SELECT COUNT(1) AS 'count_many_order',
         SUM(real_money) AS 'count_many_money',
         company_id
         FROM tb_payment_order_many
