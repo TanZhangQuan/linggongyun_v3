@@ -184,7 +184,7 @@
         <result column="package_status" property="packageStatus"/>
         <result column="real_money" property="realMoney"/>
         <result column="is_invoice" property="isInvoice"/>
-        <result column="payment_sate" property="paymentDate"/>
+        <result column="payment_date" property="paymentDate"/>
     </resultMap>
 
     <!--查询商户-->

@@ -501,7 +501,7 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
             RegulatorMerchantVO regulatorMerchantVO = new RegulatorMerchantVO();
             BeanUtils.copyProperties(regulatorMerchantInfoPO, regulatorMerchantVO);
             regulatorMerchantVO.setOrderCount(regulatorMerchantInfoPO.getCountTotalOrder() + "/" + regulatorMerchantInfoPO.getCountManyOrder());
-            regulatorMerchantVO.setAuditStatus(regulatorMerchantInfoPO.getAuditStatus() == 0 ? "正常" : "停用");
+            regulatorMerchantVO.setAuditStatus(regulatorMerchantInfoPO.getAuditStatus() == 1 ? "正常" : "停用");
             regulatorMerchantVOS.add(regulatorMerchantVO);
         }
         ReturnJson success = ReturnJson.success(regulatorMerchantInfoPOIPage);

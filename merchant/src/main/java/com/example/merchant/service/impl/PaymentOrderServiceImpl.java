@@ -158,18 +158,19 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
             paymentInventoryDao.delete(new QueryWrapper<PaymentInventory>().eq("payment_order_id", id));
             this.removeById(id);
         }
+
+        if (paymentDto.getTaxStatus() == 0) {
+            paymentOrder.setMerchantTax(new BigDecimal("100"));
+        }
+        if (paymentDto.getTaxStatus() == 1) {
+           paymentOrder.setReceviceTax(new BigDecimal("100"));
+        }
+
         BigDecimal receviceTax = paymentOrder.getReceviceTax().divide(BigDecimal.valueOf(100));
         BigDecimal merchantTax = paymentOrder.getMerchantTax().divide(BigDecimal.valueOf(100));
         BigDecimal compositeTax = new BigDecimal("0");
         BigDecimal countMoney = new BigDecimal("0");
         BigDecimal countWorkerMoney = new BigDecimal("0");
-
-        if (paymentDto.getTaxStatus() == 0) {
-            merchantTax = new BigDecimal("100");
-        }
-        if (paymentDto.getTaxStatus() == 1) {
-            receviceTax = new BigDecimal("100");
-        }
 
         CompanyTax companyTax = companyTaxDao.selectOne(new QueryWrapper<CompanyTax>()
                 .eq("tax_id", paymentOrder.getTaxId())
