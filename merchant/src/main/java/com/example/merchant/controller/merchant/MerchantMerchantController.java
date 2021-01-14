@@ -48,13 +48,13 @@ public class MerchantMerchantController {
 
     @PostMapping("/merchantInfo")
     @LoginRequired
-    @ApiOperation(value = "获取商户信息", notes = "获取商户信息", httpMethod = "POST")
+    @ApiOperation(value = "获取商户信息", notes = "获取商户信息")
     public ReturnJson merchantInfo(@ApiParam(hidden = true) @RequestAttribute("userId") String merchantId) {
         return merchantService.merchantInfo(merchantId);
     }
 
     @PostMapping("/addOrUpdataLinkman")
-    @ApiOperation(value = "添加或修改联系人", notes = "添加或修改联系人", httpMethod = "POST")
+    @ApiOperation(value = "添加或修改联系人", notes = "添加或修改联系人")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "linkman", value = "联系人信息", required = true, dataType = "Linkman")
     })
@@ -64,7 +64,7 @@ public class MerchantMerchantController {
     }
 
     @PostMapping("/updataLinkmanStatus")
-    @ApiOperation(value = "停用或启用联系人", notes = "停用或启用联系人", httpMethod = "POST")
+    @ApiOperation(value = "停用或启用联系人", notes = "停用或启用联系人")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "linkmanId", value = "联系人ID", required = true),
             @ApiImplicitParam(name = "status", value = "联系人状态", required = true)
@@ -74,7 +74,7 @@ public class MerchantMerchantController {
     }
 
     @PostMapping("/removeLinkmenById")
-    @ApiOperation(value = "删除商户的联系人", notes = "删除商户的联系人", httpMethod = "POST")
+    @ApiOperation(value = "删除商户的联系人", notes = "删除商户的联系人")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "linkmanId", value = "联系人ID", required = true)
     })
@@ -83,21 +83,21 @@ public class MerchantMerchantController {
     }
 
     @GetMapping("/getLinkmanAll")
-    @ApiOperation(value = "查询商户的联系人", notes = "查询商户的联系人", httpMethod = "GET")
+    @ApiOperation(value = "查询商户的联系人", notes = "查询商户的联系人")
     @LoginRequired
     public ReturnJson getLinkmanAll(@ApiParam(hidden = true) @RequestAttribute("userId") String merchantId) {
         return linkmanService.getLinkmanAll(merchantId);
     }
 
     @GetMapping("/getAddressAll")
-    @ApiOperation(value = "查询商户的快递地址信息", notes = "查询商户的快递地址信息", httpMethod = "GET")
+    @ApiOperation(value = "查询商户的快递地址信息", notes = "查询商户的快递地址信息")
     @LoginRequired
     public ReturnJson getAddressAll(@ApiParam(hidden = true) @RequestAttribute("userId") String merchantId) {
         return addressService.getAddressAll(merchantId);
     }
 
     @PostMapping("/addOrUpdataAddress")
-    @ApiOperation(value = "添加或修改快递地址", notes = "添加或修改快递地址", httpMethod = "POST")
+    @ApiOperation(value = "添加或修改快递地址", notes = "添加或修改快递地址")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "address", value = "快递地址信息", required = true, dataType = "Address")
     })
@@ -107,7 +107,7 @@ public class MerchantMerchantController {
     }
 
     @PostMapping("/updataAddressStatus")
-    @ApiOperation(value = "修改快递地址状态", notes = "修改快递地址状态", httpMethod = "POST")
+    @ApiOperation(value = "修改快递地址状态", notes = "修改快递地址状态")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "addressId", value = "快递地址ID", required = true), @ApiImplicitParam(name = "status", value = "快递地址状态", required = true)
     })
@@ -116,7 +116,7 @@ public class MerchantMerchantController {
     }
 
     @PostMapping("/removeAddressById")
-    @ApiOperation(value = "删除快递地址", notes = "删除快递地址", httpMethod = "POST")
+    @ApiOperation(value = "删除快递地址", notes = "删除快递地址")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "addressId", value = "快递地址ID", required = true)
     })

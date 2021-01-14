@@ -31,7 +31,7 @@ public class LianLianPayController {
 
     @LoginRequired
     @PostMapping("/merchantPay")
-    @ApiOperation(value = "商户总包支付", notes = "商户总包支付", httpMethod = "POST")
+    @ApiOperation(value = "商户总包支付", notes = "商户总包支付")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "paymentOrderId", value = "支付订单ID", required = true),
             @ApiImplicitParam(name = "payPassWord", value = "支付密码", required = true)
@@ -42,7 +42,7 @@ public class LianLianPayController {
 
     @LoginRequired
     @PostMapping("/merchantPayMany")
-    @ApiOperation(value = "商户众包支付", notes = "商户众包支付", httpMethod = "POST")
+    @ApiOperation(value = "商户众包支付", notes = "商户众包支付")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "paymentOrderId", value = "支付订单ID", required = true),
             @ApiImplicitParam(name = "payPassWord", value = "支付密码", required = true)
@@ -52,7 +52,7 @@ public class LianLianPayController {
     }
 
     @RequestMapping("/merchantNotifyUrl")
-    @ApiOperation(value = "商户总包支付回调接口", notes = "商户总包支付回调接口", hidden = true, httpMethod = "POST")
+    @ApiOperation(value = "商户总包支付回调接口", notes = "商户总包支付回调接口", hidden = true)
     public Map<String, String> merchantNotifyUrl(HttpServletRequest request) {
         lianLianPayService.merchantNotifyUrl(request);
         Map<String, String> map = new HashMap<>();
@@ -62,7 +62,7 @@ public class LianLianPayController {
     }
 
     @RequestMapping("/merchantManyNotifyUrl")
-    @ApiOperation(value = "商户众包支付回调接口", notes = "商户众包支付回调接口", hidden = true, httpMethod = "POST")
+    @ApiOperation(value = "商户众包支付回调接口", notes = "商户众包支付回调接口", hidden = true)
     public Map<String, String> merchantManyNotifyUrl(HttpServletRequest request) {
         lianLianPayService.merchantManyNotifyUrl(request);
         Map<String, String> map = new HashMap<>();
@@ -73,7 +73,7 @@ public class LianLianPayController {
 
     @PostMapping("/queryPayment")
     @LoginRequired
-    @ApiOperation(value = "商户订单查询", notes = "商户订单查询", httpMethod = "POST")
+    @ApiOperation(value = "商户订单查询", notes = "商户订单查询")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "oidPaybill", value = "连连订单号", required = true)
     })

@@ -5,14 +5,15 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * 交易类型
+ * 交易类型（用于订单号开头）
  */
 @Getter
 @AllArgsConstructor
 @SwaggerDisplayEnum()
-public enum TradeType {
-    RECHARGE("RECHARGE", "充值"),
-    WITHDRAW("WITHDRAW", "提现");
+public enum TradeNoType {
+    PO("PO", "总包交易"),
+    PI("PI", "分包交易"),
+    POM("POM", "众包交易");
 
     private final String value;
     private final String desc;

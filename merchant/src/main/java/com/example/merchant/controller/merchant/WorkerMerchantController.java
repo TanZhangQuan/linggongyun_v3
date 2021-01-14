@@ -40,7 +40,7 @@ public class WorkerMerchantController {
 
     @PostMapping("/getWorkerAll")
     @LoginRequired
-    @ApiOperation(value = "获取商户的所有创客", notes = "获取商户的所有创客", httpMethod = "POST")
+    @ApiOperation(value = "获取商户的所有创客", notes = "获取商户的所有创客")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "pageNo", value = "页数", required = true),
             @ApiImplicitParam(name = "pageSize", value = "每页的条数", required = true)
@@ -55,14 +55,14 @@ public class WorkerMerchantController {
 
     @PostMapping("/getWorkerMany")
     @LoginRequired
-    @ApiOperation(value = "按条件查询创客", notes = "按条件查询创客", httpMethod = "POST")
+    @ApiOperation(value = "按条件查询创客", notes = "按条件查询创客")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "workerDto", value = "查询条件", dataType = "WorkerDTO", required = true)})
     public ReturnJson getWorkerMany(@Valid @RequestBody WorkerDTO workerDto, @ApiParam(hidden = true) @RequestAttribute("userId") String merchantId) {
         return workerService.getByIdAndAccountNameAndMobile(merchantId, workerDto);
     }
 
     @PostMapping("/getWorkerInfo")
-    @ApiOperation(value = "查询创客详情", notes = "查询创客详情", httpMethod = "POST")
+    @ApiOperation(value = "查询创客详情", notes = "查询创客详情")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "id", value = "创客ID", required = true)})
     public ReturnJson getWorkerInfo(@NotBlank(message = "创客ID不能为空") @RequestParam(required = false) String id) {
         return workerService.getWorkerInfo(id);
@@ -70,7 +70,7 @@ public class WorkerMerchantController {
 
     @PostMapping("/saveWorker")
     @LoginRequired
-    @ApiOperation(value = "导入创客", notes = "导入创客", httpMethod = "POST")
+    @ApiOperation(value = "导入创客", notes = "导入创客")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "workers", value = "需要导入的创客集合", required = true, allowMultiple = true, dataType = "Worker"),
             @ApiImplicitParam(name = "merchantId", value = "商户ID", required = true)})
     public ReturnJson saveWorker(@NotEmpty(message = "集合不能为空") @RequestBody List<Worker> workers, @ApiParam(hidden = true) @RequestAttribute("userId") String merchantId) throws Exception {
@@ -131,7 +131,7 @@ public class WorkerMerchantController {
 
     @PostMapping("/queryWorkerCompanyByID")
     @LoginRequired
-    @ApiOperation(value = "添加指定派单创客", notes = "添加指定派单创客", httpMethod = "POST")
+    @ApiOperation(value = "添加指定派单创客", notes = "添加指定派单创客")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "pageNo", value = "页数", required = true),
             @ApiImplicitParam(name = "pageSize", value = "每页的条数", required = true)

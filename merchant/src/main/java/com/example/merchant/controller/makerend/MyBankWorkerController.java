@@ -26,7 +26,7 @@ public class MyBankWorkerController {
 
     @PostMapping("/personalRegister")
     @LoginRequired
-    @ApiOperation(value = "注册网商个人会员", notes = "注册网商个人会员", httpMethod = "POST")
+    @ApiOperation(value = "注册网商个人会员", notes = "注册网商个人会员")
     public ReturnJson personalRegister(@Valid @RequestBody Personal personal,
                                        @RequestAttribute(value = "userId") @ApiParam(hidden = true) String userId) throws Exception {
         return myBankWorkerService.personalRegister(personal, userId);
@@ -34,7 +34,7 @@ public class MyBankWorkerController {
 
     @PostMapping("/personalInfoModify")
     @LoginRequired
-    @ApiOperation(value = "修改网商个人会员信息", notes = "修改网商个人会员信息", httpMethod = "POST")
+    @ApiOperation(value = "修改网商个人会员信息", notes = "修改网商个人会员信息")
     public ReturnJson personalInfoModify(@Valid @RequestBody Personal personal,
                                          @RequestAttribute(value = "userId") @ApiParam(hidden = true) String userId) throws Exception {
         return myBankWorkerService.personalInfoModify(personal, userId);
@@ -42,21 +42,21 @@ public class MyBankWorkerController {
 
     @PostMapping("/personalInfoQuery")
     @LoginRequired
-    @ApiOperation(value = "查询网商个人会员信息", notes = "查询网商个人会员信息", httpMethod = "POST")
+    @ApiOperation(value = "查询网商个人会员信息", notes = "查询网商个人会员信息")
     public ReturnJson personalInfoQuery(@RequestAttribute(value = "userId") @ApiParam(hidden = true) String userId) throws Exception {
         return myBankWorkerService.personalInfoQuery(userId);
     }
 
     @PostMapping("/bankCardBind")
     @LoginRequired
-    @ApiOperation(value = "绑定网商银行卡", notes = "绑定网商银行卡", httpMethod = "POST")
+    @ApiOperation(value = "绑定网商银行卡", notes = "绑定网商银行卡")
     public ReturnJson bankCardBind(@Valid @RequestBody BankCardBind bankCardBind, @ApiParam(hidden = true) @RequestAttribute(value = "userId") String userId) throws Exception {
         return myBankWorkerService.bankCardBind(bankCardBind, userId);
     }
 
     @PostMapping("/bankCardUnBind")
     @LoginRequired
-    @ApiOperation(value = "解绑网商银行卡", notes = "解绑网商银行卡", httpMethod = "POST")
+    @ApiOperation(value = "解绑网商银行卡", notes = "解绑网商银行卡")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "bankId", value = "绑定的网商银行卡", required = true)})
     public ReturnJson bankCardUnBind(String bankId,
                                      @RequestAttribute(value = "userId") @ApiParam(hidden = true) String userId) throws Exception {

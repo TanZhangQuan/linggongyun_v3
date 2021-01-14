@@ -21,7 +21,7 @@ public class CodeGenerator {
     private static final String author = "hzp";
     private static final String packageName = "com.example";
     private static final String moduleName = "merchant";
-    private static final String[] tableName = {"tb_merchant_unionpay", "tb_trade_record", "tb_tax_unionpay"};
+    private static final String[] tableName = {"tb_company_unionpay", "tb_tax_unionpay"};
     private static final String tablePrefix = "tb";
 
     public static void main(String[] args) {

@@ -112,7 +112,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
     @Resource
     private TaxUnionpayService taxUnionpayService;
     @Resource
-    private MerchantUnionpayService merchantUnionpayService;
+    private CompanyUnionpayService companyUnionpayService;
 
     @Override
     public ReturnJson merchantLogin(String username, String password, HttpServletResponse response) {
@@ -485,7 +485,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
                     if (taxUnionpay == null) {
                         throw new CommonException(300, tax.getTaxName() + "服务商未开通" + unionpayBankType.getDesc() + "银联支付");
                     }
-                    if (taxUnionpay.getBoolEnable() != null && taxUnionpay.getBoolEnable()) {
+                    if (taxUnionpay.getBoolEnable() == null || !taxUnionpay.getBoolEnable()) {
                         throw new CommonException(300, tax.getTaxName() + "服务商" + unionpayBankType.getDesc() + "银联支付未开启");
                     }
 
@@ -510,14 +510,14 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
                     }
 
                     //新建商户银联信息表
-                    MerchantUnionpay merchantUnionpay = new MerchantUnionpay();
-                    merchantUnionpay.setMerchantId(merchant.getId());
-                    merchantUnionpay.setTaxUnionpayId(taxUnionpay.getId());
-                    merchantUnionpay.setUid(uuid);
-                    merchantUnionpay.setInBankNo(companyTaxDto.getInBankNo());
-                    merchantUnionpay.setSubAccountName(returnValue.getString("sub_account_name"));
-                    merchantUnionpay.setSubAccountCode(returnValue.getString("sub_account_code"));
-                    merchantUnionpayService.save(merchantUnionpay);
+                    CompanyUnionpay companyUnionpay = new CompanyUnionpay();
+                    companyUnionpay.setCompanyId(companyInfo.getId());
+                    companyUnionpay.setTaxUnionpayId(taxUnionpay.getId());
+                    companyUnionpay.setUid(uuid);
+                    companyUnionpay.setInBankNo(companyTaxDto.getInBankNo());
+                    companyUnionpay.setSubAccountName(returnValue.getString("sub_account_name"));
+                    companyUnionpay.setSubAccountCode(returnValue.getString("sub_account_code"));
+                    companyUnionpayService.save(companyUnionpay);
                 }
             }
         }
@@ -597,10 +597,10 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
             throw new CommonException(300, "商户账户信息不正确！");
         }
         BeanUtils.copyProperties(updateCompanyDto.getUpdateMerchantInfDto(), merchant);
-        if (StringUtils.isBlank(updateCompanyDto.getUpdateMerchantInfDto().getPassWord())) {
+        if (StringUtils.isNotBlank(updateCompanyDto.getUpdateMerchantInfDto().getPassWord())) {
             merchant.setPassWord(PWD_KEY + MD5.md5(updateCompanyDto.getUpdateMerchantInfDto().getPassWord()));
         }
-        if (StringUtils.isBlank(updateCompanyDto.getUpdateMerchantInfDto().getPayPwd())) {
+        if (StringUtils.isNotBlank(updateCompanyDto.getUpdateMerchantInfDto().getPayPwd())) {
             merchant.setPayPwd(PWD_KEY + MD5.md5(updateCompanyDto.getUpdateMerchantInfDto().getPayPwd()));
         }
         merchantDao.updateById(merchant);
@@ -656,7 +656,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
                     for (UpdateCompanyLadderServiceDTO updateCompanyLadderServiceDto : updateCompanyLadderServiceDtoList) {
                         if (j != 0) {
                             BigDecimal endMoney = updateCompanyLadderServiceDtoList.get(j - 1).getEndMoney();
-                            if (updateCompanyLadderServiceDto.getStartMoney().compareTo(endMoney) == -1) {
+                            if (updateCompanyLadderServiceDto.getStartMoney().compareTo(endMoney) < 0) {
                                 throw new CommonException(300, "上梯度结束金额应小于下梯度起始金额");
                             }
                         }
@@ -686,17 +686,17 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
                     if (taxUnionpay == null) {
                         throw new CommonException(300, tax.getTaxName() + "服务商未开通" + unionpayBankType.getDesc() + "银联支付");
                     }
-                    if (taxUnionpay.getBoolEnable() != null && taxUnionpay.getBoolEnable()) {
+                    if (taxUnionpay.getBoolEnable() == null || !taxUnionpay.getBoolEnable()) {
                         throw new CommonException(300, tax.getTaxName() + "服务商" + unionpayBankType.getDesc() + "银联支付未开启");
                     }
 
                     //查询商户是否开通子账号
-                    MerchantUnionpay merchantUnionpay = merchantUnionpayService.queryMerchantUnionpay(merchant.getId(), taxUnionpay.getId());
-                    if (merchantUnionpay != null) {
+                    CompanyUnionpay companyUnionpay = companyUnionpayService.queryMerchantUnionpay(companyInfo.getId(), taxUnionpay.getId());
+                    if (companyUnionpay != null) {
                         //检查盛京银行来款银行账号是否变动
-                        if (UnionpayBankType.SJBK.equals(unionpayBankType) && !(merchantUnionpay.getInBankNo().equals(updateCompanyTaxDTO.getInBankNo()))) {
+                        if (UnionpayBankType.SJBK.equals(unionpayBankType) && !(companyUnionpay.getInBankNo().equals(updateCompanyTaxDTO.getInBankNo()))) {
                             //修改盛京来款银行账号
-                            JSONObject jsonObject = UnionpayUtil.AC021(taxUnionpay.getMerchno(), taxUnionpay.getAcctno(), taxUnionpay.getPfmpubkey(), taxUnionpay.getPrikey(), merchantUnionpay.getUid(), updateCompanyTaxDTO.getInBankNo());
+                            JSONObject jsonObject = UnionpayUtil.AC021(taxUnionpay.getMerchno(), taxUnionpay.getAcctno(), taxUnionpay.getPfmpubkey(), taxUnionpay.getPrikey(), companyUnionpay.getUid(), updateCompanyTaxDTO.getInBankNo());
 
                             if (jsonObject == null) {
                                 throw new CommonException(300, tax.getTaxName() + "服务商" + unionpayBankType.getDesc() + "银联支付子账户更换绑卡失败");
@@ -716,8 +716,8 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
                             }
 
                             //更新商户-服务商银联记录绑定的来款银行账号
-                            merchantUnionpay.setInBankNo(updateCompanyTaxDTO.getInBankNo());
-                            merchantUnionpayService.updateById(merchantUnionpay);
+                            companyUnionpay.setInBankNo(updateCompanyTaxDTO.getInBankNo());
+                            companyUnionpayService.updateById(companyUnionpay);
                         }
                         continue;
                     }
@@ -743,14 +743,14 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
                     }
 
                     //新建商户银联信息表
-                    merchantUnionpay = new MerchantUnionpay();
-                    merchantUnionpay.setMerchantId(merchant.getId());
-                    merchantUnionpay.setTaxUnionpayId(taxUnionpay.getId());
-                    merchantUnionpay.setUid(uuid);
-                    merchantUnionpay.setInBankNo(updateCompanyTaxDTO.getInBankNo());
-                    merchantUnionpay.setSubAccountName(returnValue.getString("sub_account_name"));
-                    merchantUnionpay.setSubAccountCode(returnValue.getString("sub_account_code"));
-                    merchantUnionpayService.save(merchantUnionpay);
+                    companyUnionpay = new CompanyUnionpay();
+                    companyUnionpay.setCompanyId(companyInfo.getId());
+                    companyUnionpay.setTaxUnionpayId(taxUnionpay.getId());
+                    companyUnionpay.setUid(uuid);
+                    companyUnionpay.setInBankNo(updateCompanyTaxDTO.getInBankNo());
+                    companyUnionpay.setSubAccountName(returnValue.getString("sub_account_name"));
+                    companyUnionpay.setSubAccountCode(returnValue.getString("sub_account_code"));
+                    companyUnionpayService.save(companyUnionpay);
                 }
             }
         }
@@ -759,14 +759,8 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
     }
 
     @Override
-    public ReturnJson queryCompanyTaxInfo(String merchantId, String taxId) {
-
-        Merchant merchant = getById(merchantId);
-        if (merchant == null) {
-            return ReturnJson.error("商户不存在");
-        }
-
-        List<CooperationInfoVO> cooperationInfoVOList = taxDao.queryCooper(merchant.getCompanyId(), taxId);
+    public ReturnJson queryCompanyTaxInfo(String companyId, String taxId) {
+        List<CooperationInfoVO> cooperationInfoVOList = taxDao.queryCooper(companyId, taxId);
         return ReturnJson.success(cooperationInfoVOList);
     }
 

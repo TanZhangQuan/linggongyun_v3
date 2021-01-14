@@ -207,8 +207,8 @@ public interface MerchantService extends IService<Merchant> {
     /**
      * 查询商户服务商合作信息
      *
-     * @param merchantId
+     * @param companyId
      * @return
      */
-    ReturnJson queryCompanyTaxInfo(String merchantId, String taxId);
+    ReturnJson queryCompanyTaxInfo(String companyId, String taxId);
 }

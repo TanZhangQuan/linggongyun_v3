@@ -21,7 +21,7 @@ public class RegulatorLoginController {
     private RegulatorService regulatorService;
 
     @PostMapping("/regulatorLogin")
-    @ApiOperation(value = "账号密码登录", notes = "账号密码登录", httpMethod = "POST")
+    @ApiOperation(value = "账号密码登录", notes = "账号密码登录")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "username", value = "登录账号", required = true),
             @ApiImplicitParam(name = "password", value = "登录密码", required = true)
@@ -33,14 +33,14 @@ public class RegulatorLoginController {
 
     @PostMapping("/regulatorLogout")
     @LoginRequired
-    @ApiOperation(value = "登出", notes = "登出", httpMethod = "POST")
+    @ApiOperation(value = "登出", notes = "登出")
     public ReturnJson regulatorLogout(@ApiParam(hidden = true) @RequestAttribute(value = "userId", required = false) String regulatorId) {
         return regulatorService.regulatorLogout(regulatorId);
     }
 
     @PostMapping("/getRegulatorInfo")
     @LoginRequired
-    @ApiOperation(value = "获取监管人员信息", notes = "获取监管人员信息", httpMethod = "POST")
+    @ApiOperation(value = "获取监管人员信息", notes = "获取监管人员信息")
     public ReturnJson getRegulatorInfo(@ApiParam(hidden = true) @RequestAttribute(value = "userId", required = false) String regulatorId) {
         return regulatorService.getRegulatorInfo(regulatorId);
     }

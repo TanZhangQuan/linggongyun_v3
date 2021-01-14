@@ -5,13 +5,14 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.example.common.enums.UnionpayBankType;
 import com.example.common.util.ReturnJson;
 import com.example.common.util.UnionpayUtil;
-import com.example.merchant.service.MerchantUnionpayService;
+import com.example.merchant.service.CompanyUnionpayService;
 import com.example.merchant.service.TaxUnionpayService;
-import com.example.mybatis.entity.MerchantUnionpay;
+import com.example.mybatis.entity.CompanyUnionpay;
 import com.example.mybatis.entity.TaxUnionpay;
-import com.example.mybatis.mapper.MerchantUnionpayDao;
+import com.example.mybatis.mapper.CompanyUnionpayDao;
 import com.example.mybatis.vo.MerchantUnionpayBalanceVO;
 import com.example.mybatis.vo.UnionpayTaxListVO;
 import org.springframework.stereotype.Service;
@@ -30,38 +31,43 @@ import java.util.List;
  * @since 2021-01-08
  */
 @Service
-public class MerchantUnionpayServiceImpl extends ServiceImpl<MerchantUnionpayDao, MerchantUnionpay> implements MerchantUnionpayService {
+public class CompanyUnionpayServiceImpl extends ServiceImpl<CompanyUnionpayDao, CompanyUnionpay> implements CompanyUnionpayService {
 
     @Resource
-    private MerchantUnionpayDao merchantUnionpayDao;
+    private CompanyUnionpayDao companyUnionpayDao;
 
     @Resource
     private TaxUnionpayService taxUnionpayService;
 
     @Override
-    public MerchantUnionpay queryMerchantUnionpay(String merchantId, String taxUnionpayId) {
+    public CompanyUnionpay queryMerchantUnionpay(String companyId, String taxUnionpayId) {
 
-        QueryWrapper<MerchantUnionpay> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda().eq(MerchantUnionpay::getMerchantId, merchantId)
-                .eq(MerchantUnionpay::getTaxUnionpayId, taxUnionpayId);
+        QueryWrapper<CompanyUnionpay> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(CompanyUnionpay::getCompanyId, companyId)
+                .eq(CompanyUnionpay::getTaxUnionpayId, taxUnionpayId);
 
         return baseMapper.selectOne(queryWrapper);
     }
 
     @Override
-    public ReturnJson queryOfflineTaxList(String merchantId, long pageNo, long pageSize) {
-        IPage<UnionpayTaxListVO> uninopayTaxList = merchantUnionpayDao.queryOfflineTaxList(new Page<>(pageNo, pageSize), merchantId);
+    public CompanyUnionpay queryMerchantUnionpayUnionpayBankType(String companyId, String taxUnionpayId, UnionpayBankType unionpayBankType) {
+        return baseMapper.queryMerchantUnionpayUnionpayBankType(companyId, taxUnionpayId, unionpayBankType);
+    }
+
+    @Override
+    public ReturnJson queryOfflineTaxList(String companyId, long pageNo, long pageSize) {
+        IPage<UnionpayTaxListVO> uninopayTaxList = companyUnionpayDao.queryOfflineTaxList(new Page<>(pageNo, pageSize), companyId);
         return ReturnJson.success(uninopayTaxList);
     }
 
     @Override
-    public ReturnJson queryUninopayTaxList(String merchantId, long pageNo, long pageSize) {
-        IPage<UnionpayTaxListVO> uninopayTaxList = merchantUnionpayDao.queryUninopayTaxList(new Page<>(pageNo, pageSize), merchantId);
+    public ReturnJson queryUninopayTaxList(String companyId, long pageNo, long pageSize) {
+        IPage<UnionpayTaxListVO> uninopayTaxList = companyUnionpayDao.queryUninopayTaxList(new Page<>(pageNo, pageSize), companyId);
         return ReturnJson.success(uninopayTaxList);
     }
 
     @Override
-    public ReturnJson queryCompanyUnionpayDetail(String merchantId, String taxId) throws Exception {
+    public ReturnJson queryCompanyUnionpayDetail(String companyId, String taxId) throws Exception {
 
         //查询服务商所有主账号
         List<MerchantUnionpayBalanceVO> merchantUnionpayBalanceVOList = new ArrayList<>();
@@ -69,19 +75,19 @@ public class MerchantUnionpayServiceImpl extends ServiceImpl<MerchantUnionpayDao
         for (TaxUnionpay taxUnionpay : taxUnionpayList) {
 
             //查询商户-服务商银联记录
-            MerchantUnionpay merchantUnionpay = queryMerchantUnionpay(merchantId, taxUnionpay.getId());
-            if (merchantUnionpay == null) {
+            CompanyUnionpay companyUnionpay = queryMerchantUnionpay(companyId, taxUnionpay.getId());
+            if (companyUnionpay == null) {
                 log.error("商户-服务商银联记录不存在");
                 continue;
             }
 
             MerchantUnionpayBalanceVO merchantUnionpayBalanceVO = new MerchantUnionpayBalanceVO();
             merchantUnionpayBalanceVO.setUnionpayBankType(taxUnionpay.getUnionpayBankType());
-            merchantUnionpayBalanceVO.setSubAccountName(merchantUnionpay.getSubAccountName());
-            merchantUnionpayBalanceVO.setSubAccountCode(merchantUnionpay.getSubAccountCode());
-            merchantUnionpayBalanceVO.setInBankNo(merchantUnionpay.getInBankNo());
+            merchantUnionpayBalanceVO.setSubAccountName(companyUnionpay.getSubAccountName());
+            merchantUnionpayBalanceVO.setSubAccountCode(companyUnionpay.getSubAccountCode());
+            merchantUnionpayBalanceVO.setInBankNo(companyUnionpay.getInBankNo());
 
-            JSONObject jsonObject = UnionpayUtil.AC081(taxUnionpay.getMerchno(), taxUnionpay.getAcctno(), taxUnionpay.getPfmpubkey(), taxUnionpay.getPrikey(), merchantUnionpay.getUid());
+            JSONObject jsonObject = UnionpayUtil.AC081(taxUnionpay.getMerchno(), taxUnionpay.getAcctno(), taxUnionpay.getPfmpubkey(), taxUnionpay.getPrikey(), companyUnionpay.getUid());
             if (jsonObject == null) {
                 log.error("查询子帐号" + taxUnionpay.getUnionpayBankType().getDesc() + "银联支付余额失败");
                 merchantUnionpayBalanceVOList.add(merchantUnionpayBalanceVO);
@@ -130,4 +136,5 @@ public class MerchantUnionpayServiceImpl extends ServiceImpl<MerchantUnionpayDao
 
         return ReturnJson.success(merchantUnionpayBalanceVOList);
     }
+
 }

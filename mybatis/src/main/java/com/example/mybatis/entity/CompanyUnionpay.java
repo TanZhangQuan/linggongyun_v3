@@ -18,14 +18,14 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
-@TableName("tb_merchant_unionpay")
-public class MerchantUnionpay extends BaseEntity {
+@TableName("tb_company_unionpay")
+public class CompanyUnionpay extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
     /**
      * 商户ID
      */
-    private String merchantId;
+    private String companyId;
 
     /**
      * 服务商银联ID

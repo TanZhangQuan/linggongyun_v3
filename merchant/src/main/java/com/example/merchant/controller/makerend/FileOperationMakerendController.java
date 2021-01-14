@@ -26,19 +26,19 @@ public class FileOperationMakerendController {
     private FileOperationService fileOperationService;
 
     @PostMapping("/uploadJpgOrPdf")
-    @ApiOperation(value = "上传JPG或PDF", notes = "上传JPG或PDF", httpMethod = "POST")
+    @ApiOperation(value = "上传JPG或PDF", notes = "上传JPG或PDF")
     public ReturnJson uploadJpgOrPdf(@ApiParam(value = "上传文件",required = true) @RequestParam("uploadJpgOrPdf") MultipartFile uploadJpgOrPdf, HttpServletRequest request) throws IOException {
         return fileOperationService.uploadJpgOrPdf(uploadJpgOrPdf, request);
     }
 
     @PostMapping("/uploadVideo")
-    @ApiOperation(value = "上传活体视频", notes = "上传活体视频", httpMethod = "POST")
+    @ApiOperation(value = "上传活体视频", notes = "上传活体视频")
     public ReturnJson uploadVideo(@ApiParam(value = "上传文件",required = true) @RequestParam("uploadVideo") MultipartFile uploadVideo, HttpServletRequest request) throws IOException {
         return fileOperationService.uploadVideo(uploadVideo, request);
     }
 
     @PostMapping("/uploadTaxReceipt")
-    @ApiOperation(value = "税票or发票门征单开", notes = "税票or发票门征单开", httpMethod = "POST")
+    @ApiOperation(value = "税票or发票门征单开", notes = "税票or发票门征单开")
     public ReturnJson uploadInvoiceOrTaxReceipt(@ApiParam(value = "判断税票or发票,0为发票,1为税票",required = true) @RequestParam("state") String state,
                                                 @ApiParam(value = "文件",required = true) @RequestParam("uploadTaxReceipt") MultipartFile uploadTaxReceipt,
                                                 @ApiParam(value = "支付明细id",required = true) @RequestParam("paymentInventoryId")String paymentInventoryId ,HttpServletRequest request) throws IOException {

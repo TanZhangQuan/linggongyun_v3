@@ -37,7 +37,7 @@ public class PaymentOrderManyPaasController {
     private PaymentOrderService paymentOrderService;
 
     @PostMapping("/findMerchant")
-    @ApiOperation(value = "查询商户", notes = "查询商户", httpMethod = "POST")
+    @ApiOperation(value = "查询商户", notes = "查询商户")
     @LoginRequired
     public ReturnJson findMerchant(@ApiParam(hidden = true) @RequestAttribute("userId") String managersId) {
         return paymentOrderService.findMerchantPaas(managersId);
@@ -45,30 +45,31 @@ public class PaymentOrderManyPaasController {
 
     @LoginRequired
     @PostMapping("/getPaymentOrderManyAll")
-    @ApiOperation(value = "查询众包订单", notes = "查询众包订单", httpMethod = "POST")
+    @ApiOperation(value = "查询众包订单", notes = "查询众包订单")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "paymentOrderDto", value = "查询条件", required = true, dataType = "PaymentOrderDTO")})
     public ReturnJson getPaymentOrderManyAll(@Valid @RequestBody PaymentOrderDTO paymentOrderDto, @RequestAttribute("userId") @ApiParam(hidden = true) String managersId) throws CommonException {
         return paymentOrderManyService.getPaymentOrderManyPaas(paymentOrderDto, managersId);
     }
 
     @GetMapping("/getPaymentOrderManyInfo")
-    @ApiOperation(value = "查询众包支付订单详情", notes = "查询众包支付订单详情", httpMethod = "GET")
+    @ApiOperation(value = "查询众包支付订单详情", notes = "查询众包支付订单详情")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "id", value = "支付订单ID", required = true)})
     public ReturnJson getPaymentOrderManyInfo(@NotBlank(message = "支付订单ID不能为空") @RequestParam(required = false) String id) {
         return paymentOrderManyService.getPaymentOrderManyInfo(id);
     }
 
     @PostMapping("/saveOrUpdata")
-    @ApiOperation(value = "创建或修改众包支付订单", notes = "创建或修改众包支付订单", httpMethod = "POST")
-    @ApiImplicitParams(value = {@ApiImplicitParam(name = "addPaymentOrderManyDto", value = "添加众包支付订单", required = true, dataType = "AddPaymentOrderManyDTO")})
+    @ApiOperation(value = "创建或修改众包支付订单", notes = "创建或修改众包支付订单")
     public ReturnJson saveOrUpdataPaymentOrderMany(@Valid @RequestBody AddPaymentOrderManyDTO addPaymentOrderManyDto, @RequestParam String merchantId) throws CommonException {
         return paymentOrderManyService.saveOrUpdataPaymentOrderMany(addPaymentOrderManyDto, merchantId);
     }
 
-    @PostMapping("/confirmPayment")
-    @ApiOperation(value = "众包确认收款", notes = "众包确认收款", httpMethod = "POST")
-    @ApiImplicitParams(value = {@ApiImplicitParam(name = "paymentOrderId", value = "众包支付订单ID", required = true)})
-    public ReturnJson confirmPaymentMany(String paymentOrderId) {
-        return paymentOrderManyService.confirmPaymentManyPaas(paymentOrderId);
+    @PostMapping("/paymentOrderManyAudit")
+    @ApiOperation(value = "众包审核", notes = "众包审核")
+    public ReturnJson paymentOrderManyAudit(@ApiParam(value = "众包支付订单ID") @NotBlank(message = "请选择众包支付订单") @RequestParam(required = false) String paymentOrderId,
+                                            @ApiParam(value = "是否审核通过") @NotBlank(message = "请选择是否审核通过") @RequestParam(required = false) Boolean boolPass,
+                                            @ApiParam(value = "众包支付回单") @RequestParam(required = false) String manyPayment,
+                                            @ApiParam(value = "拒绝原因") @RequestParam(required = false) String reasonsForRejection) throws Exception {
+        return paymentOrderManyService.paymentOrderManyAudit(paymentOrderId, boolPass, manyPayment, reasonsForRejection);
     }
 }
