@@ -370,11 +370,11 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
         RegulatorWorkerPO regulatorWorkerPO = regulatorWorkerPOS.get(0);
         CountSingleRegulatorWorkerVO countSingleRegulatorWorkerVO = new CountSingleRegulatorWorkerVO();
         BeanUtils.copyProperties(regulatorWorkerPO, countSingleRegulatorWorkerVO);
-        Page<WorekerPaymentListPo> worekerPaymentListPoPage = new Page<>(1, 10);
-        IPage<WorekerPaymentListPo> worekerPaymentListPoIPage = workerDao.regulatorWorkerPaymentList(worekerPaymentListPoPage, workerId, paymentOrderIds);
+        Page<WorekerPaymentListPo> workerPaymentListPoPage = new Page<>(1, 10);
+        IPage<WorekerPaymentListPo> workerPaymentListPoIPage = workerDao.regulatorWorkerPaymentList(workerPaymentListPoPage, workerId, paymentOrderIds);
         CountRegulatorWorkerInfoVO countRegulatorWorkerInfoVO = new CountRegulatorWorkerInfoVO();
         countRegulatorWorkerInfoVO.setCountSingleRegulatorWorkerVO(countSingleRegulatorWorkerVO);
-        countRegulatorWorkerInfoVO.setWorekerPaymentListPos(worekerPaymentListPoIPage.getRecords());
+        countRegulatorWorkerInfoVO.setWorekerPaymentListPos(workerPaymentListPoIPage.getRecords());
         countRegulatorWorkerInfoVO.setWorker(worker);
         return ReturnJson.success(countRegulatorWorkerInfoVO);
     }
@@ -390,17 +390,17 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
             return ReturnJson.success(paymentOrderIds);
         }
         Page<WorekerPaymentListPo> paymentListPoPage = new Page<>(regulatorWorkerPaymentDto.getPageNo(), regulatorWorkerPaymentDto.getPageSize());
-        IPage<WorekerPaymentListPo> worekerPaymentListPoIPage = workerDao.selectRegulatorWorkerPaymentInfo(paymentListPoPage,
+        IPage<WorekerPaymentListPo> workerPaymentListPoIPage = workerDao.selectRegulatorWorkerPaymentInfo(paymentListPoPage,
                 paymentOrderIds, regulatorWorkerPaymentDto.getWorkerId(), regulatorWorkerPaymentDto.getCompanyName(),
                 regulatorWorkerPaymentDto.getTaxName(), regulatorWorkerPaymentDto.getStartDate(), regulatorWorkerPaymentDto.getEndDate());
         List<RegulatorWorkerPaymentInfoVO> regulatorWorkerPaymentInfoVOS = new ArrayList<>();
-        List<WorekerPaymentListPo> records = worekerPaymentListPoIPage.getRecords();
+        List<WorekerPaymentListPo> records = workerPaymentListPoIPage.getRecords();
         for (WorekerPaymentListPo worekerPaymentListPo : records) {
             RegulatorWorkerPaymentInfoVO regulatorWorkerPaymentInfoVO = new RegulatorWorkerPaymentInfoVO();
             BeanUtils.copyProperties(worekerPaymentListPo, regulatorWorkerPaymentInfoVO);
             regulatorWorkerPaymentInfoVOS.add(regulatorWorkerPaymentInfoVO);
         }
-        ReturnJson returnJson = ReturnJson.success(worekerPaymentListPoIPage);
+        ReturnJson returnJson = ReturnJson.success(workerPaymentListPoIPage);
         returnJson.setData(regulatorWorkerPaymentInfoVOS);
         return returnJson;
     }
