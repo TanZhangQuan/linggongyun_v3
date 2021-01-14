@@ -68,10 +68,9 @@ public class PaymentOrderMerchantController {
     }
 
     @PostMapping("/paymentOrderPay")
-    @ApiOperation(value = "商户总包+分包支付", notes = "商户总包+分包支付")
-    public ReturnJson paymentOrderPay(@ApiParam(hidden = true) @RequestAttribute("userId") String merchantId,
-                                      @Valid @RequestBody PaymentOrderPayDTO paymentOrderPayDTO) {
-        return paymentOrderService.paymentOrderPay(merchantId, paymentOrderPayDTO);
+    @ApiOperation(value = "商户总包支付", notes = "商户总包支付")
+    public ReturnJson paymentOrderPay(@Valid @RequestBody PaymentOrderPayDTO paymentOrderPayDTO) {
+        return paymentOrderService.paymentOrderPay(paymentOrderPayDTO);
     }
 
     @PostMapping("/associatedTasks")

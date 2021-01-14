@@ -68,8 +68,7 @@ public class PaymentOrderManyPaasController {
     @ApiOperation(value = "众包审核", notes = "众包审核")
     public ReturnJson paymentOrderManyAudit(@ApiParam(value = "众包支付订单ID") @NotBlank(message = "请选择众包支付订单") @RequestParam(required = false) String paymentOrderId,
                                             @ApiParam(value = "是否审核通过") @NotBlank(message = "请选择是否审核通过") @RequestParam(required = false) Boolean boolPass,
-                                            @ApiParam(value = "众包支付回单") @RequestParam(required = false) String manyPayment,
                                             @ApiParam(value = "拒绝原因") @RequestParam(required = false) String reasonsForRejection) throws Exception {
-        return paymentOrderManyService.paymentOrderManyAudit(paymentOrderId, boolPass, manyPayment, reasonsForRejection);
+        return paymentOrderManyService.paymentOrderManyAudit(paymentOrderId, boolPass, reasonsForRejection);
     }
 }

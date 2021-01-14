@@ -81,11 +81,10 @@ public interface PaymentOrderManyService extends IService<PaymentOrderMany> {
     /**
      * 商户众包支付
      *
-     * @param companyId
      * @param paymentOrderManyPayDTO
      * @return
      */
-    ReturnJson paymentOrderManyPay(String companyId, PaymentOrderManyPayDTO paymentOrderManyPayDTO);
+    ReturnJson paymentOrderManyPay(PaymentOrderManyPayDTO paymentOrderManyPayDTO);
 
     /**
      * 众包今天的支付金额
@@ -124,12 +123,11 @@ public interface PaymentOrderManyService extends IService<PaymentOrderMany> {
      *
      * @param paymentOrderId
      * @param boolPass
-     * @param manyPayment
      * @param reasonsForRejection
      * @return
      * @throws Exception
      */
-    ReturnJson paymentOrderManyAudit(String paymentOrderId, Boolean boolPass, String manyPayment, String reasonsForRejection) throws Exception;
+    ReturnJson paymentOrderManyAudit(String paymentOrderId, Boolean boolPass, String reasonsForRejection) throws Exception;
 
     /**
      * 查询众包的支付订单

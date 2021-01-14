@@ -64,31 +64,21 @@ public class PaymentOrderPaasController {
         return paymentOrderService.saveOrUpdataPaymentOrder(addPaymentOrderDto, merchantId);
     }
 
-    @PostMapping("/offlinePayment")
-    @ApiOperation(value = "总包线下支付", notes = "总包线下支付")
-    @ApiImplicitParams(value = {@ApiImplicitParam(name = "paymentOrderId", value = "支付订单ID", required = true),
-            @ApiImplicitParam(name = "turnkeyProjectPayment", value = "支付回单存储地址", required = true)})
-    public ReturnJson offlinePayment(@NotBlank @RequestParam(required = false) String paymentOrderId, @NotBlank @RequestParam(required = false) String turnkeyProjectPayment) {
-        return paymentOrderService.offlinePaymentPaas(paymentOrderId, turnkeyProjectPayment);
+    @PostMapping("/paymentOrderAudit")
+    @ApiOperation(value = "总包+分包审核", notes = "总包+分包审核")
+    public ReturnJson paymentOrderAudit(@ApiParam(value = "总包+分包支付订单ID") @NotBlank(message = "请选择总包+分包支付订单") @RequestParam(required = false) String paymentOrderId,
+                                        @ApiParam(value = "是否审核通过") @NotBlank(message = "请选择是否审核通过") @RequestParam(required = false) Boolean boolPass,
+                                        @ApiParam(value = "拒绝原因") @RequestParam(required = false) String reasonsForRejection) throws Exception {
+        return paymentOrderService.paymentOrderAudit(paymentOrderId, boolPass, reasonsForRejection);
     }
 
     @PostMapping("subpackagePayment")
     @ApiOperation(value = "分包支付", notes = "分包支付")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "paymentOrderId", value = "总包支付订单ID", required = true),
             @ApiImplicitParam(name = "subpackagePayment", value = "分包支付回单存储地址", required = true)})
-    public ReturnJson subpackagePay(@NotBlank(message = "支付订单不能为空！") @RequestParam(required = false) String paymentOrderId,
-                                    @NotBlank(message = "分包支付回单URL不能为空！") @RequestParam(required = false) String subpackagePayment) throws Exception {
+    public ReturnJson subpackagePay(@ApiParam(value = "总包+分包支付订单ID") @NotBlank(message = "请选择总包+分包支付订单") @RequestParam(required = false) String paymentOrderId,
+                                    @ApiParam(value = "分包支付回单") @RequestParam(required = false) String subpackagePayment) throws Exception {
         return paymentOrderService.subpackagePay(paymentOrderId, subpackagePayment);
-    }
-
-    @PostMapping("/paymentOrderAudit")
-    @ApiOperation(value = "总包+分包审核", notes = "总包+分包审核")
-    @ApiImplicitParams(value = {@ApiImplicitParam(name = "paymentOrderId", value = "支付订单ID", required = true)})
-    public ReturnJson paymentOrderAudit(@ApiParam(value = "总包+分包支付订单ID") @NotBlank(message = "请选择总包+分包支付订单") @RequestParam(required = false) String paymentOrderId,
-                                        @ApiParam(value = "是否审核通过") @NotBlank(message = "请选择是否审核通过") @RequestParam(required = false) Boolean boolPass,
-                                        @ApiParam(value = "总包支付回单") @RequestParam(required = false) String turnkeyProjectPayment,
-                                        @ApiParam(value = "拒绝原因") @RequestParam(required = false) String reasonsForRejection) throws Exception {
-        return paymentOrderService.paymentOrderAudit(paymentOrderId, boolPass, turnkeyProjectPayment, reasonsForRejection);
     }
 
     @PostMapping("/associatedTasks")

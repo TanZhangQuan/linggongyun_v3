@@ -322,7 +322,7 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
     }
 
     @Override
-    public ReturnJson paymentOrderManyPay(String companyId, PaymentOrderManyPayDTO paymentOrderManyPayDTO) {
+    public ReturnJson paymentOrderManyPay(PaymentOrderManyPayDTO paymentOrderManyPayDTO) {
 
         PaymentOrderMany paymentOrderMany = getById(paymentOrderManyPayDTO.getPaymentOrderManyId());
         if (paymentOrderMany == null) {
@@ -340,7 +340,7 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
             case 0:
 
                 if (StringUtils.isBlank(paymentOrderManyPayDTO.getTurnkeyProjectPayment())) {
-                    return ReturnJson.error("请上传线下支付回单");
+                    return ReturnJson.error("请上传众包支付回单");
                 }
 
                 paymentOrderMany.setManyPayment(paymentOrderManyPayDTO.getTurnkeyProjectPayment());
@@ -408,7 +408,7 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
     }
 
     @Override
-    public ReturnJson paymentOrderManyAudit(String paymentOrderId, Boolean boolPass, String manyPayment, String reasonsForRejection) throws Exception {
+    public ReturnJson paymentOrderManyAudit(String paymentOrderId, Boolean boolPass, String reasonsForRejection) throws Exception {
 
         PaymentOrderMany paymentOrderMany = getById(paymentOrderId);
         if (paymentOrderMany == null) {
@@ -447,12 +447,7 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
 
                 case 0:
 
-                    if (StringUtils.isBlank(manyPayment)) {
-                        return ReturnJson.error("请上传众包支付回单");
-                    }
-
                     paymentOrderMany.setPaymentOrderStatus(3);
-                    paymentOrderMany.setManyPayment(manyPayment);
                     paymentOrderManyDao.updateById(paymentOrderMany);
 
                     break;

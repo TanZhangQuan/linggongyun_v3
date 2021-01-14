@@ -748,31 +748,30 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
                     throw new CommonException(300, tax.getTaxName() + "服务商开通" + unionpayBankType.getDesc() + "银联支付注册子账号失败: " + errMsg);
                 }
 
-                    //新建商户银联信息表
-                    companyUnionpay = new CompanyUnionpay();
-                    companyUnionpay.setCompanyId(companyInfo.getId());
-                    companyUnionpay.setTaxUnionpayId(taxUnionpay.getId());
-                    companyUnionpay.setUid(uuid);
-                    companyUnionpay.setInBankNo(updateCompanyTaxDTO.getInBankNo());
-                    companyUnionpay.setSubAccountName(returnValue.getString("sub_account_name"));
-                    companyUnionpay.setSubAccountCode(returnValue.getString("sub_account_code"));
-                    companyUnionpayService.save(companyUnionpay);
-                }
+                //新建商户银联信息表
+                companyUnionpay = new CompanyUnionpay();
+                companyUnionpay.setCompanyId(companyInfo.getId());
+                companyUnionpay.setTaxUnionpayId(taxUnionpay.getId());
+                companyUnionpay.setUid(uuid);
+                companyUnionpay.setInBankNo(updateCompanyTaxDTO.getInBankNo());
+                companyUnionpay.setSubAccountName(returnValue.getString("sub_account_name"));
+                companyUnionpay.setSubAccountCode(returnValue.getString("sub_account_code"));
+                companyUnionpayService.save(companyUnionpay);
+            }
         }
-    }
 
         return ReturnJson.success("操作成功");
-}
+    }
 
     @Override
     public ReturnJson taxMerchantInfoPaas(String merchantId, String taxId) {
-        return homePageService.getHomePageInof(merchantId);
+        return homePageService.getHomePageInfo(merchantId);
     }
 
     @Override
     public ReturnJson queryMerchantTransactionFlow(String merchantId, Integer pageNo, Integer pageSize) {
         Page<TaxTransactionFlowVO> merchantPage = new Page<>(pageNo, pageSize);
-        List<TaxTransactionFlowVO> taxTransactionFlowVOS = merchantDao.queryMerchantTransactionFlow(merchantId,merchantPage);
+        List<TaxTransactionFlowVO> taxTransactionFlowVOS = merchantDao.queryMerchantTransactionFlow(merchantId, merchantPage);
         return ReturnJson.success(taxTransactionFlowVOS);
     }
 

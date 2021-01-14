@@ -48,11 +48,10 @@ public interface PaymentOrderService extends IService<PaymentOrder> {
     /**
      * 商户总包+分包支付
      *
-     * @param companyId
      * @param paymentOrderPayDTO
      * @return
      */
-    ReturnJson paymentOrderPay(String companyId, PaymentOrderPayDTO paymentOrderPayDTO);
+    ReturnJson paymentOrderPay(PaymentOrderPayDTO paymentOrderPayDTO);
 
     /**
      * 总包支付信息
@@ -111,25 +110,15 @@ public interface PaymentOrderService extends IService<PaymentOrder> {
     ReturnJson getPaymentOrderPaas(PaymentOrderDTO paymentOrderDto, String managersId) throws CommonException;
 
     /**
-     * 线下支付
-     *
-     * @param paymentOrderId
-     * @param turnkeyProjectPayment
-     * @return
-     */
-    ReturnJson offlinePaymentPaas(String paymentOrderId, String turnkeyProjectPayment);
-
-    /**
      * 总包+分包审核
      *
      * @param paymentOrderId
      * @param boolPass
-     * @param turnkeyProjectPayment
      * @param reasonsForRejection
      * @return
      * @throws Exception
      */
-    ReturnJson paymentOrderAudit(String paymentOrderId, Boolean boolPass, String turnkeyProjectPayment, String reasonsForRejection) throws Exception;
+    ReturnJson paymentOrderAudit(String paymentOrderId, Boolean boolPass, String reasonsForRejection) throws Exception;
 
     /**
      * 查询商户

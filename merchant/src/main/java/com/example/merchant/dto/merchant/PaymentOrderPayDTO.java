@@ -19,6 +19,6 @@ public class PaymentOrderPayDTO implements Serializable {
     @NotNull(message = "请选择支付方式")
     private Integer paymentMode;
 
-    @ApiModelProperty(value = "线下支付回单")
+    @ApiModelProperty(value = "总包支付回单")
     private String turnkeyProjectPayment;
 }
