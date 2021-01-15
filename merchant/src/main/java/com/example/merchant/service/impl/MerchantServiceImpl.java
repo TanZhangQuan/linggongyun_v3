@@ -572,6 +572,18 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         }
         companyVo.setQueryCooperationInfoVo(queryCooperationInfoVo);
         List<CooperationInfoVO> cooperationInfoVOList = taxDao.queryCooper(companyId, null);
+        //查询服务商银联支付银行和商户银联支付银行
+        if (cooperationInfoVOList != null && cooperationInfoVOList.size() > 0) {
+            for (CooperationInfoVO cooperationInfoVO : cooperationInfoVOList) {
+                //查询服务商银联支付银行
+                List<UnionpayBankType> taxUnionpayBankTypeList = taxUnionpayService.queryTaxUnionpayMethod(cooperationInfoVO.getTaxId());
+                cooperationInfoVO.setTaxUnionpayBankTypeList(taxUnionpayBankTypeList);
+                //查询商户银联支付银行
+                List<UnionpayBankType> companyUnionpayBankTypeList = companyUnionpayService.queryCompanyUnionpayMethod(companyId,cooperationInfoVO.getTaxId());
+                cooperationInfoVO.setCompanyUnionpayBankTypeList(companyUnionpayBankTypeList);
+            }
+        }
+
         companyVo.setCooperationInfoVoList(cooperationInfoVOList);
         return ReturnJson.success(companyVo);
     }
@@ -629,7 +641,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
                     for (UpdateCompanyLadderServiceDTO updateCompanyLadderServiceDto : updateCompanyLadderServiceDtoList) {
                         if (j != 0) {
                             BigDecimal endMoney = updateCompanyLadderServiceDtoList.get(j - 1).getEndMoney();
-                            if (updateCompanyLadderServiceDto.getStartMoney().compareTo(endMoney) == -1) {
+                            if (updateCompanyLadderServiceDto.getStartMoney().compareTo(endMoney) < 0) {
                                 throw new CommonException(300, "上梯度结束金额应小于下梯度起始金额");
                             }
                         }

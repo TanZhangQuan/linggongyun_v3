@@ -6,6 +6,8 @@ import com.example.common.enums.UnionpayBankType;
 import com.example.common.util.ReturnJson;
 import com.example.mybatis.entity.CompanyUnionpay;
 
+import java.util.List;
+
 /**
  * <p>
  * 商户银联信息表 服务类
@@ -34,6 +36,15 @@ public interface CompanyUnionpayService extends IService<CompanyUnionpay> {
      * @return
      */
     CompanyUnionpay queryMerchantUnionpayUnionpayBankType(String companyId, String taxUnionpayId, UnionpayBankType unionpayBankType);
+
+    /**
+     * 查询商户拥有的银联支付方式
+     *
+     * @param companyId
+     * @param taxId
+     * @return
+     */
+    List<UnionpayBankType> queryCompanyUnionpayMethod(String companyId, String taxId);
 
     /**
      * 查询线下支付关联的服务商

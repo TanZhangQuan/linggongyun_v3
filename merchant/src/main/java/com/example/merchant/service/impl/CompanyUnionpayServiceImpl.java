@@ -55,6 +55,11 @@ public class CompanyUnionpayServiceImpl extends ServiceImpl<CompanyUnionpayDao, 
     }
 
     @Override
+    public List<UnionpayBankType> queryCompanyUnionpayMethod(String companyId, String taxId) {
+        return companyUnionpayDao.queryCompanyUnionpayMethod(companyId, taxId);
+    }
+
+    @Override
     public ReturnJson queryOfflineTaxList(String companyId, long pageNo, long pageSize) {
         IPage<UnionpayTaxListVO> uninopayTaxList = companyUnionpayDao.queryOfflineTaxList(new Page<>(pageNo, pageSize), companyId);
         return ReturnJson.success(uninopayTaxList);

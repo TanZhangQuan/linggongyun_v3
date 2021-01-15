@@ -34,11 +34,11 @@ public class CooperationInfoVO implements Serializable {
     @ApiModelProperty(value = "合作合同地址")
     private String contract;
 
-    @ApiModelProperty(value = "银联支付银行")
-    private List<UnionpayBankType> unionpayBankTypeList;
+    @ApiModelProperty(value = "服务商银联支付银行")
+    private List<UnionpayBankType> taxUnionpayBankTypeList;
 
-    @ApiModelProperty(value = "来款银行账号(盛京银行必传)")
-    private String inBankNo;
+    @ApiModelProperty(value = "商户银联支付银行")
+    private List<UnionpayBankType> companyUnionpayBankTypeList;
 
     @ApiModelProperty(value = "账户")
     private String payee;
