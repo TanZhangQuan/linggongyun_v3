@@ -242,7 +242,7 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
 
     @Override
     public ReturnJson getRegulatorTaxPaymentList(String taxId, Integer page, Integer pageSize) {
-        return taxService.transactionRecord(taxId,null, page, pageSize);
+        return taxService.transactionRecord(taxId, null, page, pageSize);
     }
 
     @Override
@@ -470,7 +470,7 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
                 expressInfoVO.setExpressLogisticsInfos(expressLogisticsInfos);
             }
         }
-        List<PaymentInventoryVO> paymentInventories = paymentInventoryDao.selectPaymentInventoryList(paymentId, workerId);
+        List<PaymentInventoryVO> paymentInventories = paymentInventoryDao.selectPaymentOrderManyInfo(paymentId, workerId);
         paymentOrderInfoVO.setPaymentInventories(paymentInventories);
         paymentOrderInfoVO.setPaymentOrderVo(paymentOrderVO);
         paymentOrderInfoVO.setExpressInfoVO(expressInfoVO);
@@ -621,7 +621,10 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
             paymentOrderIds.add(paymentOrderMany.getId());
         }
 
-        List<PaymentInventory> paymentInventories = paymentInventoryDao.selectList(new QueryWrapper<PaymentInventory>().in("payment_order_id", paymentOrderIds));
+        List<PaymentInventory> paymentInventories = new ArrayList<>();
+        if (paymentOrderIds.size() > 0) {
+            paymentInventories = paymentInventoryDao.selectList(new QueryWrapper<PaymentInventory>().in("payment_order_id", paymentOrderIds));
+        }
         BigDecimal manyTaxMoney = new BigDecimal(0);
         BigDecimal totalTaxMoney = new BigDecimal(0);
         if (!VerificationCheck.listIsNull(paymentInventories)) {
@@ -773,7 +776,7 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
         //获取所以监管的服务商
         List<RegulatorTax> regulatorTaxes = regulatorTaxService.list(
                 new QueryWrapper<RegulatorTax>().eq("regulator_id", regulatorId)
-                        .eq("status",0));
+                        .eq("status", 0));
         for (RegulatorTax regulatorTax : regulatorTaxes) {
             taxIds.add(regulatorTax.getTaxId());
         }
@@ -804,7 +807,7 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
         List<String> taxIds = new ArrayList<>();
 
         //获取所以监管的服务商
-        List<RegulatorTax> regulatorTaxes = regulatorTaxService.list(new QueryWrapper<RegulatorTax>().eq("regulator_id", regulatorId).eq("status",0));
+        List<RegulatorTax> regulatorTaxes = regulatorTaxService.list(new QueryWrapper<RegulatorTax>().eq("regulator_id", regulatorId).eq("status", 0));
         for (RegulatorTax regulatorTax : regulatorTaxes) {
             taxIds.add(regulatorTax.getTaxId());
         }
