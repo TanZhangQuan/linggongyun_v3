@@ -676,87 +676,89 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
                 }
             }
 
-            //注册商户对应服务商银联的子账号
-            for (UnionpayBankType unionpayBankType : updateCompanyTaxDTO.getUnionpayBankTypeList()) {
-                //判断盛京银行是否传银行卡号
-                if (UnionpayBankType.SJBK.equals(unionpayBankType)) {
-                    if (StringUtils.isBlank(updateCompanyTaxDTO.getInBankNo())) {
-                        throw new CommonException(300, tax.getTaxName() + "服务商盛京银行银联支付需要输入来款银行账号");
+            if (updateCompanyTaxDTO.getUnionpayBankTypeList() != null) {
+                //注册商户对应服务商银联的子账号
+                for (UnionpayBankType unionpayBankType : updateCompanyTaxDTO.getUnionpayBankTypeList()) {
+                    //判断盛京银行是否传银行卡号
+                    if (UnionpayBankType.SJBK.equals(unionpayBankType)) {
+                        if (StringUtils.isBlank(updateCompanyTaxDTO.getInBankNo())) {
+                            throw new CommonException(300, tax.getTaxName() + "服务商盛京银行银联支付需要输入来款银行账号");
+                        }
+                    } else {
+                        updateCompanyTaxDTO.setInBankNo("");
                     }
-                } else {
-                    updateCompanyTaxDTO.setInBankNo("");
-                }
 
-                //检查服务商银联是否存在或是否关闭
-                TaxUnionpay taxUnionpay = taxUnionpayService.queryTaxUnionpay(updateCompanyTaxDTO.getTaxId(), unionpayBankType);
-                if (taxUnionpay == null) {
-                    throw new CommonException(300, tax.getTaxName() + "服务商未开通" + unionpayBankType.getDesc() + "银联支付");
-                }
-                if (taxUnionpay.getBoolEnable() == null || !taxUnionpay.getBoolEnable()) {
-                    throw new CommonException(300, tax.getTaxName() + "服务商" + unionpayBankType.getDesc() + "银联支付未开启");
-                }
-
-                //查询商户是否开通子账号
-                CompanyUnionpay companyUnionpay = companyUnionpayService.queryMerchantUnionpay(companyInfo.getId(), taxUnionpay.getId());
-                if (companyUnionpay != null) {
-                    //检查盛京银行来款银行账号是否变动
-                    if (UnionpayBankType.SJBK.equals(unionpayBankType) && !(companyUnionpay.getInBankNo().equals(updateCompanyTaxDTO.getInBankNo()))) {
-                        //修改盛京来款银行账号
-                        JSONObject jsonObject = UnionpayUtil.AC021(taxUnionpay.getMerchno(), taxUnionpay.getAcctno(), taxUnionpay.getPfmpubkey(), taxUnionpay.getPrikey(), companyUnionpay.getUid(), updateCompanyTaxDTO.getInBankNo());
-
-                        if (jsonObject == null) {
-                            throw new CommonException(300, tax.getTaxName() + "服务商" + unionpayBankType.getDesc() + "银联支付子账户更换绑卡失败");
-                        }
-
-                        Boolean boolSuccess = jsonObject.getBoolean("success");
-                        if (boolSuccess == null || !boolSuccess) {
-                            String errMsg = jsonObject.getString("err_msg");
-                            throw new CommonException(300, tax.getTaxName() + "服务商" + unionpayBankType.getDesc() + "银联支付子账户更换绑卡失败: " + errMsg);
-                        }
-
-                        JSONObject returnValue = jsonObject.getJSONObject("return_value");
-                        String rtnCode = returnValue.getString("rtn_code");
-                        if (!("S00000".equals(rtnCode))) {
-                            String errMsg = returnValue.getString("err_msg");
-                            throw new CommonException(300, tax.getTaxName() + "服务商" + unionpayBankType.getDesc() + "银联支付子账户更换绑卡失败: " + errMsg);
-                        }
-
-                        //更新商户-服务商银联记录绑定的来款银行账号
-                        companyUnionpay.setInBankNo(updateCompanyTaxDTO.getInBankNo());
-                        companyUnionpayService.updateById(companyUnionpay);
+                    //检查服务商银联是否存在或是否关闭
+                    TaxUnionpay taxUnionpay = taxUnionpayService.queryTaxUnionpay(updateCompanyTaxDTO.getTaxId(), unionpayBankType);
+                    if (taxUnionpay == null) {
+                        throw new CommonException(300, tax.getTaxName() + "服务商未开通" + unionpayBankType.getDesc() + "银联支付");
                     }
-                    continue;
-                }
+                    if (taxUnionpay.getBoolEnable() == null || !taxUnionpay.getBoolEnable()) {
+                        throw new CommonException(300, tax.getTaxName() + "服务商" + unionpayBankType.getDesc() + "银联支付未开启");
+                    }
 
-                //开通子账号
-                String uuid = UuidUtil.get32UUID();
-                JSONObject jsonObject = UnionpayUtil.MB010(taxUnionpay.getMerchno(), taxUnionpay.getAcctno(), taxUnionpay.getPfmpubkey(), taxUnionpay.getPrikey(), uuid, merchant.getCompanyName(), companyInfo.getCreditCode(), updateCompanyTaxDTO.getInBankNo());
-                if (jsonObject == null) {
-                    throw new CommonException(300, tax.getTaxName() + "服务商开通" + unionpayBankType.getDesc() + "银联支付注册子账号失败");
-                }
+                    //查询商户是否开通子账号
+                    CompanyUnionpay companyUnionpay = companyUnionpayService.queryMerchantUnionpay(companyInfo.getId(), taxUnionpay.getId());
+                    if (companyUnionpay != null) {
+                        //检查盛京银行来款银行账号是否变动
+                        if (UnionpayBankType.SJBK.equals(unionpayBankType) && !(companyUnionpay.getInBankNo().equals(updateCompanyTaxDTO.getInBankNo()))) {
+                            //修改盛京来款银行账号
+                            JSONObject jsonObject = UnionpayUtil.AC021(taxUnionpay.getMerchno(), taxUnionpay.getAcctno(), taxUnionpay.getPfmpubkey(), taxUnionpay.getPrikey(), companyUnionpay.getUid(), updateCompanyTaxDTO.getInBankNo());
 
-                Boolean boolSuccess = jsonObject.getBoolean("success");
-                if (boolSuccess == null || !boolSuccess) {
-                    String errMsg = jsonObject.getString("err_msg");
-                    throw new CommonException(300, tax.getTaxName() + "服务商开通" + unionpayBankType.getDesc() + "银联支付注册子账号失败: " + errMsg);
-                }
+                            if (jsonObject == null) {
+                                throw new CommonException(300, tax.getTaxName() + "服务商" + unionpayBankType.getDesc() + "银联支付子账户更换绑卡失败");
+                            }
 
-                JSONObject returnValue = jsonObject.getJSONObject("return_value");
-                String rtnCode = returnValue.getString("rtn_code");
-                if (!("S00000".equals(rtnCode))) {
-                    String errMsg = returnValue.getString("err_msg");
-                    throw new CommonException(300, tax.getTaxName() + "服务商开通" + unionpayBankType.getDesc() + "银联支付注册子账号失败: " + errMsg);
-                }
+                            Boolean boolSuccess = jsonObject.getBoolean("success");
+                            if (boolSuccess == null || !boolSuccess) {
+                                String errMsg = jsonObject.getString("err_msg");
+                                throw new CommonException(300, tax.getTaxName() + "服务商" + unionpayBankType.getDesc() + "银联支付子账户更换绑卡失败: " + errMsg);
+                            }
 
-                //新建商户银联信息表
-                companyUnionpay = new CompanyUnionpay();
-                companyUnionpay.setCompanyId(companyInfo.getId());
-                companyUnionpay.setTaxUnionpayId(taxUnionpay.getId());
-                companyUnionpay.setUid(uuid);
-                companyUnionpay.setInBankNo(updateCompanyTaxDTO.getInBankNo());
-                companyUnionpay.setSubAccountName(returnValue.getString("sub_account_name"));
-                companyUnionpay.setSubAccountCode(returnValue.getString("sub_account_code"));
-                companyUnionpayService.save(companyUnionpay);
+                            JSONObject returnValue = jsonObject.getJSONObject("return_value");
+                            String rtnCode = returnValue.getString("rtn_code");
+                            if (!("S00000".equals(rtnCode))) {
+                                String errMsg = returnValue.getString("err_msg");
+                                throw new CommonException(300, tax.getTaxName() + "服务商" + unionpayBankType.getDesc() + "银联支付子账户更换绑卡失败: " + errMsg);
+                            }
+
+                            //更新商户-服务商银联记录绑定的来款银行账号
+                            companyUnionpay.setInBankNo(updateCompanyTaxDTO.getInBankNo());
+                            companyUnionpayService.updateById(companyUnionpay);
+                        }
+                        continue;
+                    }
+
+                    //开通子账号
+                    String uuid = UuidUtil.get32UUID();
+                    JSONObject jsonObject = UnionpayUtil.MB010(taxUnionpay.getMerchno(), taxUnionpay.getAcctno(), taxUnionpay.getPfmpubkey(), taxUnionpay.getPrikey(), uuid, merchant.getCompanyName(), companyInfo.getCreditCode(), updateCompanyTaxDTO.getInBankNo());
+                    if (jsonObject == null) {
+                        throw new CommonException(300, tax.getTaxName() + "服务商开通" + unionpayBankType.getDesc() + "银联支付注册子账号失败");
+                    }
+
+                    Boolean boolSuccess = jsonObject.getBoolean("success");
+                    if (boolSuccess == null || !boolSuccess) {
+                        String errMsg = jsonObject.getString("err_msg");
+                        throw new CommonException(300, tax.getTaxName() + "服务商开通" + unionpayBankType.getDesc() + "银联支付注册子账号失败: " + errMsg);
+                    }
+
+                    JSONObject returnValue = jsonObject.getJSONObject("return_value");
+                    String rtnCode = returnValue.getString("rtn_code");
+                    if (!("S00000".equals(rtnCode))) {
+                        String errMsg = returnValue.getString("err_msg");
+                        throw new CommonException(300, tax.getTaxName() + "服务商开通" + unionpayBankType.getDesc() + "银联支付注册子账号失败: " + errMsg);
+                    }
+
+                    //新建商户银联信息表
+                    companyUnionpay = new CompanyUnionpay();
+                    companyUnionpay.setCompanyId(companyInfo.getId());
+                    companyUnionpay.setTaxUnionpayId(taxUnionpay.getId());
+                    companyUnionpay.setUid(uuid);
+                    companyUnionpay.setInBankNo(updateCompanyTaxDTO.getInBankNo());
+                    companyUnionpay.setSubAccountName(returnValue.getString("sub_account_name"));
+                    companyUnionpay.setSubAccountCode(returnValue.getString("sub_account_code"));
+                    companyUnionpayService.save(companyUnionpay);
+                }
             }
         }
 
