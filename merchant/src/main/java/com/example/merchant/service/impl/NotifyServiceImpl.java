@@ -5,13 +5,11 @@ import com.alibaba.fastjson.JSONObject;
 import com.example.common.enums.TradeNoType;
 import com.example.common.util.UnionpayUtil;
 import com.example.merchant.service.*;
-import com.example.mybatis.entity.PaymentInventory;
-import com.example.mybatis.entity.PaymentOrder;
-import com.example.mybatis.entity.PaymentOrderMany;
-import com.example.mybatis.entity.TaxUnionpay;
+import com.example.mybatis.entity.*;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.WebUtils;
 
 import javax.annotation.Resource;
@@ -42,7 +40,11 @@ public class NotifyServiceImpl implements NotifyService {
     @Resource
     private PaymentInventoryService paymentInventoryService;
 
+    @Resource
+    private PaymentHistoryService paymentHistoryService;
+
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public String depositNotice(HttpServletRequest request) {
 
         Map<String, Object> parameters = WebUtils.getParametersStartingWith(request, "");
@@ -88,16 +90,16 @@ public class NotifyServiceImpl implements NotifyService {
 
         //验签处理
         Map<String, String> params = Maps.newHashMap();
-        params.put("notify_type", notifyType);
-        params.put("merch_no", merchNo);
-        params.put("acct_no", acctNo);
-        params.put("inacct_bill_id", inacctBillId);
+        params.put("notifyType", notifyType);
+        params.put("merchNo", merchNo);
+        params.put("acctNo", acctNo);
+        params.put("inacctBillId", inacctBillId);
         params.put("amount", amount);
-        params.put("rcv_acct_no", rcvAcctNo);
-        params.put("rcv_acct_name", rcvAcctName);
-        params.put("rcv_bank_code", rcvBankCode);
-        params.put("biz_type", bizType);
-        params.put("rcv_time", rcvTime);
+        params.put("rcvAcctNo", rcvAcctNo);
+        params.put("rcvAcctName", rcvAcctName);
+        params.put("rcvBankCode", rcvBankCode);
+        params.put("bizType", bizType);
+        params.put("rcvTime", rcvTime);
         params.put("remarks", remarks);
         params.put("sign", sign);
 
@@ -109,12 +111,13 @@ public class NotifyServiceImpl implements NotifyService {
         }
 
         // 业务逻辑处理 ****************************
-
+        PaymentHistory paymentHistory = new PaymentHistory();
 
         return "success";
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public String txResult(HttpServletRequest request) {
 
         Map<String, Object> parameters = WebUtils.getParametersStartingWith(request, "");
@@ -155,14 +158,14 @@ public class NotifyServiceImpl implements NotifyService {
 
         //验签处理
         Map<String, String> params = Maps.newHashMap();
-        params.put("notify_type", notifyType);
-        params.put("merch_no", merchNo);
-        params.put("acct_no", acctNo);
-        params.put("dch_bill_id", dchBillId);
-        params.put("outer_trade_no", outerTradeNo);
+        params.put("notifyType", notifyType);
+        params.put("merchNo", merchNo);
+        params.put("acctNo", acctNo);
+        params.put("dchBillId", dchBillId);
+        params.put("outerTradeNo", outerTradeNo);
         params.put("status", status);
-        params.put("err_desc", errDesc);
-        params.put("tx_time", txTime);
+        params.put("errDesc", errDesc);
+        params.put("txTime", txTime);
         params.put("sign", sign);
 
         log.info("验签参数：{}", params);
@@ -214,6 +217,7 @@ public class NotifyServiceImpl implements NotifyService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public String transferResult(HttpServletRequest request) {
 
         Map<String, Object> parameters = WebUtils.getParametersStartingWith(request, "");
@@ -257,15 +261,15 @@ public class NotifyServiceImpl implements NotifyService {
 
         //验签处理
         Map<String, String> params = Maps.newHashMap();
-        params.put("notify_type", notifyType);
-        params.put("merch_no", merchNo);
-        params.put("out_acct_no", outAcctNo);
-        params.put("in_acct_no", inAcctNo);
-        params.put("itf_bill_id", itfBillId);
-        params.put("outer_trade_no", outerTradeNo);
+        params.put("notifyType", notifyType);
+        params.put("merchNo", merchNo);
+        params.put("outAcctNo", outAcctNo);
+        params.put("inAcctNo", inAcctNo);
+        params.put("itfBillId", itfBillId);
+        params.put("outerTradeNo", outerTradeNo);
         params.put("status", status);
-        params.put("err_desc", errDesc);
-        params.put("tx_time", txTime);
+        params.put("errDesc", errDesc);
+        params.put("txTime", txTime);
         params.put("sign", sign);
 
         log.info("验签参数：{}", params);

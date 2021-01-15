@@ -2,12 +2,10 @@ package com.example.merchant.controller.platform;
 
 
 import com.example.common.util.ReturnJson;
+import com.example.merchant.dto.TaxListDTO;
 import com.example.merchant.dto.platform.AddInvoiceCatalogDTO;
 import com.example.merchant.dto.platform.AddOrUpdateTaxUnionpayDTO;
 import com.example.merchant.dto.platform.TaxDTO;
-import com.example.merchant.dto.TaxListDTO;
-import com.example.merchant.service.TaxService;
-import com.example.merchant.service.TaxUnionpayService;
 import com.example.merchant.service.*;
 import io.swagger.annotations.*;
 import org.springframework.validation.annotation.Validated;
@@ -15,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
@@ -131,6 +128,12 @@ public class TaxController {
     @ApiOperation(value = "开启或关闭服务商银联", notes = "开启或关闭服务商银联")
     public ReturnJson boolEnableTaxUnionpay(@ApiParam(value = "服务商银联") @NotBlank(message = "请选择服务商银联") @RequestParam(required = false) String taxUnionpayId, @ApiParam(value = "是否开启") @NotNull(message = "请选择是否开启") @RequestParam(required = false) Boolean boolEnable) {
         return taxUnionpayService.boolEnableTaxUnionpay(taxUnionpayId, boolEnable);
+    }
+
+    @PostMapping("/queryTaxUnionpayBalance")
+    @ApiOperation(value = "查询服务商银联余额", notes = "查询服务商银联余额")
+    public ReturnJson queryTaxUnionpayBalance(@ApiParam(value = "服务商银联") @NotBlank(message = "请选择服务商银联") @RequestParam(required = false) String taxUnionpayId) throws Exception {
+        return taxUnionpayService.queryTaxUnionpayBalance(taxUnionpayId);
     }
 
     @PostMapping("/queryTaxTransactionFlow")

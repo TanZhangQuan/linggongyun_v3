@@ -1,5 +1,6 @@
 package com.example.mybatis.vo;
 
+import com.example.common.enums.UnionpayBankType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -15,7 +16,7 @@ public class TaxUnionpayListVO implements Serializable {
     private String id;
 
     @ApiModelProperty(value = "银联银行类型")
-    private String unionpayBankType;
+    private UnionpayBankType unionpayBankType;
 
     @ApiModelProperty(value = "商户号")
     private String merchno;

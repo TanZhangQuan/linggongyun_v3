@@ -95,4 +95,11 @@ public interface TaxUnionpayService extends IService<TaxUnionpay> {
      */
     ReturnJson queryTaxUnionpayMethod(String taxId);
 
+    /**
+     * 查询服务商银联余额
+     *
+     * @param taxUnionpayId
+     * @return
+     */
+    ReturnJson queryTaxUnionpayBalance(String taxUnionpayId) throws Exception;
 }

@@ -14,6 +14,7 @@ import com.example.merchant.exception.CommonException;
 import com.example.merchant.service.*;
 import com.example.merchant.util.AcquireID;
 import com.example.merchant.util.JwtUtils;
+import com.example.merchant.util.SnowflakeIdWorker;
 import com.example.merchant.vo.merchant.HomePageMerchantVO;
 import com.example.merchant.vo.merchant.MerchantInfoVO;
 import com.example.merchant.vo.merchant.TaxVO;
@@ -497,7 +498,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
                     }
 
                     //开通子账号
-                    String uuid = UuidUtil.get32UUID();
+                    String uuid = SnowflakeIdWorker.getSerialNumber();
                     JSONObject jsonObject = UnionpayUtil.MB010(taxUnionpay.getMerchno(), taxUnionpay.getAcctno(), taxUnionpay.getPfmpubkey(), taxUnionpay.getPrikey(), uuid, merchant.getCompanyName(), companyInfo.getCreditCode(), companyTaxDto.getInBankNo());
                     if (jsonObject == null) {
                         throw new CommonException(300, tax.getTaxName() + "服务商开通" + unionpayBankType.getDesc() + "银联支付注册子账号失败");
@@ -676,8 +677,8 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
                 }
             }
 
-            if (updateCompanyTaxDTO.getUnionpayBankTypeList() != null) {
-                //注册商户对应服务商银联的子账号
+            //注册商户对应服务商银联的子账号
+            if (updateCompanyTaxDTO.getUnionpayBankTypeList() != null && updateCompanyTaxDTO.getUnionpayBankTypeList().size() > 0) {
                 for (UnionpayBankType unionpayBankType : updateCompanyTaxDTO.getUnionpayBankTypeList()) {
                     //判断盛京银行是否传银行卡号
                     if (UnionpayBankType.SJBK.equals(unionpayBankType)) {
@@ -730,7 +731,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
                     }
 
                     //开通子账号
-                    String uuid = UuidUtil.get32UUID();
+                    String uuid = SnowflakeIdWorker.getSerialNumber();
                     JSONObject jsonObject = UnionpayUtil.MB010(taxUnionpay.getMerchno(), taxUnionpay.getAcctno(), taxUnionpay.getPfmpubkey(), taxUnionpay.getPrikey(), uuid, merchant.getCompanyName(), companyInfo.getCreditCode(), updateCompanyTaxDTO.getInBankNo());
                     if (jsonObject == null) {
                         throw new CommonException(300, tax.getTaxName() + "服务商开通" + unionpayBankType.getDesc() + "银联支付注册子账号失败");
@@ -760,6 +761,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
                     companyUnionpayService.save(companyUnionpay);
                 }
             }
+
         }
 
         return ReturnJson.success("操作成功");

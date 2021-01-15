@@ -32,7 +32,7 @@ public class UnionpayUtil {
      * @throws Exception
      */
     public static JSONObject MB010(String merchNo, String acctNo, String pfmpubkey, String prikey, String uid, String acctName, String companyTaxUum, String inBankNo) throws Exception {
-        Map<String, String> content = Maps.newHashMap();
+        Map<String, Object> content = Maps.newHashMap();
         content.put("uid", uid); //外部会员标识
         content.put("acct_type", "01");  //账户性质（01:企业子账户, 02:功能子账户）
         content.put("acct_name", acctName);  //子账户户名
@@ -75,7 +75,7 @@ public class UnionpayUtil {
      * @throws Exception
      */
     public static JSONObject COM02(String merchNo, String acctNo, String pfmpubkey, String prikey, String bankAcctNo) throws Exception {
-        Map<String, String> content = Maps.newHashMap();
+        Map<String, Object> content = Maps.newHashMap();
         content.put("bank_acct_no", bankAcctNo); //银行账户
         //银联请求
         return unionpay(merchNo, UnionpayMethod.COM02, acctNo, content, pfmpubkey, prikey);
@@ -87,7 +87,7 @@ public class UnionpayUtil {
      * @throws Exception
      */
     public static JSONObject AC021(String merchNo, String acctNo, String pfmpubkey, String prikey, String uid, String inBankNo) throws Exception {
-        Map<String, String> content = Maps.newHashMap();
+        Map<String, Object> content = Maps.newHashMap();
         content.put("uid", uid);  //外部会员标识
 
         //获取银行bin
@@ -119,7 +119,7 @@ public class UnionpayUtil {
      * @throws Exception
      */
     public static JSONObject AC041(String merchNo, String acctNo, String pfmpubkey, String prikey, String outerTradeNo, String uid, BigDecimal amount, String destAcctName, String destAcctNo) throws Exception {
-        Map<String, String> content = Maps.newHashMap();
+        Map<String, Object> content = Maps.newHashMap();
         content.put("outer_trade_no", outerTradeNo); //合作方业务平台订单号
         content.put("uid", uid);  //外部会员标识
         content.put("amount", String.valueOf(amount.setScale(2, RoundingMode.HALF_UP)));  //提现金额
@@ -140,7 +140,7 @@ public class UnionpayUtil {
      * @throws Exception
      */
     public static JSONObject AC042(String merchNo, String acctNo, String pfmpubkey, String prikey, String outerTradeNo) throws Exception {
-        Map<String, String> content = Maps.newHashMap();
+        Map<String, Object> content = Maps.newHashMap();
         content.put("outer_trade_no", outerTradeNo); //合作方业务平台订单号
         //银联请求
         return unionpay(merchNo, UnionpayMethod.AC042, acctNo, content, pfmpubkey, prikey);
@@ -152,7 +152,7 @@ public class UnionpayUtil {
      * @throws Exception
      */
     public static JSONObject AC051(String merchNo, String acctNo, String pfmpubkey, String prikey, String outerTradeNo, String destUid, BigDecimal amount) throws Exception {
-        Map<String, String> content = Maps.newHashMap();
+        Map<String, Object> content = Maps.newHashMap();
         content.put("outer_trade_no", outerTradeNo); //合作方业务平台订单号
         content.put("remark", "清分交易");   //摘要信息
         content.put("dest_uid", destUid);  //外部会员标识
@@ -168,7 +168,7 @@ public class UnionpayUtil {
      * @throws Exception
      */
     public static JSONObject AC054(String merchNo, String acctNo, String pfmpubkey, String prikey, String outerTradeNo, String uid, String destUid, BigDecimal amount) throws Exception {
-        Map<String, String> content = Maps.newHashMap();
+        Map<String, Object> content = Maps.newHashMap();
         content.put("outer_trade_no", outerTradeNo); //合作方业务平台订单号
         content.put("remark", "会员间交易");  //摘要信息
         content.put("uid", uid);  //转出会员标识
@@ -185,7 +185,7 @@ public class UnionpayUtil {
      * @throws Exception
      */
     public static JSONObject AC058(String merchNo, String acctNo, String pfmpubkey, String prikey, String outerTradeNo) throws Exception {
-        Map<String, String> content = Maps.newHashMap();
+        Map<String, Object> content = Maps.newHashMap();
         content.put("outer_trade_no", outerTradeNo); //合作方业务平台订单号
         //银联请求
         return unionpay(merchNo, UnionpayMethod.AC058, acctNo, content, pfmpubkey, prikey);
@@ -197,7 +197,7 @@ public class UnionpayUtil {
      * @throws Exception
      */
     public static JSONObject AC081(String merchNo, String acctNo, String pfmpubkey, String prikey, String uid) throws Exception {
-        Map<String, String> content = Maps.newHashMap();
+        Map<String, Object> content = Maps.newHashMap();
         content.put("uid", uid); //外部会员标识
         //银联请求
         return unionpay(merchNo, UnionpayMethod.AC081, acctNo, content, pfmpubkey, prikey);
@@ -209,15 +209,15 @@ public class UnionpayUtil {
      * @throws Exception
      */
     public static JSONObject AC091(String merchNo, String acctNo, String pfmpubkey, String prikey, Date date) throws Exception {
-        Map<String, String> content = Maps.newHashMap();
+        Map<String, Object> content = Maps.newHashMap();
         content.put("file_type", "BIL"); //文件类型 BIL:平台户电子对账单
         content.put("biz_date", new SimpleDateFormat("yyyyMMdd").format(date)); //交易日期
         //银联请求
         return unionpay(merchNo, UnionpayMethod.AC091, acctNo, content, pfmpubkey, prikey);
     }
 
-    private static JSONObject unionpay(String merchNo, UnionpayMethod unionPayMethod, String acctNo, Map<String, String> content, String pfmpubkey, String prikey) throws Exception {
-        Map<String, String> params = Maps.newHashMap();
+    private static JSONObject unionpay(String merchNo, UnionpayMethod unionPayMethod, String acctNo, Map<String, Object> content, String pfmpubkey, String prikey) throws Exception {
+        Map<String, Object> params = Maps.newHashMap();
         params.put("merch_no", merchNo);//商户号
         params.put("method", unionPayMethod.getValue());
         params.put("version", "1.0");
@@ -236,7 +236,7 @@ public class UnionpayUtil {
         }
 
         params.put("content", encrypt);
-        params.put("sign", createSign(prikey, params));
+        params.put("sign", createSign(params, prikey));
         log.info("请求参数：{}", JSON.toJSONString(params));
 
         //请求银联接口
@@ -246,40 +246,37 @@ public class UnionpayUtil {
         return jsonObject;
     }
 
-    /**
-     * 签约
-     *
-     * @param params
-     * @return
-     * @throws Exception
-     */
-    public static String createSign(String prikey, Map<String, String> params) throws Exception {
+    public static String createSign(Map<String, Object> params, String prikey) {
         // map类型转换
         Map<String, String> map = new HashMap<>(params.size());
-        for (String key : params.keySet()) {
-            String value = params.get(key);
-            if (value != null) {
-                map.put(key, value);
+        for (String s : params.keySet()) {
+            Object o = params.get(s);
+            if (o != null) {
+                map.put(s, o.toString());
             }
         }
         map.remove("sign");
         map.remove("sign_type");
 
-        return AlipaySignature.rsaSign(map, prikey, "utf-8");
+        try {
+            return AlipaySignature.rsaSign(map, prikey, "utf-8");
+        } catch (AlipayApiException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
-    /**
-     * 验签
-     *
-     * @param map
-     * @param publicKey
-     * @return
-     */
-    public static boolean checkSign(Map<String, String> map, String publicKey, String charset, String signType) {
+    private static Map<String, String> trimMap(Map<String, String> trimMap) {
+        trimMap.entrySet().removeIf(entry -> StringUtils.isBlank(entry.getValue()));
+        return trimMap;
+    }
+
+    // 验签
+    public static boolean checkSign(Map<String, String> map, String publicKey, String charset, String sign_type) {
         try {
-            return AlipaySignature.rsaCheckV1(map, publicKey, charset, signType);
+            return AlipaySignature.rsaCheckV1(trimMap(map), publicKey, charset, sign_type);
         } catch (AlipayApiException e) {
-            log.error(e.toString());
+            log.error("验签异常：");
         }
         return false;
     }

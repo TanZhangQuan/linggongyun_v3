@@ -1,6 +1,5 @@
 package com.example.merchant.util;
 
-import cn.hutool.extra.spring.SpringUtil;
 import com.example.redis.dao.RedisDao;
 import lombok.extern.slf4j.Slf4j;
 
@@ -192,6 +191,10 @@ public class SnowflakeIdWorker {
         SnowflakeIdWorker idWorker = new SnowflakeIdWorker(0, 0);
         long serialNumber = idWorker.nextId();
         return String.valueOf(serialNumber);
+    }
+
+    public static void main(String[] args) {
+        log.info("FFFFFF:" + getSerialNumber());
     }
 
 }
