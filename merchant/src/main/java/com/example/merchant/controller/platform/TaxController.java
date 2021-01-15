@@ -130,7 +130,7 @@ public class TaxController {
         return taxUnionpayService.boolEnableTaxUnionpay(taxUnionpayId, boolEnable);
     }
 
-    @PostMapping("/queryTaxUnionpayBalance")
+    @GetMapping("/queryTaxUnionpayBalance")
     @ApiOperation(value = "查询服务商银联余额", notes = "查询服务商银联余额")
     public ReturnJson queryTaxUnionpayBalance(@ApiParam(value = "服务商银联") @NotBlank(message = "请选择服务商银联") @RequestParam(required = false) String taxUnionpayId) throws Exception {
         return taxUnionpayService.queryTaxUnionpayBalance(taxUnionpayId);

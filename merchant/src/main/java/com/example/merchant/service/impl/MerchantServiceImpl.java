@@ -421,8 +421,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         address.setStatus(0);
         addressDao.insert(address);
 
-        Merchant merchant = merchantDao.selectOne(new QueryWrapper<Merchant>()
-                .eq("user_name", companyDto.getAddMerchantDto().getUserName()));
+        Merchant merchant = merchantDao.selectOne(new QueryWrapper<Merchant>().eq("user_name", companyDto.getAddMerchantDto().getUserName()));
         if (merchant != null) {
             return ReturnJson.success("登录账号存在相同的，请修改后重新操作！");
         }
