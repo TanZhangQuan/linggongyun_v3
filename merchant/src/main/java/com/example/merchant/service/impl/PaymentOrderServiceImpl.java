@@ -663,7 +663,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
                 //修改分包状态为支付成功
                 List<PaymentInventory> list = paymentInventoryDao.selectList(new QueryWrapper<PaymentInventory>().eq("payment_order_id", paymentOrderId));
                 for (int i = 0; i < list.size(); i++) {
-                    PaymentInventory paymentInventory=list.get(i);
+                    PaymentInventory paymentInventory = list.get(i);
                     paymentInventory.setPaymentStatus(1);
                     paymentInventoryDao.updateById(paymentInventory);
                 }

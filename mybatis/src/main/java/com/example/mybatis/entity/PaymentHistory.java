@@ -34,7 +34,7 @@ public class PaymentHistory extends BaseEntity {
     private String paymentOrderId;
 
     /**
-     * 订单类型（总包，分包，支付清单）
+     * 支付类型
      */
     private OrderType orderType;
 

@@ -94,13 +94,13 @@ public class HttpUtil {
      * @return 请求失败返回null
      * @description 功能描述: post 请求
      */
-    public static String post(String url, Map<String, String> params) throws IOException {
+    public static String post(String url, Map<String, Object> params) throws IOException {
         CloseableHttpClient httpClient = null;
         HttpPost httpPost = new HttpPost(url);
         List<NameValuePair> nameValuePairs = new ArrayList<>();
         if (params != null && !params.isEmpty()) {
-            for (Map.Entry<String, String> entry : params.entrySet()) {
-                nameValuePairs.add(new BasicNameValuePair(entry.getKey(), entry.getValue()));
+            for (Map.Entry<String, Object> entry : params.entrySet()) {
+                nameValuePairs.add(new BasicNameValuePair(entry.getKey(), (String) entry.getValue()));
             }
         }
 
