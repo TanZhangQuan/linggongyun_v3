@@ -85,7 +85,6 @@ public class CompanyUnionpayServiceImpl extends ServiceImpl<CompanyUnionpayDao, 
             merchantUnionpayBalanceVO.setUnionpayBankType(taxUnionpay.getUnionpayBankType());
             merchantUnionpayBalanceVO.setSubAccountName(companyUnionpay.getSubAccountName());
             merchantUnionpayBalanceVO.setSubAccountCode(companyUnionpay.getSubAccountCode());
-            merchantUnionpayBalanceVO.setInBankNo(companyUnionpay.getInBankNo());
 
             JSONObject jsonObject = UnionpayUtil.AC081(taxUnionpay.getMerchno(), taxUnionpay.getAcctno(), taxUnionpay.getPfmpubkey(), taxUnionpay.getPrikey(), companyUnionpay.getUid());
             if (jsonObject == null) {

@@ -22,9 +22,6 @@ public class MerchantUnionpayBalanceVO implements Serializable {
     @ApiModelProperty(value = "子账户账号")
     private String subAccountCode;
 
-    @ApiModelProperty(value = "来款银行账号")
-    private String inBankNo;
-
     @ApiModelProperty(value = " 可用余额，单位元")
     private BigDecimal useBal = BigDecimal.ZERO;
 

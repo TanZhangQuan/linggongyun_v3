@@ -47,9 +47,4 @@ public class CompanyUnionpay extends BaseEntity {
      */
     private String subAccountName;
 
-    /**
-     * 来款银行账号
-     */
-    private String inBankNo;
-
 }

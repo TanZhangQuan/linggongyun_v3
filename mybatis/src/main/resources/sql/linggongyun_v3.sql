@@ -26,7 +26,6 @@ CREATE TABLE `tb_company_unionpay` (
   `uid` varchar(50) NOT NULL COMMENT '会员标识',
   `sub_account_code` varchar(50) NOT NULL COMMENT '子账户账号',
   `sub_account_name` varchar(50) NOT NULL COMMENT '子账号户名',
-  `in_bank_no` varchar(50) NOT NULL DEFAULT '' COMMENT '来款银行账号',
   `create_date` datetime DEFAULT NULL COMMENT '创建时间',
   `update_date` datetime DEFAULT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`),
