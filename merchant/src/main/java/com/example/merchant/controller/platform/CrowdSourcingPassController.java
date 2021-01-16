@@ -3,6 +3,7 @@ package com.example.merchant.controller.platform;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.platform.AddCrowdSourcingInvoiceDTO;
 import com.example.merchant.service.CrowdSourcingInvoiceService;
+import com.example.merchant.service.MakerTotalInvoiceService;
 import com.example.mybatis.dto.TobeInvoicedDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 
 @Api(value = "平台端众包发票关操作接口", tags = {"平台端众包发票关操作接口"})
 @RestController
@@ -20,6 +22,9 @@ public class CrowdSourcingPassController {
 
     @Resource
     private CrowdSourcingInvoiceService crowdSourcingInvoiceService;
+
+    @Resource
+    private MakerTotalInvoiceService makerTotalInvoiceService;
 
     @PostMapping("/getTobeCrowdSourcingInvoice")
     @ApiOperation(value = "众包待开票")
@@ -80,6 +85,13 @@ public class CrowdSourcingPassController {
     @ApiOperation(value = "众包以开票详情")
     public ReturnJson queryInvoiced(String invoiceId) {
         return crowdSourcingInvoiceService.queryInvoiced(invoiceId);
+    }
+
+
+    @ApiOperation("总包+分包支付明细,id可以传多个用逗号隔开")
+    @PostMapping("/getTotalBranchList")
+    public ReturnJson getTotalBranchList(@RequestParam @NotBlank(message = "发票ID不能为空") String paymentOrderIds) {
+        return makerTotalInvoiceService.getTotalBranchList(paymentOrderIds);
     }
 
 }

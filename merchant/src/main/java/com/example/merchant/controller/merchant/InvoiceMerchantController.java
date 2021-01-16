@@ -47,6 +47,9 @@ public class InvoiceMerchantController {
     @Resource
     private InvoiceApplicationService invoiceApplicationService;
 
+    @Resource
+    private MakerTotalInvoiceService makerTotalInvoiceService;
+
     @ApiOperation("总包发票列表,待开票")
     @PostMapping(value = "/gettobeinvoiced")
     @LoginRequired
@@ -139,6 +142,12 @@ public class InvoiceMerchantController {
     @LoginRequired
     public ReturnJson queryApplicationInfo(@NotBlank(message = "申请ID不能为空！") @RequestParam String applicationId, @RequestAttribute("userId") @ApiParam(hidden = true) String merchantId) {
         return invoiceApplicationService.queryApplicationInfo(applicationId, merchantId);
+    }
+
+    @ApiOperation("总包+分包支付明细,id可以传多个用逗号隔开")
+    @PostMapping("/getTotalBranchList")
+    public ReturnJson getTotalBranchList(@RequestParam @NotBlank(message = "发票ID不能为空") String paymentOrderIds) {
+        return makerTotalInvoiceService.getTotalBranchList(paymentOrderIds);
     }
 
 }

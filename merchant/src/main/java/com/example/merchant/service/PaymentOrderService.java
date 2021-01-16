@@ -48,10 +48,11 @@ public interface PaymentOrderService extends IService<PaymentOrder> {
     /**
      * 商户总包+分包支付
      *
+     * @param merchantId
      * @param paymentOrderPayDTO
      * @return
      */
-    ReturnJson paymentOrderPay(PaymentOrderPayDTO paymentOrderPayDTO);
+    ReturnJson paymentOrderPay(String merchantId, PaymentOrderPayDTO paymentOrderPayDTO);
 
     /**
      * 总包支付信息

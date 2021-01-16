@@ -15,10 +15,7 @@ import com.example.merchant.dto.merchant.PaymentOrderMerchantDTO;
 import com.example.merchant.dto.merchant.PaymentOrderPayDTO;
 import com.example.merchant.dto.platform.PaymentOrderDTO;
 import com.example.merchant.exception.CommonException;
-import com.example.merchant.service.CompanyUnionpayService;
-import com.example.merchant.service.PaymentInventoryService;
-import com.example.merchant.service.PaymentOrderService;
-import com.example.merchant.service.TaxUnionpayService;
+import com.example.merchant.service.*;
 import com.example.merchant.util.AcquireID;
 import com.example.merchant.util.SnowflakeIdWorker;
 import com.example.merchant.vo.ExpressInfoVO;
@@ -29,6 +26,7 @@ import com.example.mybatis.mapper.*;
 import com.example.mybatis.po.InvoiceInfoPO;
 import com.example.mybatis.po.PaymentOrderInfoPO;
 import com.example.mybatis.vo.*;
+import com.example.redis.dao.RedisDao;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -59,6 +57,9 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
     private String TOKEN;
 
     @Resource
+    private RedisDao redisDao;
+
+    @Resource
     private PaymentOrderDao paymentOrderDao;
 
     @Resource
@@ -71,7 +72,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
     private ManagersDao managersDao;
 
     @Resource
-    private CompanyInfoDao companyInfoDao;
+    private CompanyInfoService companyInfoService;
 
     @Resource
     private CompanyTaxDao companyTaxDao;
@@ -164,7 +165,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
         String id = paymentOrder.getId();
         paymentOrder.setMerchantId(merchantId);
         paymentOrder.setTradeNo(TradeNoType.PO.getValue() + SnowflakeIdWorker.getSerialNumber());
-        CompanyInfo companyInfo = companyInfoDao.selectById(merchantId);
+        CompanyInfo companyInfo = companyInfoService.getById(merchantId);
         if (companyInfo == null) {
             Merchant merchant = merchantDao.selectById(merchantId);
             paymentOrder.setCompanyId(merchant.getCompanyId());
@@ -278,7 +279,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
     }
 
     @Override
-    public ReturnJson paymentOrderPay(PaymentOrderPayDTO paymentOrderPayDTO) {
+    public ReturnJson paymentOrderPay(String merchantId, PaymentOrderPayDTO paymentOrderPayDTO) {
 
         PaymentOrder paymentOrder = getById(paymentOrderPayDTO.getPaymentOrderId());
         if (paymentOrder == null) {
@@ -289,6 +290,22 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
         BigDecimal serviceCharge = paymentOrder.getServiceMoney();
         if (serviceCharge == null || serviceCharge.compareTo(BigDecimal.ZERO) <= 0) {
             return ReturnJson.error("总包总手续费有误");
+        }
+
+        //判断支付密码是否正确
+        boolean flag = companyInfoService.verifyPayPwd(paymentOrder.getCompanyId(), paymentOrderPayDTO.getPayPwd());
+        if (!flag) {
+            return ReturnJson.error("支付密码不正确");
+        }
+
+        //判断短信验证码是否正确
+        Merchant merchant = merchantDao.selectById(merchantId);
+        if (merchant == null) {
+            return ReturnJson.error("商户账号不存在");
+        }
+        String redisCheckCode = redisDao.get(merchant.getLoginMobile());
+        if (!(paymentOrderPayDTO.getCheckCode().equals(redisCheckCode))) {
+            return ReturnJson.error("短信验证码不正确");
         }
 
         switch (paymentOrderPayDTO.getPaymentMode()) {
@@ -631,12 +648,12 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
         List<CompanyInfo> companyInfos;
         //管理人员为代理商
         if (userSign == 1) {
-            companyInfos = companyInfoDao.selectList(new QueryWrapper<CompanyInfo>().eq("agent_id", managers.getId()));
+            companyInfos = companyInfoService.list(new QueryWrapper<CompanyInfo>().eq("agent_id", managers.getId()));
         } else if (userSign == 2) {
             //管理人员为业务员
-            companyInfos = companyInfoDao.selectList(new QueryWrapper<CompanyInfo>().eq("sales_man_id", managers.getId()));
+            companyInfos = companyInfoService.list(new QueryWrapper<CompanyInfo>().eq("sales_man_id", managers.getId()));
         } else {
-            companyInfos = companyInfoDao.selectList(new QueryWrapper<>());
+            companyInfos = companyInfoService.list(new QueryWrapper<>());
         }
         List<CompanyBriefVO> companyBriefVOS = new ArrayList<>();
         companyInfos.forEach(companyInfo -> {
@@ -940,10 +957,10 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
 
     @Override
     public ReturnJson gradientPrice(String merchantId, String taxId, Integer packageStatus) {
-        CompanyInfo companyInfo = companyInfoDao.selectById(merchantId);
+        CompanyInfo companyInfo = companyInfoService.getById(merchantId);
         if (companyInfo == null) {
             Merchant merchant = merchantDao.selectById(merchantId);
-            companyInfo = companyInfoDao.selectById(merchant.getCompanyId());
+            companyInfo = companyInfoService.getById(merchant.getCompanyId());
         }
         if (companyInfo == null) {
             return ReturnJson.error("商户信息错误请重新选择");

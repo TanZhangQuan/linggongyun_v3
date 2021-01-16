@@ -14,10 +14,7 @@ import com.example.merchant.dto.merchant.PaymentOrderMerchantDTO;
 import com.example.merchant.dto.platform.PaymentOrderDTO;
 import com.example.merchant.dto.platform.PaymentOrderManyDTO;
 import com.example.merchant.exception.CommonException;
-import com.example.merchant.service.CompanyUnionpayService;
-import com.example.merchant.service.PaymentInventoryService;
-import com.example.merchant.service.PaymentOrderManyService;
-import com.example.merchant.service.TaxUnionpayService;
+import com.example.merchant.service.*;
 import com.example.merchant.util.AcquireID;
 import com.example.merchant.util.SnowflakeIdWorker;
 import com.example.merchant.vo.ExpressInfoVO;
@@ -28,6 +25,7 @@ import com.example.mybatis.mapper.*;
 import com.example.mybatis.po.InvoiceInfoPO;
 import com.example.mybatis.po.PaymentOrderInfoPO;
 import com.example.mybatis.vo.*;
+import com.example.redis.dao.RedisDao;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -54,6 +52,9 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
 
     @Value("${TOKEN}")
     private String TOKEN;
+
+    @Resource
+    private RedisDao redisDao;
 
     @Resource
     private PaymentOrderManyDao paymentOrderManyDao;
@@ -83,7 +84,7 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
     private CrowdSourcingInvoiceDao crowdSourcingInvoiceDao;
 
     @Resource
-    private CompanyInfoDao companyInfoDao;
+    private CompanyInfoService companyInfoService;
 
     @Resource
     private TaxUnionpayService taxUnionpayService;
@@ -240,7 +241,7 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
             paymentOrderMany.setCompanyId(merchant.getCompanyId());
             paymentOrderMany.setCompanySName(merchant.getCompanyName());
         } else {
-            CompanyInfo companyInfo = companyInfoDao.selectById(merchantId);
+            CompanyInfo companyInfo = companyInfoService.getById(merchantId);
             paymentOrderMany.setCompanyId(companyInfo.getId());
             paymentOrderMany.setCompanySName(companyInfo.getCompanyName());
         }
@@ -330,7 +331,7 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
     }
 
     @Override
-    public ReturnJson paymentOrderManyPay(PaymentOrderManyPayDTO paymentOrderManyPayDTO) {
+    public ReturnJson paymentOrderManyPay(String merchantId, PaymentOrderManyPayDTO paymentOrderManyPayDTO) {
 
         PaymentOrderMany paymentOrderMany = getById(paymentOrderManyPayDTO.getPaymentOrderManyId());
         if (paymentOrderMany == null) {
@@ -341,6 +342,22 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
         BigDecimal serviceCharge = paymentOrderMany.getServiceMoney();
         if (serviceCharge == null || serviceCharge.compareTo(BigDecimal.ZERO) <= 0) {
             return ReturnJson.error("众包总手续费有误");
+        }
+
+        //判断支付密码是否正确
+        boolean flag = companyInfoService.verifyPayPwd(paymentOrderMany.getCompanyId(), paymentOrderManyPayDTO.getPayPwd());
+        if (!flag) {
+            return ReturnJson.error("支付密码不正确");
+        }
+
+        //判断短信验证码是否正确
+        Merchant merchant = merchantDao.selectById(merchantId);
+        if (merchant == null) {
+            return ReturnJson.error("商户账号不存在");
+        }
+        String redisCheckCode = redisDao.get(merchant.getLoginMobile());
+        if (!(paymentOrderManyPayDTO.getCheckCode().equals(redisCheckCode))) {
+            return ReturnJson.error("短信验证码不正确");
         }
 
         switch (paymentOrderManyPayDTO.getPaymentMode()) {
