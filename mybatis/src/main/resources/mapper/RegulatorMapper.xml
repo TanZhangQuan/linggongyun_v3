@@ -16,6 +16,45 @@
         <result column="update_date" property="updateDate"/>
     </resultMap>
 
+   <resultMap id="regulatorPayInfo" type="com.example.mybatis.vo.RegulatorPayInfoVO">
+        <result column="id" property="payId"/>
+        <result column="worker_name" property="workerName"/>
+        <result column="mobile_code" property="mobileCode"/>
+        <result column="id_card_code" property="idCardCode"/>
+        <result column="bank_code" property="bankCode"/>
+        <result column="real_money" property="realMoney"/>
+        <result column="task_money" property="taskMoney"/>
+        <result column="service_money" property="serviceMoney"/>
+        <result column="composite_tax" property="compositeTax"/>
+        <result column="merchant_payment_money" property="merchantPaymentMoney"/>
+    </resultMap>
+
+    <resultMap id="payInfo" type="com.example.mybatis.vo.PayInfoVO">
+        <result column="payment_mode" property="paymentMode"/>
+        <result column="company_name" property="companyName"/>
+        <result column="bank_name" property="bankName"/>
+        <result column="bank_code" property="bankCode"/>
+        <result column="tax_name" property="taxName"/>
+        <result column="t_bank_name" property="tBankName"/>
+        <result column="t_bank_code" property="tBankCode"/>
+        <result column="real_money" property="merchantPaymentMoney"/>
+        <result column="turnkey_project_payment" property="turnkeyProjectPayment"/>
+    </resultMap>
+
+    <resultMap id="regulatorPayment" type="com.example.mybatis.vo.RegulatorPaymentVO">
+        <id column="id" property="paymentId"/>
+        <result column="company_s_name" property="companySName"/>
+        <result column="platform_service_provider" property="platformServiceProvider"/>
+        <result column="company_contract" property="companyContract"/>
+        <result column="payment_inventory" property="paymentInventory"/>
+        <result column="payment_order_status" property="paymentOrderStatus"/>
+        <result column="create_date" property="createDate"/>
+        <association property="taskVo" javaType="com.example.mybatis.vo.TaskVO">
+            <result column="task_code" property="taskCode"/>
+            <result column="task_name" property="taskName"/>
+        </association>
+    </resultMap>
+
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id, regulator_name, address, linkman, link_mobile, user_name, pass_word, status, , update_date
@@ -297,6 +336,102 @@
                 INNER JOIN tb_tax a ON a.id=rt.tax_id
                 WHERE rt.regulator_id=#{param2}
             )
+    </select>
+
+    <select id="regulatorPayInfo" resultMap="regulatorPayInfo">
+        SELECT
+            pi.id,
+            pi.worker_name,
+            pi.mobile_code,
+            pi.id_card_code,
+            pi.bank_code,
+            pi.real_money,
+            pi.task_money,
+            pi.service_money,
+            pi.composite_tax,
+            pi.merchant_payment_money
+        FROM tb_payment_inventory pi
+        WHERE
+            pi.payment_order_id = #{param1}
+    </select>
+
+    <select id="getRegulatorPay" resultMap="regulatorPayment">
+        SELECT
+            po.id,
+            po.company_s_name,
+            po.platform_service_provider,
+            po.company_contract,
+            po.payment_inventory,
+            po.acceptance_certificate,
+            po.payment_order_status,
+            po.create_date,
+            t.task_code,
+            t.task_name
+        FROM
+        <if test="param2 == 0">
+            tb_payment_order po
+        </if>
+        <if test="param2 == 1">
+            tb_payment_order_many po
+        </if>
+        LEFT JOIN tb_task t ON t.id = po.task_id
+        WHERE
+            po.id = #{param1}
+    </select>
+
+    <select id="getPayInfo" resultMap="payInfo">
+        SELECT
+            po.payment_mode,
+            ci.company_name,
+            ci.bank_name,
+            ci.bank_code,
+            t.tax_name,
+            t.bank_name as t_bank_name,
+            t.bank_code as t_bank_code,
+            po.real_money,
+        <if test="param2 == 0">
+            po.turnkey_project_payment
+        </if>
+        <if test="param2 == 1">
+            po.many_payment as turnkey_project_payment
+        </if>
+        FROM
+        <if test="param2 == 0">
+            tb_payment_order po
+        </if>
+        <if test="param2 == 1">
+            tb_payment_order_many po
+        </if>
+        INNER JOIN tb_company_info ci ON ci.id = po.company_id
+        INNER JOIN tb_tax t ON t.id = po.tax_id
+        WHERE
+            po.id =#{param1}
+    </select>
+     <resultMap id="SubpackageInfo" type="com.example.mybatis.vo.RegulatorSubpackageInfoVO">
+        <result property="taxName" column="tax_name"/>
+        <result property="paymentMode" column="payment_mode"/>
+        <result property="bankName" column="bank_name"/>
+        <result property="bankCode" column="bank_code"/>
+        <result property="paymentInventory" column="payment_inventory"/>
+        <result property="workerMoney" column="worker_money"/>
+        <result property="subpackagePayment" column="subpackage_payment"/>
+    </resultMap>
+
+    <select id="querySub" resultMap="SubpackageInfo">
+        SELECT
+            po.payment_mode,
+            t.tax_name,
+            t.bank_name,
+            t.bank_code,
+            po.worker_money,
+            po.payment_inventory,
+            po.subpackage_payment
+        FROM
+            tb_payment_order po
+        INNER JOIN tb_company_info ci ON ci.id = po.company_id
+        INNER JOIN tb_tax t ON t.id = po.tax_id
+        WHERE
+	        po.id = #{paymentId}
     </select>
 
 </mapper>

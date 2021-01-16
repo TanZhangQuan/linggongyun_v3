@@ -98,4 +98,12 @@ public class RegulatorWorkerController {
     public ReturnJson getPaymentInventory(@NotBlank(message = "支付订单ID不能为空！") @RequestParam(required = false) String paymentOrderId, @NotNull(message = "当前页数不能为空！") @RequestParam(defaultValue = "1") Integer pageNo, @NotNull(message = "每页显示的条数不能为空！") @RequestParam(defaultValue = "10") Integer pageSize) {
         return regulatorService.getPaymentInventory(paymentOrderId, pageNo, pageSize);
     }
+
+    @PostMapping("/queryPaymentOrderInfo")
+    @ApiOperation(value = "监管端支付信息", notes = "监管端支付信息")
+    @ApiImplicitParams(value = {@ApiImplicitParam(name = "paymentOrderId", value = "支付订单ID", required = true),
+            @ApiImplicitParam(name = "type", value = "支付订单类型", required = true)})
+    public ReturnJson queryPaymentOrderInfo(@NotBlank(message = "支付订单ID不能为空！") @RequestParam String paymentOrderId,@NotNull(message = "支付订单类型不能为空！") @RequestParam Integer type) {
+        return regulatorService.queryPaymentOrderInfo(paymentOrderId,type);
+    }
 }

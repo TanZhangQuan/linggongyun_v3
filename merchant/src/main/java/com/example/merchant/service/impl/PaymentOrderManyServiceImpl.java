@@ -259,7 +259,7 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
 
         BigDecimal merchantTax = new BigDecimal("100.00");
         BigDecimal receviceTax = new BigDecimal("0.00");
-        BigDecimal compositeTax;
+        BigDecimal compositeTax = new BigDecimal("0.00");
         BigDecimal countMoney = new BigDecimal("0");
         BigDecimal countServiceMoney = new BigDecimal("0");
 
@@ -322,6 +322,7 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
             throw new CommonException(300, "订单创建失败！");
         }
         for (PaymentInventory paymentInventory : paymentInventories) {
+            paymentInventory.setCompositeTax(compositeTax.multiply(new BigDecimal("100.00")));
             paymentInventory.setTradeNo(TradeNoType.PI.getValue() + SnowflakeIdWorker.getSerialNumber());
             paymentInventory.setPaymentOrderId(paymentOrderMany.getId());
             paymentInventory.setPackageStatus(1);

@@ -18,7 +18,7 @@ import java.util.Date;
 public class RegulatorPaymentVO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @ApiModelProperty(value = "众包支付ID")
+    @ApiModelProperty(value = "支付ID")
     private String paymentId;
 
     @ApiModelProperty(value = "商户名称")
@@ -39,9 +39,9 @@ public class RegulatorPaymentVO implements Serializable {
     @ApiModelProperty(value = "支付清单")
     private String paymentInventory;
 
-    @ApiModelProperty(value = "支付时间")
+    @ApiModelProperty(value = "创建时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    private Date paymentDate;
+    private Date createDate;
 
     @ApiModelProperty(value = "任务信息")
     private TaskVO taskVo;
