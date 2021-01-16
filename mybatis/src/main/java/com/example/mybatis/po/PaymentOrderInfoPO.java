@@ -19,7 +19,7 @@ public class PaymentOrderInfoPO {
     private String paymentOrderId;
 
     @ApiModelProperty("商户ID")
-    private String merchantId;
+    private String companyId;
 
     @ApiModelProperty("任务名称")
     private String taskName;

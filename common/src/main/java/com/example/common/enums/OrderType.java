@@ -11,6 +11,7 @@ import lombok.Getter;
 @AllArgsConstructor
 @SwaggerDisplayEnum()
 public enum OrderType {
+    RECHARGE("RECHARGE", "充值"),
     TOTALORDER("TOTALORDER", "总包支付订单"),
     MANYORDER("MANYORDER", "众包支付订单"),
     INVENTORY("INVENTORY", "分包支付订单");

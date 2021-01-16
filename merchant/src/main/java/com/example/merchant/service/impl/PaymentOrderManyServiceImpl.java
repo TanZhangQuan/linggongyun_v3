@@ -329,7 +329,7 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
     }
 
     @Override
-    public ReturnJson paymentOrderManyPay(String merchantId, PaymentOrderManyPayDTO paymentOrderManyPayDTO) {
+    public ReturnJson paymentOrderManyPay(PaymentOrderManyPayDTO paymentOrderManyPayDTO) {
 
         PaymentOrderMany paymentOrderMany = getById(paymentOrderManyPayDTO.getPaymentOrderManyId());
         if (paymentOrderMany == null) {
@@ -349,11 +349,9 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
         }
 
         //判断短信验证码是否正确
-        Merchant merchant = merchantDao.selectById(merchantId);
-        if (merchant == null) {
-            return ReturnJson.error("商户账号不存在");
-        }
-        String redisCheckCode = redisDao.get(merchant.getLoginMobile());
+        //获取商户主账号手机号
+        String loginMobile = merchantDao.queryMainMerchantloginMobile(paymentOrderMany.getCompanyId());
+        String redisCheckCode = redisDao.get(loginMobile);
         if (!(paymentOrderManyPayDTO.getCheckCode().equals(redisCheckCode))) {
             return ReturnJson.error("短信验证码不正确");
         }

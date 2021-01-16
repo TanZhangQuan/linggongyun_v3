@@ -17,7 +17,7 @@ import java.util.List;
 public interface PaymentInventoryService extends IService<PaymentInventory> {
 
     /**
-     * 查询总包的所有待支付的分包
+     * 查询总包的所有未支付成功的分包
      *
      * @param paymentOrderId
      * @return
@@ -31,4 +31,12 @@ public interface PaymentInventoryService extends IService<PaymentInventory> {
      * @return
      */
     PaymentInventory queryPaymentInventoryByTradeNo(String tradeNo);
+
+    /**
+     * 检验分包是否全部支付完成
+     *
+     * @param paymentOrderId
+     * @return
+     */
+    boolean checkAllPaymentInventoryPaySuccess(String paymentOrderId);
 }

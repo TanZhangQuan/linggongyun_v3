@@ -81,11 +81,10 @@ public interface PaymentOrderManyService extends IService<PaymentOrderMany> {
     /**
      * 商户众包支付
      *
-     * @param merchantId
      * @param paymentOrderManyPayDTO
      * @return
      */
-    ReturnJson paymentOrderManyPay(String merchantId, PaymentOrderManyPayDTO paymentOrderManyPayDTO);
+    ReturnJson paymentOrderManyPay(PaymentOrderManyPayDTO paymentOrderManyPayDTO);
 
     /**
      * 众包今天的支付金额
