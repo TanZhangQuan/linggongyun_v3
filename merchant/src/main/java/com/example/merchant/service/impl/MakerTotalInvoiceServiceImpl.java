@@ -15,10 +15,7 @@ import com.example.merchant.vo.platform.MakerTotalInvoiceInfoVO;
 import com.example.mybatis.dto.QueryMakerTotalInvoiceDTO;
 import com.example.mybatis.entity.*;
 import com.example.mybatis.mapper.*;
-import com.example.mybatis.vo.BuyerVO;
-import com.example.mybatis.vo.InvoiceListVO;
-import com.example.mybatis.vo.MakerTotalInvoiceVO;
-import com.example.mybatis.vo.PaymentOrderVO;
+import com.example.mybatis.vo.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,9 +45,10 @@ public class MakerTotalInvoiceServiceImpl extends ServiceImpl<MakerTotalInvoiceD
     @Resource
     private InvoiceCatalogDao invoiceCatalogDao;
     @Resource
-    private TaxPackageDao taxPackageDao;
-    @Resource
     private ManagersDao managersDao;
+
+    @Resource
+    private PaymentInventoryDao paymentInventoryDao;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -182,6 +180,16 @@ public class MakerTotalInvoiceServiceImpl extends ServiceImpl<MakerTotalInvoiceD
         map.put("invoiceListVoIPage", invoiceListVoIPage.getRecords());
         map.put("totalTaxPrice", totalTaxPrice);
         return ReturnJson.success(map);
+    }
+
+    @Override
+    public ReturnJson getTotalBranchList(String paymentOrderIds) {
+        String[] paymentOrderId = paymentOrderIds.split(",");
+        if(paymentOrderId.length <= 0){
+            return ReturnJson.error("总包id不能为空");
+        }
+        List<PaymentInventoryVO> paymentInventories = paymentInventoryDao.getTotalBranchList(paymentOrderIds);
+        return ReturnJson.success(paymentInventories);
     }
 
 }

@@ -5,6 +5,7 @@ import com.example.merchant.dto.merchant.AddApplicationCrowdSourcingDTO;
 import com.example.merchant.exception.CommonException;
 import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.CrowdSourcingInvoiceService;
+import com.example.merchant.service.MakerTotalInvoiceService;
 import com.example.merchant.service.MerchantService;
 import com.example.merchant.service.PaymentOrderManyService;
 import com.example.mybatis.dto.QueryCrowdSourcingDTO;
@@ -23,6 +24,8 @@ import javax.validation.constraints.NotBlank;
 @RequestMapping("/merchant/crowdSourcing")
 @Validated
 public class CrowdSourcingMerchantController {
+    @Resource
+    private MakerTotalInvoiceService makerTotalInvoiceService;
 
     @Resource
     private PaymentOrderManyService paymentOrderManyService;
@@ -90,5 +93,11 @@ public class CrowdSourcingMerchantController {
     @LoginRequired
     public ReturnJson queryInvoiceInfo(@NotBlank(message = "申请开票id不能为空") @RequestParam String invoiceId, @RequestAttribute("userId") @ApiParam(hidden = true) String id) {
         return crowdSourcingInvoiceService.queryInvoiceInfo(invoiceId, id);
+    }
+
+    @ApiOperation("总包+分包支付明细,id可以传多个用逗号隔开")
+    @PostMapping("/getTotalBranchList")
+    public ReturnJson getTotalBranchList(@RequestParam @NotBlank(message = "发票ID不能为空") String paymentOrderIds) {
+        return makerTotalInvoiceService.getTotalBranchList(paymentOrderIds);
     }
 }

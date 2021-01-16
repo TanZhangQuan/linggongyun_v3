@@ -41,6 +41,7 @@
 
     <resultMap id="TaxTransactionFlowVOMap" type="com.example.mybatis.vo.TaxTransactionFlowVO">
         <result column="company_id" property="companyId"/>
+        <result column="merchant_id" property="merchantId"/>
         <result column="tax_id" property="taxId"/>
         <result column="company_name" property="merchantName"/>
         <result column="tax_name" property="taxName"/>
@@ -309,6 +310,7 @@
         SELECT
         t1.id as tax_id ,
          t3.id as company_id,
+         t4.id as merchant_id,
          t1.tax_name,
          t3.company_name,
             (SELECT SUM(real_money) from tb_payment_order where tax_id = t1.id and company_id = t3.id) as total_package_money,
@@ -322,6 +324,7 @@
          tb_tax t1
         INNER JOIN tb_company_tax t2 on t2.tax_id = t1.id
         INNER JOIN tb_company_info t3 on t3.id = t2.company_id
+        INNER JOIN tb_merchant t4 on t3.id=t4.company_id
         where t1.id = #{param1}
         GROUP BY
          t2.company_id
