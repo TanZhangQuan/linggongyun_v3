@@ -209,6 +209,13 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
         if (paymentOrderInfoPO == null) {
             return ReturnJson.error("订单编号有误，请重新输入！");
         }
+        //查询商户银联支付银行
+        List<UnionpayBankType> companyUnionpayBankTypeList = companyUnionpayService.queryCompanyUnionpayMethod(paymentOrderInfoPO.getMerchantId(), paymentOrderInfoPO.getTaxId());
+        paymentOrderInfoPO.setCompanyUnionpayBankTypeList(companyUnionpayBankTypeList);
+        //获取商户主账号手机号
+        String loginMobile = merchantDao.queryMainMerchantloginMobile(paymentOrderInfoPO.getMerchantId());
+        paymentOrderInfoPO.setLoginMobile(loginMobile);
+
         InvoiceInfoPO invoiceInfoPO = crowdSourcingInvoiceDao.selectInvoiceInfoPO(id);
         if (invoiceInfoPO != null) {
             //众包发票信息

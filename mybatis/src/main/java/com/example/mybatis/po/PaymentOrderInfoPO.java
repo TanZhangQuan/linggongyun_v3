@@ -14,12 +14,11 @@ import java.util.List;
 @ApiModel(description = "总包支付订单的信息")
 public class PaymentOrderInfoPO {
 
-
     @ApiModelProperty("支付订单编号")
     private String paymentOrderId;
 
     @ApiModelProperty("商户ID")
-    private String companyId;
+    private String merchantId;
 
     @ApiModelProperty("任务名称")
     private String taskName;

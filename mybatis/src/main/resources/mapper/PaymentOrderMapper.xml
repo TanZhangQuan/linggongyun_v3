@@ -405,7 +405,7 @@
 
     <resultMap id="PaymentOrderInfoPOResultMap" type="com.example.mybatis.po.PaymentOrderInfoPO">
         <result column="id" property="paymentOrderId"/>
-        <result column="company_id" property="companyId"/>
+        <result column="company_id" property="merchantId"/>
         <result column="platform_service_provider" property="platformServiceProvider"/>
         <result column="worker_money" property="workerMoney"/>
         <result column="company_contract" property="companyContract"/>

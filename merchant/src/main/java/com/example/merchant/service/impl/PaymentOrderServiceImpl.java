@@ -122,10 +122,10 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
         }
 
         //查询商户银联支付银行
-        List<UnionpayBankType> companyUnionpayBankTypeList = companyUnionpayService.queryCompanyUnionpayMethod(paymentOrderInfoPO.getCompanyId(), paymentOrderInfoPO.getTaxId());
+        List<UnionpayBankType> companyUnionpayBankTypeList = companyUnionpayService.queryCompanyUnionpayMethod(paymentOrderInfoPO.getMerchantId(), paymentOrderInfoPO.getTaxId());
         paymentOrderInfoPO.setCompanyUnionpayBankTypeList(companyUnionpayBankTypeList);
         //获取商户主账号手机号
-        String loginMobile = merchantDao.queryMainMerchantloginMobile(paymentOrderInfoPO.getCompanyId());
+        String loginMobile = merchantDao.queryMainMerchantloginMobile(paymentOrderInfoPO.getMerchantId());
         paymentOrderInfoPO.setLoginMobile(loginMobile);
 
         InvoiceInfoPO invoiceInfoPO = invoiceDao.selectInvoiceInfoPO(paymentOrderId);
