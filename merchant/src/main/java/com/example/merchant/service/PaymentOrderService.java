@@ -32,10 +32,10 @@ public interface PaymentOrderService extends IService<PaymentOrder> {
     /**
      * 查询支付订单详情
      *
-     * @param id
+     * @param paymentOrderId
      * @return
      */
-    ReturnJson getPaymentOrderInfo(String id);
+    ReturnJson getPaymentOrderInfo(String paymentOrderId);
 
     /**
      * 插入或更新数据

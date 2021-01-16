@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
@@ -21,4 +22,12 @@ public class PaymentOrderPayDTO implements Serializable {
 
     @ApiModelProperty(value = "总包支付回单")
     private String turnkeyProjectPayment;
+
+    @ApiModelProperty(value = "支付密码")
+    @NotBlank(message = "请输入支付密码")
+    private String payPwd;
+
+    @ApiModelProperty(value = "验证码")
+    @NotBlank(message = "请输入短信验证码")
+    private String checkCode;
 }

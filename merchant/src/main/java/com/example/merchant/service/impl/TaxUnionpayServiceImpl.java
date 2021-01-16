@@ -188,9 +188,8 @@ public class TaxUnionpayServiceImpl extends ServiceImpl<TaxUnionpayDao, TaxUnion
     }
 
     @Override
-    public ReturnJson queryTaxUnionpayMethod(String taxId) {
-        List<UnionpayBankType> taxUnionpayList = taxUnionpayDao.queryTaxUnionpayMethod(taxId);
-        return ReturnJson.success(taxUnionpayList);
+    public List<UnionpayBankType> queryTaxUnionpayMethod(String taxId) {
+        return taxUnionpayDao.queryTaxUnionpayMethod(taxId);
     }
 
     @Override

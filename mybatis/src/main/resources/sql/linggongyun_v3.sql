@@ -26,7 +26,6 @@ CREATE TABLE `tb_company_unionpay` (
   `uid` varchar(50) NOT NULL COMMENT '会员标识',
   `sub_account_code` varchar(50) NOT NULL COMMENT '子账户账号',
   `sub_account_name` varchar(50) NOT NULL COMMENT '子账号户名',
-  `in_bank_no` varchar(50) NOT NULL DEFAULT '' COMMENT '来款银行账号',
   `create_date` datetime DEFAULT NULL COMMENT '创建时间',
   `update_date` datetime DEFAULT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`),
@@ -179,6 +178,7 @@ CREATE TABLE `tb_company_info` (
   `credit_code` varchar(40) NOT NULL COMMENT '统一的社会信用代码',
   `audit_status` int(2) DEFAULT '0' COMMENT '0为审核，1审核',
   `company_status` int(11) DEFAULT '0' COMMENT '公司状态0正常',
+  `pay_pwd` varchar(40) NOT NULL COMMENT '支付密码',
   `create_date` datetime DEFAULT NULL,
   `update_date` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
@@ -664,7 +664,6 @@ CREATE TABLE `tb_merchant` (
   `invoice_taxno` varchar(100) DEFAULT NULL COMMENT '税号',
   `user_name` varchar(100) DEFAULT NULL COMMENT '用户名',
   `role_name` varchar(255) NOT NULL DEFAULT '' COMMENT '角色名称',
-  `pay_pwd` varchar(40) DEFAULT NULL COMMENT '支付密码',
   `real_name` varchar(20) DEFAULT NULL COMMENT '真实姓名',
   `pass_word` varchar(40) DEFAULT NULL COMMENT '登录密码',
   `login_mobile` varchar(40) DEFAULT NULL COMMENT '登录时用的手机号码',

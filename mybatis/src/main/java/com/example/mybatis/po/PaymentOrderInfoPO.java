@@ -1,5 +1,6 @@
 package com.example.mybatis.po;
 
+import com.example.common.enums.UnionpayBankType;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -7,6 +8,7 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @ApiModel(description = "总包支付订单的信息")
@@ -97,4 +99,11 @@ public class PaymentOrderInfoPO {
 
     @ApiModelProperty("综合税率")
     private BigDecimal compositeTax;
+
+    @ApiModelProperty(value = "商户银联支付银行")
+    private List<UnionpayBankType> companyUnionpayBankTypeList;
+
+    @ApiModelProperty(value = "手机号码")
+    private String loginMobile;
+
 }

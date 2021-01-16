@@ -55,6 +55,11 @@ public class CompanyUnionpayServiceImpl extends ServiceImpl<CompanyUnionpayDao, 
     }
 
     @Override
+    public List<UnionpayBankType> queryCompanyUnionpayMethod(String companyId, String taxId) {
+        return companyUnionpayDao.queryCompanyUnionpayMethod(companyId, taxId);
+    }
+
+    @Override
     public ReturnJson queryOfflineTaxList(String companyId, long pageNo, long pageSize) {
         IPage<UnionpayTaxListVO> uninopayTaxList = companyUnionpayDao.queryOfflineTaxList(new Page<>(pageNo, pageSize), companyId);
         return ReturnJson.success(uninopayTaxList);
@@ -85,7 +90,6 @@ public class CompanyUnionpayServiceImpl extends ServiceImpl<CompanyUnionpayDao, 
             merchantUnionpayBalanceVO.setUnionpayBankType(taxUnionpay.getUnionpayBankType());
             merchantUnionpayBalanceVO.setSubAccountName(companyUnionpay.getSubAccountName());
             merchantUnionpayBalanceVO.setSubAccountCode(companyUnionpay.getSubAccountCode());
-            merchantUnionpayBalanceVO.setInBankNo(companyUnionpay.getInBankNo());
 
             JSONObject jsonObject = UnionpayUtil.AC081(taxUnionpay.getMerchno(), taxUnionpay.getAcctno(), taxUnionpay.getPfmpubkey(), taxUnionpay.getPrikey(), companyUnionpay.getUid());
             if (jsonObject == null) {

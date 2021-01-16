@@ -124,7 +124,7 @@ public class MerchantPaasController {
     @GetMapping("/queryTaxUnionpayMethod")
     @ApiOperation(value = "查询服务商拥有的银联支付方式", notes = "查询服务商拥有的银联支付方式")
     public ReturnJson queryTaxUnionpayMethod(@ApiParam(value = "服务商") @NotBlank(message = "请选择服务商") @RequestParam(required = false) String taxId) {
-        return taxUnionpayService.queryTaxUnionpayMethod(taxId);
+        return ReturnJson.success(taxUnionpayService.queryTaxUnionpayMethod(taxId));
     }
 
     @PostMapping("/addMerchant")

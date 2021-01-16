@@ -49,11 +49,6 @@ public class Merchant extends BaseEntity {
     private String userName;
 
     /**
-     * 支付密码
-     */
-    private String payPwd;
-
-    /**
      * 真实姓名
      */
     private String realName;

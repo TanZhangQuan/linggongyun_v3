@@ -22,6 +22,7 @@ import com.example.common.lianlianpay.utils.TraderRSAUtil;
 import com.example.common.util.*;
 import com.example.merchant.dto.merchant.AddLianLianPay;
 import com.example.merchant.exception.CommonException;
+import com.example.merchant.service.CompanyInfoService;
 import com.example.merchant.service.LianLianPayService;
 import com.example.merchant.service.PaymentHistoryService;
 import com.example.merchant.util.RealnameVerifyUtil;
@@ -76,6 +77,8 @@ public class LianLianPayServiceImpl extends ServiceImpl<LianlianpayDao, Lianlian
     @Resource
     private PaymentHistoryService paymentHistoryService;
 
+    @Resource
+    private CompanyInfoService companyInfoService;
 
     /**
      * 连连公钥
@@ -143,7 +146,7 @@ public class LianLianPayServiceImpl extends ServiceImpl<LianlianpayDao, Lianlian
     @Override
     public ReturnJson merchantPay(String merchantId, String payPassWord, String paymentOrderId) throws CommonException {
         log.info("商户总包付款接口。。。。。。。。。。。。。");
-        boolean flag = this.verifyPayPwd(merchantId, payPassWord);
+        boolean flag = companyInfoService.verifyPayPwd(merchantId, payPassWord);
         if (!flag) {
             return ReturnJson.error("支付密码有误，请重新输入！");
         }
@@ -508,7 +511,7 @@ public class LianLianPayServiceImpl extends ServiceImpl<LianlianpayDao, Lianlian
     @Override
     public ReturnJson merchantPayMany(String merchantId, String payPassWord, String paymentOrderId) throws CommonException {
         log.info("商户众包付款接口。。。。。。。。。。。。。");
-        boolean flag = this.verifyPayPwd(merchantId, payPassWord);
+        boolean flag = companyInfoService.verifyPayPwd(merchantId, payPassWord);
         if (!flag) {
             return ReturnJson.error("支付密码有误，请重新输入！");
         }
@@ -778,11 +781,6 @@ public class LianLianPayServiceImpl extends ServiceImpl<LianlianpayDao, Lianlian
         String res = HttpUtil.post(queryPayment, JSON.toJSONString(paymentRequestBean));
         log.info("商户付款查询返回数据：" + res);
         return JsonUtils.jsonToPojo(res, new HashMap<String, String>().getClass());
-    }
-
-    private boolean verifyPayPwd(String merchantId, String payPassWord) {
-        Merchant merchant = merchantDao.selectById(merchantId);
-        return (PWD_KEY + MD5.md5(payPassWord)).equals(merchant.getPayPwd());
     }
 
     private ReturnJson senMsg(String msg, String NoOrder, String sendUserId, UserType sendUserType, String receiveUserId, UserType receiveUserType) {

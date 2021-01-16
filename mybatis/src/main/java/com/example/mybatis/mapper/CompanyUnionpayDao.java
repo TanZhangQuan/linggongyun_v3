@@ -9,6 +9,8 @@ import com.example.mybatis.vo.UnionpayTaxListVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 /**
  * <p>
  * 商户银联信息表 Mapper 接口
@@ -47,4 +49,13 @@ public interface CompanyUnionpayDao extends BaseMapper<CompanyUnionpay> {
      * @return
      */
     CompanyUnionpay queryMerchantUnionpayUnionpayBankType(@Param("companyId") String companyId, @Param("taxUnionpayId") String taxUnionpayId, @Param("unionpayBankType") UnionpayBankType unionpayBankType);
+
+    /**
+     * 查询商户拥有的银联支付方式
+     *
+     * @param companyId
+     * @param taxId
+     * @return
+     */
+    List<UnionpayBankType> queryCompanyUnionpayMethod(@Param("companyId") String companyId, @Param("taxId") String taxId);
 }

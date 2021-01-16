@@ -1,6 +1,6 @@
 package com.example.mybatis.entity;
 
-import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 /**
  * <p>
@@ -166,5 +165,10 @@ public class CompanyInfo extends BaseEntity {
      * 公司状态
      */
     private Integer companyStatus;
+
+    /**
+     * 支付密码
+     */
+    private String payPwd;
 
 }

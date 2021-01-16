@@ -67,7 +67,7 @@ public class PaymentOrderPaasController {
     @PostMapping("/paymentOrderAudit")
     @ApiOperation(value = "总包+分包审核", notes = "总包+分包审核")
     public ReturnJson paymentOrderAudit(@ApiParam(value = "总包+分包支付订单ID") @NotBlank(message = "请选择总包+分包支付订单") @RequestParam(required = false) String paymentOrderId,
-                                        @ApiParam(value = "是否审核通过") @NotBlank(message = "请选择是否审核通过") @RequestParam(required = false) Boolean boolPass,
+                                        @ApiParam(value = "是否审核通过") @NotNull(message = "请选择是否审核通过") @RequestParam(required = false) Boolean boolPass,
                                         @ApiParam(value = "拒绝原因") @RequestParam(required = false) String reasonsForRejection) throws Exception {
         return paymentOrderService.paymentOrderAudit(paymentOrderId, boolPass, reasonsForRejection);
     }

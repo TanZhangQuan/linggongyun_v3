@@ -2,24 +2,6 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.mybatis.mapper.MerchantDao">
 
-    <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="com.example.mybatis.entity.Merchant">
-        <id column="id" property="id"/>
-        <result column="company_id" property="companyId"/>
-        <result column="company_name" property="companyName"/>
-        <result column="role_name" property="roleName"/>
-        <result column="user_name" property="userName"/>
-        <result column="pay_pwd" property="payPwd"/>
-        <result column="real_name" property="realName"/>
-        <result column="pass_word" property="passWord"/>
-        <result column="parent_id" property="parentId"/>
-        <result column="login_mobile" property="loginMobile"/>
-        <result column="head_portrait" property="headPortrait"/>
-        <result column="status" property="status"/>
-        <result column="create_date" property="createDate"/>
-        <result column="update_date" property="updateDate"/>
-    </resultMap>
-
     <resultMap id="BuyerById" type="com.example.mybatis.vo.BuyerVO">
         <result column="company_name" property="companyName"/>
         <result column="credit_code" property="creditCode"/>
@@ -128,16 +110,6 @@
         <result column="lately_cooperation_date" property="latelyCooperationDate"/>
     </resultMap>
 
-    <!-- 通用查询结果列 -->
-    <sql id="Base_Column_List">
-        id, company_id,company_name, role_id, user_name, pay_pwd, real_name, pass_word, parent_id, login_mobile, status, create_date, update_date
-    </sql>
-
-
-    <select id="findByID" resultMap="BaseResultMap">
-        select * from tb_merchant where id=#{id}
-    </select>
-
     <resultMap id="IdAndName" type="com.example.mybatis.vo.MerchantListVO">
         <id column="id" property="id"/>
         <result column="company_name" property="companyName"/>
@@ -148,7 +120,7 @@
     </select>
 
     <select id="getNameById" resultType="java.lang.String">
-        SELECT company_name FROM tb_merchant WHERE id=#{id}
+        SELECT company_name FROM tb_merchant WHERE id= #{id}
     </select>
 
     <select id="getBuyerById" resultMap="BuyerById">
