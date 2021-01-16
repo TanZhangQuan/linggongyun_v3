@@ -71,15 +71,15 @@ fileStaticAccesspathVideo: "/static/Video/"
 #模板文件
 TemplateFile:
   #  合同模板
-  Contract: "/root/linggongyun_v3/TemplateFile/test.pdf"
+  Contract: "/root/linggongyun_v3/TemplateFile/【个人创客加盟协议】互联网众包合作协议（个人创客-平台）V1.0-2020-06-03.docx"
   #  总包+分包支付明细模板
   TotalPayInventory: "/root/linggongyun_v3/TemplateFile/支付清单模板.xlsx"
   #  众包支付明细模板
   ManyPayInventory: "/root/linggongyun_v3/TemplateFile/支付清单模板.xlsx"
   #  总包+分包交付支付验收单
-  TotalAcceptanceCertificate: "/root/linggongyun_v3/TemplateFile/交付支付验收单模板.xlsx"
+  TotalAcceptanceCertificate: "/root/linggongyun_v3/TemplateFile/【总包+分包】交付支付验收单-自然人创客V3.0.docx"
   #  众包交付支付验收单
-  ManyAcceptanceCertificate: "/root/linggongyun_v3/TemplateFile/交付支付验收单模板.xlsx"
+  ManyAcceptanceCertificate: "/root/linggongyun_v3/TemplateFile/【众包】交付支付验收单-自然人创客V3.0.docx"
   #  导入创客的模板
   ImportWorker: "/root/linggongyun_v3/TemplateFile/创客模板.xlsx"
   #  模板文件夹路径

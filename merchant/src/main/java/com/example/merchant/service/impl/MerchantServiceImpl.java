@@ -574,7 +574,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
                 List<UnionpayBankType> taxUnionpayBankTypeList = taxUnionpayService.queryTaxUnionpayMethod(cooperationInfoVO.getTaxId());
                 cooperationInfoVO.setTaxUnionpayBankTypeList(taxUnionpayBankTypeList);
                 //查询商户银联支付银行
-                List<UnionpayBankType> companyUnionpayBankTypeList = companyUnionpayService.queryCompanyUnionpayMethod(companyId,cooperationInfoVO.getTaxId());
+                List<UnionpayBankType> companyUnionpayBankTypeList = companyUnionpayService.queryCompanyUnionpayMethod(companyId, cooperationInfoVO.getTaxId());
                 cooperationInfoVO.setCompanyUnionpayBankTypeList(companyUnionpayBankTypeList);
             }
         }
@@ -658,6 +658,13 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
             } else {
                 BeanUtils.copyProperties(updateCompanyTaxDTO, companyTax);
                 companyTax.setCompanyId(updateCompanyDto.getUpdateCompanyInfoDto().getId());
+                CompanyTax companyTax1 = companyTaxDao.selectOne(new QueryWrapper<CompanyTax>()
+                        .eq("company_id", companyTax.getCompanyId())
+                        .eq("tax_id", companyTax.getTaxId())
+                        .eq("package_status",companyTax.getPackageStatus()));
+                if (companyTax1 != null) {
+                    throw new CommonException(300,"同一个商户与同一个服务商在统一合作类型上只能合作一次！");
+                }
                 companyTaxDao.insert(companyTax);
                 List<UpdateCompanyLadderServiceDTO> updateCompanyLadderServiceDtoList = updateCompanyTaxDTO.getUpdateCompanyLadderServiceDtoList();
                 if (updateCompanyLadderServiceDtoList != null) {
