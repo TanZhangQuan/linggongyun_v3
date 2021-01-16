@@ -21,6 +21,9 @@ public class TaxTransactionFlowVO implements Serializable {
     @ApiModelProperty(value = "商户ID")
     private String companyId;
 
+    @ApiModelProperty(value = "商户ID")
+    private String merchantId;
+
     @ApiModelProperty(value = "服务商ID")
     private String taxId;
 

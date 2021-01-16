@@ -50,4 +50,9 @@ public interface MakerTotalInvoiceService extends IService<MakerTotalInvoice> {
      * @return
      */
     ReturnJson getMakerTotalInvoicePayList(String invoiceId, Integer pageNo, Integer pageSize);
+
+    /**
+     * 总包+分包支付明细
+     */
+    ReturnJson getTotalBranchList(String paymentOrderIds);
 }
