@@ -111,15 +111,26 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
     }
 
     @Override
-    public ReturnJson getPaymentOrderInfo(String id) {
+    public ReturnJson getPaymentOrderInfo(String paymentOrderId) {
         PaymentOrderInfoVO paymentOrderInfoVO = new PaymentOrderInfoVO();
         ExpressInfoVO expressInfoVO = new ExpressInfoVO();
         // 为总包订单
-        PaymentOrderInfoPO paymentOrderInfoPO = paymentOrderDao.selectPaymentOrderInfo(id);
+        PaymentOrderInfoPO paymentOrderInfoPO = paymentOrderDao.selectPaymentOrderInfo(paymentOrderId);
         if (paymentOrderInfoPO == null) {
-            return ReturnJson.error("订单编号有误，请重新输入！");
+            return ReturnJson.error("总包订单不存在");
         }
-        InvoiceInfoPO invoiceInfoPO = invoiceDao.selectInvoiceInfoPO(id);
+
+        Merchant merchant = merchantDao.selectById(paymentOrderInfoPO.getMerchantId());
+        if (merchant == null) {
+            return ReturnJson.error("商户账号不存在");
+        }
+
+        //查询商户银联支付银行
+        List<UnionpayBankType> companyUnionpayBankTypeList = companyUnionpayService.queryCompanyUnionpayMethod(merchant.getCompanyId(), paymentOrderInfoPO.getTaxId());
+        paymentOrderInfoPO.setCompanyUnionpayBankTypeList(companyUnionpayBankTypeList);
+        paymentOrderInfoPO.setLoginMobile(merchant.getLoginMobile());
+
+        InvoiceInfoPO invoiceInfoPO = invoiceDao.selectInvoiceInfoPO(paymentOrderId);
         if (invoiceInfoPO != null) {
             //总包发票信息
             paymentOrderInfoVO.setInvoice(invoiceInfoPO.getInvoiceUrl());
@@ -129,7 +140,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
             List<ExpressLogisticsInfo> expressLogisticsInfos = KdniaoTrackQueryAPI.getExpressInfo(invoiceInfoPO.getExpressCompanyName(), invoiceInfoPO.getExpressSheetNo());
             expressInfoVO.setExpressLogisticsInfos(expressLogisticsInfos);
         }
-        List<PaymentInventoryVO> paymentInventories = paymentInventoryDao.selectPaymentInventoryList(id, null);
+        List<PaymentInventoryVO> paymentInventories = paymentInventoryDao.selectPaymentInventoryList(paymentOrderId, null);
         paymentOrderInfoVO.setPaymentInventories(paymentInventories);
         paymentOrderInfoVO.setPaymentOrderInfoPO(paymentOrderInfoPO);
         paymentOrderInfoVO.setExpressInfoVO(expressInfoVO);

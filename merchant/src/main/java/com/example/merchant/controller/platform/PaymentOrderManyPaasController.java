@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 /**
  * <p>
@@ -67,7 +68,7 @@ public class PaymentOrderManyPaasController {
     @PostMapping("/paymentOrderManyAudit")
     @ApiOperation(value = "众包审核", notes = "众包审核")
     public ReturnJson paymentOrderManyAudit(@ApiParam(value = "众包支付订单ID") @NotBlank(message = "请选择众包支付订单") @RequestParam(required = false) String paymentOrderId,
-                                            @ApiParam(value = "是否审核通过") @NotBlank(message = "请选择是否审核通过") @RequestParam(required = false) Boolean boolPass,
+                                            @ApiParam(value = "是否审核通过") @NotNull(message = "请选择是否审核通过") @RequestParam(required = false) Boolean boolPass,
                                             @ApiParam(value = "拒绝原因") @RequestParam(required = false) String reasonsForRejection) throws Exception {
         return paymentOrderManyService.paymentOrderManyAudit(paymentOrderId, boolPass, reasonsForRejection);
     }

@@ -279,11 +279,6 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
     }
 
     @Override
-    public Merchant findByID(String id) {
-        return merchantDao.findByID(id);
-    }
-
-    @Override
     public ReturnJson getIdAndName() {
         ReturnJson returnJson = new ReturnJson("查询失败", 300);
         List<Merchant> list = merchantDao.getIdAndName();
@@ -397,6 +392,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         CompanyInvoiceInfo companyInvoiceInfo = new CompanyInvoiceInfo();
         BeanUtils.copyProperties(companyDto.getAddCompanyInvoiceInfoDto(), companyInvoiceInfo);
 
+        companyInfo.setPayPwd(PWD_KEY + MD5.md5(companyDto.getAddMerchantDto().getPayPwd()));
         companyInfo.setAddressAndTelephone(companyInvoiceInfo.getAddressAndTelephone());
         companyInfo.setBankAndAccount(companyInvoiceInfo.getBankAndAccount());
 
@@ -427,7 +423,6 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         }
         merchant = new Merchant();
         BeanUtils.copyProperties(companyDto.getAddMerchantDto(), merchant);
-        merchant.setPayPwd(PWD_KEY + MD5.md5(companyDto.getAddMerchantDto().getPayPwd()));
         merchant.setPassWord(PWD_KEY + MD5.md5(companyDto.getAddMerchantDto().getPassWord()));
         merchant.setCompanyId(companyInfo.getId());
         merchant.setCompanyName(companyInfo.getCompanyName());
@@ -600,6 +595,9 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         String bankCode = companyInfo.getBankCode();
 
         BeanUtils.copyProperties(updateCompanyDto.getUpdateCompanyInfoDto(), companyInfo);
+        if (StringUtils.isNotBlank(updateCompanyDto.getUpdateMerchantInfDto().getPayPwd())) {
+            companyInfo.setPayPwd(PWD_KEY + MD5.md5(updateCompanyDto.getUpdateMerchantInfDto().getPayPwd()));
+        }
         companyInfo.setAgentId(updateCompanyDto.getUpdateCooperationDto().getAgentId());
         companyInfo.setSalesManId(updateCompanyDto.getUpdateCooperationDto().getSalesManId());
         companyInfoDao.updateById(companyInfo);
@@ -613,9 +611,6 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         BeanUtils.copyProperties(updateCompanyDto.getUpdateMerchantInfDto(), merchant);
         if (StringUtils.isNotBlank(updateCompanyDto.getUpdateMerchantInfDto().getPassWord())) {
             merchant.setPassWord(PWD_KEY + MD5.md5(updateCompanyDto.getUpdateMerchantInfDto().getPassWord()));
-        }
-        if (StringUtils.isNotBlank(updateCompanyDto.getUpdateMerchantInfDto().getPayPwd())) {
-            merchant.setPayPwd(PWD_KEY + MD5.md5(updateCompanyDto.getUpdateMerchantInfDto().getPayPwd()));
         }
         merchantDao.updateById(merchant);
         List<UpdateCompanyTaxDTO> updateCompanyTaxDTOList = updateCompanyDto.getUpdateCompanyTaxDtoList();

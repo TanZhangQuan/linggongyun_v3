@@ -19,8 +19,6 @@ import javax.servlet.http.HttpServletResponse;
  */
 public interface MerchantService extends IService<Merchant> {
 
-    Merchant findByID(String id);
-
     ReturnJson getIdAndName();
 
     String getNameById(String id);

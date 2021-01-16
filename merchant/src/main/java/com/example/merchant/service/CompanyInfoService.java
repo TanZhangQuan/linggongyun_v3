@@ -14,4 +14,12 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface CompanyInfoService extends IService<CompanyInfo> {
 
+    /**
+     * 校验支付密码
+     *
+     * @param companyId
+     * @param payPassWord
+     * @return
+     */
+    boolean verifyPayPwd(String companyId, String payPassWord);
 }

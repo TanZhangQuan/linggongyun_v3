@@ -22,8 +22,6 @@ import java.util.List;
  */
 public interface MerchantDao extends BaseMapper<Merchant> {
 
-    Merchant findByID(String id);
-
     List<Merchant> getIdAndName();
 
     String getNameById(String id);
