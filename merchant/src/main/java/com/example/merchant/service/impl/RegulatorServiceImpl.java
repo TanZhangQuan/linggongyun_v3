@@ -759,7 +759,7 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
 
     @Override
     public ReturnJson queryPaymentOrderInfo(String paymentId, Integer packageStatus) {
-        RegulatorPaymentManyVO paymentManyVO = null;
+        RegulatorPaymentVO paymentVO = null;
         if (packageStatus == 0) {
 
         }

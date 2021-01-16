@@ -14,12 +14,12 @@ import java.util.Date;
  * @Date 2021/1/16
  */
 @Data
-@ApiModel(description = "众包支付信息")
-public class RegulatorPaymentManyVO implements Serializable {
+@ApiModel(description = "支付信息")
+public class RegulatorPaymentVO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty(value = "众包支付ID")
-    private String paymentManyId;
+    private String paymentId;
 
     @ApiModelProperty(value = "商户名称")
     private String companySName;
