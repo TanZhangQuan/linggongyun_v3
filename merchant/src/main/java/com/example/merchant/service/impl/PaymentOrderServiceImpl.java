@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.example.common.enums.TradeNoType;
 import com.example.common.enums.UnionpayBankType;
 import com.example.common.util.*;
 import com.example.merchant.dto.AssociatedTasksDTO;
@@ -16,6 +17,7 @@ import com.example.merchant.dto.platform.PaymentOrderDTO;
 import com.example.merchant.exception.CommonException;
 import com.example.merchant.service.*;
 import com.example.merchant.util.AcquireID;
+import com.example.merchant.util.SnowflakeIdWorker;
 import com.example.merchant.vo.ExpressInfoVO;
 import com.example.merchant.vo.PaymentOrderInfoVO;
 import com.example.merchant.vo.platform.CompanyBriefVO;
@@ -162,7 +164,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
         List<PaymentInventory> paymentInventories = addPaymentOrderDto.getPaymentInventories();
         String id = paymentOrder.getId();
         paymentOrder.setMerchantId(merchantId);
-        paymentOrder.setTradeNo(OrderTradeNo.GetRandom() + "PO");
+        paymentOrder.setTradeNo(TradeNoType.PO.getValue() + SnowflakeIdWorker.getSerialNumber());
         CompanyInfo companyInfo = companyInfoService.getById(merchantId);
         if (companyInfo == null) {
             Merchant merchant = merchantDao.selectById(merchantId);
@@ -269,7 +271,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
         for (PaymentInventory paymentInventory : paymentInventories) {
             paymentInventory.setPaymentOrderId(paymentOrder.getId());
             //生成支付明细
-            paymentInventory.setTradeNo(OrderTradeNo.GetRandom() + "PI");
+            paymentInventory.setTradeNo(TradeNoType.PI.getValue() + SnowflakeIdWorker.getSerialNumber());
             paymentInventory.setPackageStatus(0);
             paymentInventoryService.saveOrUpdate(paymentInventory);
         }

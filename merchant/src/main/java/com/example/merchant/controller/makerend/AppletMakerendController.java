@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 /**
  * <p>
@@ -45,14 +47,14 @@ public class AppletMakerendController {
 
     @GetMapping("/queryAppletFaqById")
     @ApiOperation(value = "查询常见问题")
-    public ReturnJson queryAppletFaqById(String id) {
+    public ReturnJson queryAppletFaqById(@NotBlank(message = "ID不能为空") String id) {
         return appletBannerService.queryAppletFaqById(id);
     }
 
     @GetMapping("/queryAppletOtherInfo")
     @ApiOperation(value = "标识查询")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "identification", value = "标识符", dataType = "Identification", required = true)})
-    public ReturnJson queryAppletOtherInfo(Identification identification) {
+    public ReturnJson queryAppletOtherInfo(@NotNull(message = "标识不能为空") Identification identification) {
         return appletBannerService.queryAppletOtherInfo(identification);
     }
 
