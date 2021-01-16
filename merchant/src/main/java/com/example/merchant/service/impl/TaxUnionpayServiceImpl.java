@@ -294,7 +294,7 @@ public class TaxUnionpayServiceImpl extends ServiceImpl<TaxUnionpayDao, TaxUnion
                     clearTaxUnionpayBalanceVO.setOwayBal(owayBal);
                     clearTaxUnionpayBalanceVO.setActBal(actBal);
 
-                    taxUnionpayBalanceVOList.add(clearTaxUnionpayBalanceVO);
+                    taxUnionpayBalanceVOList.add(serviceTaxUnionpayBalanceVO);
                 }
             }
         }
