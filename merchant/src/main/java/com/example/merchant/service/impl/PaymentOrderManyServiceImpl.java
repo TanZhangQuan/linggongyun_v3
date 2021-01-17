@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.example.common.enums.TradeNoType;
 import com.example.common.enums.UnionpayBankType;
 import com.example.common.util.*;
 import com.example.merchant.dto.merchant.AddPaymentOrderManyDTO;
@@ -15,6 +16,7 @@ import com.example.merchant.dto.platform.PaymentOrderManyDTO;
 import com.example.merchant.exception.CommonException;
 import com.example.merchant.service.*;
 import com.example.merchant.util.AcquireID;
+import com.example.merchant.util.SnowflakeIdWorker;
 import com.example.merchant.vo.ExpressInfoVO;
 import com.example.merchant.vo.PaymentOrderInfoVO;
 import com.example.mybatis.dto.QueryCrowdSourcingDTO;
@@ -243,7 +245,7 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
         PaymentOrderMany paymentOrderMany = new PaymentOrderMany();
         PaymentOrderManyDTO paymentOrderManyDto = addPaymentOrderManyDto.getPaymentOrderManyDto();
         BeanUtils.copyProperties(paymentOrderManyDto, paymentOrderMany);
-        paymentOrderMany.setTradeNo(OrderTradeNo.GetRandom() + "PM");
+        paymentOrderMany.setTradeNo(TradeNoType.POM.getValue() + SnowflakeIdWorker.getSerialNumber());
         Tax tax = taxDao.selectById(paymentOrderMany.getTaxId());
         paymentOrderMany.setPlatformServiceProvider(tax.getTaxName());
         Merchant merchant = merchantDao.selectById(merchantId);
@@ -269,7 +271,7 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
 
         BigDecimal merchantTax = new BigDecimal("100.00");
         BigDecimal receviceTax = new BigDecimal("0.00");
-        BigDecimal compositeTax;
+        BigDecimal compositeTax = new BigDecimal("0.00");
         BigDecimal countMoney = new BigDecimal("0");
         BigDecimal countServiceMoney = new BigDecimal("0");
 
@@ -332,7 +334,8 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
             throw new CommonException(300, "订单创建失败！");
         }
         for (PaymentInventory paymentInventory : paymentInventories) {
-            paymentInventory.setTradeNo(OrderTradeNo.GetRandom() + "PI");
+            paymentInventory.setCompositeTax(compositeTax.multiply(new BigDecimal("100.00")));
+            paymentInventory.setTradeNo(TradeNoType.PI.getValue() + SnowflakeIdWorker.getSerialNumber());
             paymentInventory.setPaymentOrderId(paymentOrderMany.getId());
             paymentInventory.setPackageStatus(1);
         }

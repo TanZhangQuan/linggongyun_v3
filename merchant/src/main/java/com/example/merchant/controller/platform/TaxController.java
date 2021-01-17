@@ -156,8 +156,8 @@ public class TaxController {
 
     @GetMapping("/queryCompanyInfoById")
     @ApiOperation(value = "公司的信息", notes = "公司的信息", httpMethod = "GET")
-    public ReturnJson queryCompanyInfoById(@NotBlank(message = "商户ID不能为空！") @RequestParam String merchantId) {
-        return merchantService.queryCompanyInfoById(merchantId);
+    public ReturnJson queryCompanyInfoById(@NotBlank(message = "商户ID不能为空！") @RequestParam String companyId) {
+        return merchantService.queryCompanyInfoById(companyId);
     }
 
     @PostMapping("/taxMerchantInfoPaas")

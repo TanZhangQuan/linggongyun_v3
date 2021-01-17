@@ -758,8 +758,19 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
     }
 
     @Override
-    public ReturnJson queryPaymentOrderInfo(String workerId, String paymentId, Integer packageStatus) {
-        return null;
+    public ReturnJson queryPaymentOrderInfo(String paymentId, Integer packageStatus) {
+        //分包支付信息
+        RegulatorSubpackageInfoVO regulatorSubpackageInfoVO = regulatorDao.querySub(paymentId);
+        //总包+分包 或 众包的支付信息
+        PayInfoVO payInfoVO = regulatorDao.getPayInfo(paymentId,packageStatus);
+        //支付清单
+        List<RegulatorPayInfoVO> regulatorPayInfoVO = regulatorDao.regulatorPayInfo(paymentId);
+        //总包+分包 或 众包信息
+        RegulatorPaymentVO regulatorPaymentVO = regulatorDao.getRegulatorPay(paymentId,packageStatus);
+
+        QueryPaymentInfoVO queryPaymentInfoVO=new QueryPaymentInfoVO(payInfoVO
+                ,regulatorPayInfoVO,regulatorPaymentVO,regulatorSubpackageInfoVO);
+        return ReturnJson.success(queryPaymentInfoVO);
     }
 
 

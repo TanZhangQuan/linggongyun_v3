@@ -26,6 +26,11 @@ public interface PaymentInventoryDao extends BaseMapper<PaymentInventory> {
     List<PaymentInventoryVO> selectPaymentInventoryList(@Param("paymentOrderId") String paymentOrderId, @Param("workerId") String workerId);
 
     /**
+     * 查询总包+分包的
+     */
+    List<PaymentInventoryVO> getTotalBranchList(@Param("paymentOrderIds") String paymentOrderIds);
+
+    /**
      * 众包
      * @param paymentOrderId
      * @param workerId

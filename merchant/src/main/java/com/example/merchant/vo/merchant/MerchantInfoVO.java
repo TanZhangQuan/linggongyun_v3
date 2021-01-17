@@ -21,6 +21,9 @@ public class MerchantInfoVO implements Serializable {
     @ApiModelProperty(value = "公司全称")
     private String companyName;
 
+    @ApiModelProperty(value = "真实姓名")
+    private String realName;
+
     @ApiModelProperty(value = "公司的法定人")
     private String companyMan;
 

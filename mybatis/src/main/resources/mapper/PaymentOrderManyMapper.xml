@@ -931,7 +931,9 @@
         INNER JOIN tb_payment_inventory pi ON pi.payment_order_id = po.id
         WHERE
             po.id = #{param1}
-        AND pi.worker_id = #{param2}
+        <if test="param2 != null and param2 != ''">
+            AND pi.worker_id = #{param2}
+        </if>
     </select>
     <select id="selectDaypaa" resultMap="dayTradeVO">
  SELECT

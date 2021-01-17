@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -130,6 +131,13 @@ public class InvoicePassController {
                                                   @RequestParam(defaultValue = "1") Integer pageNo,
                                                   @RequestParam(defaultValue = "10") Integer pageSize) {
         return makerTotalInvoiceService.getMakerTotalInvoicePayList(invoiceId, pageNo, pageSize);
+    }
+
+
+    @ApiOperation("总包+分包支付明细,id可以传多个用逗号隔开")
+    @PostMapping("/getTotalBranchList")
+    public ReturnJson getTotalBranchList(@RequestParam @NotBlank(message = "发票ID不能为空") String paymentOrderIds) {
+        return makerTotalInvoiceService.getTotalBranchList(paymentOrderIds);
     }
 
 }

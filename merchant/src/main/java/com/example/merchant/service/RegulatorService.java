@@ -282,10 +282,11 @@ public interface RegulatorService extends IService<Regulator> {
     /**
      * 查询支付订单详情
      *
-     * @param workerId
      * @param paymentId
      * @param packageStatus
      * @return
      */
-    ReturnJson queryPaymentOrderInfo(String workerId, String paymentId, Integer packageStatus);
+    ReturnJson queryPaymentOrderInfo(String paymentId, Integer packageStatus);
+
+
 }
