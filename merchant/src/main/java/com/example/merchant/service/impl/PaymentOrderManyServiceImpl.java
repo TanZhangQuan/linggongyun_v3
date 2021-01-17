@@ -24,6 +24,7 @@ import com.example.mybatis.po.InvoiceInfoPO;
 import com.example.mybatis.po.PaymentOrderInfoPO;
 import com.example.mybatis.vo.*;
 import com.example.redis.dao.RedisDao;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,8 +33,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -45,6 +49,7 @@ import java.util.List;
  * @author hzp
  * @since 2020-09-08
  */
+@Slf4j
 @Service
 public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao, PaymentOrderMany> implements PaymentOrderManyService {
 
@@ -238,7 +243,7 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
         PaymentOrderMany paymentOrderMany = new PaymentOrderMany();
         PaymentOrderManyDTO paymentOrderManyDto = addPaymentOrderManyDto.getPaymentOrderManyDto();
         BeanUtils.copyProperties(paymentOrderManyDto, paymentOrderMany);
-        paymentOrderMany.setTradeNo(OrderTradeNo.GetRandom()+"PM");
+        paymentOrderMany.setTradeNo(OrderTradeNo.GetRandom() + "PM");
         Tax tax = taxDao.selectById(paymentOrderMany.getTaxId());
         paymentOrderMany.setPlatformServiceProvider(tax.getTaxName());
         Merchant merchant = merchantDao.selectById(merchantId);
@@ -327,7 +332,7 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
             throw new CommonException(300, "订单创建失败！");
         }
         for (PaymentInventory paymentInventory : paymentInventories) {
-            paymentInventory.setTradeNo(OrderTradeNo.GetRandom()+"PI");
+            paymentInventory.setTradeNo(OrderTradeNo.GetRandom() + "PI");
             paymentInventory.setPaymentOrderId(paymentOrderMany.getId());
             paymentInventory.setPackageStatus(1);
         }
@@ -709,6 +714,73 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
             }
         }
         return compositeTax;
+    }
+
+    @Override
+    public ReturnJson queryTaxPlatformReconciliationFile(Date beginDate, Date endDate, String taxUnionpayId) throws Exception {
+
+        String start = "2021-01-15";
+        String end = "2021-01-20";
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        beginDate = simpleDateFormat.parse(start);
+        endDate = simpleDateFormat.parse(end);
+        log.info("beginDate: {}", simpleDateFormat.format(beginDate));
+        log.info("endDate: {}", simpleDateFormat.format(endDate));
+
+        TaxUnionpay taxUnionpay = taxUnionpayService.getById(taxUnionpayId);
+        if (taxUnionpay == null) {
+            return ReturnJson.error("服务商银联不存在");
+        }
+
+        if (beginDate.after(endDate)) {
+            return ReturnJson.error("开始日期不能大于结束日期");
+        }
+
+        //首先要获取到Calendar类，该类有对应的添加日期的方法！！
+        Calendar calendar = Calendar.getInstance();
+
+        //获取日期的毫秒值除以每天的毫秒值
+        int betweenDays = (int) ((endDate.getTime() / (24 * 60 * 60 * 1000)) - (beginDate.getTime() / (24 * 60 * 60 * 1000)));
+        if (betweenDays + 1 > 30) {
+            return ReturnJson.error("时间段只能选择30天以内");
+        }
+
+        //然后把相差的天数set到calendar类中，这样就改变日期了
+        calendar.setTime(beginDate);
+
+        for (int i = 0; i < betweenDays; i++) {
+            // 两个参数，第一个是要添加的日期(年月日)，第二个是要添加多少天
+            calendar.add(Calendar.DATE, i); //加一天
+            Date date = calendar.getTime();
+            log.info("endDate: {}", simpleDateFormat.format(date));
+
+            //获取平台对账文件
+            JSONObject jsonObject = UnionpayUtil.AC091(taxUnionpay.getMerchno(), taxUnionpay.getAcctno(), taxUnionpay.getPfmpubkey(), taxUnionpay.getPrikey(), date);
+            if (jsonObject == null) {
+                log.error("服务商" + taxUnionpay.getUnionpayBankType().getDesc() + "银联查询平台对账文件查询失败");
+                continue;
+            }
+
+            Boolean boolSuccess = jsonObject.getBoolean("success");
+            if (boolSuccess == null || !boolSuccess) {
+                String errMsg = jsonObject.getString("err_msg");
+                log.error("服务商" + taxUnionpay.getUnionpayBankType().getDesc() + "银联查询平台对账文件查询失败: " + errMsg);
+                continue;
+            }
+
+            JSONObject returnValue = jsonObject.getJSONObject("return_value");
+            String rtnCode = returnValue.getString("rtn_code");
+            if (!("S00000".equals(rtnCode))) {
+                String errMsg = returnValue.getString("err_msg");
+                log.error("服务商" + taxUnionpay.getUnionpayBankType().getDesc() + "银联查询平台对账文件查询失败: " + errMsg);
+                continue;
+            }
+
+            String fileUrl = returnValue.getString("file_url");
+            log.info("fileUrl: {}", fileUrl);
+        }
+
+        return null;
     }
 
 }

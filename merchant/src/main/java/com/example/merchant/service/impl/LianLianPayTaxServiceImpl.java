@@ -142,7 +142,7 @@ public class LianLianPayTaxServiceImpl extends ServiceImpl<LianlianpayTaxDao, Li
             if (paymentHistory == null) {
                 paymentHistory = new PaymentHistory();
             }
-            paymentHistory.setPaymentOrderId(paymentInventory.getId());
+            paymentHistory.setTradeNo(paymentInventory.getId());
             paymentHistory.setOrderType(OrderType.INVENTORY);
             paymentHistory.setPaymentType(PaymentType.LIANLIAN);
             paymentHistory.setOidPartner(result.get("oid_partner"));

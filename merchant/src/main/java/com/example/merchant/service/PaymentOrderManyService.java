@@ -10,6 +10,8 @@ import com.example.merchant.exception.CommonException;
 import com.example.mybatis.dto.QueryCrowdSourcingDTO;
 import com.example.mybatis.entity.PaymentOrderMany;
 
+import java.util.Date;
+
 /**
  * <p>
  * 众包支付单信息
@@ -177,4 +179,15 @@ public interface PaymentOrderManyService extends IService<PaymentOrderMany> {
      * @return
      */
     PaymentOrderMany queryPaymentOrderManyByTradeNo(String tradeNo);
+
+    /**
+     * 查询平台对账文件查询
+     *
+     * @param beginDate
+     * @param endDate
+     * @param taxUnionpayId
+     * @return
+     */
+    ReturnJson queryTaxPlatformReconciliationFile(Date beginDate, Date endDate, String taxUnionpayId) throws Exception;
+
 }

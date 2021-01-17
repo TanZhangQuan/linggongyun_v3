@@ -753,8 +753,8 @@ CREATE TABLE `tb_object_menu` (
 DROP TABLE IF EXISTS `tb_payment_history`;
 CREATE TABLE `tb_payment_history` (
   `id` varchar(50) NOT NULL COMMENT '主键',
-  `payment_order_id` varchar(50) NOT NULL DEFAULT '' COMMENT '支付订单号',
-  `order_type` varchar(50) NOT NULL DEFAULT '' COMMENT '订单类型（总包，分包，支付清单）',
+  `trade_no` varchar(50) NOT NULL DEFAULT '' COMMENT '支付订单号',
+  `outer_trade_no` varchar(50) NOT NULL DEFAULT '' COMMENT '订单类型（总包，分包，支付清单）',
   `payment_type` varchar(50) NOT NULL DEFAULT '' COMMENT '支付方式',
   `user_type` varchar(50) NOT NULL DEFAULT '' COMMENT '支付人类型',
   `oid_partner` varchar(50) NOT NULL DEFAULT '' COMMENT '第三方支付账户',
@@ -764,7 +764,8 @@ CREATE TABLE `tb_payment_history` (
   `pay_date` datetime NOT NULL,
   `create_date` datetime DEFAULT NULL,
   `update_date` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `UK_icr1qhlwx3lsd0terqn7w65k1` (`oid_paybill`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='第三方支付记录';
 
 -- ----------------------------
