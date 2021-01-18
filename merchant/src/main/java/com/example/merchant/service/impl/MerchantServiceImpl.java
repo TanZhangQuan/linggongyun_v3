@@ -397,6 +397,19 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         companyInfo.setBankAndAccount(companyInvoiceInfo.getBankAndAccount());
 
         Managers managers = managersDao.selectById(userId);
+
+        //代理商创建默认选定它的业务员与他自己
+        if (managers.getUserSign() == 1) {
+            Agent agent = agentDao.selectOne(new QueryWrapper<Agent>()
+                    .eq("managers_id", managers.getId()));
+            companyInfo.setAgentId(agent.getId());
+            companyInfo.setSalesManId(agent.getSalesManId());
+        }
+        //业务员创建默认选定业务员
+        if (managers.getUserSign() == 2) {
+            companyInfo.setSalesManId(managers.getId());
+        }
+        //管理员创建直接通过审核
         if (managers.getUserSign() == 3) {
             companyInfo.setAuditStatus(1);
         }
@@ -526,8 +539,18 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
     }
 
     @Override
-    public ReturnJson queryAgent() {
+    public ReturnJson queryAgent(String userId) {
         List<Agent> list = agentDao.selectList(new QueryWrapper<Agent>().eq("agent_status", 0));
+        Managers managers = managersDao.selectById(userId);
+        if (managers.getUserSign() == 2) {
+            list = agentDao.selectList(new QueryWrapper<Agent>()
+                    .eq("agent_status", 0)
+                    .eq("sales_man_id", managers.getId()));
+        }
+        if (managers.getUserSign() == 1){
+            list = agentDao.selectList(new QueryWrapper<Agent>()
+                    .eq("managers_id", userId));
+        }
         List<AgentVO> agentVOList = new ArrayList<>();
         for (int i = 0; i < list.size(); i++) {
             AgentVO agentVo = new AgentVO();
@@ -661,9 +684,9 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
                 CompanyTax companyTax1 = companyTaxDao.selectOne(new QueryWrapper<CompanyTax>()
                         .eq("company_id", companyTax.getCompanyId())
                         .eq("tax_id", companyTax.getTaxId())
-                        .eq("package_status",companyTax.getPackageStatus()));
+                        .eq("package_status", companyTax.getPackageStatus()));
                 if (companyTax1 != null) {
-                    throw new CommonException(300,"同一个商户与同一个服务商在统一合作类型上只能合作一次！");
+                    throw new CommonException(300, "同一个商户与同一个服务商在统一合作类型上只能合作一次！");
                 }
                 companyTaxDao.insert(companyTax);
                 List<UpdateCompanyLadderServiceDTO> updateCompanyLadderServiceDtoList = updateCompanyTaxDTO.getUpdateCompanyLadderServiceDtoList();

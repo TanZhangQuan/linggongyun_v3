@@ -16,5 +16,5 @@ import com.example.mybatis.po.AgentListPO;
  * @since 2020-09-07
  */
 public interface AgentDao extends BaseMapper<Agent> {
-    IPage<AgentListPO>selectAgentList(Page page);
+    IPage<AgentListPO> selectAgentList(Page page);
 }

@@ -8,10 +8,7 @@ import com.example.merchant.service.HomePageService;
 import com.example.merchant.util.AcquireID;
 import com.example.merchant.vo.merchant.HomePageMerchantVO;
 import com.example.merchant.vo.platform.HomePageVO;
-import com.example.mybatis.entity.Agent;
-import com.example.mybatis.entity.CompanyWorker;
-import com.example.mybatis.entity.Managers;
-import com.example.mybatis.entity.Merchant;
+import com.example.mybatis.entity.*;
 import com.example.mybatis.mapper.*;
 import com.example.mybatis.po.InvoicePO;
 import lombok.extern.slf4j.Slf4j;
@@ -131,7 +128,7 @@ public class HomePageServiceImpl implements HomePageService {
         homePageVO = this.getHomePageOV(merchantIds);
         //当为代理商时可以查看代理商的所有商户及商户所拥有的创客
         if (managers.getUserSign() == 1) {
-            Integer workerTotal = companyWorkerDao.selectCount(new QueryWrapper<CompanyWorker>().in("company_id", merchantIds));
+            Integer workerTotal = companyWorkerDao.selectWorkerCount(merchantIds, 1);
             //除去可能重复的商户ID
             Set merchantIdsSet = new HashSet();
             merchantIdsSet.addAll(merchantIds);
@@ -141,7 +138,7 @@ public class HomePageServiceImpl implements HomePageService {
             //当为业务员时以查看所拥有的代理商及代理商下的所以商户及商户所拥有的创客
         } else if (managers.getUserSign() == 2) {
             Integer agentTotal = agentDao.selectCount(new QueryWrapper<Agent>().eq("sales_man_id", managersId));
-            Integer workerTotal = companyWorkerDao.selectCount(new QueryWrapper<CompanyWorker>().in("company_id", merchantIds));
+            Integer workerTotal = companyWorkerDao.selectWorkerCount(merchantIds, 1);
             //除去可能重复的商户ID
             Set merchantIdsSet = new HashSet();
             merchantIdsSet.addAll(merchantIds);
@@ -150,7 +147,10 @@ public class HomePageServiceImpl implements HomePageService {
             homePageVO.setAgentTotal(agentTotal);
             return ReturnJson.success(homePageVO);
         } else {// 管理员可以查询所有
-            Integer workerTotal = workerDao.selectCount(new QueryWrapper<>());
+            Integer workerTotal = workerDao.selectCount(
+                    new QueryWrapper<Worker>()
+                            .eq("attestation", 1)
+                            .eq("agreementSign", 2));
             Integer merchantTotal = merchantDao.selectCount(new QueryWrapper<>());
             Integer agentTotal = agentDao.selectCount(new QueryWrapper<>());
             Integer salesManTotal = managersDao.selectCount(new QueryWrapper<Managers>().eq("user_sign", 2).eq("status", 0));
@@ -200,7 +200,6 @@ public class HomePageServiceImpl implements HomePageService {
         }
         return ReturnJson.success((merchantDao.getYearTradeById(merchant.getCompanyId())));
     }
-
 
 
     private HomePageVO getHomePageOV(List<String> ids) {

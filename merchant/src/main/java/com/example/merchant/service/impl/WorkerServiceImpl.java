@@ -76,7 +76,7 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
 
 
     @Override
-    public ReturnJson getWorkerAll(String merchantId, Integer page, Integer pageSize) {
+    public ReturnJson getWorkerAll(String merchantId, Integer page, Integer pageSize, Integer workerType) {
         Merchant merchant = merchantDao.selectById(merchantId);
         QueryWrapper<CompanyWorker> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("company_id", merchant.getCompanyId());
@@ -88,7 +88,18 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
                 ids.add(companyWorker.getWorkerId());
             }
             Page<Worker> pageData = new Page<>(page, pageSize);
-            workerPage = workerDao.selectPage(pageData, new QueryWrapper<Worker>().in("id", ids));
+            if (workerType == 0) {
+                workerPage = workerDao.selectPage(pageData,
+                        new QueryWrapper<Worker>().in("id", ids)
+                                .eq("attestation", 1)
+                                .eq("agreementSign", 2));
+            }
+            if (workerType == 1) {
+                workerPage = workerDao.selectPage(pageData,
+                        new QueryWrapper<Worker>().in("id", ids)
+                                .ne("attestation", 1)
+                                .ne("agreementSign", 2));
+            }
             return ReturnJson.success(workerPage);
         }
         return ReturnJson.success("");
@@ -141,7 +152,7 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
         if (b) {
             return ReturnJson.success("导入成功！");
         }
-        throw new CommonException(300,"导入失败！");
+        throw new CommonException(300, "导入失败！");
     }
 
 

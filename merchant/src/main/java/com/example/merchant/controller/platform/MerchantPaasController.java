@@ -256,8 +256,9 @@ public class MerchantPaasController {
 
     @GetMapping("/queryAgent")
     @ApiOperation(value = "代理商列表", notes = "代理商列表")
-    public ReturnJson queryAgent() {
-        return merchantService.queryAgent();
+    @LoginRequired
+    public ReturnJson queryAgent(@RequestAttribute("userId") @ApiParam(hidden = true) String userId) {
+        return merchantService.queryAgent(userId);
     }
 
     @GetMapping("/queryCompanyInfoById")

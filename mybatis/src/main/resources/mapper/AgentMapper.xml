@@ -44,7 +44,7 @@
         b.link_mobile,
         b.contract_file,
         c.real_name as 'sales_man_name',
-        a.status,
+        b.agent_status as status,
         a.create_date
         FROM tb_managers a
         JOIN tb_agent b

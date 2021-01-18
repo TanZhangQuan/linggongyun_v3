@@ -129,5 +129,5 @@ public interface StructureService {
      *
      * @return
      */
-    ReturnJson querySalesman();
+    ReturnJson querySalesman(String userId);
 }

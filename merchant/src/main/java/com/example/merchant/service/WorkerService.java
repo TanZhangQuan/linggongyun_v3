@@ -26,9 +26,10 @@ public interface WorkerService extends IService<Worker> {
      * @param merchantId
      * @param page
      * @param pageSize
+     * @param workerType
      * @return
      */
-    ReturnJson getWorkerAll(String merchantId, Integer page, Integer pageSize);
+    ReturnJson getWorkerAll(String merchantId, Integer page, Integer pageSize, Integer workerType);
 
     /**
      * 按编号、姓名、手机号，查询该商户下的创客

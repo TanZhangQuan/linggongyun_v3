@@ -151,4 +151,11 @@ public class ManagersServiceImpl extends ServiceImpl<ManagersDao, Managers> impl
         return ReturnJson.error("你的验证码有误！");
     }
 
+    @Override
+    public ReturnJson updateHeadPortrait(String userId, String headPortrait) {
+        Managers managers = this.getById(userId);
+        managers.setUserHead(headPortrait);
+        this.updateById(managers);
+        return ReturnJson.success("修改成功");
+    }
 }
