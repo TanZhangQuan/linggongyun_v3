@@ -123,15 +123,12 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
             return ReturnJson.error("总包订单不存在");
         }
 
-        Merchant merchant = merchantDao.selectById(paymentOrderInfoPO.getMerchantId());
-        if (merchant == null) {
-            return ReturnJson.error("商户账号不存在");
-        }
-
         //查询商户银联支付银行
-        List<UnionpayBankType> companyUnionpayBankTypeList = companyUnionpayService.queryCompanyUnionpayMethod(merchant.getCompanyId(), paymentOrderInfoPO.getTaxId());
+        List<UnionpayBankType> companyUnionpayBankTypeList = companyUnionpayService.queryCompanyUnionpayMethod(paymentOrderInfoPO.getMerchantId(), paymentOrderInfoPO.getTaxId());
         paymentOrderInfoPO.setCompanyUnionpayBankTypeList(companyUnionpayBankTypeList);
-        paymentOrderInfoPO.setLoginMobile(merchant.getLoginMobile());
+        //获取商户主账号手机号
+        String loginMobile = merchantDao.queryMainMerchantloginMobile(paymentOrderInfoPO.getMerchantId());
+        paymentOrderInfoPO.setLoginMobile(loginMobile);
 
         InvoiceInfoPO invoiceInfoPO = invoiceDao.selectInvoiceInfoPO(paymentOrderId);
         if (invoiceInfoPO != null) {
@@ -279,7 +276,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
     }
 
     @Override
-    public ReturnJson paymentOrderPay(String merchantId, PaymentOrderPayDTO paymentOrderPayDTO) {
+    public ReturnJson paymentOrderPay(PaymentOrderPayDTO paymentOrderPayDTO) {
 
         PaymentOrder paymentOrder = getById(paymentOrderPayDTO.getPaymentOrderId());
         if (paymentOrder == null) {
@@ -299,11 +296,9 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
         }
 
         //判断短信验证码是否正确
-        Merchant merchant = merchantDao.selectById(merchantId);
-        if (merchant == null) {
-            return ReturnJson.error("商户账号不存在");
-        }
-        String redisCheckCode = redisDao.get(merchant.getLoginMobile());
+        //获取商户主账号手机号
+        String loginMobile = merchantDao.queryMainMerchantloginMobile(paymentOrder.getCompanyId());
+        String redisCheckCode = redisDao.get(loginMobile);
         if (!(paymentOrderPayDTO.getCheckCode().equals(redisCheckCode))) {
             return ReturnJson.error("短信验证码不正确");
         }
@@ -463,7 +458,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
 
         } else {
 
-            //查询众包清单总手续费
+            //查询总包清单总手续费
             BigDecimal serviceCharge = paymentOrder.getServiceMoney();
             if (serviceCharge == null || serviceCharge.compareTo(BigDecimal.ZERO) <= 0) {
                 return ReturnJson.error("总包+分包总手续费有误");
@@ -506,23 +501,23 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
                         return ReturnJson.error("商户未开通服务商的银联盛京银行子账号");
                     }
 
-                    //支付众包手续费
+                    //支付总包手续费
                     jsonObject = UnionpayUtil.AC054(taxUnionpay.getMerchno(), taxUnionpay.getAcctno(), taxUnionpay.getPfmpubkey(), taxUnionpay.getPrikey(), paymentOrder.getTradeNo(), companyUnionpay.getUid(), taxUnionpay.getServiceChargeNo(), serviceCharge);
                     if (jsonObject == null) {
-                        return ReturnJson.error("支付众包手续费失败");
+                        return ReturnJson.error("支付总包手续费失败");
                     }
 
                     boolSuccess = jsonObject.getBoolean("success");
                     if (boolSuccess == null || !boolSuccess) {
                         String errMsg = jsonObject.getString("err_msg");
-                        return ReturnJson.error("支付众包手续费失败：" + errMsg);
+                        return ReturnJson.error("支付总包手续费失败：" + errMsg);
                     }
 
                     returnValue = jsonObject.getJSONObject("return_value");
                     rtnCode = returnValue.getString("rtn_code");
                     if (!("S00000".equals(rtnCode))) {
                         String errMsg = returnValue.getString("err_msg");
-                        return ReturnJson.error("支付众包手续费失败：" + errMsg);
+                        return ReturnJson.error("支付总包手续费失败：" + errMsg);
                     }
 
                     break;
@@ -541,23 +536,23 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
                         return ReturnJson.error("商户未已开通服务商的银联平安银行子账号");
                     }
 
-                    //支付众包手续费
+                    //支付总包手续费
                     jsonObject = UnionpayUtil.AC054(taxUnionpay.getMerchno(), taxUnionpay.getAcctno(), taxUnionpay.getPfmpubkey(), taxUnionpay.getPrikey(), paymentOrder.getTradeNo(), companyUnionpay.getUid(), taxUnionpay.getServiceChargeNo(), serviceCharge);
                     if (jsonObject == null) {
-                        return ReturnJson.error("支付众包手续费失败");
+                        return ReturnJson.error("支付总包手续费失败");
                     }
 
                     boolSuccess = jsonObject.getBoolean("success");
                     if (boolSuccess == null || !boolSuccess) {
                         String errMsg = jsonObject.getString("err_msg");
-                        return ReturnJson.error("支付众包手续费失败：" + errMsg);
+                        return ReturnJson.error("支付总包手续费失败：" + errMsg);
                     }
 
                     returnValue = jsonObject.getJSONObject("return_value");
                     rtnCode = returnValue.getString("rtn_code");
                     if (!("S00000".equals(rtnCode))) {
                         String errMsg = returnValue.getString("err_msg");
-                        return ReturnJson.error("支付众包手续费失败：" + errMsg);
+                        return ReturnJson.error("支付总包手续费失败：" + errMsg);
                     }
 
                     break;
@@ -576,23 +571,23 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
                         return ReturnJson.error("商户未已开通服务商的银联网商银行子账号");
                     }
 
-                    //支付众包手续费
+                    //支付总包手续费
                     jsonObject = UnionpayUtil.AC054(taxUnionpay.getMerchno(), taxUnionpay.getAcctno(), taxUnionpay.getPfmpubkey(), taxUnionpay.getPrikey(), paymentOrder.getTradeNo(), companyUnionpay.getUid(), taxUnionpay.getServiceChargeNo(), serviceCharge);
                     if (jsonObject == null) {
-                        return ReturnJson.error("支付众包手续费失败");
+                        return ReturnJson.error("支付总包手续费失败");
                     }
 
                     boolSuccess = jsonObject.getBoolean("success");
                     if (boolSuccess == null || !boolSuccess) {
                         String errMsg = jsonObject.getString("err_msg");
-                        return ReturnJson.error("支付众包手续费失败：" + errMsg);
+                        return ReturnJson.error("支付总包手续费失败：" + errMsg);
                     }
 
                     returnValue = jsonObject.getJSONObject("return_value");
                     rtnCode = returnValue.getString("rtn_code");
                     if (!("S00000".equals(rtnCode))) {
                         String errMsg = returnValue.getString("err_msg");
-                        return ReturnJson.error("支付众包手续费失败：" + errMsg);
+                        return ReturnJson.error("支付总包手续费失败：" + errMsg);
                     }
 
                     break;
@@ -611,23 +606,23 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
                         return ReturnJson.error("商户未已开通服务商的银联招商银行子账号");
                     }
 
-                    //支付众包手续费
+                    //支付总包手续费
                     jsonObject = UnionpayUtil.AC054(taxUnionpay.getMerchno(), taxUnionpay.getAcctno(), taxUnionpay.getPfmpubkey(), taxUnionpay.getPrikey(), paymentOrder.getTradeNo(), companyUnionpay.getUid(), taxUnionpay.getServiceChargeNo(), serviceCharge);
                     if (jsonObject == null) {
-                        return ReturnJson.error("支付众包手续费失败");
+                        return ReturnJson.error("支付总包手续费失败");
                     }
 
                     boolSuccess = jsonObject.getBoolean("success");
                     if (boolSuccess == null || !boolSuccess) {
                         String errMsg = jsonObject.getString("err_msg");
-                        return ReturnJson.error("支付众包手续费失败：" + errMsg);
+                        return ReturnJson.error("支付总包手续费失败：" + errMsg);
                     }
 
                     returnValue = jsonObject.getJSONObject("return_value");
                     rtnCode = returnValue.getString("rtn_code");
                     if (!("S00000".equals(rtnCode))) {
                         String errMsg = returnValue.getString("err_msg");
-                        return ReturnJson.error("支付众包手续费失败：" + errMsg);
+                        return ReturnJson.error("支付总包手续费失败：" + errMsg);
                     }
 
                     break;
@@ -734,7 +729,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
                 if (paymentInventoryList != null && paymentInventoryList.size() > 0) {
                     for (PaymentInventory paymentInventory : paymentInventoryList) {
 
-                        //支付众包手续费
+                        //支付总包手续费
                         jsonObject = UnionpayUtil.AC041(taxUnionpay.getMerchno(), taxUnionpay.getAcctno(), taxUnionpay.getPfmpubkey(), taxUnionpay.getPrikey(), paymentInventory.getTradeNo(), companyUnionpay.getUid(), paymentInventory.getRealMoney(), paymentInventory.getWorkerName(), paymentInventory.getBankCode());
                         if (jsonObject == null) {
                             failMessage.append("订单号为" + paymentInventory.getTradeNo() + "的分包支付失败");
@@ -779,7 +774,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
                 if (paymentInventoryList != null && paymentInventoryList.size() > 0) {
                     for (PaymentInventory paymentInventory : paymentInventoryList) {
 
-                        //支付众包手续费
+                        //支付总包手续费
                         jsonObject = UnionpayUtil.AC041(taxUnionpay.getMerchno(), taxUnionpay.getAcctno(), taxUnionpay.getPfmpubkey(), taxUnionpay.getPrikey(), paymentInventory.getTradeNo(), companyUnionpay.getUid(), paymentInventory.getRealMoney(), paymentInventory.getWorkerName(), paymentInventory.getBankCode());
                         if (jsonObject == null) {
                             failMessage.append("订单号为" + paymentInventory.getTradeNo() + "的分包支付失败");
@@ -824,7 +819,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
                 if (paymentInventoryList != null && paymentInventoryList.size() > 0) {
                     for (PaymentInventory paymentInventory : paymentInventoryList) {
 
-                        //支付众包手续费
+                        //支付总包手续费
                         jsonObject = UnionpayUtil.AC041(taxUnionpay.getMerchno(), taxUnionpay.getAcctno(), taxUnionpay.getPfmpubkey(), taxUnionpay.getPrikey(), paymentInventory.getTradeNo(), companyUnionpay.getUid(), paymentInventory.getRealMoney(), paymentInventory.getWorkerName(), paymentInventory.getBankCode());
                         if (jsonObject == null) {
                             failMessage.append("订单号为" + paymentInventory.getTradeNo() + "的分包支付失败");
@@ -869,7 +864,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
                 if (paymentInventoryList != null && paymentInventoryList.size() > 0) {
                     for (PaymentInventory paymentInventory : paymentInventoryList) {
 
-                        //支付众包手续费
+                        //支付总包手续费
                         jsonObject = UnionpayUtil.AC041(taxUnionpay.getMerchno(), taxUnionpay.getAcctno(), taxUnionpay.getPfmpubkey(), taxUnionpay.getPrikey(), paymentInventory.getTradeNo(), companyUnionpay.getUid(), paymentInventory.getRealMoney(), paymentInventory.getWorkerName(), paymentInventory.getBankCode());
                         if (jsonObject == null) {
                             failMessage.append("订单号为" + paymentInventory.getTradeNo() + "的分包支付失败");

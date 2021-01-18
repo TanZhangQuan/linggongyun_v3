@@ -366,7 +366,7 @@ public class LianLianPayServiceImpl extends ServiceImpl<LianlianpayDao, Lianlian
             if (paymentHistory == null) {
                 paymentHistory = new PaymentHistory();
             }
-            paymentHistory.setPaymentOrderId(paymentOrder.getId());
+            paymentHistory.setTradeNo(paymentOrder.getId());
             paymentHistory.setOrderType(OrderType.TOTALORDER);
             paymentHistory.setPaymentType(PaymentType.LIANLIAN);
             paymentHistory.setOidPartner(result.get("oid_partner"));
@@ -703,7 +703,7 @@ public class LianLianPayServiceImpl extends ServiceImpl<LianlianpayDao, Lianlian
             if (paymentHistory == null) {
                 paymentHistory = new PaymentHistory();
             }
-            paymentHistory.setPaymentOrderId(paymentOrderMany.getId());
+            paymentHistory.setTradeNo(paymentOrderMany.getId());
             paymentHistory.setOrderType(OrderType.MANYORDER);
             paymentHistory.setPaymentType(PaymentType.LIANLIAN);
             paymentHistory.setOidPartner(result.get("oid_partner"));

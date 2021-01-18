@@ -183,7 +183,7 @@ public class NotifyServiceImpl implements NotifyService {
 
             case PI:
 
-                //查询众包是否存在
+                //查询分包是否存在
                 PaymentInventory paymentInventory = paymentInventoryService.queryPaymentInventoryByTradeNo(outerTradeNo);
                 if (paymentInventory == null) {
                     log.error("订单号为{}的分包支付订单不存在", outerTradeNo);
@@ -203,8 +203,15 @@ public class NotifyServiceImpl implements NotifyService {
                     paymentInventory.setPaymentStatus(-1);
                     paymentInventory.setTradeFailReason(errDesc);
                 }
-
                 paymentInventoryService.updateById(paymentInventory);
+
+                //查看是否所有分包已经支付完成
+                boolean isAllSuccess = paymentInventoryService.checkAllPaymentInventoryPaySuccess(paymentInventory.getPaymentOrderId());
+                if (isAllSuccess){
+                    PaymentOrder paymentOrder = paymentOrderService.getById(paymentInventory.getPaymentOrderId());
+                    paymentOrder.setPaymentOrderStatus(6);
+                    paymentOrderService.updateById(paymentOrder);
+                }
 
                 break;
 
@@ -287,7 +294,7 @@ public class NotifyServiceImpl implements NotifyService {
 
             case PO:
 
-                //查询总包+分包是否存在
+                //查询总包是否存在
                 PaymentOrder paymentOrder = paymentOrderService.queryPaymentOrderByTradeNo(outerTradeNo);
                 if (paymentOrder == null) {
                     log.error("订单号为{}的总包支付订单不存在", outerTradeNo);
@@ -306,7 +313,6 @@ public class NotifyServiceImpl implements NotifyService {
                     log.error("订单号为{}的总包支付订单支付失败：{}", outerTradeNo, errDesc);
                     paymentOrder.setTradeFailReason(errDesc);
                 }
-
                 paymentOrderService.updateById(paymentOrder);
 
                 break;
@@ -332,7 +338,6 @@ public class NotifyServiceImpl implements NotifyService {
                     log.error("订单号为{}的众包支付订单支付失败：{}", outerTradeNo, errDesc);
                     paymentOrderMany.setTradeFailReason(errDesc);
                 }
-
                 paymentOrderManyService.updateById(paymentOrderMany);
 
                 break;

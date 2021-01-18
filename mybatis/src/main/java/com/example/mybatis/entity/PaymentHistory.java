@@ -31,7 +31,12 @@ public class PaymentHistory extends BaseEntity {
     /**
      * 支付订单号
      */
-    private String paymentOrderId;
+    private String tradeNo;
+
+    /**
+     * 第三方订单号
+     */
+    private String outerTradeNo;
 
     /**
      * 支付类型

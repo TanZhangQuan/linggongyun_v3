@@ -40,4 +40,24 @@ public class PaymentInventoryServiceImpl extends ServiceImpl<PaymentInventoryDao
         return baseMapper.selectOne(queryWrapper);
 
     }
+
+    @Override
+    public boolean checkAllPaymentInventoryPaySuccess(String paymentOrderId) {
+
+        QueryWrapper<PaymentInventory> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(PaymentInventory::getPaymentOrderId, paymentOrderId);
+
+        List<PaymentInventory> paymentInventoryList = baseMapper.selectList(queryWrapper);
+        if (paymentInventoryList == null || paymentInventoryList.size() <= 0) {
+            return false;
+        }
+
+        for (PaymentInventory paymentInventory : paymentInventoryList) {
+            if (paymentInventory.getPaymentStatus() != 1) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }

@@ -14,7 +14,6 @@ import java.util.List;
 @ApiModel(description = "总包支付订单的信息")
 public class PaymentOrderInfoPO {
 
-
     @ApiModelProperty("支付订单编号")
     private String paymentOrderId;
 

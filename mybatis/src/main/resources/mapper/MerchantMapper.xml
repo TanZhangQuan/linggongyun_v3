@@ -666,4 +666,9 @@
         GROUP BY
          t1.id
     </select>
+
+    <select id="queryMainMerchantloginMobile" resultType="java.lang.String">
+        SELECT t1.login_mobile FROM tb_merchant t1 INNER JOIN tb_company_info t2 ON t1.company_id = t2.id WHERE t1.company_id = #{companyId} AND t1.parent_id = 0 LIMIT 1
+    </select>
+
 </mapper>

@@ -102,4 +102,5 @@ public interface TaxUnionpayService extends IService<TaxUnionpay> {
      * @return
      */
     ReturnJson queryTaxUnionpayBalance(String taxUnionpayId) throws Exception;
+
 }
