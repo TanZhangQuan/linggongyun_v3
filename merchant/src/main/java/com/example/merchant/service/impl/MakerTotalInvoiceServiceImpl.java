@@ -183,12 +183,12 @@ public class MakerTotalInvoiceServiceImpl extends ServiceImpl<MakerTotalInvoiceD
     }
 
     @Override
-    public ReturnJson getTotalBranchList(String paymentOrderIds) {
+    public ReturnJson getTotalBranchList(String paymentOrderIds,Integer type) {
         String[] paymentOrderId = paymentOrderIds.split(",");
         if(paymentOrderId.length <= 0){
             return ReturnJson.error("总包id不能为空");
         }
-        List<PaymentInventoryVO> paymentInventories = paymentInventoryDao.getTotalBranchList(paymentOrderIds);
+        List<PaymentInventoryVO> paymentInventories = paymentInventoryDao.getTotalBranchList(paymentOrderIds,type);
         return ReturnJson.success(paymentInventories);
     }
 
