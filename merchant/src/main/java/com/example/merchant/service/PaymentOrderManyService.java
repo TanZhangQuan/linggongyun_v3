@@ -10,6 +10,7 @@ import com.example.merchant.exception.CommonException;
 import com.example.mybatis.dto.QueryCrowdSourcingDTO;
 import com.example.mybatis.entity.PaymentOrderMany;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 
 /**
@@ -188,6 +189,6 @@ public interface PaymentOrderManyService extends IService<PaymentOrderMany> {
      * @param taxUnionpayId
      * @return
      */
-    ReturnJson queryTaxPlatformReconciliationFile(Date beginDate, Date endDate, String taxUnionpayId) throws Exception;
+    void queryTaxPlatformReconciliationFile(Date beginDate, Date endDate, String taxUnionpayId, HttpServletResponse response) throws Exception;
 
 }

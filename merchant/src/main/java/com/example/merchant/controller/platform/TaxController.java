@@ -14,6 +14,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -141,10 +142,11 @@ public class TaxController {
 
     @GetMapping("/queryTaxPlatformReconciliationFile")
     @ApiOperation(value = "查询平台对账文件查询", notes = "查询平台对账文件查询")
-    public ReturnJson queryTaxPlatformReconciliationFile(@ApiParam(value = "开始日期") @NotNull(message = "请选择开始日期") @JsonFormat(pattern = "yyyy-MM-dd") @DateTimeFormat(pattern = "yyyy-MM-dd") @RequestParam(required = false) Date beginDate,
+    public void queryTaxPlatformReconciliationFile(@ApiParam(value = "开始日期") @NotNull(message = "请选择开始日期") @JsonFormat(pattern = "yyyy-MM-dd") @DateTimeFormat(pattern = "yyyy-MM-dd") @RequestParam(required = false) Date beginDate,
                                                          @ApiParam(value = "结束日期") @NotNull(message = "请选择结束日期") @JsonFormat(pattern = "yyyy-MM-dd") @DateTimeFormat(pattern = "yyyy-MM-dd") @RequestParam(required = false) Date endDate,
-                                                         @ApiParam(value = "服务商银联") @NotBlank(message = "请选择服务商银联") @RequestParam(required = false) String taxUnionpayId) throws Exception {
-        return paymentOrderManyService.queryTaxPlatformReconciliationFile(beginDate, endDate, taxUnionpayId);
+                                                         @ApiParam(value = "服务商银联") @NotBlank(message = "请选择服务商银联") @RequestParam(required = false) String taxUnionpayId,
+                                                         HttpServletResponse response) throws Exception {
+        paymentOrderManyService.queryTaxPlatformReconciliationFile(beginDate, endDate, taxUnionpayId, response);
     }
 
     @PostMapping("/queryTaxTransactionFlow")

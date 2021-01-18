@@ -34,6 +34,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
@@ -410,7 +411,7 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
         paymentOrderMany.setPaymentOrderStatus(2);
         updateById(paymentOrderMany);
 
-        return ReturnJson.error("操作成功");
+        return ReturnJson.success("操作成功");
     }
 
 
@@ -720,7 +721,7 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
     }
 
     @Override
-    public ReturnJson queryTaxPlatformReconciliationFile(Date beginDate, Date endDate, String taxUnionpayId) throws Exception {
+    public void queryTaxPlatformReconciliationFile(Date beginDate, Date endDate, String taxUnionpayId, HttpServletResponse response) throws Exception {
 
         String start = "2021-01-15";
         String end = "2021-01-20";
@@ -732,11 +733,11 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
 
         TaxUnionpay taxUnionpay = taxUnionpayService.getById(taxUnionpayId);
         if (taxUnionpay == null) {
-            return ReturnJson.error("服务商银联不存在");
+            throw new CommonException(300, "服务商银联不存在");
         }
 
         if (beginDate.after(endDate)) {
-            return ReturnJson.error("开始日期不能大于结束日期");
+            throw new CommonException(300, "开始日期不能大于结束日期");
         }
 
         //首先要获取到Calendar类，该类有对应的添加日期的方法！！
@@ -745,12 +746,12 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
         //获取日期的毫秒值除以每天的毫秒值
         int betweenDays = (int) ((endDate.getTime() / (24 * 60 * 60 * 1000)) - (beginDate.getTime() / (24 * 60 * 60 * 1000)));
         if (betweenDays + 1 > 30) {
-            return ReturnJson.error("时间段只能选择30天以内");
+            throw new CommonException(300, "时间段只能选择30天以内");
         }
 
         //然后把相差的天数set到calendar类中，这样就改变日期了
+        List<String> fileUrlList = new ArrayList<>();
         calendar.setTime(beginDate);
-
         for (int i = 0; i < betweenDays; i++) {
             // 两个参数，第一个是要添加的日期(年月日)，第二个是要添加多少天
             calendar.add(Calendar.DATE, i); //加一天
@@ -781,9 +782,25 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
 
             String fileUrl = returnValue.getString("file_url");
             log.info("fileUrl: {}", fileUrl);
+
+            fileUrlList.add(fileUrl);
         }
 
-        return null;
-    }
+        if (fileUrlList.size() <= 0) {
+            throw new CommonException(300, "暂无相应的平台对账文件");
+        }
 
+        //sftp下载文件
+        SftpUtils sftp = null;
+        try {
+            sftp = new SftpUtils("47.99.58.100", "tax_read", "DWFwPe4DgXWxaBPX");
+            sftp.connect();
+            // 下载
+            sftp.downLoadFile(fileUrlList, response);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            sftp.disconnect();
+        }
+    }
 }

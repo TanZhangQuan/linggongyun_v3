@@ -342,7 +342,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
         paymentOrder.setPaymentOrderStatus(4);
         updateById(paymentOrder);
 
-        return ReturnJson.error("操作成功");
+        return ReturnJson.success("操作成功");
     }
 
     @Override
