@@ -43,14 +43,15 @@ public class WorkerMerchantController {
     @ApiOperation(value = "获取商户的所有创客", notes = "获取商户的所有创客")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "pageNo", value = "页数", required = true),
-            @ApiImplicitParam(name = "pageSize", value = "每页的条数", required = true)
+            @ApiImplicitParam(name = "pageSize", value = "每页的条数", required = true),
+            @ApiImplicitParam(name = "workerType", value = "创客类别0，已认证，1未认证", required = true)
     })
     public ReturnJson getWorkerAll(@ApiParam(hidden = true) @RequestAttribute("userId") String merchantId,
+                                   @RequestParam Integer workerType,
                                    @RequestParam(defaultValue = "1") Integer pageNo,
                                    @RequestParam(defaultValue = "10") Integer pageSize) {
-        return workerService.getWorkerAll(merchantId, pageNo, pageSize);
+        return workerService.getWorkerAll(merchantId, pageNo, pageSize, workerType);
     }
-
 
 
     @PostMapping("/getWorkerMany")
@@ -102,8 +103,8 @@ public class WorkerMerchantController {
     @PostMapping(value = "/eliminateWorker")
     public ReturnJson eliminateWorker(
             @NotBlank(message = "创客Id不能为空") @ApiParam(value = "创客id") @RequestParam String workerId,
-                                      @NotBlank(message = "任务Id不能为空") @ApiParam(value = "任务id") @RequestParam String taskId) {
-        return workerTaskService.eliminateWorker(workerId,taskId);
+            @NotBlank(message = "任务Id不能为空") @ApiParam(value = "任务id") @RequestParam String taskId) {
+        return workerTaskService.eliminateWorker(workerId, taskId);
     }
 
     @ApiOperation("验收")
@@ -124,9 +125,9 @@ public class WorkerMerchantController {
     @ApiOperation("创客任务详细信息")
     @PostMapping(value = "/queryWorkerTaskInfo")
     public ReturnJson queryWorkerTaskInfo(@NotNull(message = "当前页不能为空") @ApiParam(value = "当前页") @RequestParam Integer pageNo,
-                                          @NotNull(message = "页大小不能为空")  @ApiParam(value = "页大小") @RequestParam Integer pageSize,
+                                          @NotNull(message = "页大小不能为空") @ApiParam(value = "页大小") @RequestParam Integer pageSize,
                                           @NotBlank(message = "创客Id不能为空") @ApiParam(value = "创客Id") @RequestParam String workerId) {
-        return workerTaskService.queryWorkerTaskInfo(workerId,pageNo,pageSize);
+        return workerTaskService.queryWorkerTaskInfo(workerId, pageNo, pageSize);
     }
 
     @PostMapping("/queryWorkerCompanyByID")
@@ -137,8 +138,8 @@ public class WorkerMerchantController {
             @ApiImplicitParam(name = "pageSize", value = "每页的条数", required = true)
     })
     public ReturnJson queryWorkerCompanyByID(@ApiParam(hidden = true) @RequestAttribute("userId") String merchantId,
-                                   @RequestParam(defaultValue = "1") Integer pageNo,
-                                   @RequestParam(defaultValue = "10") Integer pageSize) {
+                                             @RequestParam(defaultValue = "1") Integer pageNo,
+                                             @RequestParam(defaultValue = "10") Integer pageSize) {
         return workerService.queryWorkerCompanyByID(merchantId, pageNo, pageSize);
     }
 
@@ -150,7 +151,7 @@ public class WorkerMerchantController {
                                          @NotNull(message = "页大小不能为空") @ApiParam(value = "页大小") @RequestParam Integer pageSize,
                                          @NotBlank(message = "创客Id不能为空") @ApiParam(value = "创客Id") @RequestParam String workerId,
                                          @ApiParam(hidden = true) @RequestAttribute("userId") String merchantId) {
-        return workerTaskService.queryMerchantWorkerPayInfo(workerId,merchantId, pageNo, pageSize);
+        return workerTaskService.queryMerchantWorkerPayInfo(workerId, merchantId, pageNo, pageSize);
     }
 }
 

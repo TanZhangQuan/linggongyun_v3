@@ -60,4 +60,15 @@ public interface ManagersService extends IService<Managers> {
      * @return
      */
     ReturnJson updataPassWord(String loginMobile, String checkCode, String newPassWord);
+
+
+
+    /**
+     * 修改头像
+     *
+     * @param userId
+     * @param headPortrait
+     * @return
+     */
+    ReturnJson updateHeadPortrait(String userId, String headPortrait);
 }

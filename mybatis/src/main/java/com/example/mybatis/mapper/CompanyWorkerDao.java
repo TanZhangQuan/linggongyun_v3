@@ -3,6 +3,8 @@ package com.example.mybatis.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.example.mybatis.entity.CompanyWorker;
 
+import java.util.List;
+
 /**
  * <p>
  *  Mapper 接口
@@ -13,4 +15,5 @@ import com.example.mybatis.entity.CompanyWorker;
  */
 public interface CompanyWorkerDao extends BaseMapper<CompanyWorker> {
 
+    Integer selectWorkerCount(List<String> merchantIds,Integer type);
 }

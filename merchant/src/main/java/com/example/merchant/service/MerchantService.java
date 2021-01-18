@@ -184,7 +184,7 @@ public interface MerchantService extends IService<Merchant> {
      *
      * @return
      */
-    ReturnJson queryAgent();
+    ReturnJson queryAgent(String userId);
 
     /**
      * 查看商户信息
