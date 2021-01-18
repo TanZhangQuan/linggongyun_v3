@@ -4,11 +4,9 @@ import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.platform.AgentInfoDTO;
 import com.example.merchant.dto.platform.ManagersDTO;
 import com.example.merchant.exception.CommonException;
+import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.StructureService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -180,7 +178,8 @@ public class StructureController {
 
     @GetMapping("querySalesman")
     @ApiOperation(value = "查询平台业务专员", notes = "查询平台业务专员")
-    public ReturnJson querySalesman() {
-        return structureService.querySalesman();
+    @LoginRequired
+    public ReturnJson querySalesman(@RequestAttribute("userId") @ApiParam(hidden = true) String userId) {
+        return structureService.querySalesman(userId);
     }
 }

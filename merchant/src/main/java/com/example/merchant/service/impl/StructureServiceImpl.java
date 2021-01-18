@@ -239,8 +239,16 @@ public class StructureServiceImpl implements StructureService {
     }
 
     @Override
-    public ReturnJson querySalesman() {
+    public ReturnJson querySalesman(String userId) {
+        Managers managers = managersDao.selectById(userId);
         List<Managers> list = managersDao.selectList(new QueryWrapper<Managers>().eq("user_sign", 2));
+        if (managers.getUserSign() == 1) {
+            Agent agent=agentDao.selectOne(new QueryWrapper<Agent>().eq("managers_id",managers.getId()));
+            list = managersDao.selectList(new QueryWrapper<Managers>().eq("id",agent.getSalesManId()));
+        }
+        if (managers.getUserSign() == 2) {
+            list = managersDao.selectList(new QueryWrapper<Managers>().eq("id", managers.getId()));
+        }
         List<QuerySalesmanVO> querySalesmanVOList = new ArrayList<>();
         for (int i = 0; i < list.size(); i++) {
             QuerySalesmanVO querySalesmanVo = new QuerySalesmanVO();

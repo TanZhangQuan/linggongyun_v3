@@ -61,15 +61,15 @@ public class ManagersPaasController {
     @PostMapping("/getCustomizedInfo")
     @ApiOperation(value = "获取当前用用户信息", notes = "获取当前用用户信息")
     @LoginRequired
-    public ReturnJson getCustomizedInfo(@RequestAttribute(value = "userId") @ApiParam(hidden = true) String merchantId) {
-        return managersService.getCustomizedInfo(merchantId);
+    public ReturnJson getCustomizedInfo(@RequestAttribute(value = "userId") @ApiParam(hidden = true) String customizedId) {
+        return managersService.getCustomizedInfo(customizedId);
     }
 
     @PostMapping("/managerLogout")
     @ApiOperation(value = "登出", notes = "登出")
     @LoginRequired
-    public ReturnJson managerLogout(@RequestAttribute(value = "userId") @ApiParam(hidden = true) String merchantId) {
-        return managersService.logout(merchantId);
+    public ReturnJson managerLogout(@RequestAttribute(value = "userId") @ApiParam(hidden = true) String customizedId) {
+        return managersService.logout(customizedId);
     }
 
     @PostMapping("/updataPassWord")
@@ -80,5 +80,13 @@ public class ManagersPaasController {
                                      @NotBlank(message = "验证码不能为空") @RequestParam(required = false) String checkCode,
                                      @NotBlank(message = "新密码不能为空") @RequestParam(required = false) String newPassWord) {
         return managersService.updataPassWord(loginMobile, checkCode, newPassWord);
+    }
+
+    @PostMapping("/updateHeadPortrait")
+    @ApiOperation(value = "修改头像", notes = "修改头像")
+    @LoginRequired
+    public ReturnJson updateHeadPortrait(@RequestAttribute(value = "userId") @ApiParam(hidden = true) String customizedId,
+                                         @RequestParam(name = "headPortrait") String headPortrait) {
+        return managersService.updateHeadPortrait(customizedId, headPortrait);
     }
 }
