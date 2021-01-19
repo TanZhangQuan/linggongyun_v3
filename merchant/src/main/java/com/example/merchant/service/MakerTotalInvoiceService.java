@@ -53,6 +53,10 @@ public interface MakerTotalInvoiceService extends IService<MakerTotalInvoice> {
 
     /**
      * 总包+分包支付明细
+     *
+     * @param paymentOrderIds
+     * @param type 0 总包+分包  1众包
+     * @return
      */
-    ReturnJson getTotalBranchList(String paymentOrderIds);
+    ReturnJson getTotalBranchList(String paymentOrderIds,Integer type);
 }

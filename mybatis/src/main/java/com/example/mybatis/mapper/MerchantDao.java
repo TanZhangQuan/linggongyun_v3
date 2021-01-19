@@ -72,7 +72,7 @@ public interface MerchantDao extends BaseMapper<Merchant> {
 
     IPage<MerchantPaymentListPO> selectTaxMerchantPaymentList(Page page, @Param("merchantId") String merchantId, @Param("taxId") String taxId);
 
-    List<TaxTransactionFlowVO> queryMerchantTransactionFlow(String merchantId, Page page);
+    IPage<TaxTransactionFlowVO> queryMerchantTransactionFlow(String merchantId, Page page);
 
     /**
      * 获取商户主账号手机号

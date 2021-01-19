@@ -91,7 +91,7 @@ public class CrowdSourcingPassController {
     @ApiOperation("总包+分包支付明细,id可以传多个用逗号隔开")
     @PostMapping("/getTotalBranchList")
     public ReturnJson getTotalBranchList(@RequestParam @NotBlank(message = "发票ID不能为空") String paymentOrderIds) {
-        return makerTotalInvoiceService.getTotalBranchList(paymentOrderIds);
+        return makerTotalInvoiceService.getTotalBranchList(paymentOrderIds,1);
     }
 
 }

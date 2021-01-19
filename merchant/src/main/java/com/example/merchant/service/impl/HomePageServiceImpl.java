@@ -111,8 +111,8 @@ public class HomePageServiceImpl implements HomePageService {
             log.info(e.toString() + ":" + e.getMessage());
         }
 
-        Integer workeCount = companyWorkerDao.selectCount(new QueryWrapper<CompanyWorker>().eq("company_id", companyId));
-        homePageMerchantVO.setWorkerTotal(workeCount);
+        Integer workerCount = companyWorkerDao.selectCount(new QueryWrapper<CompanyWorker>().eq("company_id", companyId));
+        homePageMerchantVO.setWorkerTotal(workerCount);
         return ReturnJson.success(homePageMerchantVO);
     }
 
