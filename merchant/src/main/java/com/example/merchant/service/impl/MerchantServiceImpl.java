@@ -485,6 +485,12 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
                         throw new CommonException(300, tax.getTaxName() + "服务商" + unionpayBankType.getDesc() + "银联支付未开启");
                     }
 
+                    //查询商户是否开通子账号
+                    CompanyUnionpay companyUnionpay = companyUnionpayService.queryMerchantUnionpay(companyInfo.getId(), taxUnionpay.getId());
+                    if (companyUnionpay != null) {
+                        continue;
+                    }
+
                     //开通子账号
                     String uuid = SnowflakeIdWorker.getSerialNumber();
                     JSONObject jsonObject = UnionpayUtil.MB010(taxUnionpay.getMerchno(), taxUnionpay.getAcctno(), taxUnionpay.getPfmpubkey(), taxUnionpay.getPrikey(), uuid, companyInfo.getCompanyName(), companyInfo.getCreditCode(), companyInfo.getBankCode());
@@ -506,7 +512,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
                     }
 
                     //新建商户银联信息表
-                    CompanyUnionpay companyUnionpay = new CompanyUnionpay();
+                    companyUnionpay = new CompanyUnionpay();
                     companyUnionpay.setCompanyId(companyInfo.getId());
                     companyUnionpay.setTaxUnionpayId(taxUnionpay.getId());
                     companyUnionpay.setUid(uuid);

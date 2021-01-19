@@ -1,6 +1,10 @@
 package com.example.merchant.controller.platform;
 
 
+import com.example.common.enums.OrderType;
+import com.example.common.enums.PaymentMethod;
+import com.example.common.enums.TradeObject;
+import com.example.common.enums.TradeStatus;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.platform.AddressDTO;
 import com.example.merchant.dto.platform.CompanyDTO;
@@ -9,7 +13,9 @@ import com.example.merchant.exception.CommonException;
 import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.*;
 import com.example.mybatis.entity.Linkman;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.*;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +24,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.Date;
 
 /**
  * <p>
@@ -57,6 +64,9 @@ public class MerchantPaasController {
 
     @Resource
     private PaymentOrderService paymentOrderService;
+
+    @Resource
+    private PaymentHistoryService paymentHistoryService;
 
     @ApiOperation("商户列表")
     @GetMapping(value = "/getIdAndName")
@@ -145,7 +155,7 @@ public class MerchantPaasController {
             @ApiImplicitParam(name = "pageSize", value = "每页的条数", required = true)
     })
     public ReturnJson getMerchantPaymentList(@NotBlank(message = "商户ID不能为空！") @RequestParam(required = false) String merchantId, @RequestParam(defaultValue = "1") Integer pageNo, @RequestParam(defaultValue = "10") Integer pageSize) {
-        return merchantService.getMerchantPaymentList(merchantId,null, pageNo, pageSize);
+        return merchantService.getMerchantPaymentList(merchantId, null, pageNo, pageSize);
     }
 
     @PostMapping("/getMerchantPaymentInfo")
@@ -175,7 +185,7 @@ public class MerchantPaasController {
             @ApiImplicitParam(name = "linkman", value = "联系人信息", required = true, dataType = "Linkman")
     })
     public ReturnJson addOrUpdataLinkman(@Valid @RequestBody Linkman linkman) {
-        return linkmanService.addOrUpdataLinkman(linkman,null);
+        return linkmanService.addOrUpdataLinkman(linkman, null);
     }
 
     @PostMapping("/updataLinkmanStatus")
@@ -306,7 +316,7 @@ public class MerchantPaasController {
     @ApiOperation(value = "查询商户银联详情", notes = "查询商户银联详情")
     public ReturnJson queryCompanyUnionpayBalance(@ApiParam(value = "商户ID") @NotBlank(message = "请选择商户") @RequestParam(required = false) String merchantId,
                                                   @ApiParam(value = "服务商ID") @NotBlank(message = "请选择服务商") @RequestParam(required = false) String taxId) throws Exception {
-        return companyUnionpayService.queryCompanyUnionpayDetail(merchantId, taxId);
+        return companyUnionpayService.queryCompanyUnionpayDetail(merchantId, taxId, null);
     }
 
     @PostMapping("/queryTaxTransactionFlow")
@@ -325,15 +335,15 @@ public class MerchantPaasController {
 
     @PostMapping("/taxMerchantInfoPaas")
     @ApiOperation(value = "获取服务商流水信息", notes = "获取服务商流水信息", httpMethod = "POST")
-    public ReturnJson merchantInfo(@NotBlank(message = "商户ID不能为空！") @RequestParam String merchantId,@NotBlank(message = "服务商ID不能为空！") @RequestParam String taxId) {
+    public ReturnJson taxMerchantInfoPaas(@NotBlank(message = "服务商ID不能为空！") @RequestParam String taxId) {
         return taxService.transactionRecordCount(taxId);
     }
 
     @PostMapping("/transactionRecord")
     @ApiOperation(value = "查询服务商交易流水", notes = "查询服务商交易流水", httpMethod = "POST")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "taxId", value = "服务商ID"), @ApiImplicitParam(name = "pageNo", value = "页数"), @ApiImplicitParam(name = "pageSize", value = "一页的条数")})
-    public ReturnJson transactionRecord(@NotBlank(message = "服务商ID不能为空！") @RequestParam String taxId,@NotBlank(message = "商户ID不能为空！") @RequestParam String merchantId, @RequestParam(defaultValue = "1") Integer pageNo, @RequestParam(defaultValue = "10") Integer pageSize) {
-        return taxService.transactionRecord(taxId,merchantId, pageNo, pageSize);
+    public ReturnJson transactionRecord(@NotBlank(message = "服务商ID不能为空！") @RequestParam String taxId, @NotBlank(message = "商户ID不能为空！") @RequestParam String merchantId, @RequestParam(defaultValue = "1") Integer pageNo, @RequestParam(defaultValue = "10") Integer pageSize) {
+        return taxService.transactionRecord(taxId, merchantId, pageNo, pageSize);
     }
 
     @GetMapping("/getPaymentOrderInfo")
@@ -352,6 +362,21 @@ public class MerchantPaasController {
     })
     public ReturnJson getPaymentOrderManyInfo(@NotBlank(message = "支付订单ID不能为空") @RequestParam(required = false) String id) {
         return paymentOrderManyService.getPaymentOrderManyInfo(id);
+    }
+
+    @GetMapping("/queryPaymentHistoryList")
+    @ApiOperation(value = "查询交易记录", notes = "查询交易记录")
+    @LoginRequired
+    public ReturnJson queryCompanyUnionpayDetail(@ApiParam(value = "商户ID") @NotBlank(message = "请选择商户") @RequestParam(required = false) String merchantId,
+                                                 @ApiParam(value = "开始日期") @JsonFormat(pattern = "yyyy-MM-dd") @DateTimeFormat(pattern = "yyyy-MM-dd") @RequestParam(required = false) Date beginDate,
+                                                 @ApiParam(value = "结束日期") @JsonFormat(pattern = "yyyy-MM-dd") @DateTimeFormat(pattern = "yyyy-MM-dd") @RequestParam(required = false) Date endDate,
+                                                 @ApiParam(value = "交易类型") @RequestParam(required = false) OrderType orderType,
+                                                 @ApiParam(value = "交易方式") @RequestParam(required = false) PaymentMethod paymentMethod,
+                                                 @ApiParam(value = "交易结果") @RequestParam(required = false) TradeStatus tradeStatus,
+                                                 @ApiParam(value = "当前页") @Min(value = 1, message = "当前页数最小为1") @RequestParam(required = false) long pageNo,
+                                                 @ApiParam(value = "每页条数") @Min(value = 1, message = "每页页数最小为1") @RequestParam(required = false) long pageSize) {
+
+        return paymentHistoryService.queryPaymentHistoryList(TradeObject.COMPANY, merchantId, beginDate, endDate, orderType, paymentMethod, tradeStatus, pageNo, pageSize);
     }
 
 }

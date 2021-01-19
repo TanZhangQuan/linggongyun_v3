@@ -1,6 +1,7 @@
 package com.example.merchant.controller.merchant;
 
 
+import com.example.common.enums.UnionpayBankType;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.AssociatedTasksDTO;
 import com.example.merchant.dto.merchant.AddPaymentOrderDTO;
@@ -8,7 +9,10 @@ import com.example.merchant.dto.merchant.PaymentOrderMerchantDTO;
 import com.example.merchant.dto.merchant.PaymentOrderPayDTO;
 import com.example.merchant.exception.CommonException;
 import com.example.merchant.interceptor.LoginRequired;
+import com.example.merchant.service.CompanyUnionpayService;
+import com.example.merchant.service.MerchantService;
 import com.example.merchant.service.PaymentOrderService;
+import com.example.mybatis.entity.Merchant;
 import io.swagger.annotations.*;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -32,6 +36,12 @@ import javax.validation.constraints.NotNull;
 @RequestMapping("/merchant/paymentOrder")
 @Validated
 public class PaymentOrderMerchantController {
+
+    @Resource
+    private MerchantService merchantService;
+
+    @Resource
+    private CompanyUnionpayService companyUnionpayService;
 
     @Resource
     private PaymentOrderService paymentOrderService;
@@ -91,4 +101,20 @@ public class PaymentOrderMerchantController {
                                     @NotNull(message = "支付类型不能为空！") @RequestParam(required = false) Integer packageStatus) {
         return paymentOrderService.gradientPrice(merchantId, taxId, packageStatus);
     }
+
+    @GetMapping("/queryCompanyUnionpayBalance")
+    @ApiOperation(value = "查询商户相应银联的余额详情", notes = "查询商户相应银联的余额详情")
+    @LoginRequired
+    public ReturnJson queryCompanyUnionpayDetail(@ApiParam(value = "商户ID", hidden = true) @RequestAttribute(value = "userId") String merchantId,
+                                                 @ApiParam(value = "服务商ID") @NotBlank(message = "请选择服务商") @RequestParam(required = false) String taxId,
+                                                 @ApiParam(value = "银联银行类型") @NotNull(message = "请选择银联银行类型") @RequestParam(required = false) UnionpayBankType unionpayBankType) throws Exception {
+
+        Merchant merchant = merchantService.getById(merchantId);
+        if (merchant == null) {
+            return ReturnJson.error("商户员工不存在");
+        }
+
+        return companyUnionpayService.queryCompanyUnionpayDetail(merchant.getCompanyId(), taxId, unionpayBankType);
+}
+
 }

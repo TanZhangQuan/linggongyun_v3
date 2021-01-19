@@ -50,8 +50,17 @@ public class CompanyUnionpayServiceImpl extends ServiceImpl<CompanyUnionpayDao, 
     }
 
     @Override
-    public CompanyUnionpay queryMerchantUnionpayUnionpayBankType(String companyId, String taxUnionpayId, UnionpayBankType unionpayBankType) {
-        return baseMapper.queryMerchantUnionpayUnionpayBankType(companyId, taxUnionpayId, unionpayBankType);
+    public CompanyUnionpay queryMerchantUnionpay(String subAccountCode) {
+
+        QueryWrapper<CompanyUnionpay> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(CompanyUnionpay::getSubAccountCode, subAccountCode);
+
+        return baseMapper.selectOne(queryWrapper);
+    }
+
+    @Override
+    public CompanyUnionpay queryMerchantUnionpayUnionpayBankType(String companyId, String taxUnionpayId) {
+        return baseMapper.queryMerchantUnionpayUnionpayBankType(companyId, taxUnionpayId);
     }
 
     @Override
@@ -72,71 +81,84 @@ public class CompanyUnionpayServiceImpl extends ServiceImpl<CompanyUnionpayDao, 
     }
 
     @Override
-    public ReturnJson queryCompanyUnionpayDetail(String companyId, String taxId) throws Exception {
+    public ReturnJson queryCompanyUnionpayDetail(String companyId, String taxId, UnionpayBankType unionpayBankType) throws Exception {
 
         //查询服务商所有主账号
         List<MerchantUnionpayBalanceVO> merchantUnionpayBalanceVOList = new ArrayList<>();
-        List<TaxUnionpay> taxUnionpayList = taxUnionpayService.queryTaxUnionpay(taxId);
-        for (TaxUnionpay taxUnionpay : taxUnionpayList) {
-
-            //查询商户-服务商银联记录
-            CompanyUnionpay companyUnionpay = queryMerchantUnionpay(companyId, taxUnionpay.getId());
-            if (companyUnionpay == null) {
-                log.error("商户-服务商银联记录不存在");
-                continue;
+        List<TaxUnionpay> taxUnionpayList;
+        if (unionpayBankType != null) {
+            taxUnionpayList = new ArrayList<>();
+            TaxUnionpay taxUnionpay = taxUnionpayService.queryTaxUnionpay(taxId, unionpayBankType);
+            if (taxUnionpay != null) {
+                taxUnionpayList.add(taxUnionpay);
             }
-
-            MerchantUnionpayBalanceVO merchantUnionpayBalanceVO = new MerchantUnionpayBalanceVO();
-            merchantUnionpayBalanceVO.setUnionpayBankType(taxUnionpay.getUnionpayBankType());
-            merchantUnionpayBalanceVO.setSubAccountName(companyUnionpay.getSubAccountName());
-            merchantUnionpayBalanceVO.setSubAccountCode(companyUnionpay.getSubAccountCode());
-
-            JSONObject jsonObject = UnionpayUtil.AC081(taxUnionpay.getMerchno(), taxUnionpay.getAcctno(), taxUnionpay.getPfmpubkey(), taxUnionpay.getPrikey(), companyUnionpay.getUid());
-            if (jsonObject == null) {
-                log.error("查询子帐号" + taxUnionpay.getUnionpayBankType().getDesc() + "银联余额失败");
-                merchantUnionpayBalanceVOList.add(merchantUnionpayBalanceVO);
-                continue;
-            }
-
-            Boolean boolSuccess = jsonObject.getBoolean("success");
-            if (boolSuccess == null || !boolSuccess) {
-                String errMsg = jsonObject.getString("err_msg");
-                log.error("查询子帐号" + taxUnionpay.getUnionpayBankType().getDesc() + "银联余额失败: " + errMsg);
-                merchantUnionpayBalanceVOList.add(merchantUnionpayBalanceVO);
-                continue;
-            }
-
-            JSONObject returnValue = jsonObject.getJSONObject("return_value");
-            String rtnCode = returnValue.getString("rtn_code");
-            if (!("S00000".equals(rtnCode))) {
-                String errMsg = returnValue.getString("err_msg");
-                log.error("查询子帐号" + taxUnionpay.getUnionpayBankType().getDesc() + "银联余额失败: " + errMsg);
-                merchantUnionpayBalanceVOList.add(merchantUnionpayBalanceVO);
-                continue;
-            }
-
-            //可用余额，单位元
-            BigDecimal useBal = returnValue.getBigDecimal("use_bal");
-            //冻结余额（平台），单位元
-            BigDecimal pfrzBal = returnValue.getBigDecimal("pfrz_bal");
-            //冻结余额（银行），单位元
-            BigDecimal bfrzBal = returnValue.getBigDecimal("bfrz_bal");
-            //在途余额（入），单位元
-            BigDecimal iwayBal = returnValue.getBigDecimal("iway_bal");
-            //在途余额（出），单位元
-            BigDecimal owayBal = returnValue.getBigDecimal("oway_bal");
-            //账面余额，单位元
-            BigDecimal actBal = returnValue.getBigDecimal("act_bal");
-
-            merchantUnionpayBalanceVO.setUseBal(useBal);
-            merchantUnionpayBalanceVO.setPfrzBal(pfrzBal);
-            merchantUnionpayBalanceVO.setBfrzBal(bfrzBal);
-            merchantUnionpayBalanceVO.setIwayBal(iwayBal);
-            merchantUnionpayBalanceVO.setOwayBal(owayBal);
-            merchantUnionpayBalanceVO.setActBal(actBal);
-
-            merchantUnionpayBalanceVOList.add(merchantUnionpayBalanceVO);
+        } else {
+            taxUnionpayList = taxUnionpayService.queryTaxUnionpay(taxId);
         }
+
+        if (taxUnionpayList != null && taxUnionpayList.size() > 0) {
+            for (TaxUnionpay taxUnionpay : taxUnionpayList) {
+
+                //查询商户-服务商银联记录
+                CompanyUnionpay companyUnionpay = queryMerchantUnionpay(companyId, taxUnionpay.getId());
+                if (companyUnionpay == null) {
+                    log.error("商户-服务商银联记录不存在");
+                    continue;
+                }
+
+                MerchantUnionpayBalanceVO merchantUnionpayBalanceVO = new MerchantUnionpayBalanceVO();
+                merchantUnionpayBalanceVO.setUnionpayBankType(taxUnionpay.getUnionpayBankType());
+                merchantUnionpayBalanceVO.setSubAccountName(companyUnionpay.getSubAccountName());
+                merchantUnionpayBalanceVO.setSubAccountCode(companyUnionpay.getSubAccountCode());
+
+                JSONObject jsonObject = UnionpayUtil.AC081(taxUnionpay.getMerchno(), taxUnionpay.getAcctno(), taxUnionpay.getPfmpubkey(), taxUnionpay.getPrikey(), companyUnionpay.getUid());
+                if (jsonObject == null) {
+                    log.error("查询子帐号" + taxUnionpay.getUnionpayBankType().getDesc() + "银联余额失败");
+                    merchantUnionpayBalanceVOList.add(merchantUnionpayBalanceVO);
+                    continue;
+                }
+
+                Boolean boolSuccess = jsonObject.getBoolean("success");
+                if (boolSuccess == null || !boolSuccess) {
+                    String errMsg = jsonObject.getString("err_msg");
+                    log.error("查询子帐号" + taxUnionpay.getUnionpayBankType().getDesc() + "银联余额失败: " + errMsg);
+                    merchantUnionpayBalanceVOList.add(merchantUnionpayBalanceVO);
+                    continue;
+                }
+
+                JSONObject returnValue = jsonObject.getJSONObject("return_value");
+                String rtnCode = returnValue.getString("rtn_code");
+                if (!("S00000".equals(rtnCode))) {
+                    String errMsg = returnValue.getString("err_msg");
+                    log.error("查询子帐号" + taxUnionpay.getUnionpayBankType().getDesc() + "银联余额失败: " + errMsg);
+                    merchantUnionpayBalanceVOList.add(merchantUnionpayBalanceVO);
+                    continue;
+                }
+
+                //可用余额，单位元
+                BigDecimal useBal = returnValue.getBigDecimal("use_bal");
+                //冻结余额（平台），单位元
+                BigDecimal pfrzBal = returnValue.getBigDecimal("pfrz_bal");
+                //冻结余额（银行），单位元
+                BigDecimal bfrzBal = returnValue.getBigDecimal("bfrz_bal");
+                //在途余额（入），单位元
+                BigDecimal iwayBal = returnValue.getBigDecimal("iway_bal");
+                //在途余额（出），单位元
+                BigDecimal owayBal = returnValue.getBigDecimal("oway_bal");
+                //账面余额，单位元
+                BigDecimal actBal = returnValue.getBigDecimal("act_bal");
+
+                merchantUnionpayBalanceVO.setUseBal(useBal);
+                merchantUnionpayBalanceVO.setPfrzBal(pfrzBal);
+                merchantUnionpayBalanceVO.setBfrzBal(bfrzBal);
+                merchantUnionpayBalanceVO.setIwayBal(iwayBal);
+                merchantUnionpayBalanceVO.setOwayBal(owayBal);
+                merchantUnionpayBalanceVO.setActBal(actBal);
+
+                merchantUnionpayBalanceVOList.add(merchantUnionpayBalanceVO);
+            }
+        }
+
 
         return ReturnJson.success(merchantUnionpayBalanceVOList);
     }

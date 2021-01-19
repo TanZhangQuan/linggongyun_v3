@@ -45,10 +45,9 @@ public interface CompanyUnionpayDao extends BaseMapper<CompanyUnionpay> {
      *
      * @param companyId
      * @param taxUnionpayId
-     * @param unionpayBankType
      * @return
      */
-    CompanyUnionpay queryMerchantUnionpayUnionpayBankType(@Param("companyId") String companyId, @Param("taxUnionpayId") String taxUnionpayId, @Param("unionpayBankType") UnionpayBankType unionpayBankType);
+    CompanyUnionpay queryMerchantUnionpayUnionpayBankType(@Param("companyId") String companyId, @Param("taxUnionpayId") String taxUnionpayId);
 
     /**
      * 查询商户拥有的银联支付方式

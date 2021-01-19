@@ -12,9 +12,9 @@ import lombok.Getter;
 @SwaggerDisplayEnum()
 public enum OrderType {
     RECHARGE("RECHARGE", "充值"),
-    TOTALORDER("TOTALORDER", "总包支付订单"),
-    MANYORDER("MANYORDER", "众包支付订单"),
-    INVENTORY("INVENTORY", "分包支付订单");
+    TOTALORDER("TOTALORDER", "总包服务费支付"),
+    MANYORDER("MANYORDER", "众包服务费支付"),
+    INVENTORY("INVENTORY", "分包支付订单支付");
 
     private final String value;
     private final String desc;

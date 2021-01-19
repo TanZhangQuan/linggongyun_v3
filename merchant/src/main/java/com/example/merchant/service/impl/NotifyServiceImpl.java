@@ -2,7 +2,7 @@ package com.example.merchant.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.example.common.enums.TradeNoType;
+import com.example.common.enums.*;
 import com.example.common.util.UnionpayUtil;
 import com.example.merchant.service.*;
 import com.example.mybatis.entity.*;
@@ -14,6 +14,7 @@ import org.springframework.web.util.WebUtils;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
 import java.util.Map;
 
 /**
@@ -43,8 +44,10 @@ public class NotifyServiceImpl implements NotifyService {
     @Resource
     private PaymentHistoryService paymentHistoryService;
 
+    @Resource
+    private CompanyUnionpayService companyUnionpayService;
+
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public String depositNotice(HttpServletRequest request) {
 
         Map<String, Object> parameters = WebUtils.getParametersStartingWith(request, "");
@@ -54,6 +57,7 @@ public class NotifyServiceImpl implements NotifyService {
         if (jsonObject == null) {
             log.error("银联入金回调接收不到参数");
         }
+
         //获取商户号, 查询相应的服务商银联
         String merchNo = jsonObject.getString("merchNo");
         TaxUnionpay taxUnionpay = taxUnionpayService.queryTaxUnionpayByMerchNo(merchNo);
@@ -62,15 +66,49 @@ public class NotifyServiceImpl implements NotifyService {
             return "fail";
         }
 
+        //子帐户帐号
+        String acctNo = jsonObject.getString("acctNo");
+        CompanyUnionpay companyUnionpay = companyUnionpayService.queryMerchantUnionpay(acctNo);
+        if (companyUnionpay == null) {
+            log.error("对应子账户账号的商户银联子账号不存在");
+            return "fail";
+        }
+
+        PaymentMethod paymentMethod;
+        switch (taxUnionpay.getUnionpayBankType()) {
+
+            case SJBK:
+
+                paymentMethod = PaymentMethod.UNIONSJBK;
+                break;
+
+            case PABK:
+
+                paymentMethod = PaymentMethod.UNIONPABK;
+                break;
+
+            case WSBK:
+
+                paymentMethod = PaymentMethod.UNIONWSBK;
+                break;
+
+            case ZSBK:
+
+                paymentMethod = PaymentMethod.UNIONZSBK;
+                break;
+
+            default:
+                log.error("对应商户号的服务商银联类型不存在");
+                return "fail";
+        }
+
         //获取其他参数
         //通知类型
         String notifyType = jsonObject.getString("notifyType");
-        //子帐户帐号
-        String acctNo = jsonObject.getString("acctNo");
         //入金交易凭证号
         String inacctBillId = jsonObject.getString("inacctBillId");
         //入金金额
-        String amount = jsonObject.getString("amount");
+        BigDecimal amount = jsonObject.getBigDecimal("amount");
         //来款账户帐号
         String rcvAcctNo = jsonObject.getString("rcvAcctNo");
         //来款户名
@@ -94,7 +132,7 @@ public class NotifyServiceImpl implements NotifyService {
         params.put("merchNo", merchNo);
         params.put("acctNo", acctNo);
         params.put("inacctBillId", inacctBillId);
-        params.put("amount", amount);
+        params.put("amount", String.valueOf(amount));
         params.put("rcvAcctNo", rcvAcctNo);
         params.put("rcvAcctName", rcvAcctName);
         params.put("rcvBankCode", rcvBankCode);
@@ -111,7 +149,16 @@ public class NotifyServiceImpl implements NotifyService {
         }
 
         // 业务逻辑处理 ****************************
+        //添加成功的交易记录
         PaymentHistory paymentHistory = new PaymentHistory();
+        paymentHistory.setTradeStatus(TradeStatus.SUCCESS);
+        paymentHistory.setOuterTradeNo(inacctBillId);
+        paymentHistory.setOrderType(OrderType.RECHARGE);
+        paymentHistory.setPaymentMethod(paymentMethod);
+        paymentHistory.setTradeObject(TradeObject.COMPANY);
+        paymentHistory.setTradeObjectId(companyUnionpay.getCompanyId());
+        paymentHistory.setAmount(amount);
+        paymentHistoryService.save(paymentHistory);
 
         return "success";
     }
@@ -136,11 +183,45 @@ public class NotifyServiceImpl implements NotifyService {
             return "fail";
         }
 
+        //子帐户帐号
+        String acctNo = jsonObject.getString("acctNo");
+        CompanyUnionpay companyUnionpay = companyUnionpayService.queryMerchantUnionpay(acctNo);
+        if (companyUnionpay == null) {
+            log.error("对应子账户账号的商户银联子账号不存在");
+            return "fail";
+        }
+
+        PaymentMethod paymentMethod;
+        switch (taxUnionpay.getUnionpayBankType()) {
+
+            case SJBK:
+
+                paymentMethod = PaymentMethod.UNIONSJBK;
+                break;
+
+            case PABK:
+
+                paymentMethod = PaymentMethod.UNIONPABK;
+                break;
+
+            case WSBK:
+
+                paymentMethod = PaymentMethod.UNIONWSBK;
+                break;
+
+            case ZSBK:
+
+                paymentMethod = PaymentMethod.UNIONZSBK;
+                break;
+
+            default:
+                log.error("对应商户号的服务商银联类型不存在");
+                return "fail";
+        }
+
         //获取其他参数
         //通知类型
         String notifyType = jsonObject.getString("notifyType");
-        //子帐户帐号
-        String acctNo = jsonObject.getString("acctNo");
         //提现出款交易凭证 ID
         String dchBillId = jsonObject.getString("dchBillId");
         //合作方业务平台订单号（外部请求流水号）
@@ -196,18 +277,35 @@ public class NotifyServiceImpl implements NotifyService {
                 }
 
                 //判断交易结果
+                //创建交易记录
+                PaymentHistory paymentHistory = new PaymentHistory();
                 if ("91".equals(status)) {
+                    //修改分包支付状态为成功
                     paymentInventory.setPaymentStatus(1);
+                    //添加成功的交易记录
+                    paymentHistory.setTradeStatus(TradeStatus.SUCCESS);
                 } else {
                     log.error("订单号为{}的分包支付订单支付失败：{}", outerTradeNo, errDesc);
+                    //修改分包支付状态为失败
                     paymentInventory.setPaymentStatus(-1);
                     paymentInventory.setTradeFailReason(errDesc);
+                    //添加失败的交易记录
+                    paymentHistory.setTradeStatus(TradeStatus.FAIL);
                 }
                 paymentInventoryService.updateById(paymentInventory);
 
+                paymentHistory.setTradeNo(paymentInventory.getTradeNo());
+                paymentHistory.setOuterTradeNo(dchBillId);
+                paymentHistory.setOrderType(OrderType.INVENTORY);
+                paymentHistory.setPaymentMethod(paymentMethod);
+                paymentHistory.setTradeObject(TradeObject.COMPANY);
+                paymentHistory.setTradeObjectId(companyUnionpay.getCompanyId());
+                paymentHistory.setAmount(paymentInventory.getRealMoney());
+                paymentHistoryService.save(paymentHistory);
+
                 //查看是否所有分包已经支付完成
                 boolean isAllSuccess = paymentInventoryService.checkAllPaymentInventoryPaySuccess(paymentInventory.getPaymentOrderId());
-                if (isAllSuccess){
+                if (isAllSuccess) {
                     PaymentOrder paymentOrder = paymentOrderService.getById(paymentInventory.getPaymentOrderId());
                     paymentOrder.setPaymentOrderStatus(6);
                     paymentOrderService.updateById(paymentOrder);
@@ -242,6 +340,34 @@ public class NotifyServiceImpl implements NotifyService {
         if (taxUnionpay == null) {
             log.error("对应商户号的服务商银联不存在");
             return "fail";
+        }
+
+        PaymentMethod paymentMethod;
+        switch (taxUnionpay.getUnionpayBankType()) {
+
+            case SJBK:
+
+                paymentMethod = PaymentMethod.UNIONSJBK;
+                break;
+
+            case PABK:
+
+                paymentMethod = PaymentMethod.UNIONPABK;
+                break;
+
+            case WSBK:
+
+                paymentMethod = PaymentMethod.UNIONWSBK;
+                break;
+
+            case ZSBK:
+
+                paymentMethod = PaymentMethod.UNIONZSBK;
+                break;
+
+            default:
+                log.error("对应商户号的服务商银联类型不存在");
+                return "fail";
         }
 
         //获取其他参数
@@ -286,10 +412,42 @@ public class NotifyServiceImpl implements NotifyService {
             return "fail";
         }
 
+        //出金帐号等于主账号清分账号则为清分回调
+        if (taxUnionpay.getClearNo().equals(outAcctNo)) {
+
+            //根据订单号查询充值交易记录
+            PaymentHistory paymentHistory = paymentHistoryService.queryPaymentHistoryByOuterTradeNo(outerTradeNo);
+            if (paymentHistory == null) {
+                log.error("订单号为{}的交易记录不存在", outerTradeNo);
+                return "fail";
+            }
+
+            if ("91".equals(status)) {
+                //编辑交易记录为失败
+                paymentHistory.setTradeStatus(TradeStatus.SUCCESS);
+            } else {
+                //编辑交易记录为成功
+                paymentHistory.setTradeStatus(TradeStatus.FAIL);
+            }
+
+            //编辑充值交易记录
+            paymentHistory.setOuterTradeNo(itfBillId);
+            paymentHistoryService.updateById(paymentHistory);
+            return "success";
+        }
+
+        CompanyUnionpay companyUnionpay = companyUnionpayService.queryMerchantUnionpay(outAcctNo);
+        if (companyUnionpay == null) {
+            log.error("对应子账户账号的商户银联子账号不存在");
+            return "fail";
+        }
+
+
         //业务逻辑处理 ****************************
         //拆分订单号，获取银联交易类型
         String tradeType = outerTradeNo.replaceAll("\\d+", "");
         TradeNoType tradeNoType = Enum.valueOf(TradeNoType.class, tradeType);
+        PaymentHistory paymentHistory;
         switch (tradeNoType) {
 
             case PO:
@@ -307,13 +465,29 @@ public class NotifyServiceImpl implements NotifyService {
                 }
 
                 //判断交易结果
+                //创建交易记录
+                paymentHistory = new PaymentHistory();
                 if ("91".equals(status)) {
+                    //修改总包支付状态为成功
                     paymentOrder.setPaymentOrderStatus(2);
+                    //添加成功的交易记录
+                    paymentHistory.setTradeStatus(TradeStatus.SUCCESS);
                 } else {
                     log.error("订单号为{}的总包支付订单支付失败：{}", outerTradeNo, errDesc);
                     paymentOrder.setTradeFailReason(errDesc);
+                    //添加失败的交易记录
+                    paymentHistory.setTradeStatus(TradeStatus.FAIL);
                 }
                 paymentOrderService.updateById(paymentOrder);
+
+                paymentHistory.setTradeNo(paymentOrder.getTradeNo());
+                paymentHistory.setOuterTradeNo(itfBillId);
+                paymentHistory.setOrderType(OrderType.TOTALORDER);
+                paymentHistory.setPaymentMethod(paymentMethod);
+                paymentHistory.setTradeObject(TradeObject.COMPANY);
+                paymentHistory.setTradeObjectId(companyUnionpay.getCompanyId());
+                paymentHistory.setAmount(paymentOrder.getServiceMoney());
+                paymentHistoryService.save(paymentHistory);
 
                 break;
 
@@ -332,13 +506,29 @@ public class NotifyServiceImpl implements NotifyService {
                 }
 
                 //判断交易结果
+                //创建交易记录
+                paymentHistory = new PaymentHistory();
                 if ("91".equals(status)) {
+                    //修改总包支付状态为成功
                     paymentOrderMany.setPaymentOrderStatus(3);
+                    //添加成功的交易记录
+                    paymentHistory.setTradeStatus(TradeStatus.SUCCESS);
                 } else {
                     log.error("订单号为{}的众包支付订单支付失败：{}", outerTradeNo, errDesc);
                     paymentOrderMany.setTradeFailReason(errDesc);
+                    //添加失败的交易记录
+                    paymentHistory.setTradeStatus(TradeStatus.FAIL);
                 }
                 paymentOrderManyService.updateById(paymentOrderMany);
+
+                paymentHistory.setTradeNo(paymentOrderMany.getTradeNo());
+                paymentHistory.setOuterTradeNo(itfBillId);
+                paymentHistory.setOrderType(OrderType.MANYORDER);
+                paymentHistory.setPaymentMethod(paymentMethod);
+                paymentHistory.setTradeObject(TradeObject.COMPANY);
+                paymentHistory.setTradeObjectId(companyUnionpay.getCompanyId());
+                paymentHistory.setAmount(paymentOrderMany.getServiceMoney());
+                paymentHistoryService.save(paymentHistory);
 
                 break;
 

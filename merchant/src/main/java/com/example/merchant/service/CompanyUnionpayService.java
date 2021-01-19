@@ -30,12 +30,19 @@ public interface CompanyUnionpayService extends IService<CompanyUnionpay> {
     /**
      * 查询商户-服务商银联银行记录
      *
-     * @param companyId
-     * @param taxUnionpayId
-     * @param unionpayBankType
+     * @param subAccountCode
      * @return
      */
-    CompanyUnionpay queryMerchantUnionpayUnionpayBankType(String companyId, String taxUnionpayId, UnionpayBankType unionpayBankType);
+    CompanyUnionpay queryMerchantUnionpay(String subAccountCode);
+
+    /**
+     * 查询商户-服务商银联银行记录
+     *
+     * @param companyId
+     * @param taxUnionpayId
+     * @return
+     */
+    CompanyUnionpay queryMerchantUnionpayUnionpayBankType(String companyId, String taxUnionpayId);
 
     /**
      * 查询商户拥有的银联支付方式
@@ -73,6 +80,6 @@ public interface CompanyUnionpayService extends IService<CompanyUnionpay> {
      * @param taxId
      * @return
      */
-    ReturnJson queryCompanyUnionpayDetail(String companyId, String taxId) throws Exception;
+    ReturnJson queryCompanyUnionpayDetail(String companyId, String taxId, UnionpayBankType unionpayBankType) throws Exception;
 
 }

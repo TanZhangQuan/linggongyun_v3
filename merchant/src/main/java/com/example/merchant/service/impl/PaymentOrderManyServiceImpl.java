@@ -659,7 +659,7 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
                     }
 
                     //查询商户是否已开通银联盛京银行子账号
-                    companyUnionpay = companyUnionpayService.queryMerchantUnionpayUnionpayBankType(paymentOrderMany.getCompanyId(), paymentOrderMany.getTaxId(), UnionpayBankType.SJBK);
+                    companyUnionpay = companyUnionpayService.queryMerchantUnionpayUnionpayBankType(paymentOrderMany.getCompanyId(), taxUnionpay.getId());
                     if (companyUnionpay == null) {
                         return ReturnJson.error("商户未开通服务商的银联盛京银行子账号");
                     }
@@ -694,7 +694,7 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
                     }
 
                     //查询商户是否已开通银联平安银行子账号
-                    companyUnionpay = companyUnionpayService.queryMerchantUnionpayUnionpayBankType(paymentOrderMany.getCompanyId(), paymentOrderMany.getTaxId(), UnionpayBankType.PABK);
+                    companyUnionpay = companyUnionpayService.queryMerchantUnionpayUnionpayBankType(paymentOrderMany.getCompanyId(), taxUnionpay.getId());
                     if (companyUnionpay == null) {
                         return ReturnJson.error("商户未已开通服务商的银联平安银行子账号");
                     }
@@ -729,7 +729,7 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
                     }
 
                     //查询商户是否已开通银联网商银行子账号
-                    companyUnionpay = companyUnionpayService.queryMerchantUnionpayUnionpayBankType(paymentOrderMany.getCompanyId(), paymentOrderMany.getTaxId(), UnionpayBankType.WSBK);
+                    companyUnionpay = companyUnionpayService.queryMerchantUnionpayUnionpayBankType(paymentOrderMany.getCompanyId(), taxUnionpay.getId());
                     if (companyUnionpay == null) {
                         return ReturnJson.error("商户未已开通服务商的银联网商银行子账号");
                     }
@@ -764,7 +764,7 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
                     }
 
                     //查询商户是否已开通银联招商银行子账号
-                    companyUnionpay = companyUnionpayService.queryMerchantUnionpayUnionpayBankType(paymentOrderMany.getCompanyId(), paymentOrderMany.getTaxId(), UnionpayBankType.ZSBK);
+                    companyUnionpay = companyUnionpayService.queryMerchantUnionpayUnionpayBankType(paymentOrderMany.getCompanyId(), taxUnionpay.getId());
                     if (companyUnionpay == null) {
                         return ReturnJson.error("商户未已开通服务商的银联招商银行子账号");
                     }
