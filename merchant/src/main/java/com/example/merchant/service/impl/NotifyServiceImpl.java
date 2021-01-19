@@ -243,7 +243,7 @@ public class NotifyServiceImpl implements NotifyService {
         params.put("merchNo", merchNo);
         params.put("acctNo", acctNo);
         params.put("dchBillId", dchBillId);
-        params.put("outerTradeNo", outerTradeNo);
+        params.put("outer_trade_no", outerTradeNo);
         params.put("status", status);
         params.put("errDesc", errDesc);
         params.put("txTime", txTime);
@@ -399,7 +399,7 @@ public class NotifyServiceImpl implements NotifyService {
         params.put("outAcctNo", outAcctNo);
         params.put("inAcctNo", inAcctNo);
         params.put("itfBillId", itfBillId);
-        params.put("outerTradeNo", outerTradeNo);
+        params.put("outer_trade_no", outerTradeNo);
         params.put("status", status);
         params.put("errDesc", errDesc);
         params.put("txTime", txTime);
