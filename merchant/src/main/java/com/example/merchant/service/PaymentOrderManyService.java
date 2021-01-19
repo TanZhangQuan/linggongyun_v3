@@ -87,7 +87,7 @@ public interface PaymentOrderManyService extends IService<PaymentOrderMany> {
      * @param paymentOrderManyPayDTO
      * @return
      */
-    ReturnJson paymentOrderManyPay(PaymentOrderManyPayDTO paymentOrderManyPayDTO);
+    ReturnJson paymentOrderManyPay(PaymentOrderManyPayDTO paymentOrderManyPayDTO) throws Exception;
 
     /**
      * 众包今天的支付金额

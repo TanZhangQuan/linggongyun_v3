@@ -345,7 +345,7 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
     }
 
     @Override
-    public ReturnJson paymentOrderManyPay(PaymentOrderManyPayDTO paymentOrderManyPayDTO) {
+    public ReturnJson paymentOrderManyPay(PaymentOrderManyPayDTO paymentOrderManyPayDTO) throws Exception {
 
         PaymentOrderMany paymentOrderMany = getById(paymentOrderManyPayDTO.getPaymentOrderManyId());
         if (paymentOrderMany == null) {
@@ -372,6 +372,13 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
             return ReturnJson.error("短信验证码不正确");
         }
 
+        TaxUnionpay taxUnionpay;
+        CompanyUnionpay companyUnionpay;
+        JSONObject jsonObject;
+        Boolean boolSuccess;
+        JSONObject returnValue;
+        String rtnCode;
+        BigDecimal useBal;
         switch (paymentOrderManyPayDTO.getPaymentMode()) {
 
             case 0:
@@ -394,11 +401,157 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
 
             case 3:
 
+                taxUnionpay = taxUnionpayService.queryTaxUnionpay(paymentOrderMany.getTaxId(), UnionpayBankType.SJBK);
+                if (taxUnionpay == null) {
+                    return ReturnJson.error("服务商盛京主账号不存在");
+                }
+
+                //查询商户-服务商银联记录
+                companyUnionpay = companyUnionpayService.queryMerchantUnionpay(paymentOrderMany.getCompanyId(), taxUnionpay.getId());
+                if (companyUnionpay == null) {
+                    return ReturnJson.error("商户-服务商盛京子账号不存在");
+                }
+
+                jsonObject = UnionpayUtil.AC081(taxUnionpay.getMerchno(), taxUnionpay.getAcctno(), taxUnionpay.getPfmpubkey(), taxUnionpay.getPrikey(), companyUnionpay.getUid());
+                if (jsonObject == null) {
+                    return ReturnJson.error("查询子帐号" + taxUnionpay.getUnionpayBankType().getDesc() + "银联支付余额失败");
+                }
+
+                boolSuccess = jsonObject.getBoolean("success");
+                if (boolSuccess == null || !boolSuccess) {
+                    String errMsg = jsonObject.getString("err_msg");
+                    return ReturnJson.error("查询子帐号" + taxUnionpay.getUnionpayBankType().getDesc() + "银联支付余额失败: " + errMsg);
+                }
+
+                returnValue = jsonObject.getJSONObject("return_value");
+                rtnCode = returnValue.getString("rtn_code");
+                if (!("S00000".equals(rtnCode))) {
+                    String errMsg = returnValue.getString("err_msg");
+                    return ReturnJson.error("查询子帐号" + taxUnionpay.getUnionpayBankType().getDesc() + "银联支付余额失败: " + errMsg);
+                }
+
+                //可用余额，单位元
+                useBal = returnValue.getBigDecimal("use_bal");
+                if (paymentOrderMany.getServiceMoney().compareTo(useBal) > 0){
+                    return ReturnJson.error("商户盛京子帐号可用余额不足");
+                }
+
+                break;
+
             case 4:
+
+                taxUnionpay = taxUnionpayService.queryTaxUnionpay(paymentOrderMany.getTaxId(), UnionpayBankType.PABK);
+                if (taxUnionpay == null) {
+                    return ReturnJson.error("服务商银联记录不存在");
+                }
+
+                //查询商户-服务商银联记录
+                companyUnionpay = companyUnionpayService.queryMerchantUnionpay(paymentOrderMany.getCompanyId(), taxUnionpay.getId());
+                if (companyUnionpay == null) {
+                    return ReturnJson.error("商户-服务商盛京子账号不存在");
+                }
+
+                jsonObject = UnionpayUtil.AC081(taxUnionpay.getMerchno(), taxUnionpay.getAcctno(), taxUnionpay.getPfmpubkey(), taxUnionpay.getPrikey(), companyUnionpay.getUid());
+                if (jsonObject == null) {
+                    return ReturnJson.error("查询子帐号" + taxUnionpay.getUnionpayBankType().getDesc() + "银联支付余额失败");
+                }
+
+                boolSuccess = jsonObject.getBoolean("success");
+                if (boolSuccess == null || !boolSuccess) {
+                    String errMsg = jsonObject.getString("err_msg");
+                    return ReturnJson.error("查询子帐号" + taxUnionpay.getUnionpayBankType().getDesc() + "银联支付余额失败: " + errMsg);
+                }
+
+                returnValue = jsonObject.getJSONObject("return_value");
+                rtnCode = returnValue.getString("rtn_code");
+                if (!("S00000".equals(rtnCode))) {
+                    String errMsg = returnValue.getString("err_msg");
+                    return ReturnJson.error("查询子帐号" + taxUnionpay.getUnionpayBankType().getDesc() + "银联支付余额失败: " + errMsg);
+                }
+
+                //可用余额，单位元
+                useBal = returnValue.getBigDecimal("use_bal");
+                if (paymentOrderMany.getServiceMoney().compareTo(useBal) > 0){
+                    return ReturnJson.error("商户盛京子帐号可用余额不足");
+                }
+
+                break;
 
             case 5:
 
+                taxUnionpay = taxUnionpayService.queryTaxUnionpay(paymentOrderMany.getTaxId(), UnionpayBankType.WSBK);
+                if (taxUnionpay == null) {
+                    return ReturnJson.error("服务商银联记录不存在");
+                }
+
+                //查询商户-服务商银联记录
+                companyUnionpay = companyUnionpayService.queryMerchantUnionpay(paymentOrderMany.getCompanyId(), taxUnionpay.getId());
+                if (companyUnionpay == null) {
+                    return ReturnJson.error("商户-服务商盛京子账号不存在");
+                }
+
+                jsonObject = UnionpayUtil.AC081(taxUnionpay.getMerchno(), taxUnionpay.getAcctno(), taxUnionpay.getPfmpubkey(), taxUnionpay.getPrikey(), companyUnionpay.getUid());
+                if (jsonObject == null) {
+                    return ReturnJson.error("查询子帐号" + taxUnionpay.getUnionpayBankType().getDesc() + "银联支付余额失败");
+                }
+
+                boolSuccess = jsonObject.getBoolean("success");
+                if (boolSuccess == null || !boolSuccess) {
+                    String errMsg = jsonObject.getString("err_msg");
+                    return ReturnJson.error("查询子帐号" + taxUnionpay.getUnionpayBankType().getDesc() + "银联支付余额失败: " + errMsg);
+                }
+
+                returnValue = jsonObject.getJSONObject("return_value");
+                rtnCode = returnValue.getString("rtn_code");
+                if (!("S00000".equals(rtnCode))) {
+                    String errMsg = returnValue.getString("err_msg");
+                    return ReturnJson.error("查询子帐号" + taxUnionpay.getUnionpayBankType().getDesc() + "银联支付余额失败: " + errMsg);
+                }
+
+                //可用余额，单位元
+                useBal = returnValue.getBigDecimal("use_bal");
+                if (paymentOrderMany.getServiceMoney().compareTo(useBal) > 0){
+                    return ReturnJson.error("商户盛京子帐号可用余额不足");
+                }
+
+                break;
+
             case 6:
+
+                taxUnionpay = taxUnionpayService.queryTaxUnionpay(paymentOrderMany.getTaxId(), UnionpayBankType.ZSBK);
+                if (taxUnionpay == null) {
+                    return ReturnJson.error("服务商银联记录不存在");
+                }
+
+                //查询商户-服务商银联记录
+                companyUnionpay = companyUnionpayService.queryMerchantUnionpay(paymentOrderMany.getCompanyId(), taxUnionpay.getId());
+                if (companyUnionpay == null) {
+                    return ReturnJson.error("商户-服务商盛京子账号不存在");
+                }
+
+                jsonObject = UnionpayUtil.AC081(taxUnionpay.getMerchno(), taxUnionpay.getAcctno(), taxUnionpay.getPfmpubkey(), taxUnionpay.getPrikey(), companyUnionpay.getUid());
+                if (jsonObject == null) {
+                    return ReturnJson.error("查询子帐号" + taxUnionpay.getUnionpayBankType().getDesc() + "银联支付余额失败");
+                }
+
+                boolSuccess = jsonObject.getBoolean("success");
+                if (boolSuccess == null || !boolSuccess) {
+                    String errMsg = jsonObject.getString("err_msg");
+                    return ReturnJson.error("查询子帐号" + taxUnionpay.getUnionpayBankType().getDesc() + "银联支付余额失败: " + errMsg);
+                }
+
+                returnValue = jsonObject.getJSONObject("return_value");
+                rtnCode = returnValue.getString("rtn_code");
+                if (!("S00000".equals(rtnCode))) {
+                    String errMsg = returnValue.getString("err_msg");
+                    return ReturnJson.error("查询子帐号" + taxUnionpay.getUnionpayBankType().getDesc() + "银联支付余额失败: " + errMsg);
+                }
+
+                //可用余额，单位元
+                useBal = returnValue.getBigDecimal("use_bal");
+                if (paymentOrderMany.getServiceMoney().compareTo(useBal) > 0){
+                    return ReturnJson.error("商户盛京子帐号可用余额不足");
+                }
 
                 break;
 
