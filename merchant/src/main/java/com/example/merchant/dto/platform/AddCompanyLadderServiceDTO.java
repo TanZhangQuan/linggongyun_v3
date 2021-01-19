@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -28,5 +29,6 @@ public class AddCompanyLadderServiceDTO implements Serializable {
 
     @ApiModelProperty(value = "服务费（如7.5，不需把百分数换算成小数）")
     @NotBlank(message = "服务费不能为空")
+    @Min(value = 0,message = "服务费率不能小于零")
     private BigDecimal serviceCharge;
 }

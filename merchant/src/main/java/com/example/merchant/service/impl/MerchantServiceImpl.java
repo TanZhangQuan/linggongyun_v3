@@ -421,7 +421,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
 
         Merchant merchant = merchantDao.selectOne(new QueryWrapper<Merchant>().eq("user_name", companyDto.getAddMerchantDto().getUserName()));
         if (merchant != null) {
-            return ReturnJson.success("登录账号存在相同的，请修改后重新操作！");
+            throw new CommonException(300, "登录账号存在相同的，请修改后重新操作！");
         }
         merchant = new Merchant();
         BeanUtils.copyProperties(companyDto.getAddMerchantDto(), merchant);
@@ -536,7 +536,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
                     .eq("agent_status", 0)
                     .eq("sales_man_id", managers.getId()));
         }
-        if (managers.getUserSign() == 1){
+        if (managers.getUserSign() == 1) {
             list = agentDao.selectList(new QueryWrapper<Agent>()
                     .eq("managers_id", userId));
         }
@@ -620,6 +620,12 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         if (merchant == null) {
             throw new CommonException(300, "商户账户信息不正确！");
         }
+
+        merchant = merchantDao.selectOne(new QueryWrapper<Merchant>().eq("user_name", updateCompanyDto.getUpdateMerchantInfDto().getUserName()));
+        if (merchant != null) {
+            throw new CommonException(300, "登录账号存在相同的，请修改后重新操作！");
+        }
+
         BeanUtils.copyProperties(updateCompanyDto.getUpdateMerchantInfDto(), merchant);
         if (StringUtils.isNotBlank(updateCompanyDto.getUpdateMerchantInfDto().getPassWord())) {
             merchant.setPassWord(PWD_KEY + MD5.md5(updateCompanyDto.getUpdateMerchantInfDto().getPassWord()));

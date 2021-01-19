@@ -162,11 +162,52 @@
 
     <!--查询商户-->
     <select id="selectMerchantInfoPo" resultMap="MerchantInfoPo" parameterType="list">
-        SELECT a.id , a.company_name, b.link_name, b.link_mobile,
-        (case when a.agent_id is null then '业务员' else '业务员/代理商' end) structure,
-        a.contract, a.company_status, a.create_date
-        from tb_company_info a
-        left join tb_linkman b on a.id = b.company_id and b.is_not = 0
+        SELECT
+            a.id,
+            a.company_name,
+            b.link_name,
+            b.link_mobile,
+            (
+                CASE
+                WHEN a.agent_id IS NULL THEN
+                    (
+                        SELECT
+                            real_name
+                        FROM
+                            tb_managers
+                        WHERE
+                            id = a.sales_man_id
+                    )
+                ELSE
+                    CONCAT(
+                        (
+                            SELECT
+                                real_name
+                            FROM
+                                tb_managers
+                            WHERE
+                                id = a.sales_man_id
+                        ),
+                        '/',
+                        (
+                            SELECT
+                                real_name
+                            FROM
+                                tb_managers c
+                            INNER JOIN tb_agent d ON c.id = d.managers_id
+                            WHERE
+                                c.id = a.agent_id
+                        )
+                    )
+                END
+            ) structure,
+            a.contract,
+            a.company_status,
+            a.create_date
+        FROM
+            tb_company_info a
+        LEFT JOIN tb_linkman b ON a.id = b.company_id
+        AND b.is_not = 0
         <where>
             a.id in
             <foreach collection="merchantIds" index="index" item="item" open="(" separator="," close=")">

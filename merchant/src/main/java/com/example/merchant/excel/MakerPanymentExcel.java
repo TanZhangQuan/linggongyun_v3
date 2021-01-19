@@ -15,7 +15,7 @@ import java.io.Serializable;
 public class MakerPanymentExcel implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @ExcelProperty("收款方姓名")
+    @ExcelProperty("收款方账户名")
     private String payeeName;
 
     @ExcelProperty("实名手机")
@@ -30,7 +30,7 @@ public class MakerPanymentExcel implements Serializable {
     @ExcelProperty("收款方账号")
     private String bankCardNo;
 
-    @ExcelProperty("实发金额")
+    @ExcelProperty("发放金额")
     private String realMoney;
 
 }
