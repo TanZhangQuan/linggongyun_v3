@@ -673,7 +673,8 @@ CREATE TABLE `tb_merchant` (
   `create_date` datetime NOT NULL COMMENT '创建时间',
   `update_date` datetime NOT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `UK_icr1qhlwx3lsd0terqn7w65k1` (`user_name`)
+  UNIQUE KEY `UK_icr1qhlwx3lsd0terqn7w65k1` (`user_name`),
+  UNIQUE KEY `UK_icr1qhlwx3lsd0terqn7w65k2` (`login_mobile`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='商户信息';
 
 -- ----------------------------

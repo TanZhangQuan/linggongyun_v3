@@ -40,10 +40,9 @@ public interface CompanyUnionpayService extends IService<CompanyUnionpay> {
      *
      * @param companyId
      * @param taxUnionpayId
-     * @param unionpayBankType
      * @return
      */
-    CompanyUnionpay queryMerchantUnionpayUnionpayBankType(String companyId, String taxUnionpayId, UnionpayBankType unionpayBankType);
+    CompanyUnionpay queryMerchantUnionpayUnionpayBankType(String companyId, String taxUnionpayId);
 
     /**
      * 查询商户拥有的银联支付方式

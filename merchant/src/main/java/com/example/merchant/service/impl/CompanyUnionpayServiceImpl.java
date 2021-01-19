@@ -59,8 +59,8 @@ public class CompanyUnionpayServiceImpl extends ServiceImpl<CompanyUnionpayDao, 
     }
 
     @Override
-    public CompanyUnionpay queryMerchantUnionpayUnionpayBankType(String companyId, String taxUnionpayId, UnionpayBankType unionpayBankType) {
-        return baseMapper.queryMerchantUnionpayUnionpayBankType(companyId, taxUnionpayId, unionpayBankType);
+    public CompanyUnionpay queryMerchantUnionpayUnionpayBankType(String companyId, String taxUnionpayId) {
+        return baseMapper.queryMerchantUnionpayUnionpayBankType(companyId, taxUnionpayId);
     }
 
     @Override
