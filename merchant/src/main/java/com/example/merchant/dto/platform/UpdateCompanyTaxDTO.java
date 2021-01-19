@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -29,6 +30,7 @@ public class UpdateCompanyTaxDTO implements Serializable {
     private Integer chargeStatus;
 
     @ApiModelProperty(value = "一口价的服务费(如果为梯度价这为空)")
+    @Min(value = 0,message = "服务费率不能小于零")
     private BigDecimal serviceCharge;
 
     @ApiModelProperty(value = "合作类型")

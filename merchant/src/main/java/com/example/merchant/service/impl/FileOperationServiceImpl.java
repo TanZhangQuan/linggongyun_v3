@@ -212,12 +212,13 @@ public class FileOperationServiceImpl implements FileOperationService {
             ExcelReader excelReader = EasyExcelFactory.read(inputStream, MakerPanymentExcel.class, makerPanymentReadListener).headRowNumber(1).build();
             excelReader.readAll();
             List<MakerPanymentExcel> makerPanymentExcels = makerPanymentReadListener.getList();
+            makerPanymentExcels.remove( makerPanymentExcels.get(makerPanymentExcels.size()-1));
             excelReader.finish();
 
             List<PaymentInventory> paymentInventorys = new ArrayList<>();
             for (MakerPanymentExcel makerPanymentExcel : makerPanymentExcels) {
                 //判断金额 金额为null自动去除这个人
-                if (makerPanymentExcel.getRealMoney()==null){
+                if (makerPanymentExcel.getRealMoney() == null) {
                     continue;
                 }
                 String idCardCode = makerPanymentExcel.getIdCardCode();
