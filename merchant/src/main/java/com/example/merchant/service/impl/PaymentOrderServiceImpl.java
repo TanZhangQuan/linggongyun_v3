@@ -191,7 +191,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
 
         BigDecimal receviceTax = paymentOrder.getReceviceTax().divide(BigDecimal.valueOf(100));
         BigDecimal merchantTax = paymentOrder.getMerchantTax().divide(BigDecimal.valueOf(100));
-        BigDecimal compositeTax = new BigDecimal("0");
+        BigDecimal compositeTax;
         BigDecimal countMoney = new BigDecimal("0");
         BigDecimal countWorkerMoney = new BigDecimal("0");
         BigDecimal countServiceMoney = new BigDecimal("0");

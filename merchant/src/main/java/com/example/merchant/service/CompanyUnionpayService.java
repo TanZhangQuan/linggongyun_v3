@@ -73,6 +73,6 @@ public interface CompanyUnionpayService extends IService<CompanyUnionpay> {
      * @param taxId
      * @return
      */
-    ReturnJson queryCompanyUnionpayDetail(String companyId, String taxId) throws Exception;
+    ReturnJson queryCompanyUnionpayDetail(String companyId, String taxId, UnionpayBankType unionpayBankType) throws Exception;
 
 }

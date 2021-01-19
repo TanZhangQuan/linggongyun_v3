@@ -101,7 +101,7 @@ public class MerchantUnionpayController {
             return ReturnJson.error("商户员工不存在");
         }
 
-        return companyUnionpayService.queryCompanyUnionpayDetail(merchant.getCompanyId(), taxId);
+        return companyUnionpayService.queryCompanyUnionpayDetail(merchant.getCompanyId(), taxId, null);
     }
 
 }

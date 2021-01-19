@@ -306,7 +306,7 @@ public class MerchantPaasController {
     @ApiOperation(value = "查询商户银联详情", notes = "查询商户银联详情")
     public ReturnJson queryCompanyUnionpayBalance(@ApiParam(value = "商户ID") @NotBlank(message = "请选择商户") @RequestParam(required = false) String merchantId,
                                                   @ApiParam(value = "服务商ID") @NotBlank(message = "请选择服务商") @RequestParam(required = false) String taxId) throws Exception {
-        return companyUnionpayService.queryCompanyUnionpayDetail(merchantId, taxId);
+        return companyUnionpayService.queryCompanyUnionpayDetail(merchantId, taxId, null);
     }
 
     @PostMapping("/queryTaxTransactionFlow")
