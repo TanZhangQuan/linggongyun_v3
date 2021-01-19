@@ -237,7 +237,8 @@ public class UnionpayUtil {
 
         params.put("content", encrypt);
         params.put("sign", createSign(params, prikey));
-        log.info("请求参数：{}", JSON.toJSONString(params));
+        log.info("请求业务参数：{}", JSON.toJSONString(content));
+        log.info("请求基本参数：{}", JSON.toJSONString(params));
 
         //请求银联接口
         jsonObject = JSON.parseObject(HttpUtil.post(UnionpayConstant.GATEWAYURL, params));
