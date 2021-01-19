@@ -1047,7 +1047,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
                 return ReturnJson.error("支付方式不存在");
         }
 
-        if (StringUtils.isNotBlank(failMessage)) {
+        if (StringUtils.isNotBlank(String.valueOf(failMessage))) {
             return ReturnJson.success(failMessage);
         } else {
             return ReturnJson.success("操作成功");
