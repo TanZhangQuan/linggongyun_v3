@@ -319,6 +319,8 @@
 
     <resultMap id="PaymentOrderInfoPOResultMap" type="com.example.mybatis.po.PaymentOrderInfoPO">
         <result column="id" property="paymentOrderId"/>
+        <result column="company_id" property="merchantId"/>
+        <result column="tax_id" property="taxId"/>
         <result column="platform_service_provider" property="platformServiceProvider"/>
         <result column="company_contract" property="companyContract"/>
         <result column="payment_inventory" property="paymentInventory"/>
@@ -443,6 +445,8 @@
     <select id="selectPaymentOrderInfo" parameterType="string" resultMap="PaymentOrderInfoPOResultMap">
         SELECT
         pom.id,
+        pom.company_id,
+        pom.tax_id,
         pom.platform_service_provider,
         pom.company_contract,
         pom.payment_inventory,
