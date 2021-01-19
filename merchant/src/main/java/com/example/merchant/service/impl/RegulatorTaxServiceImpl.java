@@ -58,7 +58,7 @@ public class RegulatorTaxServiceImpl extends ServiceImpl<RegulatorTaxDao, Regula
         List<RegulatorTax> taxIds = regulatorTaxDao.selectList(
                 new QueryWrapper<RegulatorTax>().select("tax_id")
                         .eq("regulator_id", regulatorId)
-                        .eq("status",0));//监管区服务商数量
+                        .eq("status", 0));//监管区服务商数量
 
         List<String> ids = new ArrayList<>();
 
@@ -198,7 +198,7 @@ public class RegulatorTaxServiceImpl extends ServiceImpl<RegulatorTaxDao, Regula
         List<TaxVO> taxVOS = regulatorTaxDao.selTaxListByIds(list);
         for (int i = 0; i < taxVOS.size(); i++) {
             taxVOS.get(i).setPaymentOrderCount(taxVOS.get(i).getPaymentOrderNum() + "/" + taxVOS.get(i).getPaymentOrderManyNum());
-            taxVOS.get(i).setStatus(taxVOS.get(i).getTaxStatus() == 0 ? "未认证" : "已认证");
+            taxVOS.get(i).setStatus(taxVOS.get(i).getTaxStatus() == 0 ? "正常" : "非正常");
         }
         if (!VerificationCheck.listIsNull(taxVOS)) {
             try {
@@ -206,10 +206,10 @@ public class RegulatorTaxServiceImpl extends ServiceImpl<RegulatorTaxDao, Regula
                 return ReturnJson.success("服务商导出成功！");
             } catch (IOException e) {
                 log.error(e.toString() + ":" + e.getMessage());
-                throw new CommonException(300, "创客导出失败！");
+                throw new CommonException(300, "服务商导出失败！");
             }
         }
-        throw new CommonException(300, "创客导出失败！");
+        throw new CommonException(300, "服务商导出失败！");
     }
 
     @Override
@@ -299,8 +299,9 @@ public class RegulatorTaxServiceImpl extends ServiceImpl<RegulatorTaxDao, Regula
     @Override
     public ReturnJson getPaymentInventoryInfo(String paymentOrderId, Integer page, Integer pageSize) {
         Page<PaymentInventory> paymentInventoryPage = new Page<>(page, pageSize);
-        paymentInventoryPage = paymentInventoryDao.selectPage(paymentInventoryPage, new QueryWrapper<PaymentInventory>()
-                .eq("payment_order_id", paymentOrderId));
+        paymentInventoryPage = paymentInventoryDao.selectPage(paymentInventoryPage,
+                new QueryWrapper<PaymentInventory>()
+                        .eq("payment_order_id", paymentOrderId));
         return ReturnJson.success(paymentInventoryPage);
     }
 

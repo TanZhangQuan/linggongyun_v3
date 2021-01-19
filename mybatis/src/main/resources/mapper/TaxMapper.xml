@@ -309,12 +309,12 @@
     <select id="queryTaxTransactionFlow" resultMap="TaxTransactionFlowVOMap">
         SELECT
         t1.id as tax_id ,
-         t3.id as company_id,
-         t4.id as merchant_id,
-         t1.tax_name,
-         t3.company_name,
-            (SELECT SUM(real_money) from tb_payment_order where tax_id = t1.id and company_id = t3.id) as total_package_money,
-        (SELECT SUM(real_money) from tb_payment_order_many where tax_id = t1.id and company_id = t3.id) as many_package_money,
+        t3.id as company_id,
+        t4.id as merchant_id,
+        t1.tax_name,
+        t3.company_name,
+        IFNULL((SELECT SUM(real_money) from tb_payment_order where tax_id = t1.id and company_id = t3.id),0) as total_package_money,
+        IFNULL((SELECT SUM(real_money) from tb_payment_order_many where tax_id = t1.id and company_id = t3.id),0) as many_package_money,
         (SELECT COUNT(id) from tb_payment_order where tax_id = t1.id and company_id = t3.id) as total_package_count,
         (SELECT COUNT(id) from tb_payment_order_many where tax_id = t1.id and company_id = t3.id) as many_package_count,
         1 as cooperation_state,
