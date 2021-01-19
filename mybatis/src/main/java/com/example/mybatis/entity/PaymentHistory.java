@@ -2,19 +2,19 @@ package com.example.mybatis.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.example.common.enums.OrderType;
-import com.example.common.enums.PaymentType;
-import com.example.common.enums.UserType;
+import com.example.common.enums.PaymentMethod;
+import com.example.common.enums.TradeObject;
+import com.example.common.enums.TradeStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 /**
  * <p>
- * 第三方支付记录
+ * 交易记录
  * </p>
  *
  * @author hzp
@@ -29,7 +29,7 @@ public class PaymentHistory extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 支付订单号
+     * 交易订单号
      */
     private String tradeNo;
 
@@ -39,43 +39,33 @@ public class PaymentHistory extends BaseEntity {
     private String outerTradeNo;
 
     /**
-     * 支付类型
+     * 交易类型
      */
     private OrderType orderType;
 
     /**
-     * 支付方式
+     * 交易方式
      */
-    private PaymentType paymentType;
+    private PaymentMethod paymentMethod;
 
     /**
-     * 支付人类型
+     * 交易对象类型
      */
-    private UserType userType;
+    private TradeObject tradeObject;
 
     /**
-     * 第三方支付账户
+     * 交易对象ID
      */
-    private String oidPartner;
+    private String tradeObjectId;
 
     /**
-     * 第三方的订单ID
+     * 交易金额
      */
-    private String oidPaybill;
+    private BigDecimal amount;
 
     /**
-     * 支付金额
+     * 交易结果
      */
-    private BigDecimal moneyOrder;
-
-    /**
-     * 支付结果
-     */
-    private String resultPay;
-
-    /**
-     * 支付时间
-     */
-    private LocalDateTime payDate;
+    private TradeStatus tradeStatus;
 
 }

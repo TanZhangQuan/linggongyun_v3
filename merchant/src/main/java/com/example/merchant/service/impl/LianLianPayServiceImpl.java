@@ -8,8 +8,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.common.enums.MessageStatus;
-import com.example.common.enums.OrderType;
-import com.example.common.enums.PaymentType;
 import com.example.common.enums.UserType;
 import com.example.common.lianlianpay.entity.ConfirmPaymentRequestBean;
 import com.example.common.lianlianpay.entity.PaymentRequestBean;
@@ -19,7 +17,10 @@ import com.example.common.lianlianpay.utils.LianLianPaySecurity;
 import com.example.common.lianlianpay.utils.RSAUtil;
 import com.example.common.lianlianpay.utils.SignUtil;
 import com.example.common.lianlianpay.utils.TraderRSAUtil;
-import com.example.common.util.*;
+import com.example.common.util.JsonUtils;
+import com.example.common.util.ReturnJson;
+import com.example.common.util.Tools;
+import com.example.common.util.VerificationCheck;
 import com.example.merchant.dto.merchant.AddLianLianPay;
 import com.example.merchant.exception.CommonException;
 import com.example.merchant.service.CompanyInfoService;
@@ -362,20 +363,20 @@ public class LianLianPayServiceImpl extends ServiceImpl<LianlianpayDao, Lianlian
             //保存交易记录
 
             //先查看是否有交易的记录,有的话就覆盖
-            PaymentHistory paymentHistory = paymentHistoryService.getOne(new QueryWrapper<PaymentHistory>().lambda().eq(PaymentHistory::getOidPaybill, result.get("oid_paybill")));
-            if (paymentHistory == null) {
-                paymentHistory = new PaymentHistory();
-            }
-            paymentHistory.setTradeNo(paymentOrder.getId());
-            paymentHistory.setOrderType(OrderType.TOTALORDER);
-            paymentHistory.setPaymentType(PaymentType.LIANLIAN);
-            paymentHistory.setOidPartner(result.get("oid_partner"));
-            paymentHistory.setOidPaybill(result.get("oid_paybill"));
-            paymentHistory.setMoneyOrder(new BigDecimal(result.get("money_order")));
-            paymentHistory.setResultPay(result.get("result_pay"));
-            paymentHistory.setUserType(UserType.MERCHANT);
-            paymentHistory.setPayDate(DateUtil.parseLocalDateTime(result.get("dt_order"),DatePattern.PURE_DATETIME_PATTERN));
-            paymentHistoryService.saveOrUpdate(paymentHistory);
+//            PaymentHistory paymentHistory = paymentHistoryService.getOne(new QueryWrapper<PaymentHistory>().lambda().eq(PaymentHistory::getOidPaybill, result.get("oid_paybill")));
+//            if (paymentHistory == null) {
+//                paymentHistory = new PaymentHistory();
+//            }
+//            paymentHistory.setTradeNo(paymentOrder.getId());
+//            paymentHistory.setOrderType(OrderType.TOTALORDER);
+//            paymentHistory.setPaymentMethod(PaymentMethod.LIANLIAN);
+//            paymentHistory.setOidPartner(result.get("oid_partner"));
+//            paymentHistory.setOidPaybill(result.get("oid_paybill"));
+//            paymentHistory.setMoneyOrder(new BigDecimal(result.get("money_order")));
+//            paymentHistory.setResultPay(result.get("result_pay"));
+//            paymentHistory.setUserType(UserType.MERCHANT);
+//            paymentHistory.setPayDate(DateUtil.parseLocalDateTime(result.get("dt_order"),DatePattern.PURE_DATETIME_PATTERN));
+//            paymentHistoryService.saveOrUpdate(paymentHistory);
 
             if ("SUCCESS".equals(result.get("result_pay").toUpperCase())) {
                 paymentOrder.setPaymentOrderStatus(2);
@@ -699,20 +700,20 @@ public class LianLianPayServiceImpl extends ServiceImpl<LianlianpayDao, Lianlian
 
             //保存交易记录
             //先查看是否有交易的记录,有的话就覆盖
-            PaymentHistory paymentHistory = paymentHistoryService.getOne(new QueryWrapper<PaymentHistory>().lambda().eq(PaymentHistory::getOidPaybill, result.get("oid_paybill")));
-            if (paymentHistory == null) {
-                paymentHistory = new PaymentHistory();
-            }
-            paymentHistory.setTradeNo(paymentOrderMany.getId());
-            paymentHistory.setOrderType(OrderType.MANYORDER);
-            paymentHistory.setPaymentType(PaymentType.LIANLIAN);
-            paymentHistory.setOidPartner(result.get("oid_partner"));
-            paymentHistory.setOidPaybill(result.get("oid_paybill"));
-            paymentHistory.setMoneyOrder(new BigDecimal(result.get("money_order")));
-            paymentHistory.setResultPay(result.get("result_pay"));
-            paymentHistory.setUserType(UserType.MERCHANT);
-            paymentHistory.setPayDate(DateUtil.parseLocalDateTime(result.get("dt_order"),DatePattern.PURE_DATETIME_PATTERN));
-            paymentHistoryService.saveOrUpdate(paymentHistory);
+//            PaymentHistory paymentHistory = paymentHistoryService.getOne(new QueryWrapper<PaymentHistory>().lambda().eq(PaymentHistory::getOidPaybill, result.get("oid_paybill")));
+//            if (paymentHistory == null) {
+//                paymentHistory = new PaymentHistory();
+//            }
+//            paymentHistory.setTradeNo(paymentOrderMany.getId());
+//            paymentHistory.setOrderType(OrderType.MANYORDER);
+//            paymentHistory.setPaymentMethod(PaymentMethod.LIANLIAN);
+//            paymentHistory.setOidPartner(result.get("oid_partner"));
+//            paymentHistory.setOidPaybill(result.get("oid_paybill"));
+//            paymentHistory.setMoneyOrder(new BigDecimal(result.get("money_order")));
+//            paymentHistory.setResultPay(result.get("result_pay"));
+//            paymentHistory.setUserType(UserType.MERCHANT);
+//            paymentHistory.setPayDate(DateUtil.parseLocalDateTime(result.get("dt_order"),DatePattern.PURE_DATETIME_PATTERN));
+//            paymentHistoryService.saveOrUpdate(paymentHistory);
 
             if ("SUCCESS".equals(result.get("result_pay"))) {
                 paymentOrderMany.setPaymentOrderStatus(2);

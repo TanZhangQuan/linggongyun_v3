@@ -50,6 +50,15 @@ public class CompanyUnionpayServiceImpl extends ServiceImpl<CompanyUnionpayDao, 
     }
 
     @Override
+    public CompanyUnionpay queryMerchantUnionpay(String subAccountCode) {
+
+        QueryWrapper<CompanyUnionpay> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(CompanyUnionpay::getSubAccountCode, subAccountCode);
+
+        return baseMapper.selectOne(queryWrapper);
+    }
+
+    @Override
     public CompanyUnionpay queryMerchantUnionpayUnionpayBankType(String companyId, String taxUnionpayId, UnionpayBankType unionpayBankType) {
         return baseMapper.queryMerchantUnionpayUnionpayBankType(companyId, taxUnionpayId, unionpayBankType);
     }

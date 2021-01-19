@@ -26,11 +26,12 @@ CREATE TABLE `tb_company_unionpay` (
   `uid` varchar(50) NOT NULL COMMENT '会员标识',
   `sub_account_code` varchar(50) NOT NULL COMMENT '子账户账号',
   `sub_account_name` varchar(50) NOT NULL COMMENT '子账号户名',
-  `create_date` datetime DEFAULT NULL COMMENT '创建时间',
-  `update_date` datetime DEFAULT NULL COMMENT '修改时间',
+  `create_date` datetime NOT NULL COMMENT '创建时间',
+  `update_date` datetime NOT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `UK_icr1qhlwx3lsd0terqn7w65k1` (`company_id`,`tax_unionpay_id`),
-  UNIQUE KEY `UK_icr1qhlwx3lsd0terqn7w65k2` (`uid`)
+  UNIQUE KEY `UK_icr1qhlwx3lsd0terqn7w65k2` (`uid`),
+  UNIQUE KEY `UK_icr1qhlwx3lsd0terqn7w65k3` (`sub_account_code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='商户银联信息表';
 
 -- ----------------------------
@@ -52,8 +53,8 @@ CREATE TABLE `tb_tax_unionpay` (
   `clear_no` varchar(50) NOT NULL COMMENT '清分子账户',
   `service_charge_no` varchar(50) NOT NULL COMMENT '手续费子账户',
   `bool_enable` bit(1) NOT NULL COMMENT '是否启用',
-  `create_date` datetime DEFAULT NULL COMMENT '创建时间',
-  `update_date` datetime DEFAULT NULL COMMENT '修改时间',
+  `create_date` datetime NOT NULL COMMENT '创建时间',
+  `update_date` datetime NOT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `UK_icr1qhlwx3lsd0terqn7w65k1` (`tax_id`,`unionpay_bank_type`),
   UNIQUE KEY `UK_icr1qhlwx3lsd0terqn7w65k2` (`merchno`)
@@ -75,8 +76,8 @@ CREATE TABLE `tb_address` (
   `address_name` varchar(255) NOT NULL COMMENT '详细地址',
   `status` int(11) NOT NULL DEFAULT '1' COMMENT '0为启用，1为停用',
   `is_not` int(11) NOT NULL DEFAULT '1' COMMENT '是否默认：0为默认，1为不默认',
-  `create_date` datetime DEFAULT NULL COMMENT '创建时间',
-  `update_date` datetime DEFAULT NULL COMMENT '修改时间',
+  `create_date` datetime NOT NULL COMMENT '创建时间',
+  `update_date` datetime NOT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='地址表';
 
@@ -98,8 +99,8 @@ CREATE TABLE `tb_agent` (
   `contract_file` varchar(40) DEFAULT NULL COMMENT '加盟合同URL',
   `agent_name` varchar(40) DEFAULT NULL COMMENT '代理商名称',
   `agent_status` int(11) DEFAULT NULL COMMENT '0可以用1禁用',
-  `create_date` datetime DEFAULT NULL COMMENT '创建时间',
-  `update_date` datetime DEFAULT NULL COMMENT '修改时间',
+  `create_date` datetime NOT NULL COMMENT '创建时间',
+  `update_date` datetime NOT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `UK_icr1qhlwx3lsd0terqn7w65k1` (`managers_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='代理商信息';
@@ -116,8 +117,8 @@ CREATE TABLE `tb_application_payment` (
   `id` varchar(50) NOT NULL COMMENT '主键',
   `invoice_application_id` varchar(36) DEFAULT NULL COMMENT '开票申请id',
   `payment_order_id` varchar(36) DEFAULT NULL COMMENT '支付id',
-  `create_date` datetime DEFAULT NULL COMMENT '接单接单时间',
-  `update_date` datetime DEFAULT NULL COMMENT '修改时间',
+  `create_date` datetime NOT NULL COMMENT '创建时间',
+  `update_date` datetime NOT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -138,8 +139,8 @@ CREATE TABLE `tb_common_message` (
   `send_user_type` varchar(50) NOT NULL DEFAULT '0' COMMENT '发送消息的用户类型:0创客，1商户，2平台',
   `receive_user_id` varchar(50) NOT NULL DEFAULT '' COMMENT '接收方ID',
   `receive_user_type` varchar(50) NOT NULL DEFAULT '0' COMMENT '接收方用户类型:0创客，1商户，2平台',
-  `create_date` datetime DEFAULT NULL,
-  `update_date` datetime DEFAULT NULL,
+  `create_date` datetime NOT NULL COMMENT '创建时间',
+  `update_date` datetime NOT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='消息表';
 
@@ -179,8 +180,8 @@ CREATE TABLE `tb_company_info` (
   `audit_status` int(2) DEFAULT '0' COMMENT '0为审核，1审核',
   `company_status` int(11) DEFAULT '0' COMMENT '公司状态0正常',
   `pay_pwd` varchar(40) NOT NULL COMMENT '支付密码',
-  `create_date` datetime DEFAULT NULL,
-  `update_date` datetime DEFAULT NULL,
+  `create_date` datetime NOT NULL COMMENT '创建时间',
+  `update_date` datetime NOT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='公司信息';
 
@@ -199,8 +200,8 @@ CREATE TABLE `tb_company_invoice_info` (
   `address_and_telephone` varchar(255) DEFAULT '' COMMENT '地址电话',
   `bank_and_account` varchar(255) DEFAULT '' COMMENT '开户行及账号',
   `tax_code` varchar(40) DEFAULT NULL COMMENT '纳税识别号',
-  `create_date` datetime DEFAULT NULL,
-  `update_date` datetime DEFAULT NULL,
+  `create_date` datetime NOT NULL COMMENT '创建时间',
+  `update_date` datetime NOT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='公司的开票信息';
 
@@ -218,8 +219,8 @@ CREATE TABLE `tb_company_ladder_service` (
   `start_money` decimal(18,2) DEFAULT NULL COMMENT '开始的金额',
   `end_money` decimal(18,2) DEFAULT NULL COMMENT '结束的金额',
   `service_charge` decimal(18,2) DEFAULT NULL COMMENT '服务费（如7.5，不需把百分数换算成小数）',
-  `create_date` datetime DEFAULT NULL,
-  `update_date` datetime DEFAULT NULL,
+  `create_date` datetime NOT NULL COMMENT '创建时间',
+  `update_date` datetime NOT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='服务商给商户的梯度价';
 
@@ -241,8 +242,8 @@ CREATE TABLE `tb_company_tax` (
   `bank_code` varchar(40) DEFAULT NULL COMMENT '银行账号',
   `bank_name` varchar(80) DEFAULT NULL COMMENT '开户行(银行名称)',
   `contract` varchar(250) DEFAULT NULL COMMENT '合作合同地址',
-  `create_date` datetime DEFAULT NULL,
-  `update_date` datetime DEFAULT NULL,
+  `create_date` datetime NOT NULL COMMENT '创建时间',
+  `update_date` datetime NOT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `UK_icr1qhlwx3lsd0terqn7w65k1` (`company_id`,`tax_id`,`package_status`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='公司与服务商的合作信息表';
@@ -259,8 +260,8 @@ CREATE TABLE `tb_company_worker` (
   `id` varchar(50) NOT NULL COMMENT '主键',
   `worker_id` varchar(36) NOT NULL COMMENT '创客id',
   `company_id` varchar(36) NOT NULL COMMENT '商户ID',
-  `create_date` datetime DEFAULT NULL COMMENT '创建时间',
-  `update_date` datetime DEFAULT NULL COMMENT '修改时间',
+  `create_date` datetime NOT NULL COMMENT '创建时间',
+  `update_date` datetime NOT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `UK_icr1qhlwx3lsd0terqn7w65k1` (`worker_id`,`company_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='商户公司所拥有的创客';
@@ -282,8 +283,8 @@ CREATE TABLE `tb_crowd_sourcing_application` (
   `application_state` int(11) DEFAULT NULL COMMENT '申请状态：0.未申请；1.申请中；2.已拒绝；3.已开票，4未开票',
   `application_desc` varchar(1000) DEFAULT NULL COMMENT '申请说明',
   `audit_desc` varchar(1000) DEFAULT NULL COMMENT '审核说明',
-  `create_date` datetime DEFAULT NULL COMMENT '创建时间',
-  `update_date` datetime DEFAULT NULL COMMENT '修改时间',
+  `create_date` datetime NOT NULL COMMENT '创建时间',
+  `update_date` datetime NOT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='众包开票申请';
 
@@ -314,8 +315,8 @@ CREATE TABLE `tb_crowd_sourcing_invoice` (
   `express_update_person` varchar(255) DEFAULT NULL COMMENT '快递更新人员',
   `express_update_person_tel` varchar(255) DEFAULT NULL COMMENT '快递更新人员电话',
   `invoice_desc` varchar(200) DEFAULT NULL COMMENT '开票说明',
-  `create_date` datetime DEFAULT NULL COMMENT '创建时间',
-  `update_date` datetime DEFAULT NULL COMMENT '修改时间',
+  `create_date` datetime NOT NULL COMMENT '创建时间',
+  `update_date` datetime NOT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -331,8 +332,8 @@ CREATE TABLE `tb_greetings` (
   `id` varchar(50) NOT NULL COMMENT '主键',
   `time_quantum` int(6) NOT NULL DEFAULT '0' COMMENT '时间段：0早晨，1上午，2中午，3下午，4晚上',
   `greetings` varchar(100) DEFAULT '' COMMENT '问候语',
-  `create_date` datetime DEFAULT NULL COMMENT '接单接单时间',
-  `update_date` datetime DEFAULT NULL COMMENT '修改时间',
+  `create_date` datetime NOT NULL COMMENT '创建时间',
+  `update_date` datetime NOT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='问候语表';
 
@@ -348,8 +349,8 @@ CREATE TABLE `tb_industry` (
   `id` varchar(50) NOT NULL COMMENT '主键',
   `industry_type` varchar(50) DEFAULT NULL COMMENT '行业类型',
   `one_level` varchar(255) DEFAULT NULL COMMENT '一级id',
-  `create_date` datetime DEFAULT NULL,
-  `update_date` datetime DEFAULT NULL,
+  `create_date` datetime NOT NULL COMMENT '创建时间',
+  `update_date` datetime NOT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='行业表';
 
@@ -382,8 +383,8 @@ CREATE TABLE `tb_invoice` (
   `express_update_person` varchar(100) DEFAULT NULL COMMENT '快递更新人员',
   `express_update_person_tel` varchar(100) DEFAULT NULL COMMENT '快递更新人员电话',
   `invoice_desc` varchar(1000) DEFAULT NULL COMMENT '开票说明',
-  `create_date` datetime DEFAULT NULL COMMENT '创建时间',
-  `update_date` datetime DEFAULT NULL COMMENT '修改时间',
+  `create_date` datetime NOT NULL COMMENT '创建时间',
+  `update_date` datetime NOT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='总包发票';
 
@@ -405,8 +406,8 @@ CREATE TABLE `tb_invoice_application` (
   `application_address` varchar(36) DEFAULT NULL COMMENT '地址',
   `application_state` int(11) DEFAULT '0' COMMENT '申请状态：0.未申请；1.申请中；2.已拒绝；3.已开票，4未开票',
   `application_handle_desc` varchar(255) DEFAULT NULL COMMENT '处理说明',
-  `create_date` datetime DEFAULT NULL,
-  `update_date` datetime DEFAULT NULL,
+  `create_date` datetime NOT NULL COMMENT '创建时间',
+  `update_date` datetime NOT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -423,8 +424,8 @@ CREATE TABLE `tb_invoice_catalog` (
   `service_type` varchar(255) DEFAULT NULL COMMENT '服务类型',
   `service_content` varchar(255) DEFAULT NULL COMMENT '具体服务内容',
   `billing_category` varchar(255) DEFAULT NULL COMMENT '开票类目',
-  `create_date` datetime DEFAULT NULL,
-  `update_date` datetime DEFAULT NULL,
+  `create_date` datetime NOT NULL COMMENT '创建时间',
+  `update_date` datetime NOT NULL COMMENT '修改时间',
   KEY `id` (`id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -445,8 +446,8 @@ CREATE TABLE `tb_invoice_ladder_price` (
   `packaeg_status` int(2) DEFAULT NULL COMMENT '0分包汇总代开，1分包单人单开，2众包单人单开',
   `status` int(2) DEFAULT NULL COMMENT '0月度，1季度',
   `rate` decimal(18,4) DEFAULT NULL COMMENT '服务费（如7.5，不需把百分数换算成小数）',
-  `create_date` datetime DEFAULT NULL,
-  `update_date` datetime DEFAULT NULL,
+  `create_date` datetime NOT NULL COMMENT '创建时间',
+  `update_date` datetime NOT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='服务商发票税率梯度价';
 
@@ -462,8 +463,8 @@ CREATE TABLE `tb_invoice_list` (
   `id` varchar(50) NOT NULL COMMENT '主键',
   `invoice_id` varchar(36) DEFAULT NULL COMMENT '总包发票',
   `maker_total_invoice_id` varchar(36) DEFAULT NULL COMMENT '汇总代开发票id',
-  `create_date` datetime DEFAULT NULL COMMENT '创建时间',
-  `update_date` datetime DEFAULT NULL COMMENT '修改时间',
+  `create_date` datetime NOT NULL COMMENT '创建时间',
+  `update_date` datetime NOT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -479,8 +480,8 @@ CREATE TABLE `tb_invoice_payment_inventory` (
   `id` varchar(50) NOT NULL COMMENT '主键',
   `invoice_id` varchar(36) DEFAULT NULL COMMENT '发票id',
   `payment_inventory_id` varchar(36) DEFAULT NULL COMMENT '支付明细id',
-  `create_date` datetime DEFAULT NULL COMMENT '创建时间',
-  `update_date` datetime DEFAULT NULL COMMENT '修改时间',
+  `create_date` datetime NOT NULL COMMENT '创建时间',
+  `update_date` datetime NOT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='发票支付清单关联表';
 
@@ -497,8 +498,8 @@ CREATE TABLE `tb_lianlianpay` (
   `company_id` varchar(50) NOT NULL COMMENT '商户的企业ID',
   `oid_partner` varchar(50) NOT NULL COMMENT '连连商户号',
   `private_key` varchar(1000) NOT NULL COMMENT '连连商户号的私钥',
-  `create_date` datetime DEFAULT NULL,
-  `update_date` datetime DEFAULT NULL,
+  `create_date` datetime NOT NULL COMMENT '创建时间',
+  `update_date` datetime NOT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `UK_icr1qhlwx3lsd0terqn7w65k1` (`company_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='商户的企业连连支付账户信息表';
@@ -516,8 +517,8 @@ CREATE TABLE `tb_lianlianpay_tax` (
   `tax_id` varchar(50) NOT NULL COMMENT '商户的企业ID',
   `oid_partner` varchar(50) NOT NULL COMMENT '连连商户号',
   `private_key` varchar(1000) NOT NULL COMMENT '连连商户号的私钥',
-  `create_date` datetime DEFAULT NULL,
-  `update_date` datetime DEFAULT NULL,
+  `create_date` datetime NOT NULL COMMENT '创建时间',
+  `update_date` datetime NOT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `UK_icr1qhlwx3lsd0terqn7w65k1` (`tax_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='服务商连连支付账户信息表';
@@ -539,8 +540,8 @@ CREATE TABLE `tb_linkman` (
   `email` varchar(40) DEFAULT NULL COMMENT '邮箱',
   `is_not` int(11) DEFAULT '1' COMMENT '是否默认：0为默认，1为不默认',
   `status` int(11) DEFAULT '1' COMMENT '0为启用，1为停用',
-  `create_date` datetime DEFAULT NULL COMMENT '创建时间',
-  `update_date` datetime DEFAULT NULL COMMENT '修改时间',
+  `create_date` datetime NOT NULL COMMENT '创建时间',
+  `update_date` datetime NOT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='联系人表';
 
@@ -569,8 +570,8 @@ CREATE TABLE `tb_maker_invoice` (
   `maker_voice_url` varchar(200) DEFAULT NULL COMMENT '发票URL',
   `maker_tax_url` varchar(200) DEFAULT NULL COMMENT '分包税票',
   `maker_voice_upload_date_time` datetime DEFAULT NULL COMMENT '发票上传日期',
-  `create_date` datetime DEFAULT NULL COMMENT '创建时间',
-  `update_date` datetime DEFAULT NULL COMMENT '更新时间',
+  `create_date` datetime NOT NULL COMMENT '创建时间',
+  `update_date` datetime NOT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -596,8 +597,8 @@ CREATE TABLE `tb_maker_total_invoice` (
   `maker_invoice_url` varchar(255) DEFAULT NULL COMMENT '分包发票url',
   `maker_tax_url` varchar(300) DEFAULT NULL COMMENT '分包完税证明URL',
   `maker_voice_upload_date_time` datetime DEFAULT NULL COMMENT '发票上传日期',
-  `create_date` datetime DEFAULT NULL COMMENT '创建时间',
-  `update_date` datetime DEFAULT NULL COMMENT '修改时间',
+  `create_date` datetime NOT NULL COMMENT '创建时间',
+  `update_date` datetime NOT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -624,8 +625,8 @@ CREATE TABLE `tb_managers` (
   `user_sign` int(1) DEFAULT NULL COMMENT '1渠道商，2业务员，3管理员',
   `status` int(11) DEFAULT '0' COMMENT '0正常，1停用',
   `user_head` varchar(100) DEFAULT NULL COMMENT '头像',
-  `create_date` datetime DEFAULT NULL COMMENT '创建时间',
-  `update_date` datetime DEFAULT NULL COMMENT '修改时间',
+  `create_date` datetime NOT NULL COMMENT '创建时间',
+  `update_date` datetime NOT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='管理员表';
 
@@ -643,8 +644,8 @@ CREATE TABLE `tb_menu` (
   `menu_zhname` varchar(50) DEFAULT NULL COMMENT '中文',
   `menu_parent` int(36) DEFAULT NULL COMMENT '菜单的父菜单',
   `is_merchant` int(6) DEFAULT NULL COMMENT '是否为商户的权限0是1不是',
-  `create_date` datetime DEFAULT NULL COMMENT '创建时间',
-  `update_date` datetime DEFAULT NULL COMMENT '修改时间',
+  `create_date` datetime NOT NULL COMMENT '创建时间',
+  `update_date` datetime NOT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -669,8 +670,8 @@ CREATE TABLE `tb_merchant` (
   `login_mobile` varchar(40) DEFAULT NULL COMMENT '登录时用的手机号码',
   `head_portrait` varchar(255) DEFAULT '' COMMENT '头像',
   `status` int(11) DEFAULT '0' COMMENT '商户状态0正常，1停用',
-  `create_date` datetime DEFAULT NULL COMMENT '用户创建时间',
-  `update_date` datetime DEFAULT NULL COMMENT '用户修改时间',
+  `create_date` datetime NOT NULL COMMENT '创建时间',
+  `update_date` datetime NOT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `UK_icr1qhlwx3lsd0terqn7w65k1` (`user_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='商户信息';
@@ -687,8 +688,8 @@ CREATE TABLE `tb_merchant_catalog` (
   `id` varchar(50) NOT NULL COMMENT '主键',
   `merchant_id` varchar(36) DEFAULT NULL COMMENT '商户id',
   `catalog_id` varchar(36) DEFAULT NULL COMMENT '类目id',
-  `create_date` datetime DEFAULT NULL COMMENT '添加时间',
-  `update_date` datetime DEFAULT NULL COMMENT '修改时间',
+  `create_date` datetime NOT NULL COMMENT '创建时间',
+  `update_date` datetime NOT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='商户&类目';
 
@@ -704,8 +705,8 @@ CREATE TABLE `tb_merchant_role` (
   `id` varchar(50) NOT NULL COMMENT '主键',
   `role_name` varchar(50) DEFAULT NULL COMMENT '角色名称',
   `role_position` varchar(200) DEFAULT NULL COMMENT '角色的职位',
-  `create_date` datetime DEFAULT NULL COMMENT '创建时间',
-  `update_date` datetime DEFAULT NULL COMMENT '修改时间',
+  `create_date` datetime NOT NULL COMMENT '创建时间',
+  `update_date` datetime NOT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='商户角色信息';
 
@@ -721,8 +722,8 @@ CREATE TABLE `tb_merchant_role_menu` (
   `id` varchar(50) NOT NULL COMMENT '主键',
   `menu_id` varchar(36) DEFAULT NULL COMMENT '菜单ID',
   `merchant_role_id` varchar(36) DEFAULT NULL COMMENT '角色ID',
-  `create_date` datetime DEFAULT NULL COMMENT '接单接单时间',
-  `update_date` datetime DEFAULT NULL COMMENT '修改时间',
+  `create_date` datetime NOT NULL COMMENT '创建时间',
+  `update_date` datetime NOT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -738,8 +739,8 @@ CREATE TABLE `tb_object_menu` (
   `id` varchar(50) NOT NULL COMMENT '主键',
   `menu_id` varchar(36) DEFAULT NULL COMMENT '菜单ID',
   `object_user_id` varchar(255) DEFAULT NULL COMMENT '用户',
-  `create_date` datetime DEFAULT NULL,
-  `update_date` datetime DEFAULT NULL,
+  `create_date` datetime NOT NULL COMMENT '创建时间',
+  `update_date` datetime NOT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -754,19 +755,18 @@ DROP TABLE IF EXISTS `tb_payment_history`;
 CREATE TABLE `tb_payment_history` (
   `id` varchar(50) NOT NULL COMMENT '主键',
   `trade_no` varchar(50) NOT NULL DEFAULT '' COMMENT '支付订单号',
-  `outer_trade_no` varchar(50) NOT NULL DEFAULT '' COMMENT '订单类型（总包，分包，支付清单）',
-  `payment_type` varchar(50) NOT NULL DEFAULT '' COMMENT '支付方式',
-  `user_type` varchar(50) NOT NULL DEFAULT '' COMMENT '支付人类型',
-  `oid_partner` varchar(50) NOT NULL DEFAULT '' COMMENT '第三方支付账户',
-  `oid_paybill` varchar(50) NOT NULL DEFAULT '' COMMENT '第三方的订单ID',
-  `money_order` decimal(18,4) NOT NULL DEFAULT '0.0000' COMMENT '支付金额',
-  `result_pay` varchar(50) NOT NULL DEFAULT '' COMMENT '支付结果',
-  `pay_date` datetime NOT NULL,
-  `create_date` datetime DEFAULT NULL,
-  `update_date` datetime DEFAULT NULL,
+  `outer_trade_no` varchar(50) NOT NULL COMMENT '第三方订单号',
+  `order_type` varchar(50) NOT NULL COMMENT '交易类型',
+  `payment_method` varchar(50) NOT NULL COMMENT '交易方式',
+  `trade_object` varchar(50) NOT NULL COMMENT '交易对象类型',
+  `trade_object_id` varchar(50) NOT NULL COMMENT '交易对象ID',
+  `amount` decimal(12,2) NOT NULL COMMENT '交易金额',
+  `trade_status` varchar(50) NOT NULL COMMENT '交易结果',
+  `create_date` datetime NOT NULL COMMENT '创建时间',
+  `update_date` datetime NOT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `UK_icr1qhlwx3lsd0terqn7w65k1` (`oid_paybill`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='第三方支付记录';
+  UNIQUE KEY `UK_icr1qhlwx3lsd0terqn7w65k1` (`outer_trade_no`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='交易记录';
 
 -- ----------------------------
 -- Records of tb_payment_history
@@ -797,8 +797,8 @@ CREATE TABLE `tb_payment_inventory` (
   `package_status` int(1) DEFAULT '0' COMMENT '0总包，1众包',
   `trade_no` varchar(50) NOT NULL COMMENT '订单号',
   `trade_fail_reason` varchar(100) NOT NULL DEFAULT '' COMMENT '交易失败原因',
-  `create_date` datetime DEFAULT NULL COMMENT '创建时间',
-  `update_date` datetime DEFAULT NULL COMMENT '修改时间',
+  `create_date` datetime NOT NULL COMMENT '创建时间',
+  `update_date` datetime NOT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `UK_icr1qhlwx3lsd0terqn7w65k1` (`trade_no`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='支付清单明细';
@@ -841,8 +841,8 @@ CREATE TABLE `tb_payment_order` (
   `trade_no` varchar(50) NOT NULL COMMENT '订单号',
   `reasons_for_rejection` varchar(100) NOT NULL DEFAULT '' COMMENT '驳回理由',
   `trade_fail_reason` varchar(100) NOT NULL DEFAULT '' COMMENT '交易失败原因',
-  `create_date` datetime DEFAULT NULL COMMENT '支付订单的创建时间',
-  `update_date` datetime DEFAULT NULL COMMENT '支付订单的修改时间',
+  `create_date` datetime NOT NULL COMMENT '创建时间',
+  `update_date` datetime NOT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `UK_icr1qhlwx3lsd0terqn7w65k1` (`trade_no`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='支付单信息';
@@ -882,8 +882,8 @@ CREATE TABLE `tb_payment_order_many` (
   `trade_no` varchar(50) NOT NULL COMMENT '订单号',
   `reasons_for_rejection` varchar(100) NOT NULL DEFAULT '' COMMENT '驳回理由',
   `trade_fail_reason` varchar(100) NOT NULL DEFAULT '' COMMENT '交易失败原因',
-  `create_date` datetime DEFAULT NULL COMMENT '支付订单的创建时间',
-  `update_date` datetime DEFAULT NULL COMMENT '支付订单的修改时间',
+  `create_date` datetime NOT NULL COMMENT '创建时间',
+  `update_date` datetime NOT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `UK_icr1qhlwx3lsd0terqn7w65k1` (`trade_no`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='众包支付单信息';
@@ -907,8 +907,8 @@ CREATE TABLE `tb_payment_order_subpackage` (
   `payment_mode` int(6) DEFAULT '0' COMMENT '0线下支付',
   `payment_order_status` int(11) DEFAULT '0' COMMENT '支付订单的状态1待支付，2已支付',
   `payment_date` datetime DEFAULT NULL COMMENT '支付时间',
-  `create_date` datetime DEFAULT NULL COMMENT '支付订单的创建时间',
-  `update_date` datetime DEFAULT NULL COMMENT '支付订单的修改时间',
+  `create_date` datetime NOT NULL COMMENT '创建时间',
+  `update_date` datetime NOT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='支付单信息';
 
@@ -929,8 +929,8 @@ CREATE TABLE `tb_regulator` (
   `user_name` varchar(40) NOT NULL COMMENT '登录账号',
   `pass_word` varchar(50) NOT NULL COMMENT '登录密码',
   `status` int(6) NOT NULL DEFAULT '0' COMMENT '状态0启用，1停用',
-  `create_date` datetime DEFAULT NULL COMMENT '创建时间',
-  `update_date` datetime DEFAULT NULL COMMENT '修改时间',
+  `create_date` datetime NOT NULL COMMENT '创建时间',
+  `update_date` datetime NOT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `UK_icr1qhlwx3lsd0terqn7w65k1` (`user_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='监管部门';
@@ -948,8 +948,8 @@ CREATE TABLE `tb_regulator_tax` (
   `tax_id` varchar(36) NOT NULL COMMENT '服务商ID',
   `regulator_id` varchar(50) NOT NULL COMMENT '监管部门ID',
   `status` int(6) NOT NULL DEFAULT '0' COMMENT '状态0开启监管，1关闭监管',
-  `create_date` datetime NOT NULL COMMENT '开始监管时间',
-  `update_date` datetime NOT NULL,
+  `create_date` datetime NOT NULL COMMENT '创建时间',
+  `update_date` datetime NOT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='监管部门监管的服务商';
 
@@ -976,8 +976,8 @@ CREATE TABLE `tb_task` (
   `cooperate_mode` varchar(50) DEFAULT NULL COMMENT '合作类型0,总包+分包  1众包',
   `task_mode` varchar(50) DEFAULT NULL COMMENT '任务模式0派单，1抢单，2混合',
   `state` int(20) DEFAULT '0' COMMENT '任务状态,0发布中,1已关单,2验收中,3已完毕,4已作废',
-  `create_date` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `update_date` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '修改时间',
+  `create_date` datetime NOT NULL COMMENT '创建时间',
+  `update_date` datetime NOT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='任务表';
 
@@ -1003,8 +1003,8 @@ CREATE TABLE `tb_tax` (
   `member_id` varchar(40) DEFAULT '' COMMENT '网商银行会员号',
   `sub_account_no` varchar(40) DEFAULT '' COMMENT '网商银行子账户唯一识别码',
   `tax_status` int(11) DEFAULT NULL COMMENT '公司状态0正常，1停用',
-  `create_date` datetime DEFAULT NULL,
-  `update_date` datetime DEFAULT NULL,
+  `create_date` datetime NOT NULL COMMENT '创建时间',
+  `update_date` datetime NOT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='服务商公司信息';
 
@@ -1028,8 +1028,8 @@ CREATE TABLE `tb_tax_package` (
   `bank_code` varchar(40) DEFAULT NULL COMMENT '银行账号',
   `package_status` int(11) DEFAULT '0' COMMENT '0总包，1众包',
   `support_category` varchar(200) DEFAULT NULL COMMENT '支持的类目ID 逗号分隔 全量更新',
-  `create_date` datetime DEFAULT NULL COMMENT '创建时间',
-  `update_date` datetime DEFAULT NULL COMMENT '修改时间',
+  `create_date` datetime NOT NULL COMMENT '创建时间',
+  `update_date` datetime NOT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='服务商的总包众包信息';
 
@@ -1069,8 +1069,8 @@ CREATE TABLE `tb_worker` (
   `agreementUrl` varchar(400) DEFAULT NULL COMMENT '合同地址',
   `head_portraits` varchar(200) DEFAULT NULL COMMENT '头像',
   `picture` varchar(200) DEFAULT NULL COMMENT '照片',
-  `create_date` datetime DEFAULT NULL COMMENT '创建时间',
-  `update_date` datetime DEFAULT NULL COMMENT '修改时间',
+  `create_date` datetime NOT NULL COMMENT '创建时间',
+  `update_date` datetime NOT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `UK_icr1qhlwx3lsd0terqn7w65k1` (`user_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='创客表';
@@ -1090,8 +1090,8 @@ CREATE TABLE `tb_worker_bank` (
   `bank_name` varchar(40) DEFAULT NULL COMMENT '开户行',
   `bank_code` varchar(40) DEFAULT NULL COMMENT '银行卡号',
   `sort` int(2) DEFAULT '0' COMMENT '优先度（越小越先）',
-  `create_date` datetime DEFAULT NULL COMMENT '接单接单时间',
-  `update_date` datetime DEFAULT NULL COMMENT '修改时间',
+  `create_date` datetime NOT NULL COMMENT '创建时间',
+  `update_date` datetime NOT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='创客绑定的银行卡号';
 
@@ -1117,8 +1117,8 @@ CREATE TABLE `tb_worker_task` (
   `check_date` datetime DEFAULT NULL COMMENT '验收日期',
   `status` int(6) DEFAULT '0' COMMENT '创客完成状态0进行中1已完成2已失效3已提交4已验收',
   `arrange_person` varchar(100) DEFAULT NULL COMMENT '派单人员',
-  `create_date` datetime DEFAULT NULL COMMENT '接单接单时间',
-  `update_date` datetime DEFAULT NULL COMMENT '修改时间',
+  `create_date` datetime NOT NULL COMMENT '创建时间',
+  `update_date` datetime NOT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

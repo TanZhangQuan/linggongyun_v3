@@ -7,8 +7,6 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.example.common.enums.OrderType;
-import com.example.common.enums.PaymentType;
 import com.example.common.enums.UserType;
 import com.example.common.lianlianpay.entity.PaymentRequestBean;
 import com.example.common.lianlianpay.entity.ServicePayApplyRequest;
@@ -138,20 +136,20 @@ public class LianLianPayTaxServiceImpl extends ServiceImpl<LianlianpayTaxDao, Li
 
             //保存交易记录
             //先查看是否有交易的记录,有的话就覆盖
-            PaymentHistory paymentHistory = paymentHistoryService.getOne(new QueryWrapper<PaymentHistory>().lambda().eq(PaymentHistory::getOidPaybill, result.get("oid_paybill")));
-            if (paymentHistory == null) {
-                paymentHistory = new PaymentHistory();
-            }
-            paymentHistory.setTradeNo(paymentInventory.getId());
-            paymentHistory.setOrderType(OrderType.INVENTORY);
-            paymentHistory.setPaymentType(PaymentType.LIANLIAN);
-            paymentHistory.setOidPartner(result.get("oid_partner"));
-            paymentHistory.setOidPaybill(result.get("oid_paybill"));
-            paymentHistory.setMoneyOrder(new BigDecimal(result.get("money_order")));
-            paymentHistory.setResultPay(result.get("result_pay"));
-            paymentHistory.setUserType(UserType.ADMIN);
-            paymentHistory.setPayDate(DateUtil.parseLocalDateTime(result.get("dt_order"),DatePattern.PURE_DATETIME_PATTERN));
-            paymentHistoryService.saveOrUpdate(paymentHistory);
+//            PaymentHistory paymentHistory = paymentHistoryService.getOne(new QueryWrapper<PaymentHistory>().lambda().eq(PaymentHistory::getOidPaybill, result.get("oid_paybill")));
+//            if (paymentHistory == null) {
+//                paymentHistory = new PaymentHistory();
+//            }
+//            paymentHistory.setTradeNo(paymentInventory.getId());
+//            paymentHistory.setOrderType(OrderType.INVENTORY);
+//            paymentHistory.setPaymentMethod(PaymentMethod.LIANLIAN);
+//            paymentHistory.setOidPartner(result.get("oid_partner"));
+//            paymentHistory.setOidPaybill(result.get("oid_paybill"));
+//            paymentHistory.setMoneyOrder(new BigDecimal(result.get("money_order")));
+//            paymentHistory.setResultPay(result.get("result_pay"));
+//            paymentHistory.setUserType(UserType.ADMIN);
+//            paymentHistory.setPayDate(DateUtil.parseLocalDateTime(result.get("dt_order"),DatePattern.PURE_DATETIME_PATTERN));
+//            paymentHistoryService.saveOrUpdate(paymentHistory);
 
             if ("SUCCESS".equals(result.get("result_pay").toUpperCase())) {
                 paymentInventory.setPaymentStatus(1);

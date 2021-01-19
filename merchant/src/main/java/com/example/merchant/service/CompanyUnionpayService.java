@@ -30,6 +30,14 @@ public interface CompanyUnionpayService extends IService<CompanyUnionpay> {
     /**
      * 查询商户-服务商银联银行记录
      *
+     * @param subAccountCode
+     * @return
+     */
+    CompanyUnionpay queryMerchantUnionpay(String subAccountCode);
+
+    /**
+     * 查询商户-服务商银联银行记录
+     *
      * @param companyId
      * @param taxUnionpayId
      * @param unionpayBankType

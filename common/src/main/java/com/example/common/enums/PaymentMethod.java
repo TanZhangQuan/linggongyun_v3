@@ -10,9 +10,14 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 @SwaggerDisplayEnum()
-public enum TradeMethod {
-    UNIONPAY("UNIONPAY", "银联支付"),
-    ALIPAY("ALIPAY", "支付宝");
+public enum PaymentMethod {
+    OFFLINE("OFFLINE", "线下支付"),
+    LIANLIAN("LIANLIAN", "连连支付"),
+    WANGSHANG("WANGSHANG", "网商银行支付"),
+    UNIONSJBK("UNIONSJBK", "银联盛京银行支付"),
+    UNIONPABK("UNIONPABK", "银联平安银行支付"),
+    UNIONWSBK("UNIONWSBK", "银联网商银行支付"),
+    UNIONZSBK("UNIONZSBK", "银联招商银行支付");
 
     private final String value;
     private final String desc;

@@ -7,7 +7,7 @@
         <id column="id" property="id" />
         <result column="payment_order_id" property="paymentOrderId" />
         <result column="order_type" property="orderType" />
-        <result column="payment_type" property="paymentType" />
+        <result column="payment_type" property="paymentMethod" />
         <result column="oid_partner" property="oidPartner" />
         <result column="oid_paybill" property="oidPaybill" />
         <result column="money_order" property="moneyOrder" />
