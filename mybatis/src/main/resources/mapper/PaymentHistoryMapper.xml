@@ -3,22 +3,35 @@
 <mapper namespace="com.example.mybatis.mapper.PaymentHistoryDao">
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="com.example.mybatis.entity.PaymentHistory">
+    <resultMap id="paymentHistoryListVO" type="com.example.mybatis.vo.PaymentHistoryListVO">
         <id column="id" property="id" />
-        <result column="payment_order_id" property="paymentOrderId" />
+        <result column="trade_no" property="tradeNo" />
+        <result column="outer_trade_no" property="outerTradeNo" />
         <result column="order_type" property="orderType" />
-        <result column="payment_type" property="paymentMethod" />
-        <result column="oid_partner" property="oidPartner" />
-        <result column="oid_paybill" property="oidPaybill" />
-        <result column="money_order" property="moneyOrder" />
-        <result column="result_pay" property="resultPay" />
+        <result column="payment_method" property="paymentMethod" />
+        <result column="amount" property="amount" />
+        <result column="trade_status" property="tradeStatus" />
         <result column="create_date" property="createDate" />
-        <result column="update_date" property="updateDate" />
     </resultMap>
 
-    <!-- 通用查询结果列 -->
-    <sql id="Base_Column_List">
-        id, payment_order_id, order_type, payment_type, oid_partner, oid_paybill, money_order, result_pay, create_date, update_date
-    </sql>
+    <select id="queryPaymentHistoryList" resultMap="paymentHistoryListVO">
+        SELECT t1.id, t1.trade_no, t1.outer_trade_no, t1.order_type, t1.payment_method, t1.amount, t1.trade_status, t1.create_date FROM tb_payment_history t1
+        WHERE t1.trade_object = #{tradeObject} AND t1.trade_object_id = #{tradeObjectId}
+        <if test="beginDate != null">
+            AND DATEDIFF(t1.create_date, #{beginDate}) <![CDATA[ >= ]]> 0
+        </if>
+        <if test="endDate != null">
+            AND DATEDIFF(t1.create_date, #{endDate}) <![CDATA[ <= ]]> 0
+        </if>
+        <if test="orderType != null">
+            AND t1.order_type = #{orderType}
+        </if>
+        <if test="paymentMethod != null">
+            AND t1.payment_method = #{paymentMethod}
+        </if>
+        <if test="tradeStatus != null">
+            AND t1.trade_status = #{tradeStatus}
+        </if>
+    </select>
 
 </mapper>
