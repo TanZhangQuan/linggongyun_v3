@@ -16,6 +16,6 @@ public interface UnionpayConstant {
     /**
      * 提现交易回调地址
      */
-    String TXCALLBACKADDR = "";
+    String TXCALLBACKADDR = "https://lgy-v3.lgyun.com.cn/notice/unionpay/txResult";
 
 }
