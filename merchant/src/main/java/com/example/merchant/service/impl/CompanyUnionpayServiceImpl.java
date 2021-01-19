@@ -93,7 +93,7 @@ public class CompanyUnionpayServiceImpl extends ServiceImpl<CompanyUnionpayDao, 
 
             JSONObject jsonObject = UnionpayUtil.AC081(taxUnionpay.getMerchno(), taxUnionpay.getAcctno(), taxUnionpay.getPfmpubkey(), taxUnionpay.getPrikey(), companyUnionpay.getUid());
             if (jsonObject == null) {
-                log.error("查询子帐号" + taxUnionpay.getUnionpayBankType().getDesc() + "银联支付余额失败");
+                log.error("查询子帐号" + taxUnionpay.getUnionpayBankType().getDesc() + "银联余额失败");
                 merchantUnionpayBalanceVOList.add(merchantUnionpayBalanceVO);
                 continue;
             }
@@ -101,7 +101,7 @@ public class CompanyUnionpayServiceImpl extends ServiceImpl<CompanyUnionpayDao, 
             Boolean boolSuccess = jsonObject.getBoolean("success");
             if (boolSuccess == null || !boolSuccess) {
                 String errMsg = jsonObject.getString("err_msg");
-                log.error("查询子帐号" + taxUnionpay.getUnionpayBankType().getDesc() + "银联支付余额失败: " + errMsg);
+                log.error("查询子帐号" + taxUnionpay.getUnionpayBankType().getDesc() + "银联余额失败: " + errMsg);
                 merchantUnionpayBalanceVOList.add(merchantUnionpayBalanceVO);
                 continue;
             }
@@ -110,7 +110,7 @@ public class CompanyUnionpayServiceImpl extends ServiceImpl<CompanyUnionpayDao, 
             String rtnCode = returnValue.getString("rtn_code");
             if (!("S00000".equals(rtnCode))) {
                 String errMsg = returnValue.getString("err_msg");
-                log.error("查询子帐号" + taxUnionpay.getUnionpayBankType().getDesc() + "银联支付余额失败: " + errMsg);
+                log.error("查询子帐号" + taxUnionpay.getUnionpayBankType().getDesc() + "银联余额失败: " + errMsg);
                 merchantUnionpayBalanceVOList.add(merchantUnionpayBalanceVO);
                 continue;
             }

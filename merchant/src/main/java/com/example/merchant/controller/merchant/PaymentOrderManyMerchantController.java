@@ -64,7 +64,7 @@ public class PaymentOrderManyMerchantController {
 
     @PostMapping("/paymentOrderManyPay")
     @ApiOperation(value = "商户众包支付", notes = "商户众包支付")
-    public ReturnJson paymentOrderManyPay(@Valid @RequestBody PaymentOrderManyPayDTO paymentOrderManyPayDTO) {
+    public ReturnJson paymentOrderManyPay(@Valid @RequestBody PaymentOrderManyPayDTO paymentOrderManyPayDTO) throws Exception {
         return paymentOrderManyService.paymentOrderManyPay(paymentOrderManyPayDTO);
     }
 }

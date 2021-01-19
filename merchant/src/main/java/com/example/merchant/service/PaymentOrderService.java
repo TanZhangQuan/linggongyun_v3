@@ -51,7 +51,7 @@ public interface PaymentOrderService extends IService<PaymentOrder> {
      * @param paymentOrderPayDTO
      * @return
      */
-    ReturnJson paymentOrderPay(PaymentOrderPayDTO paymentOrderPayDTO);
+    ReturnJson paymentOrderPay(PaymentOrderPayDTO paymentOrderPayDTO) throws Exception;
 
     /**
      * 总包支付信息

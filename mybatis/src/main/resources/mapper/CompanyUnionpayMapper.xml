@@ -25,7 +25,7 @@
 
     <select id="queryMerchantUnionpayUnionpayBankType" resultType="com.example.mybatis.entity.CompanyUnionpay">
         SELECT t1.* FROM tb_company_unionpay t1 INNER JOIN tb_tax_unionpay t2 ON t1.tax_unionpay_id = t2.id
-        WHERE t1.company_id = #{companyId} AND t2.tax_unionpay_id = #{taxUnionpayId} AND t2.unionpay_bank_type = #{unionpayBankType}
+        WHERE t1.company_id = #{companyId} AND t2.id = #{taxUnionpayId} AND t2.unionpay_bank_type = #{unionpayBankType}
     </select>
 
     <select id="queryCompanyUnionpayMethod" resultType="com.example.common.enums.UnionpayBankType">

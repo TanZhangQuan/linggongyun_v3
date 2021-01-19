@@ -172,6 +172,12 @@
 			<scope>provided</scope>
 		</dependency>
 
+        <dependency>
+            <groupId>jsch</groupId>
+            <artifactId>jsch</artifactId>
+            <version>0.1.29</version>
+        </dependency>
+
     </dependencies>
 
 <!--	<build>-->
