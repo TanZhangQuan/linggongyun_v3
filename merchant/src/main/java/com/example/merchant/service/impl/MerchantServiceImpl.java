@@ -398,17 +398,6 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
 
         Managers managers = managersDao.selectById(userId);
 
-        //代理商创建默认选定它的业务员与他自己
-        if (managers.getUserSign() == 1) {
-            Agent agent = agentDao.selectOne(new QueryWrapper<Agent>()
-                    .eq("managers_id", managers.getId()));
-            companyInfo.setAgentId(agent.getId());
-            companyInfo.setSalesManId(agent.getSalesManId());
-        }
-        //业务员创建默认选定业务员
-        if (managers.getUserSign() == 2) {
-            companyInfo.setSalesManId(managers.getId());
-        }
         //管理员创建直接通过审核
         if (managers.getUserSign() == 3) {
             companyInfo.setAuditStatus(1);
@@ -439,7 +428,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         merchant.setPassWord(PWD_KEY + MD5.md5(companyDto.getAddMerchantDto().getPassWord()));
         merchant.setCompanyId(companyInfo.getId());
         merchant.setCompanyName(companyInfo.getCompanyName());
-        merchant.setRoleName("admin");
+        merchant.setRoleName("管理员");
         merchantDao.insert(merchant);
         List<MenuListVO> listVos = menuDao.getMenuList();
         for (int i = 0; i < listVos.size(); i++) {
@@ -793,7 +782,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
     @Override
     public ReturnJson queryMerchantTransactionFlow(String merchantId, Integer pageNo, Integer pageSize) {
         Page<TaxTransactionFlowVO> merchantPage = new Page<>(pageNo, pageSize);
-        List<TaxTransactionFlowVO> taxTransactionFlowVOS = merchantDao.queryMerchantTransactionFlow(merchantId, merchantPage);
+        IPage<TaxTransactionFlowVO> taxTransactionFlowVOS = merchantDao.queryMerchantTransactionFlow(merchantId, merchantPage);
         return ReturnJson.success(taxTransactionFlowVOS);
     }
 

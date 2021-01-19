@@ -137,7 +137,7 @@ public class InvoicePassController {
     @ApiOperation("总包+分包支付明细,id可以传多个用逗号隔开")
     @PostMapping("/getTotalBranchList")
     public ReturnJson getTotalBranchList(@RequestParam @NotBlank(message = "支付ID不能为空") String paymentOrderIds,
-                                         @RequestParam @NotBlank(message = "支付类型不能为空") Integer type) {
+                                         @RequestParam @NotNull(message = "支付类型不能为空") Integer type) {
         return makerTotalInvoiceService.getTotalBranchList(paymentOrderIds,type);
     }
 
