@@ -61,6 +61,7 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/chat/**", "anon");
         filterChainDefinitionMap.put("/application/**", "anon");
         filterChainDefinitionMap.put("/common/**", "anon");
+        filterChainDefinitionMap.put("/notice/**", "anon");
         filterChainDefinitionMap.put("/static/image/**", "anon");
         filterChainDefinitionMap.put("/merchant/login", "anon");
         //放行所有模板的下载
