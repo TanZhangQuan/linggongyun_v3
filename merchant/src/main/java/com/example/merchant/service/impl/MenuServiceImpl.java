@@ -154,18 +154,17 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ReturnJson savePlatRole(SaveManagersRoleDTO saveManagersRoleDto, String managersId) {
-
         Managers managersOne = managersDao.selectOne(new QueryWrapper<Managers>().eq("mobile_code",
                 saveManagersRoleDto.getMobileCode()));
-        if (managersOne != null) {
-            return ReturnJson.error("此手机号码已近注册过！");
-        }
         Managers managers = new Managers();
         BeanUtils.copyProperties(saveManagersRoleDto, managers);
         managers.setParentId(managersId);
         managers.setUserSign(3);
         managers.setPassWord(PWD_KEY + MD5.md5(saveManagersRoleDto.getPassWord()));
         if ("".equals(saveManagersRoleDto.getId())) {
+            if (managersOne != null) {
+                return ReturnJson.error("此手机号码已近注册过！");
+            }
             managersDao.insert(managers);
             String[] menuId = saveManagersRoleDto.getMenuIds().split(",");
             for (int i = 0; i < menuId.length; i++) {
@@ -176,6 +175,9 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
             }
             return ReturnJson.success("添加成功");
         } else {
+            if (!managersOne.getId().equals(managers.getId())) {
+                return ReturnJson.error("此手机号码已近注册过！");
+            }
             managersDao.updateById(managers);
             objectMenuDao.delete(new QueryWrapper<ObjectMenu>().eq("object_user_id", managers.getId()));
             String[] menuId = saveManagersRoleDto.getMenuIds().split(",");

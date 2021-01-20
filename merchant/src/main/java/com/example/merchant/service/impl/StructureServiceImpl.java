@@ -68,8 +68,13 @@ public class StructureServiceImpl implements StructureService {
 
     @Override
     public ReturnJson addSalesMan(ManagersDTO managersDto) {
+        Managers managersOne = managersDao.selectOne(new QueryWrapper<Managers>().eq("mobile_code",
+                managersDto.getMobileCode()));
         Managers managers = managersDao.selectById(managersDto.getId());
         if (managers == null) {
+            if (managersOne != null) {
+                return ReturnJson.error("此手机号码已近注册过！");
+            }
             managers = new Managers();
             BeanUtils.copyProperties(managersDto, managers);
             managers.setRoleName("业务员");
@@ -95,6 +100,9 @@ public class StructureServiceImpl implements StructureService {
             objectMenuService.saveBatch(objectMenuList);
             return ReturnJson.success("添加业务员成功！");
         } else {
+            if (!managersOne.getId().equals(managers.getId())) {
+                return ReturnJson.error("此手机号码已近注册过！");
+            }
             BeanUtils.copyProperties(managersDto, managers);
             if (managers.getPassWord() != null) {
                 managers.setPassWord(PWD_KEY + MD5.md5(managersDto.getInitPassWord()));
@@ -180,10 +188,15 @@ public class StructureServiceImpl implements StructureService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ReturnJson addAgent(AgentInfoDTO agentInfoDto) {
+        Managers managersOne = managersDao.selectOne(new QueryWrapper<Managers>().eq("mobile_code",
+                agentInfoDto.getLinkMobile()));
         Managers managers = new Managers();
         Agent agent = new Agent();
         //ID不为空进入添加
         if (StringUtils.isEmpty(agentInfoDto.getAgentId())) {
+            if (managersOne != null) {
+                return ReturnJson.error("此手机号码已近注册过！");
+            }
             managers.setPassWord(PWD_KEY + MD5.md5(agentInfoDto.getInitPassWord()));
             managers.setRealName(agentInfoDto.getAgentName());
             managers.setUserName(agentInfoDto.getUserName());
@@ -217,6 +230,9 @@ public class StructureServiceImpl implements StructureService {
 
             return ReturnJson.success("添加代理商成功!");
         } else {
+            if (!managersOne.getId().equals(managers.getId())) {
+                return ReturnJson.error("此手机号码已近注册过！");
+            }
             //编辑
             managers.setPassWord(PWD_KEY + MD5.md5(agentInfoDto.getInitPassWord()));
             managers.setRealName(agentInfoDto.getAgentName());
