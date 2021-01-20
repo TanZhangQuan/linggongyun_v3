@@ -33,15 +33,6 @@ public class StructureController {
         return structureService.addSalesMan(managersDto);
     }
 
-    @PostMapping("/updateSalesMan")
-    @ApiOperation(value = "编辑业务员", notes = "编辑业务员")
-    @ApiImplicitParams(value = {
-            @ApiImplicitParam(name = "managersDto", value = "业务员的信息", required = true, dataType = "ManagersDTO")
-    })
-    public ReturnJson updateSalesMan(@Valid @RequestBody ManagersDTO managersDto) {
-        return structureService.updateSalesMan(managersDto);
-    }
-
     @PostMapping("/findBySalesManId")
     @ApiOperation(value = "按ID查找业务员(编辑业务员时用来获取业务员信息)", notes = "按ID查找业务员(编辑业务员时用来获取业务员信息)")
     @ApiImplicitParams(value = {
@@ -52,7 +43,7 @@ public class StructureController {
     }
 
     @PostMapping("/getSalesManAll")
-    @ApiOperation(value = "查询所以业务员", notes = "查询所以业务员")
+    @ApiOperation(value = "查询所有业务员", notes = "查询所有业务员")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "pageNo", value = "当前页数", required = true),
             @ApiImplicitParam(name = "pageSize", value = "一页的条数", required = true)
@@ -120,17 +111,8 @@ public class StructureController {
         return structureService.addAgent(agentInfoDto);
     }
 
-    @PostMapping("/updataAgent")
-    @ApiOperation(value = "编辑代理商", notes = "编辑代理商")
-    @ApiImplicitParams(value = {
-            @ApiImplicitParam(name = "agentInfoDto", value = "代理商的信息", required = true, dataType = "AgentInfoDTO")
-    })
-    public ReturnJson updataAgent(@Valid @RequestBody AgentInfoDTO agentInfoDto) {
-        return structureService.updataAgent(agentInfoDto);
-    }
-
     @PostMapping("/getAgentAll")
-    @ApiOperation(value = "查询所以代理商", notes = "查询所以代理商")
+    @ApiOperation(value = "查询所有代理商", notes = "查询所有代理商")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "pageNo", value = "当前页数", required = true),
             @ApiImplicitParam(name = "pageSize", value = "一页的条数", required = true)

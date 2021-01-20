@@ -72,7 +72,7 @@ public class Managers extends BaseEntity {
     private String paasName;
 
     /**
-     * 0平台普通用户，1渠道商，2业务员，3服务商，4管理员
+     * 1渠道商，2业务员，3管理员
      */
     private Integer userSign;
 

@@ -19,4 +19,6 @@ public interface MenuDao extends BaseMapper<Menu> {
     List<MenuListVO> getMenuList();
 
     List<MenuListVO> getPlatformMenuList();
+
+    List<MenuListVO> getAgentMenuList();
 }

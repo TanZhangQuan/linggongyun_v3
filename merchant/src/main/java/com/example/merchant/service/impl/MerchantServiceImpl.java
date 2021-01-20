@@ -554,11 +554,13 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
     public ReturnJson queryAgent(String userId) {
         List<Agent> list = agentDao.selectList(new QueryWrapper<Agent>().eq("agent_status", 0));
         Managers managers = managersDao.selectById(userId);
+        // 管理员登录 查询所有可用代理商
         if (managers.getUserSign() == 2) {
             list = agentDao.selectList(new QueryWrapper<Agent>()
                     .eq("agent_status", 0)
                     .eq("sales_man_id", managers.getId()));
         }
+        // 代理商登录 查询自己
         if (managers.getUserSign() == 1) {
             list = agentDao.selectList(new QueryWrapper<Agent>()
                     .eq("managers_id", userId));
@@ -580,21 +582,33 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         CompanyInfo companyInfo = companyInfoDao.selectById(companyId);
         BeanUtils.copyProperties(companyInfo, companyInfoVo);
         companyVo.setCompanyInfoVo(companyInfoVo);
+
+        //获取公司开票信息
         QueryInvoiceInfoVO queryInvoiceInfoVo = new QueryInvoiceInfoVO();
         CompanyInvoiceInfo companyInvoiceInfo = companyInvoiceInfoDao.selectOne(new QueryWrapper<CompanyInvoiceInfo>().eq("company_id", companyId));
         BeanUtils.copyProperties(companyInvoiceInfo, queryInvoiceInfoVo);
         companyVo.setQueryInvoiceInfoVo(queryInvoiceInfoVo);
+
+        //获取公司的登录信息
         Merchant merchant = merchantDao.selectOne(new QueryWrapper<Merchant>().eq("company_id", companyId).eq("parent_id", 0));
         QueryMerchantInfoVO queryMerchantInfoVo = new QueryMerchantInfoVO();
         BeanUtils.copyProperties(merchant, queryMerchantInfoVo);
+
+        //支付密码密码设置为空不可见
         queryMerchantInfoVo.setPassWord(null);
         queryMerchantInfoVo.setPayPwd(null);
         companyVo.setQueryMerchantInfoVo(queryMerchantInfoVo);
+
+        //业务员与代理商信息
         QueryCooperationInfoVO queryCooperationInfoVo = new QueryCooperationInfoVO();
         queryCooperationInfoVo.setSalesManId(companyInfo.getSalesManId());
         queryCooperationInfoVo.setAgentId(companyInfo.getAgentId());
+
+        //获取业务员
         Managers managers = managersDao.selectById(companyInfo.getSalesManId());
         queryCooperationInfoVo.setSalesManName(managers.getRealName());
+
+        //获取代理商
         if (companyInfo.getAgentId() != null && companyInfo.getAgentId() == "") {
             managers = managersDao.selectById(companyInfo.getAgentId());
             queryCooperationInfoVo.setAgentName(managers.getRealName());
