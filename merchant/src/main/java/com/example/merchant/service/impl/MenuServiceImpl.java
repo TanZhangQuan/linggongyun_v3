@@ -62,13 +62,15 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
     }
 
     @Override
-    public ReturnJson getPlatformMenuList() {
-        ReturnJson returnJson = new ReturnJson("查询失败", 300);
-        List<MenuListVO> listVos = menuDao.getPlatformMenuList();
-        if (listVos != null && listVos.size() != 0) {
-            returnJson = new ReturnJson("查询成功", listVos, 200);
+    public ReturnJson getPlatformMenuList(String userId) {
+        Managers managers = managersDao.selectById(userId);
+        List<MenuListVO> listVos = null;
+        if (managers.getUserSign() == 3) {
+            listVos = menuDao.getPlatformMenuList();
+        } else {
+            listVos = menuDao.getAgentMenuList();
         }
-        return returnJson;
+        return ReturnJson.success(listVos);
     }
 
     @Override
@@ -85,7 +87,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
         Merchant merchant = merchantDao.selectById(merchantDto.getId());
 
         if ("".equals(merchantDto.getId())) {
-            Merchant merchant1=merchantDao.selectById(merchantId);
+            Merchant merchant1 = merchantDao.selectById(merchantId);
             merchant = new Merchant();
             BeanUtils.copyProperties(merchantDto, merchant);
             merchant.setParentId(merchantId);
@@ -228,13 +230,13 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
             return ReturnJson.error("merchantId不能为空");
         }
         List<RoleMenuVO> list = objectMenuDao.getRolemenu(userId);
-        RoleMenuVO roleMenuVo=list.get(0);
+        RoleMenuVO roleMenuVo = list.get(0);
         return ReturnJson.success(roleMenuVo);
     }
 
     @Override
     public ReturnJson queryMenuByUserId(String userId) {
-        List<String> menuList=objectMenuDao.queryMenuByUserId(userId);
+        List<String> menuList = objectMenuDao.queryMenuByUserId(userId);
         return ReturnJson.success(menuList);
     }
 

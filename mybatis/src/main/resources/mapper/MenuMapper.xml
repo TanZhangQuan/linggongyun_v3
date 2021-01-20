@@ -64,4 +64,23 @@
         ORDER BY
             me.id ASC
     </select>
+
+    <select id="getAgentMenuList" resultMap="MenuList">
+        SELECT
+            me.id,
+            me.menu_name,
+            me.menu_zhname,
+            mes.id AS ids,
+            mes.menu_name AS NAME,
+            mes.menu_zhname AS zhname
+        FROM
+            tb_menu me
+        LEFT JOIN tb_menu mes ON me.id = mes.menu_parent
+        WHERE
+            me.menu_parent IS NULL
+        AND me.is_merchant != 2
+        AND me.id IN (1, 2, 3, 4, 12, 5, 7)
+        ORDER BY
+            me.id ASC
+    </select>
 </mapper>

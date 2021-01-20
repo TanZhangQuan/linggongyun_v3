@@ -33,8 +33,9 @@ public class MenuPaasController {
 
     @ApiOperation("查询权限菜单")
     @GetMapping(value = "/getPlatformMenuList")
-    public ReturnJson getPlatformMenuList() {
-        return menuService.getPlatformMenuList();
+    @LoginRequired
+    public ReturnJson getPlatformMenuList(@RequestAttribute("userId")@ApiParam(hidden = true) String userId) {
+        return menuService.getPlatformMenuList(userId);
     }
 
     @ApiOperation("添加子用户or编辑")
