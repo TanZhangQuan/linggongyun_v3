@@ -306,10 +306,10 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         CompanyInfo companyInfo = companyInfoDao.selectById(merchantId);
         if (companyInfo.getAuditStatus() == 0) {
             companyInfoDao.deleteById(merchantId);
-            merchantDao.delete(new QueryWrapper<Merchant>().eq("company_id",merchantId));
-            objectMenuService.remove(new QueryWrapper<ObjectMenu>().eq("object_user_id",merchantId));
-            addressDao.delete(new QueryWrapper<Address>().eq("company_id",merchantId));
-            linkmanDao.delete(new QueryWrapper<Linkman>().eq("company_id",merchantId));
+            merchantDao.delete(new QueryWrapper<Merchant>().eq("company_id", merchantId));
+            objectMenuService.remove(new QueryWrapper<ObjectMenu>().eq("object_user_id", merchantId));
+            addressDao.delete(new QueryWrapper<Address>().eq("company_id", merchantId));
+            linkmanDao.delete(new QueryWrapper<Linkman>().eq("company_id", merchantId));
             return ReturnJson.success("删除成功！");
         }
         List<Task> tasks = taskService.list(new QueryWrapper<Task>().eq("merchant_id", merchantId));
@@ -317,10 +317,10 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         List<PaymentOrderMany> paymentOrderManies = paymentOrderManyDao.selectList(new QueryWrapper<PaymentOrderMany>().eq("company_id", merchantId));
         if (VerificationCheck.listIsNull(tasks) && VerificationCheck.listIsNull(paymentOrders) && VerificationCheck.listIsNull(paymentOrderManies)) {
             companyInfoDao.deleteById(merchantId);
-            merchantDao.delete(new QueryWrapper<Merchant>().eq("company_id",merchantId));
-            objectMenuService.remove(new QueryWrapper<ObjectMenu>().eq("object_user_id",merchantId));
-            addressDao.delete(new QueryWrapper<Address>().eq("company_id",merchantId));
-            linkmanDao.delete(new QueryWrapper<Linkman>().eq("company_id",merchantId));
+            merchantDao.delete(new QueryWrapper<Merchant>().eq("company_id", merchantId));
+            objectMenuService.remove(new QueryWrapper<ObjectMenu>().eq("object_user_id", merchantId));
+            addressDao.delete(new QueryWrapper<Address>().eq("company_id", merchantId));
+            linkmanDao.delete(new QueryWrapper<Linkman>().eq("company_id", merchantId));
             return ReturnJson.success("删除成功！");
         }
         return ReturnJson.error("该商户做过业务，只能停用该用户！");
@@ -647,9 +647,11 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         BeanUtils.copyProperties(updateCompanyDto.getUpdateMerchantInfDto(), merchant);
 
         //判断是否存在相同的登录账号
-        Merchant merchant1 = merchantDao.selectOne(new QueryWrapper<Merchant>().eq("user_name", updateCompanyDto.getUpdateMerchantInfDto().getUserName()));
+        Merchant merchant1 = merchantDao.selectOne(new QueryWrapper<Merchant>().eq("user_name", merchant.getUserName()));
         if (merchant1 != null) {
-            throw new CommonException(300, "登录账号存在相同的，请修改后重新操作！");
+            if (!merchant.getId().equals(merchant1.getId())) {
+                throw new CommonException(300, "登录账号存在相同的，请修改后重新操作！");
+            }
         }
 
         if (StringUtils.isNotBlank(updateCompanyDto.getUpdateMerchantInfDto().getPassWord())) {
