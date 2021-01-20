@@ -108,7 +108,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
     @Resource
     private MenuDao menuDao;
     @Resource
-    private ObjectMenuDao objectMenuDao;
+    private ObjectMenuService objectMenuService;
     @Resource
     private AgentDao agentDao;
     @Resource
@@ -306,6 +306,10 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         CompanyInfo companyInfo = companyInfoDao.selectById(merchantId);
         if (companyInfo.getAuditStatus() == 0) {
             companyInfoDao.deleteById(merchantId);
+            merchantDao.delete(new QueryWrapper<Merchant>().eq("company_id",merchantId));
+            objectMenuService.remove(new QueryWrapper<ObjectMenu>().eq("object_user_id",merchantId));
+            addressDao.delete(new QueryWrapper<Address>().eq("company_id",merchantId));
+            linkmanDao.delete(new QueryWrapper<Linkman>().eq("company_id",merchantId));
             return ReturnJson.success("删除成功！");
         }
         List<Task> tasks = taskService.list(new QueryWrapper<Task>().eq("merchant_id", merchantId));
@@ -313,6 +317,10 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         List<PaymentOrderMany> paymentOrderManies = paymentOrderManyDao.selectList(new QueryWrapper<PaymentOrderMany>().eq("company_id", merchantId));
         if (VerificationCheck.listIsNull(tasks) && VerificationCheck.listIsNull(paymentOrders) && VerificationCheck.listIsNull(paymentOrderManies)) {
             companyInfoDao.deleteById(merchantId);
+            merchantDao.delete(new QueryWrapper<Merchant>().eq("company_id",merchantId));
+            objectMenuService.remove(new QueryWrapper<ObjectMenu>().eq("object_user_id",merchantId));
+            addressDao.delete(new QueryWrapper<Address>().eq("company_id",merchantId));
+            linkmanDao.delete(new QueryWrapper<Linkman>().eq("company_id",merchantId));
             return ReturnJson.success("删除成功！");
         }
         return ReturnJson.error("该商户做过业务，只能停用该用户！");
@@ -431,13 +439,22 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         merchant.setRoleName("管理员");
         merchantDao.insert(merchant);
         List<MenuListVO> listVos = menuDao.getMenuList();
+        List<ObjectMenu> objectMenuList = new ArrayList<>();
         for (int i = 0; i < listVos.size(); i++) {
             ObjectMenu objectMenu = new ObjectMenu();
             objectMenu.setMenuId(listVos.get(i).getId());
             objectMenu.setObjectUserId(merchant.getId());
-            objectMenuDao.insert(objectMenu);
+            objectMenuList.add(objectMenu);
+            if (listVos.get(i).getList() != null && listVos.get(i).getList().size() > 0) {
+                for (Menu menu : listVos.get(i).getList()) {
+                    objectMenu = new ObjectMenu();
+                    objectMenu.setMenuId(menu.getId());
+                    objectMenu.setObjectUserId(merchant.getId());
+                    objectMenuList.add(objectMenu);
+                }
+            }
         }
-
+        objectMenuService.saveBatch(objectMenuList);
         for (CompanyTaxDTO companyTaxDto : companyTaxDTOS) {
             //判断服务商是否存在
             Tax tax = taxDao.selectById(companyTaxDto.getTaxId());
@@ -627,12 +644,14 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
             throw new CommonException(300, "商户账户信息不正确！");
         }
 
-        merchant = merchantDao.selectOne(new QueryWrapper<Merchant>().eq("user_name", updateCompanyDto.getUpdateMerchantInfDto().getUserName()));
-        if (merchant != null) {
+        BeanUtils.copyProperties(updateCompanyDto.getUpdateMerchantInfDto(), merchant);
+
+        //判断是否存在相同的登录账号
+        Merchant merchant1 = merchantDao.selectOne(new QueryWrapper<Merchant>().eq("user_name", updateCompanyDto.getUpdateMerchantInfDto().getUserName()));
+        if (merchant1 != null) {
             throw new CommonException(300, "登录账号存在相同的，请修改后重新操作！");
         }
 
-        BeanUtils.copyProperties(updateCompanyDto.getUpdateMerchantInfDto(), merchant);
         if (StringUtils.isNotBlank(updateCompanyDto.getUpdateMerchantInfDto().getPassWord())) {
             merchant.setPassWord(PWD_KEY + MD5.md5(updateCompanyDto.getUpdateMerchantInfDto().getPassWord()));
         }

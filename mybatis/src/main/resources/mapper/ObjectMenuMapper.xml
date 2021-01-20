@@ -103,20 +103,20 @@
 
     <select id="queryPassRolemenu" resultMap="passRolemenu">
         SELECT
-                m.id,
-                m.role_name,
-                m.parent_id,
-                m.real_name,
-                m.user_name,
-                m.mobile_code,
-                me.id AS mid,
-                me.menu_name,
-                me.menu_zhname
-            FROM
-                tb_managers m
-            LEFT JOIN tb_object_menu om ON om.object_user_id = m.id
-            LEFT JOIN tb_menu me ON om.menu_id = me.id
-            where m.id=#{userId}
+            m.id,
+            m.role_name,
+            m.parent_id,
+            m.real_name,
+            m.user_name,
+            m.mobile_code,
+            me.id AS mid,
+            me.menu_name,
+            me.menu_zhname
+        FROM
+            tb_managers m
+        LEFT JOIN tb_object_menu om ON om.object_user_id = m.id
+        LEFT JOIN tb_menu me ON om.menu_id = me.id
+        where m.id=#{userId}
     </select>
     <delete id="deleteMenu">
            DELETE
@@ -125,5 +125,15 @@
         WHERE
             object_user_id =#{managerId}
     </delete>
+
+    <select id="queryMenuByUserId" resultType="java.lang.String">
+        SELECT
+            m.menu_name
+        FROM
+            tb_object_menu om
+        INNER JOIN tb_menu m ON om.menu_id = m.id
+        WHERE
+            om.object_user_id = #{userId}
+    </select>
 
 </mapper>
