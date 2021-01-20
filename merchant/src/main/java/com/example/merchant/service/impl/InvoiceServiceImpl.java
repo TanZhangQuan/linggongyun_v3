@@ -209,7 +209,7 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
                 if (num2 > 0) {
                     List<String> list = invoiceDao.selectInvoiceListPayId(addInvoiceDto.getApplicationId());
                     for (int i = 0; i < list.size(); i++) {
-                        PaymentOrder paymentOrder=paymentOrderDao.selectById(list.get(i));
+                        PaymentOrder paymentOrder = paymentOrderDao.selectById(list.get(i));
                         paymentOrder.setIsNotInvoice(1);
                         paymentOrderDao.updateById(paymentOrder);
                     }
@@ -314,6 +314,9 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
         BeanUtils.copyProperties(address, addressVo);
         queryApplicationInvoiceVo.setAddressVo(addressVo);
         InvoiceCatalog invoiceCatalog = invoiceCatalogDao.selectById(invoiceApplication.getInvoiceCatalogType());
+        if (invoiceCatalog == null) {
+            return ReturnJson.error("开票类目已被后台清楚，请联系管理员更改！");
+        }
         InvoiceCatalogVO invoiceCatalogVo = new InvoiceCatalogVO();
         BeanUtils.copyProperties(invoiceCatalog, invoiceCatalogVo);
         queryApplicationInvoiceVo.setInvoiceCatalogVo(invoiceCatalogVo);

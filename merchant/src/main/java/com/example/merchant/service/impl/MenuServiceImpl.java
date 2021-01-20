@@ -223,13 +223,19 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
     }
 
     @Override
-    public ReturnJson queryMerchantMeun(String userId) {
+    public ReturnJson queryMerchantMenu(String userId) {
         if (userId == null) {
             return ReturnJson.error("merchantId不能为空");
         }
         List<RoleMenuVO> list = objectMenuDao.getRolemenu(userId);
         RoleMenuVO roleMenuVo=list.get(0);
         return ReturnJson.success(roleMenuVo);
+    }
+
+    @Override
+    public ReturnJson queryMenuByUserId(String userId) {
+        List<String> menuList=objectMenuDao.queryMenuByUserId(userId);
+        return ReturnJson.success(menuList);
     }
 
 
