@@ -290,11 +290,6 @@ public class NotifyServiceImpl implements NotifyService {
                         return "fail";
                     }
 
-                    if (paymentInventory.getPaymentStatus() != 0) {
-                        log.error("订单号为{}的交易记录的分包支付订单状态已处理", outerTradeNo);
-                        return "fail";
-                    }
-
                     //判断交易结果
                     if ("91".equals(status)) {
                         //修改分包支付状态为成功
@@ -459,11 +454,6 @@ public class NotifyServiceImpl implements NotifyService {
                         return "fail";
                     }
 
-                    if (paymentOrder.getPaymentOrderStatus() != 4) {
-                        log.error("订单号为{}的交易记录的总包支付订单状态已处理", outerTradeNo);
-                        return "fail";
-                    }
-
                     //判断交易结果
                     if ("91".equals(status)) {
                         //修改总包支付状态为成功
@@ -492,11 +482,6 @@ public class NotifyServiceImpl implements NotifyService {
                     PaymentOrderMany paymentOrderMany = paymentOrderManyService.getById(paymentHistory.getOrderId());
                     if (paymentOrderMany == null) {
                         log.error("订单号为{}的交易记录的众包支付订单不存在", outerTradeNo);
-                        return "fail";
-                    }
-
-                    if (paymentOrderMany.getPaymentOrderStatus() != 2) {
-                        log.error("订单号为{}的交易记录的众包支付订单状态已处理", outerTradeNo);
                         return "fail";
                     }
 
