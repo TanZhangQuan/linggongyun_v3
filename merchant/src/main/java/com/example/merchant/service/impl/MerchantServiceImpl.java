@@ -108,7 +108,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
     @Resource
     private MenuDao menuDao;
     @Resource
-    private ObjectMenuDao objectMenuDao;
+    private ObjectMenuService objectMenuService;
     @Resource
     private AgentDao agentDao;
     @Resource
@@ -306,6 +306,10 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         CompanyInfo companyInfo = companyInfoDao.selectById(merchantId);
         if (companyInfo.getAuditStatus() == 0) {
             companyInfoDao.deleteById(merchantId);
+            merchantDao.delete(new QueryWrapper<Merchant>().eq("company_id", merchantId));
+            objectMenuService.remove(new QueryWrapper<ObjectMenu>().eq("object_user_id", merchantId));
+            addressDao.delete(new QueryWrapper<Address>().eq("company_id", merchantId));
+            linkmanDao.delete(new QueryWrapper<Linkman>().eq("company_id", merchantId));
             return ReturnJson.success("删除成功！");
         }
         List<Task> tasks = taskService.list(new QueryWrapper<Task>().eq("merchant_id", merchantId));
@@ -313,6 +317,10 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         List<PaymentOrderMany> paymentOrderManies = paymentOrderManyDao.selectList(new QueryWrapper<PaymentOrderMany>().eq("company_id", merchantId));
         if (VerificationCheck.listIsNull(tasks) && VerificationCheck.listIsNull(paymentOrders) && VerificationCheck.listIsNull(paymentOrderManies)) {
             companyInfoDao.deleteById(merchantId);
+            merchantDao.delete(new QueryWrapper<Merchant>().eq("company_id", merchantId));
+            objectMenuService.remove(new QueryWrapper<ObjectMenu>().eq("object_user_id", merchantId));
+            addressDao.delete(new QueryWrapper<Address>().eq("company_id", merchantId));
+            linkmanDao.delete(new QueryWrapper<Linkman>().eq("company_id", merchantId));
             return ReturnJson.success("删除成功！");
         }
         return ReturnJson.error("该商户做过业务，只能停用该用户！");
@@ -423,6 +431,11 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         if (merchant != null) {
             throw new CommonException(300, "登录账号存在相同的，请修改后重新操作！");
         }
+        merchant = merchantDao.selectOne(new QueryWrapper<Merchant>().eq("login_mobile", companyDto.getAddMerchantDto().getLoginMobile()));
+        if (merchant != null) {
+            throw new CommonException(300, "登录时用的手机号存在相同的，请修改后重新操作！");
+        }
+
         merchant = new Merchant();
         BeanUtils.copyProperties(companyDto.getAddMerchantDto(), merchant);
         merchant.setPassWord(PWD_KEY + MD5.md5(companyDto.getAddMerchantDto().getPassWord()));
@@ -431,13 +444,22 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         merchant.setRoleName("管理员");
         merchantDao.insert(merchant);
         List<MenuListVO> listVos = menuDao.getMenuList();
+        List<ObjectMenu> objectMenuList = new ArrayList<>();
         for (int i = 0; i < listVos.size(); i++) {
             ObjectMenu objectMenu = new ObjectMenu();
             objectMenu.setMenuId(listVos.get(i).getId());
             objectMenu.setObjectUserId(merchant.getId());
-            objectMenuDao.insert(objectMenu);
+            objectMenuList.add(objectMenu);
+            if (listVos.get(i).getList() != null && listVos.get(i).getList().size() > 0) {
+                for (Menu menu : listVos.get(i).getList()) {
+                    objectMenu = new ObjectMenu();
+                    objectMenu.setMenuId(menu.getId());
+                    objectMenu.setObjectUserId(merchant.getId());
+                    objectMenuList.add(objectMenu);
+                }
+            }
         }
-
+        objectMenuService.saveBatch(objectMenuList);
         for (CompanyTaxDTO companyTaxDto : companyTaxDTOS) {
             //判断服务商是否存在
             Tax tax = taxDao.selectById(companyTaxDto.getTaxId());
@@ -537,11 +559,13 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
     public ReturnJson queryAgent(String userId) {
         List<Agent> list = agentDao.selectList(new QueryWrapper<Agent>().eq("agent_status", 0));
         Managers managers = managersDao.selectById(userId);
+        // 管理员登录 查询所有可用代理商
         if (managers.getUserSign() == 2) {
             list = agentDao.selectList(new QueryWrapper<Agent>()
                     .eq("agent_status", 0)
                     .eq("sales_man_id", managers.getId()));
         }
+        // 代理商登录 查询自己
         if (managers.getUserSign() == 1) {
             list = agentDao.selectList(new QueryWrapper<Agent>()
                     .eq("managers_id", userId));
@@ -563,21 +587,33 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         CompanyInfo companyInfo = companyInfoDao.selectById(companyId);
         BeanUtils.copyProperties(companyInfo, companyInfoVo);
         companyVo.setCompanyInfoVo(companyInfoVo);
+
+        //获取公司开票信息
         QueryInvoiceInfoVO queryInvoiceInfoVo = new QueryInvoiceInfoVO();
         CompanyInvoiceInfo companyInvoiceInfo = companyInvoiceInfoDao.selectOne(new QueryWrapper<CompanyInvoiceInfo>().eq("company_id", companyId));
         BeanUtils.copyProperties(companyInvoiceInfo, queryInvoiceInfoVo);
         companyVo.setQueryInvoiceInfoVo(queryInvoiceInfoVo);
+
+        //获取公司的登录信息
         Merchant merchant = merchantDao.selectOne(new QueryWrapper<Merchant>().eq("company_id", companyId).eq("parent_id", 0));
         QueryMerchantInfoVO queryMerchantInfoVo = new QueryMerchantInfoVO();
         BeanUtils.copyProperties(merchant, queryMerchantInfoVo);
+
+        //支付密码密码设置为空不可见
         queryMerchantInfoVo.setPassWord(null);
         queryMerchantInfoVo.setPayPwd(null);
         companyVo.setQueryMerchantInfoVo(queryMerchantInfoVo);
+
+        //业务员与代理商信息
         QueryCooperationInfoVO queryCooperationInfoVo = new QueryCooperationInfoVO();
         queryCooperationInfoVo.setSalesManId(companyInfo.getSalesManId());
         queryCooperationInfoVo.setAgentId(companyInfo.getAgentId());
+
+        //获取业务员
         Managers managers = managersDao.selectById(companyInfo.getSalesManId());
         queryCooperationInfoVo.setSalesManName(managers.getRealName());
+
+        //获取代理商
         if (companyInfo.getAgentId() != null && companyInfo.getAgentId() == "") {
             managers = managersDao.selectById(companyInfo.getAgentId());
             queryCooperationInfoVo.setAgentName(managers.getRealName());
@@ -627,12 +663,16 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
             throw new CommonException(300, "商户账户信息不正确！");
         }
 
-        merchant = merchantDao.selectOne(new QueryWrapper<Merchant>().eq("user_name", updateCompanyDto.getUpdateMerchantInfDto().getUserName()));
-        if (merchant != null) {
-            throw new CommonException(300, "登录账号存在相同的，请修改后重新操作！");
+        BeanUtils.copyProperties(updateCompanyDto.getUpdateMerchantInfDto(), merchant);
+
+        //判断是否存在相同的登录账号
+        Merchant merchant1 = merchantDao.selectOne(new QueryWrapper<Merchant>().eq("user_name", merchant.getUserName()));
+        if (merchant1 != null) {
+            if (!merchant.getId().equals(merchant1.getId())) {
+                throw new CommonException(300, "登录账号存在相同的，请修改后重新操作！");
+            }
         }
 
-        BeanUtils.copyProperties(updateCompanyDto.getUpdateMerchantInfDto(), merchant);
         if (StringUtils.isNotBlank(updateCompanyDto.getUpdateMerchantInfDto().getPassWord())) {
             merchant.setPassWord(PWD_KEY + MD5.md5(updateCompanyDto.getUpdateMerchantInfDto().getPassWord()));
         }

@@ -14,6 +14,7 @@ import com.example.mybatis.vo.QueryPassRolemenuVO;
 import com.example.mybatis.vo.RoleMenuPassVO;
 import com.example.mybatis.vo.RoleMenuVO;
 import com.example.redis.dao.RedisDao;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -62,13 +63,15 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
     }
 
     @Override
-    public ReturnJson getPlatformMenuList() {
-        ReturnJson returnJson = new ReturnJson("查询失败", 300);
-        List<MenuListVO> listVos = menuDao.getPlatformMenuList();
-        if (listVos != null && listVos.size() != 0) {
-            returnJson = new ReturnJson("查询成功", listVos, 200);
+    public ReturnJson getPlatformMenuList(String userId) {
+        Managers managers = managersDao.selectById(userId);
+        List<MenuListVO> listVos = null;
+        if (managers.getUserSign() == 3) {
+            listVos = menuDao.getPlatformMenuList();
+        } else {
+            listVos = menuDao.getAgentMenuList();
         }
-        return returnJson;
+        return ReturnJson.success(listVos);
     }
 
     @Override
@@ -85,7 +88,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
         Merchant merchant = merchantDao.selectById(merchantDto.getId());
 
         if ("".equals(merchantDto.getId())) {
-            Merchant merchant1=merchantDao.selectById(merchantId);
+            Merchant merchant1 = merchantDao.selectById(merchantId);
             merchant = new Merchant();
             BeanUtils.copyProperties(merchantDto, merchant);
             merchant.setParentId(merchantId);
@@ -152,18 +155,17 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ReturnJson savePlatRole(SaveManagersRoleDTO saveManagersRoleDto, String managersId) {
-
         Managers managersOne = managersDao.selectOne(new QueryWrapper<Managers>().eq("mobile_code",
                 saveManagersRoleDto.getMobileCode()));
-        if (managersOne != null) {
-            return ReturnJson.error("此手机号码已近注册过！");
-        }
         Managers managers = new Managers();
-        BeanUtils.copyProperties(saveManagersRoleDto, managers);
-        managers.setParentId(managersId);
-        managers.setUserSign(3);
-        managers.setPassWord(PWD_KEY + MD5.md5(saveManagersRoleDto.getPassWord()));
+
         if ("".equals(saveManagersRoleDto.getId())) {
+            BeanUtils.copyProperties(saveManagersRoleDto, managers);
+            managers.setParentId(managersId);
+            managers.setUserSign(3);
+            if (managersOne != null) {
+                return ReturnJson.error("此手机号码已近注册过！");
+            }
             managersDao.insert(managers);
             String[] menuId = saveManagersRoleDto.getMenuIds().split(",");
             for (int i = 0; i < menuId.length; i++) {
@@ -174,6 +176,13 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
             }
             return ReturnJson.success("添加成功");
         } else {
+            managers = managersDao.selectById(saveManagersRoleDto.getId());
+            if (StringUtils.isNotEmpty(saveManagersRoleDto.getPassWord())) {
+                managers.setPassWord(PWD_KEY + MD5.md5(saveManagersRoleDto.getPassWord()));
+            }
+            if (!managersOne.getId().equals(managers.getId())) {
+                return ReturnJson.error("此手机号码已近注册过！");
+            }
             managersDao.updateById(managers);
             objectMenuDao.delete(new QueryWrapper<ObjectMenu>().eq("object_user_id", managers.getId()));
             String[] menuId = saveManagersRoleDto.getMenuIds().split(",");
@@ -223,13 +232,19 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
     }
 
     @Override
-    public ReturnJson queryMerchantMeun(String userId) {
+    public ReturnJson queryMerchantMenu(String userId) {
         if (userId == null) {
             return ReturnJson.error("merchantId不能为空");
         }
         List<RoleMenuVO> list = objectMenuDao.getRolemenu(userId);
-        RoleMenuVO roleMenuVo=list.get(0);
+        RoleMenuVO roleMenuVo = list.get(0);
         return ReturnJson.success(roleMenuVo);
+    }
+
+    @Override
+    public ReturnJson queryMenuByUserId(String userId) {
+        List<String> menuList = objectMenuDao.queryMenuByUserId(userId);
+        return ReturnJson.success(menuList);
     }
 
 

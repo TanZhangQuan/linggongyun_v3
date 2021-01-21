@@ -1,6 +1,7 @@
 package com.example.merchant.service;
 
 import com.example.common.util.ReturnJson;
+import com.example.merchant.exception.CommonException;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -41,7 +42,7 @@ public interface FileOperationService {
      * @return
      * @throws IOException
      */
-    ReturnJson uploadInvoice(MultipartFile uploadInvoice, HttpServletRequest request) throws IOException;
+    ReturnJson uploadInvoice(MultipartFile uploadInvoice, HttpServletRequest request) throws IOException, CommonException;
 
     /**
      * 上传门征单开发票或税票

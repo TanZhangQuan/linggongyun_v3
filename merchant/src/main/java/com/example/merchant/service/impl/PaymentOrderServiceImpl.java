@@ -1525,6 +1525,17 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
         return baseMapper.selectOne(queryWrapper);
     }
 
+    @Override
+    public ReturnJson updatePaymentInventory(String paymentInventoryId, String bankCode) {
+        PaymentInventory paymentInventory = paymentInventoryDao.selectById(paymentInventoryId);
+        if (paymentInventory == null) {
+            return ReturnJson.error("支付信息错误，请重新选择！");
+        }
+        paymentInventory.setBankCode(bankCode);
+        paymentInventoryDao.updateById(paymentInventory);
+        return ReturnJson.success("修改成功！");
+    }
+
     /**
      * 获取综合费率
      *

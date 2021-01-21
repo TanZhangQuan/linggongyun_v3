@@ -15,14 +15,6 @@ public interface StructureService {
     ReturnJson addSalesMan(ManagersDTO managersDto);
 
     /**
-     * 编辑业务员
-     *
-     * @param managersDto
-     * @return
-     */
-    ReturnJson updateSalesMan(ManagersDTO managersDto);
-
-    /**
      * 按ID查找业务员
      *
      * @param managersId
@@ -91,13 +83,6 @@ public interface StructureService {
      */
     ReturnJson addAgent(AgentInfoDTO agentInfoDto);
 
-    /**
-     * 编辑代理商
-     *
-     * @param agentInfoDto
-     * @return
-     */
-    ReturnJson updataAgent(AgentInfoDTO agentInfoDto);
 
     /**
      * 查询所以代理商

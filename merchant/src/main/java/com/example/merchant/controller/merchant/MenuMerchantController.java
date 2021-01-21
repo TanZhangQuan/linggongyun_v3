@@ -68,7 +68,7 @@ public class MenuMerchantController {
 
     @ApiOperation("权限管理，用户详情")
     @PostMapping(value = "/getRole")
-    public ReturnJson getRole(@RequestParam String merchantId) {
-        return menuService.queryMerchantMeun(merchantId);
+    public ReturnJson getRole(@RequestParam @NotBlank(message = "用户ID不能为空！") String merchantId) {
+        return menuService.queryMerchantMenu(merchantId);
     }
 }

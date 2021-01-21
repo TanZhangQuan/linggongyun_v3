@@ -28,4 +28,6 @@ public interface ObjectMenuDao extends BaseMapper<ObjectMenu> {
     QueryPassRolemenuVO queryPassRolemenu(String userId);
 
     Integer deleteMenu(String managerId);
+
+    List<String> queryMenuByUserId(String userId);
 }

@@ -12,14 +12,14 @@ import com.example.merchant.exception.CommonException;
 import com.example.merchant.service.*;
 import com.example.merchant.util.AcquireID;
 import com.example.merchant.vo.platform.QuerySalesmanVO;
-import com.example.mybatis.entity.Agent;
-import com.example.mybatis.entity.CompanyInfo;
-import com.example.mybatis.entity.Managers;
+import com.example.mybatis.entity.*;
 import com.example.mybatis.mapper.AgentDao;
 import com.example.mybatis.mapper.CompanyInfoDao;
 import com.example.mybatis.mapper.ManagersDao;
+import com.example.mybatis.mapper.MenuDao;
 import com.example.mybatis.po.AgentListPO;
 import com.example.mybatis.po.SalesManPaymentListPO;
+import com.example.mybatis.vo.MenuListVO;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -57,19 +57,52 @@ public class StructureServiceImpl implements StructureService {
     @Resource
     private AgentService agentService;
 
+    @Resource
+    private MenuDao menuDao;
+
+    @Resource
+    private ObjectMenuService objectMenuService;
+
     @Value("${PWD_KEY}")
     private String PWD_KEY;
 
     @Override
     public ReturnJson addSalesMan(ManagersDTO managersDto) {
+        Managers managersOne = managersDao.selectOne(new QueryWrapper<Managers>().eq("mobile_code",
+                managersDto.getMobileCode()));
         Managers managers = managersDao.selectById(managersDto.getId());
         if (managers == null) {
+            if (managersOne != null) {
+                return ReturnJson.error("此手机号码已近注册过！");
+            }
             managers = new Managers();
             BeanUtils.copyProperties(managersDto, managers);
+            managers.setRoleName("业务员");
             managers.setPassWord(PWD_KEY + MD5.md5(managersDto.getInitPassWord()));
             managersService.save(managers);
+            //赋予主账号权限
+            List<MenuListVO> listVos = menuDao.getMenuList();
+            List<ObjectMenu> objectMenuList = new ArrayList<>();
+            for (int i = 0; i < listVos.size(); i++) {
+                ObjectMenu objectMenu = new ObjectMenu();
+                objectMenu.setMenuId(listVos.get(i).getId());
+                objectMenu.setObjectUserId(managers.getId());
+                objectMenuList.add(objectMenu);
+                if (listVos.get(i).getList() != null && listVos.get(i).getList().size() > 0) {
+                    for (Menu menu : listVos.get(i).getList()) {
+                        objectMenu = new ObjectMenu();
+                        objectMenu.setMenuId(menu.getId());
+                        objectMenu.setObjectUserId(managers.getId());
+                        objectMenuList.add(objectMenu);
+                    }
+                }
+            }
+            objectMenuService.saveBatch(objectMenuList);
             return ReturnJson.success("添加业务员成功！");
         } else {
+            if (!managersOne.getId().equals(managers.getId())) {
+                return ReturnJson.error("此手机号码已近注册过！");
+            }
             BeanUtils.copyProperties(managersDto, managers);
             if (managers.getPassWord() != null) {
                 managers.setPassWord(PWD_KEY + MD5.md5(managersDto.getInitPassWord()));
@@ -78,19 +111,6 @@ public class StructureServiceImpl implements StructureService {
             return ReturnJson.success("编辑业务员成功！");
         }
 
-    }
-
-    /**
-     * 编辑业务员
-     *
-     * @param managersDto
-     * @return
-     */
-    @Override
-    public ReturnJson updateSalesMan(ManagersDTO managersDto) {
-        Managers managers = managersDao.selectById(managersDto.getId());
-
-        return null;
     }
 
     /**
@@ -168,21 +188,52 @@ public class StructureServiceImpl implements StructureService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ReturnJson addAgent(AgentInfoDTO agentInfoDto) {
+        Managers managersOne = managersDao.selectOne(new QueryWrapper<Managers>().eq("mobile_code",
+                agentInfoDto.getLinkMobile()));
         Managers managers = new Managers();
         Agent agent = new Agent();
+        //ID不为空进入添加
         if (StringUtils.isEmpty(agentInfoDto.getAgentId())) {
+            if (managersOne != null) {
+                return ReturnJson.error("此手机号码已近注册过！");
+            }
             managers.setPassWord(PWD_KEY + MD5.md5(agentInfoDto.getInitPassWord()));
             managers.setRealName(agentInfoDto.getAgentName());
             managers.setUserName(agentInfoDto.getUserName());
             managers.setUserSign(agentInfoDto.getUserSign());
             managers.setMobileCode(agentInfoDto.getLinkMobile());
             managers.setStatus(agentInfoDto.getAgentStatus());
+            managers.setRoleName("代理商");
             managersService.save(managers);
             BeanUtils.copyProperties(agentInfoDto, agent);
             agent.setManagersId(managers.getId());
             agentService.save(agent);
+
+            //添加完之后自动为主账号赋予权限
+            List<MenuListVO> listVos = menuDao.getMenuList();
+            List<ObjectMenu> objectMenuList = new ArrayList<>();
+            for (int i = 0; i < listVos.size(); i++) {
+                ObjectMenu objectMenu = new ObjectMenu();
+                objectMenu.setMenuId(listVos.get(i).getId());
+                objectMenu.setObjectUserId(managers.getId());
+                objectMenuList.add(objectMenu);
+                if (listVos.get(i).getList() != null && listVos.get(i).getList().size() > 0) {
+                    for (Menu menu : listVos.get(i).getList()) {
+                        objectMenu = new ObjectMenu();
+                        objectMenu.setMenuId(menu.getId());
+                        objectMenu.setObjectUserId(managers.getId());
+                        objectMenuList.add(objectMenu);
+                    }
+                }
+            }
+            objectMenuService.saveBatch(objectMenuList);
+
             return ReturnJson.success("添加代理商成功!");
         } else {
+            if (!managersOne.getId().equals(managers.getId())) {
+                return ReturnJson.error("此手机号码已近注册过！");
+            }
+            //编辑
             managers.setPassWord(PWD_KEY + MD5.md5(agentInfoDto.getInitPassWord()));
             managers.setRealName(agentInfoDto.getAgentName());
             managers.setUserName(agentInfoDto.getUserName());
@@ -199,12 +250,6 @@ public class StructureServiceImpl implements StructureService {
         }
 
 
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public ReturnJson updataAgent(AgentInfoDTO agentInfoDto) {
-        return ReturnJson.success("编辑代理商成功!");
     }
 
     @Override
@@ -241,11 +286,16 @@ public class StructureServiceImpl implements StructureService {
     @Override
     public ReturnJson querySalesman(String userId) {
         Managers managers = managersDao.selectById(userId);
+        //默认查询所有的业务员
         List<Managers> list = managersDao.selectList(new QueryWrapper<Managers>().eq("user_sign", 2));
+
+        //代理商登录的时候更具代理商返回上级的业务员
         if (managers.getUserSign() == 1) {
             Agent agent=agentDao.selectOne(new QueryWrapper<Agent>().eq("managers_id",managers.getId()));
             list = managersDao.selectList(new QueryWrapper<Managers>().eq("id",agent.getSalesManId()));
         }
+
+        //业务员登录的时候返回自己
         if (managers.getUserSign() == 2) {
             list = managersDao.selectList(new QueryWrapper<Managers>().eq("id", managers.getId()));
         }

@@ -28,7 +28,7 @@ public interface MenuService extends IService<Menu> {
      *
      * @return
      */
-    ReturnJson getPlatformMenuList();
+    ReturnJson getPlatformMenuList(String userId);
 
     /**
      * 添加子账户
@@ -112,5 +112,13 @@ public interface MenuService extends IService<Menu> {
      * @param userId
      * @return
      */
-    ReturnJson queryMerchantMeun(String userId);
+    ReturnJson queryMerchantMenu(String userId);
+
+    /**
+     * 更具ID获取自己对应的权限列表
+     *
+     * @param userId
+     * @return
+     */
+    ReturnJson queryMenuByUserId(String userId);
 }

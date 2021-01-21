@@ -79,5 +79,6 @@
     <if test="param2.applicationDateTwo != null and param2.applicationDateTwo != ''">
         AND mti.invoice_date <![CDATA[<=]]> #{param2.applicationDateTwo}
     </if>
+    order by mti.create_date desc
   </select>
 </mapper>
