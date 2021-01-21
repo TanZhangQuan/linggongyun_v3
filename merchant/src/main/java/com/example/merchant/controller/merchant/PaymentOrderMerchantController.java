@@ -115,6 +115,14 @@ public class PaymentOrderMerchantController {
         }
 
         return companyUnionpayService.queryCompanyUnionpayDetail(merchant.getCompanyId(), taxId, unionpayBankType);
-}
+    }
+
+    @PostMapping("/updatePaymentInventory")
+    @ApiOperation(value = "修改支付清单创客银行卡号", notes = "修改支付清单创客银行卡号")
+    @ApiImplicitParams(value = {@ApiImplicitParam(name = "paymentInventoryId", value = "支付清单ID", required = true),
+            @ApiImplicitParam(name = "bankCode", value = "银行卡号", required = true)})
+    public ReturnJson updatePaymentInventory(@RequestParam String paymentInventoryId ,@RequestParam String bankCode) {
+        return paymentOrderService.updatePaymentInventory(paymentInventoryId, bankCode);
+    }
 
 }

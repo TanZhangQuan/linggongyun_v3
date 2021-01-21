@@ -8,6 +8,7 @@ import com.example.merchant.excel.MakerExcel;
 import com.example.merchant.excel.MakerPanymentExcel;
 import com.example.merchant.excel.MakerPanymentReadListener;
 import com.example.merchant.excel.MakerReadListener;
+import com.example.merchant.exception.CommonException;
 import com.example.merchant.service.FileOperationService;
 import com.example.mybatis.entity.MakerInvoice;
 import com.example.mybatis.entity.PaymentInventory;
@@ -19,6 +20,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
@@ -196,7 +198,8 @@ public class FileOperationServiceImpl implements FileOperationService {
     }
 
     @Override
-    public ReturnJson uploadInvoice(MultipartFile uploadInvoice, HttpServletRequest request) throws IOException {
+    @Transactional(rollbackFor = Exception.class)
+    public ReturnJson uploadInvoice(MultipartFile uploadInvoice, HttpServletRequest request) throws IOException, CommonException {
         if (uploadInvoice.getSize() == 0) {
             return ReturnJson.error("上传文件内容不能为空！");
         }
@@ -212,7 +215,7 @@ public class FileOperationServiceImpl implements FileOperationService {
             ExcelReader excelReader = EasyExcelFactory.read(inputStream, MakerPanymentExcel.class, makerPanymentReadListener).headRowNumber(1).build();
             excelReader.readAll();
             List<MakerPanymentExcel> makerPanymentExcels = makerPanymentReadListener.getList();
-            makerPanymentExcels.remove( makerPanymentExcels.get(makerPanymentExcels.size()-1));
+            makerPanymentExcels.remove(makerPanymentExcels.get(makerPanymentExcels.size() - 1));
             excelReader.finish();
 
             List<PaymentInventory> paymentInventorys = new ArrayList<>();
@@ -228,6 +231,12 @@ public class FileOperationServiceImpl implements FileOperationService {
                 BigDecimal realMoney = BigDecimal.valueOf(Double.valueOf(makerPanymentExcel.getRealMoney()));
                 String bankName = makerPanymentExcel.getBankName();
                 Worker worker = workerDao.selectOne(new QueryWrapper<Worker>().eq("mobile_code", mobileCode));
+                if (!worker.getIdcardCode().equals(idCardCode)) {
+                    return ReturnJson.error("表格身份证与系统创客不一致！");
+                }
+                if (!worker.getAccountName().equals(workerName)) {
+                    return ReturnJson.error("表格名称与系统创客不一致！");
+                }
                 if (worker != null) {
                     PaymentInventory paymentInventory = new PaymentInventory();
                     paymentInventory.setWorkerId(worker.getId());
@@ -251,10 +260,10 @@ public class FileOperationServiceImpl implements FileOperationService {
                     workerDao.insert(worker);
                 }
                 if (worker.getAttestation() == 0) {
-                    return ReturnJson.error("创客需要认证才能进行发放！");
+                    throw new CommonException(300, "创客需要认证才能进行发放！");
                 }
                 if (worker.getAgreementSign() != 2) {
-                    return ReturnJson.error("创客需要签约才能进行发放！");
+                    throw new CommonException(300, "创客需要签约才能进行发放！");
                 }
             }
             String newFileName = UuidUtil.get32UUID() + "." + suffixName;

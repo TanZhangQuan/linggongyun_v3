@@ -207,4 +207,13 @@ public interface PaymentOrderService extends IService<PaymentOrder> {
      */
     PaymentOrder queryPaymentOrderByTradeNo(String tradeNo);
 
+    /**
+     * 发放失败时更改银行卡号
+     *
+     * @param paymentInventoryId
+     * @param bankCode
+     * @return
+     */
+    ReturnJson updatePaymentInventory(String paymentInventoryId ,String bankCode);
+
 }

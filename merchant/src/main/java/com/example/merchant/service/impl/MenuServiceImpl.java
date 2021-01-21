@@ -14,6 +14,7 @@ import com.example.mybatis.vo.QueryPassRolemenuVO;
 import com.example.mybatis.vo.RoleMenuPassVO;
 import com.example.mybatis.vo.RoleMenuVO;
 import com.example.redis.dao.RedisDao;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -157,11 +158,11 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
         Managers managersOne = managersDao.selectOne(new QueryWrapper<Managers>().eq("mobile_code",
                 saveManagersRoleDto.getMobileCode()));
         Managers managers = new Managers();
-        BeanUtils.copyProperties(saveManagersRoleDto, managers);
-        managers.setParentId(managersId);
-        managers.setUserSign(3);
-        managers.setPassWord(PWD_KEY + MD5.md5(saveManagersRoleDto.getPassWord()));
+
         if ("".equals(saveManagersRoleDto.getId())) {
+            BeanUtils.copyProperties(saveManagersRoleDto, managers);
+            managers.setParentId(managersId);
+            managers.setUserSign(3);
             if (managersOne != null) {
                 return ReturnJson.error("此手机号码已近注册过！");
             }
@@ -175,6 +176,10 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
             }
             return ReturnJson.success("添加成功");
         } else {
+            managers = managersDao.selectById(saveManagersRoleDto.getId());
+            if (StringUtils.isNotEmpty(saveManagersRoleDto.getPassWord())) {
+                managers.setPassWord(PWD_KEY + MD5.md5(saveManagersRoleDto.getPassWord()));
+            }
             if (!managersOne.getId().equals(managers.getId())) {
                 return ReturnJson.error("此手机号码已近注册过！");
             }

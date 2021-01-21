@@ -363,7 +363,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
 
                 //可用余额，单位元
                 useBal = returnValue.getBigDecimal("use_bal");
-                if (paymentOrder.getRealMoney().compareTo(useBal) > 0){
+                if (paymentOrder.getRealMoney().compareTo(useBal) > 0) {
                     return ReturnJson.error("商户盛京子帐号可用余额不足");
                 }
 
@@ -402,7 +402,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
 
                 //可用余额，单位元
                 useBal = returnValue.getBigDecimal("use_bal");
-                if (paymentOrder.getRealMoney().compareTo(useBal) > 0){
+                if (paymentOrder.getRealMoney().compareTo(useBal) > 0) {
                     return ReturnJson.error("商户盛京子帐号可用余额不足");
                 }
 
@@ -441,7 +441,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
 
                 //可用余额，单位元
                 useBal = returnValue.getBigDecimal("use_bal");
-                if (paymentOrder.getRealMoney().compareTo(useBal) > 0){
+                if (paymentOrder.getRealMoney().compareTo(useBal) > 0) {
                     return ReturnJson.error("商户盛京子帐号可用余额不足");
                 }
 
@@ -480,7 +480,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
 
                 //可用余额，单位元
                 useBal = returnValue.getBigDecimal("use_bal");
-                if (paymentOrder.getRealMoney().compareTo(useBal) > 0){
+                if (paymentOrder.getRealMoney().compareTo(useBal) > 0) {
                     return ReturnJson.error("商户盛京子帐号可用余额不足");
                 }
 
@@ -1143,6 +1143,17 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
         queryWrapper.lambda().eq(PaymentOrder::getTradeNo, tradeNo);
 
         return baseMapper.selectOne(queryWrapper);
+    }
+
+    @Override
+    public ReturnJson updatePaymentInventory(String paymentInventoryId, String bankCode) {
+        PaymentInventory paymentInventory = paymentInventoryDao.selectById(paymentInventoryId);
+        if (paymentInventory == null) {
+            return ReturnJson.error("支付信息错误，请重新选择！");
+        }
+        paymentInventory.setBankCode(bankCode);
+        paymentInventoryDao.updateById(paymentInventory);
+        return ReturnJson.success("修改成功！");
     }
 
     /**
