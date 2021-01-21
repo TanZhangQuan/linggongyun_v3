@@ -2,10 +2,15 @@ package com.example.merchant.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.example.common.enums.*;
+import com.example.common.enums.OrderType;
+import com.example.common.enums.PaymentMethod;
+import com.example.common.enums.TradeObject;
+import com.example.common.enums.TradeStatus;
 import com.example.common.util.UnionpayUtil;
 import com.example.merchant.service.*;
+import com.example.merchant.util.SnowflakeIdWorker;
 import com.example.mybatis.entity.*;
+import com.example.redis.dao.RedisDao;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -46,6 +51,9 @@ public class NotifyServiceImpl implements NotifyService {
 
     @Resource
     private CompanyUnionpayService companyUnionpayService;
+
+    @Resource
+    private RedisDao redisDao;
 
     @Override
     public String depositNotice(HttpServletRequest request) {
@@ -149,18 +157,45 @@ public class NotifyServiceImpl implements NotifyService {
         }
 
         // 业务逻辑处理 ****************************
-        //添加成功的交易记录
-        PaymentHistory paymentHistory = new PaymentHistory();
-        paymentHistory.setTradeStatus(TradeStatus.SUCCESS);
-        paymentHistory.setOuterTradeNo(inacctBillId);
-        paymentHistory.setOrderType(OrderType.RECHARGE);
-        paymentHistory.setPaymentMethod(paymentMethod);
-        paymentHistory.setTradeObject(TradeObject.COMPANY);
-        paymentHistory.setTradeObjectId(companyUnionpay.getCompanyId());
-        paymentHistory.setAmount(amount);
-        paymentHistoryService.save(paymentHistory);
+        //redis上锁
+        long time = System.currentTimeMillis() + 5 * 1000 + 1000;
+        if (!redisDao.lock(inacctBillId.intern(), time)) {
+            log.error("第三方订单号为" + inacctBillId + "的交易记录正在异步回调处理");
+            return "fail";
+        }
+        log.info("获得锁的时间戳：{}", time);
 
-        return "success";
+        try {
+            PaymentHistory paymentHistory = paymentHistoryService.queryPaymentHistoryByOuterTradeNo(inacctBillId);
+            if (paymentHistory != null) {
+                log.error("第三方订单号为" + inacctBillId + "的充值交易记录已存在");
+                return "success";
+            }
+
+            //添加成功的交易记录
+            paymentHistory = new PaymentHistory();
+            paymentHistory.setTradeNo(SnowflakeIdWorker.getSerialNumber());
+            paymentHistory.setTradeStatus(TradeStatus.SUCCESS);
+            paymentHistory.setOuterTradeNo(inacctBillId);
+            paymentHistory.setOrderType(OrderType.RECHARGE);
+            paymentHistory.setPaymentMethod(paymentMethod);
+            paymentHistory.setTradeObject(TradeObject.COMPANY);
+            paymentHistory.setTradeObjectId(companyUnionpay.getCompanyId());
+            paymentHistory.setAmount(amount);
+            paymentHistoryService.save(paymentHistory);
+
+            return "success";
+
+        } finally {
+            try {
+                //释放锁
+                redisDao.release(inacctBillId.intern(), time);
+                log.info("释放锁的时间戳：{}", time);
+            } catch (Exception e) {
+                log.info("释放锁的时间戳异常", e);
+            }
+        }
+
     }
 
     @Override
@@ -183,43 +218,9 @@ public class NotifyServiceImpl implements NotifyService {
             return "fail";
         }
 
+        //获取其他参数
         //子帐户帐号
         String acctNo = jsonObject.getString("acctNo");
-        CompanyUnionpay companyUnionpay = companyUnionpayService.queryMerchantUnionpay(acctNo);
-        if (companyUnionpay == null) {
-            log.error("对应子账户账号的商户银联子账号不存在");
-            return "fail";
-        }
-
-        PaymentMethod paymentMethod;
-        switch (taxUnionpay.getUnionpayBankType()) {
-
-            case SJBK:
-
-                paymentMethod = PaymentMethod.UNIONSJBK;
-                break;
-
-            case PABK:
-
-                paymentMethod = PaymentMethod.UNIONPABK;
-                break;
-
-            case WSBK:
-
-                paymentMethod = PaymentMethod.UNIONWSBK;
-                break;
-
-            case ZSBK:
-
-                paymentMethod = PaymentMethod.UNIONZSBK;
-                break;
-
-            default:
-                log.error("对应商户号的服务商银联类型不存在");
-                return "fail";
-        }
-
-        //获取其他参数
         //通知类型
         String notifyType = jsonObject.getString("notifyType");
         //提现出款交易凭证 ID
@@ -257,68 +258,93 @@ public class NotifyServiceImpl implements NotifyService {
         }
 
         // 业务逻辑处理 ****************************
-        //拆分订单号，获取银联交易类型
-        String tradeType = outerTradeNo.replaceAll("\\d+", "");
-        TradeNoType tradeNoType = Enum.valueOf(TradeNoType.class, tradeType);
-        switch (tradeNoType) {
+        //redis上锁
+        long time = System.currentTimeMillis() + 5 * 1000 + 1000;
+        if (!redisDao.lock(outerTradeNo.intern(), time)) {
+            log.error("订单号为" + outerTradeNo + "的交易记录正在异步回调处理");
+            return "fail";
+        }
+        log.info("获得锁的时间戳：{}", time);
 
-            case PI:
-
-                //查询分包是否存在
-                PaymentInventory paymentInventory = paymentInventoryService.queryPaymentInventoryByTradeNo(outerTradeNo);
-                if (paymentInventory == null) {
-                    log.error("订单号为{}的分包支付订单不存在", outerTradeNo);
-                    return "fail";
-                }
-
-                if (paymentInventory.getPaymentStatus() == 1) {
-                    log.error("订单号为{}的分包支付订单状态已为支付成功", outerTradeNo);
-                    return "fail";
-                }
-
-                //判断交易结果
-                //创建交易记录
-                PaymentHistory paymentHistory = new PaymentHistory();
-                if ("91".equals(status)) {
-                    //修改分包支付状态为成功
-                    paymentInventory.setPaymentStatus(1);
-                    //添加成功的交易记录
-                    paymentHistory.setTradeStatus(TradeStatus.SUCCESS);
-                } else {
-                    log.error("订单号为{}的分包支付订单支付失败：{}", outerTradeNo, errDesc);
-                    //修改分包支付状态为失败
-                    paymentInventory.setPaymentStatus(-1);
-                    paymentInventory.setTradeFailReason(errDesc);
-                    //添加失败的交易记录
-                    paymentHistory.setTradeStatus(TradeStatus.FAIL);
-                }
-                paymentInventoryService.updateById(paymentInventory);
-
-                paymentHistory.setTradeNo(paymentInventory.getTradeNo());
-                paymentHistory.setOuterTradeNo(dchBillId);
-                paymentHistory.setOrderType(OrderType.INVENTORY);
-                paymentHistory.setPaymentMethod(paymentMethod);
-                paymentHistory.setTradeObject(TradeObject.COMPANY);
-                paymentHistory.setTradeObjectId(companyUnionpay.getCompanyId());
-                paymentHistory.setAmount(paymentInventory.getRealMoney());
-                paymentHistoryService.save(paymentHistory);
-
-                //查看是否所有分包已经支付完成
-                boolean isAllSuccess = paymentInventoryService.checkAllPaymentInventoryPaySuccess(paymentInventory.getPaymentOrderId());
-                if (isAllSuccess) {
-                    PaymentOrder paymentOrder = paymentOrderService.getById(paymentInventory.getPaymentOrderId());
-                    paymentOrder.setPaymentOrderStatus(6);
-                    paymentOrderService.updateById(paymentOrder);
-                }
-
-                break;
-
-            default:
-                log.error("银联订单号交易类型有误");
+        try {
+            //判断交易记录是否存在
+            PaymentHistory paymentHistory = paymentHistoryService.queryPaymentHistoryByTradeNo(outerTradeNo);
+            if (paymentHistory == null) {
+                log.error("订单号为{}的交易订单记录不存在", outerTradeNo);
                 return "fail";
+            }
+
+            if (!(TradeStatus.TRADING.equals(paymentHistory.getTradeStatus()))) {
+                log.error("订单号为{}的交易记录已处理", outerTradeNo);
+                return "success";
+            }
+
+            switch (paymentHistory.getOrderType()) {
+
+                case INVENTORY:
+
+                    //查询分包是否存在
+                    PaymentInventory paymentInventory = paymentInventoryService.getById(paymentHistory.getOrderId());
+                    if (paymentInventory == null) {
+                        log.error("订单号为{}的交易记录的分包支付订单不存在", outerTradeNo);
+                        return "fail";
+                    }
+
+                    if (paymentInventory.getPaymentStatus() != 0) {
+                        log.error("订单号为{}的交易记录的分包支付订单状态已处理", outerTradeNo);
+                        return "fail";
+                    }
+
+                    //判断交易结果
+                    if ("91".equals(status)) {
+                        //修改分包支付状态为成功
+                        paymentInventory.setPaymentStatus(1);
+                        paymentInventoryService.updateById(paymentInventory);
+                        //修改交易记录为支付成功
+                        paymentHistory.setTradeStatus(TradeStatus.SUCCESS);
+                        paymentHistory.setOuterTradeNo(dchBillId);
+                        paymentHistoryService.updateById(paymentHistory);
+
+                        //查看是否所有分包已经支付完成
+                        boolean isAllSuccess = paymentInventoryService.checkAllPaymentInventoryPaySuccess(paymentInventory.getPaymentOrderId());
+                        if (isAllSuccess) {
+                            PaymentOrder paymentOrder = paymentOrderService.getById(paymentInventory.getPaymentOrderId());
+                            paymentOrder.setPaymentOrderStatus(6);
+                            paymentOrderService.updateById(paymentOrder);
+                        }
+
+                    } else {
+                        log.error("订单号为{}的交易订单记录支付失败：{}", outerTradeNo, errDesc);
+                        //修改分包支付状态为失败
+                        paymentInventory.setPaymentStatus(-1);
+                        paymentInventory.setTradeFailReason(errDesc);
+                        paymentInventoryService.updateById(paymentInventory);
+                        //修改交易记录为支付失败
+                        paymentHistory.setOuterTradeNo(dchBillId);
+                        paymentHistory.setTradeStatus(TradeStatus.FAIL);
+                        paymentHistory.setTradeFailReason(errDesc);
+                        paymentHistoryService.updateById(paymentHistory);
+                    }
+
+                    break;
+
+                default:
+                    log.error("交易类型有误");
+                    return "fail";
+            }
+
+            return "success";
+
+        } finally {
+            try {
+                //释放锁
+                redisDao.release(outerTradeNo.intern(), time);
+                log.info("释放锁的时间戳：{}", time);
+            } catch (Exception e) {
+                log.info("释放锁的时间戳异常", e);
+            }
         }
 
-        return "success";
     }
 
     @Override
@@ -340,34 +366,6 @@ public class NotifyServiceImpl implements NotifyService {
         if (taxUnionpay == null) {
             log.error("对应商户号的服务商银联不存在");
             return "fail";
-        }
-
-        PaymentMethod paymentMethod;
-        switch (taxUnionpay.getUnionpayBankType()) {
-
-            case SJBK:
-
-                paymentMethod = PaymentMethod.UNIONSJBK;
-                break;
-
-            case PABK:
-
-                paymentMethod = PaymentMethod.UNIONPABK;
-                break;
-
-            case WSBK:
-
-                paymentMethod = PaymentMethod.UNIONWSBK;
-                break;
-
-            case ZSBK:
-
-                paymentMethod = PaymentMethod.UNIONZSBK;
-                break;
-
-            default:
-                log.error("对应商户号的服务商银联类型不存在");
-                return "fail";
         }
 
         //获取其他参数
@@ -412,132 +410,135 @@ public class NotifyServiceImpl implements NotifyService {
             return "fail";
         }
 
-        //出金帐号等于主账号清分账号则为清分回调
-        if (taxUnionpay.getClearNo().equals(outAcctNo)) {
+        //业务逻辑处理 ****************************
+        //redis上锁
+        long time = System.currentTimeMillis() + 5 * 1000 + 1000;
+        if (!redisDao.lock(outerTradeNo.intern(), time)) {
+            log.error("订单号为" + outerTradeNo + "的交易记录正在异步回调处理");
+            return "fail";
+        }
+        log.info("获得锁的时间戳：{}", time);
 
+        try {
             //根据订单号查询充值交易记录
-            PaymentHistory paymentHistory = paymentHistoryService.queryPaymentHistoryByOuterTradeNo(outerTradeNo);
+            PaymentHistory paymentHistory = paymentHistoryService.queryPaymentHistoryByTradeNo(outerTradeNo);
             if (paymentHistory == null) {
                 log.error("订单号为{}的交易记录不存在", outerTradeNo);
                 return "fail";
             }
 
-            if ("91".equals(status)) {
-                //编辑交易记录为失败
-                paymentHistory.setTradeStatus(TradeStatus.SUCCESS);
-            } else {
-                //编辑交易记录为成功
-                paymentHistory.setTradeStatus(TradeStatus.FAIL);
+            if (!(TradeStatus.TRADING.equals(paymentHistory.getTradeStatus()))) {
+                log.error("订单号为{}的交易记录已处理", outerTradeNo);
+                return "success";
             }
 
-            //编辑充值交易记录
-            paymentHistory.setOuterTradeNo(itfBillId);
-            paymentHistoryService.updateById(paymentHistory);
+            switch (paymentHistory.getOrderType()) {
+
+                case RECHARGE:
+
+                    if ("91".equals(status)) {
+                        //编辑交易记录为成功
+                        paymentHistory.setTradeStatus(TradeStatus.SUCCESS);
+                    } else {
+                        //编辑交易记录为失败
+                        paymentHistory.setTradeStatus(TradeStatus.FAIL);
+                        paymentHistory.setTradeFailReason(errDesc);
+                    }
+
+                    paymentHistory.setOuterTradeNo(itfBillId);
+                    paymentHistoryService.updateById(paymentHistory);
+
+                    break;
+
+                case TOTALORDER:
+
+                    //查询总包是否存在
+                    PaymentOrder paymentOrder = paymentOrderService.queryPaymentOrderByTradeNo(outerTradeNo);
+                    if (paymentOrder == null) {
+                        log.error("订单号为{}的交易记录的总包支付订单不存在", outerTradeNo);
+                        return "fail";
+                    }
+
+                    if (paymentOrder.getPaymentOrderStatus() != 4) {
+                        log.error("订单号为{}的交易记录的总包支付订单状态已处理", outerTradeNo);
+                        return "fail";
+                    }
+
+                    //判断交易结果
+                    if ("91".equals(status)) {
+                        //修改总包支付状态为成功
+                        paymentOrder.setPaymentOrderStatus(2);
+                        //添加成功的交易记录
+                        paymentHistory.setTradeStatus(TradeStatus.SUCCESS);
+                    } else {
+                        log.error("订单号为{}的交易记录支付失败：{}", outerTradeNo, errDesc);
+                        //修改总包支付状态为成功
+                        paymentOrder.setPaymentOrderStatus(-1);
+                        paymentOrder.setTradeFailReason(errDesc);
+                        //添加失败的交易记录
+                        paymentHistory.setTradeStatus(TradeStatus.FAIL);
+                        paymentHistory.setTradeFailReason(errDesc);
+                    }
+                    paymentOrderService.updateById(paymentOrder);
+
+                    paymentHistory.setOuterTradeNo(itfBillId);
+                    paymentHistoryService.updateById(paymentHistory);
+
+                    break;
+
+                case MANYORDER:
+
+                    //查询众包是否存在
+                    PaymentOrderMany paymentOrderMany = paymentOrderManyService.queryPaymentOrderManyByTradeNo(outerTradeNo);
+                    if (paymentOrderMany == null) {
+                        log.error("订单号为{}的交易记录的众包支付订单不存在", outerTradeNo);
+                        return "fail";
+                    }
+
+                    if (paymentOrderMany.getPaymentOrderStatus() != 2) {
+                        log.error("订单号为{}的交易记录的众包支付订单状态已处理", outerTradeNo);
+                        return "fail";
+                    }
+
+                    //判断交易结果
+                    if ("91".equals(status)) {
+                        //修改总包支付状态为成功
+                        paymentOrderMany.setPaymentOrderStatus(3);
+                        //添加成功的交易记录
+                        paymentHistory.setTradeStatus(TradeStatus.SUCCESS);
+                    } else {
+                        log.error("订单号为{}的交易记录支付失败：{}", outerTradeNo, errDesc);
+                        //修改总包支付状态为成功
+                        paymentOrderMany.setPaymentOrderStatus(-1);
+                        paymentOrderMany.setTradeFailReason(errDesc);
+                        //添加失败的交易记录
+                        paymentHistory.setTradeStatus(TradeStatus.FAIL);
+                        paymentHistory.setTradeFailReason(errDesc);
+                    }
+                    paymentOrderManyService.updateById(paymentOrderMany);
+
+                    paymentHistory.setOuterTradeNo(itfBillId);
+                    paymentHistoryService.updateById(paymentHistory);
+
+                    break;
+
+                default:
+                    log.error("银联订单号交易类型有误");
+                    return "fail";
+            }
+
             return "success";
+
+        } finally {
+            try {
+                //释放锁
+                redisDao.release(outerTradeNo.intern(), time);
+                log.info("释放锁的时间戳：{}", time);
+            } catch (Exception e) {
+                log.info("释放锁的时间戳异常", e);
+            }
         }
 
-        CompanyUnionpay companyUnionpay = companyUnionpayService.queryMerchantUnionpay(outAcctNo);
-        if (companyUnionpay == null) {
-            log.error("对应子账户账号的商户银联子账号不存在");
-            return "fail";
-        }
-
-
-        //业务逻辑处理 ****************************
-        //拆分订单号，获取银联交易类型
-        String tradeType = outerTradeNo.replaceAll("\\d+", "");
-        TradeNoType tradeNoType = Enum.valueOf(TradeNoType.class, tradeType);
-        PaymentHistory paymentHistory;
-        switch (tradeNoType) {
-
-            case PO:
-
-                //查询总包是否存在
-                PaymentOrder paymentOrder = paymentOrderService.queryPaymentOrderByTradeNo(outerTradeNo);
-                if (paymentOrder == null) {
-                    log.error("订单号为{}的总包支付订单不存在", outerTradeNo);
-                    return "fail";
-                }
-
-                if (paymentOrder.getPaymentOrderStatus() == 2) {
-                    log.error("订单号为{}的总包支付订单状态已为已支付", outerTradeNo);
-                    return "fail";
-                }
-
-                //判断交易结果
-                //创建交易记录
-                paymentHistory = new PaymentHistory();
-                if ("91".equals(status)) {
-                    //修改总包支付状态为成功
-                    paymentOrder.setPaymentOrderStatus(2);
-                    //添加成功的交易记录
-                    paymentHistory.setTradeStatus(TradeStatus.SUCCESS);
-                } else {
-                    log.error("订单号为{}的总包支付订单支付失败：{}", outerTradeNo, errDesc);
-                    paymentOrder.setTradeFailReason(errDesc);
-                    //添加失败的交易记录
-                    paymentHistory.setTradeStatus(TradeStatus.FAIL);
-                }
-                paymentOrderService.updateById(paymentOrder);
-
-                paymentHistory.setTradeNo(paymentOrder.getTradeNo());
-                paymentHistory.setOuterTradeNo(itfBillId);
-                paymentHistory.setOrderType(OrderType.TOTALORDER);
-                paymentHistory.setPaymentMethod(paymentMethod);
-                paymentHistory.setTradeObject(TradeObject.COMPANY);
-                paymentHistory.setTradeObjectId(companyUnionpay.getCompanyId());
-                paymentHistory.setAmount(paymentOrder.getServiceMoney());
-                paymentHistoryService.save(paymentHistory);
-
-                break;
-
-            case POM:
-
-                //查询众包是否存在
-                PaymentOrderMany paymentOrderMany = paymentOrderManyService.queryPaymentOrderManyByTradeNo(outerTradeNo);
-                if (paymentOrderMany == null) {
-                    log.error("订单号为{}的众包支付订单不存在", outerTradeNo);
-                    return "fail";
-                }
-
-                if (paymentOrderMany.getPaymentOrderStatus() == 3) {
-                    log.error("订单号为{}的众包支付订单状态已为已完成", outerTradeNo);
-                    return "fail";
-                }
-
-                //判断交易结果
-                //创建交易记录
-                paymentHistory = new PaymentHistory();
-                if ("91".equals(status)) {
-                    //修改总包支付状态为成功
-                    paymentOrderMany.setPaymentOrderStatus(3);
-                    //添加成功的交易记录
-                    paymentHistory.setTradeStatus(TradeStatus.SUCCESS);
-                } else {
-                    log.error("订单号为{}的众包支付订单支付失败：{}", outerTradeNo, errDesc);
-                    paymentOrderMany.setTradeFailReason(errDesc);
-                    //添加失败的交易记录
-                    paymentHistory.setTradeStatus(TradeStatus.FAIL);
-                }
-                paymentOrderManyService.updateById(paymentOrderMany);
-
-                paymentHistory.setTradeNo(paymentOrderMany.getTradeNo());
-                paymentHistory.setOuterTradeNo(itfBillId);
-                paymentHistory.setOrderType(OrderType.MANYORDER);
-                paymentHistory.setPaymentMethod(paymentMethod);
-                paymentHistory.setTradeObject(TradeObject.COMPANY);
-                paymentHistory.setTradeObjectId(companyUnionpay.getCompanyId());
-                paymentHistory.setAmount(paymentOrderMany.getServiceMoney());
-                paymentHistoryService.save(paymentHistory);
-
-                break;
-
-            default:
-                log.error("银联订单号交易类型有误");
-                return "fail";
-        }
-
-        return "success";
     }
 
 }

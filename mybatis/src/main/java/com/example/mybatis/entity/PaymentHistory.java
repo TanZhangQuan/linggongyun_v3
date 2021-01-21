@@ -44,6 +44,11 @@ public class PaymentHistory extends BaseEntity {
     private OrderType orderType;
 
     /**
+     * 交易ID
+     */
+    private String orderId;
+
+    /**
      * 交易方式
      */
     private PaymentMethod paymentMethod;
@@ -67,5 +72,10 @@ public class PaymentHistory extends BaseEntity {
      * 交易结果
      */
     private TradeStatus tradeStatus;
+
+    /**
+     * 交易失败原因
+     */
+    private String tradeFailReason;
 
 }

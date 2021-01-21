@@ -13,7 +13,25 @@ import java.util.Date;
 public interface PaymentHistoryService extends IService<PaymentHistory> {
 
     /**
-     * 根据订单号查询交易记录
+     * 根据条件查询支付中或支付成功的交易记录（参数不能为空或null）
+     *
+     * @param orderType
+     * @param orderId
+     * @param tradeStatus
+     * @return
+     */
+    PaymentHistory queryPaymentHistory(OrderType orderType, String orderId, TradeStatus tradeStatus);
+
+    /**
+     * 根据系统订单号查询交易记录
+     *
+     * @param tradeNo
+     * @return
+     */
+    PaymentHistory queryPaymentHistoryByTradeNo(String tradeNo);
+
+    /**
+     * 根据系统订单号查询交易记录
      *
      * @param outerTradeNo
      * @return
