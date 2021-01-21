@@ -294,6 +294,7 @@ public class NotifyServiceImpl implements NotifyService {
                     if ("91".equals(status)) {
                         //修改分包支付状态为成功
                         paymentInventory.setPaymentStatus(1);
+                        paymentInventory.setTradeFailReason("");
                         paymentInventoryService.updateById(paymentInventory);
                         //修改交易记录为支付成功
                         paymentHistory.setTradeStatus(TradeStatus.SUCCESS);
@@ -458,6 +459,7 @@ public class NotifyServiceImpl implements NotifyService {
                     if ("91".equals(status)) {
                         //修改总包支付状态为成功
                         paymentOrder.setPaymentOrderStatus(2);
+                        paymentOrder.setTradeFailReason("");
                         //添加成功的交易记录
                         paymentHistory.setTradeStatus(TradeStatus.SUCCESS);
                     } else {
@@ -489,6 +491,7 @@ public class NotifyServiceImpl implements NotifyService {
                     if ("91".equals(status)) {
                         //修改总包支付状态为成功
                         paymentOrderMany.setPaymentOrderStatus(3);
+                        paymentOrderMany.setTradeFailReason("");
                         //添加成功的交易记录
                         paymentHistory.setTradeStatus(TradeStatus.SUCCESS);
                     } else {
