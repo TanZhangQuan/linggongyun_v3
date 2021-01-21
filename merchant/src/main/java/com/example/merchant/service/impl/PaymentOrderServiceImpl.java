@@ -163,7 +163,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
         List<PaymentInventory> paymentInventories = addPaymentOrderDto.getPaymentInventories();
         String id = paymentOrder.getId();
         paymentOrder.setMerchantId(merchantId);
-        paymentOrder.setTradeNo(TradeNoType.PO.getValue() + SnowflakeIdWorker.getSerialNumber());
+        paymentOrder.setTradeNo(SnowflakeIdWorker.getSerialNumber());
         CompanyInfo companyInfo = companyInfoService.getById(merchantId);
         if (companyInfo == null) {
             Merchant merchant = merchantDao.selectById(merchantId);
@@ -270,7 +270,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
         for (PaymentInventory paymentInventory : paymentInventories) {
             paymentInventory.setPaymentOrderId(paymentOrder.getId());
             //生成支付明细
-            paymentInventory.setTradeNo(TradeNoType.PI.getValue() + SnowflakeIdWorker.getSerialNumber());
+            paymentInventory.setTradeNo(SnowflakeIdWorker.getSerialNumber());
             paymentInventory.setPackageStatus(0);
             paymentInventoryService.saveOrUpdate(paymentInventory);
         }

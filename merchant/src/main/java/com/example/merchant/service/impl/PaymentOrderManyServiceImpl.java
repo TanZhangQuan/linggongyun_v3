@@ -248,7 +248,7 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
         PaymentOrderMany paymentOrderMany = new PaymentOrderMany();
         PaymentOrderManyDTO paymentOrderManyDto = addPaymentOrderManyDto.getPaymentOrderManyDto();
         BeanUtils.copyProperties(paymentOrderManyDto, paymentOrderMany);
-        paymentOrderMany.setTradeNo(TradeNoType.POM.getValue() + SnowflakeIdWorker.getSerialNumber());
+        paymentOrderMany.setTradeNo(SnowflakeIdWorker.getSerialNumber());
         Tax tax = taxDao.selectById(paymentOrderMany.getTaxId());
         paymentOrderMany.setPlatformServiceProvider(tax.getTaxName());
         Merchant merchant = merchantDao.selectById(merchantId);
@@ -338,7 +338,7 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
         }
         for (PaymentInventory paymentInventory : paymentInventories) {
             paymentInventory.setCompositeTax(compositeTax.multiply(new BigDecimal("100.00")));
-            paymentInventory.setTradeNo(TradeNoType.PI.getValue() + SnowflakeIdWorker.getSerialNumber());
+            paymentInventory.setTradeNo(SnowflakeIdWorker.getSerialNumber());
             paymentInventory.setPaymentOrderId(paymentOrderMany.getId());
             paymentInventory.setPackageStatus(1);
         }

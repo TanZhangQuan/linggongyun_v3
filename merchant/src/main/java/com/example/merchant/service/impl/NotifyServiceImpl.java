@@ -453,7 +453,7 @@ public class NotifyServiceImpl implements NotifyService {
                 case TOTALORDER:
 
                     //查询总包是否存在
-                    PaymentOrder paymentOrder = paymentOrderService.queryPaymentOrderByTradeNo(outerTradeNo);
+                    PaymentOrder paymentOrder = paymentOrderService.getById(paymentHistory.getOrderId());
                     if (paymentOrder == null) {
                         log.error("订单号为{}的交易记录的总包支付订单不存在", outerTradeNo);
                         return "fail";
@@ -489,7 +489,7 @@ public class NotifyServiceImpl implements NotifyService {
                 case MANYORDER:
 
                     //查询众包是否存在
-                    PaymentOrderMany paymentOrderMany = paymentOrderManyService.queryPaymentOrderManyByTradeNo(outerTradeNo);
+                    PaymentOrderMany paymentOrderMany = paymentOrderManyService.getById(paymentHistory.getOrderId());
                     if (paymentOrderMany == null) {
                         log.error("订单号为{}的交易记录的众包支付订单不存在", outerTradeNo);
                         return "fail";
