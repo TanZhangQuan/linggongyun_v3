@@ -13,6 +13,7 @@ import com.google.common.collect.Lists;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -22,6 +23,8 @@ import java.util.List;
  * @since JDK1.7
  */
 public class SignParamUtil {
+
+	private static final String sealID="c4d27c17-597f-439e-ad7c-ae61165c9956";
 
 	/**
 	 * 不允许外部创建实例
@@ -298,7 +301,7 @@ public class SignParamUtil {
 		String sealId1 = sealIds.get(0);
 
 		List<Signfield> list = Lists.newArrayList();
-		PosBean posBean1 = new PosBean("1", 10f, 100f, null, null);
+		PosBean posBean1 = new PosBean("10", 400f, 600f, null, null);
 		Signfield signfield1 = new Signfield(fileId1, null, posBean1, sealId1, null, null);
 
 		list.add(signfield1);
@@ -378,7 +381,7 @@ public class SignParamUtil {
 		String authorizedAccountId1 = CollectionUtils.isNotEmpty(authorizedAccountIds) ? authorizedAccountIds.get(0) : null;
 
 		List<Signfield> list = Lists.newArrayList();
-		PosBean posBean1 = new PosBean("1", 500f, 100f, null, null);
+		PosBean posBean1 = new PosBean("10", 200f, 600f, null, true);
 		Signfield signfield1 = new Signfield(fileId1, signerAccountId1, null, authorizedAccountId1, null, 1, posBean1,
 				null, null, null);
 

@@ -96,9 +96,10 @@
         FROM
             tb_managers m
         LEFT JOIN tb_object_menu om ON om.object_user_id = m.id
-        OR om.object_user_id = m.parent_id
         LEFT JOIN tb_menu me ON om.menu_id = me.id
-        where m.id=#{userId} or m.parent_id=#{userId}
+        LEFT JOIN tb_menu mes ON mes.menu_parent=me.id
+        WHERE
+            m.id = #{userId} or m.parent_id=#{userId} OR m.id=m.parent_id
     </select>
 
     <select id="queryPassRolemenu" resultMap="passRolemenu">

@@ -309,19 +309,21 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
         queryApplicationInvoiceVo.setBuyerVo(merchantDao.getBuyerById(paymentOrderOne.getMerchantId()));
         queryApplicationInvoiceVo.setSellerVo(taxDao.getSellerById(paymentOrderOne.getTaxId()));
         InvoiceApplication invoiceApplication = invoiceApplicationDao.selectById(invoice.getApplicationId());
+
         Address address = addressDao.selectById(invoiceApplication.getApplicationAddress());
         AddressVO addressVo = new AddressVO();
         BeanUtils.copyProperties(address, addressVo);
         queryApplicationInvoiceVo.setAddressVo(addressVo);
         InvoiceCatalog invoiceCatalog = invoiceCatalogDao.selectById(invoiceApplication.getInvoiceCatalogType());
         if (invoiceCatalog == null) {
-            return ReturnJson.error("开票类目已被后台清楚，请联系管理员更改！");
+            return ReturnJson.error("开票类目已被后台清除，请联系管理员更改！");
         }
         InvoiceCatalogVO invoiceCatalogVo = new InvoiceCatalogVO();
         BeanUtils.copyProperties(invoiceCatalog, invoiceCatalogVo);
         queryApplicationInvoiceVo.setInvoiceCatalogVo(invoiceCatalogVo);
         PlaInvoiceInfoVO invoiceInfoVo = new PlaInvoiceInfoVO();
         BeanUtils.copyProperties(invoice, invoiceInfoVo);
+        invoiceInfoVo.setInvoiceDesc(invoiceApplication.getApplicationDesc());
         queryApplicationInvoiceVo.setPlaInvoiceInfoVo(invoiceInfoVo);
         return ReturnJson.success(queryApplicationInvoiceVo);
     }

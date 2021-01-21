@@ -431,6 +431,11 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         if (merchant != null) {
             throw new CommonException(300, "登录账号存在相同的，请修改后重新操作！");
         }
+        merchant = merchantDao.selectOne(new QueryWrapper<Merchant>().eq("login_mobile", companyDto.getAddMerchantDto().getLoginMobile()));
+        if (merchant != null) {
+            throw new CommonException(300, "登录时用的手机号存在相同的，请修改后重新操作！");
+        }
+
         merchant = new Merchant();
         BeanUtils.copyProperties(companyDto.getAddMerchantDto(), merchant);
         merchant.setPassWord(PWD_KEY + MD5.md5(companyDto.getAddMerchantDto().getPassWord()));

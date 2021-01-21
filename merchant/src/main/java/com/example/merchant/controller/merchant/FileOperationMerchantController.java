@@ -1,6 +1,7 @@
 package com.example.merchant.controller.merchant;
 
 import com.example.common.util.ReturnJson;
+import com.example.merchant.exception.CommonException;
 import com.example.merchant.service.FileOperationService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -33,7 +34,7 @@ public class FileOperationMerchantController {
 
     @PostMapping("/uploadInvoice")
     @ApiOperation(value = "上传支付清单", notes = "上传支付清单")
-    public ReturnJson uploadInvoice(@ApiParam(value = "上传支付清单", required = true) @RequestParam("uploadInvoice") MultipartFile uploadInvoice, HttpServletRequest request) throws IOException {
+    public ReturnJson uploadInvoice(@ApiParam(value = "上传支付清单", required = true) @RequestParam("uploadInvoice") MultipartFile uploadInvoice, HttpServletRequest request) throws IOException, CommonException {
         return fileOperationService.uploadInvoice(uploadInvoice, request);
     }
 
