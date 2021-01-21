@@ -66,7 +66,7 @@ public class FileOperationServiceImpl implements FileOperationService {
 
 
     @Override
-    public ReturnJson getExcelWorker(MultipartFile workerExcel) throws IOException {
+    public ReturnJson getExcelWorker(MultipartFile workerExcel) throws Exception {
         if (workerExcel.getSize() == 0) {
             return ReturnJson.error("上传文件内容不能为空！");
         }
@@ -115,7 +115,7 @@ public class FileOperationServiceImpl implements FileOperationService {
     }
 
     @Override
-    public ReturnJson uploadJpgOrPdf(MultipartFile uploadJpgOrPdf, HttpServletRequest request) throws IOException {
+    public ReturnJson uploadJpgOrPdf(MultipartFile uploadJpgOrPdf, HttpServletRequest request) throws Exception {
         if (uploadJpgOrPdf.getSize() == 0) {
             return ReturnJson.error("上传文件内容不能为空！");
         }
@@ -199,7 +199,7 @@ public class FileOperationServiceImpl implements FileOperationService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ReturnJson uploadInvoice(MultipartFile uploadInvoice, HttpServletRequest request) throws IOException, CommonException {
+    public ReturnJson uploadInvoice(MultipartFile uploadInvoice, HttpServletRequest request) throws Exception {
         if (uploadInvoice.getSize() == 0) {
             return ReturnJson.error("上传文件内容不能为空！");
         }
@@ -285,7 +285,7 @@ public class FileOperationServiceImpl implements FileOperationService {
     }
 
     @Override
-    public ReturnJson uploadInvoiceOrTaxReceipt(String state, MultipartFile uploadTaxReceipt, String paymentInventoryId, HttpServletRequest request) throws IOException {
+    public ReturnJson uploadInvoiceOrTaxReceipt(String state, MultipartFile uploadTaxReceipt, String paymentInventoryId, HttpServletRequest request) throws Exception {
         //时间转换
         DateTimeFormatter dfd = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         if (uploadTaxReceipt.getSize() == 0) {
