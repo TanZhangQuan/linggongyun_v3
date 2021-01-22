@@ -936,9 +936,10 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
                         return ReturnJson.error("支付方式不存在");
                 }
 
-                updateById(paymentOrder);
                 paymentHistoryService.save(paymentHistory);
             }
+            //编辑总包
+            updateById(paymentOrder);
 
             return ReturnJson.success("操作成功");
 

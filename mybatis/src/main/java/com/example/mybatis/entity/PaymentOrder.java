@@ -142,7 +142,7 @@ public class PaymentOrder extends BaseEntity {
     private String reasonsForRejection;
 
     /**
-     * 交易失败理由
+     * 交易失败原因
      */
     private String tradeFailReason;
 

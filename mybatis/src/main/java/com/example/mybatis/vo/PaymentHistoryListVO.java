@@ -36,6 +36,9 @@ public class PaymentHistoryListVO implements Serializable {
     @ApiModelProperty(value = "交易结果")
     private TradeStatus tradeStatus;
 
+    @ApiModelProperty(value = "交易失败原因")
+    private String tradeFailReason;
+
     @ApiModelProperty(value = "创建时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date createDate;

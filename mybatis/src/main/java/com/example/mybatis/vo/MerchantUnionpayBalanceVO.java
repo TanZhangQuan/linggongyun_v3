@@ -13,11 +13,23 @@ import java.math.BigDecimal;
 public class MerchantUnionpayBalanceVO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @ApiModelProperty(value = "银联银行类型")
+    @ApiModelProperty(value = "银行类型")
     private UnionpayBankType unionpayBankType;
+
+    @ApiModelProperty(value = "服务商名称")
+    private String taxName;
+
+    @ApiModelProperty(value = "商户号")
+    private String merchno;
+
+    @ApiModelProperty(value = "平台帐户账号")
+    private String acctno;
 
     @ApiModelProperty(value = "子账号户名")
     private String subAccountName;
+
+    @ApiModelProperty(value = "来款银行账号")
+    private String inBankNo;
 
     @ApiModelProperty(value = "子账户账号")
     private String subAccountCode;

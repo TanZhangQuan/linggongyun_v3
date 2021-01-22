@@ -133,7 +133,7 @@ public class PaymentInventory extends BaseEntity {
     private String tradeNo;
 
     /**
-     * 交易失败理由
+     * 交易失败原因
      */
     private String tradeFailReason;
 

@@ -36,6 +36,8 @@
         <result column="composite_tax" property="compositeTax"/>
         <result column="merchant_payment_money" property="merchantPaymentMoney"/>
         <result column="attestation" property="attestation"/>
+        <result column="payment_status" property="paymentStatus"/>
+        <result column="trade_fail_reason" property="tradeFailReason"/>
         <result column="package_status" property="packageStatus"/>
         <result column="create_date" property="createDate"/>
         <result column="update_date" property="updateDate"/>

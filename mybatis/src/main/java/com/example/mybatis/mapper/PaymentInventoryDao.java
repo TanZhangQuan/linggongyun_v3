@@ -19,6 +19,7 @@ import java.util.List;
 public interface PaymentInventoryDao extends BaseMapper<PaymentInventory> {
     /**
      * 查询总包+分包的
+     *
      * @param paymentOrderId
      * @param workerId
      * @return
@@ -27,11 +28,16 @@ public interface PaymentInventoryDao extends BaseMapper<PaymentInventory> {
 
     /**
      * 查询总包+分包的
+     *
+     * @param paymentOrderIds
+     * @param type
+     * @return
      */
-    List<PaymentInventoryVO> getTotalBranchList(@Param("paymentOrderIds") String paymentOrderIds,Integer type);
+    List<PaymentInventoryVO> getTotalBranchList(@Param("paymentOrderIds") String paymentOrderIds, Integer type);
 
     /**
      * 众包
+     *
      * @param paymentOrderId
      * @param workerId
      * @return
