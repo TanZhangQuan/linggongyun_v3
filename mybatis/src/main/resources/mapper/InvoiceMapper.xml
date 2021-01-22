@@ -152,6 +152,7 @@
             <result column="pid" property="id"/>
             <result column="payment_inventory" property="paymentInventory"/>
             <result column="subpackage_payment" property="subpackagePayment"/>
+            <result column="turnkey_project_payment" property="turnkeyProjectPayment"/>
         </collection>
     </resultMap>
     <select id="selectTobeinvoiced" resultMap="TobeInvoiced">
@@ -164,7 +165,8 @@
         invapp.application_date,
         po.id as pid,
         po.payment_inventory,
-        po.subpackage_payment
+        po.subpackage_payment,
+        turnkey_project_payment
         FROM tb_payment_order AS po
         LEFT JOIN tb_application_payment AS app ON app.payment_order_id = po.id
         LEFT JOIN tb_invoice_application as invapp ON invapp.id=app.invoice_application_id
