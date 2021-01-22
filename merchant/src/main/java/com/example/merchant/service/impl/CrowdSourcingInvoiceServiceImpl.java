@@ -71,7 +71,7 @@ public class CrowdSourcingInvoiceServiceImpl extends ServiceImpl<CrowdSourcingIn
             PaymentOrderMany paymentOrderMany = paymentOrderManyDao.selectById(addApplicationCrowdSourcingDto.
                     getPaymentOrderManyId());
             if (paymentOrderMany == null) {
-                throw new CommonException(300,"不存在此众包订单");
+                throw new CommonException(300, "不存在此众包订单");
             }
             applicationCrowdSourcing.setApplicationState(1);
             applicationCrowdSourcing.setApplicationDate(new Date());
@@ -253,7 +253,7 @@ public class CrowdSourcingInvoiceServiceImpl extends ServiceImpl<CrowdSourcingIn
         QueryApplicationInfoVO queryApplicationInfo = new QueryApplicationInfoVO();
         CrowdSourcingApplication crowdSourcingApplication = crowdSourcingApplicationDao.selectById(applicationId);
         if (crowdSourcingApplication == null) {
-            throw new CommonException(300,"此申请不存在！");
+            throw new CommonException(300, "此申请不存在！");
         }
         PaymentOrderManyVO paymentOrderManyVo = paymentOrderManyDao.getPayOrderManyById(crowdSourcingApplication.
                 getPaymentOrderManyId());
@@ -313,22 +313,26 @@ public class CrowdSourcingInvoiceServiceImpl extends ServiceImpl<CrowdSourcingIn
 
     @Override
     public ReturnJson queryNotInvoiced(String applicationId) {
-        QueryNotInvoicedVO queryNotInvoicedVo = new QueryNotInvoicedVO();
-        PaymentOrderManyVO vo = crowdSourcingInvoiceDao.getPaymentOrderManyPass(applicationId);
-        queryNotInvoicedVo.setPaymentOrderManyVo(vo);
-        CrowdSourcingApplication crowdSourcingApplication = crowdSourcingApplicationDao.selectById(applicationId);
-        BuyerVO buyerVo = crowdSourcingInvoiceDao.getBuyer(applicationId);
-        queryNotInvoicedVo.setBuyerVo(buyerVo);
-        InvoiceCatalog invoiceCatalog = invoiceCatalogDao.selectById(crowdSourcingApplication.getInvoiceCatalogType());
-        InvoiceCatalogVO invoiceCatalogVo = new InvoiceCatalogVO();
-        BeanUtils.copyProperties(invoiceCatalog, invoiceCatalogVo);
-        queryNotInvoicedVo.setInvoiceCatalogVo(invoiceCatalogVo);
-        queryNotInvoicedVo.setRemarks(crowdSourcingApplication.getApplicationDesc());
-        Address address = addressDao.selectById(crowdSourcingApplication.getApplicationAddressId());
-        AddressVO addressVo = new AddressVO();
-        BeanUtils.copyProperties(address, addressVo);
-        queryNotInvoicedVo.setAddressVo(addressVo);
-        return ReturnJson.success(queryNotInvoicedVo);
+        try {
+            QueryNotInvoicedVO queryNotInvoicedVo = new QueryNotInvoicedVO();
+            PaymentOrderManyVO vo = crowdSourcingInvoiceDao.getPaymentOrderManyPass(applicationId);
+            queryNotInvoicedVo.setPaymentOrderManyVo(vo);
+            CrowdSourcingApplication crowdSourcingApplication = crowdSourcingApplicationDao.selectById(applicationId);
+            BuyerVO buyerVo = crowdSourcingInvoiceDao.getBuyer(applicationId);
+            queryNotInvoicedVo.setBuyerVo(buyerVo);
+            InvoiceCatalog invoiceCatalog = invoiceCatalogDao.selectById(crowdSourcingApplication.getInvoiceCatalogType());
+            InvoiceCatalogVO invoiceCatalogVo = new InvoiceCatalogVO();
+            BeanUtils.copyProperties(invoiceCatalog, invoiceCatalogVo);
+            queryNotInvoicedVo.setInvoiceCatalogVo(invoiceCatalogVo);
+            queryNotInvoicedVo.setRemarks(crowdSourcingApplication.getApplicationDesc());
+            Address address = addressDao.selectById(crowdSourcingApplication.getApplicationAddressId());
+            AddressVO addressVo = new AddressVO();
+            BeanUtils.copyProperties(address, addressVo);
+            queryNotInvoicedVo.setAddressVo(addressVo);
+            return ReturnJson.success(queryNotInvoicedVo);
+        } catch (Exception e) {
+            return ReturnJson.error("出现异常");
+        }
     }
 
     @Override
