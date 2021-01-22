@@ -19,12 +19,33 @@ import java.util.Date;
 public class PaymentHistoryServiceImpl extends ServiceImpl<PaymentHistoryDao, PaymentHistory> implements PaymentHistoryService {
 
     @Override
+    public PaymentHistory queryPaymentHistory(OrderType orderType, String orderId, TradeStatus tradeStatus) {
+
+        QueryWrapper<PaymentHistory> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(PaymentHistory::getOrderType, orderType)
+                .eq(PaymentHistory::getOrderId, orderId)
+                .eq(PaymentHistory::getTradeStatus, tradeStatus);
+
+        return baseMapper.selectOne(queryWrapper);
+    }
+
+    @Override
+    public PaymentHistory queryPaymentHistoryByTradeNo(String tradeNo) {
+
+        QueryWrapper<PaymentHistory> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(PaymentHistory::getTradeNo, tradeNo);
+
+        return baseMapper.selectOne(queryWrapper);
+    }
+
+    @Override
     public PaymentHistory queryPaymentHistoryByOuterTradeNo(String outerTradeNo) {
 
         QueryWrapper<PaymentHistory> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda().eq(PaymentHistory::getOuterTradeNo, outerTradeNo);
 
         return baseMapper.selectOne(queryWrapper);
+
     }
 
     @Override

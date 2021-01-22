@@ -132,7 +132,7 @@ public class PaymentOrder extends BaseEntity {
     private BigDecimal receviceTax;
 
     /**
-     * 支付订单的状态-1支付失败,0申请中，1待支付，2已支付，3已确认收款,4支付中（可能支付失败，用来避免重复支付）5已驳回 6已完成
+     * 支付订单的状态 -1支付失败, 0申请中，1待支付，2已支付，3已确认收款, 4支付中（可能支付失败，用来避免重复支付）5已驳回 6已完成
      */
     private Integer paymentOrderStatus;
 

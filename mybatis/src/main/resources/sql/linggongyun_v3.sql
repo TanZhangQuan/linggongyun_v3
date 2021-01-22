@@ -755,18 +755,20 @@ CREATE TABLE `tb_object_menu` (
 DROP TABLE IF EXISTS `tb_payment_history`;
 CREATE TABLE `tb_payment_history` (
   `id` varchar(50) NOT NULL COMMENT '主键',
-  `trade_no` varchar(50) NOT NULL DEFAULT '' COMMENT '支付订单号',
-  `outer_trade_no` varchar(50) NOT NULL COMMENT '第三方订单号',
+  `trade_no` varchar(50) NOT NULL COMMENT '支付订单号',
+  `outer_trade_no` varchar(50) NOT NULL DEFAULT '' COMMENT '第三方订单号',
   `order_type` varchar(50) NOT NULL COMMENT '交易类型',
+  `order_id` varchar(50) NOT NULL DEFAULT '' COMMENT '交易类型ID',
   `payment_method` varchar(50) NOT NULL COMMENT '交易方式',
   `trade_object` varchar(50) NOT NULL COMMENT '交易对象类型',
   `trade_object_id` varchar(50) NOT NULL COMMENT '交易对象ID',
   `amount` decimal(12,2) NOT NULL COMMENT '交易金额',
   `trade_status` varchar(50) NOT NULL COMMENT '交易结果',
+  `trade_fail_reason` varchar(100) NOT NULL DEFAULT '' COMMENT '交易失败原因',
   `create_date` datetime NOT NULL COMMENT '创建时间',
   `update_date` datetime NOT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `UK_icr1qhlwx3lsd0terqn7w65k1` (`outer_trade_no`)
+  UNIQUE KEY `UK_icr1qhlwx3lsd0terqn7w65k1` (`trade_no`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='交易记录';
 
 -- ----------------------------

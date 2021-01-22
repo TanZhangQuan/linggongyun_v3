@@ -1,8 +1,6 @@
 package com.example.merchant.service;
 
 import com.example.common.util.ReturnJson;
-import com.example.merchant.exception.CommonException;
-import org.apache.http.client.methods.CloseableHttpResponse;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -15,7 +13,7 @@ public interface FileOperationService {
      * @param workerExcel
      * @return
      */
-    ReturnJson getExcelWorker(MultipartFile workerExcel) throws IOException;
+    ReturnJson getExcelWorker(MultipartFile workerExcel) throws Exception;
 
     /**
      * 上传JPG或PDF文件
@@ -24,7 +22,7 @@ public interface FileOperationService {
      * @return
      * @throws IOException
      */
-    ReturnJson uploadJpgOrPdf(MultipartFile uploadJpgOrPdf, HttpServletRequest request) throws IOException;
+    ReturnJson uploadJpgOrPdf(MultipartFile uploadJpgOrPdf, HttpServletRequest request) throws Exception;
 
     /**
      * 上传JpgOrPdf
@@ -42,7 +40,7 @@ public interface FileOperationService {
      * @return
      * @throws IOException
      */
-    ReturnJson uploadInvoice(MultipartFile uploadInvoice, HttpServletRequest request) throws IOException, CommonException;
+    ReturnJson uploadInvoice(MultipartFile uploadInvoice, HttpServletRequest request) throws Exception;
 
     /**
      * 上传门征单开发票或税票
@@ -54,7 +52,7 @@ public interface FileOperationService {
      * @return
      * @throws IOException
      */
-    ReturnJson uploadInvoiceOrTaxReceipt(String state, MultipartFile uploadTaxReceipt, String paymentInventoryId, HttpServletRequest request) throws IOException;
+    ReturnJson uploadInvoiceOrTaxReceipt(String state, MultipartFile uploadTaxReceipt, String paymentInventoryId, HttpServletRequest request) throws Exception;
 
     /**
      * 上传视频
