@@ -13,7 +13,7 @@ import java.util.List;
 public class MenuListVO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @ApiModelProperty(value = "XXXXX")
+    @ApiModelProperty(value = "ID")
     private String id;
 
     @ApiModelProperty(value = "菜单英文名")
@@ -23,6 +23,6 @@ public class MenuListVO implements Serializable {
     private String menuZhname;
 
     @ApiModelProperty(value = "子菜单集合")
-    private List<Menu> list;
+    private List<MenuVO> list;
 
 }

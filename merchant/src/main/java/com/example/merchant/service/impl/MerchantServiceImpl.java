@@ -24,10 +24,7 @@ import com.example.mybatis.mapper.*;
 import com.example.mybatis.po.MerchantInfoPo;
 import com.example.mybatis.po.MerchantPaymentListPO;
 import com.example.mybatis.po.TaxPO;
-import com.example.mybatis.vo.BuyerVO;
-import com.example.mybatis.vo.CooperationInfoVO;
-import com.example.mybatis.vo.MenuListVO;
-import com.example.mybatis.vo.TaxTransactionFlowVO;
+import com.example.mybatis.vo.*;
 import com.example.redis.dao.RedisDao;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
@@ -451,11 +448,17 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
             objectMenu.setObjectUserId(merchant.getId());
             objectMenuList.add(objectMenu);
             if (listVos.get(i).getList() != null && listVos.get(i).getList().size() > 0) {
-                for (Menu menu : listVos.get(i).getList()) {
+                for (MenuVO menu : listVos.get(i).getList()) {
                     objectMenu = new ObjectMenu();
                     objectMenu.setMenuId(menu.getId());
                     objectMenu.setObjectUserId(merchant.getId());
                     objectMenuList.add(objectMenu);
+                    for(Menu menu1:menu.getList()){
+                        objectMenu = new ObjectMenu();
+                        objectMenu.setMenuId(menu1.getId());
+                        objectMenu.setObjectUserId(merchant.getId());
+                        objectMenuList.add(objectMenu);
+                    }
                 }
             }
         }

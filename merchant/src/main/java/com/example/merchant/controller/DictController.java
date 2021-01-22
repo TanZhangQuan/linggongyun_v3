@@ -3,6 +3,7 @@ package com.example.merchant.controller;
 
 import com.example.common.util.ReturnJson;
 import com.example.merchant.service.DictService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,6 +26,7 @@ import javax.validation.constraints.NotBlank;
 @Validated
 @RestController
 @RequestMapping("/merchant/dict")
+@Api(value = "获取字典信息", tags = "获取字典信息")
 public class DictController {
 
     @Resource
