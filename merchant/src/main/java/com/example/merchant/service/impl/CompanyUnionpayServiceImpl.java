@@ -9,8 +9,10 @@ import com.example.common.enums.UnionpayBankType;
 import com.example.common.util.ReturnJson;
 import com.example.common.util.UnionpayUtil;
 import com.example.merchant.service.CompanyUnionpayService;
+import com.example.merchant.service.TaxService;
 import com.example.merchant.service.TaxUnionpayService;
 import com.example.mybatis.entity.CompanyUnionpay;
+import com.example.mybatis.entity.Tax;
 import com.example.mybatis.entity.TaxUnionpay;
 import com.example.mybatis.mapper.CompanyUnionpayDao;
 import com.example.mybatis.vo.MerchantUnionpayBalanceVO;
@@ -32,6 +34,9 @@ import java.util.List;
  */
 @Service
 public class CompanyUnionpayServiceImpl extends ServiceImpl<CompanyUnionpayDao, CompanyUnionpay> implements CompanyUnionpayService {
+
+    @Resource
+    private TaxService taxService;
 
     @Resource
     private CompanyUnionpayDao companyUnionpayDao;
@@ -84,7 +89,6 @@ public class CompanyUnionpayServiceImpl extends ServiceImpl<CompanyUnionpayDao, 
     public ReturnJson queryCompanyUnionpayDetail(String companyId, String taxId, UnionpayBankType unionpayBankType) throws Exception {
 
         //查询服务商所有主账号
-        List<MerchantUnionpayBalanceVO> merchantUnionpayBalanceVOList = new ArrayList<>();
         List<TaxUnionpay> taxUnionpayList;
         if (unionpayBankType != null) {
             taxUnionpayList = new ArrayList<>();
@@ -96,6 +100,7 @@ public class CompanyUnionpayServiceImpl extends ServiceImpl<CompanyUnionpayDao, 
             taxUnionpayList = taxUnionpayService.queryTaxUnionpay(taxId);
         }
 
+        List<MerchantUnionpayBalanceVO> merchantUnionpayBalanceVOList = new ArrayList<>();
         if (taxUnionpayList != null && taxUnionpayList.size() > 0) {
             for (TaxUnionpay taxUnionpay : taxUnionpayList) {
 
@@ -107,7 +112,20 @@ public class CompanyUnionpayServiceImpl extends ServiceImpl<CompanyUnionpayDao, 
                 }
 
                 MerchantUnionpayBalanceVO merchantUnionpayBalanceVO = new MerchantUnionpayBalanceVO();
+                //银联银行类型
                 merchantUnionpayBalanceVO.setUnionpayBankType(taxUnionpay.getUnionpayBankType());
+                //主账号数据
+                String taxName = "未知服务商";
+                Tax tax = taxService.getById(taxUnionpay.getTaxId());
+                if (tax != null) {
+                    taxName = tax.getTaxName();
+                }
+                merchantUnionpayBalanceVO.setTaxName(taxName);
+                merchantUnionpayBalanceVO.setMerchno(taxUnionpay.getMerchno());
+                merchantUnionpayBalanceVO.setAcctno(taxUnionpay.getAcctno());
+                merchantUnionpayBalanceVO.setClearNo(taxUnionpay.getClearNo());
+                merchantUnionpayBalanceVO.setServiceChargeNo(taxUnionpay.getServiceChargeNo());
+                //子账号数据
                 merchantUnionpayBalanceVO.setSubAccountName(companyUnionpay.getSubAccountName());
                 merchantUnionpayBalanceVO.setSubAccountCode(companyUnionpay.getSubAccountCode());
 

@@ -949,9 +949,10 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
                         return ReturnJson.error("支付方式不存在");
                 }
 
-                updateById(paymentOrderMany);
                 paymentHistoryService.save(paymentHistory);
             }
+            //编辑分包
+            updateById(paymentOrderMany);
 
             return ReturnJson.success("操作成功");
 
