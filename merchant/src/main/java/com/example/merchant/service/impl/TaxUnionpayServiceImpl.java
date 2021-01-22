@@ -204,11 +204,9 @@ public class TaxUnionpayServiceImpl extends ServiceImpl<TaxUnionpayDao, TaxUnion
         List<TaxUnionpayBalanceVO> taxUnionpayBalanceVOList = new ArrayList<>();
         //清分子账号余额
         TaxUnionpayBalanceVO clearTaxUnionpayBalanceVO = new TaxUnionpayBalanceVO();
-        clearTaxUnionpayBalanceVO.setUnionpayBankType(taxUnionpay.getUnionpayBankType());
         clearTaxUnionpayBalanceVO.setAccount(taxUnionpay.getClearNo());
         //手续费子账号余额
         TaxUnionpayBalanceVO serviceTaxUnionpayBalanceVO = new TaxUnionpayBalanceVO();
-        serviceTaxUnionpayBalanceVO.setUnionpayBankType(taxUnionpay.getUnionpayBankType());
         serviceTaxUnionpayBalanceVO.setAccount(taxUnionpay.getServiceChargeNo());
 
         //查询清分子帐号余额

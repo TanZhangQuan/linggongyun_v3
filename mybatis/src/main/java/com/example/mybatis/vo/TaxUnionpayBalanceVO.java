@@ -1,6 +1,5 @@
 package com.example.mybatis.vo;
 
-import com.example.common.enums.UnionpayBankType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -12,9 +11,6 @@ import java.math.BigDecimal;
 @ApiModel(description = "服务商银联余额详情")
 public class TaxUnionpayBalanceVO implements Serializable {
     private static final long serialVersionUID = 1L;
-
-    @ApiModelProperty(value = "银联银行类型")
-    private UnionpayBankType unionpayBankType;
 
     @ApiModelProperty(value = "账号")
     private String account;
