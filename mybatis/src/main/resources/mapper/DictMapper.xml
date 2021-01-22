@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mybatis.mapper.DictDao">
+
+    <resultMap id="dict" type="com.example.mybatis.vo.DictVO">
+        <result column="dict_key" property="dictKey"/>
+        <result column="dict_value" property="dictValue"/>
+    </resultMap>
+
+    <select id="getDictValues" resultType="java.lang.String">
+        SELECT
+            dict_value
+        FROM
+            tb_dict
+        WHERE
+            `CODE` = #{code}
+        AND parent_id != 0
+        ORDER BY
+            sort ASC
+    </select>
+    <select id="getDictValueAndKey" resultMap="dict">
+        SELECT
+            dict_value,dict_key
+        FROM
+            tb_dict
+        WHERE
+            parent_id = 0
+        ORDER BY
+            sort ASC
+    </select>
+
+</mapper>

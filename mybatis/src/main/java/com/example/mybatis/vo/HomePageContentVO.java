@@ -11,15 +11,15 @@ import java.io.Serializable;
 public class HomePageContentVO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @ApiModelProperty(value = "XXXXXX")
+    @ApiModelProperty(value = "今天")
     private TodayVO todayVo;
 
-    @ApiModelProperty(value = "XXXXXX")
+    @ApiModelProperty(value = "本周")
     private WeekTradeVO weekTradeVO;
 
-    @ApiModelProperty(value = "XXXXXX")
+    @ApiModelProperty(value = "本月")
     private MonthTradeVO monthTradeVO;
 
-    @ApiModelProperty(value = "XXXXXX")
+    @ApiModelProperty(value = "本年")
     private YearTradeVO yearTradeVO;
 }

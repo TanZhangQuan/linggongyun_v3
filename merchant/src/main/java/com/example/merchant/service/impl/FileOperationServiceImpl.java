@@ -32,6 +32,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Pattern;
 
 @Slf4j
 @Service
@@ -64,6 +65,10 @@ public class FileOperationServiceImpl implements FileOperationService {
     @Value("${fileStaticAccesspathVideo}")
     private String fileStaticAccesspathVideo;
 
+    public static boolean isInteger(String str) {
+        Pattern pattern = Pattern.compile("^[-\\+]?[\\d]*$");
+        return pattern.matcher(str).matches();
+    }
 
     @Override
     public ReturnJson getExcelWorker(MultipartFile workerExcel) throws IOException {
@@ -232,10 +237,13 @@ public class FileOperationServiceImpl implements FileOperationService {
                 String bankName = makerPanymentExcel.getBankName();
                 Worker worker = workerDao.selectOne(new QueryWrapper<Worker>().eq("mobile_code", mobileCode));
                 if (!worker.getIdcardCode().equals(idCardCode)) {
-                    return ReturnJson.error("表格身份证与系统创客不一致！");
+                    return ReturnJson.error(workerName + "表格身份证与系统内不一致！");
                 }
                 if (!worker.getAccountName().equals(workerName)) {
-                    return ReturnJson.error("表格名称与系统创客不一致！");
+                    return ReturnJson.error(workerName + "表格名称与系统创客不一致！");
+                }
+                if (isInteger(bankCode)) {
+                    return ReturnJson.error(workerName + "银行卡错误请确认表格内数据！");
                 }
                 if (worker != null) {
                     PaymentInventory paymentInventory = new PaymentInventory();
@@ -248,22 +256,13 @@ public class FileOperationServiceImpl implements FileOperationService {
                     paymentInventory.setIdCardCode(idCardCode);
                     paymentInventory.setAttestation(worker.getAttestation());
                     paymentInventorys.add(paymentInventory);
-                } else {
-                    worker = new Worker();
-                    worker.setAccountName(makerPanymentExcel.getPayeeName());
-                    worker.setMobileCode(mobileCode);
-                    worker.setIdcardBack(idCardCode);
-                    worker.setBankCode(makerPanymentExcel.getBankCardNo());
-                    worker.setUserName(mobileCode);
-                    worker.setWorkerStatus(2);
-                    worker.setUserPwd(PWD_KEY + MD5.md5(idCardCode.substring(12)));
-                    workerDao.insert(worker);
                 }
+
                 if (worker.getAttestation() == 0) {
-                    throw new CommonException(300, "创客需要认证才能进行发放！");
+                    throw new CommonException(300, workerName + "创客需要认证才能进行发放！");
                 }
                 if (worker.getAgreementSign() != 2) {
-                    throw new CommonException(300, "创客需要签约才能进行发放！");
+                    throw new CommonException(300, workerName + "创客需要签约才能进行发放！");
                 }
             }
             String newFileName = UuidUtil.get32UUID() + "." + suffixName;
