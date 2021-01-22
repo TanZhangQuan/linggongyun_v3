@@ -21,7 +21,7 @@ public class CodeGenerator {
     private static final String author = "xjw";
     private static final String packageName = "com.example";
     private static final String moduleName = "merchant";
-    private static final String[] tableName = {"tb_applet_banner", "tb_applet_faq", "tb_applet_other_info"};
+    private static final String[] tableName = {"tb_dict"};
     private static final String tablePrefix = "tb";
 
     public static void main(String[] args) {
