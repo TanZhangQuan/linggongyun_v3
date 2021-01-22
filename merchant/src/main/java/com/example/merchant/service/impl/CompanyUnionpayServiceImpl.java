@@ -8,9 +8,11 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.common.enums.UnionpayBankType;
 import com.example.common.util.ReturnJson;
 import com.example.common.util.UnionpayUtil;
+import com.example.merchant.service.CompanyInfoService;
 import com.example.merchant.service.CompanyUnionpayService;
 import com.example.merchant.service.TaxService;
 import com.example.merchant.service.TaxUnionpayService;
+import com.example.mybatis.entity.CompanyInfo;
 import com.example.mybatis.entity.CompanyUnionpay;
 import com.example.mybatis.entity.Tax;
 import com.example.mybatis.entity.TaxUnionpay;
@@ -37,6 +39,9 @@ public class CompanyUnionpayServiceImpl extends ServiceImpl<CompanyUnionpayDao, 
 
     @Resource
     private TaxService taxService;
+
+    @Resource
+    private CompanyInfoService companyInfoService;
 
     @Resource
     private CompanyUnionpayDao companyUnionpayDao;
@@ -123,10 +128,14 @@ public class CompanyUnionpayServiceImpl extends ServiceImpl<CompanyUnionpayDao, 
                 merchantUnionpayBalanceVO.setTaxName(taxName);
                 merchantUnionpayBalanceVO.setMerchno(taxUnionpay.getMerchno());
                 merchantUnionpayBalanceVO.setAcctno(taxUnionpay.getAcctno());
-                merchantUnionpayBalanceVO.setClearNo(taxUnionpay.getClearNo());
-                merchantUnionpayBalanceVO.setServiceChargeNo(taxUnionpay.getServiceChargeNo());
                 //子账号数据
                 merchantUnionpayBalanceVO.setSubAccountName(companyUnionpay.getSubAccountName());
+                String inBankNo = "";
+                CompanyInfo companyInfo = companyInfoService.getById(companyId);
+                if (companyInfo != null) {
+                    inBankNo = companyInfo.getBankCode();
+                }
+                merchantUnionpayBalanceVO.setInBankNo(inBankNo);
                 merchantUnionpayBalanceVO.setSubAccountCode(companyUnionpay.getSubAccountCode());
 
                 JSONObject jsonObject = UnionpayUtil.AC081(taxUnionpay.getMerchno(), taxUnionpay.getAcctno(), taxUnionpay.getPfmpubkey(), taxUnionpay.getPrikey(), companyUnionpay.getUid());

@@ -25,14 +25,11 @@ public class MerchantUnionpayBalanceVO implements Serializable {
     @ApiModelProperty(value = "平台帐户账号")
     private String acctno;
 
-    @ApiModelProperty(value = "清分子账户")
-    private String clearNo;
-
-    @ApiModelProperty(value = "手续费子账户")
-    private String serviceChargeNo;
-
     @ApiModelProperty(value = "子账号户名")
     private String subAccountName;
+
+    @ApiModelProperty(value = "来款银行账号")
+    private String inBankNo;
 
     @ApiModelProperty(value = "子账户账号")
     private String subAccountCode;
