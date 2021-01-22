@@ -50,7 +50,7 @@ fileStaticAccesspathVideo: "/static/Video/"
 #模板文件
 TemplateFile:
   #  合同模板
-  Contract: "D:/TemplateFile/test.pdf"
+  Contract: "D:/TemplateFile/个人创客加盟协议.pdf"
   #  总包+分包支付明细模板
   TotalPayInventory: "D:/TemplateFile/支付清单模板.xlsx"
   #  众包支付明细模板
@@ -68,6 +68,7 @@ TemplateFile:
 
 #发送签署合同应用的密钥
 appSecret: "86d20a7f49bc3c4c20bae23d369d8853"
+
 
 salary:
   #连连银通公钥（不需替换，这是连连公钥，用于报文加密和连连返回响应报文时验签，不是商户生成的公钥.)
