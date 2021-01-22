@@ -50,7 +50,7 @@
     <select id="selectMany" resultMap="BaseResultMap" parameterType="list">
         select
         id,company_s_name, platform_service_provider, company_contract, payment_inventory, many_payment, task_id,
-        acceptance_certificate,payment_order_status, create_date
+        acceptance_certificate,payment_order_status, reasons_for_rejection, trade_fail_reason, create_date
         from tb_payment_order_many
         <where>
             company_id = #{merchantId}
