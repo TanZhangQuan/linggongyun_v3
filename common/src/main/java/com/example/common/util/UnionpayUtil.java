@@ -273,9 +273,9 @@ public class UnionpayUtil {
     }
 
     // 验签
-    public static boolean checkSign(Map<String, String> map, String publicKey, String charset, String sign_type) {
+    public static boolean checkSign(Map<String, String> map, String publicKey, String charset, String signType) {
         try {
-            return AlipaySignature.rsaCheckV1(trimMap(map), publicKey, charset, sign_type);
+            return AlipaySignature.rsaCheckV1(trimMap(map), publicKey, charset, signType);
         } catch (AlipayApiException e) {
             log.error("验签异常：");
         }

@@ -21,6 +21,7 @@
         <result column="recevice_tax" property="receviceTax"/>
         <result column="payment_order_status" property="paymentOrderStatus"/>
         <result column="reasons_for_rejection" property="reasonsForRejection"/>
+        <result column="trade_fail_reason" property="tradeFailReason"/>
         <result column="payment_date" property="paymentDate"/>
         <result column="create_date" property="createDate"/>
         <result column="update_date" property="updateDate"/>
@@ -28,7 +29,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, company_id, company_s_name, real_money, tax_id, platform_service_provider, company_contract, payment_inventory, many_payment, task_id, acceptance_certificate, composite_tax, merchant_tax, recevice_tax, payment_order_status, payment_date, create_date, update_date
+        id, company_id, company_s_name, real_money, tax_id, platform_service_provider, company_contract, payment_inventory, many_payment, task_id, acceptance_certificate, tax_status, composite_tax, merchant_tax, recevice_tax, payment_order_status, reasons_for_rejection, trade_fail_reason, payment_date, create_date, update_date
     </sql>
 
     <!--查询众包30天总支付-->

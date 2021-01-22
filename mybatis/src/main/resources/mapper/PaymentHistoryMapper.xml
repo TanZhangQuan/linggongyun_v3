@@ -11,11 +11,12 @@
         <result column="payment_method" property="paymentMethod" />
         <result column="amount" property="amount" />
         <result column="trade_status" property="tradeStatus" />
+        <result column="trade_fail_reason" property="tradeFailReason" />
         <result column="create_date" property="createDate" />
     </resultMap>
 
     <select id="queryPaymentHistoryList" resultMap="paymentHistoryListVO">
-        SELECT t1.id, t1.trade_no, t1.outer_trade_no, t1.order_type, t1.payment_method, t1.amount, t1.trade_status, t1.create_date FROM tb_payment_history t1
+        SELECT t1.id, t1.trade_no, t1.outer_trade_no, t1.order_type, t1.payment_method, t1.amount, t1.trade_status, t1.trade_fail_reason, t1.create_date FROM tb_payment_history t1
         WHERE t1.trade_object = #{tradeObject} AND t1.trade_object_id = #{tradeObjectId}
         <if test="beginDate != null">
             AND DATEDIFF(t1.create_date, #{beginDate}) <![CDATA[ >= ]]> 0
