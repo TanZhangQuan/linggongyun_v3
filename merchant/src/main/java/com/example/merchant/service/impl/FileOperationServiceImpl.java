@@ -242,7 +242,7 @@ public class FileOperationServiceImpl implements FileOperationService {
                 if (!worker.getAccountName().equals(workerName)) {
                     return ReturnJson.error(workerName + "表格名称与系统创客不一致！");
                 }
-                if (isInteger(bankCode)) {
+                if (!isInteger(bankCode)) {
                     return ReturnJson.error(workerName + "银行卡错误请确认表格内数据！");
                 }
                 if (worker != null) {

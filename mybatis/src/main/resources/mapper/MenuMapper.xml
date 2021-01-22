@@ -20,10 +20,15 @@
         <id column="id" property="id"/>
         <result column="menu_name" property="menuName"/>
         <result column="menu_zhname" property="menuZhname"/>
-        <collection property="list" ofType="com.example.mybatis.entity.Menu">
+        <collection property="list" ofType="com.example.mybatis.vo.MenuVO">
             <id column="ids" property="id"/>
             <result column="NAME" property="menuName"/>
             <result column="zhname" property="menuZhname"/>
+            <collection property="list" ofType="com.example.mybatis.entity.Menu">
+                <result property="id" column="msid"/>
+                <result property="menuName" column="me_name"/>
+                <result property="menuZhname" column="me_zhname"/>
+            </collection>
         </collection>
     </resultMap>
 
@@ -35,10 +40,14 @@
             me.menu_zhname,
             mes.id AS ids,
             mes.menu_name AS NAME,
-            mes.menu_zhname AS zhname
+            mes.menu_zhname AS zhname,
+            ms.id as msid,
+            ms.menu_name as me_name,
+            ms.menu_zhname as me_zhname
         FROM
             tb_menu me
         LEFT JOIN tb_menu mes ON me.id = mes.menu_parent
+        LEFT JOIN tb_menu ms ON ms.menu_parent=mes.id
         WHERE
             me.menu_parent IS NULL
         AND me.is_merchant != 1
@@ -54,10 +63,14 @@
             me.menu_zhname,
             mes.id AS ids,
             mes.menu_name AS NAME,
-            mes.menu_zhname AS zhname
+            mes.menu_zhname AS zhname,
+            ms.id as msid,
+            ms.menu_name as me_name,
+            ms.menu_zhname as me_zhname
         FROM
             tb_menu me
         LEFT JOIN tb_menu mes ON me.id = mes.menu_parent
+        LEFT JOIN tb_menu ms ON ms.menu_parent=mes.id
         WHERE
             me.menu_parent IS NULL
         AND me.is_merchant != 2
@@ -72,10 +85,14 @@
             me.menu_zhname,
             mes.id AS ids,
             mes.menu_name AS NAME,
-            mes.menu_zhname AS zhname
+            mes.menu_zhname AS zhname,
+            ms.id as msid,
+            ms.menu_name as me_name,
+            ms.menu_zhname as me_zhname
         FROM
             tb_menu me
         LEFT JOIN tb_menu mes ON me.id = mes.menu_parent
+        LEFT JOIN tb_menu ms ON ms.menu_parent=mes.id
         WHERE
             me.menu_parent IS NULL
         AND me.is_merchant != 2

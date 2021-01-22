@@ -20,6 +20,7 @@ import com.example.mybatis.mapper.MenuDao;
 import com.example.mybatis.po.AgentListPO;
 import com.example.mybatis.po.SalesManPaymentListPO;
 import com.example.mybatis.vo.MenuListVO;
+import com.example.mybatis.vo.MenuVO;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -89,11 +90,17 @@ public class StructureServiceImpl implements StructureService {
                 objectMenu.setObjectUserId(managers.getId());
                 objectMenuList.add(objectMenu);
                 if (listVos.get(i).getList() != null && listVos.get(i).getList().size() > 0) {
-                    for (Menu menu : listVos.get(i).getList()) {
+                    for (MenuVO menu : listVos.get(i).getList()) {
                         objectMenu = new ObjectMenu();
                         objectMenu.setMenuId(menu.getId());
                         objectMenu.setObjectUserId(managers.getId());
                         objectMenuList.add(objectMenu);
+                        for (Menu menu1 : menu.getList()) {
+                            objectMenu = new ObjectMenu();
+                            objectMenu.setMenuId(menu1.getId());
+                            objectMenu.setObjectUserId(managers.getId());
+                            objectMenuList.add(objectMenu);
+                        }
                     }
                 }
             }
@@ -218,11 +225,17 @@ public class StructureServiceImpl implements StructureService {
                 objectMenu.setObjectUserId(managers.getId());
                 objectMenuList.add(objectMenu);
                 if (listVos.get(i).getList() != null && listVos.get(i).getList().size() > 0) {
-                    for (Menu menu : listVos.get(i).getList()) {
+                    for (MenuVO menu : listVos.get(i).getList()) {
                         objectMenu = new ObjectMenu();
                         objectMenu.setMenuId(menu.getId());
                         objectMenu.setObjectUserId(managers.getId());
                         objectMenuList.add(objectMenu);
+                        for (Menu menu1 : menu.getList()) {
+                            objectMenu = new ObjectMenu();
+                            objectMenu.setMenuId(menu1.getId());
+                            objectMenu.setObjectUserId(managers.getId());
+                            objectMenuList.add(objectMenu);
+                        }
                     }
                 }
             }
@@ -291,8 +304,8 @@ public class StructureServiceImpl implements StructureService {
 
         //代理商登录的时候更具代理商返回上级的业务员
         if (managers.getUserSign() == 1) {
-            Agent agent=agentDao.selectOne(new QueryWrapper<Agent>().eq("managers_id",managers.getId()));
-            list = managersDao.selectList(new QueryWrapper<Managers>().eq("id",agent.getSalesManId()));
+            Agent agent = agentDao.selectOne(new QueryWrapper<Agent>().eq("managers_id", managers.getId()));
+            list = managersDao.selectList(new QueryWrapper<Managers>().eq("id", agent.getSalesManId()));
         }
 
         //业务员登录的时候返回自己

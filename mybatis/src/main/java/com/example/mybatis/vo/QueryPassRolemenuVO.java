@@ -12,21 +12,21 @@ import java.util.List;
 public class QueryPassRolemenuVO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @ApiModelProperty(value = "XXXXXX")
+    @ApiModelProperty(value = "管理员ID")
     private String managersId;
 
-    @ApiModelProperty(value = "XXXXXX")
+    @ApiModelProperty(value = "真实名称")
     private String realNmae;
 
-    @ApiModelProperty(value = "XXXXXX")
+    @ApiModelProperty(value = "角色名称")
     private String roleName;
 
-    @ApiModelProperty(value = "XXXXXX")
+    @ApiModelProperty(value = "用户名")
     private String userName;
 
-    @ApiModelProperty(value = "XXXXXX")
+    @ApiModelProperty(value = "登录电话号码")
     private String loginMoblie;
 
-    @ApiModelProperty(value = "XXXXXX")
+    @ApiModelProperty(value = "权限集合")
     private List<MenuVO> list;
 }
