@@ -693,40 +693,20 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
                         }
 
                         //查询商户是否已开通银联盛京银行子账号
-                        companyUnionpay = companyUnionpayService.queryMerchantUnionpayUnionpayBankType(paymentOrderMany.getCompanyId(), taxUnionpay.getId());
+                        companyUnionpay = companyUnionpayService.queryMerchantUnionpay(paymentOrderMany.getCompanyId(), taxUnionpay.getId());
                         if (companyUnionpay == null) {
                             return ReturnJson.error("商户未开通服务商的银联盛京银行子账号");
                         }
 
-
-                        //设置交易记录交易方式
-                        paymentHistory.setPaymentMethod(PaymentMethod.UNIONSJBK);
-
                         //支付众包手续费
                         jsonObject = UnionpayUtil.AC054(taxUnionpay.getMerchno(), taxUnionpay.getAcctno(), taxUnionpay.getPfmpubkey(), taxUnionpay.getPrikey(), paymentHistory.getTradeNo(), companyUnionpay.getUid(), taxUnionpay.getServiceChargeNo(), serviceCharge);
                         if (jsonObject == null) {
-                            //设置总包订单为失败
-                            paymentOrderMany.setPaymentOrderStatus(-1);
-                            paymentOrderMany.setTradeFailReason("同步回调参数为空");
-                            updateById(paymentOrderMany);
-                            //设置交易记录为失败
-                            paymentHistory.setTradeStatus(TradeStatus.FAIL);
-                            paymentHistory.setTradeFailReason("同步回调参数为空");
-                            paymentHistoryService.save(paymentHistory);
-                            return ReturnJson.error("支付众包手续费失败");
+                            return ReturnJson.error("支付众包手续费失败：同步回调参数为空");
                         }
 
                         boolSuccess = jsonObject.getBoolean("success");
                         if (boolSuccess == null || !boolSuccess) {
                             String errMsg = jsonObject.getString("err_msg");
-                            //设置总包订单为失败
-                            paymentOrderMany.setPaymentOrderStatus(-1);
-                            paymentOrderMany.setTradeFailReason(errMsg);
-                            updateById(paymentOrderMany);
-                            //设置交易记录为失败
-                            paymentHistory.setTradeStatus(TradeStatus.FAIL);
-                            paymentHistory.setTradeFailReason(errMsg);
-                            paymentHistoryService.save(paymentHistory);
                             return ReturnJson.error("支付众包手续费失败：" + errMsg);
                         }
 
@@ -734,17 +714,11 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
                         rtnCode = returnValue.getString("rtn_code");
                         if (!("S00000".equals(rtnCode))) {
                             String errMsg = returnValue.getString("err_msg");
-                            //设置总包订单为失败
-                            paymentOrderMany.setPaymentOrderStatus(-1);
-                            paymentOrderMany.setTradeFailReason(errMsg);
-                            updateById(paymentOrderMany);
-                            //设置交易记录为失败
-                            paymentHistory.setTradeStatus(TradeStatus.FAIL);
-                            paymentHistory.setTradeFailReason(errMsg);
-                            paymentHistoryService.save(paymentHistory);
                             return ReturnJson.error("支付众包手续费失败：" + errMsg);
                         }
 
+                        //设置交易记录交易方式
+                        paymentHistory.setPaymentMethod(PaymentMethod.UNIONSJBK);
                         //设置交易记录状态
                         paymentHistory.setTradeStatus(TradeStatus.TRADING);
 
@@ -759,39 +733,20 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
                         }
 
                         //查询商户是否已开通银联平安银行子账号
-                        companyUnionpay = companyUnionpayService.queryMerchantUnionpayUnionpayBankType(paymentOrderMany.getCompanyId(), taxUnionpay.getId());
+                        companyUnionpay = companyUnionpayService.queryMerchantUnionpay(paymentOrderMany.getCompanyId(), taxUnionpay.getId());
                         if (companyUnionpay == null) {
                             return ReturnJson.error("商户未已开通服务商的银联平安银行子账号");
                         }
 
-                        //设置交易记录交易方式
-                        paymentHistory.setPaymentMethod(PaymentMethod.UNIONPABK);
-
                         //支付众包手续费
                         jsonObject = UnionpayUtil.AC054(taxUnionpay.getMerchno(), taxUnionpay.getAcctno(), taxUnionpay.getPfmpubkey(), taxUnionpay.getPrikey(), paymentHistory.getTradeNo(), companyUnionpay.getUid(), taxUnionpay.getServiceChargeNo(), serviceCharge);
                         if (jsonObject == null) {
-                            //设置总包订单为失败
-                            paymentOrderMany.setPaymentOrderStatus(-1);
-                            paymentOrderMany.setTradeFailReason("同步回调参数为空");
-                            updateById(paymentOrderMany);
-                            //设置交易记录为失败
-                            paymentHistory.setTradeStatus(TradeStatus.FAIL);
-                            paymentHistory.setTradeFailReason("同步回调参数为空");
-                            paymentHistoryService.save(paymentHistory);
-                            return ReturnJson.error("支付众包手续费失败");
+                            return ReturnJson.error("支付众包手续费失败：同步回调参数为空");
                         }
 
                         boolSuccess = jsonObject.getBoolean("success");
                         if (boolSuccess == null || !boolSuccess) {
                             String errMsg = jsonObject.getString("err_msg");
-                            //设置总包订单为失败
-                            paymentOrderMany.setPaymentOrderStatus(-1);
-                            paymentOrderMany.setTradeFailReason(errMsg);
-                            updateById(paymentOrderMany);
-                            //设置交易记录为失败
-                            paymentHistory.setTradeStatus(TradeStatus.FAIL);
-                            paymentHistory.setTradeFailReason(errMsg);
-                            paymentHistoryService.save(paymentHistory);
                             return ReturnJson.error("支付众包手续费失败：" + errMsg);
                         }
 
@@ -799,17 +754,11 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
                         rtnCode = returnValue.getString("rtn_code");
                         if (!("S00000".equals(rtnCode))) {
                             String errMsg = returnValue.getString("err_msg");
-                            //设置总包订单为失败
-                            paymentOrderMany.setPaymentOrderStatus(-1);
-                            paymentOrderMany.setTradeFailReason(errMsg);
-                            updateById(paymentOrderMany);
-                            //设置交易记录为失败
-                            paymentHistory.setTradeStatus(TradeStatus.FAIL);
-                            paymentHistory.setTradeFailReason(errMsg);
-                            paymentHistoryService.save(paymentHistory);
                             return ReturnJson.error("支付众包手续费失败：" + errMsg);
                         }
 
+                        //设置交易记录交易方式
+                        paymentHistory.setPaymentMethod(PaymentMethod.UNIONPABK);
                         //设置交易记录状态
                         paymentHistory.setTradeStatus(TradeStatus.TRADING);
 
@@ -824,39 +773,20 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
                         }
 
                         //查询商户是否已开通银联网商银行子账号
-                        companyUnionpay = companyUnionpayService.queryMerchantUnionpayUnionpayBankType(paymentOrderMany.getCompanyId(), taxUnionpay.getId());
+                        companyUnionpay = companyUnionpayService.queryMerchantUnionpay(paymentOrderMany.getCompanyId(), taxUnionpay.getId());
                         if (companyUnionpay == null) {
                             return ReturnJson.error("商户未已开通服务商的银联网商银行子账号");
                         }
 
-                        //设置交易记录交易方式
-                        paymentHistory.setPaymentMethod(PaymentMethod.UNIONWSBK);
-
                         //支付众包手续费
                         jsonObject = UnionpayUtil.AC054(taxUnionpay.getMerchno(), taxUnionpay.getAcctno(), taxUnionpay.getPfmpubkey(), taxUnionpay.getPrikey(), paymentHistory.getTradeNo(), companyUnionpay.getUid(), taxUnionpay.getServiceChargeNo(), serviceCharge);
                         if (jsonObject == null) {
-                            //设置总包订单为失败
-                            paymentOrderMany.setPaymentOrderStatus(-1);
-                            paymentOrderMany.setTradeFailReason("同步回调参数为空");
-                            updateById(paymentOrderMany);
-                            //设置交易记录为失败
-                            paymentHistory.setTradeStatus(TradeStatus.FAIL);
-                            paymentHistory.setTradeFailReason("同步回调参数为空");
-                            paymentHistoryService.save(paymentHistory);
-                            return ReturnJson.error("支付众包手续费失败");
+                            return ReturnJson.error("支付众包手续费失败：同步回调参数为空");
                         }
 
                         boolSuccess = jsonObject.getBoolean("success");
                         if (boolSuccess == null || !boolSuccess) {
                             String errMsg = jsonObject.getString("err_msg");
-                            //设置总包订单为失败
-                            paymentOrderMany.setPaymentOrderStatus(-1);
-                            paymentOrderMany.setTradeFailReason(errMsg);
-                            updateById(paymentOrderMany);
-                            //设置交易记录为失败
-                            paymentHistory.setTradeStatus(TradeStatus.FAIL);
-                            paymentHistory.setTradeFailReason(errMsg);
-                            paymentHistoryService.save(paymentHistory);
                             return ReturnJson.error("支付众包手续费失败：" + errMsg);
                         }
 
@@ -864,17 +794,11 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
                         rtnCode = returnValue.getString("rtn_code");
                         if (!("S00000".equals(rtnCode))) {
                             String errMsg = returnValue.getString("err_msg");
-                            //设置总包订单为失败
-                            paymentOrderMany.setPaymentOrderStatus(-1);
-                            paymentOrderMany.setTradeFailReason(errMsg);
-                            updateById(paymentOrderMany);
-                            //设置交易记录为失败
-                            paymentHistory.setTradeStatus(TradeStatus.FAIL);
-                            paymentHistory.setTradeFailReason(errMsg);
-                            paymentHistoryService.save(paymentHistory);
                             return ReturnJson.error("支付众包手续费失败：" + errMsg);
                         }
 
+                        //设置交易记录交易方式
+                        paymentHistory.setPaymentMethod(PaymentMethod.UNIONWSBK);
                         //设置交易记录状态
                         paymentHistory.setTradeStatus(TradeStatus.TRADING);
 
@@ -889,39 +813,20 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
                         }
 
                         //查询商户是否已开通银联招商银行子账号
-                        companyUnionpay = companyUnionpayService.queryMerchantUnionpayUnionpayBankType(paymentOrderMany.getCompanyId(), taxUnionpay.getId());
+                        companyUnionpay = companyUnionpayService.queryMerchantUnionpay(paymentOrderMany.getCompanyId(), taxUnionpay.getId());
                         if (companyUnionpay == null) {
                             return ReturnJson.error("商户未已开通服务商的银联招商银行子账号");
                         }
 
-                        //设置交易记录交易方式
-                        paymentHistory.setPaymentMethod(PaymentMethod.UNIONZSBK);
-
                         //支付众包手续费
                         jsonObject = UnionpayUtil.AC054(taxUnionpay.getMerchno(), taxUnionpay.getAcctno(), taxUnionpay.getPfmpubkey(), taxUnionpay.getPrikey(), paymentHistory.getTradeNo(), companyUnionpay.getUid(), taxUnionpay.getServiceChargeNo(), serviceCharge);
                         if (jsonObject == null) {
-                            //设置总包订单为失败
-                            paymentOrderMany.setPaymentOrderStatus(-1);
-                            paymentOrderMany.setTradeFailReason("同步回调参数为空");
-                            updateById(paymentOrderMany);
-                            //设置交易记录为失败
-                            paymentHistory.setTradeStatus(TradeStatus.FAIL);
-                            paymentHistory.setTradeFailReason("同步回调参数为空");
-                            paymentHistoryService.save(paymentHistory);
-                            return ReturnJson.error("支付众包手续费失败");
+                            return ReturnJson.error("支付众包手续费失败：同步回调参数为空");
                         }
 
                         boolSuccess = jsonObject.getBoolean("success");
                         if (boolSuccess == null || !boolSuccess) {
                             String errMsg = jsonObject.getString("err_msg");
-                            //设置总包订单为失败
-                            paymentOrderMany.setPaymentOrderStatus(-1);
-                            paymentOrderMany.setTradeFailReason(errMsg);
-                            updateById(paymentOrderMany);
-                            //设置交易记录为失败
-                            paymentHistory.setTradeStatus(TradeStatus.FAIL);
-                            paymentHistory.setTradeFailReason(errMsg);
-                            paymentHistoryService.save(paymentHistory);
                             return ReturnJson.error("支付众包手续费失败：" + errMsg);
                         }
 
@@ -929,17 +834,11 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
                         rtnCode = returnValue.getString("rtn_code");
                         if (!("S00000".equals(rtnCode))) {
                             String errMsg = returnValue.getString("err_msg");
-                            //设置总包订单为失败
-                            paymentOrderMany.setPaymentOrderStatus(-1);
-                            paymentOrderMany.setTradeFailReason(errMsg);
-                            updateById(paymentOrderMany);
-                            //设置交易记录为失败
-                            paymentHistory.setTradeStatus(TradeStatus.FAIL);
-                            paymentHistory.setTradeFailReason(errMsg);
-                            paymentHistoryService.save(paymentHistory);
                             return ReturnJson.error("支付众包手续费失败：" + errMsg);
                         }
 
+                        //设置交易记录交易方式
+                        paymentHistory.setPaymentMethod(PaymentMethod.UNIONZSBK);
                         //设置交易记录状态
                         paymentHistory.setTradeStatus(TradeStatus.TRADING);
 

@@ -3,6 +3,7 @@ package com.example.mybatis.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.example.common.enums.UnionpayBankType;
 import com.example.mybatis.entity.TaxUnionpay;
+import com.example.mybatis.vo.CompanyIdAndNameList;
 import com.example.mybatis.vo.TaxUnionpayListVO;
 
 import java.util.List;
@@ -32,4 +33,12 @@ public interface TaxUnionpayDao extends BaseMapper<TaxUnionpay> {
      * @return
      */
     List<UnionpayBankType> queryTaxUnionpayMethod(String taxId);
+
+    /**
+     * 查询服务商银联所有子账号的商户
+     *
+     * @param taxUnionpayId
+     * @return
+     */
+    List<CompanyIdAndNameList> queryTaxUnionpayCompanyUnionpayList(String taxUnionpayId);
 }

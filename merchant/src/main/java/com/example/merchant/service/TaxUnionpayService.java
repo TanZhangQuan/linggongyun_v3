@@ -6,6 +6,7 @@ import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.platform.AddOrUpdateTaxUnionpayDTO;
 import com.example.mybatis.entity.TaxUnionpay;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -103,4 +104,23 @@ public interface TaxUnionpayService extends IService<TaxUnionpay> {
      */
     ReturnJson queryTaxUnionpayBalance(String taxUnionpayId) throws Exception;
 
+    /**
+     * 查询服务商银联所有子账号的商户
+     *
+     * @param taxUnionpayId
+     * @return
+     */
+    ReturnJson queryTaxUnionpayCompanyUnionpayList(String taxUnionpayId);
+
+    /**
+     * 服务商清分操作
+     *
+     * @param userId
+     * @param taxUnionpayId
+     * @param companyId
+     * @param amount
+     * @return
+     * @throws Exception
+     */
+    ReturnJson clarify(String userId, String taxUnionpayId, String companyId, BigDecimal amount) throws Exception;
 }

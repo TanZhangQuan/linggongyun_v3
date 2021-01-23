@@ -13,12 +13,21 @@
         <result column="create_date" property="createDate" />
     </resultMap>
 
+    <resultMap id="companyIdAndNameList" type="com.example.mybatis.vo.CompanyIdAndNameList">
+        <id column="id" property="id" />
+        <result column="company_name" property="companyName" />
+    </resultMap>
+
     <select id="queryTaxUnionpayList" resultMap="taxUnionpayListVO">
         SELECT id, unionpay_bank_type, merchno, acctno, clear_no, service_charge_no, bool_enable, create_date FROM tb_tax_unionpay t1 WHERE t1.tax_id = #{taxId}
     </select>
 
     <select id="queryTaxUnionpayMethod" resultType="com.example.common.enums.UnionpayBankType">
         SELECT unionpay_bank_type FROM tb_tax_unionpay t1 WHERE t1.bool_enable = 1 AND t1.tax_id = #{taxId}
+    </select>
+
+    <select id="queryTaxUnionpayCompanyUnionpayList" resultMap="companyIdAndNameList">
+        SELECT t1.id, t1.company_name FROM tb_company_info t1 INNER JOIN tb_company_unionpay t2 ON t1.id = t2.company_id WHERE t2.tax_unionpay_id = #{taxUnionpayId}
     </select>
 
 </mapper>

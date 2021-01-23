@@ -296,10 +296,6 @@ public class NotifyServiceImpl implements NotifyService {
                         paymentInventory.setPaymentStatus(1);
                         paymentInventory.setTradeFailReason("");
                         paymentInventoryService.updateById(paymentInventory);
-                        //修改交易记录为支付成功
-                        paymentHistory.setTradeStatus(TradeStatus.SUCCESS);
-                        paymentHistory.setOuterTradeNo(dchBillId);
-                        paymentHistoryService.updateById(paymentHistory);
 
                         //查看是否所有分包已经支付完成
                         boolean isAllSuccess = paymentInventoryService.checkAllPaymentInventoryPaySuccess(paymentInventory.getPaymentOrderId());
@@ -309,6 +305,9 @@ public class NotifyServiceImpl implements NotifyService {
                             paymentOrderService.updateById(paymentOrder);
                         }
 
+                        //修改交易记录为支付成功
+                        paymentHistory.setTradeStatus(TradeStatus.SUCCESS);
+
                     } else {
                         log.error("订单号为{}的交易订单记录支付失败：{}", outerTradeNo, errDesc);
                         //修改分包支付状态为失败
@@ -316,10 +315,8 @@ public class NotifyServiceImpl implements NotifyService {
                         paymentInventory.setTradeFailReason(errDesc);
                         paymentInventoryService.updateById(paymentInventory);
                         //修改交易记录为支付失败
-                        paymentHistory.setOuterTradeNo(dchBillId);
                         paymentHistory.setTradeStatus(TradeStatus.FAIL);
                         paymentHistory.setTradeFailReason(errDesc);
-                        paymentHistoryService.updateById(paymentHistory);
                     }
 
                     break;
@@ -328,6 +325,9 @@ public class NotifyServiceImpl implements NotifyService {
                     log.error("交易类型有误");
                     return "fail";
             }
+
+            paymentHistory.setOuterTradeNo(dchBillId);
+            paymentHistoryService.updateById(paymentHistory);
 
             return "success";
 
@@ -430,19 +430,36 @@ public class NotifyServiceImpl implements NotifyService {
 
             switch (paymentHistory.getOrderType()) {
 
-                case RECHARGE:
+                case CLEAR:
 
                     if ("91".equals(status)) {
+
+                        //子帐户帐号
+                        CompanyUnionpay companyUnionpay = companyUnionpayService.queryMerchantUnionpay(inAcctNo);
+                        if (companyUnionpay == null) {
+                            log.error("对应入金子账户账号的商户银联子账号不存在");
+                            return "fail";
+                        }
+
                         //编辑交易记录为成功
                         paymentHistory.setTradeStatus(TradeStatus.SUCCESS);
+
+                        //新建交易记录
+                        PaymentHistory rechargePaymentHistory = new PaymentHistory();
+                        rechargePaymentHistory.setTradeNo(SnowflakeIdWorker.getSerialNumber());
+                        rechargePaymentHistory.setOrderType(OrderType.RECHARGE);
+                        rechargePaymentHistory.setPaymentMethod(paymentHistory.getPaymentMethod());
+                        rechargePaymentHistory.setTradeObject(TradeObject.COMPANY);
+                        rechargePaymentHistory.setTradeObjectId(companyUnionpay.getCompanyId());
+                        rechargePaymentHistory.setAmount(paymentHistory.getAmount());
+                        rechargePaymentHistory.setTradeStatus(TradeStatus.SUCCESS);
+                        paymentHistoryService.save(rechargePaymentHistory);
+
                     } else {
                         //编辑交易记录为失败
                         paymentHistory.setTradeStatus(TradeStatus.FAIL);
                         paymentHistory.setTradeFailReason(errDesc);
                     }
-
-                    paymentHistory.setOuterTradeNo(itfBillId);
-                    paymentHistoryService.updateById(paymentHistory);
 
                     break;
 
@@ -471,10 +488,8 @@ public class NotifyServiceImpl implements NotifyService {
                         paymentHistory.setTradeStatus(TradeStatus.FAIL);
                         paymentHistory.setTradeFailReason(errDesc);
                     }
-                    paymentOrderService.updateById(paymentOrder);
 
-                    paymentHistory.setOuterTradeNo(itfBillId);
-                    paymentHistoryService.updateById(paymentHistory);
+                    paymentOrderService.updateById(paymentOrder);
 
                     break;
 
@@ -503,10 +518,8 @@ public class NotifyServiceImpl implements NotifyService {
                         paymentHistory.setTradeStatus(TradeStatus.FAIL);
                         paymentHistory.setTradeFailReason(errDesc);
                     }
-                    paymentOrderManyService.updateById(paymentOrderMany);
 
-                    paymentHistory.setOuterTradeNo(itfBillId);
-                    paymentHistoryService.updateById(paymentHistory);
+                    paymentOrderManyService.updateById(paymentOrderMany);
 
                     break;
 
@@ -514,6 +527,9 @@ public class NotifyServiceImpl implements NotifyService {
                     log.error("银联订单号交易类型有误");
                     return "fail";
             }
+
+            paymentHistory.setOuterTradeNo(itfBillId);
+            paymentHistoryService.updateById(paymentHistory);
 
             return "success";
 

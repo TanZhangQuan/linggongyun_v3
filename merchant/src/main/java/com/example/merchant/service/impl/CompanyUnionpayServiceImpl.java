@@ -19,6 +19,7 @@ import com.example.mybatis.entity.TaxUnionpay;
 import com.example.mybatis.mapper.CompanyUnionpayDao;
 import com.example.mybatis.vo.MerchantUnionpayBalanceVO;
 import com.example.mybatis.vo.UnionpayTaxListVO;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -38,15 +39,16 @@ import java.util.List;
 public class CompanyUnionpayServiceImpl extends ServiceImpl<CompanyUnionpayDao, CompanyUnionpay> implements CompanyUnionpayService {
 
     @Resource
+    private CompanyUnionpayDao companyUnionpayDao;
+
+    @Resource
     private TaxService taxService;
 
     @Resource
     private CompanyInfoService companyInfoService;
 
     @Resource
-    private CompanyUnionpayDao companyUnionpayDao;
-
-    @Resource
+    @Lazy
     private TaxUnionpayService taxUnionpayService;
 
     @Override
@@ -66,11 +68,6 @@ public class CompanyUnionpayServiceImpl extends ServiceImpl<CompanyUnionpayDao, 
         queryWrapper.lambda().eq(CompanyUnionpay::getSubAccountCode, subAccountCode);
 
         return baseMapper.selectOne(queryWrapper);
-    }
-
-    @Override
-    public CompanyUnionpay queryMerchantUnionpayUnionpayBankType(String companyId, String taxUnionpayId) {
-        return baseMapper.queryMerchantUnionpayUnionpayBankType(companyId, taxUnionpayId);
     }
 
     @Override
@@ -117,7 +114,7 @@ public class CompanyUnionpayServiceImpl extends ServiceImpl<CompanyUnionpayDao, 
                 }
 
                 MerchantUnionpayBalanceVO merchantUnionpayBalanceVO = new MerchantUnionpayBalanceVO();
-                //银联银行类型
+                //银行类型
                 merchantUnionpayBalanceVO.setUnionpayBankType(taxUnionpay.getUnionpayBankType());
                 //主账号数据
                 String taxName = "未知服务商";

@@ -20,8 +20,8 @@ public class AddOrUpdateTaxUnionpayDTO implements Serializable {
     @ApiModelProperty(value = "服务商ID")
     private String taxId;
 
-    @ApiModelProperty(value = "银联银行类型")
-    @NotNull(message = "请选择银联银行类型")
+    @ApiModelProperty(value = "银行类型")
+    @NotNull(message = "请选择银行类型")
     private UnionpayBankType unionpayBankType;
 
     @ApiModelProperty(value = "平台公钥")

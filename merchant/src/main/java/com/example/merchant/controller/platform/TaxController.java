@@ -1,11 +1,16 @@
 package com.example.merchant.controller.platform;
 
 
+import com.example.common.enums.OrderType;
+import com.example.common.enums.PaymentMethod;
+import com.example.common.enums.TradeObject;
+import com.example.common.enums.TradeStatus;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.TaxListDTO;
 import com.example.merchant.dto.platform.AddInvoiceCatalogDTO;
 import com.example.merchant.dto.platform.AddOrUpdateTaxUnionpayDTO;
 import com.example.merchant.dto.platform.TaxDTO;
+import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.*;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.*;
@@ -16,8 +21,10 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -36,6 +43,7 @@ public class TaxController {
 
     @Resource
     private TaxService taxService;
+
     @Resource
     private TaxUnionpayService taxUnionpayService;
 
@@ -44,6 +52,9 @@ public class TaxController {
 
     @Resource
     private PaymentOrderService paymentOrderService;
+
+    @Resource
+    private PaymentHistoryService paymentHistoryService;
 
     @Resource
     private PaymentOrderManyService paymentOrderManyService;
@@ -138,6 +149,37 @@ public class TaxController {
     @ApiOperation(value = "查询服务商银联余额", notes = "查询服务商银联余额")
     public ReturnJson queryTaxUnionpayBalance(@ApiParam(value = "服务商银联") @NotBlank(message = "请选择服务商银联") @RequestParam(required = false) String taxUnionpayId) throws Exception {
         return taxUnionpayService.queryTaxUnionpayBalance(taxUnionpayId);
+    }
+
+    @GetMapping("/queryPaymentHistoryList")
+    @ApiOperation(value = "查询交易记录", notes = "查询交易记录")
+    @LoginRequired
+    public ReturnJson queryCompanyUnionpayDetail(@ApiParam(value = "服务商ID") @NotBlank(message = "请选择服务商") @RequestParam(required = false) String taxId,
+                                                 @ApiParam(value = "开始日期") @JsonFormat(pattern = "yyyy-MM-dd") @DateTimeFormat(pattern = "yyyy-MM-dd") @RequestParam(required = false) Date beginDate,
+                                                 @ApiParam(value = "结束日期") @JsonFormat(pattern = "yyyy-MM-dd") @DateTimeFormat(pattern = "yyyy-MM-dd") @RequestParam(required = false) Date endDate,
+                                                 @ApiParam(value = "交易类型") @RequestParam(required = false) OrderType orderType,
+                                                 @ApiParam(value = "交易方式") @RequestParam(required = false) PaymentMethod paymentMethod,
+                                                 @ApiParam(value = "交易结果") @RequestParam(required = false) TradeStatus tradeStatus,
+                                                 @ApiParam(value = "当前页") @Min(value = 1, message = "当前页数最小为1") @RequestParam(required = false) long pageNo,
+                                                 @ApiParam(value = "每页条数") @Min(value = 1, message = "每页页数最小为1") @RequestParam(required = false) long pageSize) {
+
+        return paymentHistoryService.queryPaymentHistoryList(TradeObject.TAX, taxId, beginDate, endDate, orderType, paymentMethod, tradeStatus, pageNo, pageSize);
+    }
+
+    @GetMapping("/queryTaxUnionpayCompanyUnionpayList")
+    @ApiOperation(value = "查询服务商银联所有子账号的商户", notes = "查询服务商银联所有子账号的商户")
+    public ReturnJson queryTaxUnionpayCompanyUnionpayList(@ApiParam(value = "服务商银联") @NotBlank(message = "请选择服务商银联") @RequestParam(required = false) String taxUnionpayId) {
+        return taxUnionpayService.queryTaxUnionpayCompanyUnionpayList(taxUnionpayId);
+    }
+
+    @PostMapping("/clarify")
+    @ApiOperation(value = "服务商清分操作", notes = "服务商清分操作")
+    @LoginRequired
+    public ReturnJson clarify(@ApiParam(hidden = true) @RequestAttribute(value = "userId") String userId,
+                              @ApiParam(value = "服务商银联") @NotBlank(message = "请选择服务商银联") @RequestParam(required = false) String taxUnionpayId,
+                              @ApiParam(value = "商户ID") @NotBlank(message = "请选择商户") @RequestParam(required = false) String companyId,
+                              @ApiParam(value = "清分金额") @NotBlank(message = "请输入清分金额") @RequestParam(required = false) BigDecimal amount) throws Exception {
+        return taxUnionpayService.clarify(userId, taxUnionpayId, companyId, amount);
     }
 
     @GetMapping("/queryTaxPlatformReconciliationFile")
