@@ -29,7 +29,7 @@ public class TaxUnionpay extends BaseEntity {
     private String taxId;
 
     /**
-     * 银联银行类型
+     * 银行类型
      */
     private UnionpayBankType unionpayBankType;
 

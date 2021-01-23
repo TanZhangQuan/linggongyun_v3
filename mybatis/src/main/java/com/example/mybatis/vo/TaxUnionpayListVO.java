@@ -15,7 +15,7 @@ public class TaxUnionpayListVO implements Serializable {
     @ApiModelProperty(value = "服务商银联ID")
     private String id;
 
-    @ApiModelProperty(value = "银联银行类型")
+    @ApiModelProperty(value = "银行类型")
     private UnionpayBankType unionpayBankType;
 
     @ApiModelProperty(value = "商户号")

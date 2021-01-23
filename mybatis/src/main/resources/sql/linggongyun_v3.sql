@@ -45,7 +45,7 @@ DROP TABLE IF EXISTS `tb_tax_unionpay`;
 CREATE TABLE `tb_tax_unionpay` (
   `id` varchar(50) NOT NULL COMMENT '主键',
   `tax_id` varchar(50) NOT NULL COMMENT '服务商ID',
-  `unionpay_bank_type` varchar(50) NOT NULL COMMENT '银联银行类型',
+  `unionpay_bank_type` varchar(50) NOT NULL COMMENT '银行类型',
   `pfmpubkey` varchar(1000) NOT NULL COMMENT '平台公钥',
   `prikey` varchar(1000) NOT NULL COMMENT '合作方私钥',
   `merchno` varchar(50) NOT NULL COMMENT '商户号',
@@ -168,7 +168,7 @@ CREATE TABLE `tb_company_info` (
   `company_name` varchar(40) NOT NULL COMMENT '公司全称',
   `address_and_telephone` varchar(255) DEFAULT '' COMMENT '地址电话',
   `bank_and_account` varchar(255) NOT NULL DEFAULT '' COMMENT '开户行及账号',
-  `registered_capital` decimal(18,4) DEFAULT '0.0000' COMMENT '注册资本',
+  `registered_capital` decimal(18,4) DEFAULT '0.00' COMMENT '注册资本',
   `company_create_date` date DEFAULT NULL COMMENT '公司的成立时间',
   `contract` varchar(100) DEFAULT NULL COMMENT '加盟合同地址',
   `member_id` varchar(36) DEFAULT NULL COMMENT '网商银行会员号',
@@ -182,7 +182,9 @@ CREATE TABLE `tb_company_info` (
   `pay_pwd` varchar(40) NOT NULL COMMENT '支付密码',
   `create_date` datetime NOT NULL COMMENT '创建时间',
   `update_date` datetime NOT NULL COMMENT '修改时间',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `UK_icr1qhlwx3lsd0terqn7w65k1` (`company_name`),
+  UNIQUE KEY `UK_icr1qhlwx3lsd0terqn7w65k1` (`credit_code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='公司信息';
 
 -- ----------------------------

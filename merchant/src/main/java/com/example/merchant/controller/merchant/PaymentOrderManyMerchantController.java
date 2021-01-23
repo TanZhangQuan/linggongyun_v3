@@ -84,7 +84,7 @@ public class PaymentOrderManyMerchantController {
     @LoginRequired
     public ReturnJson queryCompanyUnionpayDetail(@ApiParam(value = "商户ID", hidden = true) @RequestAttribute(value = "userId") String merchantId,
                                                  @ApiParam(value = "服务商ID") @NotBlank(message = "请选择服务商") @RequestParam(required = false) String taxId,
-                                                 @ApiParam(value = "银联银行类型") @NotNull(message = "请选择银联银行类型") @RequestParam(required = false) UnionpayBankType unionpayBankType) throws Exception {
+                                                 @ApiParam(value = "银行类型") @NotNull(message = "请选择银行类型") @RequestParam(required = false) UnionpayBankType unionpayBankType) throws Exception {
 
         Merchant merchant = merchantService.getById(merchantId);
         if (merchant == null) {

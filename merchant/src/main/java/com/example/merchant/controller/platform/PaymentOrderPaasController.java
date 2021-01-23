@@ -53,7 +53,7 @@ public class PaymentOrderPaasController {
     @LoginRequired
     @PostMapping("/findMerchant")
     @ApiOperation(value = "查询商户", notes = "查询商户")
-    public ReturnJson findMerchant(@NotBlank(message = "支付订单不能为空！") @ApiParam(hidden = true) @RequestAttribute(value = "userId") String managersId) {
+    public ReturnJson findMerchant(@ApiParam(hidden = true) @RequestAttribute(value = "userId") String managersId) {
         return paymentOrderService.findMerchantPaas(managersId);
     }
 
