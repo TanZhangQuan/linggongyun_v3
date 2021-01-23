@@ -57,20 +57,27 @@
         <result column="real_money" property="realMoney"/>
     </resultMap>
 
-    <!--通用查询-->
-    <sql id="que">
-
-    </sql>
-
     <select id="getSummaryList" resultMap="summaryList">
-        SELECT mti.id,po.company_s_name,po.platform_service_provider,mti.maker_invoice_url,mti.maker_tax_url,
-        po.is_subpackage,mti.invoice_date,po.id as pid,po.payment_inventory,po.turnkey_project_payment
-        FROM tb_maker_total_invoice as mti
-        INNER JOIN tb_application_payment as ap ON ap.payment_order_id
-        INNER JOIN tb_invoice_application as ia ON ia.id= ap.invoice_application_id
-        INNER JOIN tb_payment_order as po ON po.id=ap.payment_order_id
-        INNER JOIN tb_invoice as i ON ia.id=i.application_id
-        WHERE po.is_subpackage = 1
+        SELECT
+            mti.id,
+            po.company_s_name,
+            po.platform_service_provider,
+            mti.maker_invoice_url,
+            mti.maker_tax_url,
+            po.is_subpackage,
+            mti.invoice_date,
+            po.id AS pid,
+            po.payment_inventory,
+            po.turnkey_project_payment
+        FROM
+            tb_maker_total_invoice AS mti
+        INNER JOIN tb_invoice_list il ON il.maker_total_invoice_id = mti.id
+        INNER JOIN tb_invoice i ON i.id = il.invoice_id
+        INNER JOIN tb_invoice_application ia ON ia.id = i.application_id
+        INNER JOIN tb_application_payment ap ON ap.invoice_application_id = ia.id
+        INNER JOIN tb_payment_order po ON po.id=ap.payment_order_id
+        WHERE
+            po.is_subpackage = 1
         <if test="param3 != null and param3 != ''">
             AND po.company_id=#{param3}
         </if>
