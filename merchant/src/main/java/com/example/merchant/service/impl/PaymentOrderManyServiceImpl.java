@@ -982,14 +982,14 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
             //获取平台对账文件
             JSONObject jsonObject = UnionpayUtil.AC091(taxUnionpay.getMerchno(), taxUnionpay.getAcctno(), taxUnionpay.getPfmpubkey(), taxUnionpay.getPrikey(), date);
             if (jsonObject == null) {
-                log.error("服务商" + taxUnionpay.getUnionpayBankType().getDesc() + "银联查询平台对账文件查询失败");
+                log.error("下载对账文件失败");
                 continue;
             }
 
             Boolean boolSuccess = jsonObject.getBoolean("success");
             if (boolSuccess == null || !boolSuccess) {
                 String errMsg = jsonObject.getString("err_msg");
-                log.error("服务商" + taxUnionpay.getUnionpayBankType().getDesc() + "银联查询平台对账文件查询失败: " + errMsg);
+                log.error("下载对账文件失败: " + errMsg);
                 continue;
             }
 
@@ -997,7 +997,7 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
             String rtnCode = returnValue.getString("rtn_code");
             if (!("S00000".equals(rtnCode))) {
                 String errMsg = returnValue.getString("err_msg");
-                log.error("服务商" + taxUnionpay.getUnionpayBankType().getDesc() + "银联查询平台对账文件查询失败: " + errMsg);
+                log.error("下载对账文件失败: " + errMsg);
                 continue;
             }
 
@@ -1008,7 +1008,7 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
         }
 
         if (fileUrlList.size() <= 0) {
-            throw new CommonException(300, "暂无相应的平台对账文件");
+            throw new CommonException(300, "暂无对应日期的对账文件");
         }
 
         for (String fileUrl : fileUrlList) {

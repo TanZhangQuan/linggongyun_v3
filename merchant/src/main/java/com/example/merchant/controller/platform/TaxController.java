@@ -186,7 +186,7 @@ public class TaxController {
     }
 
     @GetMapping("/downloadTaxPlatformReconciliationFile")
-    @ApiOperation(value = "查询平台对账文件查询", notes = "查询平台对账文件查询")
+    @ApiOperation(value = "银联对账文件下载", notes = "银联对账文件下载")
     public void queryTaxPlatformReconciliationFile(@ApiParam(value = "开始日期") @NotNull(message = "请选择开始日期") @JsonFormat(pattern = "yyyy-MM-dd") @DateTimeFormat(pattern = "yyyy-MM-dd") @RequestParam(required = false) Date beginDate,
                                                    @ApiParam(value = "结束日期") @NotNull(message = "请选择结束日期") @JsonFormat(pattern = "yyyy-MM-dd") @DateTimeFormat(pattern = "yyyy-MM-dd") @RequestParam(required = false) Date endDate,
                                                    @ApiParam(value = "服务商银联") @NotBlank(message = "请选择服务商银联") @RequestParam(required = false) String taxUnionpayId,
