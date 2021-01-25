@@ -943,13 +943,9 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
     @Override
     public void queryTaxPlatformReconciliationFile(Date beginDate, Date endDate, String taxUnionpayId, HttpServletResponse response) throws Exception {
 
-        String start = "2021-01-15";
-        String end = "2021-01-20";
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        beginDate = simpleDateFormat.parse(start);
-        endDate = simpleDateFormat.parse(end);
-        log.info("beginDate: {}", simpleDateFormat.format(beginDate));
-        log.info("endDate: {}", simpleDateFormat.format(endDate));
+        log.info("开始日期: {}", simpleDateFormat.format(beginDate));
+        log.info("结束日期: {}", simpleDateFormat.format(endDate));
 
         TaxUnionpay taxUnionpay = taxUnionpayService.getById(taxUnionpayId);
         if (taxUnionpay == null) {
@@ -965,18 +961,23 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
 
         //获取日期的毫秒值除以每天的毫秒值
         int betweenDays = (int) ((endDate.getTime() / (24 * 60 * 60 * 1000)) - (beginDate.getTime() / (24 * 60 * 60 * 1000)));
-        if (betweenDays + 1 > 30) {
-            throw new CommonException(300, "时间段只能选择30天以内");
+        if (betweenDays + 1 > 31) {
+            throw new CommonException(300, "时间段只能选择31天以内");
         }
 
         //然后把相差的天数set到calendar类中，这样就改变日期了
         List<String> fileUrlList = new ArrayList<>();
         calendar.setTime(beginDate);
-        for (int i = 0; i < betweenDays; i++) {
+        for (int i = 0; i < betweenDays + 1; i++) {
             // 两个参数，第一个是要添加的日期(年月日)，第二个是要添加多少天
-            calendar.add(Calendar.DATE, i); //加一天
+            if (i == 0) {
+                calendar.add(Calendar.DATE, 0); //加0天
+            } else {
+                calendar.add(Calendar.DATE, 1); //加1天
+            }
+
             Date date = calendar.getTime();
-            log.info("endDate: {}", simpleDateFormat.format(date));
+            log.info("访问请求日期: {}", simpleDateFormat.format(date));
 
             //获取平台对账文件
             JSONObject jsonObject = UnionpayUtil.AC091(taxUnionpay.getMerchno(), taxUnionpay.getAcctno(), taxUnionpay.getPfmpubkey(), taxUnionpay.getPrikey(), date);
