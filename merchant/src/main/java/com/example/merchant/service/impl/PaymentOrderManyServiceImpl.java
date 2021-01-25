@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.example.common.constant.SftpConstant;
 import com.example.common.enums.*;
 import com.example.common.util.*;
 import com.example.merchant.dto.merchant.AddPaymentOrderManyDTO;
@@ -34,13 +35,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
+import java.io.*;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * <p>
@@ -944,13 +943,9 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
     @Override
     public void queryTaxPlatformReconciliationFile(Date beginDate, Date endDate, String taxUnionpayId, HttpServletResponse response) throws Exception {
 
-        String start = "2021-01-15";
-        String end = "2021-01-20";
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        beginDate = simpleDateFormat.parse(start);
-        endDate = simpleDateFormat.parse(end);
-        log.info("beginDate: {}", simpleDateFormat.format(beginDate));
-        log.info("endDate: {}", simpleDateFormat.format(endDate));
+        log.info("开始日期: {}", simpleDateFormat.format(beginDate));
+        log.info("结束日期: {}", simpleDateFormat.format(endDate));
 
         TaxUnionpay taxUnionpay = taxUnionpayService.getById(taxUnionpayId);
         if (taxUnionpay == null) {
@@ -966,18 +961,23 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
 
         //获取日期的毫秒值除以每天的毫秒值
         int betweenDays = (int) ((endDate.getTime() / (24 * 60 * 60 * 1000)) - (beginDate.getTime() / (24 * 60 * 60 * 1000)));
-        if (betweenDays + 1 > 30) {
-            throw new CommonException(300, "时间段只能选择30天以内");
+        if (betweenDays + 1 > 31) {
+            throw new CommonException(300, "时间段只能选择31天以内");
         }
 
         //然后把相差的天数set到calendar类中，这样就改变日期了
         List<String> fileUrlList = new ArrayList<>();
         calendar.setTime(beginDate);
-        for (int i = 0; i < betweenDays; i++) {
+        for (int i = 0; i < betweenDays + 1; i++) {
             // 两个参数，第一个是要添加的日期(年月日)，第二个是要添加多少天
-            calendar.add(Calendar.DATE, i); //加一天
+            if (i == 0) {
+                calendar.add(Calendar.DATE, 0); //加0天
+            } else {
+                calendar.add(Calendar.DATE, 1); //加1天
+            }
+
             Date date = calendar.getTime();
-            log.info("endDate: {}", simpleDateFormat.format(date));
+            log.info("访问请求日期: {}", simpleDateFormat.format(date));
 
             //获取平台对账文件
             JSONObject jsonObject = UnionpayUtil.AC091(taxUnionpay.getMerchno(), taxUnionpay.getAcctno(), taxUnionpay.getPfmpubkey(), taxUnionpay.getPrikey(), date);
@@ -1011,17 +1011,59 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
             throw new CommonException(300, "暂无相应的平台对账文件");
         }
 
-        //sftp下载文件
-        SftpUtils sftp = null;
+        for (String fileUrl : fileUrlList) {
+
+            SftpUtil sftpUtil = null;
+            try {
+                sftpUtil = new SftpUtil(SftpConstant.UNIONPAYSFTPHOST, SftpConstant.UNIONPAYSFTPUSERNAME, SftpConstant.UNIONPAYSFTPPASSWORD);
+                sftpUtil.connect();
+                // 下载
+                //获取文件名称和后缀
+                String fileName = FileUtil.getFileName(fileUrl);
+                //获取去掉文件名称和后缀后的路径
+                String subUrl = fileUrl.replace(fileName, "");
+
+                sftpUtil.downloadFile(subUrl, fileName, SftpConstant.SAVELOCALPATH + "/", fileName);
+
+            } catch (Exception e) {
+                log.error(e.getMessage());
+            } finally {
+                if (sftpUtil != null) {
+                    sftpUtil.disconnect();
+                }
+            }
+
+        }
+
+        //压缩文件
+        FileOutputStream fileOutputStream = new FileOutputStream(new File(SftpConstant.COMPRESSLOCALPATH + "/platform.zip"));
+        ZipUtil.toZip(SftpConstant.SAVELOCALPATH, fileOutputStream, true);
+
+        OutputStream outputStream = response.getOutputStream();
+        // 清空response
+        response.reset();
+        response.setContentType("application/x-download");//设置response内容的类型 普通下载类型
+        response.setHeader("Content-Disposition", "attachment; filename=" + java.net.URLEncoder.encode("platform.zip", "UTF-8"));
+
+        //下载文件
+        File zipFile = new File(SftpConstant.COMPRESSLOCALPATH + "/platform.zip");
+        InputStream inputStream = new FileInputStream(zipFile);
         try {
-            sftp = new SftpUtils("47.99.58.100", "tax_read", "DWFwPe4DgXWxaBPX");
-            sftp.connect();
-            // 下载
-            sftp.downLoadFile(fileUrlList, response);
+            int len;
+            byte[] bytes = new byte[1024 * 1024];
+            while ((len = inputStream.read(bytes)) != -1) {
+                outputStream.write(bytes, 0, len);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            sftp.disconnect();
+            inputStream.close();
+            outputStream.flush();
+            outputStream.close();
+            //删除文件
+            File deleteFile = new File(SftpConstant.COMPRESSLOCALPATH);
+            FileUtil.deleteFile(deleteFile);
         }
+
     }
 }

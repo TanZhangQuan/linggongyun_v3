@@ -33,6 +33,7 @@
         <if test="tradeStatus != null">
             AND t1.trade_status = #{tradeStatus}
         </if>
+        ORDER BY t1.create_date DESC
     </select>
 
 </mapper>

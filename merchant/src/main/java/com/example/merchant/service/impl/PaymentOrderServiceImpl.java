@@ -1019,6 +1019,13 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
                                 continue;
                             }
 
+                            //设置分包未支付，清空分包支付失败原因
+                            if (paymentInventory.getPaymentStatus() == -1){
+                                paymentInventory.setPaymentStatus(0);
+                                paymentInventory.setTradeFailReason("");
+                                paymentInventoryService.updateById(paymentInventory);
+                            }
+
                             paymentHistory.setOrderType(OrderType.INVENTORY);
                             paymentHistory.setOrderId(paymentInventory.getId());
                             paymentHistory.setPaymentMethod(PaymentMethod.UNIONSJBK);
@@ -1096,6 +1103,13 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
                                 paymentInventory.setTradeFailReason(errMsg);
                                 paymentInventoryService.updateById(paymentInventory);
                                 continue;
+                            }
+
+                            //设置分包未支付，清空分包支付失败原因
+                            if (paymentInventory.getPaymentStatus() == -1){
+                                paymentInventory.setPaymentStatus(0);
+                                paymentInventory.setTradeFailReason("");
+                                paymentInventoryService.updateById(paymentInventory);
                             }
 
                             paymentHistory.setOrderType(OrderType.INVENTORY);
@@ -1177,6 +1191,13 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
                                 continue;
                             }
 
+                            //设置分包未支付，清空分包支付失败原因
+                            if (paymentInventory.getPaymentStatus() == -1){
+                                paymentInventory.setPaymentStatus(0);
+                                paymentInventory.setTradeFailReason("");
+                                paymentInventoryService.updateById(paymentInventory);
+                            }
+
                             paymentHistory.setOrderType(OrderType.INVENTORY);
                             paymentHistory.setOrderId(paymentInventory.getId());
                             paymentHistory.setPaymentMethod(PaymentMethod.UNIONWSBK);
@@ -1255,6 +1276,13 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
                                 paymentInventory.setTradeFailReason(errMsg);
                                 paymentInventoryService.updateById(paymentInventory);
                                 continue;
+                            }
+
+                            //设置分包未支付，清空分包支付失败原因
+                            if (paymentInventory.getPaymentStatus() == -1){
+                                paymentInventory.setPaymentStatus(0);
+                                paymentInventory.setTradeFailReason("");
+                                paymentInventoryService.updateById(paymentInventory);
                             }
 
                             paymentHistory.setOrderType(OrderType.INVENTORY);
