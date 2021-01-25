@@ -11,6 +11,7 @@ import com.example.mybatis.po.TaxPO;
 import com.example.mybatis.vo.*;
 import org.apache.ibatis.annotations.Param;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -44,7 +45,7 @@ public interface TaxDao extends BaseMapper<Tax> {
 
     TaxInBankInfoVO queryTaxInBankInfo(String taxId);
 
-    List<TaxTransactionFlowVO> queryTaxTransactionFlow(String taxId,Page page);
+    IPage<TaxTransactionFlowVO> queryTaxTransactionFlow(String taxId,Page page);
 
     IPage<TaxCompanyPaymentVO> getTaxCompanyFlow(Page page,String companyId,String taxId);
 
