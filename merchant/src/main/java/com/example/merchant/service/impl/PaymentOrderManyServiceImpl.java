@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.example.common.constant.SftpConstant;
 import com.example.common.enums.*;
 import com.example.common.util.*;
 import com.example.merchant.dto.merchant.AddPaymentOrderManyDTO;
@@ -34,13 +35,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
+import java.io.*;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * <p>
@@ -1011,17 +1010,59 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
             throw new CommonException(300, "暂无相应的平台对账文件");
         }
 
-        //sftp下载文件
-        SftpUtils sftp = null;
+        for (String fileUrl : fileUrlList) {
+
+            SftpUtil sftpUtil = null;
+            try {
+                sftpUtil = new SftpUtil(SftpConstant.UNIONPAYSFTPHOST, SftpConstant.UNIONPAYSFTPUSERNAME, SftpConstant.UNIONPAYSFTPPASSWORD);
+                sftpUtil.connect();
+                // 下载
+                //获取文件名称和后缀
+                String fileName = FileUtil.getFileName(fileUrl);
+                //获取去掉文件名称和后缀后的路径
+                String subUrl = fileUrl.replace(fileName, "");
+
+                sftpUtil.downloadFile(subUrl, fileName, SftpConstant.SAVELOCALPATH + "/", fileName);
+
+            } catch (Exception e) {
+                log.error(e.getMessage());
+            } finally {
+                if (sftpUtil != null) {
+                    sftpUtil.disconnect();
+                }
+            }
+
+        }
+
+        //压缩文件
+        FileOutputStream fileOutputStream = new FileOutputStream(new File(SftpConstant.COMPRESSLOCALPATH + "/platform.zip"));
+        ZipUtil.toZip(SftpConstant.SAVELOCALPATH, fileOutputStream, true);
+
+        OutputStream outputStream = response.getOutputStream();
+        // 清空response
+        response.reset();
+        response.setContentType("application/x-download");//设置response内容的类型 普通下载类型
+        response.setHeader("Content-Disposition", "attachment; filename=" + java.net.URLEncoder.encode("platform.zip", "UTF-8"));
+
+        //下载文件
+        File zipFile = new File(SftpConstant.COMPRESSLOCALPATH + "/platform.zip");
+        InputStream inputStream = new FileInputStream(zipFile);
         try {
-            sftp = new SftpUtils("47.99.58.100", "tax_read", "DWFwPe4DgXWxaBPX");
-            sftp.connect();
-            // 下载
-            sftp.downLoadFile(fileUrlList, response);
+            int len;
+            byte[] bytes = new byte[1024 * 1024];
+            while ((len = inputStream.read(bytes)) != -1) {
+                outputStream.write(bytes, 0, len);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            sftp.disconnect();
+            inputStream.close();
+            outputStream.flush();
+            outputStream.close();
+            //删除文件
+            File deleteFile = new File(SftpConstant.COMPRESSLOCALPATH);
+            FileUtil.deleteFile(deleteFile);
         }
+
     }
 }
