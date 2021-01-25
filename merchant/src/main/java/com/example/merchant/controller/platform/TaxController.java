@@ -181,7 +181,7 @@ public class TaxController {
     public ReturnJson clarify(@ApiParam(hidden = true) @RequestAttribute(value = "userId") String userId,
                               @ApiParam(value = "服务商银联") @NotBlank(message = "请选择服务商银联") @RequestParam(required = false) String taxUnionpayId,
                               @ApiParam(value = "商户ID") @NotBlank(message = "请选择商户") @RequestParam(required = false) String companyId,
-                              @ApiParam(value = "清分金额") @NotBlank(message = "请输入清分金额") @RequestParam(required = false) BigDecimal amount) throws Exception {
+                              @ApiParam(value = "清分金额") @NotNull(message = "请输入清分金额") @RequestParam(required = false) BigDecimal amount) throws Exception {
         return taxUnionpayService.clarify(userId, taxUnionpayId, companyId, amount);
     }
 
