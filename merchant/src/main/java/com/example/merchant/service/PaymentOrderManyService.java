@@ -189,6 +189,6 @@ public interface PaymentOrderManyService extends IService<PaymentOrderMany> {
      * @param taxUnionpayId
      * @return
      */
-    void queryTaxPlatformReconciliationFile(Date beginDate, Date endDate, String taxUnionpayId, HttpServletResponse response) throws Exception;
+    void downloadTaxPlatformReconciliationFile(Date beginDate, Date endDate, String taxUnionpayId, HttpServletResponse response) throws Exception;
 
 }

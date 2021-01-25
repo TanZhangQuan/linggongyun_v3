@@ -941,7 +941,7 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
     }
 
     @Override
-    public void queryTaxPlatformReconciliationFile(Date beginDate, Date endDate, String taxUnionpayId, HttpServletResponse response) throws Exception {
+    public void downloadTaxPlatformReconciliationFile(Date beginDate, Date endDate, String taxUnionpayId, HttpServletResponse response) throws Exception {
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         log.info("开始日期: {}", simpleDateFormat.format(beginDate));
@@ -1036,17 +1036,17 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
         }
 
         //压缩文件
-        FileOutputStream fileOutputStream = new FileOutputStream(new File(SftpConstant.COMPRESSLOCALPATH + "/platform.zip"));
+        FileOutputStream fileOutputStream = new FileOutputStream(new File(SftpConstant.COMPRESSLOCALPATH + "/reconciliation.zip"));
         ZipUtil.toZip(SftpConstant.SAVELOCALPATH, fileOutputStream, true);
 
         OutputStream outputStream = response.getOutputStream();
         // 清空response
         response.reset();
         response.setContentType("application/x-download");//设置response内容的类型 普通下载类型
-        response.setHeader("Content-Disposition", "attachment; filename=" + java.net.URLEncoder.encode("platform.zip", "UTF-8"));
+        response.setHeader("Content-Disposition", "attachment; filename=" + java.net.URLEncoder.encode("reconciliation.zip", "UTF-8"));
 
         //下载文件
-        File zipFile = new File(SftpConstant.COMPRESSLOCALPATH + "/platform.zip");
+        File zipFile = new File(SftpConstant.COMPRESSLOCALPATH + "/reconciliation.zip");
         InputStream inputStream = new FileInputStream(zipFile);
         try {
             int len;
