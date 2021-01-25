@@ -45,7 +45,7 @@ public class SignAContractUtils {
 
         log.info("---------------------创建机构印章start----------------------------------");
         JSONObject orgSealJson = SealHelper.createOrgTemplateSeal(orgId, "顺利创印章", "RED", 159, 159, null, null, "TEMPLATE_ROUND", "STAR");
-        String orgSealId = orgSealJson.getString("sealId");
+        String orgSealId = orgSealJson.getString("");
 
         log.info("---------------------通过上传方式创建文件start-----------------------------");
         JSONObject uploadJson = FileTemplateHelper.createFileByUpload(filePath, UuidUtil.get32UUID() + ".pdf", orgId);

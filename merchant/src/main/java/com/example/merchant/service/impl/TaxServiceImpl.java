@@ -360,8 +360,8 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
 
     @Override
     public ReturnJson queryTaxTransactionFlow(String taxId, Integer page, Integer pageSize) {
-        Page<TaxTransactionFlowVO> taxPage = new Page<>(page, pageSize);
-        List<TaxTransactionFlowVO> taxTransactionFlowVOS = taxDao.queryTaxTransactionFlow(taxId, taxPage);
+        Page taxPage = new Page(page, pageSize);
+        IPage<TaxTransactionFlowVO> taxTransactionFlowVOS = taxDao.queryTaxTransactionFlow(taxId, taxPage);
         return ReturnJson.success(taxTransactionFlowVOS);
     }
 
