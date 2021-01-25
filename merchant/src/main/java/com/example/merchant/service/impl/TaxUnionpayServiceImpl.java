@@ -324,13 +324,18 @@ public class TaxUnionpayServiceImpl extends ServiceImpl<TaxUnionpayDao, TaxUnion
     @Override
     public ReturnJson clarify(String userId, String taxUnionpayId, String companyId, BigDecimal amount) throws Exception {
 
+        //判断金额
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+            return ReturnJson.error("请输入大于0的清分金额");
+        }
+
         //判断当前管理员是否是超级管理员
         Managers managers = managersService.getById(userId);
         if (managers == null) {
             return ReturnJson.error("管理员不存在");
         }
 
-        if (managers.getUserSign() != 3 || !(managers.getParentId().equals("0"))) {
+        if (managers.getUserSign() != 3 || !("0".equals(managers.getParentId()))) {
             return ReturnJson.error("非超级管理员不可进行清分操作");
         }
 

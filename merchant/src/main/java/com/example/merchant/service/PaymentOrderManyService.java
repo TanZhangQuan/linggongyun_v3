@@ -182,13 +182,13 @@ public interface PaymentOrderManyService extends IService<PaymentOrderMany> {
     PaymentOrderMany queryPaymentOrderManyByTradeNo(String tradeNo);
 
     /**
-     * 查询平台对账文件查询
+     * 银联对账文件下载
      *
      * @param beginDate
      * @param endDate
      * @param taxUnionpayId
      * @return
      */
-    void queryTaxPlatformReconciliationFile(Date beginDate, Date endDate, String taxUnionpayId, HttpServletResponse response) throws Exception;
+    void downloadTaxPlatformReconciliationFile(Date beginDate, Date endDate, String taxUnionpayId, HttpServletResponse response) throws Exception;
 
 }

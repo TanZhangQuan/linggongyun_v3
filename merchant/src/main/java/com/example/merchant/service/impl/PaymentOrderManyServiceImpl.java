@@ -941,7 +941,7 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
     }
 
     @Override
-    public void queryTaxPlatformReconciliationFile(Date beginDate, Date endDate, String taxUnionpayId, HttpServletResponse response) throws Exception {
+    public void downloadTaxPlatformReconciliationFile(Date beginDate, Date endDate, String taxUnionpayId, HttpServletResponse response) throws Exception {
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         log.info("开始日期: {}", simpleDateFormat.format(beginDate));
@@ -982,14 +982,14 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
             //获取平台对账文件
             JSONObject jsonObject = UnionpayUtil.AC091(taxUnionpay.getMerchno(), taxUnionpay.getAcctno(), taxUnionpay.getPfmpubkey(), taxUnionpay.getPrikey(), date);
             if (jsonObject == null) {
-                log.error("服务商" + taxUnionpay.getUnionpayBankType().getDesc() + "银联查询平台对账文件查询失败");
+                log.error("下载对账文件失败");
                 continue;
             }
 
             Boolean boolSuccess = jsonObject.getBoolean("success");
             if (boolSuccess == null || !boolSuccess) {
                 String errMsg = jsonObject.getString("err_msg");
-                log.error("服务商" + taxUnionpay.getUnionpayBankType().getDesc() + "银联查询平台对账文件查询失败: " + errMsg);
+                log.error("下载对账文件失败: " + errMsg);
                 continue;
             }
 
@@ -997,7 +997,7 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
             String rtnCode = returnValue.getString("rtn_code");
             if (!("S00000".equals(rtnCode))) {
                 String errMsg = returnValue.getString("err_msg");
-                log.error("服务商" + taxUnionpay.getUnionpayBankType().getDesc() + "银联查询平台对账文件查询失败: " + errMsg);
+                log.error("下载对账文件失败: " + errMsg);
                 continue;
             }
 
@@ -1008,7 +1008,7 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
         }
 
         if (fileUrlList.size() <= 0) {
-            throw new CommonException(300, "暂无相应的平台对账文件");
+            throw new CommonException(300, "暂无对应日期的对账文件");
         }
 
         for (String fileUrl : fileUrlList) {
@@ -1036,17 +1036,17 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
         }
 
         //压缩文件
-        FileOutputStream fileOutputStream = new FileOutputStream(new File(SftpConstant.COMPRESSLOCALPATH + "/platform.zip"));
+        FileOutputStream fileOutputStream = new FileOutputStream(new File(SftpConstant.COMPRESSLOCALPATH + "/reconciliation.zip"));
         ZipUtil.toZip(SftpConstant.SAVELOCALPATH, fileOutputStream, true);
 
         OutputStream outputStream = response.getOutputStream();
         // 清空response
         response.reset();
         response.setContentType("application/x-download");//设置response内容的类型 普通下载类型
-        response.setHeader("Content-Disposition", "attachment; filename=" + java.net.URLEncoder.encode("platform.zip", "UTF-8"));
+        response.setHeader("Content-Disposition", "attachment; filename=" + java.net.URLEncoder.encode("reconciliation.zip", "UTF-8"));
 
         //下载文件
-        File zipFile = new File(SftpConstant.COMPRESSLOCALPATH + "/platform.zip");
+        File zipFile = new File(SftpConstant.COMPRESSLOCALPATH + "/reconciliation.zip");
         InputStream inputStream = new FileInputStream(zipFile);
         try {
             int len;
