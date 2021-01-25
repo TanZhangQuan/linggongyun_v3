@@ -462,7 +462,7 @@
             po.acceptance_certificate,
             po.payment_order_status,
             po.payment_mode,
-            po.service_money AS real_money,
+            IF(po.payment_mode = 0, po.real_money, po.service_money) AS real_money
             po.create_date,
             po.subpackage_payment,
             po.turnkey_project_payment,
