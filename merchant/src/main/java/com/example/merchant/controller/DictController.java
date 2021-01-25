@@ -25,7 +25,7 @@ import javax.validation.constraints.NotBlank;
  */
 @Validated
 @RestController
-@RequestMapping("/merchant/dict")
+@RequestMapping("/dict")
 @Api(value = "获取字典信息", tags = "获取字典信息")
 public class DictController {
 
