@@ -113,4 +113,9 @@ public interface PaymentOrderManyDao extends BaseMapper<PaymentOrderMany> {
 
     YearTradeVO selectYearpaa(List<String> merchantId);
 
+    BigDecimal getFlowInfo(String companyId,String taxId,Integer isNot);
+
+    BigDecimal getPaymentManyMoney(String companyId,String taxId);
+
+    Integer getPaymentManyCount(String companyId,String taxId);
 }

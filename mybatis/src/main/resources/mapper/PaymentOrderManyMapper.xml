@@ -1343,4 +1343,55 @@ SELECT
         </foreach>
     </select>
 
+    <select id="getFlowInfo" resultType="java.math.BigDecimal">
+        SELECT
+            IFNULL(SUM(po.real_money),0)
+        FROM
+            tb_payment_order_many po
+        WHERE
+            po.payment_order_status = 3
+        <if test="param3 != null">
+            AND DATE_SUB(CURDATE(), INTERVAL #{param3} DAY) &lt;= date(payment_date)
+        </if>
+        <if test="param1 != null and param1 != ''">
+            AND po.company_id = #{param1}
+        </if>
+        <if test="param2 != null and param2 != ''">
+            AND po.tax_id = #{param2}
+        </if>
+    </select>
+
+    <select id="getPaymentManyMoney" resultType="java.math.BigDecimal">
+        SELECT
+            IFNULL(SUM(
+                pi.real_money + pi.service_money
+            ),0)
+        FROM
+            tb_payment_order_many po
+        INNER JOIN tb_payment_inventory pi ON pi.payment_order_id=po.id
+        WHERE
+            po.is_not_invoice = 1
+        <if test="param1 != null and param1 != ''">
+            AND po.company_id = #{param1}
+        </if>
+        <if test="param2 != null and param2 != ''">
+            AND po.tax_id = #{param2}
+        </if>
+    </select>
+
+    <select id="getPaymentManyCount" resultType="java.lang.Integer">
+        SELECT
+            COUNT(1)
+        FROM
+            tb_payment_order_many po
+        WHERE
+            po.is_not_invoice = 1
+        <if test="param1 != null and param1 != ''">
+            AND po.company_id = #{param1}
+        </if>
+        <if test="param2 != null and param2 != ''">
+            AND po.tax_id = #{param2}
+        </if>
+    </select>
+
 </mapper>

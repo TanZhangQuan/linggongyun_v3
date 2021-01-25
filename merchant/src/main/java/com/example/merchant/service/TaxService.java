@@ -130,4 +130,22 @@ public interface TaxService extends IService<Tax> {
      * @return
      */
     ReturnJson queryTaxTransactionFlow(String taxId, Integer page, Integer pageSize);
+
+    /**
+     * 查询服务商与商户的交易记录
+     *
+     * @param taxId
+     * @param userId
+     * @return
+     */
+    ReturnJson queryTaxCompanyList(String taxId,String userId,Integer pageNo, Integer pageSize);
+
+    /**
+     * 获取流水信息 通用
+     *
+     * @param companyId
+     * @param taxId
+     * @return
+     */
+    ReturnJson queryCompanyFlowInfo(String companyId, String taxId);
 }

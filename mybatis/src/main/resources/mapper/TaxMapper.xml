@@ -165,6 +165,7 @@
         <if test="endDate != null and endDate != ''">
             and date(create_date) &lt;= #{endDate}
         </if>
+        GROUP BY f.id
     </select>
 
     <resultMap id="MerchantPaymentList" type="com.example.mybatis.po.MerchantPaymentListPO">
@@ -321,13 +322,51 @@
         t2.create_date as start_cooperation_date,
         if(DATE_FORMAT((SELECT create_date FROM tb_payment_order where tax_id = t1.id and company_id = t3.id ORDER BY create_date desc LIMIT 1), 'MM-dd-yyyy hh:mm:ss') > DATE_FORMAT((SELECT create_date FROM tb_payment_order_many where tax_id = t1.id and company_id = t3.id ORDER BY create_date desc LIMIT 1), 'MM-dd-yyyy hh:mm:ss'),(SELECT create_date FROM tb_payment_order where tax_id = t1.id and company_id = t3.id ORDER BY create_date desc LIMIT 1),(SELECT create_date FROM tb_payment_order_many where tax_id = t1.id and company_id = t3.id ORDER BY create_date desc LIMIT 1)) as lately_cooperation_date
         FROM
-         tb_tax t1
+        tb_tax t1
         INNER JOIN tb_company_tax t2 on t2.tax_id = t1.id
         INNER JOIN tb_company_info t3 on t3.id = t2.company_id
         INNER JOIN tb_merchant t4 on t3.id=t4.company_id
         where t1.id = #{param1}
         GROUP BY
-         t2.company_id
+        t2.company_id
     </select>
+    <resultMap id="taxCompanyFlow" type="com.example.mybatis.vo.TaxCompanyPaymentVO">
+        <id column="id" property="id"/>
+        <result column="platform_service_provider" property="platformServiceProvider"/>
+        <result column="company_s_name" property="companySName"/>
+        <result column="cooperate_mode" property="cooperateMode"/>
+        <result column="transaction_flow" property="transactionFlow"/>
+        <result column="is_not_invoice" property="isNotInvoice"/>
+        <result column="update_date" property="updateDate"/>
+    </resultMap>
 
+    <select id="getTaxCompanyFlow" resultMap="taxCompanyFlow">
+        SELECT
+            id,
+            platform_service_provider,
+            company_s_name,
+            0 AS cooperate_mode,
+            (real_money + service_money) AS transaction_flow,
+            IFNULL(is_not_invoice, 0) AS is_not_invoice,
+            update_date
+        FROM
+            tb_payment_order
+        WHERE company_id=#{param2}
+        AND tax_id=#{param3}
+        UNION
+        SELECT
+            id,
+            platform_service_provider,
+            company_s_name,
+            1 AS cooperate_mode,
+            real_money AS transaction_flow,
+            IFNULL(is_not_invoice, 0) AS is_not_invoice,
+            update_date
+        FROM
+            tb_payment_order_many
+        WHERE company_id=#{param2}
+        AND tax_id=#{param3}
+        ORDER BY
+            update_date DESC
+    </select>
 </mapper>

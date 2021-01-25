@@ -111,10 +111,10 @@ public class TaxController {
     @ApiOperation(value = "查询服务商交易流水", notes = "查询服务商交易流水")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "taxId", value = "服务商ID"), @ApiImplicitParam(name = "pageNo", value = "页数"), @ApiImplicitParam(name = "pageSize", value = "一页的条数")})
     public ReturnJson transactionRecord(@NotBlank(message = "服务商ID不能为空！") @RequestParam String taxId,
-                                        @NotBlank(message = "商户ID不能为空！") @RequestParam String merchantId,
+                                        @NotBlank(message = "商户ID不能为空！") @RequestParam String companyId,
                                         @RequestParam(defaultValue = "1") Integer pageNo,
                                         @RequestParam(defaultValue = "10") Integer pageSize) {
-        return taxService.transactionRecord(taxId, merchantId, pageNo, pageSize);
+        return taxService.transactionRecord(taxId, companyId, pageNo, pageSize);
     }
 
     @GetMapping("/queryTaxPaasList")

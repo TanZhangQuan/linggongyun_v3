@@ -84,4 +84,10 @@ public interface PaymentOrderDao extends BaseMapper<PaymentOrder> {
     MonthTradeVO selectMonthpaa(List<String> merchantId);
 
     YearTradeVO selectYearpaa(List<String> merchantId);
+
+    BigDecimal getFlowInfo(String companyId,String taxId,Integer isNot);
+
+    BigDecimal getInvoiceTotalMoney(String companyId,String taxId);
+
+    Integer getInvoiceTotalCount(String companyId,String taxId);
 }
