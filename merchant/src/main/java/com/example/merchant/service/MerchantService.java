@@ -140,7 +140,7 @@ public interface MerchantService extends IService<Merchant> {
      * @param pageSize
      * @return
      */
-    ReturnJson getMerchantPaymentList(String merchantId, String tax,Integer page, Integer pageSize);
+    ReturnJson getMerchantPaymentList(String merchantId, String tax, Integer page, Integer pageSize);
 
     /**
      * 获取支付详情
@@ -210,7 +210,8 @@ public interface MerchantService extends IService<Merchant> {
      */
     ReturnJson queryCompanyTaxInfo(String companyId, String taxId);
 
-    ReturnJson taxMerchantInfoPaas(String merchantId,String taxId);
+    ReturnJson taxMerchantInfoPaas(String merchantId, String taxId);
 
-    ReturnJson queryMerchantTransactionFlow(String merchantId,Integer pageNo,Integer pageSize);
+    ReturnJson queryMerchantTransactionFlow(String merchantId, Integer pageNo, Integer pageSize);
+
 }

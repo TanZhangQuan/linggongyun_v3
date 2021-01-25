@@ -11,6 +11,7 @@ import com.example.merchant.dto.platform.*;
 import com.example.merchant.exception.CommonException;
 import com.example.merchant.service.InvoiceLadderPriceService;
 import com.example.merchant.service.TaxService;
+import com.example.merchant.vo.merchant.CompanyFlowInfoVO;
 import com.example.merchant.vo.platform.HomePageVO;
 import com.example.merchant.vo.platform.TaxPlatformVO;
 import com.example.mybatis.entity.*;
@@ -240,11 +241,11 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
         if (merchantId != null) {
             Merchant merchant = merchantDao.selectById(merchantId);
             Page<TaxListPO> taxListPOPage = new Page<>(taxListDto.getPageNo(), taxListDto.getPageSize());
-            IPage<TaxListPO> taxListPage = taxDao.selectTaxList(taxListPOPage, taxListDto.getTaxName(), taxListDto.getStartDate(), taxListDto.getEndDate(),merchant.getCompanyId());
+            IPage<TaxListPO> taxListPage = taxDao.selectTaxList(taxListPOPage, taxListDto.getTaxName(), taxListDto.getStartDate(), taxListDto.getEndDate(), merchant.getCompanyId());
             return ReturnJson.success(taxListPage);
         } else {
             Page<TaxListPO> taxListPOPage = new Page<>(taxListDto.getPageNo(), taxListDto.getPageSize());
-            IPage<TaxListPO> taxListPage = taxDao.selectTaxList(taxListPOPage, taxListDto.getTaxName(), taxListDto.getStartDate(), taxListDto.getEndDate(),null);
+            IPage<TaxListPO> taxListPage = taxDao.selectTaxList(taxListPOPage, taxListDto.getTaxName(), taxListDto.getStartDate(), taxListDto.getEndDate(), null);
             return ReturnJson.success(taxListPage);
         }
     }
@@ -300,13 +301,13 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
         homePageVO.setWorkerTotal(countWorker);
 
         //获取10条具体的交易流水
-        ReturnJson returnJson = this.transactionRecord(taxId,null, 1, 10);
+        ReturnJson returnJson = this.transactionRecord(taxId, null, 1, 10);
         returnJson.setObj(homePageVO);
         return returnJson;
     }
 
     @Override
-    public ReturnJson transactionRecord(String taxId,String merchantId, Integer page, Integer pageSize) {
+    public ReturnJson transactionRecord(String taxId, String merchantId, Integer page, Integer pageSize) {
         List<String> ids = new ArrayList<>();
         QueryWrapper<PaymentOrder> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda().eq(PaymentOrder::getTaxId, taxId).eq(StringUtils.isNotBlank(merchantId), PaymentOrder::getMerchantId, merchantId);
@@ -360,8 +361,55 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
     @Override
     public ReturnJson queryTaxTransactionFlow(String taxId, Integer page, Integer pageSize) {
         Page<TaxTransactionFlowVO> taxPage = new Page<>(page, pageSize);
-        List<TaxTransactionFlowVO> taxTransactionFlowVOS = taxDao.queryTaxTransactionFlow(taxId,taxPage);
+        List<TaxTransactionFlowVO> taxTransactionFlowVOS = taxDao.queryTaxTransactionFlow(taxId, taxPage);
         return ReturnJson.success(taxTransactionFlowVOS);
+    }
+
+    @Override
+    public ReturnJson queryTaxCompanyList(String taxId, String userId, Integer pageNo, Integer pageSize) {
+        Merchant merchant = merchantDao.selectById(userId);
+        if (merchant == null) {
+            return ReturnJson.error("不存在此商户，请重新登录！");
+        }
+        Page page = new Page(pageNo, pageSize);
+        IPage iPage = taxDao.getTaxCompanyFlow(page, merchant.getCompanyId(), taxId);
+        return ReturnJson.success(iPage);
+    }
+
+    @Override
+    public ReturnJson queryCompanyFlowInfo(String userId, String taxId) {
+        Merchant merchant = merchantDao.selectById(userId);
+        if (merchant == null) {
+            return ReturnJson.error("商户不存在，请重新登录");
+        }
+        String companyId=merchant.getCompanyId();
+        //获取众包三十天支付流水
+        BigDecimal payment30ManyMoney = paymentOrderManyDao.getFlowInfo(companyId, taxId, 30);
+        //获取总包三十天支付流水
+        BigDecimal payment30TotalMoney = paymentOrderDao.getFlowInfo(companyId, taxId, 30);
+        //获取众包总支付流水
+        BigDecimal paymentManyMoney = paymentOrderManyDao.getFlowInfo(companyId, taxId, null);
+        //获取总包总支付流水
+        BigDecimal paymentTotalMoney = paymentOrderDao.getFlowInfo(companyId, taxId, null);
+        //获取总包发票数
+        Integer invoiceTotalCount = paymentOrderDao.getInvoiceTotalCount(companyId, taxId);
+        //获取总包发票金额
+        BigDecimal invoiceTotalMoney = paymentOrderDao.getInvoiceTotalMoney(companyId, taxId);
+        //获取众包发票金额
+        BigDecimal invoiceManyMoney = paymentOrderManyDao.getPaymentManyMoney(companyId, taxId);
+        //获取众包发票数
+        Integer invoiceManyCount = paymentOrderManyDao.getPaymentManyCount(companyId, taxId);
+
+        CompanyFlowInfoVO companyFlowInfoVO = new CompanyFlowInfoVO();
+        companyFlowInfoVO.setPayment30ManyMoney(payment30ManyMoney);
+        companyFlowInfoVO.setPayment30TotalMoney(payment30TotalMoney);
+        companyFlowInfoVO.setPaymentManyMoney(paymentManyMoney);
+        companyFlowInfoVO.setPaymentTotalMoney(paymentTotalMoney);
+        companyFlowInfoVO.setInvoiceManyCount(invoiceManyCount);
+        companyFlowInfoVO.setInvoiceTotalCount(invoiceTotalCount);
+        companyFlowInfoVO.setInvoiceManyMoney(invoiceManyMoney);
+        companyFlowInfoVO.setInvoiceTotalMoney(invoiceTotalMoney);
+        return ReturnJson.success(companyFlowInfoVO);
     }
 
     @Override

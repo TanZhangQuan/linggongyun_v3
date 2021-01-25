@@ -53,7 +53,7 @@ public class KdniaoTrackQueryAPI {
         KdniaoTrackQueryAPI api = new KdniaoTrackQueryAPI();
         try {
             //String result = api.getOrderTracesByJson("YTO", "YT4733477430882");
-            List<ExpressLogisticsInfo> expressLogisticsInfos = getExpressInfo("圆通速递", "YT4733477430882");
+            List<ExpressLogisticsInfo> expressLogisticsInfos = getExpressInfo("申通速递", "777027340407442");
             System.out.println(expressLogisticsInfos.toString());
 
         } catch (Exception e) {

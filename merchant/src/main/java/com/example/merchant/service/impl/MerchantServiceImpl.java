@@ -15,6 +15,7 @@ import com.example.merchant.service.*;
 import com.example.merchant.util.AcquireID;
 import com.example.merchant.util.JwtUtils;
 import com.example.merchant.util.SnowflakeIdWorker;
+import com.example.merchant.vo.merchant.CompanyFlowInfoVO;
 import com.example.merchant.vo.merchant.HomePageMerchantVO;
 import com.example.merchant.vo.merchant.MerchantInfoVO;
 import com.example.merchant.vo.merchant.TaxVO;
@@ -112,6 +113,8 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
     private TaxUnionpayService taxUnionpayService;
     @Resource
     private CompanyUnionpayService companyUnionpayService;
+    @Resource
+    private CompanyWorkerDao companyWorkerDao;
 
     @Override
     public ReturnJson merchantLogin(String username, String password, HttpServletResponse response) {
@@ -453,7 +456,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
                     objectMenu.setMenuId(menu.getId());
                     objectMenu.setObjectUserId(merchant.getId());
                     objectMenuList.add(objectMenu);
-                    for(Menu menu1:menu.getList()){
+                    for (Menu menu1 : menu.getList()) {
                         objectMenu = new ObjectMenu();
                         objectMenu.setMenuId(menu1.getId());
                         objectMenu.setObjectUserId(merchant.getId());
