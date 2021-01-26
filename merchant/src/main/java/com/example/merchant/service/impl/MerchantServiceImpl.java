@@ -114,7 +114,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
     @Resource
     private CompanyUnionpayService companyUnionpayService;
     @Resource
-    private CompanyWorkerDao companyWorkerDao;
+    private TaxService taxService;
 
     @Override
     public ReturnJson merchantLogin(String username, String password, HttpServletResponse response) {
@@ -834,7 +834,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
 
     @Override
     public ReturnJson taxMerchantInfoPaas(String merchantId, String taxId) {
-        return homePageService.getHomePageInfo(merchantId);
+        return taxService.queryCompanyFlowInfo(merchantId,taxId);
     }
 
     @Override

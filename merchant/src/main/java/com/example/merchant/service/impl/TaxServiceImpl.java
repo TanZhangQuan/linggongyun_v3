@@ -310,14 +310,20 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
     public ReturnJson transactionRecord(String taxId, String merchantId, Integer page, Integer pageSize) {
         List<String> ids = new ArrayList<>();
         QueryWrapper<PaymentOrder> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda().eq(PaymentOrder::getTaxId, taxId).eq(StringUtils.isNotBlank(merchantId), PaymentOrder::getMerchantId, merchantId);
+        queryWrapper.lambda()
+                .eq(PaymentOrder::getTaxId, taxId)
+                .eq(StringUtils.isNotBlank(merchantId), PaymentOrder::getCompanyId, merchantId)
+                .eq(PaymentOrder::getPaymentOrderStatus,6);
         List<PaymentOrder> paymentOrders = paymentOrderDao.selectList(queryWrapper);
         for (PaymentOrder paymentOrder : paymentOrders) {
             ids.add(paymentOrder.getId());
         }
 
         QueryWrapper<PaymentOrderMany> queryWrapperMany = new QueryWrapper<>();
-        queryWrapperMany.lambda().eq(PaymentOrderMany::getTaxId, taxId).eq(StringUtils.isNotBlank(merchantId), PaymentOrderMany::getMerchantId, merchantId);
+        queryWrapperMany.lambda()
+                .eq(PaymentOrderMany::getTaxId, taxId)
+                .eq(StringUtils.isNotBlank(merchantId), PaymentOrderMany::getCompanyId, merchantId)
+                .eq(PaymentOrderMany::getPaymentOrderStatus,3);
         List<PaymentOrderMany> paymentOrderManies = paymentOrderManyDao.selectList(queryWrapperMany);
         for (PaymentOrderMany paymentOrderMany : paymentOrderManies) {
             ids.add(paymentOrderMany.getId());
