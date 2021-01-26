@@ -11,10 +11,10 @@ public interface SftpConstant {
     //共用配置
     // sftp下载保存地址
 //    String SAVELOCALPATH = "D:/unionpay/sftp"; //本地测试环境sftp下载保存地址
-    String SAVELOCALPATH = "D:/unionpay/sftp"; //生产环境sftp下载保存地址
+    String SAVELOCALPATH = "/root/linggongyun_v3/unionpay/sftp"; //生产环境sftp下载保存地址
     // sftp文件压缩地址
 //    String COMPRESSLOCALPATH = "D:/unionpay"; //本地测试环境sftp文件压缩地址
-    String COMPRESSLOCALPATH = "D:/unionpay"; //生产环境sftp文件压缩地址
+    String COMPRESSLOCALPATH = "/root/linggongyun_v3/unionpay"; //生产环境sftp文件压缩地址
 
     //银联sftp配置
     // 银联sftp地址
