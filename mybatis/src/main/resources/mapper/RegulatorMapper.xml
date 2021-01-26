@@ -198,7 +198,7 @@
         ON e.id = f.worker_id
         <where>
             <if test="workerId != null and workerId != '' ">
-                AND e.id like CONCAR('%',#{workerId},'%')
+                AND e.id = #{workerId}
             </if>
             <if test="workerName != null and workerName != '' ">
                 AND e.account_name like CONCAR('%',#{workerName},'%')
@@ -292,10 +292,10 @@
         <include refid="RegulatorMerchantSql"/>
         <where>
             <if test="companyName != null and companyName != '' ">
-                AND ci.company_name like CONCAR('%',#{companyName},'%')
+                AND ci.company_name like CONCAT('%',#{companyName},'%')
             </if>
             <if test="companyId != null and companyId != '' ">
-                AND ci.id like CONCAR('%',#{companyId},'%')
+                AND ci.id = #{companyId}
             </if>
             <if test="startDate != null and startDate != '' ">
                 AND ci.create_date &gt;= #{startDate}
