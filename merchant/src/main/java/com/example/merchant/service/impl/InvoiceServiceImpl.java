@@ -19,6 +19,7 @@ import com.example.mybatis.entity.*;
 import com.example.mybatis.mapper.*;
 import com.example.mybatis.vo.*;
 import com.example.mybatis.vo.InvoiceVO;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -114,6 +115,8 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
         sendAndReceiveVo.setAddressee(address.getLinkName());
         sendAndReceiveVo.setAddresseeTelephone(address.getLinkMobile());
         queryInvoiceVo.setSendAndReceiveVo(sendAndReceiveVo);
+        queryInvoiceVo.setInvoiceUrl(vo.getInvoiceUrl());
+        queryInvoiceVo.setTaxReceiptUrl(StringUtils.isNotEmpty(vo.getTaxReceiptUrl()) ? vo.getTaxReceiptUrl() : null);
         return ReturnJson.success("查询成功", queryInvoiceVo);
     }
 
@@ -272,7 +275,8 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
             PaymentInventory paymentInventory = new PaymentInventory();
             paymentInventory.setId(vo.getId());
             totalTaxPrice = totalTaxPrice.add(vo.getRealMoney());
-            List<InvoiceLadderPrice> invoiceLadderPrice = invoiceLadderPriceDao.selectList(new QueryWrapper<InvoiceLadderPrice>().eq("tax_id", vo.getTaxId()));
+            List<InvoiceLadderPrice> invoiceLadderPrice = invoiceLadderPriceDao.selectList(new QueryWrapper<InvoiceLadderPrice>()
+                    .lambda().eq(InvoiceLadderPrice::getTaxId, vo.getTaxId()));
             if (invoiceLadderPrice != null) {
                 for (InvoiceLadderPrice price : invoiceLadderPrice) {
                     if ((vo.getTaskMoney().compareTo(price.getStartMoney()) > -1) && (vo.getTaskMoney().compareTo(price.getEndMoney()) == -1)) {

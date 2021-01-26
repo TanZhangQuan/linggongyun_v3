@@ -69,8 +69,8 @@ public class StructureServiceImpl implements StructureService {
 
     @Override
     public ReturnJson addSalesMan(ManagersDTO managersDto) {
-        Managers managersOne = managersDao.selectOne(new QueryWrapper<Managers>().eq("mobile_code",
-                managersDto.getMobileCode()));
+        Managers managersOne = managersDao.selectOne(new QueryWrapper<Managers>().lambda()
+                .eq(Managers::getMobileCode, managersDto.getMobileCode()));
         Managers managers = managersDao.selectById(managersDto.getId());
         if (managers == null) {
             if (managersOne != null) {
@@ -141,14 +141,20 @@ public class StructureServiceImpl implements StructureService {
     @Override
     public ReturnJson getSalesManAll(Integer page, Integer pageSize) {
         Page<Managers> managersPage = new Page<>(page, pageSize);
-        IPage<Managers> managersIPage = managersService.page(managersPage, new QueryWrapper<Managers>().eq("user_sign", 2));
+        IPage<Managers> managersIPage = managersService.page(managersPage,
+                new QueryWrapper<Managers>().lambda()
+                        .eq(Managers::getUserSign, 2));
         return ReturnJson.success(managersIPage);
     }
 
     @Override
     public ReturnJson removeSalesMan(String salesManId) throws CommonException {
-        Integer companyInfoCount = companyInfoDao.selectCount(new QueryWrapper<CompanyInfo>().eq("sales_man_id", salesManId));
-        Integer agentCount = agentDao.selectCount(new QueryWrapper<Agent>().eq("sales_man_id", salesManId));
+        Integer companyInfoCount = companyInfoDao.selectCount(
+                new QueryWrapper<CompanyInfo>().lambda()
+                        .eq(CompanyInfo::getSalesManId, salesManId));
+        Integer agentCount = agentDao.selectCount(
+                new QueryWrapper<Agent>().lambda()
+                        .eq(Agent::getSalesManId, salesManId));
         if (companyInfoCount + agentCount == 0) {
             managersService.removeById(salesManId);
             return ReturnJson.success("删除成功！");
@@ -195,8 +201,9 @@ public class StructureServiceImpl implements StructureService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ReturnJson addAgent(AgentInfoDTO agentInfoDto) {
-        Managers managersOne = managersDao.selectOne(new QueryWrapper<Managers>().eq("mobile_code",
-                agentInfoDto.getLinkMobile()));
+        Managers managersOne = managersDao.selectOne(
+                new QueryWrapper<Managers>().lambda()
+                        .eq(Managers::getMobileCode, agentInfoDto.getLinkMobile()));
         Managers managers = new Managers();
         Agent agent = new Agent();
         //ID不为空进入添加
@@ -254,7 +261,8 @@ public class StructureServiceImpl implements StructureService {
             managers.setMobileCode(agentInfoDto.getLinkMobile());
             managers.setStatus(agentInfoDto.getAgentStatus());
             managersService.updateById(managers);
-            Agent agentOne = agentService.getOne(new QueryWrapper<Agent>().eq("managers_id", agentInfoDto.getAgentId()));
+            Agent agentOne = agentService.getOne(new QueryWrapper<Agent>().lambda()
+                    .eq(Agent::getManagersId, agentInfoDto.getAgentId()));
             BeanUtils.copyProperties(agentInfoDto, agent);
             agent.setManagersId(managers.getId());
             agent.setId(agentOne.getId());
@@ -274,7 +282,8 @@ public class StructureServiceImpl implements StructureService {
 
     @Override
     public ReturnJson findByAgentId(String agentId) {
-        Agent agent = agentDao.selectOne(new QueryWrapper<Agent>().eq("managers_id", agentId));
+        Agent agent = agentDao.selectOne(new QueryWrapper<Agent>().lambda()
+                .eq(Agent::getManagersId, agentId));
         AgentInfoDTO agentInfoDto = new AgentInfoDTO();
         BeanUtils.copyProperties(agent, agentInfoDto);
 
@@ -287,11 +296,13 @@ public class StructureServiceImpl implements StructureService {
 
     @Override
     public ReturnJson removeAgent(String agentId) {
-        Integer count = companyInfoDao.selectCount(new QueryWrapper<CompanyInfo>().eq("agent_id", agentId));
+        Integer count = companyInfoDao.selectCount(new QueryWrapper<CompanyInfo>().lambda()
+                .eq(CompanyInfo::getAgentId, agentId));
         if (count > 0) {
             return ReturnJson.error("该代理商有业务记录，只能停用！");
         }
-        agentDao.delete(new QueryWrapper<Agent>().eq("managers_id", agentId));
+        agentDao.delete(new QueryWrapper<Agent>().lambda()
+                .eq(Agent::getManagersId, agentId));
         managersDao.selectById(agentId);
         return ReturnJson.success("删除代理商成功！");
     }
@@ -300,17 +311,21 @@ public class StructureServiceImpl implements StructureService {
     public ReturnJson querySalesman(String userId) {
         Managers managers = managersDao.selectById(userId);
         //默认查询所有的业务员
-        List<Managers> list = managersDao.selectList(new QueryWrapper<Managers>().eq("user_sign", 2));
+        List<Managers> list = managersDao.selectList(new QueryWrapper<Managers>().lambda()
+                .eq(Managers::getUserSign, 2));
 
         //代理商登录的时候更具代理商返回上级的业务员
         if (managers.getUserSign() == 1) {
-            Agent agent = agentDao.selectOne(new QueryWrapper<Agent>().eq("managers_id", managers.getId()));
-            list = managersDao.selectList(new QueryWrapper<Managers>().eq("id", agent.getSalesManId()));
+            Agent agent = agentDao.selectOne(new QueryWrapper<Agent>().lambda()
+                    .eq(Agent::getManagersId, managers.getId()));
+            list = managersDao.selectList(new QueryWrapper<Managers>().lambda()
+                    .eq(Managers::getId, agent.getSalesManId()));
         }
 
         //业务员登录的时候返回自己
         if (managers.getUserSign() == 2) {
-            list = managersDao.selectList(new QueryWrapper<Managers>().eq("id", managers.getId()));
+            list = managersDao.selectList(new QueryWrapper<Managers>().lambda()
+                    .eq(Managers::getId, managers.getId()));
         }
         List<QuerySalesmanVO> querySalesmanVOList = new ArrayList<>();
         for (int i = 0; i < list.size(); i++) {

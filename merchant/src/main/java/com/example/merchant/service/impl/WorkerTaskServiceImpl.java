@@ -59,7 +59,9 @@ public class WorkerTaskServiceImpl extends ServiceImpl<WorkerTaskDao, WorkerTask
             workerTaskDao.addWorkerTask(workerTask);
         }
         if (task.getTaskMode() == 2) {
-            int count = workerTaskDao.selectCount(new QueryWrapper<WorkerTask>().eq("task_id", map.get("taskId").toString()).eq("task_status", 0));
+            int count = workerTaskDao.selectCount(new QueryWrapper<WorkerTask>().lambda()
+                    .eq(WorkerTask::getTaskId, map.get("taskId").toString())
+                    .eq(WorkerTask::getTaskStatus, 0));
             if (count == task.getUpperLimit()) {
                 task.setState(1);
                 taskDao.updateById(task);
@@ -77,8 +79,9 @@ public class WorkerTaskServiceImpl extends ServiceImpl<WorkerTaskDao, WorkerTask
         if (task == null) {
             return ReturnJson.error("不存在此任务信息！");
         }
-        WorkerTask workerTask = workerTaskDao.selectOne(new QueryWrapper<WorkerTask>()
-                .eq("worker_id", workerId).eq("task_id", taskId));
+        WorkerTask workerTask = workerTaskDao.selectOne(new QueryWrapper<WorkerTask>().lambda()
+                .eq(WorkerTask::getWorkerId, workerId)
+                .eq(WorkerTask::getTaskId, taskId));
         if (workerTask.getStatus() != 0) {
             return ReturnJson.error("该创客已经完成了该任务不能进行剔除！");
         }
@@ -99,14 +102,16 @@ public class WorkerTaskServiceImpl extends ServiceImpl<WorkerTaskDao, WorkerTask
         if (money == null) {
             returnJson = new ReturnJson("验收金额不能为空", 300);
         } else {
-            WorkerTask workerTask = workerTaskDao.selectOne(new QueryWrapper<WorkerTask>().eq("worker_id", id).eq("task_id", taskId));
+            WorkerTask workerTask = workerTaskDao.selectOne(new QueryWrapper<WorkerTask>().lambda()
+                    .eq(WorkerTask::getWorkerId, id).eq(WorkerTask::getTaskId, taskId));
             workerTask.setCheckMoney(money);
             workerTask.setStatus(4);
             workerTask.setCheckDate(LocalDateTime.now());
             workerTask.setCheckPerson(userId);
             workerTaskDao.updateById(workerTask);
-            List<WorkerTask> list = workerTaskDao.selectList(new QueryWrapper<WorkerTask>().
-                    eq("task_id", taskId).eq("task_status", 0));
+            List<WorkerTask> list = workerTaskDao.selectList(new QueryWrapper<WorkerTask>().lambda()
+                    .eq(WorkerTask::getTaskId, taskId)
+                    .eq(WorkerTask::getTaskStatus, 0));
             int j = 0;
             for (int i = 0; i < list.size(); i++) {
                 if (list.get(i).getStatus() == 4) {
@@ -131,8 +136,9 @@ public class WorkerTaskServiceImpl extends ServiceImpl<WorkerTaskDao, WorkerTask
     @Override
     public ReturnJson updateCheck(String taskId, String id) {
         workerTaskDao.updateCheckMoney(null, id, taskId);
-        List<WorkerTask> list = workerTaskDao.selectList(new QueryWrapper<WorkerTask>()
-                .eq("task_id", taskId).eq("task_status", 0));
+        List<WorkerTask> list = workerTaskDao.selectList(new QueryWrapper<WorkerTask>().lambda()
+                .eq(WorkerTask::getTaskId, taskId)
+                .eq(WorkerTask::getTaskStatus, 0));
         int j = 0;
         for (int i = 0; i < list.size(); i++) {
             if (list.get(i).getStatus() == 4) {
@@ -175,7 +181,8 @@ public class WorkerTaskServiceImpl extends ServiceImpl<WorkerTaskDao, WorkerTask
     @Override
     public ReturnJson getWorkerTask(String workerTaskId) {
         ReturnJson returnJson = new ReturnJson("操作失败", 300);
-        WorkerTask workerTask = workerTaskDao.selectOne(new QueryWrapper<WorkerTask>().eq("id", workerTaskId));
+        WorkerTask workerTask = workerTaskDao.selectOne(new QueryWrapper<WorkerTask>().lambda()
+                .eq(WorkerTask::getId, workerTaskId));
         if (workerTask != null) {
             returnJson = new ReturnJson("操作成果", workerTask, 200);
         }

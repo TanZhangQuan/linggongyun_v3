@@ -111,7 +111,8 @@ public class HomePageServiceImpl implements HomePageService {
             log.info(e.toString() + ":" + e.getMessage());
         }
 
-        Integer workerCount = companyWorkerDao.selectCount(new QueryWrapper<CompanyWorker>().eq("company_id", companyId));
+        Integer workerCount = companyWorkerDao.selectCount(new QueryWrapper<CompanyWorker>().lambda()
+                .eq(CompanyWorker::getCompanyId, companyId));
         homePageMerchantVO.setWorkerTotal(workerCount);
         return ReturnJson.success(homePageMerchantVO);
     }
@@ -137,7 +138,8 @@ public class HomePageServiceImpl implements HomePageService {
             return ReturnJson.success(homePageVO);
             //当为业务员时以查看所拥有的代理商及代理商下的所以商户及商户所拥有的创客
         } else if (managers.getUserSign() == 2) {
-            Integer agentTotal = agentDao.selectCount(new QueryWrapper<Agent>().eq("sales_man_id", managersId));
+            Integer agentTotal = agentDao.selectCount(new QueryWrapper<Agent>().lambda()
+                    .eq(Agent::getSalesManId, managersId));
             Integer workerTotal = companyWorkerDao.selectWorkerCount(merchantIds, 1);
             //除去可能重复的商户ID
             Set merchantIdsSet = new HashSet();
@@ -150,7 +152,8 @@ public class HomePageServiceImpl implements HomePageService {
             Integer workerTotal = workerDao.selectCount(new QueryWrapper<Worker>().lambda().eq(Worker::getAttestation, 1).eq(Worker::getAgreementSign, 2));
             Integer merchantTotal = merchantDao.selectCount(new QueryWrapper<>());
             Integer agentTotal = agentDao.selectCount(new QueryWrapper<>());
-            Integer salesManTotal = managersDao.selectCount(new QueryWrapper<Managers>().eq("user_sign", 2).eq("status", 0));
+            Integer salesManTotal = managersDao.selectCount(new QueryWrapper<Managers>().lambda()
+                    .eq(Managers::getUserSign, 2).eq(Managers::getStatus, 0));
             Integer taxTotal = taxDao.selectCount(new QueryWrapper<>());
 
             homePageVO.setWorkerTotal(workerTotal);

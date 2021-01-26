@@ -52,14 +52,19 @@ public class MakerInvoiceServiceImpl extends ServiceImpl<MakerInvoiceDao, MakerI
         for (InvoiceListVO vo : listVos) {
             PaymentInventory paymentInventory = new PaymentInventory();
             paymentInventory.setId(vo.getId());
-            List<InvoiceLadderPrice> invoiceLadderPrice = invoiceLadderPriceDao.selectList(new QueryWrapper<InvoiceLadderPrice>().eq("tax_id", vo.getTaxId()));
+            List<InvoiceLadderPrice> invoiceLadderPrice = invoiceLadderPriceDao.selectList(
+                    new QueryWrapper<InvoiceLadderPrice>().lambda()
+                            .eq(InvoiceLadderPrice::getTaxId, vo.getTaxId()));
             if (invoiceLadderPrice != null) {
                 for (InvoiceLadderPrice price : invoiceLadderPrice) {
-                    if ((vo.getTaskMoney().compareTo(price.getStartMoney()) > -1) && (vo.getTaskMoney().compareTo(price.getEndMoney()) == -1)) {
+                    if ((vo.getTaskMoney().compareTo(price.getStartMoney()) > -1) && (vo.getTaskMoney()
+                            .compareTo(price.getEndMoney()) == -1)) {
                         vo.setTaxRate(price.getRate());//纳税率
                         BigDecimal bigDecimal = vo.getTaxRate().multiply(vo.getTaskMoney());
                         vo.setPersonalServiceFee(bigDecimal.setScale(2, RoundingMode.HALF_UP));//个人服务费
-                        vo.setTaxAmount((vo.getTaskMoney().subtract(vo.getPersonalServiceFee())).divide((vo.getTaxRate().add(new BigDecimal("1.00"))), 2, BigDecimal.ROUND_HALF_UP).multiply(vo.getTaxRate()));//纳税金额
+                        vo.setTaxAmount((vo.getTaskMoney().subtract(vo.getPersonalServiceFee()))
+                                .divide((vo.getTaxRate().add(new BigDecimal("1.00"))),
+                                        2, BigDecimal.ROUND_HALF_UP).multiply(vo.getTaxRate()));//纳税金额
                         paymentInventory.setTaxRate(vo.getTaxRate());
                         paymentInventory.setTaxAmount(vo.getTaxAmount());
                     }

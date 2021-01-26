@@ -95,7 +95,8 @@ public class LianLianPayTaxServiceImpl extends ServiceImpl<LianlianpayTaxDao, Li
             return ReturnJson.error("您输入的服务商不存在！");
         }
         LianlianpayTax lianlianpayTax = null;
-        lianlianpayTax = this.getOne(new QueryWrapper<LianlianpayTax>().lambda().eq(LianlianpayTax::getTaxId, tax.getId()));
+        lianlianpayTax = this.getOne(new QueryWrapper<LianlianpayTax>()
+                .lambda().eq(LianlianpayTax::getTaxId, tax.getId()));
         if (lianlianpayTax == null) {
             lianlianpayTax = new LianlianpayTax();
         }
@@ -154,7 +155,9 @@ public class LianLianPayTaxServiceImpl extends ServiceImpl<LianlianpayTaxDao, Li
             if ("SUCCESS".equals(result.get("result_pay").toUpperCase())) {
                 paymentInventory.setPaymentStatus(1);
                 paymentInventoryDao.updateById(paymentInventory);
-                senMessage.senMsg("您有一笔" + paymentInventory.getRealMoney() + "元的收益", result.get("no_order"), "0", UserType.ADMIN, paymentInventory.getWorkerId(), UserType.WORKER);
+                senMessage.senMsg("您有一笔" + paymentInventory.getRealMoney() +
+                        "元的收益", result.get("no_order"), "0", UserType.ADMIN,
+                        paymentInventory.getWorkerId(), UserType.WORKER);
                 return;
             } else {
                 log.error(result.toString());
@@ -185,17 +188,20 @@ public class LianLianPayTaxServiceImpl extends ServiceImpl<LianlianpayTaxDao, Li
         for (PaymentInventory paymentInventory : paymentInventories) {
             PaymentOrder paymentOrder = paymentOrderDao.selectById(paymentInventory.getPaymentOrderId());
             if (paymentOrder == null) {
-                log.error("总包订单为空" + "\t总包ID:" + paymentOrder.getId() + "\t支付清单ID:" + paymentInventory.getId());
+                log.error("总包订单为空" + "\t总包ID:" + paymentOrder.getId() + "\t支付清单ID:"
+                        + paymentInventory.getId());
                 Map map = new HashMap();
                 map.put("paymentInventoryId", paymentInventory.getId());
                 map.put("msg", "总包订单不存在");
                 errorList.add(map);
                 continue;
             }
-            LianlianpayTax lianlianpayTax = lianlianpayTaxDao.selectOne(new QueryWrapper<LianlianpayTax>().lambda().eq(LianlianpayTax::getTaxId, paymentOrder.getTaxId()));
+            LianlianpayTax lianlianpayTax = lianlianpayTaxDao.selectOne(new QueryWrapper<LianlianpayTax>()
+                    .lambda().eq(LianlianpayTax::getTaxId, paymentOrder.getTaxId()));
             Worker worker = workerDao.selectById(paymentInventory.getWorkerId());
             if (worker == null) {
-                log.error("创客不存在" + "\t总包ID:" + paymentOrder.getId() + "\t支付清单ID:" + paymentInventory.getId());
+                log.error("创客不存在" + "\t总包ID:" + paymentOrder.getId() + "\t支付清单ID:" +
+                        paymentInventory.getId());
                 Map map = new HashMap();
                 map.put("paymentInventoryId", paymentInventory.getId());
                 map.put("msg", "创客不存在");
@@ -203,7 +209,8 @@ public class LianLianPayTaxServiceImpl extends ServiceImpl<LianlianpayTaxDao, Li
                 continue;
             }
             if (!(worker.getAgreementSign() == 2 && worker.getAttestation() == 1)) {
-                log.error("创客未认证" + "\t总包ID:" + paymentOrder.getId() + "\t支付清单ID:" + paymentInventory.getId() + "\t创客姓名:" + worker.getAccountName());
+                log.error("创客未认证" + "\t总包ID:" + paymentOrder.getId() + "\t支付清单ID:" +
+                        paymentInventory.getId() + "\t创客姓名:" + worker.getAccountName());
                 paymentInventory.setPaymentStatus(-1);
                 paymentInventoryDao.updateById(paymentInventory);
                 Map map = new HashMap();
@@ -211,13 +218,17 @@ public class LianLianPayTaxServiceImpl extends ServiceImpl<LianlianpayTaxDao, Li
                 map.put("workerName", worker.getAccountName());
                 map.put("msg", "创客未认证");
                 errorList.add(map);
-                senMessage.senMsg("您有一笔" + paymentInventory.getRealMoney() + "元的薪资未领取成功！,请实名认证和签署加盟合同后在领取！", paymentInventory.getId(), "0", UserType.ADMIN, paymentInventory.getWorkerId(), UserType.WORKER);
+                senMessage.senMsg("您有一笔" + paymentInventory.getRealMoney() +
+                        "元的薪资未领取成功！,请实名认证和签署加盟合同后在领取！", paymentInventory.getId(),
+                        "0", UserType.ADMIN, paymentInventory.getWorkerId(), UserType.WORKER);
                 continue;
             }
 
-            List<WorkerBank> workerBanks = workerBankDao.selectList(new QueryWrapper<WorkerBank>().lambda().eq(WorkerBank::getWorkerId, worker.getId()));
+            List<WorkerBank> workerBanks = workerBankDao.selectList(new QueryWrapper<WorkerBank>()
+                    .lambda().eq(WorkerBank::getWorkerId, worker.getId()));
             if (VerificationCheck.listIsNull(workerBanks)) {
-                log.error("创客未绑定银行卡" + "\t总包ID:" + paymentOrder.getId() + "\t支付清单ID:" + paymentInventory.getId() + "\t创客姓名:" + worker.getAccountName());
+                log.error("创客未绑定银行卡" + "\t总包ID:" + paymentOrder.getId() + "\t支付清单ID:"
+                        + paymentInventory.getId() + "\t创客姓名:" + worker.getAccountName());
                 paymentInventory.setPaymentStatus(-1);
                 paymentInventoryDao.updateById(paymentInventory);
                 Map map = new HashMap();
@@ -225,7 +236,9 @@ public class LianLianPayTaxServiceImpl extends ServiceImpl<LianlianpayTaxDao, Li
                 map.put("workerName", worker.getAccountName());
                 map.put("msg", "创客未绑定银行卡");
                 errorList.add(map);
-                senMessage.senMsg("您有一笔" + paymentInventory.getRealMoney() + "元的薪资未领取成功！,请绑定银行卡后在领取！", paymentInventory.getId(), "0", UserType.ADMIN, paymentInventory.getWorkerId(), UserType.WORKER);
+                senMessage.senMsg("您有一笔" + paymentInventory.getRealMoney() +
+                        "元的薪资未领取成功！,请绑定银行卡后在领取！", paymentInventory.getId(),
+                        "0", UserType.ADMIN, paymentInventory.getWorkerId(), UserType.WORKER);
                 continue;
             }
 
@@ -300,7 +313,8 @@ public class LianLianPayTaxServiceImpl extends ServiceImpl<LianlianpayTaxDao, Li
                 continue;
             }
             if (!("0000".equals(paymentapiResult.get("ret_code")))) {
-                log.error(paymentapiResult.get("ret_msg") + "\t总包ID:" + paymentOrder.getId() + "\t支付清单ID:" + paymentInventory.getId() + "\t创客姓名:" + worker.getAccountName());
+                log.error(paymentapiResult.get("ret_msg") + "\t总包ID:" + paymentOrder.getId() +
+                        "\t支付清单ID:" + paymentInventory.getId() + "\t创客姓名:" + worker.getAccountName());
                 paymentInventory.setPaymentStatus(-1);
                 paymentInventoryDao.updateById(paymentInventory);
                 Map map = new HashMap();

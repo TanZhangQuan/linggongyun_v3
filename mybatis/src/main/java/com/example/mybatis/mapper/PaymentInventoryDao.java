@@ -33,7 +33,7 @@ public interface PaymentInventoryDao extends BaseMapper<PaymentInventory> {
      * @param type
      * @return
      */
-    List<PaymentInventoryVO> getTotalBranchList(@Param("paymentOrderIds") String paymentOrderIds, Integer type);
+    List<PaymentInventoryVO> getTotalBranchList(@Param("paymentOrderId")List<String> paymentOrderIds, Integer type);
 
     /**
      * 众包

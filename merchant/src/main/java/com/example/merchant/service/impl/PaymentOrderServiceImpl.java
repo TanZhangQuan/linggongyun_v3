@@ -175,12 +175,15 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
             paymentOrder.setCompanySName(companyInfo.getCompanyName());
         }
         if (id != null && paymentOrder.getPaymentOrderStatus() == 0) {
-            List<PaymentInventory> paymentInventoryList = paymentInventoryDao.selectList(new QueryWrapper<PaymentInventory>().eq("payment_order_id", id));
+            List<PaymentInventory> paymentInventoryList = paymentInventoryDao.selectList(
+                    new QueryWrapper<PaymentInventory>().lambda()
+                            .eq(PaymentInventory::getPaymentOrderId, id));
             List<String> ids = new ArrayList<>();
             for (PaymentInventory paymentInventory : paymentInventoryList) {
                 ids.add(paymentInventory.getId());
             }
-            paymentInventoryDao.delete(new QueryWrapper<PaymentInventory>().eq("payment_order_id", id));
+            paymentInventoryDao.delete(new QueryWrapper<PaymentInventory>().lambda()
+                    .eq(PaymentInventory::getPaymentOrderId, id));
             this.removeById(id);
         }
 
@@ -228,7 +231,10 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
                 countServiceMoney = countServiceMoney.add(paymentInventory.getServiceMoney());
             }
         } else {
-            List<CompanyLadderService> companyLadderServices = companyLadderServiceDao.selectList(new QueryWrapper<CompanyLadderService>().eq("company_tax_id", companyTax.getId()).orderByAsc("start_money"));
+            List<CompanyLadderService> companyLadderServices = companyLadderServiceDao.selectList(
+                    new QueryWrapper<CompanyLadderService>().lambda()
+                            .eq(CompanyLadderService::getCompanyTaxId, companyTax.getId())
+                            .orderByAsc(CompanyLadderService::getStartMoney));
             BigDecimal compositeTaxCount = new BigDecimal(0);
             for (PaymentInventory paymentInventory : paymentInventories) {
                 BigDecimal realMoney = paymentInventory.getRealMoney();
@@ -862,10 +868,12 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
         List<CompanyInfo> companyInfos;
         //管理人员为代理商
         if (userSign == 1) {
-            companyInfos = companyInfoService.list(new QueryWrapper<CompanyInfo>().eq("agent_id", managers.getId()));
+            companyInfos = companyInfoService.list(new QueryWrapper<CompanyInfo>().lambda()
+                    .eq(CompanyInfo::getAgentId, managers.getId()));
         } else if (userSign == 2) {
             //管理人员为业务员
-            companyInfos = companyInfoService.list(new QueryWrapper<CompanyInfo>().eq("sales_man_id", managers.getId()));
+            companyInfos = companyInfoService.list(new QueryWrapper<CompanyInfo>().lambda()
+                    .eq(CompanyInfo::getSalesManId, managers.getId()));
         } else {
             companyInfos = companyInfoService.list(new QueryWrapper<>());
         }
@@ -1374,10 +1382,10 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
         if (companyInfo == null) {
             return ReturnJson.error("商户信息错误请重新选择");
         }
-        CompanyTax companyTax = companyTaxDao.selectOne(new QueryWrapper<CompanyTax>()
-                .eq("company_id", companyInfo.getId())
-                .eq("tax_id", taxId)
-                .eq("package_status", packageStatus));
+        CompanyTax companyTax = companyTaxDao.selectOne(new QueryWrapper<CompanyTax>().lambda()
+                .eq(CompanyTax::getCompanyId, companyInfo.getId())
+                .eq(CompanyTax::getTaxId, taxId)
+                .eq(CompanyTax::getPackageStatus, packageStatus));
         if (companyTax == null) {
             return ReturnJson.error("此商户还未和此服务商取得合作！");
         }

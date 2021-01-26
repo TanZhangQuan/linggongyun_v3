@@ -114,14 +114,16 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
     @Resource
     private CompanyUnionpayService companyUnionpayService;
     @Resource
-    private CompanyWorkerDao companyWorkerDao;
+    private TaxService taxService;
 
     @Override
     public ReturnJson merchantLogin(String username, String password, HttpServletResponse response) {
         String encryptPWD = PWD_KEY + MD5.md5(password);
         Subject currentUser = SecurityUtils.getSubject();
         QueryWrapper<Merchant> merchantQueryWrapper = new QueryWrapper<>();
-        merchantQueryWrapper.eq("user_name", username).eq("pass_word", encryptPWD);
+        merchantQueryWrapper.lambda()
+                .eq(Merchant::getUserName, username)
+                .eq(Merchant::getPassWord, encryptPWD);
         Merchant me = merchantDao.selectOne(merchantQueryWrapper);
         if (me == null) {
             throw new AuthenticationException("账号或密码错误");
@@ -142,7 +144,8 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
     @Override
     public ReturnJson senSMS(String mobileCode) {
         ReturnJson rj = new ReturnJson();
-        Merchant merchant = this.getOne(new QueryWrapper<Merchant>().eq("login_mobile", mobileCode));
+        Merchant merchant = this.getOne(new QueryWrapper<Merchant>().lambda()
+                .eq(Merchant::getLoginMobile, mobileCode));
         if (merchant == null) {
             rj.setCode(401);
             rj.setMessage("你还未注册，请先去注册！");
@@ -174,7 +177,9 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
             return ReturnJson.error("输入的验证码有误");
         } else {
             redisDao.remove(loginMobile);
-            Merchant merchant = this.getOne(new QueryWrapper<Merchant>().eq("login_mobile", loginMobile).eq("status", 0));
+            Merchant merchant = this.getOne(new QueryWrapper<Merchant>().lambda()
+                    .eq(Merchant::getLoginMobile, loginMobile)
+                    .eq(Merchant::getStatus, 0));
             String token = jwtUtils.generateToken(merchant.getId());
             resource.setHeader(TOKEN, token);
             redisDao.set(merchant.getId(), token);
@@ -196,7 +201,9 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
     public ReturnJson merchantInfo(String merchantId) {
         Merchant merchant = merchantDao.selectById(merchantId);
         CompanyInfo companyInfo = companyInfoDao.selectById(merchant.getCompanyId());
-        CompanyInvoiceInfo companyInvoiceInfo = companyInvoiceInfoDao.selectOne(new QueryWrapper<CompanyInvoiceInfo>().eq("company_id", merchant.getCompanyId()));
+        CompanyInvoiceInfo companyInvoiceInfo = companyInvoiceInfoDao.selectOne(
+                new QueryWrapper<CompanyInvoiceInfo>().lambda()
+                        .eq(CompanyInvoiceInfo::getCompanyId, merchant.getCompanyId()));
         Managers salesMan = managersDao.selectById(companyInfo.getSalesManId());
         Managers agent = managersDao.selectById(companyInfo.getAgentId());
         List<TaxPO> taxPOS = taxDao.selectByMerchantId(merchant.getCompanyId());
@@ -205,13 +212,20 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
             TaxVO taxVO = new TaxVO();
             BeanUtils.copyProperties(taxPO, taxVO);
             if (taxPO.getChargeStatus() == 1) {
-                List<CompanyLadderService> companyLadderServiceList = companyLadderServiceService.list(new QueryWrapper<CompanyLadderService>().eq("company_tax_id", taxPO.getCompanyTaxId()).orderByAsc("start_money"));
+                List<CompanyLadderService> companyLadderServiceList = companyLadderServiceService.list(
+                        new QueryWrapper<CompanyLadderService>().lambda()
+                                .eq(CompanyLadderService::getCompanyTaxId, taxPO.getCompanyTaxId())
+                                .orderByAsc(CompanyLadderService::getStartMoney));
                 taxVO.setCompanyLadderServices(companyLadderServiceList);
             }
             taxVOS.add(taxVO);
         }
-        List<Linkman> linkmanList = linkmanDao.selectList(new QueryWrapper<Linkman>().eq("company_id", merchant.getCompanyId()).orderByAsc("is_not"));
-        List<Address> addressList = addressDao.selectList(new QueryWrapper<Address>().eq("company_id", merchant.getCompanyId()).orderByAsc("is_not"));
+        List<Linkman> linkmanList = linkmanDao.selectList(new QueryWrapper<Linkman>().lambda()
+                .eq(Linkman::getCompanyId, merchant.getCompanyId())
+                .orderByAsc(Linkman::getIsNot));
+        List<Address> addressList = addressDao.selectList(new QueryWrapper<Address>().lambda()
+                .eq(Address::getCompanyId, merchant.getCompanyId())
+                .orderByAsc(Address::getIsNot));
 
         MerchantInfoVO merchantInfoVO = new MerchantInfoVO();
         BeanUtils.copyProperties(companyInfo, merchantInfoVO);
@@ -249,7 +263,8 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         if (redisCode.equals(checkCode)) {
             Merchant merchant = new Merchant();
             merchant.setPassWord(PWD_KEY + MD5.md5(newPassWord));
-            boolean flag = this.update(merchant, new QueryWrapper<Merchant>().eq("login_mobile", loginMobile));
+            boolean flag = this.update(merchant, new QueryWrapper<Merchant>().lambda()
+                    .eq(Merchant::getLoginMobile, loginMobile));
             if (flag) {
                 redisDao.remove(loginMobile);
                 return ReturnJson.success("密码修改成功！");
@@ -306,21 +321,22 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         CompanyInfo companyInfo = companyInfoDao.selectById(merchantId);
         if (companyInfo.getAuditStatus() == 0) {
             companyInfoDao.deleteById(merchantId);
-            merchantDao.delete(new QueryWrapper<Merchant>().eq("company_id", merchantId));
-            objectMenuService.remove(new QueryWrapper<ObjectMenu>().eq("object_user_id", merchantId));
-            addressDao.delete(new QueryWrapper<Address>().eq("company_id", merchantId));
-            linkmanDao.delete(new QueryWrapper<Linkman>().eq("company_id", merchantId));
+            merchantDao.delete(new QueryWrapper<Merchant>().lambda().eq(Merchant::getCompanyId, merchantId));
+            objectMenuService.remove(new QueryWrapper<ObjectMenu>().lambda().eq(ObjectMenu::getObjectUserId, merchantId));
+            addressDao.delete(new QueryWrapper<Address>().lambda().eq(Address::getCompanyId, merchantId));
+            linkmanDao.delete(new QueryWrapper<Linkman>().lambda().eq(Linkman::getCompanyId, merchantId));
             return ReturnJson.success("删除成功！");
         }
-        List<Task> tasks = taskService.list(new QueryWrapper<Task>().eq("merchant_id", merchantId));
-        List<PaymentOrder> paymentOrders = paymentOrderDao.selectList(new QueryWrapper<PaymentOrder>().eq("company_id", merchantId));
+        List<Task> tasks = taskService.list(new QueryWrapper<Task>().lambda().eq(Task::getMerchantId, merchantId));
+        List<PaymentOrder> paymentOrders = paymentOrderDao.selectList(new QueryWrapper<PaymentOrder>().lambda()
+                .eq(PaymentOrder::getCompanyId, merchantId));
         List<PaymentOrderMany> paymentOrderManies = paymentOrderManyDao.selectList(new QueryWrapper<PaymentOrderMany>().eq("company_id", merchantId));
         if (VerificationCheck.listIsNull(tasks) && VerificationCheck.listIsNull(paymentOrders) && VerificationCheck.listIsNull(paymentOrderManies)) {
             companyInfoDao.deleteById(merchantId);
-            merchantDao.delete(new QueryWrapper<Merchant>().eq("company_id", merchantId));
-            objectMenuService.remove(new QueryWrapper<ObjectMenu>().eq("object_user_id", merchantId));
-            addressDao.delete(new QueryWrapper<Address>().eq("company_id", merchantId));
-            linkmanDao.delete(new QueryWrapper<Linkman>().eq("company_id", merchantId));
+            merchantDao.delete(new QueryWrapper<Merchant>().lambda().eq(Merchant::getCompanyId, merchantId));
+            objectMenuService.remove(new QueryWrapper<ObjectMenu>().lambda().eq(ObjectMenu::getObjectUserId, merchantId));
+            addressDao.delete(new QueryWrapper<Address>().lambda().eq(Address::getCompanyId, merchantId));
+            linkmanDao.delete(new QueryWrapper<Linkman>().lambda().eq(Linkman::getCompanyId, merchantId));
             return ReturnJson.success("删除成功！");
         }
         return ReturnJson.error("该商户做过业务，只能停用该用户！");
@@ -340,12 +356,15 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
 
     @Override
     public ReturnJson merchantInfoPaas(String merchantId) {
-        Merchant merchant = merchantDao.selectOne(new QueryWrapper<Merchant>().eq("company_id", merchantId).eq("parent_id", 0));
+        Merchant merchant = merchantDao.selectOne(new QueryWrapper<Merchant>().lambda()
+                .eq(Merchant::getCompanyId, merchantId)
+                .eq(Merchant::getParentId, 0));
         ReturnJson returnJson = homePageService.getHomePageInfo(merchant.getId());
         HomePageVO homePageVO = new HomePageVO();
         HomePageMerchantVO homePageMerchantVO = (HomePageMerchantVO) returnJson.getObj();
         BeanUtils.copyProperties(homePageMerchantVO, homePageVO);
-        Integer taxTotal = companyTaxDao.selectCount(new QueryWrapper<CompanyTax>().eq("company_id", merchant.getCompanyId()));
+        Integer taxTotal = companyTaxDao.selectCount(new QueryWrapper<CompanyTax>().lambda()
+                .eq(CompanyTax::getCompanyId, merchant.getCompanyId()));
         homePageVO.setTaxTotal(taxTotal);
         ReturnJson merchantPaymentList = this.getMerchantPaymentList(merchantId, null, 1, 10);
         List data = (List) merchantPaymentList.getData();
@@ -427,11 +446,13 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         address.setStatus(0);
         addressDao.insert(address);
 
-        Merchant merchant = merchantDao.selectOne(new QueryWrapper<Merchant>().eq("user_name", companyDto.getAddMerchantDto().getUserName()));
+        Merchant merchant = merchantDao.selectOne(new QueryWrapper<Merchant>().lambda()
+                .eq(Merchant::getUserName, companyDto.getAddMerchantDto().getUserName()));
         if (merchant != null) {
             throw new CommonException(300, "登录账号存在相同的，请修改后重新操作！");
         }
-        merchant = merchantDao.selectOne(new QueryWrapper<Merchant>().eq("login_mobile", companyDto.getAddMerchantDto().getLoginMobile()));
+        merchant = merchantDao.selectOne(new QueryWrapper<Merchant>().lambda()
+                .eq(Merchant::getLoginMobile, companyDto.getAddMerchantDto().getLoginMobile()));
         if (merchant != null) {
             throw new CommonException(300, "登录时用的手机号存在相同的，请修改后重新操作！");
         }
@@ -563,18 +584,19 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
 
     @Override
     public ReturnJson queryAgent(String userId) {
-        List<Agent> list = agentDao.selectList(new QueryWrapper<Agent>().eq("agent_status", 0));
+        List<Agent> list = agentDao.selectList(new QueryWrapper<Agent>().lambda()
+                .eq(Agent::getAgentStatus, 0));
         Managers managers = managersDao.selectById(userId);
         // 管理员登录 查询所有可用代理商
         if (managers.getUserSign() == 2) {
-            list = agentDao.selectList(new QueryWrapper<Agent>()
-                    .eq("agent_status", 0)
-                    .eq("sales_man_id", managers.getId()));
+            list = agentDao.selectList(new QueryWrapper<Agent>().lambda()
+                    .eq(Agent::getAgentStatus, 0)
+                    .eq(Agent::getSalesManId, managers.getId()));
         }
         // 代理商登录 查询自己
         if (managers.getUserSign() == 1) {
-            list = agentDao.selectList(new QueryWrapper<Agent>()
-                    .eq("managers_id", userId));
+            list = agentDao.selectList(new QueryWrapper<Agent>().lambda()
+                    .eq(Agent::getManagersId, userId));
         }
         List<AgentVO> agentVOList = new ArrayList<>();
         for (int i = 0; i < list.size(); i++) {
@@ -596,12 +618,16 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
 
         //获取公司开票信息
         QueryInvoiceInfoVO queryInvoiceInfoVo = new QueryInvoiceInfoVO();
-        CompanyInvoiceInfo companyInvoiceInfo = companyInvoiceInfoDao.selectOne(new QueryWrapper<CompanyInvoiceInfo>().eq("company_id", companyId));
+        CompanyInvoiceInfo companyInvoiceInfo = companyInvoiceInfoDao.selectOne(
+                new QueryWrapper<CompanyInvoiceInfo>().lambda()
+                        .eq(CompanyInvoiceInfo::getCompanyId, companyId));
         BeanUtils.copyProperties(companyInvoiceInfo, queryInvoiceInfoVo);
         companyVo.setQueryInvoiceInfoVo(queryInvoiceInfoVo);
 
         //获取公司的登录信息
-        Merchant merchant = merchantDao.selectOne(new QueryWrapper<Merchant>().eq("company_id", companyId).eq("parent_id", 0));
+        Merchant merchant = merchantDao.selectOne(new QueryWrapper<Merchant>().lambda()
+                .eq(Merchant::getCompanyId, companyId)
+                .eq(Merchant::getParentId, 0));
         QueryMerchantInfoVO queryMerchantInfoVo = new QueryMerchantInfoVO();
         BeanUtils.copyProperties(merchant, queryMerchantInfoVo);
 
@@ -672,7 +698,8 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         BeanUtils.copyProperties(updateCompanyDto.getUpdateMerchantInfDto(), merchant);
 
         //判断是否存在相同的登录账号
-        Merchant merchant1 = merchantDao.selectOne(new QueryWrapper<Merchant>().eq("user_name", merchant.getUserName()));
+        Merchant merchant1 = merchantDao.selectOne(new QueryWrapper<Merchant>().lambda()
+                .eq(Merchant::getUserName, merchant.getUserName()));
         if (merchant1 != null) {
             if (!merchant.getId().equals(merchant1.getId())) {
                 throw new CommonException(300, "登录账号存在相同的，请修改后重新操作！");
@@ -728,10 +755,10 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
             } else {
                 BeanUtils.copyProperties(updateCompanyTaxDTO, companyTax);
                 companyTax.setCompanyId(updateCompanyDto.getUpdateCompanyInfoDto().getId());
-                CompanyTax companyTax1 = companyTaxDao.selectOne(new QueryWrapper<CompanyTax>()
-                        .eq("company_id", companyTax.getCompanyId())
-                        .eq("tax_id", companyTax.getTaxId())
-                        .eq("package_status", companyTax.getPackageStatus()));
+                CompanyTax companyTax1 = companyTaxDao.selectOne(new QueryWrapper<CompanyTax>().lambda()
+                        .eq(CompanyTax::getCompanyId, companyTax.getCompanyId())
+                        .eq(CompanyTax::getTaxId, companyTax.getTaxId())
+                        .eq(CompanyTax::getPackageStatus, companyTax.getPackageStatus()));
                 if (companyTax1 != null) {
                     throw new CommonException(300, "同一个商户与同一个服务商在统一合作类型上只能合作一次！");
                 }
@@ -834,7 +861,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
 
     @Override
     public ReturnJson taxMerchantInfoPaas(String merchantId, String taxId) {
-        return homePageService.getHomePageInfo(merchantId);
+        return taxService.queryCompanyFlowInfo(merchantId,taxId);
     }
 
     @Override

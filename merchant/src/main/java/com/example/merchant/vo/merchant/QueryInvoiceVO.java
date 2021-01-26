@@ -37,4 +37,11 @@ public class QueryInvoiceVO implements Serializable {
 
     @ApiModelProperty(value = "收发件信息")
     private SendAndReceiveVO sendAndReceiveVo;
+
+    @ApiModelProperty(value = "发票")
+    private String invoiceUrl;
+
+    @ApiModelProperty(value = "税票")
+    private String taxReceiptUrl;
+
 }
