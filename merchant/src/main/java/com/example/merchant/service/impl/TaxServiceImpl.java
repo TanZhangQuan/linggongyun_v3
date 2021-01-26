@@ -84,15 +84,18 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
     @Override
     public ReturnJson getTaxAll(String merchantId, Integer packageStatus) {
         Merchant merchant = merchantDao.selectById(merchantId);
-        List<CompanyTax> companyTaxes = companyTaxDao.selectList(new QueryWrapper<CompanyTax>()
-                .eq("company_id", merchant.getCompanyId()).eq("package_status", packageStatus));
+        List<CompanyTax> companyTaxes = companyTaxDao.selectList(new QueryWrapper<CompanyTax>().lambda()
+                .eq(CompanyTax::getCompanyId, merchant.getCompanyId())
+                .eq(CompanyTax::getPackageStatus, packageStatus));
         List<String> ids = new LinkedList<>();
         for (CompanyTax companyTax : companyTaxes) {
             ids.add(companyTax.getTaxId());
         }
         List<Tax> taxes = null;
         if (!VerificationCheck.listIsNull(ids)) {
-            taxes = taxDao.selectList(new QueryWrapper<Tax>().in("id", ids).eq("tax_status", 0));
+            taxes = taxDao.selectList(new QueryWrapper<Tax>().lambda()
+                    .in(Tax::getId, ids)
+                    .eq(Tax::getTaxStatus, 0));
         }
         List<TaxBriefVO> taxBriefVOS = new ArrayList<>();
         if (taxes != null) {
