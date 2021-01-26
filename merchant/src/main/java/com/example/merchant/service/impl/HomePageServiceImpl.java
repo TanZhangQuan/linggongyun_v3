@@ -147,10 +147,7 @@ public class HomePageServiceImpl implements HomePageService {
             homePageVO.setAgentTotal(agentTotal);
             return ReturnJson.success(homePageVO);
         } else {// 管理员可以查询所有
-            Integer workerTotal = workerDao.selectCount(
-                    new QueryWrapper<Worker>()
-                            .eq("attestation", 1)
-                            .eq("agreementSign", 2));
+            Integer workerTotal = workerDao.selectCount(new QueryWrapper<Worker>().lambda().eq(Worker::getAttestation, 1).eq(Worker::getAgreementSign, 2));
             Integer merchantTotal = merchantDao.selectCount(new QueryWrapper<>());
             Integer agentTotal = agentDao.selectCount(new QueryWrapper<>());
             Integer salesManTotal = managersDao.selectCount(new QueryWrapper<Managers>().eq("user_sign", 2).eq("status", 0));
