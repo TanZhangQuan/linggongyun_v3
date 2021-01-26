@@ -79,7 +79,7 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
     public ReturnJson getWorkerAll(String merchantId, Integer page, Integer pageSize, Integer workerType) {
         Merchant merchant = merchantDao.selectById(merchantId);
         QueryWrapper<CompanyWorker> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("company_id", merchant.getCompanyId());
+        queryWrapper.lambda().eq(CompanyWorker::getCompanyId, merchant.getCompanyId());
         List<CompanyWorker> records = companyWorkerService.list(queryWrapper);
         Page<Worker> workerPage = null;
         if (!VerificationCheck.listIsNull(records)) {
@@ -119,7 +119,8 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
     public ReturnJson getWorkerInfo(String id) {
         Worker worker = workerDao.selectById(id);
         worker.setUserPwd("");
-        List<WorkerTask> workerTasks = workerTaskService.list(new QueryWrapper<WorkerTask>().eq("worker_id", worker.getId()));
+        List<WorkerTask> workerTasks = workerTaskService.list(new QueryWrapper<WorkerTask>().lambda()
+                .eq(WorkerTask::getWorkerId, worker.getId()));
         List ids = new ArrayList();
         for (WorkerTask workerTask : workerTasks) {
             ids.add(workerTask.getTaskId());
@@ -202,7 +203,8 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
     public ReturnJson loginWorker(String username, String password, HttpServletResponse response) {
         String encryptPWD = PWD_KEY + MD5.md5(password);
         QueryWrapper<Worker> workerQueryWrapper = new QueryWrapper<>();
-        workerQueryWrapper.eq("user_name", username).eq("user_pwd", encryptPWD);
+        workerQueryWrapper.lambda().eq(Worker::getUserName, username)
+                .eq(Worker::getUserPwd, encryptPWD);
         Worker worker = this.getOne(workerQueryWrapper);
         if (worker != null) {
             String token = jwtUtils.generateToken(worker.getId());
@@ -218,7 +220,8 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
     @Override
     public ReturnJson senSMS(String mobileCode, String isNot) {
         ReturnJson rj = new ReturnJson();
-        Worker worker = workerDao.selectOne(new QueryWrapper<Worker>().eq("mobile_code", mobileCode));
+        Worker worker = workerDao.selectOne(new QueryWrapper<Worker>().lambda()
+                .eq(Worker::getMobileCode, mobileCode));
         if ("T".equals(isNot)) {
             if (worker == null) {
                 rj.setCode(300);
@@ -267,7 +270,8 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
             return ReturnJson.error("输入的验证码有误!");
         } else {
             redisDao.remove(loginMobile);
-            Worker worker = this.getOne(new QueryWrapper<Worker>().eq("mobile_code", loginMobile));
+            Worker worker = this.getOne(new QueryWrapper<Worker>().lambda()
+                    .eq(Worker::getMobileCode, loginMobile));
             String token = jwtUtils.generateToken(worker.getId());
             resource.setHeader(TOKEN, token);
             redisDao.set(worker.getId(), token);
@@ -280,7 +284,8 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
     public ReturnJson updataPassWord(String loginMobile, String checkCode, String newPassWord) {
         String redisCode = redisDao.get(loginMobile);
         if (checkCode.equals(redisCode)) {
-            Worker worker = workerDao.selectOne(new QueryWrapper<Worker>().eq("mobile_code", loginMobile));
+            Worker worker = workerDao.selectOne(new QueryWrapper<Worker>().lambda()
+                    .eq(Worker::getMobileCode, loginMobile));
             if (worker != null) {
                 if (worker.getUserPwd().equals(PWD_KEY + MD5.md5(newPassWord))) {
                     return ReturnJson.error("旧密码与新密码一致！");
@@ -359,7 +364,8 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
 
             result.put("purePhoneNumber", purePhoneNumber);
 
-            Worker worker = workerDao.selectOne(new QueryWrapper<Worker>().eq("mobile_code", purePhoneNumber));
+            Worker worker = workerDao.selectOne(new QueryWrapper<Worker>().lambda()
+                    .eq(Worker::getMobileCode, purePhoneNumber));
             if (worker == null) {
                 worker = new Worker();
                 worker.setWxId(openid);
@@ -425,7 +431,8 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
 
     @Override
     public ReturnJson registerWorker(AddWorkerDTO addWorkerDto) {
-        Worker worker = workerDao.selectOne(new QueryWrapper<Worker>().eq("mobile_code", addWorkerDto.getMobileCode()));
+        Worker worker = workerDao.selectOne(new QueryWrapper<Worker>().lambda()
+                .eq(Worker::getMobileCode, addWorkerDto.getMobileCode()));
         if (worker == null) {
             String redisCheckCode = redisDao.get(addWorkerDto.getMobileCode());
             if (StringUtils.isBlank(redisCheckCode)) {

@@ -96,7 +96,8 @@ public class FileOperationServiceImpl implements FileOperationService {
             mobileCodes.add(makerExcel.getPhoneNumber());
         }
 
-        List<Worker> workers = workerDao.selectList(new QueryWrapper<Worker>().in("mobile_code", mobileCodes));
+        List<Worker> workers = workerDao.selectList(new QueryWrapper<Worker>().lambda()
+                .in(Worker::getMobileCode, mobileCodes));
         mobileCodes = new ArrayList();
         for (Worker worker : workers) {
             mobileCodes.add(worker.getMobileCode());
@@ -235,7 +236,8 @@ public class FileOperationServiceImpl implements FileOperationService {
                 String bankCode = makerPanymentExcel.getBankCardNo();
                 BigDecimal realMoney = BigDecimal.valueOf(Double.valueOf(makerPanymentExcel.getRealMoney()));
                 String bankName = makerPanymentExcel.getBankName();
-                Worker worker = workerDao.selectOne(new QueryWrapper<Worker>().eq("mobile_code", mobileCode));
+                Worker worker = workerDao.selectOne(new QueryWrapper<Worker>().lambda()
+                        .eq(Worker::getMobileCode, mobileCode));
                 if (!worker.getIdcardCode().equals(idCardCode)) {
                     return ReturnJson.error(workerName + "表格身份证与系统内不一致！");
                 }
@@ -311,12 +313,14 @@ public class FileOperationServiceImpl implements FileOperationService {
             if ("0".equals(state)) {
                 makerInvoice.setMakerVoiceUrl(fileName);
                 makerInvoice.setUpdateDate(LocalDateTime.parse(DateUtil.getTime(), dfd));
-                makerInvoiceDao.update(makerInvoice, new QueryWrapper<MakerInvoice>().eq("payment_inventory_id", paymentInventoryId));
+                makerInvoiceDao.update(makerInvoice, new QueryWrapper<MakerInvoice>().lambda()
+                        .eq(MakerInvoice::getPaymentInventoryId, paymentInventoryId));
                 return ReturnJson.success("发票上传成功", accessPath);
             } else {
                 makerInvoice.setMakerTaxUrl(fileName);
                 makerInvoice.setUpdateDate(LocalDateTime.parse(DateUtil.getTime(), dfd));
-                makerInvoiceDao.update(makerInvoice, new QueryWrapper<MakerInvoice>().eq("payment_inventory_id", paymentInventoryId));
+                makerInvoiceDao.update(makerInvoice, new QueryWrapper<MakerInvoice>().lambda()
+                        .eq(MakerInvoice::getPaymentInventoryId, paymentInventoryId));
                 return ReturnJson.success("税票上传成功", accessPath);
             }
         } else {

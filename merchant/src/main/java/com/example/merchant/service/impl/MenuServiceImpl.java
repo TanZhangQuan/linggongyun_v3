@@ -81,7 +81,8 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
         if (token == null) {
             return ReturnJson.error("请先登录");
         }
-        int count = merchantDao.selectCount(new QueryWrapper<Merchant>().eq("parent_id", merchantId));
+        int count = merchantDao.selectCount(new QueryWrapper<Merchant>().lambda()
+                .eq(Merchant::getParentId, merchantId));
         if (count == 3) {
             return ReturnJson.error("子账户达到上限");
         }
@@ -111,7 +112,8 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
             merchant.setParentId(merchantId);
             merchant.setPassWord(PWD_KEY + MD5.md5(merchantDto.getPassWord()));
             merchantDao.updateById(merchant);
-            objectMenuDao.delete(new QueryWrapper<ObjectMenu>().eq("object_user_id", merchant.getId()));
+            objectMenuDao.delete(new QueryWrapper<ObjectMenu>().lambda()
+                    .eq(ObjectMenu::getObjectUserId, merchant.getId()));
             String[] meunId = merchantDto.getMenuIds().split(",");
             for (int i = 0; i < meunId.length; i++) {
                 ObjectMenu roleMenu = new ObjectMenu();
@@ -155,8 +157,8 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ReturnJson savePlatRole(SaveManagersRoleDTO saveManagersRoleDto, String managersId) {
-        Managers managersOne = managersDao.selectOne(new QueryWrapper<Managers>().eq("mobile_code",
-                saveManagersRoleDto.getMobileCode()));
+        Managers managersOne = managersDao.selectOne(new QueryWrapper<Managers>().lambda()
+                .eq(Managers::getMobileCode, saveManagersRoleDto.getMobileCode()));
         Managers managers = new Managers();
 
         if ("".equals(saveManagersRoleDto.getId())) {
@@ -184,7 +186,8 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
                 return ReturnJson.error("此手机号码已近注册过！");
             }
             managersDao.updateById(managers);
-            objectMenuDao.delete(new QueryWrapper<ObjectMenu>().eq("object_user_id", managers.getId()));
+            objectMenuDao.delete(new QueryWrapper<ObjectMenu>().lambda()
+                    .eq(ObjectMenu::getObjectUserId, managers.getId()));
             String[] menuId = saveManagersRoleDto.getMenuIds().split(",");
             for (int i = 0; i < menuId.length; i++) {
                 ObjectMenu roleMenu = new ObjectMenu();

@@ -56,9 +56,9 @@ public class RegulatorTaxServiceImpl extends ServiceImpl<RegulatorTaxDao, Regula
     public ReturnJson homeFourData(String regulatorId) {
         Map<String, Object> map = new HashMap<>();
         List<RegulatorTax> taxIds = regulatorTaxDao.selectList(
-                new QueryWrapper<RegulatorTax>().select("tax_id")
-                        .eq("regulator_id", regulatorId)
-                        .eq("status", 0));//监管区服务商数量
+                new QueryWrapper<RegulatorTax>().lambda().select(RegulatorTax::getTaxId)
+                        .eq(RegulatorTax::getRegulatorId, regulatorId)
+                        .eq(RegulatorTax::getStatus, 0));//监管区服务商数量
 
         List<String> ids = new ArrayList<>();
 
@@ -66,7 +66,7 @@ public class RegulatorTaxServiceImpl extends ServiceImpl<RegulatorTaxDao, Regula
             ids.add(taxIds.get(i).getTaxId());
         }
 
-        List<Tax> taxList = taxDao.selectList(new QueryWrapper<Tax>().in("id", ids));
+        List<Tax> taxList = taxDao.selectList(new QueryWrapper<Tax>().lambda().in(Tax::getId, ids));
 
         BigDecimal paymentOrderNum = new BigDecimal("0.00");
         BigDecimal paymentOrderManyNum = new BigDecimal("0.00");
@@ -80,9 +80,9 @@ public class RegulatorTaxServiceImpl extends ServiceImpl<RegulatorTaxDao, Regula
             for (int i = 0; i < taxList.size(); i++) {
                 List<String> paymentOrderIds = new ArrayList<>();
                 List<PaymentOrder> paymentOrders = paymentOrderDao.selectList(
-                        new QueryWrapper<PaymentOrder>()
-                                .in("tax_id", taxList.get(i).getId())
-                                .ge("payment_order_status", 2));
+                        new QueryWrapper<PaymentOrder>().lambda()
+                                .in(PaymentOrder::getTaxId, taxList.get(i).getId())
+                                .ge(PaymentOrder::getPaymentOrderStatus, 2));
                 paymentOrderCount = paymentOrders.size();
                 for (PaymentOrder paymentOrder : paymentOrders) {
                     paymentOrderNum = paymentOrderNum.add(paymentOrder.getRealMoney());
@@ -90,9 +90,9 @@ public class RegulatorTaxServiceImpl extends ServiceImpl<RegulatorTaxDao, Regula
                 }
 
                 List<PaymentOrderMany> paymentOrderManies = paymentOrderManyDao.selectList(
-                        new QueryWrapper<PaymentOrderMany>()
-                                .in("tax_id", taxList.get(i).getId())
-                                .ge("payment_order_status", 2));
+                        new QueryWrapper<PaymentOrderMany>().lambda()
+                                .in(PaymentOrderMany::getTaxId, taxList.get(i).getId())
+                                .ge(PaymentOrderMany::getPaymentOrderStatus, 2));
                 paymentOrderManyCount = paymentOrderManies.size();
                 for (PaymentOrderMany paymentOrderMany : paymentOrderManies) {
                     paymentOrderManyNum = paymentOrderManyNum.add(paymentOrderMany.getRealMoney());
@@ -101,8 +101,8 @@ public class RegulatorTaxServiceImpl extends ServiceImpl<RegulatorTaxDao, Regula
 
                 if (!VerificationCheck.listIsNull(paymentOrderIds)) {
                     List<PaymentInventory> paymentInventories = paymentInventoryDao.selectList(
-                            new QueryWrapper<PaymentInventory>()
-                                    .in("payment_order_id", paymentOrderIds));
+                            new QueryWrapper<PaymentInventory>().lambda()
+                                    .in(PaymentInventory::getPaymentOrderId, paymentOrderIds));
                     if (!VerificationCheck.listIsNull(paymentInventories)) {
                         for (PaymentInventory paymentInventory : paymentInventories) {
                             if (paymentInventory.getPackageStatus() == 0) {
@@ -150,18 +150,20 @@ public class RegulatorTaxServiceImpl extends ServiceImpl<RegulatorTaxDao, Regula
         Integer paymentOrderCount = 0;
         Integer paymentOrderManyCount = 0;
         List<String> paymentOrderIds = new ArrayList<>();
-        List<PaymentOrder> paymentOrders = paymentOrderDao.selectList(new QueryWrapper<PaymentOrder>()
-                .in("tax_id", tax.getId())
-                .ge("payment_order_status", 2));
+        List<PaymentOrder> paymentOrders = paymentOrderDao.selectList(
+                new QueryWrapper<PaymentOrder>().lambda()
+                .in(PaymentOrder::getTaxId, tax.getId())
+                .ge(PaymentOrder::getPaymentOrderStatus, 2));
         paymentOrderCount = paymentOrders.size();
         for (PaymentOrder paymentOrder : paymentOrders) {
             paymentOrderNum = paymentOrderNum.add(paymentOrder.getRealMoney());
             paymentOrderIds.add(paymentOrder.getId());
         }
 
-        List<PaymentOrderMany> paymentOrderManies = paymentOrderManyDao.selectList(new QueryWrapper<PaymentOrderMany>()
-                .in("tax_id", tax.getId())
-                .ge("payment_order_status", 2));
+        List<PaymentOrderMany> paymentOrderManies = paymentOrderManyDao.selectList(
+                new QueryWrapper<PaymentOrderMany>().lambda()
+                .in(PaymentOrderMany::getTaxId, tax.getId())
+                .ge(PaymentOrderMany::getPaymentOrderStatus, 2));
         paymentOrderManyCount = paymentOrderManies.size();
         for (PaymentOrderMany paymentOrderMany : paymentOrderManies) {
             paymentOrderManyNum = paymentOrderManyNum.add(paymentOrderMany.getRealMoney());
@@ -169,8 +171,9 @@ public class RegulatorTaxServiceImpl extends ServiceImpl<RegulatorTaxDao, Regula
         }
 
         if (!VerificationCheck.listIsNull(paymentOrderIds)) {
-            List<PaymentInventory> paymentInventories = paymentInventoryDao.selectList(new QueryWrapper<PaymentInventory>()
-                    .in("payment_order_id", paymentOrderIds));
+            List<PaymentInventory> paymentInventories = paymentInventoryDao.selectList(
+                    new QueryWrapper<PaymentInventory>().lambda()
+                    .in(PaymentInventory::getPaymentOrderId, paymentOrderIds));
             if (!VerificationCheck.listIsNull(paymentInventories)) {
                 for (PaymentInventory paymentInventory : paymentInventories) {
                     if (paymentInventory.getPackageStatus() == 0) {

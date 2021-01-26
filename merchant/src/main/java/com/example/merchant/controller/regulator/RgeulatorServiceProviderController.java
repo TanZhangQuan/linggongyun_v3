@@ -25,7 +25,7 @@ public class RgeulatorServiceProviderController {
     @Autowired
     private RegulatorTaxService regulatorTaxService;
 
-    @PostMapping("getListServiceProvider")
+    @PostMapping("/getListServiceProvider")
     @LoginRequired
     @ApiOperation(value = "查询服务商列表", notes = "查询服务商列表")
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "regulatorTaxDto", value = "监管服务商查询", dataType = "RegulatorTaxDTO", required = true)})

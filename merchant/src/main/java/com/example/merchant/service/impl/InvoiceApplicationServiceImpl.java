@@ -148,9 +148,4 @@ public class InvoiceApplicationServiceImpl extends ServiceImpl<InvoiceApplicatio
         return ReturnJson.success(queryApplicationInvoiceVo);
     }
 
-    @Override
-    public ReturnJson queryInvoiceInfo(String invoiceId) {
-
-        return null;
-    }
 }

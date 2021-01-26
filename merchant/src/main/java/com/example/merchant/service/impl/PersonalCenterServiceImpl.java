@@ -33,7 +33,8 @@ public class PersonalCenterServiceImpl implements PersonalCenterService {
         } else {
             return ReturnJson.error("该用户不存在！");
         }
-        List<WorkerBank> workerBanks = workerBankDao.selectList(new QueryWrapper<WorkerBank>().eq("worker_id", workerId));
+        List<WorkerBank> workerBanks = workerBankDao.selectList(new QueryWrapper<WorkerBank>().lambda()
+                .eq(WorkerBank::getWorkerId, workerId));
         if (!VerificationCheck.listIsNull(workerBanks)){
             workerInfoVO.setBankName(workerBanks.get(0).getBankName());
             workerInfoVO.setBankCode(workerBanks.get(0).getBankCode());

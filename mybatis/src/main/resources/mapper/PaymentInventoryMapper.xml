@@ -69,7 +69,10 @@
             tb_payment_order_many t1
         </if>
         INNER JOIN tb_payment_inventory t2 on t1.id = t2.payment_order_id
-        WHERE t2.payment_order_id in (#{paymentOrderIds})
+        WHERE t2.payment_order_id in
+         <foreach collection="paymentOrderId" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+         </foreach>
     </select>
 
     <select id="selectPaymentOrderManyInfo" resultMap="PaymentInventoryVOMap" parameterType="string">

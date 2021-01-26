@@ -34,10 +34,14 @@ public class AddressServiceImpl extends ServiceImpl<AddressDao, Address> impleme
         Merchant merchant = merchantDao.selectById(merchantId);
         List<Address> addressList = null;
         if (merchant == null) {
-            addressList = this.list(new QueryWrapper<Address>().eq("company_id", merchantId).orderByAsc("is_not"));
+            addressList = this.list(new QueryWrapper<Address>().lambda()
+                    .eq(Address::getCompanyId, merchantId)
+                    .orderByAsc(Address::getIsNot));
         }
         if (merchant != null){
-            addressList = this.list(new QueryWrapper<Address>().eq("company_id", merchant.getCompanyId()).orderByAsc("is_not"));
+            addressList = this.list(new QueryWrapper<Address>().lambda()
+                    .eq(Address::getCompanyId, merchant.getCompanyId())
+                    .orderByAsc(Address::getIsNot));
         }
         return ReturnJson.success(addressList);
     }
@@ -53,7 +57,9 @@ public class AddressServiceImpl extends ServiceImpl<AddressDao, Address> impleme
         BeanUtils.copyProperties(addressDto, address);
         address.setCompanyId(merchant.getCompanyId());
         if (address.getIsNot() == 0) {
-            Address addressOne = this.getOne(new QueryWrapper<Address>().eq("company_id", address.getCompanyId()).eq("is_not", 0));
+            Address addressOne = this.getOne(new QueryWrapper<Address>().lambda()
+                    .eq(Address::getCompanyId, address.getCompanyId())
+                    .eq(Address::getIsNot, 0));
             if (addressOne != null) {
                 addressOne.setIsNot(1);
                 this.saveOrUpdate(addressOne);

@@ -135,8 +135,8 @@ public class CrowdSourcingInvoiceServiceImpl extends ServiceImpl<CrowdSourcingIn
             PaymentInventory paymentInventory = new PaymentInventory();
             paymentInventory.setId(vo.getId());
             List<InvoiceLadderPrice> invoiceLadderPrice = invoiceLadderPriceDao.
-                    selectList(new QueryWrapper<InvoiceLadderPrice>().
-                            eq("tax_id", vo.getTaxId()));
+                    selectList(new QueryWrapper<InvoiceLadderPrice>().lambda().
+                            eq(InvoiceLadderPrice::getTaxId, vo.getTaxId()));
             if (invoiceLadderPrice != null) {
                 for (InvoiceLadderPrice price : invoiceLadderPrice) {
                     if ((vo.getTaskMoney().compareTo(price.getStartMoney()) > -1) && (vo.getTaskMoney().
@@ -364,8 +364,8 @@ public class CrowdSourcingInvoiceServiceImpl extends ServiceImpl<CrowdSourcingIn
         CrowdSourcingInvoiceVO crowdSourcingInvoiceVo = new CrowdSourcingInvoiceVO();
         BeanUtils.copyProperties(crowdSourcingInvoice, crowdSourcingInvoiceVo);
         queryInvoicedVo.setCrowdSourcingInvoiceVo(crowdSourcingInvoiceVo);
-        List<PaymentInventory> paymentInventoryList = paymentInventoryDao.selectList(new QueryWrapper<PaymentInventory>().
-                eq("payment_order_id", crowdSourcingApplication.getPaymentOrderManyId()));
+        List<PaymentInventory> paymentInventoryList = paymentInventoryDao.selectList(new QueryWrapper<PaymentInventory>().lambda()
+                .eq(PaymentInventory::getPaymentOrderId, crowdSourcingApplication.getPaymentOrderManyId()));
         BigDecimal totalTaxPrice = new BigDecimal("0.00");
         for (int i = 0; i < paymentInventoryList.size(); i++) {
             totalTaxPrice = totalTaxPrice.add(paymentInventoryList.get(i).getRealMoney()).add(paymentInventoryList.get(i).getServiceMoney());

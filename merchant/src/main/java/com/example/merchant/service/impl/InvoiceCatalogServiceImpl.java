@@ -37,16 +37,16 @@ public class InvoiceCatalogServiceImpl implements InvoiceCatalogService {
         List<String> list = Arrays.asList(id.split(","));
         if (packageStatus == 0) {
             PaymentOrder paymentOrder = paymentOrderDao.selectById(list.get(0));
-            String supportCategory = taxPackageDao.selectOne(new QueryWrapper<TaxPackage>()
-                    .eq("tax_id", paymentOrder.getTaxId())
-                    .eq("package_status", packageStatus)).getSupportCategory();
+            String supportCategory = taxPackageDao.selectOne(new QueryWrapper<TaxPackage>().lambda()
+                    .eq(TaxPackage::getTaxId, paymentOrder.getTaxId())
+                    .eq(TaxPackage::getPackageStatus, packageStatus)).getSupportCategory();
             list = Arrays.asList(supportCategory.split(","));
         }
         if (packageStatus == 1) {
             PaymentOrderMany paymentOrderMany = paymentOrderManyDao.selectById(id);
-            String supportCategory = taxPackageDao.selectOne(new QueryWrapper<TaxPackage>()
-                    .eq("tax_id", paymentOrderMany.getTaxId())
-                    .eq("package_status", packageStatus)).getSupportCategory();
+            String supportCategory = taxPackageDao.selectOne(new QueryWrapper<TaxPackage>().lambda()
+                    .eq(TaxPackage::getTaxId, paymentOrderMany.getTaxId())
+                    .eq(TaxPackage::getPackageStatus, packageStatus)).getSupportCategory();
             list = Arrays.asList(supportCategory.split(","));
         }
 

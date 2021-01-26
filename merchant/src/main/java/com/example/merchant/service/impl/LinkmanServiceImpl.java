@@ -40,7 +40,9 @@ public class LinkmanServiceImpl extends ServiceImpl<LinkmanDao, Linkman> impleme
             linkman.setCompanyId(merchant.getCompanyId());
         }
         if (linkman.getIsNot() == 0) {
-            Linkman linkmanOne = this.getOne(new QueryWrapper<Linkman>().eq("company_id", linkman.getCompanyId()).eq("is_not", 0));
+            Linkman linkmanOne = this.getOne(new QueryWrapper<Linkman>().lambda()
+                    .eq(Linkman::getCompanyId, linkman.getCompanyId())
+                    .eq(Linkman::getIsNot, 0));
             if (linkmanOne != null) {
                 linkmanOne.setIsNot(1);
                 this.saveOrUpdate(linkmanOne);
@@ -58,10 +60,14 @@ public class LinkmanServiceImpl extends ServiceImpl<LinkmanDao, Linkman> impleme
         Merchant merchant = merchantDao.selectById(merchantId);
         List<Linkman> list = null;
         if (merchant == null) {
-            list = this.list(new QueryWrapper<Linkman>().eq("company_id", merchantId).orderByAsc("is_not"));
+            list = this.list(new QueryWrapper<Linkman>().lambda()
+                    .eq(Linkman::getCompanyId, merchantId)
+                    .orderByAsc(Linkman::getIsNot));
         }
         if (merchant != null) {
-            list = this.list(new QueryWrapper<Linkman>().eq("company_id", merchant.getCompanyId()).orderByAsc("is_not"));
+            list = this.list(new QueryWrapper<Linkman>().lambda()
+                    .eq(Linkman::getCompanyId, merchant.getCompanyId())
+                    .orderByAsc(Linkman::getIsNot));
         }
         return ReturnJson.success(list);
     }
