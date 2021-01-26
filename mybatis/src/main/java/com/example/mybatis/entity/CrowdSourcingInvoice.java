@@ -1,6 +1,5 @@
 package com.example.mybatis.entity;
 
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -9,7 +8,6 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -62,8 +60,7 @@ public class CrowdSourcingInvoice extends BaseEntity {
      */
     @ApiModelProperty("发票代码")
     @NotNull(message = "发票代码不能为空")
-    @TableField("invoice_codeNo")
-    private String invoiceCodeno;
+    private String invoiceCodeNo;
 
     /**
      * 购买方

@@ -9,7 +9,7 @@
         <result column="invoice_code" property="invoiceCode" />
         <result column="invoice_print_date" property="invoicePrintDate" />
         <result column="invoice_number" property="invoiceNumber" />
-        <result column="invoice_codeNo" property="invoiceCodeNo" />
+        <result column="invoice_code_no" property="invoiceCodeNo" />
         <result column="invoice_print_person" property="invoicePrintPerson" />
         <result column="application_invoice_person" property="applicationInvoicePerson" />
         <result column="invoice_numbers" property="invoiceNumbers" />
@@ -93,7 +93,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, application_id, invoice_code, invoice_print_date, invoice_number, invoice_codeNo, invoice_print_person, application_invoice_person, invoice_numbers, invoice_money, invoice_catalog_id, invoice_url, tax_receipt_url, express_sheet_no, express_company_name, express_update_datetime, express_update_person, express_update_person_tel, invoice_desc, create_date, update_date
+        id, application_id, invoice_code, invoice_print_date, invoice_number, invoice_code_no, invoice_print_person, application_invoice_person, invoice_numbers, invoice_money, invoice_catalog_id, invoice_url, tax_receipt_url, express_sheet_no, express_company_name, express_update_datetime, express_update_person, express_update_person_tel, invoice_desc, create_date, update_date
     </sql>
 
     <resultMap id="InvoiceMoney" type="com.example.mybatis.po.InvoicePO">

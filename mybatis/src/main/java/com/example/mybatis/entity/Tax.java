@@ -1,13 +1,12 @@
 package com.example.mybatis.entity;
 
-import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 /**
  * <p>
@@ -89,13 +88,11 @@ public class Tax extends BaseEntity {
     /**
      * 网商银行会员号
      */
-    @TableField("member_id")
     private String memberId;
 
     /**
      * 网商银行子账户唯一识别码
      */
-    @TableField("sub_account_no")
     private String subAccountNo;
 
     /**

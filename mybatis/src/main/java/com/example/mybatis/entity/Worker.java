@@ -1,6 +1,5 @@
 package com.example.mybatis.entity;
 
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -76,16 +75,13 @@ public class Worker extends BaseEntity {
     /**
      *  网商银行会员号。
      */
-    @TableField("member_id")
     private String memberId;
 
     /**
      * 子账户（智能识别码）
      */
-    @TableField("sub_account_no")
     private String subAccountNo;
 
-    @TableField("bank_id")
     private String bankId;
 
     /**
@@ -96,13 +92,11 @@ public class Worker extends BaseEntity {
     /**
      * 身份证正面
      */
-    @TableField("idcardFront")
     private String idcardFront;
 
     /**
      * 身份证反面
      */
-    @TableField("idcardBack")
     private String idcardBack;
 
     /**
@@ -128,13 +122,11 @@ public class Worker extends BaseEntity {
     /**
      * 加盟合同(签约状态)
      */
-    @TableField("agreementSign")
     private Integer agreementSign;
 
     /**
      * 合同地址
      */
-    @TableField("agreementUrl")
     private String agreementUrl;
 
     /**
