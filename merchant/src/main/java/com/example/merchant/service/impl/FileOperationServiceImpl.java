@@ -262,7 +262,7 @@ public class FileOperationServiceImpl implements FileOperationService {
                     paymentInventorys.add(paymentInventory);
                 }
 
-                if (worker.getAttestation() == 0) {
+                if (worker.getAttestation() == 0 || worker.getAttestation() == -1) {
                     throw new CommonException(300, workerName + "创客需要认证才能进行发放！");
                 }
                 if (worker.getAgreementSign() != 2) {

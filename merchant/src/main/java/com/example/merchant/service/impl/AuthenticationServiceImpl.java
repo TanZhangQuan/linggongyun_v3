@@ -12,15 +12,14 @@ import com.example.common.util.JsonUtils;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.makerend.IdCardInfoDTO;
 import com.example.merchant.dto.makerend.WorkerBankDTO;
-import com.example.merchant.service.AuthenticationService;
-import com.example.merchant.service.FileOperationService;
+import com.example.merchant.service.*;
 import com.example.merchant.util.RealnameVerifyUtil;
 import com.example.merchant.websocket.WebsocketServer;
-import com.example.mybatis.entity.CommonMessage;
-import com.example.mybatis.entity.Worker;
-import com.example.mybatis.entity.WorkerBank;
+import com.example.mybatis.entity.*;
+import com.example.mybatis.mapper.DictDao;
 import com.example.mybatis.mapper.WorkerBankDao;
 import com.example.mybatis.mapper.WorkerDao;
+import com.example.mybatis.vo.DictVO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -51,11 +50,41 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Value("${appSecret}")
     private String appSecret;
 
+    @Value("${fileStaticAccesspathImage}")
+    private String fileStaticAccesspathImage;
+
+    @Value("${platformName}")
+    private String platformName;
+
+    @Value("${platformLegalPerson}")
+    private String platformLegalPerson;
+
+    @Value("${platformContactNumber}")
+    private String platformContactNumber;
+
+    @Value("${platformCreditCode}")
+    private String platformCreditCode;
+
+    @Value("${yyqAppKey}")
+    private String yyqAppKey;
+
+    @Value("${yyqSecrept}")
+    private String yyqSecrept;
+
+    @Value("${yyqUrl}")
+    private String yyqUrl;
+
+    @Value("${signType}")
+    private String signType;
+
     @Resource
     private FileOperationService fileOperationService;
 
     @Resource
     private WebsocketServer websocketServer;
+
+    @Resource
+    private DictDao dictDao;
 
     @Override
     public ReturnJson getIdCardInfo(String filePath, IdCardSide idCardSide) throws Exception {
@@ -81,12 +110,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         if (worker != null) {
             return ReturnJson.error("该身份证已存在签约创客，请更换身份证或者联系管理员");
         }
-        worker=workerDao.selectById(workerId);
+        worker = workerDao.selectById(workerId);
         worker.setAccountName(idCardInfoDto.getRealName());
         worker.setIdcardCode(idCardInfoDto.getIdCard());
         worker.setIdcardFront(idCardInfoDto.getIdCardFront());
         worker.setIdcardBack(idCardInfoDto.getIdCardBack());
-        worker.setAttestation(1);
+        worker.setAttestation(-1);
         int i = workerDao.updateById(worker);
         if (i == 1) {
             return ReturnJson.success("身份证上传成功！");
@@ -130,19 +159,51 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public ReturnJson senSignAContract(String workerId) throws DefineException {
+    public ReturnJson senSignAContract(String workerId,HttpServletRequest request) throws DefineException {
         Worker worker = workerDao.selectById(workerId);
         if (worker == null) {
             return ReturnJson.error("该用户不存在！");
         }
-        if (worker.getAttestation() != 1) {
+        if (worker.getAttestation() == 0) {
             return ReturnJson.error("请您先完成实名认证！");
         }
+        Integer platformCertificationState = 0;
+        Dict dict = dictDao.getDictValue("platformCertification");
+        if(null != dict){
+            if(dict.getDictValue().equals("true")){
+                platformCertificationState = 1;
+            }
+        }else{
+            dict = new Dict();
+            dict.setParentId("0");
+            dict.setCode("platformCertification");
+            dict.setDictKey("platformCertification");
+            dict.setSort(99);
+            dict.setDictValue("false");
+            dict.setRemark("平台是否三要素检测，true代表检验过了");
+            dictDao.insert(dict);
+        }
         if (worker.getAgreementSign() == 0 || worker.getAgreementSign() == -1) {
-            ReturnJson returnJson = SignAContractUtils.signAContract(contract, worker.getId(), worker.getAccountName(), worker.getIdcardCode(),
-                    worker.getMobileCode());
-            worker.setAgreementSign(1);
-            workerDao.updateById(worker);
+            ReturnJson returnJson= null;
+            if(signType.equals("1")){
+                String uuid = UUID.randomUUID().toString()+".pdf";
+                String accessPath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() +
+                        request.getContextPath() + fileStaticAccesspathImage + uuid;
+                returnJson = SignAContractUtils.signYiYunAContract(contract,yyqAppKey,yyqSecrept,yyqUrl,uuid, PathImage_KEY, worker.getAccountName(), worker.getIdcardCode(),
+                        worker.getMobileCode(),platformName,platformContactNumber,platformCreditCode,platformLegalPerson,worker.getAttestation()
+                ,platformCertificationState);
+                worker.setAgreementSign(2);
+                worker.setAttestation(1);
+                worker.setAgreementUrl(accessPath);
+                dict.setDictValue("true");
+                dictDao.updateById(dict);
+                workerDao.updateById(worker);
+            }else{
+                returnJson = SignAContractUtils.signAContract(contract, worker.getId(), worker.getAccountName(), worker.getIdcardCode(),
+                        worker.getMobileCode());
+                worker.setAgreementSign(1);
+                workerDao.updateById(worker);
+            }
             return returnJson;
         } else if (worker.getAgreementSign() == 1) {
             return ReturnJson.error("加盟合同正在签署中，请查看手机短信并通过链接进行网签《加盟合同》！");
