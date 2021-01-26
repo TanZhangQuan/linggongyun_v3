@@ -1,10 +1,12 @@
 package com.example.merchant.controller.platform;
 
+import com.example.common.enums.UnionpayBankType;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.merchant.AddPaymentOrderManyDTO;
 import com.example.merchant.dto.platform.PaymentOrderDTO;
 import com.example.merchant.exception.CommonException;
 import com.example.merchant.interceptor.LoginRequired;
+import com.example.merchant.service.CompanyUnionpayService;
 import com.example.merchant.service.PaymentOrderManyService;
 import com.example.merchant.service.PaymentOrderService;
 import io.swagger.annotations.*;
@@ -36,6 +38,9 @@ public class PaymentOrderManyPaasController {
 
     @Resource
     private PaymentOrderService paymentOrderService;
+
+    @Resource
+    private CompanyUnionpayService companyUnionpayService;
 
     @PostMapping("/findMerchant")
     @ApiOperation(value = "查询商户", notes = "查询商户")
@@ -72,4 +77,14 @@ public class PaymentOrderManyPaasController {
                                             @ApiParam(value = "拒绝原因") @RequestParam(required = false) String reasonsForRejection) throws Exception {
         return paymentOrderManyService.paymentOrderManyAudit(paymentOrderId, boolPass, reasonsForRejection);
     }
+
+    @GetMapping("/queryCompanyUnionpayBalance")
+    @ApiOperation(value = "查询商户相应银联的余额详情", notes = "查询商户相应银联的余额详情")
+    @LoginRequired
+    public ReturnJson queryCompanyUnionpayDetail(@ApiParam(value = "商户ID") @NotBlank(message = "请选择商户") @RequestParam(required = false) String merchantId,
+                                                 @ApiParam(value = "服务商ID") @NotBlank(message = "请选择服务商") @RequestParam(required = false) String taxId,
+                                                 @ApiParam(value = "银行类型") @NotNull(message = "请选择银行类型") @RequestParam(required = false) UnionpayBankType unionpayBankType) throws Exception {
+        return companyUnionpayService.queryCompanyUnionpayDetail(merchantId, taxId, unionpayBankType);
+    }
+
 }

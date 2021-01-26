@@ -1,12 +1,14 @@
 package com.example.merchant.controller.platform;
 
 
+import com.example.common.enums.UnionpayBankType;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.AssociatedTasksDTO;
 import com.example.merchant.dto.merchant.AddPaymentOrderDTO;
 import com.example.merchant.dto.platform.PaymentOrderDTO;
 import com.example.merchant.exception.CommonException;
 import com.example.merchant.interceptor.LoginRequired;
+import com.example.merchant.service.CompanyUnionpayService;
 import com.example.merchant.service.PaymentOrderService;
 import io.swagger.annotations.*;
 import org.springframework.validation.annotation.Validated;
@@ -34,6 +36,9 @@ public class PaymentOrderPaasController {
 
     @Resource
     private PaymentOrderService paymentOrderService;
+
+    @Resource
+    private CompanyUnionpayService companyUnionpayService;
 
     @PostMapping("/getPaymentOrderAll")
     @LoginRequired
@@ -97,6 +102,15 @@ public class PaymentOrderPaasController {
                                     @NotBlank(message = "服务商ID不能为空") @RequestParam(required = false) String taxId,
                                     @NotNull(message = "支付类型不能为空") @RequestParam(required = false) Integer packageStatus) {
         return paymentOrderService.gradientPrice(merchantId, taxId, packageStatus);
+    }
+
+    @GetMapping("/queryCompanyUnionpayBalance")
+    @ApiOperation(value = "查询商户相应银联的余额详情", notes = "查询商户相应银联的余额详情")
+    @LoginRequired
+    public ReturnJson queryCompanyUnionpayDetail(@ApiParam(value = "商户ID") @NotBlank(message = "请选择商户") @RequestParam(required = false) String merchantId,
+                                                 @ApiParam(value = "服务商ID") @NotBlank(message = "请选择服务商") @RequestParam(required = false) String taxId,
+                                                 @ApiParam(value = "银行类型") @NotNull(message = "请选择银行类型") @RequestParam(required = false) UnionpayBankType unionpayBankType) throws Exception {
+        return companyUnionpayService.queryCompanyUnionpayDetail(merchantId, taxId, unionpayBankType);
     }
 
 }

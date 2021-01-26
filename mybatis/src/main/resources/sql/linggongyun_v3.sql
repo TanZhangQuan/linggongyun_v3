@@ -279,7 +279,7 @@ CREATE TABLE `tb_crowd_sourcing_invoice` (
   `invoice_code` varchar(200) DEFAULT NULL COMMENT '开票代码KP+0000',
   `invoice_print_date` datetime DEFAULT NULL COMMENT '开票时间',
   `invoice_number` varchar(200) DEFAULT NULL COMMENT '发票数字',
-  `invoice_codeNo` varchar(200) DEFAULT NULL COMMENT '发票代码',
+  `invoice_code_no` varchar(200) DEFAULT NULL COMMENT '发票代码',
   `invoice_print_person` varchar(200) DEFAULT NULL COMMENT '购买方',
   `invoice_money` decimal(18,2) DEFAULT NULL COMMENT '开票金额',
   `invoice_catalog_id` varchar(36) DEFAULT NULL COMMENT '开票类目',
