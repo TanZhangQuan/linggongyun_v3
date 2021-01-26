@@ -309,27 +309,29 @@
 
     <select id="queryTaxTransactionFlow" resultMap="TaxTransactionFlowVOMap">
         SELECT
+        DISTINCT t3.id as company_id,
         t1.id as tax_id ,
-        t3.id as company_id,
-        t4.id as merchant_id,
         t1.tax_name,
+        t4.id as merchant_id,
         t3.company_name,
-        IFNULL((SELECT SUM(real_money) from tb_payment_order where tax_id = t1.id and company_id = t3.id),0) as total_package_money,
-        IFNULL((SELECT SUM(real_money) from tb_payment_order_many where tax_id = t1.id and company_id = t3.id),0) as many_package_money,
-        (SELECT COUNT(id) from tb_payment_order where tax_id = t1.id and company_id = t3.id) as total_package_count,
+        IFNULL((SELECT SUM(real_money) from tb_payment_order where tax_id = t1.id and company_id = t3.id AND payment_order_status=6),0) as total_package_money,
+        IFNULL((SELECT SUM(real_money) from tb_payment_order_many where tax_id = t1.id and company_id = t3.id AND payment_order_status=3),0) as many_package_money,        (SELECT COUNT(id) from tb_payment_order where tax_id = t1.id and company_id = t3.id) as total_package_count,
         (SELECT COUNT(id) from tb_payment_order_many where tax_id = t1.id and company_id = t3.id) as many_package_count,
         1 as cooperation_state,
-        t2.create_date as start_cooperation_date,
-        if(DATE_FORMAT((SELECT create_date FROM tb_payment_order where tax_id = t1.id and company_id = t3.id ORDER BY create_date desc LIMIT 1), 'MM-dd-yyyy hh:mm:ss') > DATE_FORMAT((SELECT create_date FROM tb_payment_order_many where tax_id = t1.id and company_id = t3.id ORDER BY create_date desc LIMIT 1), 'MM-dd-yyyy hh:mm:ss'),(SELECT create_date FROM tb_payment_order where tax_id = t1.id and company_id = t3.id ORDER BY create_date desc LIMIT 1),(SELECT create_date FROM tb_payment_order_many where tax_id = t1.id and company_id = t3.id ORDER BY create_date desc LIMIT 1)) as lately_cooperation_date
+        (SELECT create_date from tb_company_tax WHERE company_id=t3.id AND tax_id=t1.id GROUP BY company_id)as start_cooperation_date,
+        if(DATE_FORMAT((SELECT create_date FROM tb_payment_order where tax_id = t1.id and company_id = t3.id ORDER BY create_date desc LIMIT 1),
+        'MM-dd-yyyy hh:mm:ss') > DATE_FORMAT((SELECT create_date FROM tb_payment_order_many where tax_id = t1.id and company_id = t3.id
+        ORDER BY create_date desc LIMIT 1), 'MM-dd-yyyy hh:mm:ss'),(SELECT create_date FROM tb_payment_order where tax_id = t1.id and company_id = t3.id
+        ORDER BY create_date desc LIMIT 1),(SELECT create_date FROM tb_payment_order_many where tax_id = t1.id and company_id = t3.id
+        ORDER BY create_date desc LIMIT 1)) as lately_cooperation_date
         FROM
         tb_tax t1
         INNER JOIN tb_company_tax t2 on t2.tax_id = t1.id
         INNER JOIN tb_company_info t3 on t3.id = t2.company_id
         INNER JOIN tb_merchant t4 on t3.id=t4.company_id
         where t1.id = #{param1}
-        GROUP BY
-        t2.company_id
     </select>
+
     <resultMap id="taxCompanyFlow" type="com.example.mybatis.vo.TaxCompanyPaymentVO">
         <id column="id" property="id"/>
         <result column="platform_service_provider" property="platformServiceProvider"/>
