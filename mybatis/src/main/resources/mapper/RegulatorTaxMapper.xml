@@ -37,11 +37,11 @@
         from tb_regulator_tax rt
         INNER JOIN tb_tax t ON t.id=rt.tax_id
         where rt.regulator_id=#{regulatorId} and rt.`status`!=1
-        <if test="tax.serviceProviderName !=null and tax.serviceProviderName != '' " >
-            AND t.tax_name like CONCAR('%',#{tax.serviceProviderName},'%')
+        <if test="tax.serviceProviderName != null and tax.serviceProviderName != '' " >
+            AND t.tax_name like CONCAT('%',#{tax.serviceProviderName},'%')
         </if>
         <if test="tax.serviceProvideId !=null and tax.serviceProvideId != '' " >
-            AND t.id like CONCAR('%',#{tax.serviceProvideId},'%')
+            AND t.id = #{tax.serviceProvideId}
         </if>
         <if test="tax.startDate !=null and tax.startDate != '' " >
             AND t.create_date >= #{tax.startDate}
@@ -49,6 +49,7 @@
         <if test="tax.endDate !=null and tax.endDate != '' " >
             AND t.create_date <![CDATA[<=]]> #{tax.endDate}
         </if>
+        order by t.create_date desc
     </select>
 
 

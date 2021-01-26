@@ -418,12 +418,12 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
 
     @Override
     public ReturnJson exportRegulatorWorkerPaymentInfo(String workerId, String paymentIds, HttpServletResponse response) throws CommonException {
-        List<WorekerPaymentListPo> worekerPaymentListPos = workerDao.exportRegulatorWorkerPaymentInfo(Arrays.asList(paymentIds.split(",")), workerId);
-        if (VerificationCheck.listIsNull(worekerPaymentListPos)) {
+        List<WorekerPaymentListPo> workerPaymentListPos = workerDao.exportRegulatorWorkerPaymentInfo(Arrays.asList(paymentIds.split(",")), workerId);
+        if (VerificationCheck.listIsNull(workerPaymentListPos)) {
             throw new CommonException(300, "订单有误，请重试！");
         }
         List<ExportRegulatorWorkerPaymentInfoVO> regulatorWorkerPaymentInfoVOS = new ArrayList<>();
-        for (WorekerPaymentListPo worekerPaymentListPo : worekerPaymentListPos) {
+        for (WorekerPaymentListPo worekerPaymentListPo : workerPaymentListPos) {
             ExportRegulatorWorkerPaymentInfoVO regulatorWorkerPaymentInfoVO = new ExportRegulatorWorkerPaymentInfoVO();
             BeanUtils.copyProperties(worekerPaymentListPo, regulatorWorkerPaymentInfoVO);
             regulatorWorkerPaymentInfoVO.setPackageStatus(worekerPaymentListPo.getPackageStatus() == 0 ? "总包+分包" : "众包");
@@ -624,7 +624,11 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
         }
         List<String> taxIds = (List<String>) returnJson.getData();
         List<String> paymentOrderIds = new ArrayList<>();
-        List<PaymentOrder> paymentOrders = paymentOrderDao.selectList(new QueryWrapper<PaymentOrder>().in("tax_id", taxIds).ge("payment_order_status", 2).eq("company_id", companyId));
+        List<PaymentOrder> paymentOrders = paymentOrderDao.selectList(
+                new QueryWrapper<PaymentOrder>().lambda()
+                        .in(PaymentOrder::getTaxId, taxIds)
+                        .ge(PaymentOrder::getPaymentOrderStatus, 2)
+                        .eq(PaymentOrder::getCompanyId, companyId));
         Integer totalOrderCount = paymentOrders.size();
         BigDecimal totalMoney = new BigDecimal(0);
         for (PaymentOrder paymentOrder : paymentOrders) {

@@ -250,8 +250,8 @@
         from tb_payment_inventory a
         INNER JOIN tb_worker w ON w.id=a.worker_id
         left join tb_invoice_payment_inventory b on a.id = b.payment_inventory_id
-        left join tb_payment_order c on a.payment_order_id = c.id and c.payment_order_status &gt;= 2
-        left join tb_payment_order_many d on a.payment_order_id = d.id and d.payment_order_status &gt;= 2
+        left join tb_payment_order c on a.payment_order_id = c.id and c.payment_order_status &gt;= 6
+        left join tb_payment_order_many d on a.payment_order_id = d.id and d.payment_order_status &gt;= 3
     </sql>
 
     <!--查询监管部门所监管的创客支付明细-->
@@ -275,16 +275,16 @@
                 #{item}
             </foreach>
             <if test="taxName != null and taxName != ''">
-                AND tax_name like CONCAT('%',#{taxName},'%')
+                AND c.platform_service_provider like CONCAT('%',#{taxName},'%') or d.platform_service_provider like CONCAT('%',#{taxName},'%')
             </if>
             <if test="companyName != null and companyName != ''">
-                AND merchant_name like CONCAT('%',#{companyName},'%')
+                AND c.company_s_name like CONCAT('%',#{companyName},'%') or d.company_s_name like CONCAT('%',#{companyName},'%')
             </if>
             <if test="startDate != null and startDate != ''">
-                AND date(payment_date) &gt;= #{startDate}
+                AND date(c.payment_date) &gt;= #{startDate} or date(d.payment_date) &gt;= #{startDate}
             </if>
             <if test="endDate != null and endDate != ''">
-                AND date(payment_date) &lt;= #{endDate}
+                AND date(c.payment_date) &lt;= #{endDate} or date(d.payment_date) &lt;= #{startDate}
             </if>
         </where>
         ORDER BY payment_date DESC
