@@ -10,59 +10,10 @@ Target Server Type    : MYSQL
 Target Server Version : 50717
 File Encoding         : 65001
 
-Date: 2021-01-07 17:18:10
+Date: 2021-01-25 17:33:59
 */
 
 SET FOREIGN_KEY_CHECKS=0;
-
--- ----------------------------
--- Table structure for `tb_company_unionpay`
--- ----------------------------
-DROP TABLE IF EXISTS `tb_company_unionpay`;
-CREATE TABLE `tb_company_unionpay` (
-  `id` varchar(50) NOT NULL COMMENT '主键',
-  `company_id` varchar(50) NOT NULL COMMENT '商户ID',
-  `tax_unionpay_id` varchar(50) NOT NULL COMMENT '服务商银联ID',
-  `uid` varchar(50) NOT NULL COMMENT '会员标识',
-  `sub_account_code` varchar(50) NOT NULL COMMENT '子账户账号',
-  `sub_account_name` varchar(50) NOT NULL COMMENT '子账号户名',
-  `create_date` datetime NOT NULL COMMENT '创建时间',
-  `update_date` datetime NOT NULL COMMENT '修改时间',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `UK_icr1qhlwx3lsd0terqn7w65k1` (`company_id`,`tax_unionpay_id`),
-  UNIQUE KEY `UK_icr1qhlwx3lsd0terqn7w65k2` (`uid`),
-  UNIQUE KEY `UK_icr1qhlwx3lsd0terqn7w65k3` (`sub_account_code`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='商户银联信息表';
-
--- ----------------------------
--- Records of tb_company_unionpay
--- ----------------------------
-
--- ----------------------------
--- Table structure for `tb_tax_unionpay`
--- ----------------------------
-DROP TABLE IF EXISTS `tb_tax_unionpay`;
-CREATE TABLE `tb_tax_unionpay` (
-  `id` varchar(50) NOT NULL COMMENT '主键',
-  `tax_id` varchar(50) NOT NULL COMMENT '服务商ID',
-  `unionpay_bank_type` varchar(50) NOT NULL COMMENT '银行类型',
-  `pfmpubkey` varchar(1000) NOT NULL COMMENT '平台公钥',
-  `prikey` varchar(1000) NOT NULL COMMENT '合作方私钥',
-  `merchno` varchar(50) NOT NULL COMMENT '商户号',
-  `acctno` varchar(50) NOT NULL COMMENT '平台帐户账号',
-  `clear_no` varchar(50) NOT NULL COMMENT '清分子账户',
-  `service_charge_no` varchar(50) NOT NULL COMMENT '手续费子账户',
-  `bool_enable` bit(1) NOT NULL COMMENT '是否启用',
-  `create_date` datetime NOT NULL COMMENT '创建时间',
-  `update_date` datetime NOT NULL COMMENT '修改时间',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `UK_icr1qhlwx3lsd0terqn7w65k1` (`tax_id`,`unionpay_bank_type`),
-  UNIQUE KEY `UK_icr1qhlwx3lsd0terqn7w65k2` (`merchno`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='服务商银联信息表';
-
--- ----------------------------
--- Records of tb_tax_unionpay
--- ----------------------------
 
 -- ----------------------------
 -- Table structure for `tb_address`
@@ -156,7 +107,7 @@ CREATE TABLE `tb_company_info` (
   `id` varchar(50) NOT NULL COMMENT '主键',
   `sales_man_id` varchar(36) NOT NULL COMMENT '业务员ID(tb_managers表中为业务员的ID)',
   `agent_id` varchar(36) DEFAULT NULL COMMENT '代理商ID(可以为空,tb_managers表中为代理商的ID)',
-  `company_s_name` varchar(20) DEFAULT '' COMMENT '公司的简称',
+  `company_s_name` varchar(20) NOT NULL DEFAULT '' COMMENT '公司的简称',
   `company_logo` varchar(40) DEFAULT NULL COMMENT '公司logo',
   `company_size` varchar(40) DEFAULT NULL COMMENT '公司规模',
   `company_provice` varchar(36) DEFAULT NULL COMMENT '公司所属省份',
@@ -166,14 +117,14 @@ CREATE TABLE `tb_company_info` (
   `business_license` varchar(250) DEFAULT NULL COMMENT '公司的营业执照',
   `company_desc` varchar(2000) DEFAULT NULL COMMENT '公司的简介',
   `company_name` varchar(40) NOT NULL COMMENT '公司全称',
-  `address_and_telephone` varchar(255) DEFAULT '' COMMENT '地址电话',
+  `address_and_telephone` varchar(255) NOT NULL DEFAULT '' COMMENT '地址电话',
   `bank_and_account` varchar(255) NOT NULL DEFAULT '' COMMENT '开户行及账号',
-  `registered_capital` decimal(18,4) DEFAULT '0.00' COMMENT '注册资本',
+  `registered_capital` decimal(12,2) NOT NULL DEFAULT '0.00' COMMENT '注册资本',
   `company_create_date` date DEFAULT NULL COMMENT '公司的成立时间',
   `contract` varchar(100) DEFAULT NULL COMMENT '加盟合同地址',
   `member_id` varchar(36) DEFAULT NULL COMMENT '网商银行会员号',
   `sub_account_no` varchar(36) DEFAULT NULL COMMENT '网商银行子账户(智能试别码)',
-  `bank_id` varchar(36) DEFAULT '' COMMENT '网商银行银行卡号',
+  `bank_id` varchar(36) NOT NULL DEFAULT '' COMMENT '网商银行银行卡号',
   `link_man` varchar(40) DEFAULT NULL COMMENT '公司联系人',
   `link_mobile` varchar(40) DEFAULT NULL COMMENT '公司联系电话',
   `credit_code` varchar(40) NOT NULL COMMENT '统一的社会信用代码',
@@ -184,7 +135,7 @@ CREATE TABLE `tb_company_info` (
   `update_date` datetime NOT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `UK_icr1qhlwx3lsd0terqn7w65k1` (`company_name`),
-  UNIQUE KEY `UK_icr1qhlwx3lsd0terqn7w65k1` (`credit_code`)
+  UNIQUE KEY `UK_icr1qhlwx3lsd0terqn7w65k2` (`credit_code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='公司信息';
 
 -- ----------------------------
@@ -199,8 +150,8 @@ CREATE TABLE `tb_company_invoice_info` (
   `id` varchar(50) NOT NULL COMMENT '主键',
   `company_id` varchar(36) DEFAULT NULL COMMENT '公司ID',
   `company_name` varchar(50) DEFAULT NULL COMMENT '公司全称',
-  `address_and_telephone` varchar(255) DEFAULT '' COMMENT '地址电话',
-  `bank_and_account` varchar(255) DEFAULT '' COMMENT '开户行及账号',
+  `address_and_telephone` varchar(255) NOT NULL DEFAULT '' COMMENT '地址电话',
+  `bank_and_account` varchar(255) NOT NULL DEFAULT '' COMMENT '开户行及账号',
   `tax_code` varchar(40) DEFAULT NULL COMMENT '纳税识别号',
   `create_date` datetime NOT NULL COMMENT '创建时间',
   `update_date` datetime NOT NULL COMMENT '修改时间',
@@ -252,6 +203,29 @@ CREATE TABLE `tb_company_tax` (
 
 -- ----------------------------
 -- Records of tb_company_tax
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for `tb_company_unionpay`
+-- ----------------------------
+DROP TABLE IF EXISTS `tb_company_unionpay`;
+CREATE TABLE `tb_company_unionpay` (
+  `id` varchar(50) NOT NULL COMMENT '主键',
+  `company_id` varchar(50) NOT NULL COMMENT '商户ID',
+  `tax_unionpay_id` varchar(50) NOT NULL COMMENT '服务商银联ID',
+  `uid` varchar(50) NOT NULL COMMENT '会员标识',
+  `sub_account_code` varchar(50) NOT NULL COMMENT '子账户账号',
+  `sub_account_name` varchar(50) NOT NULL COMMENT '子账号户名',
+  `create_date` datetime NOT NULL COMMENT '创建时间',
+  `update_date` datetime NOT NULL COMMENT '修改时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `UK_icr1qhlwx3lsd0terqn7w65k1` (`company_id`,`tax_unionpay_id`),
+  UNIQUE KEY `UK_icr1qhlwx3lsd0terqn7w65k2` (`uid`),
+  UNIQUE KEY `UK_icr1qhlwx3lsd0terqn7w65k3` (`sub_account_code`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='商户银联信息表';
+
+-- ----------------------------
+-- Records of tb_company_unionpay
 -- ----------------------------
 
 -- ----------------------------
@@ -333,7 +307,7 @@ DROP TABLE IF EXISTS `tb_greetings`;
 CREATE TABLE `tb_greetings` (
   `id` varchar(50) NOT NULL COMMENT '主键',
   `time_quantum` int(6) NOT NULL DEFAULT '0' COMMENT '时间段：0早晨，1上午，2中午，3下午，4晚上',
-  `greetings` varchar(100) DEFAULT '' COMMENT '问候语',
+  `greetings` varchar(100) NOT NULL DEFAULT '' COMMENT '问候语',
   `create_date` datetime NOT NULL COMMENT '创建时间',
   `update_date` datetime NOT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`)
@@ -443,11 +417,11 @@ CREATE TABLE `tb_invoice_ladder_price` (
   `id` varchar(50) NOT NULL COMMENT '主键',
   `tax_id` varchar(36) DEFAULT NULL COMMENT '服务商ID',
   `tax_package_id` varchar(36) DEFAULT NULL COMMENT '合作类型ID',
-  `start_money` decimal(18,4) DEFAULT NULL COMMENT '开始的金额',
-  `end_money` decimal(18,4) DEFAULT NULL COMMENT '结束的金额',
+  `start_money` decimal(12,2) NOT NULL DEFAULT '0.00' COMMENT '开始的金额',
+  `end_money` decimal(12,2) NOT NULL DEFAULT '0.00' COMMENT '结束的金额',
   `packaeg_status` int(2) DEFAULT NULL COMMENT '0分包汇总代开，1分包单人单开，2众包单人单开',
   `status` int(2) DEFAULT NULL COMMENT '0月度，1季度',
-  `rate` decimal(18,4) DEFAULT NULL COMMENT '服务费（如7.5，不需把百分数换算成小数）',
+  `rate` decimal(5,2) NOT NULL DEFAULT '0.00' COMMENT '服务费（如7.5，不需把百分数换算成小数）',
   `create_date` datetime NOT NULL COMMENT '创建时间',
   `update_date` datetime NOT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`)
@@ -562,10 +536,10 @@ CREATE TABLE `tb_maker_invoice` (
   `invoice_serial_no` varchar(50) DEFAULT NULL COMMENT '发票号码',
   `maker_voice_get_date_time` datetime DEFAULT NULL COMMENT '发票开具日期',
   `invoice_category` varchar(50) DEFAULT NULL COMMENT '服务名称',
-  `total_amount` decimal(12,2) DEFAULT NULL COMMENT '开票金额',
-  `tax_amount` decimal(12,2) DEFAULT NULL COMMENT '税额合计',
-  `ivoice_person` varchar(50) DEFAULT '' COMMENT '开票人',
-  `sale_company` varchar(50) DEFAULT '' COMMENT '销售方名称',
+  `total_amount` decimal(12,2) NOT NULL DEFAULT '0.00' COMMENT '开票金额',
+  `tax_amount` decimal(12,2) NOT NULL DEFAULT '0.00' COMMENT '税额合计',
+  `ivoice_person` varchar(50) NOT NULL DEFAULT '' COMMENT '开票人',
+  `sale_company` varchar(50) NOT NULL DEFAULT '' COMMENT '销售方名称',
   `help_make_organation_name` varchar(50) DEFAULT NULL COMMENT '代开机关名称',
   `help_make_company` varchar(50) DEFAULT NULL COMMENT '代开企业名称',
   `help_make_tax_no` varchar(50) DEFAULT NULL COMMENT '代开企业税号',
@@ -670,7 +644,7 @@ CREATE TABLE `tb_merchant` (
   `real_name` varchar(20) DEFAULT NULL COMMENT '真实姓名',
   `pass_word` varchar(40) DEFAULT NULL COMMENT '登录密码',
   `login_mobile` varchar(40) DEFAULT NULL COMMENT '登录时用的手机号码',
-  `head_portrait` varchar(255) DEFAULT '' COMMENT '头像',
+  `head_portrait` varchar(255) NOT NULL DEFAULT '' COMMENT '头像',
   `status` int(11) DEFAULT '0' COMMENT '商户状态0正常，1停用',
   `create_date` datetime NOT NULL COMMENT '创建时间',
   `update_date` datetime NOT NULL COMMENT '修改时间',
@@ -785,10 +759,10 @@ CREATE TABLE `tb_payment_inventory` (
   `id` varchar(50) NOT NULL COMMENT '主键',
   `payment_order_id` varchar(36) NOT NULL COMMENT '支付单ID',
   `worker_id` varchar(36) NOT NULL COMMENT '创客ID',
-  `worker_name` varchar(36) DEFAULT '' COMMENT '创客姓名',
-  `mobile_code` varchar(40) DEFAULT '' COMMENT '创客电话',
-  `id_card_code` varchar(40) DEFAULT '' COMMENT '创客身份证号码',
-  `bank_name` varchar(40) DEFAULT '' COMMENT '开户行',
+  `worker_name` varchar(36) NOT NULL DEFAULT '' COMMENT '创客姓名',
+  `mobile_code` varchar(40) NOT NULL DEFAULT '' COMMENT '创客电话',
+  `id_card_code` varchar(40) NOT NULL DEFAULT '' COMMENT '创客身份证号码',
+  `bank_name` varchar(40) NOT NULL DEFAULT '' COMMENT '开户行',
   `bank_code` varchar(40) DEFAULT NULL COMMENT '创客的银行账号',
   `task_money` decimal(18,2) DEFAULT '0.00' COMMENT '任务金额',
   `real_money` decimal(18,2) DEFAULT '0.00' COMMENT '创客的实际到手的金额',
@@ -818,12 +792,12 @@ CREATE TABLE `tb_payment_inventory` (
 DROP TABLE IF EXISTS `tb_payment_order`;
 CREATE TABLE `tb_payment_order` (
   `id` varchar(50) NOT NULL COMMENT '主键',
-  `company_id` varchar(36) NOT NULL DEFAULT '""' COMMENT '商户的公司ID',
+  `company_id` varchar(36) NOT NULL DEFAULT '' COMMENT '商户的公司ID',
   `company_s_name` varchar(36) DEFAULT NULL COMMENT '商户的公司简称',
   `real_money` decimal(18,2) NOT NULL DEFAULT '0.00' COMMENT '商户支付总金额',
   `service_money` decimal(18,2) NOT NULL DEFAULT '0.00' COMMENT '总服务费',
-  `worker_money` decimal(18,2) NOT NULL DEFAULT NULL COMMENT '付给创客的金额(分包总金额)',
-  `tax_id` varchar(36) DEFAULT '""' COMMENT '平台服务商ID',
+  `worker_money` decimal(18,2) NOT NULL DEFAULT '0.00' COMMENT '付给创客的金额(分包总金额)',
+  `tax_id` varchar(36) NOT NULL DEFAULT '' COMMENT '平台服务商ID',
   `platform_service_provider` varchar(50) DEFAULT NULL COMMENT '平台服务商名称',
   `company_contract` varchar(255) DEFAULT NULL COMMENT '项目合同（存储位置）',
   `payment_inventory` varchar(255) DEFAULT NULL COMMENT '支付清单（存储位置）',
@@ -832,7 +806,7 @@ CREATE TABLE `tb_payment_order` (
   `is_invoice` tinyint(1) DEFAULT '0' COMMENT '是否申请总包开票：0为申请,1已申请',
   `is_subpackage` tinyint(1) DEFAULT '0' COMMENT '是否分包开票0，为开票 1，已开票',
   `is_not_invoice` tinyint(1) DEFAULT NULL COMMENT '是否开票',
-  `task_id` varchar(36) DEFAULT '' COMMENT '关联的任务(可以不关联)',
+  `task_id` varchar(36) NOT NULL DEFAULT '' COMMENT '关联的任务(可以不关联)',
   `task_name` varchar(255) DEFAULT NULL COMMENT '任务名称',
   `acceptance_certificate` varchar(100) DEFAULT NULL COMMENT '支付验收单（存储位置）',
   `tax_status` int(6) DEFAULT '0' COMMENT '0商户承担，1创客承担，2商户创客共同承担',
@@ -841,7 +815,7 @@ CREATE TABLE `tb_payment_order` (
   `recevice_tax` decimal(18,2) DEFAULT NULL COMMENT '创客承担的税率的百分比（如50，不需要把百分比换算成小数）',
   `payment_mode` int(6) DEFAULT '0' COMMENT '0线下支付',
   `payment_order_status` int(11) DEFAULT '0' COMMENT '支付订单的状态-1支付失败,0申请中，1待支付，2已支付，3已确认收款,4支付中（可能支付失败，用来避免重复支付）5已驳回 6已完成',
-  `merchant_id` varchar(50) DEFAULT '' COMMENT '支付人ID',
+  `merchant_id` varchar(50) NOT NULL DEFAULT '' COMMENT '支付人ID',
   `payment_date` datetime DEFAULT NULL COMMENT '支付时间',
   `trade_no` varchar(50) NOT NULL COMMENT '订单号',
   `reasons_for_rejection` varchar(100) NOT NULL DEFAULT '' COMMENT '驳回理由',
@@ -866,12 +840,12 @@ CREATE TABLE `tb_payment_order_many` (
   `company_s_name` varchar(36) DEFAULT NULL COMMENT '商户的公司简称',
   `real_money` decimal(18,2) NOT NULL DEFAULT '0.00' COMMENT '支付金额',
   `service_money` decimal(18,2) NOT NULL DEFAULT '0.00' COMMENT '总服务费',
-  `tax_id` varchar(36) DEFAULT '' COMMENT '平台服务商ID',
+  `tax_id` varchar(36) NOT NULL DEFAULT '' COMMENT '平台服务商ID',
   `platform_service_provider` varchar(50) DEFAULT NULL COMMENT '平台服务商',
   `company_contract` varchar(255) DEFAULT NULL COMMENT '项目合同（存储位置）',
   `payment_inventory` varchar(255) DEFAULT NULL COMMENT '支付清单（存储位置）',
   `many_payment` varchar(255) DEFAULT NULL COMMENT '众包支付回单（存储位置）',
-  `task_id` varchar(36) DEFAULT '' COMMENT '关联的任务(可以不关联)',
+  `task_id` varchar(36) NOT NULL DEFAULT '' COMMENT '关联的任务(可以不关联)',
   `task_name` varchar(255) DEFAULT NULL COMMENT '任务名称',
   `acceptance_certificate` varchar(255) DEFAULT NULL COMMENT '支付验收单（存储位置）',
   `tax_status` int(6) DEFAULT '0' COMMENT '0商户承担，1创客承担，2商户创客共同承担',
@@ -880,7 +854,7 @@ CREATE TABLE `tb_payment_order_many` (
   `recevice_tax` decimal(18,2) DEFAULT NULL COMMENT '创客承担的税率的百分比（如50，不需要把百分比换算成小数）',
   `payment_mode` int(6) DEFAULT '0' COMMENT '支付方式：0线下支付',
   `payment_order_status` int(11) DEFAULT '0' COMMENT '支付订单的状态 0申请中，1待支付，2支付中，3已完成，4已取消',
-  `merchant_id` varchar(50) DEFAULT '' COMMENT '付款的商户ID',
+  `merchant_id` varchar(50) NOT NULL DEFAULT '' COMMENT '付款的商户ID',
   `payment_date` datetime DEFAULT NULL COMMENT '支付时间',
   `is_application` tinyint(1) DEFAULT '0' COMMENT '是否申请,0未申请，1已申请',
   `is_not_invoice` tinyint(1) DEFAULT NULL COMMENT '是否开票',
@@ -908,7 +882,7 @@ CREATE TABLE `tb_payment_order_subpackage` (
   `real_money` decimal(18,2) DEFAULT '0.00' COMMENT '支付金额',
   `tax_id` varchar(36) DEFAULT NULL COMMENT '平台服务商ID',
   `subpackage_payment` varchar(100) DEFAULT NULL COMMENT '分包支付回单（存储位置）',
-  `task_id` varchar(36) DEFAULT '' COMMENT '关联的任务(可以不关联)',
+  `task_id` varchar(36) NOT NULL DEFAULT '' COMMENT '关联的任务(可以不关联)',
   `payment_mode` int(6) DEFAULT '0' COMMENT '0线下支付',
   `payment_order_status` int(11) DEFAULT '0' COMMENT '支付订单的状态1待支付，2已支付',
   `payment_date` datetime DEFAULT NULL COMMENT '支付时间',
@@ -1005,8 +979,8 @@ CREATE TABLE `tb_tax` (
   `link_man` varchar(40) DEFAULT NULL COMMENT '公司联系人',
   `link_mobile` varchar(40) DEFAULT NULL COMMENT '公司联系电话',
   `credit_code` varchar(40) DEFAULT NULL COMMENT '统一的社会信用代码',
-  `member_id` varchar(40) DEFAULT '' COMMENT '网商银行会员号',
-  `sub_account_no` varchar(40) DEFAULT '' COMMENT '网商银行子账户唯一识别码',
+  `member_id` varchar(40) NOT NULL DEFAULT '' COMMENT '网商银行会员号',
+  `sub_account_no` varchar(40) NOT NULL DEFAULT '' COMMENT '网商银行子账户唯一识别码',
   `tax_status` int(11) DEFAULT NULL COMMENT '公司状态0正常，1停用',
   `create_date` datetime NOT NULL COMMENT '创建时间',
   `update_date` datetime NOT NULL COMMENT '修改时间',
@@ -1025,9 +999,9 @@ CREATE TABLE `tb_tax_package` (
   `id` varchar(50) NOT NULL COMMENT '主键',
   `tax_id` varchar(36) DEFAULT NULL COMMENT '对应的服务商',
   `invoice_taxno` varchar(100) DEFAULT NULL COMMENT '税号',
-  `tax_price` decimal(18,4) DEFAULT '0.0000' COMMENT '税费率成本',
-  `tax_min_price` decimal(18,4) DEFAULT '0.0000' COMMENT '建议市场价最小值',
-  `tax_max_price` decimal(18,4) DEFAULT '0.0000' COMMENT '建议市场价最大值',
+  `tax_price` decimal(12,2) NOT NULL DEFAULT '0.00' COMMENT '税费率成本',
+  `tax_min_price` decimal(12,2) NOT NULL DEFAULT '0.00' COMMENT '建议市场价最小值',
+  `tax_max_price` decimal(12,2) NOT NULL DEFAULT '0.00' COMMENT '建议市场价最大值',
   `payee` varchar(20) DEFAULT NULL COMMENT '收款方户名',
   `bank_name` varchar(80) DEFAULT NULL COMMENT '银行名称',
   `bank_code` varchar(40) DEFAULT NULL COMMENT '银行账号',
@@ -1040,6 +1014,32 @@ CREATE TABLE `tb_tax_package` (
 
 -- ----------------------------
 -- Records of tb_tax_package
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for `tb_tax_unionpay`
+-- ----------------------------
+DROP TABLE IF EXISTS `tb_tax_unionpay`;
+CREATE TABLE `tb_tax_unionpay` (
+  `id` varchar(50) NOT NULL COMMENT '主键',
+  `tax_id` varchar(50) NOT NULL COMMENT '服务商ID',
+  `unionpay_bank_type` varchar(50) NOT NULL COMMENT '银行类型',
+  `pfmpubkey` varchar(1000) NOT NULL COMMENT '平台公钥',
+  `prikey` varchar(1000) NOT NULL COMMENT '合作方私钥',
+  `merchno` varchar(50) NOT NULL COMMENT '商户号',
+  `acctno` varchar(50) NOT NULL COMMENT '平台帐户账号',
+  `clear_no` varchar(50) NOT NULL COMMENT '清分子账户',
+  `service_charge_no` varchar(50) NOT NULL COMMENT '手续费子账户',
+  `bool_enable` bit(1) NOT NULL COMMENT '是否启用',
+  `create_date` datetime NOT NULL COMMENT '创建时间',
+  `update_date` datetime NOT NULL COMMENT '修改时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `UK_icr1qhlwx3lsd0terqn7w65k1` (`tax_id`,`unionpay_bank_type`),
+  UNIQUE KEY `UK_icr1qhlwx3lsd0terqn7w65k2` (`merchno`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='服务商银联信息表';
+
+-- ----------------------------
+-- Records of tb_tax_unionpay
 -- ----------------------------
 
 -- ----------------------------
@@ -1059,19 +1059,19 @@ CREATE TABLE `tb_worker` (
   `bank_code` varchar(40) DEFAULT NULL COMMENT '银行卡号',
   `member_id` varchar(36) DEFAULT NULL COMMENT '网商银行会员号。',
   `sub_account_no` varchar(36) DEFAULT NULL COMMENT '子账户（智能识别码）',
-  `bank_id` varchar(36) DEFAULT '' COMMENT '银行卡id，银行卡在交易见证平台的绑卡id',
+  `bank_id` varchar(36) NOT NULL DEFAULT '' COMMENT '银行卡id，银行卡在交易见证平台的绑卡id',
   `worker_status` int(11) DEFAULT '0' COMMENT '注册状态（0小程序端注册，1商户导入，2导入支付清单时注册）',
   `attestation` int(11) DEFAULT '0' COMMENT '实名认证状态（0未认证，1已认证）',
-  `idcardFront` varchar(200) DEFAULT NULL COMMENT '身份证正面',
-  `idcardBack` varchar(200) DEFAULT '' COMMENT '身份证反面',
+  `idcard_front` varchar(200) DEFAULT NULL COMMENT '身份证正面',
+  `idcard_back` varchar(200) NOT NULL DEFAULT '' COMMENT '身份证反面',
   `attestation_video` varchar(200) DEFAULT NULL COMMENT '认证视频',
   `user_name` varchar(20) DEFAULT NULL COMMENT '登录用户名',
   `user_pwd` varchar(40) DEFAULT NULL COMMENT '登陆密码',
   `skill` varchar(100) DEFAULT NULL COMMENT '主要技能',
-  `agreementSign` int(11) DEFAULT '0' COMMENT '加盟合同(签约状态0未签约，1签约中,2签约成功，3签约失败)',
+  `agreement_sign` int(11) DEFAULT '0' COMMENT '加盟合同(签约状态0未签约，1签约中,2签约成功，3签约失败)',
   `business_license` varchar(400) DEFAULT NULL COMMENT '营业执照',
-  `credit_code` varchar(255) DEFAULT '' COMMENT '社会统一代码',
-  `agreementUrl` varchar(400) DEFAULT NULL COMMENT '合同地址',
+  `credit_code` varchar(255) NOT NULL DEFAULT '' COMMENT '社会统一代码',
+  `agreement_url` varchar(400) DEFAULT NULL COMMENT '合同地址',
   `head_portraits` varchar(200) DEFAULT NULL COMMENT '头像',
   `picture` varchar(200) DEFAULT NULL COMMENT '照片',
   `create_date` datetime NOT NULL COMMENT '创建时间',

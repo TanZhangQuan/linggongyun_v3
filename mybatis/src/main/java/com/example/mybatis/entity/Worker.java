@@ -59,7 +59,7 @@ public class Worker extends BaseEntity {
     private String mobileCode;
 
     /**
-     * 创客身份证
+     * 创客身份证号码
      */
     private String idcardCode;
 
