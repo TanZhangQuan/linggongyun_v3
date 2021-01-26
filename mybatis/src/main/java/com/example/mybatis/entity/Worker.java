@@ -85,7 +85,7 @@ public class Worker extends BaseEntity {
     private String bankId;
 
     /**
-     * 实名认证状态（0未认证，1已认证）
+     * 实名认证状态（0未认证，1已认证,-1已上传图片）
      */
     private Integer attestation;
 

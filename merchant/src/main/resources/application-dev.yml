@@ -47,6 +47,25 @@ fileStaticAccesspathExcel: "/static/excel/"
 #视频的访问路径
 fileStaticAccesspathVideo: "/static/Video/"
 
+#平台全称
+platformName: '顺利创（广州）企业服务有限公司'
+#平台法人
+platformLegalPerson: '郑磊'
+#平台联系电话
+platformContactNumber: '18666009970'
+#平台社会信用代码
+platformCreditCode: '914401063045811741'
+
+#易云签的appkey
+yyqAppKey: "yyz9a9ek64096uk799"
+#易云签的secrept
+yyqSecrept: "7b95c6068a2d34c02b3a1ef251dc282f"
+#易云签的url
+yyqUrl: "https://testapi.ecloudsign.com/"
+#签约类型 0 e签宝，1：易云签
+signType: "1"
+
+
 #模板文件
 TemplateFile:
   #  合同模板

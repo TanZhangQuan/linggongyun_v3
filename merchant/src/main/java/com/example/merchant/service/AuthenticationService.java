@@ -54,7 +54,7 @@ public interface AuthenticationService {
      * @param workerId
      * @return
      */
-    ReturnJson senSignAContract(String workerId) throws DefineException;
+    ReturnJson senSignAContract(String workerId,HttpServletRequest request) throws DefineException;
 
     /**
      * 合同签署成功后的回调
