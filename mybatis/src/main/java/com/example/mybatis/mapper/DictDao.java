@@ -29,4 +29,11 @@ public interface DictDao extends BaseMapper<Dict> {
      * @return
      */
     List<DictVO> getDictValueAndKey();
+
+    /**
+     * 根据key 获取value
+     *
+     * @return
+     */
+    Dict getDictValue(String dictKey);
 }

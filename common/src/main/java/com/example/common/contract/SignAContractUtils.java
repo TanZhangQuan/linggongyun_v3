@@ -1,5 +1,9 @@
 package com.example.common.contract;
 
+import com.agile.ecloud.sdk.bean.ECloudDomain;
+import com.agile.ecloud.sdk.bean.EcloudPublicKey;
+import com.agile.ecloud.sdk.http.EcloudClient;
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.example.common.contract.exception.DefineException;
 import com.example.common.contract.helper.*;
@@ -8,11 +12,11 @@ import com.example.common.util.UuidUtil;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.Map;
+import java.io.*;
+import java.util.*;
 
 @Slf4j
 public class SignAContractUtils {
-
     /**
      * 功能描述: 银行卡号3要素验证
      *
@@ -72,5 +76,107 @@ public class SignAContractUtils {
         log.info("---------------------签署流程开启 start-----------------------------");
         SignHelper.startSignFlow(flowId);
         return ReturnJson.success("网签短信也发送到" + mobile + "请查看手机短信并通过链接进行网签《加盟合同》");
+    }
+
+
+    public static ReturnJson signYiYunAContract(String filePath,String yyqAppKey,String yyqSecrept,String yyqUrlString ,String uuid, String PathImage_KEY, String realName, String IdCardCode, String mobile, String taxName, String linkMobile, String creditCode,String taxMan,Integer attestation,Integer platformCertificationState) throws DefineException {
+
+        log.info("---------------------获取token start------------------------------");
+        TokenHelper.getTokenData();
+        EcloudPublicKey.init(yyqAppKey, yyqSecrept, "1.0", yyqUrlString);
+
+        if(attestation != 1){
+            //创客实名
+            ECloudDomain workerCloudDomain = EcloudClient.threeElementsIdentification(realName, mobile, IdCardCode);
+            if(!workerCloudDomain.getCode().equals("0")){
+                return ReturnJson.error("创客实名不通过");
+            }
+        }
+
+        if(platformCertificationState != 1){
+            //企业实名
+            ECloudDomain serviceProviderCloudDomain = EcloudClient.busThreeElementsIdentification(taxMan, taxName, creditCode);
+            if(!serviceProviderCloudDomain.getCode().equals("0")){
+                return ReturnJson.error("企业实名不通过");
+            }
+        }
+
+        log.info("---------------------个人申请证书-------------------------------");
+        EcloudClient.applyCert("1", "0", IdCardCode, realName, mobile);
+
+        log.info("---------------------企业申请证书----------------------------------");
+        EcloudClient.applyCert("2", "8", creditCode, taxName, linkMobile);
+
+        log.info("---------------------服务商自动生成印章----------------------------------");
+        ECloudDomain serviceProviderSeal = EcloudClient.createSeal(linkMobile, taxName, null, null);
+        //获取服务商签名对象
+        Map<String,Object> serviceProviderSealObject = (Map) serviceProviderSeal.getData();
+
+        log.info("---------------------创客自动生成签名-----------------------------");
+        ECloudDomain workerSeal = EcloudClient.createSign(mobile, realName, null, null, null, null);
+        //获取创客签名对象
+        Map<String,Object> workerSealObject = (Map) workerSeal.getData();
+
+        log.info("---------------------获取用户签名照片-----------------------------");
+        ECloudDomain workerSignImg = EcloudClient.getSignImg(mobile, workerSealObject.get("signId").toString());
+        //获取用户签名照片签名对象
+        Map<String,Object> workerSignImgObject = (Map) workerSignImg.getData();
+
+        log.info("---------------------添加创客签名---------------------------------");
+        ECloudDomain workerAddSign = EcloudClient.addSign(mobile, "1", workerSignImgObject.get("signImg").toString());
+
+        log.info("---------------------获取服务商的印章-----------------------------");
+        ECloudDomain serviceProviderSignImg = EcloudClient.getSignImg(linkMobile, serviceProviderSealObject.get("signId").toString());
+        //获取用户签名照片签名对象
+        Map<String,Object> serviceProviderSignImgObject = (Map) serviceProviderSignImg.getData();
+
+        log.info("---------------------添加服务商的印章---------------------------------");
+        ECloudDomain serviceProviderSign = EcloudClient.addSign(linkMobile, "2", serviceProviderSignImgObject.get("signImg").toString());
+
+        log.info("---------------------添加模板---------------------------------");
+        ECloudDomain contract = EcloudClient.createContract("", mobile, new File(filePath));
+        //添加模板对象
+        Map<String,Object> contractMap = (Map) contract.getData();
+
+        log.info("---------------------创客坐标自动签署合同---------------------------------");
+        Map<String,String> map = new HashMap<>();
+        map.put("type","1");
+        map.put("cardType","0");
+        map.put("idCardNum",IdCardCode);
+        map.put("name",realName);
+        map.put("mobilePhone",mobile);
+        String  param= JSON.toJSONString(map);
+        List<Map<String,String>> listMap = new ArrayList<>();
+        Map<String,String> positionMap = new HashMap();
+        positionMap.put("page","1");
+        positionMap.put("x","200");
+        positionMap.put("y","200");
+        positionMap.put("signId",workerSealObject.get("signId").toString());
+        listMap.add(positionMap);
+        String listMapStr = JSON.toJSONString(listMap);
+        EcloudClient.autoSignByPoistion(param, contractMap.get("contractNum").toString(), 1, listMapStr);
+
+
+        log.info("---------------------服务商坐标自动签署合同---------------------------------");
+        Map<String,String> serviceProviderMap = new HashMap<>();
+        serviceProviderMap.put("type","2");
+        serviceProviderMap.put("cardType","8");
+        serviceProviderMap.put("idCardNum",creditCode);
+        serviceProviderMap.put("name",taxName);
+        serviceProviderMap.put("mobilePhone",linkMobile);
+        String serviceProviderParam= JSON.toJSONString(serviceProviderMap);
+        List<Map<String,String>> serviceProviderListMap = new ArrayList<>();
+        Map<String,String> serviceProviderPositionMap = new HashMap();
+        serviceProviderPositionMap.put("page","1");
+        serviceProviderPositionMap.put("x","150");
+        serviceProviderPositionMap.put("y","200");
+        serviceProviderPositionMap.put("signId",serviceProviderSealObject.get("signId").toString());
+        serviceProviderListMap.add(serviceProviderPositionMap);
+        String serviceProviderListMapStr = JSON.toJSONString(serviceProviderListMap);
+        EcloudClient.autoSignByPoistion(serviceProviderParam, contractMap.get("contractNum").toString(), 0, serviceProviderListMapStr);
+
+        //下载合同
+        EcloudClient.downloadContract(contractMap.get("contractNum").toString(),PathImage_KEY+uuid);
+        return ReturnJson.success("下载成功");
     }
 }

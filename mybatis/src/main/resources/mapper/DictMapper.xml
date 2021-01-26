@@ -7,6 +7,18 @@
         <result column="dict_value" property="dictValue"/>
     </resultMap>
 
+     <resultMap id="dictMap" type="com.example.mybatis.entity.Dict">
+        <result column="id" property="id"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="dict_key" property="dictKey"/>
+        <result column="dict_value" property="dictValue"/>
+        <result column="sort" property="sort"/>
+        <result column="remark" property="remark"/>
+        <result column="create_date" property="createDate"/>
+        <result column="update_date" property="updateDate"/>
+        <result column="bool_deleted" property="boolDeleted"/>
+    </resultMap>
+
     <select id="getDictValues" resultType="java.lang.String">
         SELECT
             dict_value
@@ -27,6 +39,16 @@
             parent_id = 0
         ORDER BY
             sort ASC
+    </select>
+
+    <select id="getDictValue" resultMap="dictMap">
+         SELECT
+            *
+        FROM
+            tb_dict
+        WHERE
+            dict_key = #{dictKey}
+        AND parent_id = 0
     </select>
 
 </mapper>
