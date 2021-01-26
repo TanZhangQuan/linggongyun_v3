@@ -90,15 +90,15 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
             Page<Worker> pageData = new Page<>(page, pageSize);
             if (workerType == 0) {
                 workerPage = workerDao.selectPage(pageData,
-                        new QueryWrapper<Worker>().in("id", ids)
-                                .eq("attestation", 1)
-                                .eq("agreementSign", 2));
+                        new QueryWrapper<Worker>().lambda().in(Worker::getId, ids)
+                                .eq(Worker::getAttestation, 1)
+                                .eq(Worker::getAgreementSign, 2));
             }
             if (workerType == 1) {
                 workerPage = workerDao.selectPage(pageData,
-                        new QueryWrapper<Worker>().in("id", ids)
-                                .ne("attestation", 1)
-                                .ne("agreementSign", 2));
+                        new QueryWrapper<Worker>().lambda().in(Worker::getId, ids)
+                                .ne(Worker::getAttestation, 1)
+                                .ne(Worker::getAgreementSign, 2));
             }
             return ReturnJson.success(workerPage);
         }

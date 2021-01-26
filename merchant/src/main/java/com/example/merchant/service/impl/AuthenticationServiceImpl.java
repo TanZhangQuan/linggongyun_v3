@@ -75,13 +75,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         if (worker == null) {
             return ReturnJson.error("该创客不存在！");
         }
-        worker = workerDao.selectOne(new QueryWrapper<Worker>()
-                .eq("idcard_code", idCardInfoDto.getIdCard())
-                .eq("agreementSign", 2));
+        worker = workerDao.selectOne(new QueryWrapper<Worker>().lambda()
+                .eq(Worker::getIdcardCode, idCardInfoDto.getIdCard())
+                .eq(Worker::getAgreementSign, 2));
         if (worker != null) {
             return ReturnJson.error("该身份证已存在签约创客，请更换身份证或者联系管理员");
         }
-        worker=workerDao.selectById(workerId);
+        worker = workerDao.selectById(workerId);
         worker.setAccountName(idCardInfoDto.getRealName());
         worker.setIdcardCode(idCardInfoDto.getIdCard());
         worker.setIdcardFront(idCardInfoDto.getIdCardFront());
