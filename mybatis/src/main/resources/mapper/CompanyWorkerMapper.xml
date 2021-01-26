@@ -15,11 +15,11 @@
         </foreach>
         <if test="param2 == 0">
             AND w.attestation != 1
-            AND w.agreementSign != 2
+            AND w.agreement_sign != 2
         </if>
         <if test="param2 == 1">
             AND w.attestation = 1
-            AND w.agreementSign = 2
+            AND w.agreement_sign = 2
         </if>
     </select>
 

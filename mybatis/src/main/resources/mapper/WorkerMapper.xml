@@ -13,16 +13,16 @@
         <result column="idcard_code" property="idcardCode"/>
         <result column="bank_code" property="bankCode"/>
         <result column="attestation" property="attestation"/>
-        <result column="idcardFront" property="idcardFront"/>
-        <result column="idcardBack" property="idcardBack"/>
+        <result column="idcard_front" property="idcardFront"/>
+        <result column="idcard_back" property="idcardBack"/>
         <result column="member_id" property="memberId"/>
         <result column="sub_account_no" property="subAccountNo"/>
         <result column="attestation_video" property="attestationVideo"/>
         <result column="user_name" property="userName"/>
         <result column="user_pwd" property="userPwd"/>
         <result column="skill" property="skill"/>
-        <result column="agreementSign" property="agreementSign"/>
-        <result column="agreementUrl" property="agreementUrl"/>
+        <result column="agreement_sign" property="agreementSign"/>
+        <result column="agreement_url" property="agreementUrl"/>
         <result column="head_portraits" property="headPortraits"/>
         <result column="picture" property="picture"/>
         <result column="business_license" property="businessLicense"/>
@@ -38,7 +38,7 @@
         <result column="mobile_code" property="mobileCode"/>
         <result column="idcard_code" property="idcardCode"/>
         <result column="attestation" property="attestation"/>
-        <result column="agreementUrl" property="agreementUrl"/>
+        <result column="agreement_url" property="agreementUrl"/>
         <result column="create_date" property="createDate"/>
         <result column="is_deliver" property="isDeliver"/>
         <result column="achievement_desc" property="achievementDesc"/>
@@ -52,7 +52,7 @@
         <result column="mobile_code" property="mobileCode"/>
         <result column="idcard_code" property="idcardCode"/>
         <result column="attestation" property="attestation"/>
-        <result column="agreementUrl" property="agreementUrl"/>
+        <result column="agreement_url" property="agreementUrl"/>
         <result column="create_date" property="createDate"/>
         <result column="check_money" property="checkMoney"/>
         <result column="is_deliver" property="isDeliver"/>
@@ -68,7 +68,7 @@
         <result column="mobile_code" property="mobileCode"/>
         <result column="idcard_code" property="idcardCode"/>
         <result column="attestation" property="attestation"/>
-        <result column="agreementUrl" property="agreementUrl"/>
+        <result column="agreement_url" property="agreementUrl"/>
         <result column="create_date" property="createDate"/>
         <result column="is_deliver" property="isDeliver"/>
         <result column="acceptance_amount" property="acceptanceAmount"/>
@@ -96,7 +96,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, worker_status, worker_name, account_name, worker_sex, mobile_code, idcard_code, bank_code, attestation, idcardFront, idcardBack, attestation_video, user_name, user_pwd, skill, agreementSign, agreementUrl, head_portraits, picture, business_license, create_date, update_date
+        id, worker_status, worker_name, account_name, worker_sex, mobile_code, idcard_code, bank_code, attestation, idcard_front, idcard_back, attestation_video, user_name, user_pwd, skill, agreement_sign, agreement_url, head_portraits, picture, business_license, create_date, update_date
     </sql>
 
     <sql id="ByIdAndAccountNameAndMobile">
@@ -113,7 +113,7 @@
 
     <select id="selectByIdAndAccountNameAndMobile" resultMap="BaseResultMap" parameterType="list">
         select
-        a.id, account_name, mobile_code, idcard_code, bank_code, attestation, agreementSign ,a.create_date
+        a.id, account_name, mobile_code, idcard_code, bank_code, attestation, agreement_sign ,a.create_date
         from tb_worker a join tb_company_worker b on a.id = b.worker_id
         <where>
             b.company_id = #{merchantId}
@@ -134,7 +134,7 @@
             idcard_code,
             bank_code,
             attestation,
-            agreementUrl,
+            agreement_url,
             create_date
         FROM
             tb_worker
@@ -142,7 +142,7 @@
         <include refid="ByIdAndAccountNameAndMobile"></include>
         AND (
             attestation = 0
-            OR agreementSign != 2
+            OR agreement_sign != 2
         )
         ORDER BY create_date desc
     </select>
@@ -155,13 +155,13 @@
             idcard_code,
             bank_code,
             attestation,
-            agreementUrl,
+            agreement_url,
             create_date
         FROM
             tb_worker
         WHERE
             attestation = 1
-        AND agreementSign = 2
+        AND agreement_sign = 2
         <include refid="ByIdAndAccountNameAndMobile"></include>
         ORDER BY create_date desc
     </select>
@@ -173,7 +173,7 @@
             w.mobile_code,
             w.idcard_code,
             w.attestation,
-            w.agreementUrl,
+            w.agreement_url,
             IF (ISNULL(wt.achievement_date),0,1) AS is_deliver,
             wt.achievement_date,
             wt.achievement_desc,
@@ -195,7 +195,7 @@
             w.mobile_code,
             w.idcard_code,
             w.attestation,
-            w.agreementUrl,
+            w.agreement_url,
             wt.check_money,
             IF (ISNULL(wt.achievement_date),0,1) AS is_deliver,
             wt.achievement_date,
@@ -323,7 +323,7 @@
             w.mobile_code,
             w.idcard_code,
             w.attestation,
-            w.agreementUrl,
+            w.agreement_url,
             wt.achievement_date,
             wt.achievement_desc,
             wt.achievement_files,
@@ -461,7 +461,7 @@
         WHERE
             cw.company_id = #{param2}
         AND w.attestation = 1
-        AND w.agreementSign = 2
+        AND w.agreement_sign = 2
     </select>
 
     <select id="queryWorkerCount" resultType="int">

@@ -95,7 +95,7 @@
         <result column="many_tax_money" property="manyTaxMoney"/>
         <result column="total_tax_money" property="totalTaxMoney"/>
         <result column="attestation" property="attestation"/>
-        <result column="agreementUrl" property="agreementUrl"/>
+        <result column="agreement_url" property="agreementUrl"/>
         <result column="create_date" property="createDate"/>
     </resultMap>
 
@@ -189,7 +189,7 @@
         e.mobile_code,
         e.idcard_code,
         e.attestation,
-        e.agreementUrl,
+        e.agreement_url,
         e.create_date
         FROM tb_worker e
         JOIN
@@ -229,7 +229,7 @@
         e.mobile_code,
         e.idcard_code,
         e.attestation,
-        e.agreementUrl,
+        e.agreement_url,
         e.create_date
         FROM tb_worker e
         JOIN
