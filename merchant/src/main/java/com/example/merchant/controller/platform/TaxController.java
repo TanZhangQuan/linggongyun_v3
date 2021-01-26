@@ -14,6 +14,7 @@ import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.*;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.*;
+import org.hibernate.validator.constraints.Range;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -91,6 +92,13 @@ public class TaxController {
     @ApiImplicitParams(value = {@ApiImplicitParam(name = "taxListDto", value = "查询条件", dataType = "TaxListDTO", paramType = "body")})
     public ReturnJson getTaxList(@Valid @RequestBody TaxListDTO taxListDto) {
         return taxService.getTaxList(taxListDto, null);
+    }
+
+    @PostMapping("/updateTaxStatus")
+    @ApiOperation(value = "修改服务商状态", notes = "修改服务商状态")
+    public ReturnJson updateTaxStatus(@ApiParam(value = "服务商ID") @NotBlank(message = "请选择服务商") @RequestParam(required = false) String taxId,
+                                 @ApiParam(value = "服务商状态") @NotBlank(message = "请选择服务商状态") @Range(min = 0, max = 1, message = "请选择0或1") @RequestParam(required = false) Integer taxStatus) {
+        return taxService.updateTaxStatus(taxId, taxStatus);
     }
 
     @GetMapping("/getTaxInfo")

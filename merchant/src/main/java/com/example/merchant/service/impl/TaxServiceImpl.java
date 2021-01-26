@@ -7,7 +7,10 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.common.util.ReturnJson;
 import com.example.common.util.VerificationCheck;
 import com.example.merchant.dto.TaxListDTO;
-import com.example.merchant.dto.platform.*;
+import com.example.merchant.dto.platform.AddInvoiceCatalogDTO;
+import com.example.merchant.dto.platform.InvoiceLadderPriceDTO;
+import com.example.merchant.dto.platform.TaxDTO;
+import com.example.merchant.dto.platform.TaxPackageDTO;
 import com.example.merchant.exception.CommonException;
 import com.example.merchant.service.InvoiceLadderPriceService;
 import com.example.merchant.service.TaxService;
@@ -19,14 +22,9 @@ import com.example.mybatis.mapper.*;
 import com.example.mybatis.po.InvoicePO;
 import com.example.mybatis.po.MerchantPaymentListPO;
 import com.example.mybatis.po.TaxListPO;
-import com.example.mybatis.vo.SellerVO;
-import com.example.mybatis.vo.TaxBriefVO;
-import com.example.mybatis.vo.TaxInBankInfoVO;
-import com.example.mybatis.vo.TaxListVO;
-import com.example.mybatis.vo.TaxTransactionFlowVO;
+import com.example.mybatis.vo.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -382,7 +380,7 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
         if (merchant == null) {
             return ReturnJson.error("商户不存在，请重新登录");
         }
-        String companyId=merchant.getCompanyId();
+        String companyId = merchant.getCompanyId();
         //获取众包三十天支付流水
         BigDecimal payment30ManyMoney = paymentOrderManyDao.getFlowInfo(companyId, taxId, 30);
         //获取总包三十天支付流水
@@ -410,6 +408,22 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
         companyFlowInfoVO.setInvoiceManyMoney(invoiceManyMoney);
         companyFlowInfoVO.setInvoiceTotalMoney(invoiceTotalMoney);
         return ReturnJson.success(companyFlowInfoVO);
+    }
+
+    @Override
+    public ReturnJson updateTaxStatus(String taxId, Integer taxStatus) {
+
+        Tax tax = getById(taxId);
+        if (tax == null) {
+            return ReturnJson.error("服务商不存在");
+        }
+
+        if (!(taxStatus.equals(tax.getTaxStatus()))) {
+            tax.setTaxStatus(taxStatus);
+            updateById(tax);
+        }
+
+        return ReturnJson.success("操作成功");
     }
 
     @Override

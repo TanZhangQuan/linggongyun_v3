@@ -63,7 +63,7 @@ public interface TaxService extends IService<Tax> {
      * @param taxListDto
      * @return
      */
-    ReturnJson getTaxList(TaxListDTO taxListDto,String merchantId);
+    ReturnJson getTaxList(TaxListDTO taxListDto, String merchantId);
 
     /**
      * 查询服务商详情
@@ -89,7 +89,7 @@ public interface TaxService extends IService<Tax> {
      * @param pageSize
      * @return
      */
-    ReturnJson transactionRecord(String taxId,String merchantId, Integer page, Integer pageSize);
+    ReturnJson transactionRecord(String taxId, String merchantId, Integer page, Integer pageSize);
 
     /**
      * 销售方信息
@@ -138,7 +138,7 @@ public interface TaxService extends IService<Tax> {
      * @param userId
      * @return
      */
-    ReturnJson queryTaxCompanyList(String taxId,String userId,Integer pageNo, Integer pageSize);
+    ReturnJson queryTaxCompanyList(String taxId, String userId, Integer pageNo, Integer pageSize);
 
     /**
      * 获取流水信息 通用
@@ -148,4 +148,13 @@ public interface TaxService extends IService<Tax> {
      * @return
      */
     ReturnJson queryCompanyFlowInfo(String companyId, String taxId);
+
+    /**
+     * 修改服务商状态
+     *
+     * @param taxId
+     * @param taxStatus
+     * @return
+     */
+    ReturnJson updateTaxStatus(String taxId, Integer taxStatus);
 }
