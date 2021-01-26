@@ -53,10 +53,13 @@ public class ManagersServiceImpl extends ServiceImpl<ManagersDao, Managers> impl
 
     @Override
     public ReturnJson managersLogin(String userName, String passWord, HttpServletResponse response) {
-        Managers managers = this.getOne(new QueryWrapper<Managers>().eq("user_name", userName).eq("pass_word", PWD_KEY + MD5.md5(passWord)));
+        Managers managers = this.getOne(new QueryWrapper<Managers>().lambda()
+                .eq(Managers::getUserName, userName)
+                .eq(Managers::getPassWord, PWD_KEY + MD5.md5(passWord)));
         Subject currentUser = SecurityUtils.getSubject();
         if (managers != null) {
-            CustomizedToken customizedToken = new CustomizedToken(userName, PWD_KEY + MD5.md5(passWord), MANAGERS);
+            CustomizedToken customizedToken = new CustomizedToken(userName,
+                    PWD_KEY + MD5.md5(passWord), MANAGERS);
             String token = jwtUtils.generateToken(managers.getId());
             redisDao.set(managers.getId(), token);
             response.setHeader(TOKEN, token);
@@ -70,7 +73,8 @@ public class ManagersServiceImpl extends ServiceImpl<ManagersDao, Managers> impl
     @Override
     public ReturnJson senSMS(String mobileCode) {
         ReturnJson rj = new ReturnJson();
-        List<Managers> managers = this.list(new QueryWrapper<Managers>().eq("mobile_code", mobileCode));
+        List<Managers> managers = this.list(new QueryWrapper<Managers>().lambda()
+                .eq(Managers::getMobileCode, mobileCode));
         if (managers == null) {
             rj.setCode(401);
             rj.setMessage("你还未注册，请先去注册！");
@@ -101,7 +105,8 @@ public class ManagersServiceImpl extends ServiceImpl<ManagersDao, Managers> impl
             return ReturnJson.error("输入的验证码有误!");
         } else {
             redisDao.remove(loginMobile);
-            Managers managers = this.getOne(new QueryWrapper<Managers>().eq("mobile_code", loginMobile));
+            Managers managers = this.getOne(new QueryWrapper<Managers>().lambda()
+                    .eq(Managers::getMobileCode, loginMobile));
             managers.setPassWord("");
             String token = jwtUtils.generateToken(managers.getId());
             resource.setHeader(TOKEN, token);
@@ -140,7 +145,8 @@ public class ManagersServiceImpl extends ServiceImpl<ManagersDao, Managers> impl
         if (redisCode.equals(checkCode)) {
             Managers managers = new Managers();
             managers.setPassWord(PWD_KEY + MD5.md5(newPassWord));
-            boolean flag = this.update(managers, new QueryWrapper<Managers>().eq("mobile_code", loginMobile));
+            boolean flag = this.update(managers, new QueryWrapper<Managers>().lambda()
+                    .eq(Managers::getMobileCode, loginMobile));
             if (flag) {
                 redisDao.remove(loginMobile);
                 return ReturnJson.success("密码修改成功！");

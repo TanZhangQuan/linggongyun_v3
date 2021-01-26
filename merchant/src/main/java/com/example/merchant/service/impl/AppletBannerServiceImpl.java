@@ -65,8 +65,8 @@ public class AppletBannerServiceImpl extends ServiceImpl<AppletBannerDao, Applet
 
     @Override
     public ReturnJson queryAppletOtherInfo(Identification identification) {
-        AppletOtherInfo appletOtherInfo = appletOtherInfoDao.selectOne(new QueryWrapper<AppletOtherInfo>()
-                .eq("entry_name", identification.getDesc()));
+        AppletOtherInfo appletOtherInfo = appletOtherInfoDao.selectOne(new QueryWrapper<AppletOtherInfo>().lambda()
+                .eq(AppletOtherInfo::getEntryName, identification.getDesc()));
         if (appletOtherInfo != null) {
             String content=appletOtherInfo.getContent();
             return ReturnJson.success(content);

@@ -262,12 +262,15 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
         List<PaymentInventory> paymentInventories = addPaymentOrderManyDto.getPaymentInventories();
         String id = paymentOrderMany.getId();
         if (id != "" && paymentOrderMany.getPaymentOrderStatus() == 0) {
-            List<PaymentInventory> paymentInventoryList = paymentInventoryDao.selectList(new QueryWrapper<PaymentInventory>().eq("payment_order_id", id));
+            List<PaymentInventory> paymentInventoryList = paymentInventoryDao.selectList(
+                    new QueryWrapper<PaymentInventory>().lambda()
+                            .eq(PaymentInventory::getPaymentOrderId, id));
             List<String> ids = new ArrayList<>();
             for (PaymentInventory paymentInventory : paymentInventoryList) {
                 ids.add(paymentInventory.getId());
             }
-            paymentInventoryDao.delete(new QueryWrapper<PaymentInventory>().eq("payment_order_id", id));
+            paymentInventoryDao.delete(new QueryWrapper<PaymentInventory>().lambda()
+                    .eq(PaymentInventory::getPaymentOrderId, id));
             this.removeById(id);
         }
 
@@ -280,10 +283,10 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
         Integer taxStatus = paymentOrderMany.getTaxStatus();
         paymentOrderMany.setMerchantTax(merchantTax);
         paymentOrderMany.setReceviceTax(receviceTax);
-        CompanyTax companyTax = companyTaxDao.selectOne(new QueryWrapper<CompanyTax>().
-                eq("tax_id", paymentOrderMany.getTaxId()).
-                eq("company_id", paymentOrderMany.getCompanyId()).
-                eq("package_status", 1));
+        CompanyTax companyTax = companyTaxDao.selectOne(new QueryWrapper<CompanyTax>().lambda()
+                .eq(CompanyTax::getTaxId, paymentOrderMany.getTaxId())
+                .eq(CompanyTax::getCompanyId, paymentOrderMany.getCompanyId())
+                .eq(CompanyTax::getPackageStatus, 1));
 
         if (companyTax.getChargeStatus() == 0) {
             compositeTax = companyTax.getServiceCharge().divide(BigDecimal.valueOf(100));
@@ -307,7 +310,10 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
                 countServiceMoney = countServiceMoney.add(paymentInventory.getServiceMoney());
             }
         } else {
-            List<CompanyLadderService> companyLadderServices = companyLadderServiceDao.selectList(new QueryWrapper<CompanyLadderService>().eq("company_tax_id", companyTax.getId()).orderByAsc("start_money"));
+            List<CompanyLadderService> companyLadderServices = companyLadderServiceDao.selectList(
+                    new QueryWrapper<CompanyLadderService>().lambda()
+                            .eq(CompanyLadderService::getCompanyTaxId, companyTax.getId())
+                            .orderByAsc(CompanyLadderService::getStartMoney));
             for (PaymentInventory paymentInventory : paymentInventories) {
                 BigDecimal realMoney = paymentInventory.getRealMoney();
                 paymentInventory.setTaskMoney(realMoney);
