@@ -273,6 +273,7 @@
         <foreach collection="taxIds" index="index" item="item" open="(" separator="," close=")">
             #{item}
         </foreach>
+        AND payment_order_status=6
         GROUP BY company_id) po
         ON ci.id = po.company_id
         LEFT JOIN (SELECT COUNT(1) AS 'count_many_order',
@@ -283,6 +284,7 @@
         <foreach collection="taxIds" index="index" item="item" open="(" separator="," close=")">
             #{item}
         </foreach>
+        AND payment_order_status=3
         GROUP BY company_id) pom
         ON ci.id = pom.company_id
     </sql>
