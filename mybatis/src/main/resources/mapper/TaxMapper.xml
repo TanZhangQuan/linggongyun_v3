@@ -189,14 +189,16 @@
     </select>
 
     <select id="selectPayInfo" resultMap="PayInfo">
-        SELECT id,platform_service_provider,company_s_name,if(TRUE,'0','1') as type,company_contract,payment_inventory,real_money,payment_order_status,payment_date
+        SELECT id,platform_service_provider,company_s_name,if(TRUE,'0','1') as type,company_contract,payment_inventory,real_money,IFNULL(is_not_invoice,0) as payment_order_status,payment_date
         from tb_payment_order
         WHERE tax_id=#{taxId}
+        AND payment_order_status = 6
         <include refid="que"/>
         UNION
-        SELECT id,platform_service_provider,company_s_name,if(FALSE,'0','1') as type,company_contract,payment_inventory,real_money,payment_order_status,payment_date
+        SELECT id,platform_service_provider,company_s_name,if(FALSE,'0','1') as type,company_contract,payment_inventory,real_money,IFNULL(is_not_invoice,0) as payment_order_status,payment_date
         FROM tb_payment_order_many
         WHERE tax_id=#{taxId}
+        AND payment_order_status = 3
         <include refid="que"/>
         ORDER BY id
     </select>

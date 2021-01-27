@@ -300,6 +300,7 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
         if (invoice == null) {
             return ReturnJson.error("不存在此发票");
         }
+        InvoiceInformationVO vo = invoiceDao.getInvInfoById(invoiceId);
         QueryPlaInvoiceVO queryApplicationInvoiceVo = new QueryPlaInvoiceVO();
         List<PaymentOrderVO> paymentOrderVOList = paymentOrderDao.queryPaymentOrderInfo(invoice.getApplicationId());
         queryApplicationInvoiceVo.setPaymentOrderVoList(paymentOrderVOList);
@@ -322,6 +323,18 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
         if (invoiceCatalog == null) {
             return ReturnJson.error("开票类目已被后台清除，请联系管理员更改！");
         }
+        List<ExpressLogisticsInfo> expressLogisticsInfos = KdniaoTrackQueryAPI.getExpressInfo(vo.getExpressCompanyName(), vo.getExpressSheetNo());
+        queryApplicationInvoiceVo.setExpressLogisticsInfoList(expressLogisticsInfos);
+        SendAndReceiveVO sendAndReceiveVo = new SendAndReceiveVO();
+        sendAndReceiveVo.setLogisticsCompany(vo.getExpressCompanyName());
+        sendAndReceiveVo.setLogisticsOrderNo(vo.getExpressSheetNo());
+        sendAndReceiveVo.setFrom(queryApplicationInvoiceVo.getSellerVo().getTaxName());
+        sendAndReceiveVo.setFromTelephone(queryApplicationInvoiceVo.getSellerVo().getPhone());
+        sendAndReceiveVo.setSendingAddress(queryApplicationInvoiceVo.getSellerVo().getTaxAddress());
+        sendAndReceiveVo.setToAddress(address.getAddressName());
+        sendAndReceiveVo.setAddressee(address.getLinkName());
+        sendAndReceiveVo.setAddresseeTelephone(address.getLinkMobile());
+        queryApplicationInvoiceVo.setSendAndReceiveVo(sendAndReceiveVo);
         InvoiceCatalogVO invoiceCatalogVo = new InvoiceCatalogVO();
         BeanUtils.copyProperties(invoiceCatalog, invoiceCatalogVo);
         queryApplicationInvoiceVo.setInvoiceCatalogVo(invoiceCatalogVo);
