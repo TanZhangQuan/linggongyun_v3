@@ -109,23 +109,27 @@
 
     <!--查询总包的发票数量和发票金额-->
     <select id="selectInvoiceMoney" parameterType="string" resultMap="InvoiceMoney">
-        select count(d.id) 'count', SUM(d.invoice_money) 'total_money' from tb_company_info a RIGHT JOIN tb_payment_order b on a.id = b.company_id
-        RIGHT join
-        (select * from tb_application_payment
-        GROUP BY invoice_application_id)
-        c on b.id = c.payment_order_id
-        join tb_invoice d on c.invoice_application_id = d.application_id
-        where a.id = #{merchantId}
+        SELECT
+            count(po.id) 'count',
+            SUM(po.real_money+po.service_money) 'total_money'
+        FROM
+            tb_company_info a
+        INNER JOIN tb_payment_order po ON po.company_id=a.id
+        WHERE
+            a.id = #{merchantId}
+            AND po.is_not_invoice=1
     </select>
 
     <select id="selectInvoiceMoneyPaas" parameterType="string" resultMap="InvoiceMoney">
-        select count(d.id) 'count', SUM(d.invoice_money) 'total_money' from tb_company_info a RIGHT JOIN tb_payment_order b on a.id = b.company_id
-        RIGHT join
-        (select * from tb_application_payment
-        GROUP BY invoice_application_id)
-        c on b.id = c.payment_order_id
-        join tb_invoice d on c.invoice_application_id = d.application_id
-        where a.id in
+        SELECT
+            count(po.id) 'count',
+            SUM(po.real_money+po.service_money) 'total_money'
+        FROM
+            tb_company_info a
+        INNER JOIN tb_payment_order po ON po.company_id=a.id
+        WHERE
+            po.is_not_invoice = 1
+        and a.id in
         <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
             #{item}
         </foreach>

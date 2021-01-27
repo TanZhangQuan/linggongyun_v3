@@ -36,7 +36,7 @@ import java.util.concurrent.TimeUnit;
  * @author hzp
  * @since 2020-09-15
  */
-@Service("")
+@Service
 public class ManagersServiceImpl extends ServiceImpl<ManagersDao, Managers> implements ManagersService {
 
     private static final String MANAGERS = "manager";
@@ -63,7 +63,7 @@ public class ManagersServiceImpl extends ServiceImpl<ManagersDao, Managers> impl
             String token = jwtUtils.generateToken(managers.getId());
             redisDao.set(managers.getId(), token);
             response.setHeader(TOKEN, token);
-            redisDao.setExpire(managers.getId(), 7, TimeUnit.DAYS);
+            redisDao.setExpire(managers.getId(), 1, TimeUnit.DAYS);
             currentUser.login(customizedToken);//shiro验证身份
             return ReturnJson.success("登录成功", token);
         }
@@ -111,7 +111,7 @@ public class ManagersServiceImpl extends ServiceImpl<ManagersDao, Managers> impl
             String token = jwtUtils.generateToken(managers.getId());
             resource.setHeader(TOKEN, token);
             redisDao.set(managers.getId(), JsonUtils.objectToJson(managers));
-            redisDao.setExpire(managers.getId(), 60 * 60 * 24 * 7);
+            redisDao.setExpire(managers.getId(), 60 * 60 * 24);
             return ReturnJson.success(managers);
         }
     }

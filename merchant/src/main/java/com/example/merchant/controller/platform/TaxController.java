@@ -250,4 +250,12 @@ public class TaxController {
         return paymentOrderManyService.getPaymentOrderManyInfo(id);
     }
 
+    @GetMapping("/deleteInvoiceCatalog")
+    @ApiOperation(value = "删除开票类目", notes = "删除开票类目")
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(name = "invoiceCatalogId", value = "开票类目ID", required = true)
+    })
+    public ReturnJson deleteInvoiceCatalog(@RequestParam @NotBlank(message = "开票类目ID不能为空！") String invoiceCatalogId) {
+        return taxService.deleteInvoiceCatalog(invoiceCatalogId);
+    }
 }

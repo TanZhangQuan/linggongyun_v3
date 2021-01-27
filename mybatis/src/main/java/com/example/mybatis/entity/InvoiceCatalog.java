@@ -37,4 +37,9 @@ public class InvoiceCatalog extends BaseEntity {
      */
     private String billingCategory;
 
+    /**
+     * 是否为系统默认开票类目
+     */
+    private Boolean isNot = false;
+
 }

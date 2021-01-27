@@ -206,7 +206,7 @@
     <select id="selectBy30Daypaas" parameterType="list" resultType="decimal">
         select SUM(real_money) 'total_money' from tb_payment_order where
         date_sub(curdate(), INTERVAL 30 DAY) &lt;= date(`payment_date`)
-        and payment_order_status &gt;= 2 and company_id in
+        and payment_order_status = 6 and company_id in
         <foreach collection="list" index="index" item="merchantIds" open="(" separator="," close=")">
             #{merchantIds}
         </foreach>
@@ -215,7 +215,7 @@
     <!--查询总支付-->
     <select id="selectTotalpaas" parameterType="list" resultType="decimal">
         select SUM(real_money) 'total_money' from tb_payment_order where
-        payment_order_status &gt;= 2 and company_id in
+        payment_order_status = 6 and company_id in
         <foreach collection="list" index="index" item="merchantIds" open="(" separator="," close=")">
             #{merchantIds}
         </foreach>
