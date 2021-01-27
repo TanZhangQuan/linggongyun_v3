@@ -36,7 +36,7 @@ import java.util.concurrent.TimeUnit;
  * @author hzp
  * @since 2020-09-15
  */
-@Service("")
+@Service
 public class ManagersServiceImpl extends ServiceImpl<ManagersDao, Managers> implements ManagersService {
 
     private static final String MANAGERS = "manager";

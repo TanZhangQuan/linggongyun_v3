@@ -394,14 +394,14 @@ CREATE TABLE `tb_invoice_application` (
 -- ----------------------------
 -- Table structure for `tb_invoice_catalog`
 -- ----------------------------
-DROP TABLE IF EXISTS `tb_invoice_catalog`;
 CREATE TABLE `tb_invoice_catalog` (
   `id` varchar(50) NOT NULL COMMENT '主键',
   `service_type` varchar(255) DEFAULT NULL COMMENT '服务类型',
   `service_content` varchar(255) DEFAULT NULL COMMENT '具体服务内容',
   `billing_category` varchar(255) DEFAULT NULL COMMENT '开票类目',
-  `create_date` datetime NOT NULL COMMENT '创建时间',
-  `update_date` datetime NOT NULL COMMENT '修改时间',
+  `is_not` bigint(1) NOT NULL DEFAULT '0' COMMENT '是否为系统默认',
+  `create_date` datetime DEFAULT NULL,
+  `update_date` datetime DEFAULT NULL,
   KEY `id` (`id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
