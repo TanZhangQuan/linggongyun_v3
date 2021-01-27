@@ -62,14 +62,20 @@ yyqAppKey: "yyz9a9ek64096uk799"
 yyqSecrept: "7b95c6068a2d34c02b3a1ef251dc282f"
 #易云签的url
 yyqUrl: "https://testapi.ecloudsign.com/"
+#易云签的AES密钥
+yyqAES: "YF}+efcaj{+oESb9"
+#易云签的回调地址
+yyqCallBack: "http://246953jp33.qicp.vip:34780/makerend/authentication/callBackYYQSignAContract"
 #签约类型 0 e签宝，1：易云签
-signType: "0"
+signType: "1"
 
 
 #模板文件
 TemplateFile:
   #  合同模板
   Contract: "D:/TemplateFile/个人创客加盟协议.pdf"
+  #  合同模板
+  yyqContract: "D:/TemplateFile/个人创客加盟协议.html"
   #  总包+分包支付明细模板
   TotalPayInventory: "D:/TemplateFile/支付清单模板.xlsx"
   #  众包支付明细模板

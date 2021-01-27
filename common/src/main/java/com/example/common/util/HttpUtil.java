@@ -1,6 +1,8 @@
 package com.example.common.util;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -13,10 +15,9 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import javax.crypto.Cipher;
+import javax.crypto.spec.SecretKeySpec;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -210,4 +211,55 @@ public class HttpUtil {
         log.info("result:" + result);
         return result;
     }
+
+    public static String buildMap(Map<String, String> map,String yyqSecrept) throws Exception{
+        StringBuffer sb = new StringBuffer();
+        if (map.size() > 0) {
+            for (String key : map.keySet()) {
+                sb.append(key + "=");
+                if (StringUtils.isEmpty(map.get(key))) {
+                    sb.append("&");
+                } else {
+                    if(key.equals("appKey") || key.equals("callBack")){
+                        String value = map.get(key);
+                        try {
+                            value = URLEncoder.encode(value, "UTF-8");
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
+                        }
+                        sb.append(value + "&");
+                    }else{
+                        String value = aesEncrypt(map.get(key),yyqSecrept) ;
+                        try {
+                            value = URLEncoder.encode(value, "UTF-8");
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
+                        }
+                        sb.append(value + "&");
+                    }
+
+                }
+            }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * aes加密
+     * @param str
+     * @param key
+     * @return
+     * @throws Exception
+     */
+    public static String aesEncrypt(String str, String key)
+            throws Exception {
+        if (str == null || key == null) return null;
+        Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+        cipher.init(Cipher.ENCRYPT_MODE, new
+                SecretKeySpec(key.getBytes("utf-8"), "AES"));
+        byte[] bytes = cipher.doFinal(str.getBytes("utf-8"));
+        //注意不要采用，会出现回车换行 new BASE64Encoder().encode(bytes);
+        return Base64.encodeBase64String(bytes);
+    }
+
 }
