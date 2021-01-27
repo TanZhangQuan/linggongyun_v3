@@ -68,13 +68,19 @@ public class AuthenticationController {
     @PostMapping("/senSignAContract")
     @ApiOperation(value = "发送签署加盟合同", notes = "发送签署加盟合同")
     @LoginRequired
-    public ReturnJson senSignAContract(@RequestAttribute(value = "userId") @ApiParam(hidden = true) String workerId,HttpServletRequest request) throws DefineException {
-        return authenticationService.senSignAContract(workerId,request);
+    public ReturnJson senSignAContract(@RequestAttribute(value = "userId") @ApiParam(hidden = true) String workerId) throws DefineException {
+        return authenticationService.senSignAContract(workerId);
     }
 
     @PostMapping("/callBackSignAContract")
     @ApiOperation(value = "签署加盟合同回调接口", notes = "签署加盟合同回调接口", hidden = true)
     public ReturnJson callBackSignAContract(HttpServletRequest request) {
         return authenticationService.callBackSignAContract(request);
+    }
+
+    @GetMapping("/callBackYYQSignAContract")
+    @ApiOperation(value = "签署加盟合同回调接口", notes = "签署加盟合同回调接口", hidden = true)
+    public ReturnJson callBackYYQSignAContract(String workerId,String contractNum,HttpServletRequest request) {
+        return authenticationService.callBackYYQSignAContract(workerId,contractNum,request);
     }
 }

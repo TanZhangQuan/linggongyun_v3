@@ -1,5 +1,6 @@
 package com.example.merchant.service.impl;
 
+import com.agile.ecloud.sdk.http.EcloudClient;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.example.common.contract.SignAContractUtils;
 import com.example.common.contract.exception.DefineException;
@@ -47,6 +48,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Value("${TemplateFile.Contract}")
     private String contract;
 
+    @Value("${TemplateFile.yyqContract}")
+    private String yyqContract;
+
+    @Value("${yyqCallBack}")
+    private String yyqCallBack;
+
     @Value("${appSecret}")
     private String appSecret;
 
@@ -70,6 +77,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Value("${yyqSecrept}")
     private String yyqSecrept;
+
+    @Value("${yyqAES}")
+    private String yyqAES;
 
     @Value("${yyqUrl}")
     private String yyqUrl;
@@ -159,7 +169,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public ReturnJson senSignAContract(String workerId,HttpServletRequest request) throws DefineException {
+    public ReturnJson senSignAContract(String workerId) throws DefineException {
         Worker worker = workerDao.selectById(workerId);
         if (worker == null) {
             return ReturnJson.error("该用户不存在！");
@@ -186,18 +196,16 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         if (worker.getAgreementSign() == 0 || worker.getAgreementSign() == -1) {
             ReturnJson returnJson= null;
             if(signType.equals("1")){
-                String uuid = UUID.randomUUID().toString()+".pdf";
-                String accessPath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() +
-                        request.getContextPath() + fileStaticAccesspathImage + uuid;
-                returnJson = SignAContractUtils.signYiYunAContract(contract,yyqAppKey,yyqSecrept,yyqUrl,uuid, PathImage_KEY, worker.getAccountName(), worker.getIdcardCode(),
+                returnJson = SignAContractUtils.signH5YiYunAContract(workerId,yyqContract,yyqAppKey,yyqSecrept,yyqAES,yyqUrl,yyqCallBack, worker.getAccountName(), worker.getIdcardCode(),
                         worker.getMobileCode(),platformName,platformContactNumber,platformCreditCode,platformLegalPerson,worker.getAttestation()
                 ,platformCertificationState);
-                worker.setAgreementSign(2);
-                worker.setAttestation(1);
-                worker.setAgreementUrl(accessPath);
-                dict.setDictValue("true");
-                dictDao.updateById(dict);
-                workerDao.updateById(worker);
+                if(returnJson.getCode() == 200){
+                    worker.setAgreementSign(1);
+                    worker.setAttestation(1);
+                    dict.setDictValue("true");
+                    dictDao.updateById(dict);
+                    workerDao.updateById(worker);
+                }
             }else{
                 returnJson = SignAContractUtils.signAContract(contract, worker.getId(), worker.getAccountName(), worker.getIdcardCode(),
                         worker.getMobileCode());
@@ -304,6 +312,20 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         Map<String, Integer> map = new HashMap<>();
         map.put("status", worker.getAgreementSign());
         return ReturnJson.success(map);
+    }
+
+    @Override
+    public ReturnJson callBackYYQSignAContract(String workerId,String contractNum,HttpServletRequest request) {
+        Worker worker = workerDao.selectById(workerId);
+        worker.setAgreementSign(2);
+        String uuid = UUID.randomUUID().toString()+".pdf";
+        //下载合同
+        EcloudClient.downloadContract(contractNum,PathImage_KEY+uuid);
+        String accessPath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() +
+                request.getContextPath() + fileStaticAccesspathImage + uuid;
+        worker.setAgreementUrl(accessPath);
+        workerDao.updateById(worker);
+        return ReturnJson.success("成功");
     }
 
     private ReturnJson senMsg(String msg, String NoOrder, String sendUserId, UserType sendUserType, String receiveUserId, UserType receiveUserType) {
