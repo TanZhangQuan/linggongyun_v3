@@ -53,6 +53,11 @@ public class Regulator extends BaseEntity {
     private String passWord;
 
     /**
+     * 头像
+     */
+    private String headPortrait;
+
+    /**
      * 状态0启用，1停用
      */
     private Integer status;
