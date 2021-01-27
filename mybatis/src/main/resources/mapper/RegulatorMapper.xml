@@ -27,6 +27,8 @@
         <result column="service_money" property="serviceMoney"/>
         <result column="composite_tax" property="compositeTax"/>
         <result column="merchant_payment_money" property="merchantPaymentMoney"/>
+        <result column="recevice_tax" property="receviceTax"/>
+        <result column="merchant_tax" property="merchantTax"/>
     </resultMap>
 
     <resultMap id="payInfo" type="com.example.mybatis.vo.PayInfoVO">
@@ -351,7 +353,11 @@
             pi.task_money,
             pi.service_money,
             pi.composite_tax,
-            pi.merchant_payment_money
+            pi.merchant_payment_money,
+            IF(pi.package_status=0,(SELECT recevice_tax from tb_payment_order WHERE id=pi.payment_order_id),
+            (SELECT recevice_tax from tb_payment_order_many WHERE id=pi.payment_order_id)) as recevice_tax,
+	        IF(pi.package_status=0,(SELECT merchant_tax from tb_payment_order WHERE id=pi.payment_order_id),
+	        (SELECT merchant_tax from tb_payment_order_many WHERE id=pi.payment_order_id)) as merchant_tax
         FROM tb_payment_inventory pi
         WHERE
             pi.payment_order_id = #{param1}

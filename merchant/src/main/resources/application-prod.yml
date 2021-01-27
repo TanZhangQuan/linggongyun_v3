@@ -84,7 +84,7 @@ yyqSecrept: "7b95c6068a2d34c02b3a1ef251dc282f"
 #易云签的url
 yyqUrl: "https://testapi.ecloudsign.com/"
 #签约类型 0 e签宝，1：易云签
-signType: "1"
+signType: "0"
 
 #模板文件
 TemplateFile:
