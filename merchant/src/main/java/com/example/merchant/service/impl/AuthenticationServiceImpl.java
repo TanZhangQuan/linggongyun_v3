@@ -13,14 +13,17 @@ import com.example.common.util.JsonUtils;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.makerend.IdCardInfoDTO;
 import com.example.merchant.dto.makerend.WorkerBankDTO;
-import com.example.merchant.service.*;
+import com.example.merchant.service.AuthenticationService;
+import com.example.merchant.service.FileOperationService;
 import com.example.merchant.util.RealnameVerifyUtil;
 import com.example.merchant.websocket.WebsocketServer;
-import com.example.mybatis.entity.*;
+import com.example.mybatis.entity.CommonMessage;
+import com.example.mybatis.entity.Dict;
+import com.example.mybatis.entity.Worker;
+import com.example.mybatis.entity.WorkerBank;
 import com.example.mybatis.mapper.DictDao;
 import com.example.mybatis.mapper.WorkerBankDao;
 import com.example.mybatis.mapper.WorkerDao;
-import com.example.mybatis.vo.DictVO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -179,11 +182,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
         Integer platformCertificationState = 0;
         Dict dict = dictDao.getDictValue("platformCertification");
-        if(null != dict){
-            if(dict.getDictValue().equals("true")){
+        if (null != dict) {
+            if (dict.getDictValue().equals("true")) {
                 platformCertificationState = 1;
             }
-        }else{
+        } else {
             dict = new Dict();
             dict.setParentId("0");
             dict.setCode("platformCertification");
@@ -194,19 +197,19 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             dictDao.insert(dict);
         }
         if (worker.getAgreementSign() == 0 || worker.getAgreementSign() == -1) {
-            ReturnJson returnJson= null;
-            if(signType.equals("1")){
-                returnJson = SignAContractUtils.signH5YiYunAContract(workerId,yyqContract,yyqAppKey,yyqSecrept,yyqAES,yyqUrl,yyqCallBack, worker.getAccountName(), worker.getIdcardCode(),
-                        worker.getMobileCode(),platformName,platformContactNumber,platformCreditCode,platformLegalPerson,worker.getAttestation()
-                ,platformCertificationState);
-                if(returnJson.getCode() == 200){
+            ReturnJson returnJson;
+            if (signType.equals("1")) {
+                returnJson = SignAContractUtils.signH5YiYunAContract(workerId, yyqContract, yyqAppKey, yyqSecrept, yyqAES, yyqUrl, yyqCallBack, worker.getAccountName(), worker.getIdcardCode(),
+                        worker.getMobileCode(), platformName, platformContactNumber, platformCreditCode, platformLegalPerson, worker.getAttestation()
+                        , platformCertificationState);
+                if (returnJson.getCode() == 200) {
                     worker.setAgreementSign(1);
                     worker.setAttestation(1);
                     dict.setDictValue("true");
                     dictDao.updateById(dict);
                     workerDao.updateById(worker);
                 }
-            }else{
+            } else {
                 returnJson = SignAContractUtils.signAContract(contract, worker.getId(), worker.getAccountName(), worker.getIdcardCode(),
                         worker.getMobileCode());
                 worker.setAgreementSign(1);
@@ -315,12 +318,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public ReturnJson callBackYYQSignAContract(String workerId,String contractNum,HttpServletRequest request) {
+    public ReturnJson callBackYYQSignAContract(String workerId, String contractNum, HttpServletRequest request) {
         Worker worker = workerDao.selectById(workerId);
         worker.setAgreementSign(2);
-        String uuid = UUID.randomUUID().toString()+".pdf";
+        String uuid = UUID.randomUUID().toString() + ".pdf";
         //下载合同
-        EcloudClient.downloadContract(contractNum,PathImage_KEY+uuid);
+        EcloudClient.downloadContract(contractNum, PathImage_KEY + uuid);
         String accessPath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() +
                 request.getContextPath() + fileStaticAccesspathImage + uuid;
         worker.setAgreementUrl(accessPath);
