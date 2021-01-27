@@ -44,6 +44,12 @@ public class RegulatorPayInfoVO implements Serializable {
     @ApiModelProperty(value = "服务费率")
     private BigDecimal compositeTax;
 
+    @ApiModelProperty(value = "创客承担百分比")
+    private BigDecimal receviceTax;
+
+    @ApiModelProperty(value = "商户承担百分比")
+    private BigDecimal merchantTax;
+
     @ApiModelProperty(value = "商户支出")
     private BigDecimal merchantPaymentMoney;
 }

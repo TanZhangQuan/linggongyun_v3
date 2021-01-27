@@ -418,12 +418,12 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
 
     @Override
     public ReturnJson exportRegulatorWorkerPaymentInfo(String workerId, String paymentIds, HttpServletResponse response) throws CommonException {
-        List<WorekerPaymentListPo> worekerPaymentListPos = workerDao.exportRegulatorWorkerPaymentInfo(Arrays.asList(paymentIds.split(",")), workerId);
-        if (VerificationCheck.listIsNull(worekerPaymentListPos)) {
+        List<WorekerPaymentListPo> workerPaymentListPos = workerDao.exportRegulatorWorkerPaymentInfo(Arrays.asList(paymentIds.split(",")), workerId);
+        if (VerificationCheck.listIsNull(workerPaymentListPos)) {
             throw new CommonException(300, "订单有误，请重试！");
         }
         List<ExportRegulatorWorkerPaymentInfoVO> regulatorWorkerPaymentInfoVOS = new ArrayList<>();
-        for (WorekerPaymentListPo worekerPaymentListPo : worekerPaymentListPos) {
+        for (WorekerPaymentListPo worekerPaymentListPo : workerPaymentListPos) {
             ExportRegulatorWorkerPaymentInfoVO regulatorWorkerPaymentInfoVO = new ExportRegulatorWorkerPaymentInfoVO();
             BeanUtils.copyProperties(worekerPaymentListPo, regulatorWorkerPaymentInfoVO);
             regulatorWorkerPaymentInfoVO.setPackageStatus(worekerPaymentListPo.getPackageStatus() == 0 ? "总包+分包" : "众包");
@@ -562,7 +562,7 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
         List<PaymentOrder> paymentOrders = paymentOrderDao.selectList(
                 new QueryWrapper<PaymentOrder>().lambda()
                         .in(PaymentOrder::getTaxId, taxIds)
-                        .ge(PaymentOrder::getPaymentOrderStatus, 2));
+                        .eq(PaymentOrder::getPaymentOrderStatus, 6));
         Integer totalOrderCount = paymentOrders.size();
         BigDecimal totalMoney = new BigDecimal(0);
         for (PaymentOrder paymentOrder : paymentOrders) {
@@ -573,7 +573,7 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
         List<PaymentOrderMany> paymentOrderManies = paymentOrderManyDao.selectList(
                 new QueryWrapper<PaymentOrderMany>().lambda()
                         .in(PaymentOrderMany::getTaxId, taxIds)
-                        .ge(PaymentOrderMany::getPaymentOrderStatus, 2));
+                        .eq(PaymentOrderMany::getPaymentOrderStatus, 3));
         Integer manyOrderCount = paymentOrderManies.size();
         BigDecimal manyMoney = new BigDecimal(0);
         for (PaymentOrderMany paymentOrderMany : paymentOrderManies) {
@@ -624,7 +624,11 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
         }
         List<String> taxIds = (List<String>) returnJson.getData();
         List<String> paymentOrderIds = new ArrayList<>();
-        List<PaymentOrder> paymentOrders = paymentOrderDao.selectList(new QueryWrapper<PaymentOrder>().in("tax_id", taxIds).ge("payment_order_status", 2).eq("company_id", companyId));
+        List<PaymentOrder> paymentOrders = paymentOrderDao.selectList(
+                new QueryWrapper<PaymentOrder>().lambda()
+                        .in(PaymentOrder::getTaxId, taxIds)
+                        .eq(PaymentOrder::getPaymentOrderStatus, 6)
+                        .eq(PaymentOrder::getCompanyId, companyId));
         Integer totalOrderCount = paymentOrders.size();
         BigDecimal totalMoney = new BigDecimal(0);
         for (PaymentOrder paymentOrder : paymentOrders) {
@@ -635,7 +639,7 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
         List<PaymentOrderMany> paymentOrderManies = paymentOrderManyDao.selectList(
                 new QueryWrapper<PaymentOrderMany>().lambda()
                         .in(PaymentOrderMany::getTaxId, taxIds)
-                        .ge(PaymentOrderMany::getPaymentOrderStatus, 2)
+                        .eq(PaymentOrderMany::getPaymentOrderStatus, 3)
                         .eq(PaymentOrderMany::getCompanyId, companyId));
         Integer manyOrderCount = paymentOrderManies.size();
         BigDecimal manyMoney = new BigDecimal(0);
@@ -827,14 +831,16 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
         //获取所有使用了监管服务商的支付订单
         List<PaymentOrder> paymentOrders = paymentOrderDao.selectList(
                 new QueryWrapper<PaymentOrder>().lambda()
-                        .in(PaymentOrder::getTaxId, taxIds));
+                        .in(PaymentOrder::getTaxId, taxIds)
+                        .eq(PaymentOrder::getPaymentOrderStatus,6));
         for (PaymentOrder paymentOrder : paymentOrders) {
             paymentOrderIds.add(paymentOrder.getId());
         }
 
         List<PaymentOrderMany> paymentOrderManies = paymentOrderManyDao.selectList(
                 new QueryWrapper<PaymentOrderMany>().lambda()
-                        .in(PaymentOrderMany::getTaxId, taxIds));
+                        .in(PaymentOrderMany::getTaxId, taxIds)
+                        .eq(PaymentOrderMany::getPaymentOrderStatus,3));
         for (PaymentOrderMany paymentOrderMany : paymentOrderManies) {
             paymentOrderIds.add(paymentOrderMany.getId());
         }

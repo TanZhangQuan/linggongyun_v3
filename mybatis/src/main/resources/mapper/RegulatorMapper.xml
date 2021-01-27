@@ -27,6 +27,8 @@
         <result column="service_money" property="serviceMoney"/>
         <result column="composite_tax" property="compositeTax"/>
         <result column="merchant_payment_money" property="merchantPaymentMoney"/>
+        <result column="recevice_tax" property="receviceTax"/>
+        <result column="merchant_tax" property="merchantTax"/>
     </resultMap>
 
     <resultMap id="payInfo" type="com.example.mybatis.vo.PayInfoVO">
@@ -198,7 +200,7 @@
         ON e.id = f.worker_id
         <where>
             <if test="workerId != null and workerId != '' ">
-                AND e.id like CONCAR('%',#{workerId},'%')
+                AND e.id = #{workerId}
             </if>
             <if test="workerName != null and workerName != '' ">
                 AND e.account_name like CONCAR('%',#{workerName},'%')
@@ -273,6 +275,7 @@
         <foreach collection="taxIds" index="index" item="item" open="(" separator="," close=")">
             #{item}
         </foreach>
+        AND payment_order_status=6
         GROUP BY company_id) po
         ON ci.id = po.company_id
         LEFT JOIN (SELECT COUNT(1) AS 'count_many_order',
@@ -283,6 +286,7 @@
         <foreach collection="taxIds" index="index" item="item" open="(" separator="," close=")">
             #{item}
         </foreach>
+        AND payment_order_status=3
         GROUP BY company_id) pom
         ON ci.id = pom.company_id
     </sql>
@@ -292,10 +296,10 @@
         <include refid="RegulatorMerchantSql"/>
         <where>
             <if test="companyName != null and companyName != '' ">
-                AND ci.company_name like CONCAR('%',#{companyName},'%')
+                AND ci.company_name like CONCAT('%',#{companyName},'%')
             </if>
             <if test="companyId != null and companyId != '' ">
-                AND ci.id like CONCAR('%',#{companyId},'%')
+                AND ci.id = #{companyId}
             </if>
             <if test="startDate != null and startDate != '' ">
                 AND ci.create_date &gt;= #{startDate}
@@ -349,7 +353,11 @@
             pi.task_money,
             pi.service_money,
             pi.composite_tax,
-            pi.merchant_payment_money
+            pi.merchant_payment_money,
+            IF(pi.package_status=0,(SELECT recevice_tax from tb_payment_order WHERE id=pi.payment_order_id),
+            (SELECT recevice_tax from tb_payment_order_many WHERE id=pi.payment_order_id)) as recevice_tax,
+	        IF(pi.package_status=0,(SELECT merchant_tax from tb_payment_order WHERE id=pi.payment_order_id),
+	        (SELECT merchant_tax from tb_payment_order_many WHERE id=pi.payment_order_id)) as merchant_tax
         FROM tb_payment_inventory pi
         WHERE
             pi.payment_order_id = #{param1}

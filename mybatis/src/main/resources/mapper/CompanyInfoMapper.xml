@@ -43,12 +43,12 @@
         ((SELECT b.id 'payment_order_id',b.tax_id,b.company_id ,b.company_s_name 'company_name' ,
         b.platform_service_provider 'tax_name', b.company_contract,b.payment_inventory,
         (case when b.id is null then 1 else 0 end) package_status,b.real_money,b.is_invoice,b.payment_date
-        FROM tb_company_info a RIGHT JOIN tb_payment_order b on a.id = b.company_id and b.payment_order_status &gt;= 2
+        FROM tb_company_info a INNER JOIN tb_payment_order b on a.id = b.company_id and b.payment_order_status = 6
         ) union
         (SELECT b.id 'payment_order_id' ,b.tax_id,b.company_id ,b.company_s_name 'company_name',
         b.platform_service_provider 'tax_name', b.company_contract,b.payment_inventory,
         (case when b.id is null then 0 else 1 end) package_status,b.real_money,b.is_application 'is_invoice',b.payment_date
-         FROM tb_company_info a RIGHT JOIN tb_payment_order_many b on a.id = b.company_id and b.payment_order_status &gt;= 2
+         FROM tb_company_info a INNER JOIN tb_payment_order_many b on a.id = b.company_id and b.payment_order_status = 3
         )) tb_company_panyment_list
     </sql>
 

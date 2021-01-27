@@ -240,9 +240,11 @@
 
     <sql id="WorkerPaymentSql">
         select a.payment_order_id,
-        (case when c.platform_service_provider is null then d.platform_service_provider else c.platform_service_provider
-        end)as tax_name,
-        (case when c.company_s_name is null then d.company_s_name else c.company_s_name end)as merchant_name,
+        IF (a.package_status=0,(SELECT platform_service_provider from tb_payment_order WHERE id=a.payment_order_id),
+		(SELECT platform_service_provider from tb_payment_order_many WHERE id=a.payment_order_id)) tax_name,
+        IF (a.package_status=0,(SELECT company_s_name from tb_payment_order WHERE id=a.payment_order_id),
+		(SELECT company_s_name from tb_payment_order_many WHERE id=a.payment_order_id)) merchant_name,
+        w.account_name AS worker_name,
         w.account_name as worker_name, a.package_status, a.real_money,
         IFNULL((case when c.payment_date is null then d.payment_date else c.payment_date end),a.create_date) as
         'payment_date',
@@ -250,8 +252,8 @@
         from tb_payment_inventory a
         INNER JOIN tb_worker w ON w.id=a.worker_id
         left join tb_invoice_payment_inventory b on a.id = b.payment_inventory_id
-        left join tb_payment_order c on a.payment_order_id = c.id and c.payment_order_status &gt;= 2
-        left join tb_payment_order_many d on a.payment_order_id = d.id and d.payment_order_status &gt;= 2
+        left join tb_payment_order c on a.payment_order_id = c.id and c.payment_order_status &gt;= 6
+        left join tb_payment_order_many d on a.payment_order_id = d.id and d.payment_order_status &gt;= 3
     </sql>
 
     <!--查询监管部门所监管的创客支付明细-->
@@ -275,16 +277,16 @@
                 #{item}
             </foreach>
             <if test="taxName != null and taxName != ''">
-                AND tax_name like CONCAT('%',#{taxName},'%')
+                AND if(a.package_status=0,c.platform_service_provider like CONCAT('%',#{taxName},'%'),d.platform_service_provider like CONCAT('%',#{taxName},'%'))
             </if>
             <if test="companyName != null and companyName != ''">
-                AND merchant_name like CONCAT('%',#{companyName},'%')
+                AND if(a.package_status=0,c.company_s_name like CONCAT('%',#{companyName},'%'),d.company_s_name like CONCAT('%',#{companyName},'%'))
             </if>
             <if test="startDate != null and startDate != ''">
-                AND date(payment_date) &gt;= #{startDate}
+                AND if(a.package_status=0,date(c.payment_date) &gt;= #{startDate},date(d.payment_date) &gt;= #{startDate})
             </if>
             <if test="endDate != null and endDate != ''">
-                AND date(payment_date) &lt;= #{endDate}
+                AND if(a.package_status=0,date(c.payment_date) &lt;= #{endDate},date(d.payment_date) &lt;= #{startDate})
             </if>
         </where>
         ORDER BY payment_date DESC

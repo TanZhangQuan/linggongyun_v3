@@ -29,19 +29,19 @@
     </sql>
 
     <select id="selServiceProviders" resultMap="ServiceProvider">
-        SELECT t.id,t.tax_name,(SELECT COUNT(1) FROM tb_payment_order WHERE tax_id=t.id) as payment_order_num,
-        (SELECT SUM(real_money) FROM tb_payment_order WHERE tax_id=t.id) as payment_order_money,
-        (SELECT COUNT(1) FROM tb_payment_order_many WHERE tax_id=t.id) as payment_order_many_num,
-        (SELECT SUM(real_money) FROM tb_payment_order_many WHERE tax_id=t.id) as payment_order_many_money,
+        SELECT t.id,t.tax_name,(SELECT COUNT(1) FROM tb_payment_order WHERE tax_id=t.id AND payment_order_status=6) as payment_order_num,
+        (SELECT SUM(real_money) FROM tb_payment_order WHERE tax_id=t.id AND payment_order_status=6) as payment_order_money,
+        (SELECT COUNT(1) FROM tb_payment_order_many WHERE tax_id=t.id AND payment_order_status=3) as payment_order_many_num,
+        (SELECT SUM(real_money) FROM tb_payment_order_many WHERE tax_id=t.id AND payment_order_status=3) as payment_order_many_money,
         rt.`status` as tax_status,t.create_date
         from tb_regulator_tax rt
         INNER JOIN tb_tax t ON t.id=rt.tax_id
         where rt.regulator_id=#{regulatorId} and rt.`status`!=1
-        <if test="tax.serviceProviderName !=null and tax.serviceProviderName != '' " >
-            AND t.tax_name like CONCAR('%',#{tax.serviceProviderName},'%')
+        <if test="tax.serviceProviderName != null and tax.serviceProviderName != '' " >
+            AND t.tax_name like CONCAT('%',#{tax.serviceProviderName},'%')
         </if>
         <if test="tax.serviceProvideId !=null and tax.serviceProvideId != '' " >
-            AND t.id like CONCAR('%',#{tax.serviceProvideId},'%')
+            AND t.id = #{tax.serviceProvideId}
         </if>
         <if test="tax.startDate !=null and tax.startDate != '' " >
             AND t.create_date >= #{tax.startDate}
@@ -49,6 +49,7 @@
         <if test="tax.endDate !=null and tax.endDate != '' " >
             AND t.create_date <![CDATA[<=]]> #{tax.endDate}
         </if>
+        order by t.create_date desc
     </select>
 
 
