@@ -210,7 +210,7 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
             String token = jwtUtils.generateToken(worker.getId());
             redisDao.set(worker.getId(), token);
             response.setHeader(TOKEN, token);
-            redisDao.setExpire(worker.getId(), 7, TimeUnit.DAYS);
+            redisDao.setExpire(worker.getId(), 1, TimeUnit.DAYS);
             return ReturnJson.success("登录成功", token);
         }
         return ReturnJson.error("你输入的用户名或密码有误！");
@@ -275,7 +275,7 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
             String token = jwtUtils.generateToken(worker.getId());
             resource.setHeader(TOKEN, token);
             redisDao.set(worker.getId(), token);
-            redisDao.setExpire(worker.getId(), 7, TimeUnit.DAYS);
+            redisDao.setExpire(worker.getId(), 1, TimeUnit.DAYS);
             return ReturnJson.success("登录成功", token);
         }
     }
@@ -378,7 +378,7 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
             }
             String token = jwtUtils.generateToken(worker.getId());
             redisDao.set(worker.getId(), token);
-            redisDao.setExpire(worker.getId(), 7, TimeUnit.DAYS);
+            redisDao.setExpire(worker.getId(), 1, TimeUnit.DAYS);
             return ReturnJson.success("登录成功", token);
         }
         return ReturnJson.error("信息错误,请重新登录");

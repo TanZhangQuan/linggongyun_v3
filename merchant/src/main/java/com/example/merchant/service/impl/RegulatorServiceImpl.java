@@ -753,7 +753,7 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
         String token = jwtUtils.generateToken(re.getId());
         response.setHeader(TOKEN, token);
         redisDao.set(re.getId(), token);
-        redisDao.setExpire(re.getId(), 60 * 60 * 24 * 7);
+        redisDao.setExpire(re.getId(), 60 * 60 * 24 * 1);
         return ReturnJson.success("登录成功！", token);
     }
 
