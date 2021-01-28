@@ -31,7 +31,7 @@ public class CompanyInfoServiceImpl extends ServiceImpl<CompanyInfoDao, CompanyI
             return false;
         }
 
-        return (PWD_KEY + MD5.md5(payPassWord)).equals(companyInfo.getPayPwd());
+        return (MD5.md5(PWD_KEY + payPassWord)).equals(companyInfo.getPayPwd());
     }
 
 }

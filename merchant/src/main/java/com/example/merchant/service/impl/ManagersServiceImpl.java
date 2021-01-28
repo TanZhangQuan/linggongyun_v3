@@ -10,7 +10,6 @@ import com.example.merchant.config.shiro.CustomizedToken;
 import com.example.merchant.service.ManagersService;
 import com.example.merchant.util.JwtUtils;
 import com.example.mybatis.entity.Managers;
-import com.example.mybatis.entity.Merchant;
 import com.example.mybatis.mapper.ManagersDao;
 import com.example.redis.dao.RedisDao;
 import io.jsonwebtoken.Claims;
@@ -19,11 +18,9 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import springfox.documentation.spring.web.json.Json;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -55,11 +52,10 @@ public class ManagersServiceImpl extends ServiceImpl<ManagersDao, Managers> impl
     public ReturnJson managersLogin(String userName, String passWord, HttpServletResponse response) {
         Managers managers = this.getOne(new QueryWrapper<Managers>().lambda()
                 .eq(Managers::getUserName, userName)
-                .eq(Managers::getPassWord, PWD_KEY + MD5.md5(passWord)));
+                .eq(Managers::getPassWord, MD5.md5(PWD_KEY + passWord)));
         Subject currentUser = SecurityUtils.getSubject();
         if (managers != null) {
-            CustomizedToken customizedToken = new CustomizedToken(userName,
-                    PWD_KEY + MD5.md5(passWord), MANAGERS);
+            CustomizedToken customizedToken = new CustomizedToken(userName, MD5.md5(PWD_KEY + passWord), MANAGERS);
             String token = jwtUtils.generateToken(managers.getId());
             redisDao.set(managers.getId(), token);
             response.setHeader(TOKEN, token);
@@ -144,7 +140,7 @@ public class ManagersServiceImpl extends ServiceImpl<ManagersDao, Managers> impl
         }
         if (redisCode.equals(checkCode)) {
             Managers managers = new Managers();
-            managers.setPassWord(PWD_KEY + MD5.md5(newPassWord));
+            managers.setPassWord(MD5.md5(PWD_KEY + newPassWord));
             boolean flag = this.update(managers, new QueryWrapper<Managers>().lambda()
                     .eq(Managers::getMobileCode, loginMobile));
             if (flag) {

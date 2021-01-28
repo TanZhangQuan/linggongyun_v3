@@ -37,4 +37,9 @@ public class Menu extends BaseEntity {
      */
     private String menuParent;
 
+    /**
+     * 是否为商户的权限 0是 1不是 2平台
+     */
+    private int isMerchant;
+
 }

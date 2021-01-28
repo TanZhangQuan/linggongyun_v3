@@ -4,16 +4,13 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.example.common.util.MD5;
 import com.example.common.util.ReturnJson;
 import com.example.common.util.VerificationCheck;
 import com.example.merchant.dto.TaxListDTO;
-import com.example.merchant.dto.platform.AddInvoiceCatalogDTO;
-import com.example.merchant.dto.platform.InvoiceLadderPriceDTO;
-import com.example.merchant.dto.platform.TaxDTO;
-import com.example.merchant.dto.platform.TaxPackageDTO;
+import com.example.merchant.dto.platform.*;
 import com.example.merchant.exception.CommonException;
-import com.example.merchant.service.InvoiceLadderPriceService;
-import com.example.merchant.service.TaxService;
+import com.example.merchant.service.*;
 import com.example.merchant.vo.merchant.CompanyFlowInfoVO;
 import com.example.merchant.vo.platform.HomePageVO;
 import com.example.merchant.vo.platform.TaxPlatformVO;
@@ -25,6 +22,7 @@ import com.example.mybatis.po.TaxListPO;
 import com.example.mybatis.vo.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,17 +43,20 @@ import java.util.List;
 @Service
 public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxService {
 
+    @Value("${PWD_KEY}")
+    private String PWD_KEY;
+
     @Resource
     private TaxDao taxDao;
 
     @Resource
-    private CompanyTaxDao companyTaxDao;
+    private CompanyTaxService companyTaxService;
 
     @Resource
     private InvoiceCatalogDao invoiceCatalogDao;
 
     @Resource
-    private TaxPackageDao taxPackageDao;
+    private TaxPackageService taxPackageService;
 
     @Resource
     private InvoiceLadderPriceService invoiceLadderPriceService;
@@ -78,11 +79,13 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
     @Resource
     private WorkerDao workerDao;
 
+    @Resource
+    private TaxWorkerService taxWorkerService;
 
     @Override
     public ReturnJson getTaxAll(String merchantId, Integer packageStatus) {
         Merchant merchant = merchantDao.selectById(merchantId);
-        List<CompanyTax> companyTaxes = companyTaxDao.selectList(new QueryWrapper<CompanyTax>().lambda()
+        List<CompanyTax> companyTaxes = companyTaxService.list(new QueryWrapper<CompanyTax>().lambda()
                 .eq(CompanyTax::getCompanyId, merchant.getCompanyId())
                 .eq(CompanyTax::getPackageStatus, packageStatus));
         List<String> ids = new LinkedList<>();
@@ -111,7 +114,7 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
 
     @Override
     public ReturnJson getTaxPaasAll(String companyId, Integer packageStatus) {
-        List<CompanyTax> companyTaxes = companyTaxDao.selectList(new QueryWrapper<CompanyTax>().lambda()
+        List<CompanyTax> companyTaxes = companyTaxService.list(new QueryWrapper<CompanyTax>().lambda()
                 .eq(CompanyTax::getCompanyId, companyId)
                 .eq(CompanyTax::getPackageStatus, packageStatus));
         List<String> ids = new LinkedList<>();
@@ -152,27 +155,139 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ReturnJson saveTax(TaxDTO taxDto) throws Exception {
-        if (taxDto.getId() != null) {
-            invoiceLadderPriceService.remove(new QueryWrapper<InvoiceLadderPrice>().lambda()
-                    .eq(InvoiceLadderPrice::getTaxId, taxDto.getId()));
-            taxPackageDao.delete(new QueryWrapper<TaxPackage>().lambda()
-                    .eq(TaxPackage::getTaxId, taxDto.getId()));
-            this.removeById(taxDto.getId());
+    public ReturnJson addOrUpdateTax(TaxDTO taxDto) throws Exception {
+
+        Tax tax;
+        TaxWorker taxWorker;
+        QueryWrapper<Tax> queryWrapper;
+        QueryWrapper<TaxWorker> taxWorkerQueryWrapper;
+        int taxNameCount;
+        int creditCodeCount;
+        int userNameCount;
+        int loginMobileCount;
+        if (taxDto.getTaxId() != null) {
+
+            tax = getById(taxDto.getTaxId());
+            if (tax == null) {
+                return ReturnJson.error("服务商不存在");
+            }
+
+            //判断是否存在相同服务商名称
+            queryWrapper = new QueryWrapper<>();
+            queryWrapper.lambda().eq(Tax::getTaxName, taxDto.getTaxName()).ne(Tax::getId, taxDto.getTaxId());
+            taxNameCount = baseMapper.selectCount(queryWrapper);
+            if (taxNameCount > 0) {
+                return ReturnJson.error("服务商名称已存在");
+            }
+
+            //判断是否存在相同统一社会信用代码
+            queryWrapper = new QueryWrapper<>();
+            queryWrapper.lambda().eq(Tax::getCreditCode, taxDto.getCreditCode()).ne(Tax::getId, taxDto.getTaxId());
+            creditCodeCount = baseMapper.selectCount(queryWrapper);
+            if (creditCodeCount > 0) {
+                return ReturnJson.error("统一社会信用代码已存在");
+            }
+
+            //查看服务商是否有主账号
+            taxWorkerQueryWrapper = new QueryWrapper<>();
+            taxWorkerQueryWrapper.lambda().eq(TaxWorker::getTaxId, taxDto.getTaxId()).eq(TaxWorker::getParentId, "0");
+            taxWorker = taxWorkerService.getOne(taxWorkerQueryWrapper);
+            if (taxWorker == null) {
+                return ReturnJson.error("服务商主账号不存在");
+            }
+
+            //判断是否存在相同用户名的员工账号
+            taxWorkerQueryWrapper = new QueryWrapper<>();
+            taxWorkerQueryWrapper.lambda().eq(TaxWorker::getUserName, taxDto.getUserName()).ne(TaxWorker::getId, taxWorker.getId());
+            userNameCount = taxWorkerService.count(taxWorkerQueryWrapper);
+            if (userNameCount > 0) {
+                return ReturnJson.error("管理员账户号已存在");
+            }
+
+            //判断是否存在相同登录手机号的员工账号
+            taxWorkerQueryWrapper = new QueryWrapper<>();
+            taxWorkerQueryWrapper.lambda().eq(TaxWorker::getLoginMobile, taxDto.getLoginMobile()).ne(TaxWorker::getId, taxWorker.getId());
+            loginMobileCount = taxWorkerService.count(taxWorkerQueryWrapper);
+            if (loginMobileCount > 0) {
+                return ReturnJson.error("管理员手机号已存在");
+            }
+
+            //更新服务商
+            BeanUtils.copyProperties(taxDto, tax);
+            updateById(tax);
+            //更新主账号
+            if (StringUtils.isBlank(taxDto.getPassWord())) {
+                taxDto.setPassWord(taxWorker.getPassWord());
+            } else {
+                taxDto.setPassWord(MD5.md5(PWD_KEY + taxDto.getPassWord()));
+            }
+            BeanUtils.copyProperties(taxDto, taxWorker);
+            taxWorkerService.updateById(taxWorker);
+
+            return ReturnJson.success("操作成功！");
+
+        } else {
+
+            if (StringUtils.isBlank(taxDto.getPassWord())) {
+                return ReturnJson.error("请输入管理员密码");
+            }
+
+            if (taxDto.getPassWord().length() < 6 || taxDto.getPassWord().length() > 18) {
+                return ReturnJson.error("请输入长度为6-18位的管理员密码");
+            }
+
+            //判断是否存在相同服务商名称
+            queryWrapper = new QueryWrapper<>();
+            queryWrapper.lambda().eq(Tax::getTaxName, taxDto.getTaxName());
+            taxNameCount = baseMapper.selectCount(queryWrapper);
+            if (taxNameCount > 0) {
+                return ReturnJson.error("服务商名称已存在");
+            }
+
+            //判断是否存在相同统一社会信用代码
+            queryWrapper = new QueryWrapper<>();
+            queryWrapper.lambda().eq(Tax::getCreditCode, taxDto.getCreditCode());
+            creditCodeCount = baseMapper.selectCount(queryWrapper);
+            if (creditCodeCount > 0) {
+                return ReturnJson.error("统一社会信用代码已存在");
+            }
+
+            //判断是否存在相同用户名的员工账号
+            taxWorkerQueryWrapper = new QueryWrapper<>();
+            taxWorkerQueryWrapper.lambda().eq(TaxWorker::getUserName, taxDto.getUserName());
+            userNameCount = taxWorkerService.count(taxWorkerQueryWrapper);
+            if (userNameCount > 0) {
+                return ReturnJson.error("管理员账户号已存在");
+            }
+
+            //判断是否存在相同登录手机号的员工账号
+            taxWorkerQueryWrapper = new QueryWrapper<>();
+            taxWorkerQueryWrapper.lambda().eq(TaxWorker::getLoginMobile, taxDto.getLoginMobile());
+            loginMobileCount = taxWorkerService.count(taxWorkerQueryWrapper);
+            if (loginMobileCount > 0) {
+                return ReturnJson.error("管理员手机号已存在");
+            }
+
+            //新建服务商
+            tax = new Tax();
+            BeanUtils.copyProperties(taxDto, tax);
+            save(tax);
+            //新建主账号
+            taxWorker = new TaxWorker();
+            taxDto.setPassWord(MD5.md5(PWD_KEY + taxDto.getPassWord()));
+            BeanUtils.copyProperties(taxDto, taxWorker);
+            taxWorkerService.save(taxWorker);
         }
-        Tax tax = new Tax();
-        BeanUtils.copyProperties(taxDto, tax);
-        log.error(tax.toString());
-        taxDao.insert(tax);
-        TaxPackageDTO totalTaxPackageDTO = taxDto.getTotalTaxPackage();
+
         //判断是否有总包，有总包就添加
+        TaxPackageDTO totalTaxPackageDTO = taxDto.getTotalTaxPackage();
         if (totalTaxPackageDTO != null) {
 
             TaxPackage totalTaxPackage = new TaxPackage();
             BeanUtils.copyProperties(totalTaxPackageDTO, totalTaxPackage);
 
             totalTaxPackage.setTaxId(tax.getId());
-            taxPackageDao.insert(totalTaxPackage);
+            taxPackageService.save(totalTaxPackage);
             List<InvoiceLadderPriceDTO> totalLaddersDto = taxDto.getTotalLadders();
             List<InvoiceLadderPrice> totalLadders = new ArrayList<>();
             for (int i = 0; i < totalLaddersDto.size(); i++) {
@@ -202,15 +317,16 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
             }
 
         }
-        TaxPackageDTO manyTaxPackageDTO = taxDto.getManyTaxPackage();
+
         //判断是否有众包，有众包就添加
+        TaxPackageDTO manyTaxPackageDTO = taxDto.getManyTaxPackage();
         if (manyTaxPackageDTO != null) {
 
             TaxPackage manyTaxPackage = new TaxPackage();
             BeanUtils.copyProperties(manyTaxPackageDTO, manyTaxPackage);
 
             manyTaxPackage.setTaxId(tax.getId());
-            taxPackageDao.insert(manyTaxPackage);
+            taxPackageService.save(manyTaxPackage);
             List<InvoiceLadderPriceDTO> manyLaddersDto = taxDto.getManyLadders();
             List<InvoiceLadderPrice> manyLadders = new ArrayList<>();
             for (int i = 0; i < manyLaddersDto.size(); i++) {
@@ -229,8 +345,8 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
                         }
                         InvoiceLadderPrice invoiceLadderPriceNext = manyLadders.get(i + 1);
                         invoiceLadderPriceNext.getStartMoney().compareTo(invoiceLadderPrice.getEndMoney());
-                        if (invoiceLadderPriceNext.getStartMoney().compareTo(invoiceLadderPrice.getEndMoney()) < 0) {
-                            throw new CommonException(300, "上梯度结束金额应小于下梯度起始金额");
+                        if (invoiceLadderPriceNext.getStartMoney().compareTo(invoiceLadderPrice.getEndMoney()) == 0) {
+                            throw new CommonException(300, "上梯度结束金额应等于下梯度起始金额");
                         }
                     }
                     manyLadders.get(i).setTaxId(tax.getId());
@@ -239,7 +355,97 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
                 invoiceLadderPriceService.saveBatch(manyLadders);
             }
         }
+
         return ReturnJson.success("操作成功！");
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public ReturnJson updateTaxPackage(TaxPackageUpdateDTO taxPackageUpdateDTO) throws Exception {
+
+        //删除所有商户-服务商总包众包合作信息
+        companyTaxService.deleteCompanyTax(taxPackageUpdateDTO.getTaxId());
+        //删除服务商总包众包合作信息
+        taxPackageService.deleteTaxPackage(taxPackageUpdateDTO.getTaxId());
+
+        //判断是否有总包，有总包就添加
+        TaxPackageDTO totalTaxPackageDTO = taxPackageUpdateDTO.getTotalTaxPackage();
+        if (totalTaxPackageDTO != null) {
+
+            TaxPackage totalTaxPackage = new TaxPackage();
+            BeanUtils.copyProperties(totalTaxPackageDTO, totalTaxPackage);
+
+            totalTaxPackage.setTaxId(taxPackageUpdateDTO.getTaxId());
+            taxPackageService.save(totalTaxPackage);
+            List<InvoiceLadderPriceDTO> totalLaddersDto = taxPackageUpdateDTO.getTotalLadders();
+            List<InvoiceLadderPrice> totalLadders = new ArrayList<>();
+            for (int i = 0; i < totalLaddersDto.size(); i++) {
+                InvoiceLadderPrice invoiceLadderPrice = new InvoiceLadderPrice();
+                BeanUtils.copyProperties(totalLaddersDto.get(i), invoiceLadderPrice);
+                totalLadders.add(invoiceLadderPrice);
+            }
+            //判断是否有梯度价
+            if (!VerificationCheck.listIsNull(totalLadders)) {
+                //判断梯度价是否合理
+                for (int i = 0; i < totalLadders.size(); i++) {
+                    if (i != totalLadders.size() - 1) {
+                        InvoiceLadderPrice invoiceLadderPrice = totalLadders.get(i);
+                        if (invoiceLadderPrice.getEndMoney().compareTo(invoiceLadderPrice.getStartMoney()) < 0) {
+                            throw new CommonException(300, "结束金额应该大于起始金额");
+                        }
+                        InvoiceLadderPrice invoiceLadderPriceNext = totalLadders.get(i + 1);
+                        invoiceLadderPriceNext.getStartMoney().compareTo(invoiceLadderPrice.getEndMoney());
+                        if (invoiceLadderPriceNext.getStartMoney().compareTo(invoiceLadderPrice.getEndMoney()) < 0) {
+                            throw new CommonException(300, "上梯度结束金额应小于下梯度起始金额");
+                        }
+                    }
+                    totalLadders.get(i).setTaxId(taxPackageUpdateDTO.getTaxId());
+                    totalLadders.get(i).setTaxPackageId(totalTaxPackage.getId());
+                }
+                invoiceLadderPriceService.saveBatch(totalLadders);
+            }
+
+        }
+
+        //判断是否有众包，有众包就添加
+        TaxPackageDTO manyTaxPackageDTO = taxPackageUpdateDTO.getManyTaxPackage();
+        if (manyTaxPackageDTO != null) {
+
+            TaxPackage manyTaxPackage = new TaxPackage();
+            BeanUtils.copyProperties(manyTaxPackageDTO, manyTaxPackage);
+
+            manyTaxPackage.setTaxId(taxPackageUpdateDTO.getTaxId());
+            taxPackageService.save(manyTaxPackage);
+            List<InvoiceLadderPriceDTO> manyLaddersDto = taxPackageUpdateDTO.getManyLadders();
+            List<InvoiceLadderPrice> manyLadders = new ArrayList<>();
+            for (int i = 0; i < manyLaddersDto.size(); i++) {
+                InvoiceLadderPrice invoiceLadderPrice = new InvoiceLadderPrice();
+                BeanUtils.copyProperties(manyLaddersDto.get(i), invoiceLadderPrice);
+                manyLadders.add(invoiceLadderPrice);
+            }
+            //判断是否有梯度价
+            if (!VerificationCheck.listIsNull(manyLadders)) {
+                //判断梯度价是否合理
+                for (int i = 0; i < manyLadders.size(); i++) {
+                    if (i != manyLadders.size() - 1) {
+                        InvoiceLadderPrice invoiceLadderPrice = manyLadders.get(i);
+                        if (invoiceLadderPrice.getEndMoney().compareTo(invoiceLadderPrice.getStartMoney()) < 0) {
+                            throw new CommonException(300, "结束金额应该大于起始金额");
+                        }
+                        InvoiceLadderPrice invoiceLadderPriceNext = manyLadders.get(i + 1);
+                        invoiceLadderPriceNext.getStartMoney().compareTo(invoiceLadderPrice.getEndMoney());
+                        if (invoiceLadderPriceNext.getStartMoney().compareTo(invoiceLadderPrice.getEndMoney()) == 0) {
+                            throw new CommonException(300, "上梯度结束金额应等于下梯度起始金额");
+                        }
+                    }
+                    manyLadders.get(i).setTaxId(taxPackageUpdateDTO.getTaxId());
+                    manyLadders.get(i).setTaxPackageId(manyTaxPackage.getId());
+                }
+                invoiceLadderPriceService.saveBatch(manyLadders);
+            }
+        }
+
+        return ReturnJson.success("操作成功");
     }
 
     @Override
@@ -261,7 +467,7 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
         Tax tax = taxDao.selectById(taxId);
         TaxPlatformVO taxPlatformVO = new TaxPlatformVO();
         BeanUtils.copyProperties(tax, taxPlatformVO);
-        TaxPackage totalTaxPackage = taxPackageDao.selectOne(new QueryWrapper<TaxPackage>().lambda()
+        TaxPackage totalTaxPackage = taxPackageService.getOne(new QueryWrapper<TaxPackage>().lambda()
                 .eq(TaxPackage::getTaxId, taxId)
                 .eq(TaxPackage::getPackageStatus, 0));
         if (totalTaxPackage != null) {
@@ -271,7 +477,7 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
             taxPlatformVO.setTotalTaxPackage(totalTaxPackage);
             taxPlatformVO.setTotalLadders(totalLadder);
         }
-        TaxPackage manyTaxPackage = taxPackageDao.selectOne(new QueryWrapper<TaxPackage>().lambda()
+        TaxPackage manyTaxPackage = taxPackageService.getOne(new QueryWrapper<TaxPackage>().lambda()
                 .eq(TaxPackage::getTaxId, taxId)
                 .eq(TaxPackage::getPackageStatus, 1));
         if (manyTaxPackage != null) {
@@ -308,7 +514,7 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
         homePageVO.setInvoiceManyMoney(manyInvoice.getTotalMoney());
 
         //商户数
-        Integer count = companyTaxDao.selectCount(new QueryWrapper<CompanyTax>().lambda()
+        Integer count = companyTaxService.count(new QueryWrapper<CompanyTax>().lambda()
                 .eq(CompanyTax::getTaxId, taxId));
         homePageVO.setMerchantTotal(count);
         //创客数

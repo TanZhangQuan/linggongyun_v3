@@ -19,4 +19,5 @@ public interface CompanyTaxDao extends BaseMapper<CompanyTax> {
     Double getCompanyTax(String merchantId,String taxId,Integer packageStatus);
 
     List<CompanyTaxMoneyVO> getCompanyTaxMoney(String merchantId,String taxId,Integer packageStatus);
+
 }

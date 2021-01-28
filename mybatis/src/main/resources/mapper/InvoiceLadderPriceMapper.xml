@@ -2,21 +2,14 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.mybatis.mapper.InvoiceLadderPriceDao">
 
-    <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="com.example.mybatis.entity.InvoiceLadderPrice">
-        <id column="id" property="id" />
-        <result column="tax_id" property="taxId" />
-        <result column="tax_package_id" property="taxPackageId" />
-        <result column="start_money" property="startMoney" />
+    <resultMap id="invoiceLadderPriceDetailVO" type="com.example.mybatis.vo.InvoiceLadderPriceDetailVO">
+        <id column="start_money" property="startMoney" />
         <result column="end_money" property="endMoney" />
-        <result column="packaeg_status" property="packaegStatus" />
-        <result column="status" property="status" />
         <result column="rate" property="rate" />
     </resultMap>
 
-    <!-- 通用查询结果列 -->
-    <sql id="Base_Column_List">
-        id, tax_id,tax_package_id, start_money, end_money, packaeg_status, status, rate
-    </sql>
+   <select id="queryInvoiceLadderPriceDetailVOList" resultMap="invoiceLadderPriceDetailVO">
+        SELECT t1.start_money, t1.end_money, t1.packaeg_status, t1.status, t1.rate FROM tb_invoice_ladder_price t1 WHERE t1.tax_package_id = #{taxPackageId} ORDER BY t1.packaeg_status, t1.status ,t1.start_money ASC
+    </select>
 
 </mapper>

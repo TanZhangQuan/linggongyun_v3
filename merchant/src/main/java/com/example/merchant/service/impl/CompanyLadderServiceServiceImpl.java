@@ -6,6 +6,14 @@ import com.example.mybatis.entity.CompanyLadderService;
 import com.example.mybatis.mapper.CompanyLadderServiceDao;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+
 @Service
 public class CompanyLadderServiceServiceImpl extends ServiceImpl<CompanyLadderServiceDao, CompanyLadderService> implements CompanyLadderServiceService {
+
+    @Override
+    public BigDecimal queryServiceCharge(String companyTaxId, BigDecimal startMoney, BigDecimal endMoney) {
+        return baseMapper.queryServiceCharge(companyTaxId, startMoney, endMoney);
+    }
+
 }

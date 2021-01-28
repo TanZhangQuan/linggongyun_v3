@@ -2,6 +2,9 @@ package com.example.mybatis.mapper;
 
 import com.example.mybatis.entity.InvoiceLadderPrice;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.example.mybatis.vo.InvoiceLadderPriceDetailVO;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,4 +16,11 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface InvoiceLadderPriceDao extends BaseMapper<InvoiceLadderPrice> {
 
+    /**
+     * 获取梯度价
+     *
+     * @param taxPackageId
+     * @return
+     */
+    List<InvoiceLadderPriceDetailVO> queryInvoiceLadderPriceDetailVOList(String taxPackageId);
 }

@@ -26,27 +26,22 @@ public class Tax extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 公司的简称
-     */
-    private String taxSName;
-
-    /**
-     * 公司的法定人
-     */
-    private String taxMan;
-
-    /**
-     * 公司的营业执照
-     */
-    private String businessLicense;
-
-    /**
      * 公司全称
      */
     private String taxName;
 
     /**
-     * 公司的详细地址
+     * 统一的社会信用代码
+     */
+    private String creditCode;
+
+    /**
+     * 法定人
+     */
+    private String taxMan;
+
+    /**
+     * 公司详细地址
      */
     private String taxAddress;
 
@@ -56,19 +51,54 @@ public class Tax extends BaseEntity {
     private LocalDate taxCreateDate;
 
     /**
-     * 公司联系人
+     * 联系人名称
      */
     private String linkMan;
 
     /**
-     * 公司联系电话
+     * 联系人职位
+     */
+    private String linkPosition;
+
+    /**
+     * 联系人手机号
      */
     private String linkMobile;
 
     /**
-     * 统一的社会信用代码
+     * 联系人邮箱
      */
-    private String creditCode;
+    private String linkEmail;
+
+    /**
+     * 开票资料-公司名称
+     */
+    private String invoiceEnterpriseName;
+
+    /**
+     * 开票资料-纳税识别号
+     */
+    private String invoiceTaxNo;
+
+    /**
+     * 开票资料-地址电话
+     */
+    private String invoiceAddressPhone;
+
+    /**
+     * 开票资料-开户行及账号
+     */
+    private String invoiceBankNameAccount;
+
+    /**
+     * 收款单位名称
+     */
+    private String titleOfAccount;
+
+    /**
+     * 收款单位账号
+     */
+    private String bankCode;
 
     /**
      * 开户行名称
@@ -76,14 +106,34 @@ public class Tax extends BaseEntity {
     private String bankName;
 
     /**
-     * 银行卡号
+     * 收件人
      */
-    private String bankCode;
+    private String receiptName;
 
     /**
-     * 账户名称
+     * 收件人手机号
      */
-    private String titleOfAccount;
+    private String receiptPhone;
+
+    /**
+     * 收件地址
+     */
+    private String receiptAddress;
+
+    /**
+     * 营业执照
+     */
+    private String businessLicense;
+
+    /**
+     * 法人身份证
+     */
+    private String taxManIdcard;
+
+    /**
+     * 平台加盟合同
+     */
+    private String joinContract;
 
     /**
      * 网商银行会员号
@@ -96,7 +146,7 @@ public class Tax extends BaseEntity {
     private String subAccountNo;
 
     /**
-     * 公司状态0正常，1停用
+     * 公司状态 0正常，1停用
      */
     private Integer taxStatus;
 

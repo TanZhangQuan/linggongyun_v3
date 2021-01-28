@@ -111,7 +111,7 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
         }
         Regulator regulator = new Regulator();
         BeanUtils.copyProperties(regulatorDto, regulator);
-        regulator.setPassWord(PWD_KEY + MD5.md5(regulatorDto.getPassWord()));
+        regulator.setPassWord(MD5.md5(PWD_KEY + regulatorDto.getPassWord()));
         this.save(regulator);
         return ReturnJson.success("添加监管部门成功！");
     }
@@ -124,7 +124,7 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
         }
         BeanUtils.copyProperties(regulatorDto, regulator);
         if (regulatorDto.getPassWord() != null) {
-            regulator.setPassWord(PWD_KEY + MD5.md5(regulatorDto.getPassWord()));
+            regulator.setPassWord(MD5.md5(PWD_KEY + regulatorDto.getPassWord()));
         }
         boolean flag = this.updateById(regulator);
         if (flag) {
@@ -739,7 +739,7 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
 
     @Override
     public ReturnJson regulatorLogin(String username, String password, HttpServletResponse response) {
-        String encryptPWD = PWD_KEY + MD5.md5(password);
+        String encryptPWD = MD5.md5(PWD_KEY + password);
         QueryWrapper<Regulator> merchantQueryWrapper = new QueryWrapper<>();
         merchantQueryWrapper.lambda().eq(Regulator::getUserName, username)
                 .eq(Regulator::getPassWord, encryptPWD);

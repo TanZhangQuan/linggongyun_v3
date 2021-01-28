@@ -25,7 +25,7 @@ public class CompanyLadderService extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 商户公司ID
+     * 商户-服务商ID
      */
     private String companyTaxId;
 

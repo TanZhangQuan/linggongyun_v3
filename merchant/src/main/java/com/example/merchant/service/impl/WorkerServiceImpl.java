@@ -201,7 +201,7 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
 
     @Override
     public ReturnJson loginWorker(String username, String password, HttpServletResponse response) {
-        String encryptPWD = PWD_KEY + MD5.md5(password);
+        String encryptPWD = MD5.md5(PWD_KEY + password);
         QueryWrapper<Worker> workerQueryWrapper = new QueryWrapper<>();
         workerQueryWrapper.lambda().eq(Worker::getUserName, username)
                 .eq(Worker::getUserPwd, encryptPWD);
@@ -287,10 +287,10 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
             Worker worker = workerDao.selectOne(new QueryWrapper<Worker>().lambda()
                     .eq(Worker::getMobileCode, loginMobile));
             if (worker != null) {
-                if (worker.getUserPwd().equals(PWD_KEY + MD5.md5(newPassWord))) {
+                if (worker.getUserPwd().equals(MD5.md5(PWD_KEY + newPassWord))) {
                     return ReturnJson.error("旧密码与新密码一致！");
                 }
-                worker.setUserPwd(PWD_KEY + MD5.md5(newPassWord));
+                worker.setUserPwd(MD5.md5(PWD_KEY + newPassWord));
                 int flag = workerDao.updateById(worker);
                 if (flag > 0) {
                     redisDao.remove(loginMobile);
@@ -442,7 +442,7 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
             }
             worker = new Worker();
             worker.setUserName(addWorkerDto.getUserName());
-            worker.setUserPwd(PWD_KEY + MD5.md5(addWorkerDto.getUserPwd()));
+            worker.setUserPwd(MD5.md5(PWD_KEY + addWorkerDto.getUserPwd()));
             worker.setMobileCode(addWorkerDto.getMobileCode());
             workerDao.insert(worker);
             return ReturnJson.success("注册成功");

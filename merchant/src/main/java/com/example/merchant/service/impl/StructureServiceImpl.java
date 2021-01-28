@@ -79,7 +79,7 @@ public class StructureServiceImpl implements StructureService {
             managers = new Managers();
             BeanUtils.copyProperties(managersDto, managers);
             managers.setRoleName("业务员");
-            managers.setPassWord(PWD_KEY + MD5.md5(managersDto.getInitPassWord()));
+            managers.setPassWord(MD5.md5(PWD_KEY + managersDto.getInitPassWord()));
             managersService.save(managers);
             //赋予主账号权限
             List<MenuListVO> listVos = menuDao.getMenuList();
@@ -112,7 +112,7 @@ public class StructureServiceImpl implements StructureService {
             }
             BeanUtils.copyProperties(managersDto, managers);
             if (managers.getPassWord() != null) {
-                managers.setPassWord(PWD_KEY + MD5.md5(managersDto.getInitPassWord()));
+                managers.setPassWord(MD5.md5(PWD_KEY + managersDto.getInitPassWord()));
             }
             managersService.updateById(managers);
             return ReturnJson.success("编辑业务员成功！");
@@ -211,7 +211,7 @@ public class StructureServiceImpl implements StructureService {
             if (managersOne != null) {
                 return ReturnJson.error("此手机号码已近注册过！");
             }
-            managers.setPassWord(PWD_KEY + MD5.md5(agentInfoDto.getInitPassWord()));
+            managers.setPassWord(MD5.md5(PWD_KEY + agentInfoDto.getInitPassWord()));
             managers.setRealName(agentInfoDto.getAgentName());
             managers.setUserName(agentInfoDto.getUserName());
             managers.setUserSign(agentInfoDto.getUserSign());
@@ -254,7 +254,7 @@ public class StructureServiceImpl implements StructureService {
                 return ReturnJson.error("此手机号码已近注册过！");
             }
             //编辑
-            managers.setPassWord(PWD_KEY + MD5.md5(agentInfoDto.getInitPassWord()));
+            managers.setPassWord(MD5.md5(PWD_KEY + agentInfoDto.getInitPassWord()));
             managers.setRealName(agentInfoDto.getAgentName());
             managers.setUserName(agentInfoDto.getUserName());
             managers.setUserSign(agentInfoDto.getUserSign());

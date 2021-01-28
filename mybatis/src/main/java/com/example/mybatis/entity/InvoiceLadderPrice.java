@@ -21,7 +21,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 @TableName("tb_invoice_ladder_price")
-public class InvoiceLadderPrice extends BaseEntity{
+public class InvoiceLadderPrice extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
     /**

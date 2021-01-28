@@ -15,6 +15,7 @@ import com.example.merchant.service.*;
 import com.example.mybatis.entity.Linkman;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.*;
+import org.hibernate.validator.constraints.Range;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -135,6 +136,23 @@ public class MerchantPaasController {
     @ApiOperation(value = "查询服务商拥有的银联支付方式", notes = "查询服务商拥有的银联支付方式")
     public ReturnJson queryTaxUnionpayMethod(@ApiParam(value = "服务商") @NotBlank(message = "请选择服务商") @RequestParam(required = false) String taxId) {
         return ReturnJson.success(taxUnionpayService.queryTaxUnionpayMethod(taxId));
+    }
+
+    @GetMapping("/queryTaxPackage")
+    @ApiOperation(value = "查询服务商总包或众包合作信息(商户创建时使用)", notes = "查询服务商总包或众包合作信息(商户创建时使用)")
+    @LoginRequired
+    public ReturnJson queryTaxPackage(@ApiParam(value = "服务商ID") @NotBlank(message = "请选择服务商") @RequestParam(required = false) String taxId,
+                                      @ApiParam(value = "总包或众包") @NotNull(message = "请选择总包或众包") @Range(min = 0, max = 1, message = "请选择正确的合作类型") @RequestParam(required = false) Integer packageStatus) {
+        return merchantService.queryTaxPackage(taxId, packageStatus);
+    }
+
+    @GetMapping("/queryCompanyPackage")
+    @ApiOperation(value = "查询商户总包或众包合作信息(商户编辑时使用)", notes = "查询商户总包或众包合作信息(商户编辑时使用)")
+    @LoginRequired
+    public ReturnJson queryCompanyPackage(@ApiParam(value = "服务商ID") @NotBlank(message = "请选择服务商") @RequestParam(required = false) String taxId,
+                                          @ApiParam(value = "商户ID") @NotBlank(message = "请选择商户") @RequestParam(required = false) String companyId,
+                                          @ApiParam(value = "总包或众包") @NotNull(message = "请选择总包或众包") @Range(min = 0, max = 1, message = "请选择正确的合作类型") @RequestParam(required = false) Integer packageStatus) {
+        return merchantService.queryCompanyPackage(taxId, companyId, packageStatus);
     }
 
     @PostMapping("/addMerchant")

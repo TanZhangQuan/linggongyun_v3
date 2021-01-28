@@ -7,7 +7,10 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.common.enums.UnionpayBankType;
 import com.example.common.sms.SenSMS;
-import com.example.common.util.*;
+import com.example.common.util.MD5;
+import com.example.common.util.ReturnJson;
+import com.example.common.util.UnionpayUtil;
+import com.example.common.util.VerificationCheck;
 import com.example.merchant.config.shiro.CustomizedToken;
 import com.example.merchant.dto.platform.*;
 import com.example.merchant.exception.CommonException;
@@ -15,7 +18,6 @@ import com.example.merchant.service.*;
 import com.example.merchant.util.AcquireID;
 import com.example.merchant.util.JwtUtils;
 import com.example.merchant.util.SnowflakeIdWorker;
-import com.example.merchant.vo.merchant.CompanyFlowInfoVO;
 import com.example.merchant.vo.merchant.HomePageMerchantVO;
 import com.example.merchant.vo.merchant.MerchantInfoVO;
 import com.example.merchant.vo.merchant.TaxVO;
@@ -72,7 +74,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
     @Resource
     private TaxDao taxDao;
     @Resource
-    private CompanyTaxDao companyTaxDao;
+    private CompanyTaxService companyTaxService;
     @Resource
     private CompanyInvoiceInfoDao companyInvoiceInfoDao;
     @Resource
@@ -115,10 +117,14 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
     private CompanyUnionpayService companyUnionpayService;
     @Resource
     private TaxService taxService;
+    @Resource
+    private TaxPackageService taxPackageService;
+    @Resource
+    private InvoiceLadderPriceService invoiceLadderPriceService;
 
     @Override
     public ReturnJson merchantLogin(String username, String password, HttpServletResponse response) {
-        String encryptPWD = PWD_KEY + MD5.md5(password);
+        String encryptPWD = MD5.md5(PWD_KEY + password);
         Subject currentUser = SecurityUtils.getSubject();
         QueryWrapper<Merchant> merchantQueryWrapper = new QueryWrapper<>();
         merchantQueryWrapper.lambda()
@@ -262,7 +268,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         }
         if (redisCode.equals(checkCode)) {
             Merchant merchant = new Merchant();
-            merchant.setPassWord(PWD_KEY + MD5.md5(newPassWord));
+            merchant.setPassWord(MD5.md5(PWD_KEY + newPassWord));
             boolean flag = this.update(merchant, new QueryWrapper<Merchant>().lambda()
                     .eq(Merchant::getLoginMobile, loginMobile));
             if (flag) {
@@ -363,13 +369,71 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         HomePageVO homePageVO = new HomePageVO();
         HomePageMerchantVO homePageMerchantVO = (HomePageMerchantVO) returnJson.getObj();
         BeanUtils.copyProperties(homePageMerchantVO, homePageVO);
-        Integer taxTotal = companyTaxDao.selectCount(new QueryWrapper<CompanyTax>().lambda()
+        Integer taxTotal = companyTaxService.count(new QueryWrapper<CompanyTax>().lambda()
                 .eq(CompanyTax::getCompanyId, merchant.getCompanyId()));
         homePageVO.setTaxTotal(taxTotal);
         ReturnJson merchantPaymentList = this.getMerchantPaymentList(merchantId, null, 1, 10);
         List data = (List) merchantPaymentList.getData();
         returnJson.setData(data);
         return returnJson;
+    }
+
+    @Override
+    public ReturnJson queryTaxPackage(String taxId, Integer packageStatus) {
+
+        TaxPackageDetailVO taxPackageDetailVO = new TaxPackageDetailVO();
+        TaxPackage taxPackage = taxPackageService.queryTaxPackage(taxId, packageStatus);
+        if (taxPackage != null) {
+            taxPackageDetailVO.setTaxPrice(taxPackage.getTaxPrice());
+            //获取梯度价
+            List<InvoiceLadderPriceDetailVO> invoiceLadderPriceDetailVOList = invoiceLadderPriceService.queryInvoiceLadderPriceDetailVOList(taxPackage.getId());
+            if (invoiceLadderPriceDetailVOList != null && invoiceLadderPriceDetailVOList.size() > 0) {
+                taxPackageDetailVO.setInvoiceLadderPriceDetailVOList(invoiceLadderPriceDetailVOList);
+            }
+        }
+
+        return ReturnJson.success(taxPackageDetailVO);
+    }
+
+    @Override
+    public ReturnJson queryCompanyPackage(String taxId, String companyId, Integer packageStatus) {
+
+        CompanyPackageDetailVO companyPackageDetailVO = new CompanyPackageDetailVO();
+        TaxPackage taxPackage = taxPackageService.queryTaxPackage(taxId, packageStatus);
+        if (taxPackage != null) {
+            //服务商一口价综合税费率
+            companyPackageDetailVO.setTaxPrice(taxPackage.getTaxPrice());
+
+            //获取服务商梯度价
+            List<CompanyInvoiceLadderPriceDetailVO> companyInvoiceLadderPriceDetailVOList = new ArrayList<>();
+            List<InvoiceLadderPriceDetailVO> invoiceLadderPriceDetailVOList = invoiceLadderPriceService.queryInvoiceLadderPriceDetailVOList(taxPackage.getId());
+            if (invoiceLadderPriceDetailVOList != null && invoiceLadderPriceDetailVOList.size() > 0) {
+                for (InvoiceLadderPriceDetailVO invoiceLadderPriceDetailVO : invoiceLadderPriceDetailVOList) {
+                    CompanyInvoiceLadderPriceDetailVO companyInvoiceLadderPriceDetailVO = new CompanyInvoiceLadderPriceDetailVO();
+                    BeanUtils.copyProperties(invoiceLadderPriceDetailVO, companyInvoiceLadderPriceDetailVO);
+                    companyInvoiceLadderPriceDetailVOList.add(companyInvoiceLadderPriceDetailVO);
+                }
+            }
+
+            CompanyTax companyTax = companyTaxService.queryCompanyTax(taxId, companyId, packageStatus);
+            if (companyTax != null) {
+
+                //商户一口价综合税费率
+                companyPackageDetailVO.setCompanyPrice(companyTax.getServiceCharge());
+
+                //获取商户梯度价税率
+                if (companyInvoiceLadderPriceDetailVOList.size() > 0) {
+                    for (CompanyInvoiceLadderPriceDetailVO companyInvoiceLadderPriceDetailVO : companyInvoiceLadderPriceDetailVOList) {
+                        BigDecimal serviceCharge = companyLadderServiceService.queryServiceCharge(companyTax.getId(), companyInvoiceLadderPriceDetailVO.getStartMoney(), companyInvoiceLadderPriceDetailVO.getEndMoney());
+                        companyInvoiceLadderPriceDetailVO.setCompanyRate(serviceCharge);
+                    }
+                }
+
+            }
+
+        }
+
+        return ReturnJson.success(companyPackageDetailVO);
     }
 
     @Override
@@ -380,7 +444,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
             merchant.setCompanyId(merchantId);
         }
         Page<MerchantPaymentListPO> paymentListPage = new Page(page, pageSize);
-        IPage<MerchantPaymentListPO> merchantPaymentListIPage = null;
+        IPage<MerchantPaymentListPO> merchantPaymentListIPage;
         if (StringUtils.isBlank(taxId)) {
             merchantPaymentListIPage = merchantDao.selectMerchantPaymentList(paymentListPage, merchant.getCompanyId());
         } else {
@@ -419,7 +483,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         CompanyInvoiceInfo companyInvoiceInfo = new CompanyInvoiceInfo();
         BeanUtils.copyProperties(companyDto.getAddCompanyInvoiceInfoDto(), companyInvoiceInfo);
 
-        companyInfo.setPayPwd(PWD_KEY + MD5.md5(companyDto.getAddMerchantDto().getPayPwd()));
+        companyInfo.setPayPwd(MD5.md5(PWD_KEY + companyDto.getAddMerchantDto().getPayPwd()));
         companyInfo.setAddressAndTelephone(companyInvoiceInfo.getAddressAndTelephone());
         companyInfo.setBankAndAccount(companyInvoiceInfo.getBankAndAccount());
 
@@ -459,7 +523,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
 
         merchant = new Merchant();
         BeanUtils.copyProperties(companyDto.getAddMerchantDto(), merchant);
-        merchant.setPassWord(PWD_KEY + MD5.md5(companyDto.getAddMerchantDto().getPassWord()));
+        merchant.setPassWord(MD5.md5(PWD_KEY + companyDto.getAddMerchantDto().getPassWord()));
         merchant.setCompanyId(companyInfo.getId());
         merchant.setCompanyName(companyInfo.getCompanyName());
         merchant.setRoleName("管理员");
@@ -497,7 +561,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
             CompanyTax companyTax = new CompanyTax();
             BeanUtils.copyProperties(companyTaxDto, companyTax);
             companyTax.setCompanyId(companyInfo.getId());
-            companyTaxDao.insert(companyTax);
+            companyTaxService.save(companyTax);
             List<AddCompanyLadderServiceDTO> companyLadderServiceDtoList = companyTaxDto.getAddCompanyLadderServiceDtoList();
             List<CompanyLadderService> companyLadderServices = new ArrayList<>();
             for (int i = 0; i < companyLadderServiceDtoList.size(); i++) {
@@ -509,7 +573,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
             for (int i = 0; i < companyLadderServices.size(); i++) {
                 if (i != companyLadderServices.size() - 1) {
                     BigDecimal endMoney = companyLadderServices.get(i).getEndMoney();
-                    if (endMoney.compareTo(companyLadderServices.get(i).getEndMoney()) == -1) {
+                    if (endMoney.compareTo(companyLadderServices.get(i).getEndMoney()) < 0) {
                         throw new CommonException(300, "结束金额应该大于起始金额");
                     }
                     BigDecimal startMoney = companyLadderServices.get(i + 1).getStartMoney();
@@ -682,7 +746,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
 
         BeanUtils.copyProperties(updateCompanyDto.getUpdateCompanyInfoDto(), companyInfo);
         if (StringUtils.isNotBlank(updateCompanyDto.getUpdateMerchantInfDto().getPayPwd())) {
-            companyInfo.setPayPwd(PWD_KEY + MD5.md5(updateCompanyDto.getUpdateMerchantInfDto().getPayPwd()));
+            companyInfo.setPayPwd(MD5.md5(PWD_KEY + updateCompanyDto.getUpdateMerchantInfDto().getPayPwd()));
         }
         companyInfo.setAgentId(updateCompanyDto.getUpdateCooperationDto().getAgentId());
         companyInfo.setSalesManId(updateCompanyDto.getUpdateCooperationDto().getSalesManId());
@@ -707,7 +771,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         }
 
         if (StringUtils.isNotBlank(updateCompanyDto.getUpdateMerchantInfDto().getPassWord())) {
-            merchant.setPassWord(PWD_KEY + MD5.md5(updateCompanyDto.getUpdateMerchantInfDto().getPassWord()));
+            merchant.setPassWord(MD5.md5(PWD_KEY + updateCompanyDto.getUpdateMerchantInfDto().getPassWord()));
         }
         merchantDao.updateById(merchant);
         List<UpdateCompanyTaxDTO> updateCompanyTaxDTOList = updateCompanyDto.getUpdateCompanyTaxDtoList();
@@ -720,13 +784,13 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
 
             CompanyTax companyTax = new CompanyTax();
             if (StringUtils.isNotBlank(updateCompanyTaxDTO.getId())) {
-                companyTax = companyTaxDao.selectById(updateCompanyTaxDTO.getId());
+                companyTax = companyTaxService.getById(updateCompanyTaxDTO.getId());
                 if (companyTax == null) {
                     throw new CommonException(300, "信息错误");
                 }
                 BeanUtils.copyProperties(updateCompanyTaxDTO, companyTax);
                 companyTax.setCompanyId(updateCompanyDto.getUpdateCompanyInfoDto().getId());
-                companyTaxDao.updateById(companyTax);
+                companyTaxService.updateById(companyTax);
                 List<UpdateCompanyLadderServiceDTO> updateCompanyLadderServiceDtoList = updateCompanyTaxDTO.getUpdateCompanyLadderServiceDtoList();
                 if (updateCompanyLadderServiceDtoList != null) {
                     int j = 0;
@@ -755,14 +819,14 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
             } else {
                 BeanUtils.copyProperties(updateCompanyTaxDTO, companyTax);
                 companyTax.setCompanyId(updateCompanyDto.getUpdateCompanyInfoDto().getId());
-                CompanyTax companyTax1 = companyTaxDao.selectOne(new QueryWrapper<CompanyTax>().lambda()
+                CompanyTax companyTax1 = companyTaxService.getOne(new QueryWrapper<CompanyTax>().lambda()
                         .eq(CompanyTax::getCompanyId, companyTax.getCompanyId())
                         .eq(CompanyTax::getTaxId, companyTax.getTaxId())
                         .eq(CompanyTax::getPackageStatus, companyTax.getPackageStatus()));
                 if (companyTax1 != null) {
                     throw new CommonException(300, "同一个商户与同一个服务商在统一合作类型上只能合作一次！");
                 }
-                companyTaxDao.insert(companyTax);
+                companyTaxService.save(companyTax);
                 List<UpdateCompanyLadderServiceDTO> updateCompanyLadderServiceDtoList = updateCompanyTaxDTO.getUpdateCompanyLadderServiceDtoList();
                 if (updateCompanyLadderServiceDtoList != null) {
                     int j = 0;
@@ -861,7 +925,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
 
     @Override
     public ReturnJson taxMerchantInfoPaas(String merchantId, String taxId) {
-        return taxService.queryCompanyFlowInfo(merchantId,taxId);
+        return taxService.queryCompanyFlowInfo(merchantId, taxId);
     }
 
     @Override

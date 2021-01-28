@@ -95,7 +95,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
             merchant.setParentId(merchantId);
             merchant.setCompanyId(merchant1.getCompanyId());
             merchant.setCompanyName(merchant1.getCompanyName());
-            merchant.setPassWord(PWD_KEY + MD5.md5(merchantDto.getPassWord()));
+            merchant.setPassWord(MD5.md5(PWD_KEY + merchantDto.getPassWord()));
             int m = merchantDao.insert(merchant);
             if (m > 0) {
                 String[] meunId = merchantDto.getMenuIds().split(",");
@@ -110,7 +110,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
         } else {
             BeanUtils.copyProperties(merchantDto, merchant);
             merchant.setParentId(merchantId);
-            merchant.setPassWord(PWD_KEY + MD5.md5(merchantDto.getPassWord()));
+            merchant.setPassWord(MD5.md5(PWD_KEY + merchantDto.getPassWord()));
             merchantDao.updateById(merchant);
             objectMenuDao.delete(new QueryWrapper<ObjectMenu>().lambda()
                     .eq(ObjectMenu::getObjectUserId, merchant.getId()));
@@ -180,7 +180,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
         } else {
             managers = managersDao.selectById(saveManagersRoleDto.getId());
             if (StringUtils.isNotEmpty(saveManagersRoleDto.getPassWord())) {
-                managers.setPassWord(PWD_KEY + MD5.md5(saveManagersRoleDto.getPassWord()));
+                managers.setPassWord(MD5.md5(PWD_KEY + saveManagersRoleDto.getPassWord()));
             }
             if (!managersOne.getId().equals(managers.getId())) {
                 return ReturnJson.error("此手机号码已近注册过！");

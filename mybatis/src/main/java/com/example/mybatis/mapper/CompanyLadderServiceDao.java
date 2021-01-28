@@ -2,6 +2,9 @@ package com.example.mybatis.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.example.mybatis.entity.CompanyLadderService;
+import org.apache.ibatis.annotations.Param;
+
+import java.math.BigDecimal;
 
 /**
  * <p>
@@ -13,4 +16,5 @@ import com.example.mybatis.entity.CompanyLadderService;
  */
 public interface CompanyLadderServiceDao extends BaseMapper<CompanyLadderService> {
 
+    BigDecimal queryServiceCharge(@Param("companyTaxId") String companyTaxId, @Param("startMoney") BigDecimal startMoney, @Param("endMoney") BigDecimal endMoney);
 }

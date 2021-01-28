@@ -10,6 +10,7 @@ import com.example.merchant.dto.TaxListDTO;
 import com.example.merchant.dto.platform.AddInvoiceCatalogDTO;
 import com.example.merchant.dto.platform.AddOrUpdateTaxUnionpayDTO;
 import com.example.merchant.dto.platform.TaxDTO;
+import com.example.merchant.dto.platform.TaxPackageUpdateDTO;
 import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.*;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -82,9 +83,14 @@ public class TaxController {
 
     @PostMapping("/saveTax")
     @ApiOperation(value = "添加或修改平台服务商", notes = "添加或修改平台服务商")
-    @ApiImplicitParams(value = {@ApiImplicitParam(name = "taxDto", value = "平台服务商的信息", required = true, dataType = "TaxDTO")})
-    public ReturnJson saveTax(@Valid @RequestBody TaxDTO taxDto) throws Exception {
-        return taxService.saveTax(taxDto);
+    public ReturnJson addOrUpdateTax(@Valid @RequestBody TaxDTO taxDto) throws Exception {
+        return taxService.addOrUpdateTax(taxDto);
+    }
+
+    @PostMapping("/updateTaxPackage")
+    @ApiOperation(value = "修改服务商的总包众包合作信息", notes = "修改服务商的总包众包合作信息")
+    public ReturnJson updateTaxPackage(@Valid @RequestBody TaxPackageUpdateDTO taxPackageUpdateDTO) throws Exception {
+        return taxService.updateTaxPackage(taxPackageUpdateDTO);
     }
 
     @PostMapping("/getTaxList")
@@ -97,7 +103,7 @@ public class TaxController {
     @PostMapping("/updateTaxStatus")
     @ApiOperation(value = "修改服务商状态", notes = "修改服务商状态")
     public ReturnJson updateTaxStatus(@ApiParam(value = "服务商ID") @NotBlank(message = "请选择服务商") @RequestParam(required = false) String taxId,
-                                 @ApiParam(value = "服务商状态") @NotBlank(message = "请选择服务商状态") @Range(min = 0, max = 1, message = "请选择0或1") @RequestParam(required = false) Integer taxStatus) {
+                                      @ApiParam(value = "服务商状态") @NotNull(message = "请选择服务商状态") @Range(min = 0, max = 1, message = "请选择0或1") @RequestParam(required = false) Integer taxStatus) {
         return taxService.updateTaxStatus(taxId, taxStatus);
     }
 

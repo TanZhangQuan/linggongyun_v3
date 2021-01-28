@@ -25,32 +25,17 @@ public class TaxPackage extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 对应的服务商
+     * 服务商
      */
     private String taxId;
 
     /**
-     * 税号
-     */
-    private String invoiceTaxno;
-
-    /**
-     * 税费率成本
+     * 一口价综合税费率
      */
     private BigDecimal taxPrice;
 
     /**
-     * 建议市场价最小值
-     */
-    private BigDecimal taxMinPrice;
-
-    /**
-     * 建议市场价最大值
-     */
-    private BigDecimal taxMaxPrice;
-
-    /**
-     * 0总包，1众包
+     * 合作类型 0总包，1众包
      */
     private Integer packageStatus;
 

@@ -139,8 +139,7 @@ public class CrowdSourcingInvoiceServiceImpl extends ServiceImpl<CrowdSourcingIn
                             eq(InvoiceLadderPrice::getTaxId, vo.getTaxId()));
             if (invoiceLadderPrice != null) {
                 for (InvoiceLadderPrice price : invoiceLadderPrice) {
-                    if ((vo.getTaskMoney().compareTo(price.getStartMoney()) > -1) && (vo.getTaskMoney().
-                            compareTo(price.getEndMoney()) == -1)) {
+                    if ((vo.getTaskMoney().compareTo(price.getStartMoney()) > -1) && (vo.getTaskMoney().compareTo(price.getEndMoney()) < 0)) {
                         //纳税率
                         vo.setTaxRate(price.getRate());
                         BigDecimal bigDecimal = vo.getTaxRate().multiply(vo.getTaskMoney());

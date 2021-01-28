@@ -113,7 +113,7 @@ public class FileOperationServiceImpl implements FileOperationService {
                 worker.setBankCode(makerExcel.getBankCardNo());
                 worker.setUserName(makerExcel.getPhoneNumber());
                 worker.setWorkerStatus(1);
-                worker.setUserPwd(PWD_KEY + MD5.md5(idCardCode.substring(12)));
+                worker.setUserPwd(MD5.md5(PWD_KEY + idCardCode.substring(12)));
                 workers.add(worker);
             }
         }

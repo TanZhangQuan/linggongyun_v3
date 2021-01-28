@@ -16,4 +16,8 @@
         id,company_tax_id, start_money, end_money, service_charge
     </sql>
 
+    <select id="queryServiceCharge" resultType="java.math.BigDecimal">
+        SELECT t1.service_charge FROM tb_company_ladder_service t1 WHERE t1.company_tax_id = #{companyTaxId} AND t1.start_money = #{startMoney} AND t1.end_money = #{endMoney}
+    </select>
+
 </mapper>

@@ -1,7 +1,6 @@
 package com.example.mybatis.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -25,22 +24,28 @@ import java.math.BigDecimal;
 public class CompanyTax extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
+    /**
+     * 商户ID
+     */
     private String companyId;
 
+    /**
+     * 服务商ID
+     */
     private String taxId;
 
     /**
-     * 费用类型0为一口价，1为梯度价
+     * 费用类型 0为一口价 1为梯度价
      */
     private Integer chargeStatus;
 
     /**
-     * 一口价的服务费(如果为梯度价这为空)
+     * 一口价综合税费率(如果有梯度价这为空)
      */
     private BigDecimal serviceCharge;
 
     /**
-     * 合作类型
+     * 合作类型 0总包，1众包
      */
     private Integer packageStatus;
 

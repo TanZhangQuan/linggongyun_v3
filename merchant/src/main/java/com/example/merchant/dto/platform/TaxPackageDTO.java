@@ -14,20 +14,9 @@ import java.math.BigDecimal;
 public class TaxPackageDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @ApiModelProperty(value = "税号")
-    private String invoiceTaxno;
-
     @ApiModelProperty(value = "税费率成本")
     @NotNull(message = "税费率成本不能为空")
     private BigDecimal taxPrice;
-
-    @ApiModelProperty(value = "建议市场价最小值")
-    @NotNull(message = "建议市场价最小值不能为空")
-    private BigDecimal taxMinPrice;
-
-    @ApiModelProperty(value = "建议市场价最大值")
-    @NotNull(message = "建议市场价最大值不能为空")
-    private BigDecimal taxMaxPrice;
 
     @ApiModelProperty(value = "0总包，1众包")
     @NotNull(message = "请选择总包或者众包")

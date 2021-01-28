@@ -9,7 +9,6 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -20,9 +19,6 @@ public class TaxPlatformVO implements Serializable {
 
     @ApiModelProperty(value = "服务商ID")
     private String id;
-
-    @ApiModelProperty(value = "公司的简称")
-    private String taxSName;
 
     @ApiModelProperty(value = "公司的法定人")
     private String taxMan;
