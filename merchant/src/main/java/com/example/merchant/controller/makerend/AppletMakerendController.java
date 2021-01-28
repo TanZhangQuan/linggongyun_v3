@@ -10,6 +10,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
@@ -47,7 +48,7 @@ public class AppletMakerendController {
 
     @GetMapping("/queryAppletFaqById")
     @ApiOperation(value = "查询常见问题")
-    public ReturnJson queryAppletFaqById(@NotBlank(message = "ID不能为空") String id) {
+    public ReturnJson queryAppletFaqById(@RequestParam @NotBlank(message = "ID不能为空") String id) {
         return appletBannerService.queryAppletFaqById(id);
     }
 

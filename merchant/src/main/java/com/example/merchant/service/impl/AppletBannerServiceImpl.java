@@ -55,7 +55,7 @@ public class AppletBannerServiceImpl extends ServiceImpl<AppletBannerDao, Applet
     @Override
     public ReturnJson queryAppletFaqById(String id) {
         AppletFaq appletFaq = appletFaqDao.selectById(id);
-        if (appletFaq != null) {
+        if (appletFaq == null) {
             return ReturnJson.error("信息错误，请稍后再试！");
         }
         AppletFaqInfoVO appletFaqInfoVO = new AppletFaqInfoVO();
