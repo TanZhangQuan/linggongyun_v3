@@ -26,6 +26,8 @@ public interface PaymentOrderDao extends BaseMapper<PaymentOrder> {
     BigDecimal selectBy30Day(String merchantId);
     BigDecimal selectTotal(String merchantId);
 
+    BigDecimal getTotalServiceMoney(String companyId);
+
     List<PaymentOrder> selectDay(String merchantId);
     List<PaymentOrder> selectWeek(String merchantId);
     List<PaymentOrder> selectMonth(String merchantId);
@@ -37,9 +39,11 @@ public interface PaymentOrderDao extends BaseMapper<PaymentOrder> {
 
     BigDecimal selectBy30Daypaas(List<String> merchantId);
     BigDecimal selectTotalpaas(List<String> merchantId);
+    BigDecimal selectTotalServiceMoney(List<String> companyId);
 
     BigDecimal selectBy30DayPaasTax(String taxId);
     BigDecimal selectTotalPaasTax(String taxId);
+    BigDecimal selectTotalServicePaasTax(String taxId);
 
     BigDecimal selectBy30DayPaasRegulator(@Param("taxIds") List<String> taxIds);
     BigDecimal selectTotalPaasRegulator(@Param("taxIds")List<String> taxIds);
@@ -88,6 +92,8 @@ public interface PaymentOrderDao extends BaseMapper<PaymentOrder> {
     BigDecimal getFlowInfo(String companyId,String taxId,Integer isNot);
 
     BigDecimal getInvoiceTotalMoney(String companyId,String taxId);
+
+    BigDecimal getPaymentTotalServiceMoney(String companyId,String taxId);
 
     Integer getInvoiceTotalCount(String companyId,String taxId);
 }

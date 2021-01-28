@@ -238,6 +238,9 @@ public class FileOperationServiceImpl implements FileOperationService {
                 String bankName = makerPanymentExcel.getBankName();
                 Worker worker = workerDao.selectOne(new QueryWrapper<Worker>().lambda()
                         .eq(Worker::getMobileCode, mobileCode));
+                if (worker == null) {
+                    return ReturnJson.error(workerName + "不存在此创客，或者此创客手机号码不对");
+                }
                 if (!worker.getIdcardCode().equals(idCardCode)) {
                     return ReturnJson.error(workerName + "表格身份证与系统内不一致！");
                 }

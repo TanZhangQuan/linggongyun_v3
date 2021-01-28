@@ -687,8 +687,8 @@
 
     <select id="queryMerchantTransactionFlow" resultMap="TaxTransactionFlowVOMap">
         SELECT
+        DISTINCT t3.id AS company_id,
         t1.id as tax_id ,
-        t3.id as company_id,
         t4.id as merchant_id,
         t1.tax_name,
         t3.company_name,

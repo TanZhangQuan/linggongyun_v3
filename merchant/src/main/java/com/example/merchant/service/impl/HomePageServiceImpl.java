@@ -84,6 +84,15 @@ public class HomePageServiceImpl implements HomePageService {
         BigDecimal paymentManyMoney = paymentOrderManyDao.selectTotal(companyId);
         homePageMerchantVO.setPaymentManyMoney(paymentManyMoney);
 
+        BigDecimal payTotalServiceMoney = paymentOrderDao.getTotalServiceMoney(companyId);
+        homePageMerchantVO.setPaymentTotalServiceMoney(payTotalServiceMoney);
+
+        BigDecimal payManyServiceMoney = paymentOrderManyDao.getTotalServiceMoney(companyId);
+        homePageMerchantVO.setPaymentManyServiceMoney(payManyServiceMoney);
+
+        BigDecimal invoiceManyDKMoney=paymentOrderManyDao.getInvoiceManyDKMoney(companyId);
+        homePageMerchantVO.setInvoiceManyDKMoney(invoiceManyDKMoney);
+
 
         InvoicePO invoicePO = invoiceDao.selectInvoiceMoney(companyId);
 
@@ -210,8 +219,14 @@ public class HomePageServiceImpl implements HomePageService {
         BigDecimal pay30Total = paymentOrderDao.selectBy30Daypaas(ids);
         BigDecimal pay30Many = paymentOrderManyDao.selectBy30Daypaas(ids);
 
+
+        BigDecimal payTotalServiceMoney = paymentOrderDao.selectTotalServiceMoney(ids);
+        BigDecimal payManyServiceMoney = paymentOrderManyDao.selectTotalServiceMoneyPaas(ids);
+
         BigDecimal payTotal = paymentOrderDao.selectTotalpaas(ids);
         BigDecimal payMany = paymentOrderManyDao.selectTotalpaas(ids);
+
+        BigDecimal invoiceManyDKMoney=paymentOrderManyDao.selectInvoiceManyDKMoneyPaas(ids);
 
         InvoicePO invoicePO = invoiceDao.selectInvoiceMoneyPaas(ids);
         try {
@@ -236,7 +251,9 @@ public class HomePageServiceImpl implements HomePageService {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
+        homePageVO.setInvoiceManyDKMoney(invoiceManyDKMoney);
+        homePageVO.setPaymentTotalServiceMoney(payTotalServiceMoney);
+        homePageVO.setPaymentManyServiceMoney(payManyServiceMoney);
         homePageVO.setPayment30TotalMoney(pay30Total);
         homePageVO.setPayment30ManyMoney(pay30Many);
         homePageVO.setPaymentTotalMoney(payTotal);

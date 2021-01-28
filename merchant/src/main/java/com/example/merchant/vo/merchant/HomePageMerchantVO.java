@@ -24,11 +24,20 @@ public class HomePageMerchantVO implements Serializable {
     @ApiModelProperty(value = "总包+分包支付总金额")
     private BigDecimal paymentTotalMoney;
 
+    @ApiModelProperty(value = "众包总服务费")
+    private BigDecimal paymentManyServiceMoney;
+
+    @ApiModelProperty(value = "总包+分包总服务费")
+    private BigDecimal paymentTotalServiceMoney;
+
     @ApiModelProperty(value = "众包的发票数量")
     private Integer invoiceManyCount;
 
     @ApiModelProperty(value = "众包的发票总金额")
     private BigDecimal invoiceManyMoney;
+
+    @ApiModelProperty(value = "众包的发票代开金额")
+    private BigDecimal invoiceManyDKMoney;
 
     @ApiModelProperty(value = "总包+分包的发票数量")
     private Integer invoiceTotalCount;
