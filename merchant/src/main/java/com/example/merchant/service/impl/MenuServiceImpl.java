@@ -190,11 +190,14 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
             return ReturnJson.success("添加成功");
         } else {
             managers = managersDao.selectById(saveManagersRoleDto.getId());
+            BeanUtils.copyProperties(saveManagersRoleDto, managers);
             if (StringUtils.isNotEmpty(saveManagersRoleDto.getPassWord())) {
                 managers.setPassWord(MD5.md5(PWD_KEY + saveManagersRoleDto.getPassWord()));
             }
-            if (!managersOne.getId().equals(managers.getId())) {
-                return ReturnJson.error("此手机号码已近注册过！");
+            if (managersOne != null) {
+                if (!managersOne.getId().equals(managers.getId())) {
+                    return ReturnJson.error("此手机号码已近注册过！");
+                }
             }
             managersDao.updateById(managers);
             objectMenuDao.delete(new QueryWrapper<ObjectMenu>().lambda()
