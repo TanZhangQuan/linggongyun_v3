@@ -3,6 +3,7 @@ package com.example.merchant.controller.merchant;
 
 import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.merchant.MerchantDTO;
+import com.example.merchant.exception.CommonException;
 import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.MenuService;
 import io.swagger.annotations.Api;
@@ -43,7 +44,8 @@ public class MenuMerchantController {
     @ApiOperation("添加子用户or编辑")
     @PostMapping(value = "/addMerchant")
     @LoginRequired
-    public ReturnJson addMerchant(@Valid @RequestBody MerchantDTO merchantDto, @RequestAttribute(value = "userId") @ApiParam(hidden = true) String merchantId) {
+    public ReturnJson addMerchant(@Valid @RequestBody MerchantDTO merchantDto,
+                                  @RequestAttribute(value = "userId") @ApiParam(hidden = true) String merchantId) throws CommonException {
         return menuService.saveRole(merchantDto,merchantId);
     }
 

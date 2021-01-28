@@ -41,4 +41,12 @@ public class CompanyFlowInfoVO implements Serializable {
     @ApiModelProperty(value = "总包+分包的发票总金额")
     private BigDecimal invoiceTotalMoney;
 
+    @ApiModelProperty(value = "众包总服务费")
+    private BigDecimal paymentManyServiceMoney;
+
+    @ApiModelProperty(value = "总包+分包总服务费")
+    private BigDecimal paymentTotalServiceMoney;
+
+    @ApiModelProperty(value = "众包的发票代开金额")
+    private BigDecimal invoiceManyDKMoney;
 }

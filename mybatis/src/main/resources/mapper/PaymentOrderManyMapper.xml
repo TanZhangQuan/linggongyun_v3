@@ -43,7 +43,20 @@
     <select id="selectTotal" parameterType="java.lang.String" resultType="decimal">
         select SUM(real_money) 'total_money' from tb_payment_order_many where
         payment_order_status  = 3 and company_id = #{merchantId}
+    </select>
 
+    <select id="getTotalServiceMoney" resultType="java.math.BigDecimal">
+        select SUM(service_money) 'total_service_money' from tb_payment_order_many where
+        payment_order_status  = 3 and company_id = #{merchantId}
+    </select>
+
+    <select id="getInvoiceManyDKMoney" resultType="java.math.BigDecimal">
+        SELECT
+            SUM(pi.real_money)
+        FROM
+            tb_payment_order_many po
+        INNER JOIN tb_payment_inventory pi ON pi.payment_order_id=po.id
+        WHERE is_not_invoice = 1 and  po.company_id=#{companyId}
     </select>
 
     <!--多条件查询-->
@@ -165,6 +178,38 @@
         </foreach>
     </select>
 
+    <select id="getInvoiceManyDKMoneyPass" resultType="java.math.BigDecimal">
+        SELECT
+            SUM(pi.real_money)
+        FROM
+            tb_payment_order_many po
+        INNER JOIN tb_payment_inventory pi ON pi.payment_order_id=po.id
+        WHERE payment_order_status = 3 and po.company_id in
+        <foreach collection="list" index="index" item="merchantIds" open="(" separator="," close=")">
+            #{merchantIds}
+        </foreach>
+    </select>
+
+    <select id="selectTotalServiceMoneyPaas" resultType="java.math.BigDecimal">
+        select SUM(service_money) 'total_service_money' from tb_payment_order_many where
+        payment_order_status = 3 and company_id in
+        <foreach collection="list" index="index" item="merchantIds" open="(" separator="," close=")">
+            #{merchantIds}
+        </foreach>
+    </select>
+
+    <select id="selectInvoiceManyDKMoneyPaas" resultType="java.math.BigDecimal">
+        SELECT
+            SUM(pi.real_money)
+        FROM
+            tb_payment_order_many po
+        INNER JOIN tb_payment_inventory pi ON pi.payment_order_id = po.id
+        WHERE
+            po.is_not_invoice = 1 and po.company_id in
+        <foreach collection="list" index="index" item="merchantIds" open="(" separator="," close=")">
+            #{merchantIds}
+        </foreach>
+    </select>
 
 
     <!--查询今天已支付订单-->
@@ -242,6 +287,33 @@
         select SUM(real_money) 'total_money' from tb_payment_order_many where
         payment_order_status = 3
         and tax_id = #{taxId}
+    </select>
+
+    <select id="selectTotalServicePaasTax" resultType="java.math.BigDecimal">
+        select SUM(service_money) 'total_service_money' from tb_payment_order_many where
+        payment_order_status = 3
+        and tax_id = #{taxId}
+    </select>
+
+    <select id="selectInvoiceManyDKMoneyPaasTax" resultType="java.math.BigDecimal">
+        SELECT
+            SUM(pi.real_money)
+        FROM
+            tb_payment_order_many po
+        INNER JOIN tb_payment_inventory pi ON pi.payment_order_id=po.id
+        WHERE
+            po.is_not_invoice = 1
+        AND po.tax_id = #{taxId}
+    </select>
+
+    <select id="getInvoiceManyDKMoneyTax" resultType="java.math.BigDecimal">
+         SELECT
+            SUM(pi.real_money)
+        FROM
+            tb_payment_order_many po
+        INNER JOIN tb_payment_inventory pi ON pi.payment_order_id = po.id
+        WHERE
+            po.is_not_invoice = 1 and po.tax_id=#{taxId}
     </select>
 
     <!--    查询最近30天-->
@@ -1363,12 +1435,11 @@ SELECT
 
     <select id="getPaymentManyMoney" resultType="java.math.BigDecimal">
         SELECT
-            IFNULL(SUM(
-                pi.real_money + pi.service_money
-            ),0)
+            SUM(
+                po.real_money
+            )
         FROM
             tb_payment_order_many po
-        INNER JOIN tb_payment_inventory pi ON pi.payment_order_id=po.id
         WHERE
             po.is_not_invoice = 1
         <if test="param1 != null and param1 != ''">
@@ -1393,5 +1464,19 @@ SELECT
             AND po.tax_id = #{param2}
         </if>
     </select>
-
+    <select id="queryInvoiceManyDKMoney" resultType="java.math.BigDecimal">
+        SELECT
+            SUM(pi.real_money)
+        FROM
+            tb_payment_order_many po
+        INNER JOIN tb_payment_inventory pi ON pi.payment_order_id=po.id
+        WHERE
+            po.is_not_invoice = 1
+        <if test="param1 != null and param1 != ''">
+            AND po.company_id = #{param1}
+        </if>
+        <if test="param2 != null and param2 != ''">
+            AND po.tax_id = #{param2}
+        </if>
+    </select>
 </mapper>

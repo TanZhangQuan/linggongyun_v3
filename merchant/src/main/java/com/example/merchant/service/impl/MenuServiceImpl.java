@@ -5,6 +5,7 @@ import com.example.common.util.MD5;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.merchant.MerchantDTO;
 import com.example.merchant.dto.platform.SaveManagersRoleDTO;
+import com.example.merchant.exception.CommonException;
 import com.example.mybatis.entity.*;
 import com.example.mybatis.mapper.*;
 import com.example.merchant.service.MenuService;
@@ -76,7 +77,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ReturnJson saveRole(MerchantDTO merchantDto, String merchantId) {
+    public ReturnJson saveRole(MerchantDTO merchantDto, String merchantId) throws CommonException {
         String token = redisDao.get(merchantId);
         if (token == null) {
             return ReturnJson.error("请先登录");
@@ -89,6 +90,16 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
         Merchant merchant = merchantDao.selectById(merchantDto.getId());
 
         if ("".equals(merchantDto.getId())) {
+            Merchant merchantTwo = merchantDao.selectOne(new QueryWrapper<Merchant>().lambda()
+                    .eq(Merchant::getLoginMobile, merchantDto.getMobileCode()));
+            if (merchantTwo != null) {
+                throw new CommonException(300,"手机号已存在，请重新输入");
+            }
+            merchantTwo = merchantDao.selectOne(new QueryWrapper<Merchant>().lambda()
+                    .eq(Merchant::getUserName, merchantDto.getUserName()));
+            if (merchantTwo != null) {
+                throw new CommonException(300,"登录账号已存在相同，请重新输入");
+            }
             Merchant merchant1 = merchantDao.selectById(merchantId);
             merchant = new Merchant();
             BeanUtils.copyProperties(merchantDto, merchant);
@@ -98,11 +109,11 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
             merchant.setPassWord(MD5.md5(PWD_KEY + merchantDto.getPassWord()));
             int m = merchantDao.insert(merchant);
             if (m > 0) {
-                String[] meunId = merchantDto.getMenuIds().split(",");
-                for (int i = 0; i < meunId.length; i++) {
+                String[] menuId = merchantDto.getMenuIds().split(",");
+                for (int i = 0; i < menuId.length; i++) {
                     ObjectMenu roleMenu = new ObjectMenu();
                     roleMenu.setObjectUserId(merchant.getId());
-                    roleMenu.setMenuId(meunId[i]);
+                    roleMenu.setMenuId(menuId[i]);
                     objectMenuDao.insert(roleMenu);
                 }
             }
