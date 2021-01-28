@@ -137,7 +137,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         String token = jwtUtils.generateToken(me.getId());
         response.setHeader(TOKEN, token);
         redisDao.set(me.getId(), token);
-        redisDao.setExpire(me.getId(), 7, TimeUnit.DAYS);
+        redisDao.setExpire(me.getId(), 1, TimeUnit.DAYS);
         return ReturnJson.success("登录成功", token);
     }
 
@@ -183,7 +183,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
             String token = jwtUtils.generateToken(merchant.getId());
             resource.setHeader(TOKEN, token);
             redisDao.set(merchant.getId(), token);
-            redisDao.setExpire(merchant.getId(), 7, TimeUnit.DAYS);
+            redisDao.setExpire(merchant.getId(), 1, TimeUnit.DAYS);
             CustomizedToken customizedToken = new CustomizedToken(merchant.getUserName(), merchant.getPassWord(), MERCHANT);
             currentUser.login(customizedToken);//shiro验证身份
             return ReturnJson.success("登录成功", token);

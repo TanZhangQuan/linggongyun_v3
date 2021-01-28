@@ -44,4 +44,12 @@ public class RegulatorLoginController {
     public ReturnJson getRegulatorInfo(@ApiParam(hidden = true) @RequestAttribute(value = "userId", required = false) String regulatorId) {
         return regulatorService.getRegulatorInfo(regulatorId);
     }
+
+    @PostMapping("/updateHeadPortrait")
+    @ApiOperation(value = "修改头像", notes = "修改头像")
+    @LoginRequired
+    public ReturnJson updateHeadPortrait(@RequestAttribute(value = "userId") @ApiParam(hidden = true) String customizedId,
+                                         @RequestParam(name = "headPortrait") String headPortrait) {
+        return regulatorService.updateHeadPortrait(customizedId, headPortrait);
+    }
 }

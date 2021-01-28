@@ -288,5 +288,12 @@ public interface RegulatorService extends IService<Regulator> {
      */
     ReturnJson queryPaymentOrderInfo(String paymentId, Integer packageStatus);
 
-
+    /**
+     * 修改头像
+     *
+     * @param userId
+     * @param headPortrait
+     * @return
+     */
+    ReturnJson updateHeadPortrait(String userId, String headPortrait);
 }

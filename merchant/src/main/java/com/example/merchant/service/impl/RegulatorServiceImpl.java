@@ -753,7 +753,7 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
         String token = jwtUtils.generateToken(re.getId());
         response.setHeader(TOKEN, token);
         redisDao.set(re.getId(), token);
-        redisDao.setExpire(re.getId(), 60 * 60 * 24 * 7);
+        redisDao.setExpire(re.getId(), 60 * 60 * 24 * 1);
         return ReturnJson.success("登录成功！", token);
     }
 
@@ -805,6 +805,17 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
         return ReturnJson.success(queryPaymentInfoVO);
     }
 
+    @Override
+    public ReturnJson updateHeadPortrait(String userId, String headPortrait) {
+        Regulator regulator = this.getById(userId);
+        if (regulator == null) {
+            return ReturnJson.error("登录信息错误，请重新登录！");
+        }
+        regulator.setHeadPortrait(headPortrait);
+        this.updateById(regulator);
+        return ReturnJson.success("修改成功！");
+    }
+
 
     /**
      * 获取监管部门所监管的服务商下产生的支付订单
@@ -832,7 +843,7 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
         List<PaymentOrder> paymentOrders = paymentOrderDao.selectList(
                 new QueryWrapper<PaymentOrder>().lambda()
                         .in(PaymentOrder::getTaxId, taxIds)
-                        .eq(PaymentOrder::getPaymentOrderStatus,6));
+                        .eq(PaymentOrder::getPaymentOrderStatus, 6));
         for (PaymentOrder paymentOrder : paymentOrders) {
             paymentOrderIds.add(paymentOrder.getId());
         }
@@ -840,7 +851,7 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
         List<PaymentOrderMany> paymentOrderManies = paymentOrderManyDao.selectList(
                 new QueryWrapper<PaymentOrderMany>().lambda()
                         .in(PaymentOrderMany::getTaxId, taxIds)
-                        .eq(PaymentOrderMany::getPaymentOrderStatus,3));
+                        .eq(PaymentOrderMany::getPaymentOrderStatus, 3));
         for (PaymentOrderMany paymentOrderMany : paymentOrderManies) {
             paymentOrderIds.add(paymentOrderMany.getId());
         }

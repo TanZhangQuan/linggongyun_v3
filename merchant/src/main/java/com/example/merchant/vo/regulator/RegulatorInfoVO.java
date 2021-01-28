@@ -43,6 +43,11 @@ public class RegulatorInfoVO implements Serializable {
     private String userName;
 
     /**
+     * 头像
+     */
+    private String headPortrait;
+
+    /**
      * 状态0启用，1停用
      */
     private Integer status;

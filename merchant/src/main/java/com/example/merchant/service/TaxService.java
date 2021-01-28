@@ -157,4 +157,12 @@ public interface TaxService extends IService<Tax> {
      * @return
      */
     ReturnJson updateTaxStatus(String taxId, Integer taxStatus);
+
+    /**
+     * 删除开票类目
+     *
+     * @param invoiceCatalogId
+     * @return
+     */
+    ReturnJson deleteInvoiceCatalog(String invoiceCatalogId);
 }

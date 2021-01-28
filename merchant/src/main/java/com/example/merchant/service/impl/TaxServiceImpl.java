@@ -451,6 +451,19 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
     }
 
     @Override
+    public ReturnJson deleteInvoiceCatalog(String invoiceCatalogId) {
+        InvoiceCatalog invoiceCatalog = invoiceCatalogDao.selectById(invoiceCatalogId);
+        if (invoiceCatalog != null) {
+            if (invoiceCatalog.getIsNot()){
+                invoiceCatalogDao.deleteById(invoiceCatalog);
+                return ReturnJson.success("删除成功！");
+            }
+            return ReturnJson.error("此开票类目为系统默认，不能删除！");
+        }
+        return ReturnJson.error("找不到此信息！");
+    }
+
+    @Override
     public ReturnJson queryTaxInBankInfo(String taxId) {
         TaxInBankInfoVO taxInBankInfoVO = taxDao.queryTaxInBankInfo(taxId);
         return ReturnJson.success(taxInBankInfoVO);
