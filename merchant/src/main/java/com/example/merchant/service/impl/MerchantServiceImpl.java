@@ -343,12 +343,21 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
     }
 
     @Override
-    public ReturnJson auditMerchant(String merchantId) {
+    @Transactional(rollbackFor = Exception.class)
+    public ReturnJson auditMerchant(String merchantId) throws CommonException {
         CompanyInfo companyInfo = new CompanyInfo();
         companyInfo.setAuditStatus(1);
         companyInfo.setId(merchantId);
         int i = companyInfoDao.updateById(companyInfo);
         if (i == 1) {
+            Merchant merchant = merchantDao.selectOne(new QueryWrapper<Merchant>()
+                    .lambda().eq(Merchant::getCompanyId, merchantId)
+                    .eq(Merchant::getParentId, 0));
+            if (merchant == null) {
+                throw new CommonException(300,"商户登录账号异常，请稍后再试！");
+            }
+            merchant.setStatus(0);
+            merchantDao.updateById(merchant);
             return ReturnJson.success("审核成功！");
         }
         return ReturnJson.error("审核失败！");
@@ -461,6 +470,9 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         BeanUtils.copyProperties(companyDto.getAddMerchantDto(), merchant);
         merchant.setPassWord(PWD_KEY + MD5.md5(companyDto.getAddMerchantDto().getPassWord()));
         merchant.setCompanyId(companyInfo.getId());
+        if (managers.getUserSign() != 3) {
+            merchant.setStatus(1);
+        }
         merchant.setCompanyName(companyInfo.getCompanyName());
         merchant.setRoleName("管理员");
         merchantDao.insert(merchant);
@@ -722,7 +734,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
             if (StringUtils.isNotBlank(updateCompanyTaxDTO.getId())) {
                 companyTax = companyTaxDao.selectById(updateCompanyTaxDTO.getId());
                 if (companyTax == null) {
-                    throw new CommonException(300, "信息错误");
+                    throw new CommonException(300, "合作信息错误");
                 }
                 BeanUtils.copyProperties(updateCompanyTaxDTO, companyTax);
                 companyTax.setCompanyId(updateCompanyDto.getUpdateCompanyInfoDto().getId());
@@ -861,7 +873,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
 
     @Override
     public ReturnJson taxMerchantInfoPaas(String merchantId, String taxId) {
-        return taxService.queryCompanyFlowInfo(merchantId,taxId);
+        return taxService.queryCompanyFlowInfo(merchantId, taxId);
     }
 
     @Override

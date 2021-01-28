@@ -122,7 +122,7 @@ public interface MerchantService extends IService<Merchant> {
      * @param merchantId
      * @return
      */
-    ReturnJson auditMerchant(String merchantId);
+    ReturnJson auditMerchant(String merchantId) throws CommonException;
 
     /**
      * 获取商户的支付流水

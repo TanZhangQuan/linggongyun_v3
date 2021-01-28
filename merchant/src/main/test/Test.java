@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
-public class TestDete {
+public class Test {
 
     public static void main(String[] args) {
 
