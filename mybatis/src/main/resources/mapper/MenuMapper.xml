@@ -49,7 +49,7 @@
         LEFT JOIN tb_menu mes ON me.id = mes.menu_parent
         LEFT JOIN tb_menu ms ON ms.menu_parent=mes.id
         WHERE
-            me.menu_parent IS NULL
+            me.menu_parent = 0
         AND me.is_merchant != 1
         ORDER BY
             me.id ASC
@@ -72,7 +72,7 @@
         LEFT JOIN tb_menu mes ON me.id = mes.menu_parent
         LEFT JOIN tb_menu ms ON ms.menu_parent=mes.id
         WHERE
-            me.menu_parent IS NULL
+            me.menu_parent = 0
         AND me.is_merchant != 2
         ORDER BY
             me.id ASC
@@ -94,7 +94,7 @@
         LEFT JOIN tb_menu mes ON me.id = mes.menu_parent
         LEFT JOIN tb_menu ms ON ms.menu_parent=mes.id
         WHERE
-            me.menu_parent IS NULL
+            me.menu_parent = 0
         AND me.is_merchant != 2
         AND me.id IN (1, 2, 3, 4, 12, 5, 7)
         ORDER BY

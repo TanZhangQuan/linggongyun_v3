@@ -109,7 +109,7 @@ public class MerchantPaasController {
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "companyId", value = "企业ID", required = true)
     })
-    public ReturnJson auditMerchant(@NotBlank(message = "商户公司ID不能为空！") @RequestParam(required = false) String companyId) {
+    public ReturnJson auditMerchant(@NotBlank(message = "商户公司ID不能为空！") @RequestParam(required = false) String companyId) throws CommonException {
         return merchantService.auditMerchant(companyId);
     }
 
