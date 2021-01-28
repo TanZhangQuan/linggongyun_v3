@@ -520,7 +520,7 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
         homePageVO.setInvoiceManyCount(manyInvoice.getCount());
         homePageVO.setInvoiceManyMoney(manyInvoice.getTotalMoney());
 
-        //商户数
+        //商户数queryAppletFaqById
         Integer count = companyTaxService.count(new QueryWrapper<CompanyTax>().lambda()
                 .eq(CompanyTax::getTaxId, taxId));
         homePageVO.setMerchantTotal(count);
