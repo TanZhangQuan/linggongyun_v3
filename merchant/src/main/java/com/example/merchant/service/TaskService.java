@@ -136,13 +136,6 @@ public interface TaskService extends IService<Task> {
     ReturnJson myTask(String workerId, String status);
 
     /**
-     * 获取任务列表
-     *
-     * @return
-     */
-    ReturnJson getindustryType();
-
-    /**
      * 根据创客ID筛选创客未接单的任务
      *
      * @return
