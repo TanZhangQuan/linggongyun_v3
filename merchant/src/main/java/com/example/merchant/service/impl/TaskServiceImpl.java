@@ -52,8 +52,6 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
     @Resource
     private WorkerDao workerDao;
     @Resource
-    private IndustryDao industryDao;
-    @Resource
     private CompanyInfoDao companyInfoDao;
     @Resource
     private CompanyTaxDao companyTaxDao;
@@ -335,12 +333,6 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
         return ReturnJson.success(workerTaskList);
     }
 
-
-    @Override
-    public ReturnJson getindustryType() {
-        List<String> list = industryDao.getIndustryType();
-        return ReturnJson.success(list);
-    }
 
     @Override
     public ReturnJson getAllTask(String workerId) {
