@@ -369,6 +369,7 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
             if (worker == null) {
                 worker = new Worker();
                 worker.setWxId(openid);
+                worker.setUserName(purePhoneNumber);
                 worker.setMobileCode((String) wxResult.get("purePhoneNumber"));
                 worker.setCreateDate(LocalDateTime.now());
                 workerDao.insert(worker);
