@@ -282,7 +282,13 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
             paymentInventory.setTradeNo(SnowflakeIdWorker.getSerialNumber());
             paymentInventory.setPackageStatus(0);
             paymentInventoryService.saveOrUpdate(paymentInventory);
-            CompanyWorker companyWorker=new CompanyWorker();
+            CompanyWorker companyWorker = companyWorkerService.getOne(new QueryWrapper<CompanyWorker>().lambda()
+                    .eq(CompanyWorker::getCompanyId, paymentOrder.getCompanyId())
+                    .eq(CompanyWorker::getWorkerId, paymentInventory.getWorkerId()));
+            if (companyWorker != null) {
+                continue;
+            }
+            companyWorker = new CompanyWorker();
             companyWorker.setWorkerId(paymentInventory.getWorkerId());
             companyWorker.setCompanyId(paymentOrder.getCompanyId());
             companyWorkerService.saveOrUpdate(companyWorker);
@@ -1035,7 +1041,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
                             }
 
                             //设置分包未支付，清空分包支付失败原因
-                            if (paymentInventory.getPaymentStatus() == -1){
+                            if (paymentInventory.getPaymentStatus() == -1) {
                                 paymentInventory.setPaymentStatus(0);
                                 paymentInventory.setTradeFailReason("");
                                 paymentInventoryService.updateById(paymentInventory);
@@ -1121,7 +1127,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
                             }
 
                             //设置分包未支付，清空分包支付失败原因
-                            if (paymentInventory.getPaymentStatus() == -1){
+                            if (paymentInventory.getPaymentStatus() == -1) {
                                 paymentInventory.setPaymentStatus(0);
                                 paymentInventory.setTradeFailReason("");
                                 paymentInventoryService.updateById(paymentInventory);
@@ -1207,7 +1213,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
                             }
 
                             //设置分包未支付，清空分包支付失败原因
-                            if (paymentInventory.getPaymentStatus() == -1){
+                            if (paymentInventory.getPaymentStatus() == -1) {
                                 paymentInventory.setPaymentStatus(0);
                                 paymentInventory.setTradeFailReason("");
                                 paymentInventoryService.updateById(paymentInventory);
@@ -1294,7 +1300,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
                             }
 
                             //设置分包未支付，清空分包支付失败原因
-                            if (paymentInventory.getPaymentStatus() == -1){
+                            if (paymentInventory.getPaymentStatus() == -1) {
                                 paymentInventory.setPaymentStatus(0);
                                 paymentInventory.setTradeFailReason("");
                                 paymentInventoryService.updateById(paymentInventory);

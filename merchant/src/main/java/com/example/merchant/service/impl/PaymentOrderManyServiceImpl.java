@@ -99,6 +99,9 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
     @Resource
     private PaymentHistoryService paymentHistoryService;
 
+    @Resource
+    private CompanyWorkerService companyWorkerService;
+
     /**
      * 众包今天的支付金额
      *
@@ -346,6 +349,16 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
             paymentInventory.setTradeNo(SnowflakeIdWorker.getSerialNumber());
             paymentInventory.setPaymentOrderId(paymentOrderMany.getId());
             paymentInventory.setPackageStatus(1);
+            CompanyWorker companyWorker = companyWorkerService.getOne(new QueryWrapper<CompanyWorker>().lambda()
+                    .eq(CompanyWorker::getCompanyId, paymentOrderMany.getCompanyId())
+                    .eq(CompanyWorker::getWorkerId, paymentInventory.getWorkerId()));
+            if (companyWorker != null) {
+                continue;
+            }
+            companyWorker = new CompanyWorker();
+            companyWorker.setWorkerId(paymentInventory.getWorkerId());
+            companyWorker.setCompanyId(paymentOrderMany.getCompanyId());
+            companyWorkerService.saveOrUpdate(companyWorker);
         }
         paymentInventoryService.saveOrUpdateBatch(paymentInventories);
         return ReturnJson.success("支付订单创建成功！");
