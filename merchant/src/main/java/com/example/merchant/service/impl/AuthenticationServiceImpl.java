@@ -230,8 +230,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     dict.setDictValue("true");
                     dictDao.updateById(dict);
                     workerDao.updateById(worker);
+                    returnJson = ReturnJson.success(returnJson.getMessage(),1);
                 }
-                returnJson = ReturnJson.success(returnJson.getMessage(),1);
+
             } else {
                 returnJson = SignAContractUtils.signAContract(contract, worker.getId(), worker.getAccountName(), worker.getIdcardCode(),
                         worker.getMobileCode());
