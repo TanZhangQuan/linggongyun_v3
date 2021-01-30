@@ -38,17 +38,6 @@ INSERT INTO `tb_dict`  VALUES ('1353958771681931266', '0', 'platformCertificatio
 
 
 
-INSERT INTO `tb_industry`  VALUES ('1353958771681932261', '咨询服务', '0', NOW(), NOW());
-INSERT INTO `tb_industry`  VALUES ('1353958771681932262', '企业服务', '0', NOW(), NOW());
-INSERT INTO `tb_industry`  VALUES ('1353958771681932263', '房地产投资咨询', '1353958771681932261', NOW(), NOW());
-INSERT INTO `tb_industry`  VALUES ('1353958771681932264', '企业管理咨询', '1353958771681932261', NOW(), NOW());
-INSERT INTO `tb_industry`  VALUES ('1353958771681932265', '云软件服务', '1353958771681932262', NOW(), NOW());
-INSERT INTO `tb_industry`  VALUES ('1353958771681932266', '测量勘察服务', '1353958771681932262', NOW(), NOW());
-INSERT INTO `tb_industry`  VALUES ('1353958771681932267', '建设工程监理服务', '1353958771681932262', NOW(), NOW());
-
-
-
-
 INSERT INTO `tb_invoice_catalog`  VALUES ('1307971755501895682', '技术咨询', '提供信息、建议、策划、顾问等服务的活动，包括软件、技术等方面的咨询；对技术项目提供可行性论证、技术预测和测试、技术培训、专题技术调查、分析报告和专业知识咨询等。', '研发技术服务＊技术咨询', '0', NOW(), NOW());
 INSERT INTO `tb_invoice_catalog`  VALUES ('1351448925623996418', '技术服务', '指气象服务、地震服务、海洋服务、测绘服务、城市规划、环境与生态监测服务等专项技术服务。', '现代服务*技术服务', '0', NOW(), NOW());
 INSERT INTO `tb_invoice_catalog`  VALUES ('1351448996247687169', '软件开发服务', '对基础软件、应用软件、嵌入式软件等软件提供的开发服务。', '信息技术服务*软件开发服务', '0', NOW(), NOW());
