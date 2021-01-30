@@ -724,11 +724,18 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
         homePageVO.setPayment30TotalMoney(total30DayMoney);
         BigDecimal totalMoney = paymentOrderDao.selectTotalPaasTax(taxId);
         homePageVO.setPaymentTotalMoney(totalMoney);
+        BigDecimal totalServiceMoney=paymentOrderDao.selectTotalServicePaasTax(taxId);
+        homePageVO.setPaymentTotalServiceMoney(totalServiceMoney);
 
         BigDecimal many30DayMoney = paymentOrderManyDao.selectBy30DayPaasTax(taxId);
         homePageVO.setPayment30ManyMoney(many30DayMoney);
         BigDecimal manyMoney = paymentOrderManyDao.selectTotalPaasTax(taxId);
         homePageVO.setPaymentManyMoney(manyMoney);
+        BigDecimal manyServiceMoney = paymentOrderManyDao.selectTotalServicePaasTax(taxId);
+        homePageVO.setPaymentManyServiceMoney(manyServiceMoney);
+
+        BigDecimal invoiceManyDKMoney = paymentOrderManyDao.selectInvoiceManyDKMoneyPaasTax(taxId);
+        homePageVO.setInvoiceManyDKMoney(invoiceManyDKMoney);
 
         InvoicePO totalInvoice = invoiceDao.selectInvoiceMoneyPaasTax(taxId);
         if (totalInvoice != null) {
@@ -740,7 +747,7 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
         homePageVO.setInvoiceManyCount(manyInvoice.getCount());
         homePageVO.setInvoiceManyMoney(manyInvoice.getTotalMoney());
 
-        //商户数
+        //商户数queryAppletFaqById
         Integer count = companyTaxService.count(new QueryWrapper<CompanyTax>().lambda()
                 .eq(CompanyTax::getTaxId, taxId));
         homePageVO.setMerchantTotal(count);
@@ -850,10 +857,17 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
         Integer invoiceTotalCount = paymentOrderDao.getInvoiceTotalCount(companyId, taxId);
         //获取总包发票金额
         BigDecimal invoiceTotalMoney = paymentOrderDao.getInvoiceTotalMoney(companyId, taxId);
+        //总包+分包总服务费
+        BigDecimal paymentTotalServiceMoney=paymentOrderDao.getPaymentTotalServiceMoney(companyId, taxId);
         //获取众包发票金额
         BigDecimal invoiceManyMoney = paymentOrderManyDao.getPaymentManyMoney(companyId, taxId);
         //获取众包发票数
         Integer invoiceManyCount = paymentOrderManyDao.getPaymentManyCount(companyId, taxId);
+        //众包总服务费
+        BigDecimal paymentManyServiceMoney=paymentManyMoney;
+        //众包的发票代开金额
+        BigDecimal invoiceManyDKMoney=paymentOrderManyDao.queryInvoiceManyDKMoney(companyId, taxId);
+
 
         CompanyFlowInfoVO companyFlowInfoVO = new CompanyFlowInfoVO();
         companyFlowInfoVO.setPayment30ManyMoney(payment30ManyMoney);
@@ -864,6 +878,9 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
         companyFlowInfoVO.setInvoiceTotalCount(invoiceTotalCount);
         companyFlowInfoVO.setInvoiceManyMoney(invoiceManyMoney);
         companyFlowInfoVO.setInvoiceTotalMoney(invoiceTotalMoney);
+        companyFlowInfoVO.setPaymentManyServiceMoney(paymentManyServiceMoney);
+        companyFlowInfoVO.setPaymentTotalServiceMoney(paymentTotalServiceMoney);
+        companyFlowInfoVO.setInvoiceManyDKMoney(invoiceManyDKMoney);
         return ReturnJson.success(companyFlowInfoVO);
     }
 

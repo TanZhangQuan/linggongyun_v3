@@ -108,6 +108,26 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             return ReturnJson.error("现在只支持jpg、png、bmp，格式的图片");
         }
         Map<String, String> idCardInfo = IdCardUtils.getIdCardInfo(filePath, idCardSide);
+        if (idCardSide.equals(IdCardSide.FRONT)) {
+            if ("".equals(idCardInfo.get("idCard"))) {
+                return ReturnJson.error("请上传正确的身份证正面图片");
+            }
+        } else {
+            if ("".equals(idCardInfo.get("expiryDate"))) {
+                return ReturnJson.error("请上传正确的身份证反面图片");
+            }
+            Calendar now = Calendar.getInstance();
+            String month = "";
+            if ((now.get(Calendar.MONTH) + 1) < 10) {
+                month = "0" + now.get(Calendar.MONTH + 1);
+            }
+            String currentTime = now.get(Calendar.YEAR) + month + now.get(Calendar.DAY_OF_MONTH);
+            Integer currentTimeInt = Integer.parseInt(currentTime);
+            Integer expiryTimeInt = Integer.parseInt(idCardInfo.get("expiryDate"));
+            if (expiryTimeInt.compareTo(currentTimeInt) == -1) {
+                return ReturnJson.error("身份证已过期,请重新上传！");
+            }
+        }
         return ReturnJson.success(idCardInfo);
     }
 

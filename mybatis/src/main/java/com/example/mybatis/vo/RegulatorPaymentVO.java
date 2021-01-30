@@ -27,6 +27,12 @@ public class RegulatorPaymentVO implements Serializable {
     @ApiModelProperty(value = "服务商名称")
     private String platformServiceProvider;
 
+    @ApiModelProperty(value = "商户ID")
+    private String companyId;
+
+    @ApiModelProperty(value = "服务商ID")
+    private String taxId;
+
     @ApiModelProperty(value = "项目合同")
     private String companyContract;
 

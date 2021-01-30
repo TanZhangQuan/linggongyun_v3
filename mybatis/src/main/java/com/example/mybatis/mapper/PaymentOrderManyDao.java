@@ -28,6 +28,10 @@ public interface PaymentOrderManyDao extends BaseMapper<PaymentOrderMany> {
 
     BigDecimal selectTotal(String merchantId);
 
+    BigDecimal getTotalServiceMoney(String companyId);
+
+    BigDecimal getInvoiceManyDKMoney(String companyId);
+
     /**
      * 查询商户今日成交总额
      *
@@ -61,7 +65,7 @@ public interface PaymentOrderManyDao extends BaseMapper<PaymentOrderMany> {
     YearTradeVO getYearTradeById(String merchantId);
 
     //根据商户id查众包待开票数据
-    IPage<CrowdSourcingInvoiceInfoVO>   getListCSIByID(Page page, QueryCrowdSourcingDTO queryCrowdSourcingDto, String userId);
+    IPage<CrowdSourcingInvoiceInfoVO> getListCSIByID(Page page, QueryCrowdSourcingDTO queryCrowdSourcingDto, String userId);
 
     //根据支付id查询众包支付信息
     PaymentOrderManyVO getPayOrderManyById(String id);
@@ -77,9 +81,21 @@ public interface PaymentOrderManyDao extends BaseMapper<PaymentOrderMany> {
 
     BigDecimal selectTotalpaas(List<String> merchantId);
 
+    BigDecimal getInvoiceManyDKMoneyPass(List<String> merchantId);
+
+    BigDecimal selectTotalServiceMoneyPaas(List<String> merchantId);
+
+    BigDecimal selectInvoiceManyDKMoneyPaas(List<String> merchantId);
+
     BigDecimal selectBy30DayPaasTax(String taxId);
 
     BigDecimal selectTotalPaasTax(String taxId);
+
+    BigDecimal selectTotalServicePaasTax(String taxId);
+
+    BigDecimal selectInvoiceManyDKMoneyPaasTax(String taxId);
+
+    BigDecimal getInvoiceManyDKMoneyTax(String taxId);
 
     BigDecimal selectBy30DayPaasRegulator(@Param("taxIds") List<String> taxIds);
 
@@ -118,4 +134,6 @@ public interface PaymentOrderManyDao extends BaseMapper<PaymentOrderMany> {
     BigDecimal getPaymentManyMoney(String companyId,String taxId);
 
     Integer getPaymentManyCount(String companyId,String taxId);
+
+    BigDecimal queryInvoiceManyDKMoney(String companyId,String taxId);
 }

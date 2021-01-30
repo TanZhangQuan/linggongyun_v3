@@ -206,7 +206,7 @@ public class StructureServiceImpl implements StructureService {
                         .eq(Managers::getMobileCode, agentInfoDto.getLinkMobile()));
         Managers managers = new Managers();
         Agent agent = new Agent();
-        //ID不为空进入添加
+        //ID为空进入添加
         if (StringUtils.isEmpty(agentInfoDto.getAgentId())) {
             if (managersOne != null) {
                 return ReturnJson.error("此手机号码已近注册过！");
@@ -250,6 +250,7 @@ public class StructureServiceImpl implements StructureService {
 
             return ReturnJson.success("添加代理商成功!");
         } else {
+            managers = managersDao.selectById(agentInfoDto.getAgentId());
             if (!managersOne.getId().equals(managers.getId())) {
                 return ReturnJson.error("此手机号码已近注册过！");
             }

@@ -151,6 +151,11 @@
         payment_order_status = 6 and company_id = #{merchantId}
     </select>
 
+    <select id="getTotalServiceMoney" resultType="java.math.BigDecimal">
+        select SUM(service_money) 'total_service_money' from tb_payment_order where
+        payment_order_status = 6 and company_id = #{companyId}
+    </select>
+
     <!--查询今天已支付订单-->
     <select id="selectDay" parameterType="list" resultMap="BaseResultMap">
         select * from tb_payment_order where date(payment_date) = date(now())
@@ -221,6 +226,14 @@
         </foreach>
     </select>
 
+    <select id="selectTotalServiceMoney" resultType="java.math.BigDecimal">
+        select SUM(service_money) 'total_service_money' from tb_payment_order where
+        payment_order_status = 6 and company_id in
+        <foreach collection="list" index="index" item="merchantIds" open="(" separator="," close=")">
+            #{merchantIds}
+        </foreach>
+    </select>
+
     <!--查询今天已支付订单-->
     <select id="selectDaypaas" parameterType="list" resultMap="BaseResultMap">
         select * from tb_payment_order where date(payment_date) = date(now())
@@ -284,7 +297,7 @@
                 and date(create_date) &lt;= #{endDate}
             </if>
         </where>
-        ORDER BY update_date DESC
+        ORDER BY create_date DESC
     </select>
 
     <select id="getPaymentOrderById" resultMap="PaymentOrderById">
@@ -328,6 +341,11 @@
         and tax_id = #{taxId}
     </select>
 
+    <select id="selectTotalServicePaasTax" resultType="java.math.BigDecimal">
+        select SUM(service_money) 'total_service_money' from tb_payment_order where
+        payment_order_status = 6
+        and tax_id = #{taxId}
+    </select>
 
     <!--    查询最近30天-->
     <select id="selectBy30DayPaasRegulator" parameterType="list" resultType="decimal">
@@ -1109,6 +1127,21 @@
             tb_payment_order po
         WHERE
             po.is_not_invoice = 1
+        <if test="param1 != null and param1 != ''">
+            AND po.company_id = #{param1}
+        </if>
+        <if test="param2 != null and param2 != ''">
+            AND po.tax_id = #{param2}
+        </if>
+    </select>
+
+    <select id="getPaymentTotalServiceMoney" resultType="java.math.BigDecimal">
+        SELECT
+            IFNULL(SUM(po.service_money), 0)
+        FROM
+            tb_payment_order po
+        WHERE
+            po.payment_order_status = 6
         <if test="param1 != null and param1 != ''">
             AND po.company_id = #{param1}
         </if>

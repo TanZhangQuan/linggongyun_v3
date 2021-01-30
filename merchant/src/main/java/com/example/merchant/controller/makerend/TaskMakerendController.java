@@ -68,12 +68,6 @@ public class TaskMakerendController {
         return taskService.orderGrabbing(taskId, workerId);
     }
 
-    @ApiOperation(value = "行业列表")
-    @GetMapping(value = "/queryIndustryType")
-    public ReturnJson queryIndustryType() {
-        return taskService.getindustryType();
-    }
-
     @ApiOperation(value = "待接单")
     @GetMapping(value = "/getAllTask")
     @LoginRequired

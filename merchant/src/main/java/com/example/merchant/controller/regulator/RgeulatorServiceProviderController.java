@@ -1,16 +1,18 @@
 package com.example.merchant.controller.regulator;
 
+import com.example.common.enums.UnionpayBankType;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.regulator.PayInfoDTO;
 import com.example.merchant.exception.CommonException;
 import com.example.merchant.interceptor.LoginRequired;
+import com.example.merchant.service.CompanyUnionpayService;
 import com.example.merchant.service.RegulatorTaxService;
 import com.example.mybatis.dto.RegulatorTaxDTO;
 import io.swagger.annotations.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
@@ -22,8 +24,11 @@ import javax.validation.constraints.NotNull;
 @Validated
 public class RgeulatorServiceProviderController {
 
-    @Autowired
+    @Resource
     private RegulatorTaxService regulatorTaxService;
+
+    @Resource
+    private CompanyUnionpayService companyUnionpayService;
 
     @PostMapping("/getListServiceProvider")
     @LoginRequired
@@ -92,6 +97,15 @@ public class RgeulatorServiceProviderController {
             @ApiImplicitParam(name = "type", value = "支付订单类型", required = true)})
     public ReturnJson getPaymentOrderInfo(@NotBlank(message = "支付订单ID不能为空！") @RequestParam String paymentOrderId,@NotNull(message = "支付订单类型不能为空！") @RequestParam Integer type) {
         return regulatorTaxService.getPaymentOrderInfo(paymentOrderId,type);
+    }
+
+    @GetMapping("/queryCompanyUnionpayBalance")
+    @ApiOperation(value = "查询商户相应银联的余额详情", notes = "查询商户相应银联的余额详情")
+    @LoginRequired
+    public ReturnJson queryCompanyUnionpayDetail(@ApiParam(value = "商户ID") @NotBlank(message = "请选择商户") @RequestParam(required = false) String merchantId,
+                                                 @ApiParam(value = "服务商ID") @NotBlank(message = "请选择服务商") @RequestParam(required = false) String taxId,
+                                                 @ApiParam(value = "银行类型") @NotNull(message = "请选择银行类型") @RequestParam(required = false) UnionpayBankType unionpayBankType) throws Exception {
+        return companyUnionpayService.queryCompanyUnionpayDetail(merchantId, taxId, unionpayBankType);
     }
 
 }
