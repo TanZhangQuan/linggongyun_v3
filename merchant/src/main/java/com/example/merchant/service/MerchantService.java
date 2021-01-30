@@ -142,16 +142,6 @@ public interface MerchantService extends IService<Merchant> {
     ReturnJson queryTaxPackage(String taxId, Integer packageStatus);
 
     /**
-     * 查询商户总包或众包合作信息
-     *
-     * @param taxId
-     * @param companyId
-     * @param packageStatus
-     * @return
-     */
-    ReturnJson queryCompanyPackage(String taxId, String companyId, Integer packageStatus);
-
-    /**
      * 获取商户的支付列表
      *
      * @param merchantId

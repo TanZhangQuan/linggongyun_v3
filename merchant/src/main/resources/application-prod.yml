@@ -78,13 +78,13 @@ platformContactNumber: '18666009970'
 platformCreditCode: '914401063045811741'
 
 #易云签的appkey
-yyqAppKey: "yyz9a9ek64096uk799"
+yyqAppKey: "yyzzs1bc12j8j06w7nf0"
 #易云签的secrept
-yyqSecrept: "7b95c6068a2d34c02b3a1ef251dc282f"
+yyqSecrept: "1a00ff1ef81f5eddf0ede508fdc9183e"
 #易云签的url
-yyqUrl: "https://testapi.ecloudsign.com/"
+yyqUrl: "https://api.ecloudsign.cn/"
 #易云签的AES密钥
-yyqAES: "YF}+efcaj{+oESb9"
+yyqAES: "csqd0b38i463jbq7"
 #易云签的回调地址
 yyqCallBack: "https://lgy-v3.lgyun.com.cn/makerend/authentication/callBackYYQSignAContract"
 #签约类型 0 e签宝，1：易云签

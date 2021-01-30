@@ -11,7 +11,6 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.util.List;
 
 @Data
@@ -34,11 +33,11 @@ public class TaxDTO implements Serializable {
     @NotBlank(message = "请输入法定人")
     private String taxMan;
 
-    @ApiModelProperty(value = "公司详细地址")
-    private String taxAddress;
-
-    @ApiModelProperty(value = "公司的成立时间")
-    private LocalDate taxCreateDate;
+//    @ApiModelProperty(value = "公司详细地址")
+//    private String taxAddress;
+//
+//    @ApiModelProperty(value = "公司的成立时间")
+//    private LocalDate taxCreateDate;
 
     @ApiModelProperty(value = "联系人名称")
     @NotBlank(message = "请输入联系人名称")
@@ -133,11 +132,24 @@ public class TaxDTO implements Serializable {
     @ApiModelProperty(value = "众包信息")
     private TaxPackageDTO manyTaxPackage;
 
-    @ApiModelProperty(value = "总包税率梯度价")
+    @ApiModelProperty(value = "分包汇总代开（开票）税率梯度价")
     @Valid
-    private List<InvoiceLadderPriceDTO> totalLadders;
+    private List<InvoiceLadderPriceDTO> totalCollectLadders;
 
-    @ApiModelProperty(value = "众包税率梯度价")
+    @ApiModelProperty(value = "分包单人单开（开票）税率梯度价")
+    @Valid
+    private List<InvoiceLadderPriceDTO> totalSingleLadders;
+
+    @ApiModelProperty(value = "总包（手续费）税率梯度价")
+    @Valid
+    private List<InvoiceLadderPriceDTO> totalServiceLadders;
+
+    @ApiModelProperty(value = "众包（开票）税率梯度价")
     @Valid
     private List<InvoiceLadderPriceDTO> manyLadders;
+
+    @ApiModelProperty(value = "众包（手续费）税率梯度价")
+    @Valid
+    private List<InvoiceLadderPriceDTO> manyServiceLadders;
+
 }

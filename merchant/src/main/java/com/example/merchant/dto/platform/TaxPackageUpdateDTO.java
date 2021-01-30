@@ -24,11 +24,23 @@ public class TaxPackageUpdateDTO implements Serializable {
     @ApiModelProperty(value = "众包信息")
     private TaxPackageDTO manyTaxPackage;
 
-    @ApiModelProperty(value = "总包税率梯度价")
+    @ApiModelProperty(value = "分包汇总代开（开票）税率梯度价")
     @Valid
-    private List<InvoiceLadderPriceDTO> totalLadders;
+    private List<InvoiceLadderPriceDTO> totalCollectLadders;
 
-    @ApiModelProperty(value = "众包税率梯度价")
+    @ApiModelProperty(value = "分包单人单开（开票）税率梯度价")
+    @Valid
+    private List<InvoiceLadderPriceDTO> totalSingleLadders;
+
+    @ApiModelProperty(value = "总包（手续费）税率梯度价")
+    @Valid
+    private List<InvoiceLadderPriceDTO> totalServiceLadders;
+
+    @ApiModelProperty(value = "众包（开票）税率梯度价")
     @Valid
     private List<InvoiceLadderPriceDTO> manyLadders;
+
+    @ApiModelProperty(value = "众包（手续费）税率梯度价")
+    @Valid
+    private List<InvoiceLadderPriceDTO> manyServiceLadders;
 }

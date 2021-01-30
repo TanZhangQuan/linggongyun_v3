@@ -112,7 +112,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public ReturnJson saveIdCardinfo(IdCardInfoDTO idCardInfoDto, String workerId) throws Exception {
+    public ReturnJson saveIdCardinfo(IdCardInfoDTO idCardInfoDto, String workerId) {
         Worker worker = workerDao.selectById(workerId);
         if (worker == null) {
             return ReturnJson.error("该创客不存在！");

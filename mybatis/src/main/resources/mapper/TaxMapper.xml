@@ -125,29 +125,8 @@
     </resultMap>
     <!--查询服务商列表-->
     <select id="selectTaxList" resultMap="TaxListPO" parameterType="list">
-        select f.id, f.tax_name, f.link_man, f.link_mobile, e.total_status, e.many_status, f.tax_status, f.create_date from tb_tax f LEFT JOIN
-        ((select (case when a.tax_id is null then b.tax_id else a.tax_id end) 'tax_id',
-        (case when a.id is null then 0 else 1 end) 'total_status',(case when b.id is null then 0 else 1 end)
-        'many_status' from
-        (select * from tb_tax_package
-        where package_status = 0) a
-        left join
-        (select * from tb_tax_package
-        where package_status = 1) b
-        on a.tax_id = b.tax_id
-        )
-        union
-        (select (case when c.tax_id is null then d.tax_id else c.tax_id end) 'tax_id' ,
-        (case when c.id is null then 0 else 1 end) 'total_status',(case when d.id is null then 0 else 1 end)
-        'many_status' from
-        (select * from tb_tax_package
-        where package_status = 0) c
-        right join
-        (select * from tb_tax_package
-        where package_status = 1) d
-        on c.tax_id = d.tax_id
-        ))e
-        on f.id = e.tax_id
+        select f.id, f.tax_name, f.link_man, f.link_mobile, IF((SELECT COUNT(ttp.id) FROM tb_tax_package ttp WHERE ttp.package_status = 0 AND ttp.tax_id = f.id) > 0, 1, 0) AS total_status,
+        IF((SELECT COUNT(ttp.id) FROM tb_tax_package ttp WHERE ttp.package_status = 1 AND ttp.tax_id = f.id) > 0, 1, 0) AS many_status, f.tax_status, f.create_date FROM tb_tax f
         <if test="merchantId != null and merchantId != ''">
         INNER JOIN tb_company_tax ct ON ct.tax_id=f.id
         </if>
@@ -218,7 +197,8 @@
         <result column="tid" property="taxId"/>
         <result column="tax_name" property="taxName"/>
         <result column="charge_status" property="chargeStatus"/>
-        <result column="service" property="serviceCharge"/>
+        <result column="tax_price" property="taxPrice"/>
+        <result column="service_charge" property="serviceCharge"/>
         <result column="payee" property="payee"/>
         <result column="bank_code" property="bankCode"/>
         <result column="bank_name" property="bankName"/>
@@ -227,6 +207,7 @@
             <result column="start_money" property="startMoney"/>
             <result column="end_money" property="endMoney"/>
             <result column="clsservice_charge" property="serviceCharge"/>
+            <result column="rate" property="rate"/>
         </collection>
     </resultMap>
 
@@ -237,8 +218,8 @@
             t.tax_name,
             t.id as tid,
             ct.charge_status,
+            ttp.tax_price,
             ct.service_charge,
-            ct.service_charge as service,
             ct.contract,
             t.title_of_account as payee,
             t.bank_code,
@@ -246,13 +227,16 @@
             cls.id as cls_id,
             cls.start_money,
             cls.end_money,
-            cls.service_charge as clsservice_charge
+            cls.service_charge as clsservice_charge,
+		    (SELECT tilp.rate FROM tb_invoice_ladder_price tilp WHERE tilp.tax_id = ct.tax_id AND tilp.start_money = cls.start_money AND tilp.end_money = cls.end_money
+		    AND IF(ct.package_status = 0, tilp.packaeg_status = 4, tilp.packaeg_status = 5) AND tilp.status = 0) AS rate
         FROM
             tb_company_info ci
         INNER JOIN tb_company_tax ct ON ct.company_id = ci.id
         INNER JOIN tb_tax t ON t.id = ct.tax_id
         LEFT JOIN tb_company_ladder_service cls ON cls.company_tax_id = ct.id
-        where ci.id=#{companyId}
+		LEFT JOIN tb_tax_package ttp ON ttp.tax_id = ct.tax_id AND ttp.package_status = ct.package_status
+        where ci.id= #{companyId}
         <if test="taxId != null and taxId != ''">
             AND ct.tax_id = #{taxId}
         </if>

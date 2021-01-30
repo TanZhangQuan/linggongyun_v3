@@ -38,9 +38,9 @@ public class TaxWorker extends BaseEntity {
     private String userName;
 
     /**
-     * 角色ID
+     * 角色名称
      */
-    private String roleId;
+    private String roleName;
 
     /**
      * 真实姓名

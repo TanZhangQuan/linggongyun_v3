@@ -9,7 +9,8 @@
     </resultMap>
 
    <select id="queryInvoiceLadderPriceDetailVOList" resultMap="invoiceLadderPriceDetailVO">
-        SELECT t1.start_money, t1.end_money, t1.packaeg_status, t1.status, t1.rate FROM tb_invoice_ladder_price t1 WHERE t1.tax_package_id = #{taxPackageId} ORDER BY t1.packaeg_status, t1.status ,t1.start_money ASC
+        SELECT t1.start_money, t1.end_money, t1.rate FROM tb_invoice_ladder_price t1 INNER JOIN tb_tax_package t2 ON t1.tax_package_id = t2.id
+        WHERE IF(t2.package_status = 0, t1.packaeg_status = 4, t1.packaeg_status = 5) AND t1.tax_package_id = #{taxPackageId} ORDER BY t1.start_money ASC
     </select>
 
 </mapper>

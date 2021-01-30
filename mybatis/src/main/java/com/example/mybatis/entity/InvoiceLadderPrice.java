@@ -45,7 +45,7 @@ public class InvoiceLadderPrice extends BaseEntity {
     private BigDecimal endMoney;
 
     /**
-     * 0分包汇总代开，1分包单人单开，2众包单人单开
+     * 0分包汇总代开(开票) 1分包单人单开(开票) 2众包单人单开(开票) 4总包单人单开（手续费） 5众包包单人单开（手续费）
      */
     private Integer packaegStatus;
 

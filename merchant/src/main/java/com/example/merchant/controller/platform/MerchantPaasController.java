@@ -146,15 +146,6 @@ public class MerchantPaasController {
         return merchantService.queryTaxPackage(taxId, packageStatus);
     }
 
-    @GetMapping("/queryCompanyPackage")
-    @ApiOperation(value = "查询商户总包或众包合作信息(商户编辑时使用)", notes = "查询商户总包或众包合作信息(商户编辑时使用)")
-    @LoginRequired
-    public ReturnJson queryCompanyPackage(@ApiParam(value = "服务商ID") @NotBlank(message = "请选择服务商") @RequestParam(required = false) String taxId,
-                                          @ApiParam(value = "商户ID") @NotBlank(message = "请选择商户") @RequestParam(required = false) String companyId,
-                                          @ApiParam(value = "总包或众包") @NotNull(message = "请选择总包或众包") @Range(min = 0, max = 1, message = "请选择正确的合作类型") @RequestParam(required = false) Integer packageStatus) {
-        return merchantService.queryCompanyPackage(taxId, companyId, packageStatus);
-    }
-
     @PostMapping("/addMerchant")
     @ApiOperation(value = "添加商户", notes = "添加商户")
     @ApiImplicitParams(value = {

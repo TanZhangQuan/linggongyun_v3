@@ -165,7 +165,7 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
         int creditCodeCount;
         int userNameCount;
         int loginMobileCount;
-        if (taxDto.getTaxId() != null) {
+        if (StringUtils.isNotBlank(taxDto.getTaxId())) {
 
             tax = getById(taxDto.getTaxId());
             if (tax == null) {
@@ -276,6 +276,7 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
             taxWorker = new TaxWorker();
             taxDto.setPassWord(MD5.md5(PWD_KEY + taxDto.getPassWord()));
             BeanUtils.copyProperties(taxDto, taxWorker);
+            taxWorker.setTaxId(tax.getId());
             taxWorkerService.save(taxWorker);
         }
 
@@ -283,70 +284,175 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
         TaxPackageDTO totalTaxPackageDTO = taxDto.getTotalTaxPackage();
         if (totalTaxPackageDTO != null) {
 
+            //商户-服务商总包合作信息操作
             TaxPackage totalTaxPackage = new TaxPackage();
             BeanUtils.copyProperties(totalTaxPackageDTO, totalTaxPackage);
-
             totalTaxPackage.setTaxId(tax.getId());
             taxPackageService.save(totalTaxPackage);
-            List<InvoiceLadderPriceDTO> totalLaddersDto = taxDto.getTotalLadders();
-            List<InvoiceLadderPrice> totalLadders = new ArrayList<>();
-            for (int i = 0; i < totalLaddersDto.size(); i++) {
-                InvoiceLadderPrice invoiceLadderPrice = new InvoiceLadderPrice();
-                BeanUtils.copyProperties(totalLaddersDto.get(i), invoiceLadderPrice);
-                totalLadders.add(invoiceLadderPrice);
-            }
-            //判断是否有梯度价
-            if (!VerificationCheck.listIsNull(totalLadders)) {
-                //判断梯度价是否合理
-                for (int i = 0; i < totalLadders.size(); i++) {
-                    if (i != totalLadders.size() - 1) {
-                        InvoiceLadderPrice invoiceLadderPrice = totalLadders.get(i);
-                        if (invoiceLadderPrice.getEndMoney().compareTo(invoiceLadderPrice.getStartMoney()) < 0) {
-                            throw new CommonException(300, "结束金额应该大于起始金额");
-                        }
-                        InvoiceLadderPrice invoiceLadderPriceNext = totalLadders.get(i + 1);
-                        invoiceLadderPriceNext.getStartMoney().compareTo(invoiceLadderPrice.getEndMoney());
-                        if (invoiceLadderPriceNext.getStartMoney().compareTo(invoiceLadderPrice.getEndMoney()) < 0) {
-                            throw new CommonException(300, "上梯度结束金额应小于下梯度起始金额");
-                        }
-                    }
-                    totalLadders.get(i).setTaxId(tax.getId());
-                    totalLadders.get(i).setTaxPackageId(totalTaxPackage.getId());
+
+            //总包（手续费）税率梯度价
+            List<InvoiceLadderPriceDTO> totalServiceLaddersDTO = taxDto.getTotalServiceLadders();
+            List<InvoiceLadderPrice> totalServiceLadders = new ArrayList<>();
+            if (totalServiceLaddersDTO != null && totalServiceLaddersDTO.size() > 0) {
+                for (int i = 0; i < totalServiceLaddersDTO.size(); i++) {
+                    InvoiceLadderPrice invoiceLadderPrice = new InvoiceLadderPrice();
+                    BeanUtils.copyProperties(totalServiceLaddersDTO.get(i), invoiceLadderPrice);
+                    totalServiceLadders.add(invoiceLadderPrice);
                 }
-                invoiceLadderPriceService.saveBatch(totalLadders);
             }
 
+            //判断是否有梯度价
+            if (!VerificationCheck.listIsNull(totalServiceLadders)) {
+                //判断梯度价是否合理
+                for (int i = 0; i < totalServiceLadders.size(); i++) {
+                    if (i != totalServiceLadders.size() - 1) {
+                        InvoiceLadderPrice invoiceLadderPrice = totalServiceLadders.get(i);
+                        if (invoiceLadderPrice.getEndMoney().compareTo(invoiceLadderPrice.getStartMoney()) <= 0) {
+                            throw new CommonException(300, "总包（手续费）税率梯度价结束金额应该大于起始金额");
+                        }
+                        InvoiceLadderPrice invoiceLadderPriceNext = totalServiceLadders.get(i + 1);
+                        invoiceLadderPriceNext.getStartMoney().compareTo(invoiceLadderPrice.getEndMoney());
+                        if (invoiceLadderPriceNext.getStartMoney().compareTo(invoiceLadderPrice.getEndMoney()) != 0) {
+                            throw new CommonException(300, "总包（手续费）税率梯度价上梯度结束金额应等于下梯度起始金额");
+                        }
+                    }
+                    totalServiceLadders.get(i).setTaxId(tax.getId());
+                    totalServiceLadders.get(i).setTaxPackageId(totalTaxPackage.getId());
+                }
+                invoiceLadderPriceService.saveBatch(totalServiceLadders);
+            }
+
+            //分包汇总代开（开票）税率梯度价
+            List<InvoiceLadderPriceDTO> totalCollectLaddersDto = taxDto.getTotalCollectLadders();
+            List<InvoiceLadderPrice> totalCollectLadders = new ArrayList<>();
+            if (totalCollectLaddersDto != null && totalCollectLaddersDto.size() > 0) {
+                for (int i = 0; i < totalCollectLaddersDto.size(); i++) {
+                    InvoiceLadderPrice invoiceLadderPrice = new InvoiceLadderPrice();
+                    BeanUtils.copyProperties(totalCollectLaddersDto.get(i), invoiceLadderPrice);
+                    totalCollectLadders.add(invoiceLadderPrice);
+                }
+            }
+
+            //判断是否有梯度价
+            if (!VerificationCheck.listIsNull(totalCollectLadders)) {
+                //判断梯度价是否合理
+                for (int i = 0; i < totalCollectLadders.size(); i++) {
+                    if (i != totalCollectLadders.size() - 1) {
+                        InvoiceLadderPrice invoiceLadderPrice = totalCollectLadders.get(i);
+                        if (invoiceLadderPrice.getEndMoney().compareTo(invoiceLadderPrice.getStartMoney()) <= 0) {
+                            throw new CommonException(300, "分包汇总代开（开票）税率梯度价结束金额应该大于起始金额");
+                        }
+                        InvoiceLadderPrice invoiceLadderPriceNext = totalCollectLadders.get(i + 1);
+                        invoiceLadderPriceNext.getStartMoney().compareTo(invoiceLadderPrice.getEndMoney());
+                        if (invoiceLadderPriceNext.getStartMoney().compareTo(invoiceLadderPrice.getEndMoney()) != 0) {
+                            throw new CommonException(300, "分包汇总代开（开票）税率梯度价上梯度结束金额应等于下梯度起始金额");
+                        }
+                    }
+                    totalCollectLadders.get(i).setTaxId(tax.getId());
+                    totalCollectLadders.get(i).setTaxPackageId(totalTaxPackage.getId());
+                }
+                invoiceLadderPriceService.saveBatch(totalCollectLadders);
+            }
+
+            //分包单人单开（开票）税率梯度价
+            List<InvoiceLadderPriceDTO> totalSingleLaddersDto = taxDto.getTotalSingleLadders();
+            List<InvoiceLadderPrice> totalSingleLadders = new ArrayList<>();
+            if (totalSingleLaddersDto != null && totalSingleLaddersDto.size() > 0) {
+                for (int i = 0; i < totalSingleLaddersDto.size(); i++) {
+                    InvoiceLadderPrice invoiceLadderPrice = new InvoiceLadderPrice();
+                    BeanUtils.copyProperties(totalSingleLaddersDto.get(i), invoiceLadderPrice);
+                    totalSingleLadders.add(invoiceLadderPrice);
+                }
+            }
+
+            //判断是否有梯度价
+            if (!VerificationCheck.listIsNull(totalSingleLadders)) {
+                //判断梯度价是否合理
+                for (int i = 0; i < totalSingleLadders.size(); i++) {
+                    if (i != totalSingleLadders.size() - 1) {
+                        InvoiceLadderPrice invoiceLadderPrice = totalSingleLadders.get(i);
+                        if (invoiceLadderPrice.getEndMoney().compareTo(invoiceLadderPrice.getStartMoney()) <= 0) {
+                            throw new CommonException(300, "分包单人单开（开票）税率梯度价结束金额应该大于起始金额");
+                        }
+                        InvoiceLadderPrice invoiceLadderPriceNext = totalSingleLadders.get(i + 1);
+                        invoiceLadderPriceNext.getStartMoney().compareTo(invoiceLadderPrice.getEndMoney());
+                        if (invoiceLadderPriceNext.getStartMoney().compareTo(invoiceLadderPrice.getEndMoney()) != 0) {
+                            throw new CommonException(300, "分包单人单开（开票）税率梯度价上梯度结束金额应等于下梯度起始金额");
+                        }
+                    }
+                    totalSingleLadders.get(i).setTaxId(tax.getId());
+                    totalSingleLadders.get(i).setTaxPackageId(totalTaxPackage.getId());
+                }
+                invoiceLadderPriceService.saveBatch(totalSingleLadders);
+            }
         }
 
         //判断是否有众包，有众包就添加
         TaxPackageDTO manyTaxPackageDTO = taxDto.getManyTaxPackage();
         if (manyTaxPackageDTO != null) {
 
+            //商户-服务商众包合作信息操作
             TaxPackage manyTaxPackage = new TaxPackage();
             BeanUtils.copyProperties(manyTaxPackageDTO, manyTaxPackage);
-
             manyTaxPackage.setTaxId(tax.getId());
             taxPackageService.save(manyTaxPackage);
+
+            //众包（手续费）税率梯度价
+            List<InvoiceLadderPriceDTO> manyServiceLaddersDto = taxDto.getManyServiceLadders();
+            List<InvoiceLadderPrice> manyServiceLadders = new ArrayList<>();
+            if (manyServiceLaddersDto != null && manyServiceLaddersDto.size() > 0) {
+                for (int i = 0; i < manyServiceLaddersDto.size(); i++) {
+                    InvoiceLadderPrice invoiceLadderPrice = new InvoiceLadderPrice();
+                    BeanUtils.copyProperties(manyServiceLaddersDto.get(i), invoiceLadderPrice);
+                    manyServiceLadders.add(invoiceLadderPrice);
+                }
+            }
+
+            //判断是否有梯度价
+            if (!VerificationCheck.listIsNull(manyServiceLadders)) {
+                //判断梯度价是否合理
+                for (int i = 0; i < manyServiceLadders.size(); i++) {
+                    if (i != manyServiceLadders.size() - 1) {
+                        InvoiceLadderPrice invoiceLadderPrice = manyServiceLadders.get(i);
+                        if (invoiceLadderPrice.getEndMoney().compareTo(invoiceLadderPrice.getStartMoney()) <= 0) {
+                            throw new CommonException(300, "众包（手续费）税率梯度价结束金额应该大于起始金额");
+                        }
+                        InvoiceLadderPrice invoiceLadderPriceNext = manyServiceLadders.get(i + 1);
+                        invoiceLadderPriceNext.getStartMoney().compareTo(invoiceLadderPrice.getEndMoney());
+                        if (invoiceLadderPriceNext.getStartMoney().compareTo(invoiceLadderPrice.getEndMoney()) != 0) {
+                            throw new CommonException(300, "众包（手续费）税率梯度价上梯度结束金额应等于下梯度起始金额");
+                        }
+                    }
+                    manyServiceLadders.get(i).setTaxId(tax.getId());
+                    manyServiceLadders.get(i).setTaxPackageId(manyTaxPackage.getId());
+                }
+                invoiceLadderPriceService.saveBatch(manyServiceLadders);
+            }
+
+            //众包（开票）税率梯度价
             List<InvoiceLadderPriceDTO> manyLaddersDto = taxDto.getManyLadders();
             List<InvoiceLadderPrice> manyLadders = new ArrayList<>();
-            for (int i = 0; i < manyLaddersDto.size(); i++) {
-                InvoiceLadderPrice invoiceLadderPrice = new InvoiceLadderPrice();
-                BeanUtils.copyProperties(manyLaddersDto.get(i), invoiceLadderPrice);
-                manyLadders.add(invoiceLadderPrice);
+            if (manyLaddersDto != null && manyLaddersDto.size() > 0) {
+                for (int i = 0; i < manyLaddersDto.size(); i++) {
+                    InvoiceLadderPrice invoiceLadderPrice = new InvoiceLadderPrice();
+                    BeanUtils.copyProperties(manyLaddersDto.get(i), invoiceLadderPrice);
+                    manyLadders.add(invoiceLadderPrice);
+                }
             }
+
             //判断是否有梯度价
             if (!VerificationCheck.listIsNull(manyLadders)) {
                 //判断梯度价是否合理
                 for (int i = 0; i < manyLadders.size(); i++) {
                     if (i != manyLadders.size() - 1) {
                         InvoiceLadderPrice invoiceLadderPrice = manyLadders.get(i);
-                        if (invoiceLadderPrice.getEndMoney().compareTo(invoiceLadderPrice.getStartMoney()) < 0) {
-                            throw new CommonException(300, "结束金额应该大于起始金额");
+                        if (invoiceLadderPrice.getEndMoney().compareTo(invoiceLadderPrice.getStartMoney()) <= 0) {
+                            throw new CommonException(300, "众包（开票）税率梯度价结束金额应该大于起始金额");
                         }
                         InvoiceLadderPrice invoiceLadderPriceNext = manyLadders.get(i + 1);
                         invoiceLadderPriceNext.getStartMoney().compareTo(invoiceLadderPrice.getEndMoney());
-                        if (invoiceLadderPriceNext.getStartMoney().compareTo(invoiceLadderPrice.getEndMoney()) == 0) {
-                            throw new CommonException(300, "上梯度结束金额应等于下梯度起始金额");
+                        if (invoiceLadderPriceNext.getStartMoney().compareTo(invoiceLadderPrice.getEndMoney()) != 0) {
+                            throw new CommonException(300, "众包（开票）税率梯度价上梯度结束金额应等于下梯度起始金额");
                         }
                     }
                     manyLadders.get(i).setTaxId(tax.getId());
@@ -372,70 +478,175 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
         TaxPackageDTO totalTaxPackageDTO = taxPackageUpdateDTO.getTotalTaxPackage();
         if (totalTaxPackageDTO != null) {
 
+            //商户-服务商总包合作信息操作
             TaxPackage totalTaxPackage = new TaxPackage();
             BeanUtils.copyProperties(totalTaxPackageDTO, totalTaxPackage);
-
             totalTaxPackage.setTaxId(taxPackageUpdateDTO.getTaxId());
             taxPackageService.save(totalTaxPackage);
-            List<InvoiceLadderPriceDTO> totalLaddersDto = taxPackageUpdateDTO.getTotalLadders();
-            List<InvoiceLadderPrice> totalLadders = new ArrayList<>();
-            for (int i = 0; i < totalLaddersDto.size(); i++) {
-                InvoiceLadderPrice invoiceLadderPrice = new InvoiceLadderPrice();
-                BeanUtils.copyProperties(totalLaddersDto.get(i), invoiceLadderPrice);
-                totalLadders.add(invoiceLadderPrice);
-            }
-            //判断是否有梯度价
-            if (!VerificationCheck.listIsNull(totalLadders)) {
-                //判断梯度价是否合理
-                for (int i = 0; i < totalLadders.size(); i++) {
-                    if (i != totalLadders.size() - 1) {
-                        InvoiceLadderPrice invoiceLadderPrice = totalLadders.get(i);
-                        if (invoiceLadderPrice.getEndMoney().compareTo(invoiceLadderPrice.getStartMoney()) < 0) {
-                            throw new CommonException(300, "结束金额应该大于起始金额");
-                        }
-                        InvoiceLadderPrice invoiceLadderPriceNext = totalLadders.get(i + 1);
-                        invoiceLadderPriceNext.getStartMoney().compareTo(invoiceLadderPrice.getEndMoney());
-                        if (invoiceLadderPriceNext.getStartMoney().compareTo(invoiceLadderPrice.getEndMoney()) < 0) {
-                            throw new CommonException(300, "上梯度结束金额应小于下梯度起始金额");
-                        }
-                    }
-                    totalLadders.get(i).setTaxId(taxPackageUpdateDTO.getTaxId());
-                    totalLadders.get(i).setTaxPackageId(totalTaxPackage.getId());
+
+            //总包（手续费）税率梯度价
+            List<InvoiceLadderPriceDTO> totalServiceLaddersDTO = taxPackageUpdateDTO.getTotalServiceLadders();
+            List<InvoiceLadderPrice> totalServiceLadders = new ArrayList<>();
+            if (totalServiceLaddersDTO != null && totalServiceLaddersDTO.size() > 0) {
+                for (int i = 0; i < totalServiceLaddersDTO.size(); i++) {
+                    InvoiceLadderPrice invoiceLadderPrice = new InvoiceLadderPrice();
+                    BeanUtils.copyProperties(totalServiceLaddersDTO.get(i), invoiceLadderPrice);
+                    totalServiceLadders.add(invoiceLadderPrice);
                 }
-                invoiceLadderPriceService.saveBatch(totalLadders);
             }
 
+            //判断是否有梯度价
+            if (!VerificationCheck.listIsNull(totalServiceLadders)) {
+                //判断梯度价是否合理
+                for (int i = 0; i < totalServiceLadders.size(); i++) {
+                    if (i != totalServiceLadders.size() - 1) {
+                        InvoiceLadderPrice invoiceLadderPrice = totalServiceLadders.get(i);
+                        if (invoiceLadderPrice.getEndMoney().compareTo(invoiceLadderPrice.getStartMoney()) <= 0) {
+                            throw new CommonException(300, "总包（手续费）税率梯度价结束金额应该大于起始金额");
+                        }
+                        InvoiceLadderPrice invoiceLadderPriceNext = totalServiceLadders.get(i + 1);
+                        invoiceLadderPriceNext.getStartMoney().compareTo(invoiceLadderPrice.getEndMoney());
+                        if (invoiceLadderPriceNext.getStartMoney().compareTo(invoiceLadderPrice.getEndMoney()) != 0) {
+                            throw new CommonException(300, "总包（手续费）税率梯度价上梯度结束金额应等于下梯度起始金额");
+                        }
+                    }
+                    totalServiceLadders.get(i).setTaxId(taxPackageUpdateDTO.getTaxId());
+                    totalServiceLadders.get(i).setTaxPackageId(totalTaxPackage.getId());
+                }
+                invoiceLadderPriceService.saveBatch(totalServiceLadders);
+            }
+
+            //分包汇总代开（开票）税率梯度价
+            List<InvoiceLadderPriceDTO> totalCollectLaddersDto = taxPackageUpdateDTO.getTotalCollectLadders();
+            List<InvoiceLadderPrice> totalCollectLadders = new ArrayList<>();
+            if (totalCollectLaddersDto != null && totalCollectLaddersDto.size() > 0) {
+                for (int i = 0; i < totalCollectLaddersDto.size(); i++) {
+                    InvoiceLadderPrice invoiceLadderPrice = new InvoiceLadderPrice();
+                    BeanUtils.copyProperties(totalCollectLaddersDto.get(i), invoiceLadderPrice);
+                    totalCollectLadders.add(invoiceLadderPrice);
+                }
+            }
+
+            //判断是否有梯度价
+            if (!VerificationCheck.listIsNull(totalCollectLadders)) {
+                //判断梯度价是否合理
+                for (int i = 0; i < totalCollectLadders.size(); i++) {
+                    if (i != totalCollectLadders.size() - 1) {
+                        InvoiceLadderPrice invoiceLadderPrice = totalCollectLadders.get(i);
+                        if (invoiceLadderPrice.getEndMoney().compareTo(invoiceLadderPrice.getStartMoney()) <= 0) {
+                            throw new CommonException(300, "分包汇总代开（开票）税率梯度价结束金额应该大于起始金额");
+                        }
+                        InvoiceLadderPrice invoiceLadderPriceNext = totalCollectLadders.get(i + 1);
+                        invoiceLadderPriceNext.getStartMoney().compareTo(invoiceLadderPrice.getEndMoney());
+                        if (invoiceLadderPriceNext.getStartMoney().compareTo(invoiceLadderPrice.getEndMoney()) != 0) {
+                            throw new CommonException(300, "分包汇总代开（开票）税率梯度价上梯度结束金额应等于下梯度起始金额");
+                        }
+                    }
+                    totalCollectLadders.get(i).setTaxId(taxPackageUpdateDTO.getTaxId());
+                    totalCollectLadders.get(i).setTaxPackageId(totalTaxPackage.getId());
+                }
+                invoiceLadderPriceService.saveBatch(totalCollectLadders);
+            }
+
+            //分包单人单开（开票）税率梯度价
+            List<InvoiceLadderPriceDTO> totalSingleLaddersDto = taxPackageUpdateDTO.getTotalSingleLadders();
+            List<InvoiceLadderPrice> totalSingleLadders = new ArrayList<>();
+            if (totalSingleLaddersDto != null && totalSingleLaddersDto.size() > 0) {
+                for (int i = 0; i < totalSingleLaddersDto.size(); i++) {
+                    InvoiceLadderPrice invoiceLadderPrice = new InvoiceLadderPrice();
+                    BeanUtils.copyProperties(totalSingleLaddersDto.get(i), invoiceLadderPrice);
+                    totalSingleLadders.add(invoiceLadderPrice);
+                }
+            }
+
+            //判断是否有梯度价
+            if (!VerificationCheck.listIsNull(totalSingleLadders)) {
+                //判断梯度价是否合理
+                for (int i = 0; i < totalSingleLadders.size(); i++) {
+                    if (i != totalSingleLadders.size() - 1) {
+                        InvoiceLadderPrice invoiceLadderPrice = totalSingleLadders.get(i);
+                        if (invoiceLadderPrice.getEndMoney().compareTo(invoiceLadderPrice.getStartMoney()) <= 0) {
+                            throw new CommonException(300, "分包单人单开（开票）税率梯度价结束金额应该大于起始金额");
+                        }
+                        InvoiceLadderPrice invoiceLadderPriceNext = totalSingleLadders.get(i + 1);
+                        invoiceLadderPriceNext.getStartMoney().compareTo(invoiceLadderPrice.getEndMoney());
+                        if (invoiceLadderPriceNext.getStartMoney().compareTo(invoiceLadderPrice.getEndMoney()) != 0) {
+                            throw new CommonException(300, "分包单人单开（开票）税率梯度价上梯度结束金额应等于下梯度起始金额");
+                        }
+                    }
+                    totalSingleLadders.get(i).setTaxId(taxPackageUpdateDTO.getTaxId());
+                    totalSingleLadders.get(i).setTaxPackageId(totalTaxPackage.getId());
+                }
+                invoiceLadderPriceService.saveBatch(totalSingleLadders);
+            }
         }
 
         //判断是否有众包，有众包就添加
         TaxPackageDTO manyTaxPackageDTO = taxPackageUpdateDTO.getManyTaxPackage();
         if (manyTaxPackageDTO != null) {
 
+            //商户-服务商众包合作信息操作
             TaxPackage manyTaxPackage = new TaxPackage();
             BeanUtils.copyProperties(manyTaxPackageDTO, manyTaxPackage);
-
             manyTaxPackage.setTaxId(taxPackageUpdateDTO.getTaxId());
             taxPackageService.save(manyTaxPackage);
+
+            //众包（手续费）税率梯度价
+            List<InvoiceLadderPriceDTO> manyServiceLaddersDto = taxPackageUpdateDTO.getManyServiceLadders();
+            List<InvoiceLadderPrice> manyServiceLadders = new ArrayList<>();
+            if (manyServiceLaddersDto != null && manyServiceLaddersDto.size() > 0) {
+                for (int i = 0; i < manyServiceLaddersDto.size(); i++) {
+                    InvoiceLadderPrice invoiceLadderPrice = new InvoiceLadderPrice();
+                    BeanUtils.copyProperties(manyServiceLaddersDto.get(i), invoiceLadderPrice);
+                    manyServiceLadders.add(invoiceLadderPrice);
+                }
+            }
+
+            //判断是否有梯度价
+            if (!VerificationCheck.listIsNull(manyServiceLadders)) {
+                //判断梯度价是否合理
+                for (int i = 0; i < manyServiceLadders.size(); i++) {
+                    if (i != manyServiceLadders.size() - 1) {
+                        InvoiceLadderPrice invoiceLadderPrice = manyServiceLadders.get(i);
+                        if (invoiceLadderPrice.getEndMoney().compareTo(invoiceLadderPrice.getStartMoney()) <= 0) {
+                            throw new CommonException(300, "众包（手续费）税率梯度价结束金额应该大于起始金额");
+                        }
+                        InvoiceLadderPrice invoiceLadderPriceNext = manyServiceLadders.get(i + 1);
+                        invoiceLadderPriceNext.getStartMoney().compareTo(invoiceLadderPrice.getEndMoney());
+                        if (invoiceLadderPriceNext.getStartMoney().compareTo(invoiceLadderPrice.getEndMoney()) != 0) {
+                            throw new CommonException(300, "众包（手续费）税率梯度价上梯度结束金额应等于下梯度起始金额");
+                        }
+                    }
+                    manyServiceLadders.get(i).setTaxId(taxPackageUpdateDTO.getTaxId());
+                    manyServiceLadders.get(i).setTaxPackageId(manyTaxPackage.getId());
+                }
+                invoiceLadderPriceService.saveBatch(manyServiceLadders);
+            }
+
+            //众包（开票）税率梯度价
             List<InvoiceLadderPriceDTO> manyLaddersDto = taxPackageUpdateDTO.getManyLadders();
             List<InvoiceLadderPrice> manyLadders = new ArrayList<>();
-            for (int i = 0; i < manyLaddersDto.size(); i++) {
-                InvoiceLadderPrice invoiceLadderPrice = new InvoiceLadderPrice();
-                BeanUtils.copyProperties(manyLaddersDto.get(i), invoiceLadderPrice);
-                manyLadders.add(invoiceLadderPrice);
+            if (manyLaddersDto != null && manyLaddersDto.size() > 0) {
+                for (int i = 0; i < manyLaddersDto.size(); i++) {
+                    InvoiceLadderPrice invoiceLadderPrice = new InvoiceLadderPrice();
+                    BeanUtils.copyProperties(manyLaddersDto.get(i), invoiceLadderPrice);
+                    manyLadders.add(invoiceLadderPrice);
+                }
             }
+
             //判断是否有梯度价
             if (!VerificationCheck.listIsNull(manyLadders)) {
                 //判断梯度价是否合理
                 for (int i = 0; i < manyLadders.size(); i++) {
                     if (i != manyLadders.size() - 1) {
                         InvoiceLadderPrice invoiceLadderPrice = manyLadders.get(i);
-                        if (invoiceLadderPrice.getEndMoney().compareTo(invoiceLadderPrice.getStartMoney()) < 0) {
-                            throw new CommonException(300, "结束金额应该大于起始金额");
+                        if (invoiceLadderPrice.getEndMoney().compareTo(invoiceLadderPrice.getStartMoney()) <= 0) {
+                            throw new CommonException(300, "众包（开票）税率梯度价结束金额应该大于起始金额");
                         }
                         InvoiceLadderPrice invoiceLadderPriceNext = manyLadders.get(i + 1);
                         invoiceLadderPriceNext.getStartMoney().compareTo(invoiceLadderPrice.getEndMoney());
-                        if (invoiceLadderPriceNext.getStartMoney().compareTo(invoiceLadderPrice.getEndMoney()) == 0) {
-                            throw new CommonException(300, "上梯度结束金额应等于下梯度起始金额");
+                        if (invoiceLadderPriceNext.getStartMoney().compareTo(invoiceLadderPrice.getEndMoney()) != 0) {
+                            throw new CommonException(300, "众包（开票）税率梯度价上梯度结束金额应等于下梯度起始金额");
                         }
                     }
                     manyLadders.get(i).setTaxId(taxPackageUpdateDTO.getTaxId());
@@ -464,12 +675,16 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
 
     @Override
     public ReturnJson getTaxInfo(String taxId) {
+        //服务商信息
         Tax tax = taxDao.selectById(taxId);
         TaxPlatformVO taxPlatformVO = new TaxPlatformVO();
         BeanUtils.copyProperties(tax, taxPlatformVO);
+
+        //服务商总包合作信息
         TaxPackage totalTaxPackage = taxPackageService.getOne(new QueryWrapper<TaxPackage>().lambda()
                 .eq(TaxPackage::getTaxId, taxId)
                 .eq(TaxPackage::getPackageStatus, 0));
+
         if (totalTaxPackage != null) {
             List<InvoiceLadderPrice> totalLadder = invoiceLadderPriceService.list(
                     new QueryWrapper<InvoiceLadderPrice>().lambda()
@@ -477,9 +692,12 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
             taxPlatformVO.setTotalTaxPackage(totalTaxPackage);
             taxPlatformVO.setTotalLadders(totalLadder);
         }
+
+        //服务商众包合作信息
         TaxPackage manyTaxPackage = taxPackageService.getOne(new QueryWrapper<TaxPackage>().lambda()
                 .eq(TaxPackage::getTaxId, taxId)
                 .eq(TaxPackage::getPackageStatus, 1));
+
         if (manyTaxPackage != null) {
             List<InvoiceLadderPrice> manyLadder = invoiceLadderPriceService.list(
                     new QueryWrapper<InvoiceLadderPrice>().lambda()
@@ -487,6 +705,15 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
             taxPlatformVO.setManyTaxPackage(manyTaxPackage);
             taxPlatformVO.setManyLadders(manyLadder);
         }
+
+        //主账号信息
+        QueryWrapper<TaxWorker> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(TaxWorker::getTaxId, taxId).eq(TaxWorker::getParentId, 0);
+        TaxWorker taxWorker = taxWorkerService.getOne(queryWrapper);
+
+        taxPlatformVO.setUserName(taxWorker.getUserName());
+        taxPlatformVO.setLoginMobile(taxWorker.getLoginMobile());
+
         return ReturnJson.success(taxPlatformVO);
     }
 
@@ -660,7 +887,7 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
     public ReturnJson deleteInvoiceCatalog(String invoiceCatalogId) {
         InvoiceCatalog invoiceCatalog = invoiceCatalogDao.selectById(invoiceCatalogId);
         if (invoiceCatalog != null) {
-            if (invoiceCatalog.getIsNot()){
+            if (invoiceCatalog.getIsNot()) {
                 invoiceCatalogDao.deleteById(invoiceCatalog);
                 return ReturnJson.success("删除成功！");
             }

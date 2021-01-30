@@ -20,6 +20,10 @@ public class CompanyLadderServiceVO implements Serializable {
     @ApiModelProperty(value = "结束金额")
     private String endMoney;
 
-    @ApiModelProperty(value = "服务费率")
+    @ApiModelProperty(value = "商户服务费率")
     private String serviceCharge;
+
+    @ApiModelProperty(value = "服务商服务费率")
+    private String rate;
+
 }

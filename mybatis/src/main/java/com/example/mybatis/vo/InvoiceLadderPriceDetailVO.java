@@ -23,12 +23,6 @@ public class InvoiceLadderPriceDetailVO implements Serializable {
     @ApiModelProperty(value = "结束的金额")
     private BigDecimal endMoney;
 
-    @ApiModelProperty(value = "0分包汇总代开，1分包单人单开，2众包单人单开")
-    private Integer packaegStatus;
-
-    @ApiModelProperty(value = "0月度，1季度")
-    private Integer status;
-
     @ApiModelProperty(value = "服务费（如7.5，不需把百分数换算成小数）")
     private BigDecimal rate;
 

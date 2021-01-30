@@ -23,13 +23,13 @@ public class TaxListPO {
     @ApiModelProperty("联系人手机号")
     private String linkMobile;
 
-    @ApiModelProperty("总包状态0有总包，1没有总包")
+    @ApiModelProperty("总包状态 0没有总包，1有总包")
     private Integer totalStatus;
 
-    @ApiModelProperty("众包状态0有众包，1没有众包")
+    @ApiModelProperty("众包状态 0没有众包，1有众包")
     private Integer manyStatus;
 
-    @ApiModelProperty("服务商状态：0正常1停用")
+    @ApiModelProperty("服务商状态：0正常 1停用")
     private Integer taxStatus;
 
     @ApiModelProperty("创建时间")

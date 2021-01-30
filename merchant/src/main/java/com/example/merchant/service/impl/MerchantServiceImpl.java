@@ -405,47 +405,6 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
     }
 
     @Override
-    public ReturnJson queryCompanyPackage(String taxId, String companyId, Integer packageStatus) {
-
-        CompanyPackageDetailVO companyPackageDetailVO = new CompanyPackageDetailVO();
-        TaxPackage taxPackage = taxPackageService.queryTaxPackage(taxId, packageStatus);
-        if (taxPackage != null) {
-            //服务商一口价综合税费率
-            companyPackageDetailVO.setTaxPrice(taxPackage.getTaxPrice());
-
-            //获取服务商梯度价
-            List<CompanyInvoiceLadderPriceDetailVO> companyInvoiceLadderPriceDetailVOList = new ArrayList<>();
-            List<InvoiceLadderPriceDetailVO> invoiceLadderPriceDetailVOList = invoiceLadderPriceService.queryInvoiceLadderPriceDetailVOList(taxPackage.getId());
-            if (invoiceLadderPriceDetailVOList != null && invoiceLadderPriceDetailVOList.size() > 0) {
-                for (InvoiceLadderPriceDetailVO invoiceLadderPriceDetailVO : invoiceLadderPriceDetailVOList) {
-                    CompanyInvoiceLadderPriceDetailVO companyInvoiceLadderPriceDetailVO = new CompanyInvoiceLadderPriceDetailVO();
-                    BeanUtils.copyProperties(invoiceLadderPriceDetailVO, companyInvoiceLadderPriceDetailVO);
-                    companyInvoiceLadderPriceDetailVOList.add(companyInvoiceLadderPriceDetailVO);
-                }
-            }
-
-            CompanyTax companyTax = companyTaxService.queryCompanyTax(taxId, companyId, packageStatus);
-            if (companyTax != null) {
-
-                //商户一口价综合税费率
-                companyPackageDetailVO.setCompanyPrice(companyTax.getServiceCharge());
-
-                //获取商户梯度价税率
-                if (companyInvoiceLadderPriceDetailVOList.size() > 0) {
-                    for (CompanyInvoiceLadderPriceDetailVO companyInvoiceLadderPriceDetailVO : companyInvoiceLadderPriceDetailVOList) {
-                        BigDecimal serviceCharge = companyLadderServiceService.queryServiceCharge(companyTax.getId(), companyInvoiceLadderPriceDetailVO.getStartMoney(), companyInvoiceLadderPriceDetailVO.getEndMoney());
-                        companyInvoiceLadderPriceDetailVO.setCompanyRate(serviceCharge);
-                    }
-                }
-
-            }
-
-        }
-
-        return ReturnJson.success(companyPackageDetailVO);
-    }
-
-    @Override
     public ReturnJson getMerchantPaymentList(String merchantId, String taxId, Integer page, Integer pageSize) {
         Merchant merchant = merchantDao.selectById(merchantId);
         if (merchant == null) {

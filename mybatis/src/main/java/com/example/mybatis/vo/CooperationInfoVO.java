@@ -29,6 +29,12 @@ public class CooperationInfoVO implements Serializable {
     private String chargeStatus;
 
     @ApiModelProperty(value = "一口价费率")
+    private String tax;
+
+    @ApiModelProperty(value = "服务商一口价费率")
+    private String taxPrice;
+
+    @ApiModelProperty(value = "商户一口价费率")
     private String serviceCharge;
 
     @ApiModelProperty(value = "合作合同地址")

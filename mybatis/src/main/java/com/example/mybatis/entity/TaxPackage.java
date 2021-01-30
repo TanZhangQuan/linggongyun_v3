@@ -35,7 +35,7 @@ public class TaxPackage extends BaseEntity {
     private BigDecimal taxPrice;
 
     /**
-     * 合作类型 0总包，1众包
+     * 合作类型 0总包 1众包
      */
     private Integer packageStatus;
 

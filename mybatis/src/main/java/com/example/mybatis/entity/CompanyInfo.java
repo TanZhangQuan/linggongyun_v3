@@ -92,7 +92,7 @@ public class CompanyInfo extends BaseEntity {
     private String bankAndAccount;
 
     /**
-     * 公司地址and电话
+     * 公司地址及电话
      */
     private String addressAndTelephone;
 
