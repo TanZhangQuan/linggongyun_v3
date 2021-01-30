@@ -23,14 +23,15 @@ import java.util.*;
 public class SftpUtil {
 
     private String host;//服务器连接ip
+    private int port;//端口号
     private String username;//用户名
     private String password;//密码
-    private int port = 22;//端口号
     private ChannelSftp sftp = null;
     private Session sshSession = null;
 
-    public SftpUtil(String host, String username, String password) {
+    public SftpUtil(String host, int port, String username, String password) {
         this.host = host;
+        this.port = port;
         this.username = username;
         this.password = password;
     }
@@ -381,7 +382,7 @@ public class SftpUtil {
         // Sftp下载路径
         String sftpPath = "/file/323331000001/146666526/BIL20201129.zip";
         try {
-            sftp = new SftpUtil("47.99.58.100", "tax_read", "DWFwPe4DgXWxaBPX");
+            sftp = new SftpUtil("47.99.58.100", 22, "tax_read", "DWFwPe4DgXWxaBPX");
             sftp.connect();
             // 下载
             sftp.batchDownLoadFile(sftpPath, localPath, "", ".zip", false);

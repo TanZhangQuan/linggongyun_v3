@@ -1021,7 +1021,7 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
 
             SftpUtil sftpUtil = null;
             try {
-                sftpUtil = new SftpUtil(SftpConstant.UNIONPAYSFTPHOST, SftpConstant.UNIONPAYSFTPUSERNAME, SftpConstant.UNIONPAYSFTPPASSWORD);
+                sftpUtil = new SftpUtil(SftpConstant.UNIONPAYSFTPHOST, SftpConstant.UNIONPAYSFTPPORT, SftpConstant.UNIONPAYSFTPUSERNAME, SftpConstant.UNIONPAYSFTPPASSWORD);
                 sftpUtil.connect();
                 // 下载
                 //获取文件名称和后缀

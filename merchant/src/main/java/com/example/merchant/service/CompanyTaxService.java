@@ -18,7 +18,14 @@ public interface CompanyTaxService extends IService<CompanyTax> {
      *
      * @param taxId
      */
-    void deleteCompanyTax(String taxId);
+    void deleteCompanyTaxByTax(String taxId);
+
+    /**
+     * 删除商户-服务商总包众包合作信息
+     *
+     * @param companyId
+     */
+    void deleteCompanyTaxByCompany(String companyId);
 
     /**
      * 查询商户-服务商总包众包合作信息
