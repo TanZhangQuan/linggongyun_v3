@@ -1044,8 +1044,6 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
 
                 sftpUtil.downloadFile(subUrl, fileName, SftpConstant.SAVELOCALPATH + "/", fileName);
 
-            } catch (Exception e) {
-                log.error(e.getMessage());
             } finally {
                 if (sftpUtil != null) {
                     sftpUtil.disconnect();
@@ -1073,8 +1071,6 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
             while ((len = inputStream.read(bytes)) != -1) {
                 outputStream.write(bytes, 0, len);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         } finally {
             inputStream.close();
             outputStream.flush();

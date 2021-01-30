@@ -47,7 +47,7 @@ CREATE TABLE `tb_agent` (
   `company_address` varchar(200) NOT NULL DEFAULT '' COMMENT '代理商地址',
   `link_man` varchar(50) NOT NULL DEFAULT '' COMMENT '联系人',
   `link_mobile` varchar(50) NOT NULL DEFAULT '' COMMENT '代理商电话',
-  `contract_file` varchar(50) NOT NULL DEFAULT '' COMMENT '加盟合同URL',
+  `contract_file` varchar(500) NOT NULL DEFAULT '' COMMENT '加盟合同URL',
   `agent_name` varchar(50) NOT NULL DEFAULT '' COMMENT '代理商名称',
   `agent_status` tinyint(1) DEFAULT NULL COMMENT '0可用 1禁用',
   `create_date` datetime NOT NULL COMMENT '创建时间',

@@ -149,4 +149,9 @@ public class Worker extends BaseEntity {
      */
     private String creditCode;
 
+    /**
+     * 合同编号
+     */
+    private String contractNum;
+
 }

@@ -216,19 +216,22 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             dict.setRemark("平台是否三要素检测，true代表检验过了");
             dictDao.insert(dict);
         }
-        if (worker.getAgreementSign() == 0 || worker.getAgreementSign() == -1) {
+        if (worker.getAgreementSign() == 0 || worker.getAgreementSign() == -1 || worker.getAgreementSign() == 1) {
             ReturnJson returnJson;
             if (signType.equals("1")) {
                 returnJson = SignAContractUtils.signH5YiYunAContract(workerId, yyqContract, yyqAppKey, yyqSecrept, yyqAES, yyqUrl, yyqCallBack, worker.getAccountName(), worker.getIdcardCode(),
                         worker.getMobileCode(), platformName, platformContactNumber, platformCreditCode, platformLegalPerson, worker.getAttestation()
                         , platformCertificationState);
                 if (returnJson.getCode() == 200) {
+                    String contractNum = returnJson.getObj().toString();
                     worker.setAgreementSign(1);
+                    worker.setContractNum(contractNum);
                     worker.setAttestation(1);
                     dict.setDictValue("true");
                     dictDao.updateById(dict);
                     workerDao.updateById(worker);
                 }
+                returnJson = ReturnJson.success(returnJson.getMessage(),1);
             } else {
                 returnJson = SignAContractUtils.signAContract(contract, worker.getId(), worker.getAccountName(), worker.getIdcardCode(),
                         worker.getMobileCode());
@@ -236,8 +239,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 workerDao.updateById(worker);
             }
             return returnJson;
-        } else if (worker.getAgreementSign() == 1) {
-            return ReturnJson.error("加盟合同正在签署中，请查看手机短信并通过链接进行网签《加盟合同》！");
         }
         return ReturnJson.error("您已经签署了加盟合同，请勿重复签署！");
     }
@@ -327,27 +328,42 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public ReturnJson findSignAContract(String workerId) {
+    public ReturnJson findSignAContract(String workerId,HttpServletRequest request) {
         Worker worker = workerDao.selectById(workerId);
         if (worker == null) {
             return ReturnJson.error("该用户不存在！");
         }
         Map<String, Integer> map = new HashMap<>();
         map.put("status", worker.getAgreementSign());
+        if(worker.getAgreementSign() == 1 && null != worker.getContractNum()){
+            worker.setAgreementSign(2);
+            String uuid = UUID.randomUUID().toString() + ".pdf";
+            //下载合同
+            EcloudClient.downloadContract(worker.getContractNum(), PathImage_KEY + uuid);
+            String accessPath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() +
+                    request.getContextPath() + fileStaticAccesspathImage + uuid;
+            worker.setAgreementUrl(accessPath);
+            workerDao.updateById(worker);
+            return ReturnJson.success("成功");
+        }
+
         return ReturnJson.success(map);
     }
 
     @Override
     public ReturnJson callBackYYQSignAContract(String workerId, String contractNum, HttpServletRequest request) {
         Worker worker = workerDao.selectById(workerId);
-        worker.setAgreementSign(2);
-        String uuid = UUID.randomUUID().toString() + ".pdf";
-        //下载合同
-        EcloudClient.downloadContract(contractNum, PathImage_KEY + uuid);
-        String accessPath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() +
-                request.getContextPath() + fileStaticAccesspathImage + uuid;
-        worker.setAgreementUrl(accessPath);
-        workerDao.updateById(worker);
+        if(worker.getAgreementSign() == 1 && null != worker.getContractNum()){
+            worker.setAgreementSign(2);
+            String uuid = UUID.randomUUID().toString() + ".pdf";
+            //下载合同
+            EcloudClient.downloadContract(contractNum, PathImage_KEY + uuid);
+            String accessPath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() +
+                    request.getContextPath() + fileStaticAccesspathImage + uuid;
+            worker.setAgreementUrl(accessPath);
+            workerDao.updateById(worker);
+            return ReturnJson.success("成功");
+        }
         return ReturnJson.success("成功");
     }
 

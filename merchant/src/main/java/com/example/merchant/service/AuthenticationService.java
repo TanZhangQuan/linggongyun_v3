@@ -70,7 +70,7 @@ public interface AuthenticationService {
      * @param workerId
      * @return
      */
-    ReturnJson findSignAContract(String workerId);
+    ReturnJson findSignAContract(String workerId,HttpServletRequest request);
 
     /**
      * 合同签署成功后的回调
