@@ -141,4 +141,10 @@ INSERT INTO `tb_object_menu`  VALUES ('1351854177510662153', '135145011392484662
 
 
 
-INSERT INTO `tb_managers` VALUES ('1308716289793970171', '0', 'superAdmin', '管理员', 'superAdmin', '', '', '19120666950', '8472810e8c4de3499aa63d7b6d4a31a4', '', '', '3', '0', '', NOW(), NOW());
+INSERT INTO `tb_managers` VALUES ('1308716289793970171', '0', 'superAdmin', '超级管理员', 'superAdmin', '', '', '19120666950', '8472810e8c4de3499aa63d7b6d4a31a4', '', '', '3', '0', '', NOW(), NOW());
+
+
+INSERT INTO `tb_applet_other_info` VALUES ('1349230872928616450', '客服电话', '', NOW(), NOW());
+INSERT INTO `tb_applet_other_info` VALUES ('1349231570902745090', '隐私协议', '', NOW(), NOW());
+INSERT INTO `tb_applet_other_info` VALUES ('1349231673109544962', '银行卡信息协议', '', NOW(), NOW());
+INSERT INTO `tb_applet_other_info` VALUES ('1349231778218803201', '小程序操作指南', '', NOW(), NOW());
