@@ -214,8 +214,13 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
         }
         BeanUtils.copyProperties(taskDto, task);
         String taskCode = this.getTaskCode();
-        int code = Integer.valueOf(taskCode.substring(2)) + 1;
-        task.setTaskCode("RW" + String.valueOf(code));
+        int code = 0;
+        if (taskCode == null) {
+            code = 001;
+        } else {
+            code = Integer.valueOf(taskCode.substring(2)) + 1;
+        }
+        task.setTaskCode("RW" + code);
         int i = taskDao.insert(task);
         if (i > 0) {
             if (taskDto.getTaskMode() != 1) {
