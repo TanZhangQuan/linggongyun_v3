@@ -350,7 +350,11 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ReturnJson auditMerchant(String merchantId) throws CommonException {
+    public ReturnJson auditMerchant(String merchantId, String userId) throws CommonException {
+        Managers managers = managersDao.selectById(userId);
+        if (managers.getUserSign() != 3) {
+            return ReturnJson.error("平台管理员才能进行审核");
+        }
         CompanyInfo companyInfo = new CompanyInfo();
         companyInfo.setAuditStatus(1);
         companyInfo.setId(merchantId);
@@ -793,33 +797,33 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
 //                        }
 //                    }
 //                } else {
-                    BeanUtils.copyProperties(updateCompanyTaxDTO, companyTax);
-                    companyTax.setCompanyId(updateCompanyDto.getUpdateCompanyInfoDto().getId());
-                    CompanyTax companyTax1 = companyTaxService.getOne(new QueryWrapper<CompanyTax>().lambda()
-                            .eq(CompanyTax::getCompanyId, companyTax.getCompanyId())
-                            .eq(CompanyTax::getTaxId, companyTax.getTaxId())
-                            .eq(CompanyTax::getPackageStatus, companyTax.getPackageStatus()));
-                    if (companyTax1 != null) {
-                        throw new CommonException(300, "同一个商户与同一个服务商在统一合作类型上只能合作一次！");
-                    }
-                    companyTaxService.save(companyTax);
-                    List<UpdateCompanyLadderServiceDTO> updateCompanyLadderServiceDtoList = updateCompanyTaxDTO.getUpdateCompanyLadderServiceDtoList();
-                    if (updateCompanyLadderServiceDtoList != null) {
-                        int j = 0;
-                        for (UpdateCompanyLadderServiceDTO updateCompanyLadderServiceDto : updateCompanyLadderServiceDtoList) {
-                            if (j != 0) {
-                                BigDecimal endMoney = updateCompanyLadderServiceDtoList.get(j - 1).getEndMoney();
-                                if (updateCompanyLadderServiceDto.getStartMoney().compareTo(endMoney) != 0) {
-                                    throw new CommonException(300, "上梯度结束金额应等于下梯度起始金额");
-                                }
+                BeanUtils.copyProperties(updateCompanyTaxDTO, companyTax);
+                companyTax.setCompanyId(updateCompanyDto.getUpdateCompanyInfoDto().getId());
+                CompanyTax companyTax1 = companyTaxService.getOne(new QueryWrapper<CompanyTax>().lambda()
+                        .eq(CompanyTax::getCompanyId, companyTax.getCompanyId())
+                        .eq(CompanyTax::getTaxId, companyTax.getTaxId())
+                        .eq(CompanyTax::getPackageStatus, companyTax.getPackageStatus()));
+                if (companyTax1 != null) {
+                    throw new CommonException(300, "同一个商户与同一个服务商在统一合作类型上只能合作一次！");
+                }
+                companyTaxService.save(companyTax);
+                List<UpdateCompanyLadderServiceDTO> updateCompanyLadderServiceDtoList = updateCompanyTaxDTO.getUpdateCompanyLadderServiceDtoList();
+                if (updateCompanyLadderServiceDtoList != null) {
+                    int j = 0;
+                    for (UpdateCompanyLadderServiceDTO updateCompanyLadderServiceDto : updateCompanyLadderServiceDtoList) {
+                        if (j != 0) {
+                            BigDecimal endMoney = updateCompanyLadderServiceDtoList.get(j - 1).getEndMoney();
+                            if (updateCompanyLadderServiceDto.getStartMoney().compareTo(endMoney) != 0) {
+                                throw new CommonException(300, "上梯度结束金额应等于下梯度起始金额");
                             }
-                            CompanyLadderService companyLadderService = new CompanyLadderService();
-                            BeanUtils.copyProperties(updateCompanyLadderServiceDto, companyLadderService);
-                            companyLadderService.setCompanyTaxId(companyTax.getId());
-                            companyLadderServiceService.save(companyLadderService);
-                            j++;
                         }
+                        CompanyLadderService companyLadderService = new CompanyLadderService();
+                        BeanUtils.copyProperties(updateCompanyLadderServiceDto, companyLadderService);
+                        companyLadderService.setCompanyTaxId(companyTax.getId());
+                        companyLadderServiceService.save(companyLadderService);
+                        j++;
                     }
+                }
 //                }
 
                 //注册商户对应服务商银联的子账号
