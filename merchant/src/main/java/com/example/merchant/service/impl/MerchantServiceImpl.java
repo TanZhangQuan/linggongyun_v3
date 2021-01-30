@@ -746,7 +746,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         }
         merchantDao.updateById(merchant);
 
-        ////删除所有商户-服务商总包众包合作信息
+        //删除所有商户-服务商总包众包合作信息
         companyTaxService.deleteCompanyTaxByCompany(companyInfo.getId());
 
         List<UpdateCompanyTaxDTO> updateCompanyTaxDTOList = updateCompanyDto.getUpdateCompanyTaxDtoList();
@@ -759,40 +759,40 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
                 }
 
                 CompanyTax companyTax = new CompanyTax();
-                if (StringUtils.isNotBlank(updateCompanyTaxDTO.getId())) {
-                    companyTax = companyTaxService.getById(updateCompanyTaxDTO.getId());
-                    if (companyTax == null) {
-                        throw new CommonException(300, "合作信息错误");
-                    }
-                    BeanUtils.copyProperties(updateCompanyTaxDTO, companyTax);
-                    companyTax.setCompanyId(updateCompanyDto.getUpdateCompanyInfoDto().getId());
-                    companyTaxService.updateById(companyTax);
-                    List<UpdateCompanyLadderServiceDTO> updateCompanyLadderServiceDtoList = updateCompanyTaxDTO.getUpdateCompanyLadderServiceDtoList();
-                    if (updateCompanyLadderServiceDtoList != null) {
-                        int j = 0;
-                        for (UpdateCompanyLadderServiceDTO updateCompanyLadderServiceDto : updateCompanyLadderServiceDtoList) {
-                            if (j != 0) {
-                                BigDecimal endMoney = updateCompanyLadderServiceDtoList.get(j - 1).getEndMoney();
-                                if (updateCompanyLadderServiceDto.getStartMoney().compareTo(endMoney) != 0) {
-                                    throw new CommonException(300, "上梯度结束金额应等于下梯度起始金额");
-                                }
-                            }
-                            if (updateCompanyLadderServiceDto.getId() != null) {
-                                CompanyLadderService companyLadderService = new CompanyLadderService();
-                                BeanUtils.copyProperties(updateCompanyLadderServiceDto, companyLadderService);
-                                companyLadderService.setCompanyTaxId(companyTax.getId());
-                                companyLadderServiceService.updateById(companyLadderService);
-                            }
-                            if (updateCompanyLadderServiceDto.getId() == null) {
-                                CompanyLadderService companyLadderService = new CompanyLadderService();
-                                companyLadderService.setCompanyTaxId(companyTax.getId());
-                                BeanUtils.copyProperties(updateCompanyLadderServiceDto, companyLadderService);
-                                companyLadderServiceService.save(companyLadderService);
-                            }
-                            j++;
-                        }
-                    }
-                } else {
+//                if (StringUtils.isNotBlank(updateCompanyTaxDTO.getId())) {
+//                    companyTax = companyTaxService.getById(updateCompanyTaxDTO.getId());
+//                    if (companyTax == null) {
+//                        throw new CommonException(300, "合作信息错误");
+//                    }
+//                    BeanUtils.copyProperties(updateCompanyTaxDTO, companyTax);
+//                    companyTax.setCompanyId(updateCompanyDto.getUpdateCompanyInfoDto().getId());
+//                    companyTaxService.updateById(companyTax);
+//                    List<UpdateCompanyLadderServiceDTO> updateCompanyLadderServiceDtoList = updateCompanyTaxDTO.getUpdateCompanyLadderServiceDtoList();
+//                    if (updateCompanyLadderServiceDtoList != null) {
+//                        int j = 0;
+//                        for (UpdateCompanyLadderServiceDTO updateCompanyLadderServiceDto : updateCompanyLadderServiceDtoList) {
+//                            if (j != 0) {
+//                                BigDecimal endMoney = updateCompanyLadderServiceDtoList.get(j - 1).getEndMoney();
+//                                if (updateCompanyLadderServiceDto.getStartMoney().compareTo(endMoney) != 0) {
+//                                    throw new CommonException(300, "上梯度结束金额应等于下梯度起始金额");
+//                                }
+//                            }
+//                            if (updateCompanyLadderServiceDto.getId() != null) {
+//                                CompanyLadderService companyLadderService = new CompanyLadderService();
+//                                BeanUtils.copyProperties(updateCompanyLadderServiceDto, companyLadderService);
+//                                companyLadderService.setCompanyTaxId(companyTax.getId());
+//                                companyLadderServiceService.updateById(companyLadderService);
+//                            }
+//                            if (updateCompanyLadderServiceDto.getId() == null) {
+//                                CompanyLadderService companyLadderService = new CompanyLadderService();
+//                                companyLadderService.setCompanyTaxId(companyTax.getId());
+//                                BeanUtils.copyProperties(updateCompanyLadderServiceDto, companyLadderService);
+//                                companyLadderServiceService.save(companyLadderService);
+//                            }
+//                            j++;
+//                        }
+//                    }
+//                } else {
                     BeanUtils.copyProperties(updateCompanyTaxDTO, companyTax);
                     companyTax.setCompanyId(updateCompanyDto.getUpdateCompanyInfoDto().getId());
                     CompanyTax companyTax1 = companyTaxService.getOne(new QueryWrapper<CompanyTax>().lambda()
@@ -820,7 +820,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
                             j++;
                         }
                     }
-                }
+//                }
 
                 //注册商户对应服务商银联的子账号
                 if (updateCompanyTaxDTO.getUnionpayBankTypeList() != null && updateCompanyTaxDTO.getUnionpayBankTypeList().size() > 0) {

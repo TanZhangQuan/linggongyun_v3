@@ -61,8 +61,8 @@ public class AuthenticationController {
     @PostMapping("/findSignAContract")
     @ApiOperation(value = "查看创客是否签署了加盟合同", notes = "查看创客是否签署了加盟合同")
     @LoginRequired
-    public ReturnJson findSignAContract(@RequestAttribute(value = "userId") @ApiParam(hidden = true) String workerId) {
-        return authenticationService.findSignAContract(workerId);
+    public ReturnJson findSignAContract(@RequestAttribute(value = "userId") @ApiParam(hidden = true) String workerId,HttpServletRequest request) {
+        return authenticationService.findSignAContract(workerId,request);
     }
 
     @PostMapping("/senSignAContract")

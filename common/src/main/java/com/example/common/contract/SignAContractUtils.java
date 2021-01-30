@@ -195,12 +195,18 @@ public class SignAContractUtils {
             if (!workerCloudDomain.getCode().equals("0")) {
                 return ReturnJson.error("创客实名不通过");
             }
+            if(!workerCloudDomain.getMessage().equals("一致")){
+                return ReturnJson.error("创客实名不通过");
+            }
         }
 
         if (platformCertificationState != 1) {
             //企业实名
             ECloudDomain serviceProviderCloudDomain = EcloudClient.busThreeElementsIdentification(taxMan, taxName, creditCode);
             if (!serviceProviderCloudDomain.getCode().equals("0")) {
+                return ReturnJson.error("企业实名不通过");
+            }
+            if(!serviceProviderCloudDomain.getMessage().equals("一致")){
                 return ReturnJson.error("企业实名不通过");
             }
         }
@@ -272,7 +278,7 @@ public class SignAContractUtils {
         List<Map<String, String>> serviceProviderListMap = new ArrayList<>();
         Map<String, String> serviceProviderPositionMap = new HashMap();
         serviceProviderPositionMap.put("page", "1");
-        serviceProviderPositionMap.put("x", "150");
+        serviceProviderPositionMap.put("x", "200");
         serviceProviderPositionMap.put("y", "200");
         serviceProviderPositionMap.put("signId", serviceProviderSealObject.get("signId").toString());
         serviceProviderListMap.add(serviceProviderPositionMap);
@@ -303,6 +309,6 @@ public class SignAContractUtils {
 
         String substring = s.substring(0, s.length() - 1);
 
-        return ReturnJson.success(H5url + substring, 1);
+        return ReturnJson.success(H5url + substring, contractMap.get("contractNum").toString());
     }
 }
