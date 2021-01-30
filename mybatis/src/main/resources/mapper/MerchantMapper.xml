@@ -169,7 +169,7 @@
             b.link_mobile,
             (
                 CASE
-                WHEN a.agent_id IS NULL THEN
+                WHEN a.agent_id = '' THEN
                     (
                         SELECT
                             real_name
