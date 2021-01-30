@@ -117,7 +117,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 return ReturnJson.error("请上传正确的身份证反面图片");
             }
             Calendar now = Calendar.getInstance();
-            String currentTime = now.get(Calendar.YEAR) + String.valueOf((now.get(Calendar.MONTH) + 1)) + now.get(Calendar.DAY_OF_MONTH);
+            String month = "";
+            if ((now.get(Calendar.MONTH) + 1) < 10) {
+                month = "0" + now.get(Calendar.MONTH + 1);
+            }
+            String currentTime = now.get(Calendar.YEAR) + month + now.get(Calendar.DAY_OF_MONTH);
             Integer currentTimeInt = Integer.parseInt(currentTime);
             Integer expiryTimeInt = Integer.parseInt(idCardInfo.get("expiryDate"));
             if (expiryTimeInt.compareTo(currentTimeInt) == -1) {

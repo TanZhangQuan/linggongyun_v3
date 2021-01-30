@@ -103,6 +103,9 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
     @Resource
     private PaymentHistoryService paymentHistoryService;
 
+    @Resource
+    private CompanyWorkerService companyWorkerService;
+
     @Override
     public ReturnJson getPaymentOrder(String merchantId, PaymentOrderMerchantDTO paymentOrderMerchantDto) {
         Merchant merchant = merchantDao.selectById(merchantId);
@@ -279,6 +282,10 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
             paymentInventory.setTradeNo(SnowflakeIdWorker.getSerialNumber());
             paymentInventory.setPackageStatus(0);
             paymentInventoryService.saveOrUpdate(paymentInventory);
+            CompanyWorker companyWorker=new CompanyWorker();
+            companyWorker.setWorkerId(paymentInventory.getWorkerId());
+            companyWorker.setCompanyId(paymentOrder.getCompanyId());
+            companyWorkerService.saveOrUpdate(companyWorker);
         }
         return ReturnJson.success("支付订单创建成功！");
     }
