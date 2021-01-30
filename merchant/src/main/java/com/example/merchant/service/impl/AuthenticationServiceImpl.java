@@ -216,7 +216,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             dict.setRemark("平台是否三要素检测，true代表检验过了");
             dictDao.insert(dict);
         }
-        if (worker.getAgreementSign() == 0 || worker.getAgreementSign() == -1) {
+        if (worker.getAgreementSign() == 0 || worker.getAgreementSign() == -1 || worker.getAgreementSign() == 1) {
             ReturnJson returnJson;
             if (signType.equals("1")) {
                 returnJson = SignAContractUtils.signH5YiYunAContract(workerId, yyqContract, yyqAppKey, yyqSecrept, yyqAES, yyqUrl, yyqCallBack, worker.getAccountName(), worker.getIdcardCode(),
@@ -236,8 +236,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 workerDao.updateById(worker);
             }
             return returnJson;
-        } else if (worker.getAgreementSign() == 1) {
-            return ReturnJson.error("加盟合同正在签署中，请查看手机短信并通过链接进行网签《加盟合同》！");
         }
         return ReturnJson.error("您已经签署了加盟合同，请勿重复签署！");
     }

@@ -191,6 +191,7 @@ public class SignAContractUtils {
         if (attestation != 1) {
             //创客实名
             ECloudDomain workerCloudDomain = EcloudClient.threeElementsIdentification(realName, mobile, IdCardCode);
+            log.info(mobile + "---------------------" + workerCloudDomain.getCode() + "------------------------------" + workerCloudDomain.getMessage());
             if (!workerCloudDomain.getCode().equals("0")) {
                 return ReturnJson.error("创客实名不通过");
             }
@@ -292,7 +293,7 @@ public class SignAContractUtils {
         H5Map.put("name", realName);
         H5Map.put("isFinish", "0");
         H5Map.put("callBack", yyqCallBack + "?workerId=" + workerId + "&contractNum=" + contractMap.get("contractNum").toString());
-        String H5url = "https://fat-yss-h5.myrrx.com/signFilePage?";
+        String H5url = "https://h5.ecloudsign.com/signFilePage?";
         String s = null;
         try {
             s = HttpUtil.buildMap(H5Map, yyqAES);

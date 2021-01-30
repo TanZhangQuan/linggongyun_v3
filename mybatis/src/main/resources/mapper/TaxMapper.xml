@@ -225,17 +225,17 @@
             t.bank_code,
             t.bank_name,
             cls.id as cls_id,
-            cls.start_money,
-            cls.end_money,
+            tilp.start_money,
+            tilp.end_money,
             cls.service_charge as clsservice_charge,
-		    (SELECT tilp.rate FROM tb_invoice_ladder_price tilp WHERE tilp.tax_id = ct.tax_id AND tilp.start_money = cls.start_money AND tilp.end_money = cls.end_money
-		    AND IF(ct.package_status = 0, tilp.packaeg_status = 4, tilp.packaeg_status = 5) AND tilp.status = 0) AS rate
+		        tilp.rate
         FROM
             tb_company_info ci
         INNER JOIN tb_company_tax ct ON ct.company_id = ci.id
         INNER JOIN tb_tax t ON t.id = ct.tax_id
-        LEFT JOIN tb_company_ladder_service cls ON cls.company_tax_id = ct.id
-		LEFT JOIN tb_tax_package ttp ON ttp.tax_id = ct.tax_id AND ttp.package_status = ct.package_status
+        LEFT JOIN tb_tax_package ttp ON ttp.tax_id = ct.tax_id AND ttp.package_status = ct.package_status
+				LEFT JOIN tb_invoice_ladder_price tilp ON ttp.tax_id = ct.tax_id AND IF(ct.package_status = 0, tilp.packaeg_status = 4, tilp.packaeg_status = 5)
+        LEFT JOIN tb_company_ladder_service cls ON cls.company_tax_id = ct.id AND cls.start_money = tilp.start_money AND cls.end_money = tilp.end_money
         where ci.id= #{companyId}
         <if test="taxId != null and taxId != ''">
             AND ct.tax_id = #{taxId}
