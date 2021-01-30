@@ -28,7 +28,7 @@ public class AddCompanyLadderServiceDTO implements Serializable {
     private BigDecimal endMoney;
 
     @ApiModelProperty(value = "服务费（如7.5，不需把百分数换算成小数）")
-    @NotBlank(message = "服务费不能为空")
+    @NotNull(message = "服务费不能为空")
     @Min(value = 0,message = "服务费率不能小于零")
     private BigDecimal serviceCharge;
 }

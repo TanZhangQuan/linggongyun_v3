@@ -470,7 +470,7 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
     public ReturnJson updateTaxPackage(TaxPackageUpdateDTO taxPackageUpdateDTO) throws Exception {
 
         //删除所有商户-服务商总包众包合作信息
-        companyTaxService.deleteCompanyTax(taxPackageUpdateDTO.getTaxId());
+        companyTaxService.deleteCompanyTaxByTax(taxPackageUpdateDTO.getTaxId());
         //删除服务商总包众包合作信息
         taxPackageService.deleteTaxPackage(taxPackageUpdateDTO.getTaxId());
 

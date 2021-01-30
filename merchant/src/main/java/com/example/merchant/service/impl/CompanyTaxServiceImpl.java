@@ -27,7 +27,7 @@ public class CompanyTaxServiceImpl extends ServiceImpl<CompanyTaxDao, CompanyTax
     private CompanyLadderServiceService companyLadderServiceService;
 
     @Override
-    public void deleteCompanyTax(String taxId) {
+    public void deleteCompanyTaxByTax(String taxId) {
 
         //搜索所有商户-服务商总包众包合作信息记录
         QueryWrapper<CompanyTax> companyTaxQueryWrapper = new QueryWrapper<>();
@@ -49,6 +49,32 @@ public class CompanyTaxServiceImpl extends ServiceImpl<CompanyTaxDao, CompanyTax
                 removeById(companyTax.getId());
             }
         }
+    }
+
+    @Override
+    public void deleteCompanyTaxByCompany(String companyId) {
+
+        //搜索所有商户-服务商总包众包合作信息记录
+        QueryWrapper<CompanyTax> companyTaxQueryWrapper = new QueryWrapper<>();
+        companyTaxQueryWrapper.lambda().eq(CompanyTax::getCompanyId, companyId);
+        List<CompanyTax> companyTaxList = baseMapper.selectList(companyTaxQueryWrapper);
+
+        if (companyTaxList != null && companyTaxList.size() > 0) {
+            for (CompanyTax companyTax : companyTaxList) {
+                //删除商户-服务商总包众包合作信息:梯度价记录
+                QueryWrapper<CompanyLadderService> companyLadderServiceQueryWrapper = new QueryWrapper<>();
+                companyLadderServiceQueryWrapper.lambda().eq(CompanyLadderService::getCompanyTaxId, companyTax.getId());
+                List<CompanyLadderService> companyLadderServiceList = companyLadderServiceService.list(companyLadderServiceQueryWrapper);
+                if (companyLadderServiceList != null && companyLadderServiceList.size() > 0) {
+                    for (CompanyLadderService companyLadderService : companyLadderServiceList) {
+                        companyLadderServiceService.removeById(companyLadderService);
+                    }
+                }
+                //删除商户-服务商总包众包合作信息:一口价记录
+                removeById(companyTax.getId());
+            }
+        }
+
     }
 
     @Override
