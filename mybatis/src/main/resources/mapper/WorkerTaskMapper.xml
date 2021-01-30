@@ -29,7 +29,8 @@
     </sql>
 
     <insert id="addWorkerTask" parameterType="com.example.mybatis.entity.WorkerTask">
-        INSERT INTO tb_worker_task (id,worker_id,task_id,get_type,arrange_person,create_date) VALUES (#{id},#{workerId},#{taskId},#{getType},#{arrangePerson},now())
+        INSERT INTO tb_worker_task (id,worker_id,task_id,get_type,arrange_person,create_date,update_date)
+        VALUES (#{id},#{workerId},#{taskId},#{getType},#{arrangePerson},now(),now())
     </insert>
 
     <update id="eliminateWorker">
