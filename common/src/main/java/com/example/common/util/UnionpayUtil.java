@@ -61,7 +61,7 @@ public class UnionpayUtil {
                 return returnValue;
             }
 
-            content.put("in_bank_code", returnValue.getString("card_bin"));  //来款银行编码，网商平台户无需填写，盛京平台户必填
+            content.put("in_bank_code", returnValue.getString("bank_code"));  //来款银行编码，网商平台户无需填写，盛京平台户必填
             content.put("in_bank_no", inBankNo);    //来款银行账号，网商平台户无需填写，盛京平台户必填
         }
         content.put("desc", "子账户申请开户");  //摘要信息
@@ -107,7 +107,7 @@ public class UnionpayUtil {
             return returnValue;
         }
 
-        content.put("in_bank_code", returnValue.getString("card_bin"));  //来款银行编码，网商平台户无需填写，盛京平台户必填
+        content.put("in_bank_code", returnValue.getString("bank_code"));  //来款银行编码，网商平台户无需填写，盛京平台户必填
         content.put("in_bank_no", inBankNo);    //来款银行账号，网商平台户无需填写，盛京平台户必填
         //银联请求
         return unionpay(merchNo, UnionpayMethod.AC041, acctNo, content, pfmpubkey, prikey);
