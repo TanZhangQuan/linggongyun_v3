@@ -45,6 +45,8 @@
 
     <resultMap id="regulatorPayment" type="com.example.mybatis.vo.RegulatorPaymentVO">
         <id column="id" property="paymentId"/>
+        <result column="tax_id" property="taxId"/>
+        <result column="company_id" property="companyId"/>
         <result column="company_s_name" property="companySName"/>
         <result column="platform_service_provider" property="platformServiceProvider"/>
         <result column="company_contract" property="companyContract"/>
@@ -367,7 +369,9 @@
         SELECT
             po.id,
             po.company_s_name,
+            po.company_id,
             po.platform_service_provider,
+            po.tax_id,
             po.company_contract,
             po.payment_inventory,
             po.acceptance_certificate,
