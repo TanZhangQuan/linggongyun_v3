@@ -132,10 +132,10 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
                 .eq(Merchant::getPassWord, encryptPWD);
         Merchant me = merchantDao.selectOne(merchantQueryWrapper);
         if (me == null) {
-            throw new AuthenticationException("账号或密码错误");
+            return ReturnJson.error("账号或密码错误");
         }
         if (me.getStatus() == 1) {
-            throw new LockedAccountException("账号已被禁用");
+            return ReturnJson.error("账号已被禁用");
         }
         CustomizedToken customizedToken = new CustomizedToken(username, encryptPWD, MERCHANT);
         //shiro验证身份
