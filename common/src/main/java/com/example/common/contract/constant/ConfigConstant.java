@@ -17,6 +17,8 @@ public class ConfigConstant {
     public static final String PROJECT_ID = "4438766163";
     // 项目密钥(应用密钥）
     public static final String PROJECT_SECRET = "86d20a7f49bc3c4c20bae23d369d8853";
+    // 项目印章ID(印章ID）
+    public static final String ORGSEAL_ID = "77ec11bb-b78c-4077-966b-4fe58a5e6b54";
 
     // ------Token相关地址------
     // 获取Token

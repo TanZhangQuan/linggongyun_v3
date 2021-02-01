@@ -5,6 +5,7 @@ import com.agile.ecloud.sdk.bean.EcloudPublicKey;
 import com.agile.ecloud.sdk.http.EcloudClient;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.example.common.contract.constant.ConfigConstant;
 import com.example.common.contract.exception.DefineException;
 import com.example.common.contract.helper.*;
 import com.example.common.util.HttpUtil;
@@ -45,16 +46,18 @@ public class SignAContractUtils {
         JSONObject personAcctJson = AccountHelper.createPersonAcct(userId, realName, null, IdCardCode, mobile, null);
         String acctId = personAcctJson.getString("accountId");
 
-        log.info("---------------------创建机构账号start----------------------------------");
-        JSONObject orgAcctJson = AccountHelper.createOrgAcct("SLC", acctId, "零工云（上海）科技发展有限公司", "CRED_ORG_USCC", null);
-        String orgId = orgAcctJson.getString("orgId");
+//        log.info("---------------------创建机构账号start----------------------------------");
+//        JSONObject orgAcctJson = AccountHelper.createOrgAcct("SLC", acctId, "零工云（上海）科技发展有限公司", "CRED_ORG_USCC", null);
+//        String orgId = orgAcctJson.getString("orgId");
+//
+//        log.info("---------------------创建机构印章start----------------------------------");
+//        JSONObject orgSealJson = SealHelper.createOrgTemplateSeal(orgId, "顺利创印章", "RED", 159, 159, null, null, "TEMPLATE_ROUND", "STAR");
+//        String orgSealId = orgSealJson.getString("");
 
-        log.info("---------------------创建机构印章start----------------------------------");
-        JSONObject orgSealJson = SealHelper.createOrgTemplateSeal(orgId, "顺利创印章", "RED", 159, 159, null, null, "TEMPLATE_ROUND", "STAR");
-        String orgSealId = orgSealJson.getString("");
+        String orgSealId = ConfigConstant.ORGSEAL_ID;
 
         log.info("---------------------通过上传方式创建文件start-----------------------------");
-        JSONObject uploadJson = FileTemplateHelper.createFileByUpload(filePath, UuidUtil.get32UUID() + ".pdf", orgId);
+        JSONObject uploadJson = FileTemplateHelper.createFileByUpload(filePath, UuidUtil.get32UUID() + ".pdf", null);
         String uploadUrl = uploadJson.getString("uploadUrl");
         String fileId = uploadJson.getString("fileId");
 
