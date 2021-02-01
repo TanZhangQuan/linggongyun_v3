@@ -773,7 +773,7 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
             return ReturnJson.error("此服务商不在监管范围");
         }
         if (status == 2) {
-            regulatorTaxService.updateById(regulatorTax);
+            regulatorTaxService.removeById(regulatorTax);
             return ReturnJson.success("撤销成功");
         }
         regulatorTax.setStatus(status);
