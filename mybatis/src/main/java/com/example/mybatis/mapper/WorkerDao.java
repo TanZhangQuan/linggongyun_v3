@@ -8,6 +8,7 @@ import com.example.mybatis.po.WorekerPaymentListPo;
 import com.example.mybatis.po.WorkerPo;
 import com.example.mybatis.vo.*;
 import org.apache.ibatis.annotations.Param;
+import org.omg.CORBA.INTERNAL;
 
 import java.util.List;
 
@@ -34,7 +35,9 @@ public interface WorkerDao extends BaseMapper<Worker> {
 
     IPage<Worker> selectWorkerQuery(Page page, @Param("companyIds") List<String> companyIds, @Param("workerId") String workerId, @Param("accountName") String accountName, @Param("mobileCode") String mobileCode);
 
-    IPage<Worker> selectWorkerQueryNot(Page page, @Param("companyIds") List<String> companyIds, @Param("workerId") String workerId, @Param("accountName") String accountName, @Param("mobileCode") String mobileCode);
+    IPage<Worker> selectAgentWorkerQuery(Page page, @Param("companyIds") List<String> companyIds, @Param("workerId") String workerId, @Param("accountName") String accountName, @Param("mobileCode") String mobileCode);
+
+    IPage<Worker> selectWorkerQueryNot(Page page, @Param("companyIds") List<String> companyIds, @Param("workerId") String workerId, @Param("accountName") String accountName, @Param("mobileCode") String mobileCode, Integer isNot);
 
     IPage<WorekerPaymentListPo> workerPaymentList(Page page, @Param("workerId") String workerId);
 

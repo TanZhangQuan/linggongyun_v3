@@ -73,6 +73,8 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
     private String APPID;
     @Value("${SECRET}")
     private String SECRET;
+    @Resource
+    private ManagersService managersService;
 
 
     @Override
@@ -454,16 +456,29 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
 
     @Override
     public ReturnJson getWorkerQuery(String managersId, WorkerQueryDTO workerQueryDto) throws CommonException {
+        Managers managers = managersService.getById(managersId);
         List<String> companyIds = acquireID.getCompanyIds(managersId);
-        IPage<Worker> workerIPage = workerDao.selectWorkerQuery(new Page(workerQueryDto.getPageNo(), workerQueryDto.getPageSize()), companyIds, workerQueryDto.getWorkerId(), workerQueryDto.getAccountName(), workerQueryDto.getMobileCode());
-        return ReturnJson.success(workerIPage);
+        if (managers.getUserSign() == 3) {
+            IPage<Worker> workerIPage = workerDao.selectWorkerQuery(new Page(workerQueryDto.getPageNo(), workerQueryDto.getPageSize()), companyIds, workerQueryDto.getWorkerId(), workerQueryDto.getAccountName(), workerQueryDto.getMobileCode());
+            return ReturnJson.success(workerIPage);
+        } else {
+            IPage<Worker> workerIPage = workerDao.selectAgentWorkerQuery(new Page(workerQueryDto.getPageNo(), workerQueryDto.getPageSize()), companyIds, workerQueryDto.getWorkerId(), workerQueryDto.getAccountName(), workerQueryDto.getMobileCode());
+            return ReturnJson.success(workerIPage);
+        }
+
     }
 
     @Override
     public ReturnJson getWorkerQueryNot(String managersId, WorkerQueryDTO workerQueryDto) throws CommonException {
+        Managers managers = managersService.getById(managersId);
         List<String> companyIds = acquireID.getCompanyIds(managersId);
-        IPage<Worker> workerIPage = workerDao.selectWorkerQueryNot(new Page(workerQueryDto.getPageNo(), workerQueryDto.getPageSize()), companyIds, workerQueryDto.getWorkerId(), workerQueryDto.getAccountName(), workerQueryDto.getMobileCode());
-        return ReturnJson.success(workerIPage);
+        if (managers.getUserSign() == 3) {
+            IPage<Worker> workerIPage = workerDao.selectWorkerQueryNot(new Page(workerQueryDto.getPageNo(), workerQueryDto.getPageSize()), companyIds, workerQueryDto.getWorkerId(), workerQueryDto.getAccountName(), workerQueryDto.getMobileCode(),null);
+            return ReturnJson.success(workerIPage);
+        } else {
+            IPage<Worker> workerIPage = workerDao.selectWorkerQueryNot(new Page(workerQueryDto.getPageNo(), workerQueryDto.getPageSize()), companyIds, workerQueryDto.getWorkerId(), workerQueryDto.getAccountName(), workerQueryDto.getMobileCode(),100);
+            return ReturnJson.success(workerIPage);
+        }
     }
 
     @Override

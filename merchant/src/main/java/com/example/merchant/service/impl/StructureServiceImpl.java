@@ -82,7 +82,7 @@ public class StructureServiceImpl implements StructureService {
             managers.setPassWord(MD5.md5(PWD_KEY + managersDto.getInitPassWord()));
             managersService.save(managers);
             //赋予主账号权限
-            List<MenuListVO> listVos = menuDao.getMenuList();
+            List<MenuListVO> listVos = menuDao.getAgentMenuList();
             List<ObjectMenu> objectMenuList = new ArrayList<>();
             for (int i = 0; i < listVos.size(); i++) {
                 ObjectMenu objectMenu = new ObjectMenu();
