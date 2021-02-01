@@ -110,7 +110,7 @@ public class UnionpayUtil {
         content.put("in_bank_code", returnValue.getString("bank_code"));  //来款银行编码，网商平台户无需填写，盛京平台户必填
         content.put("in_bank_no", inBankNo);    //来款银行账号，网商平台户无需填写，盛京平台户必填
         //银联请求
-        return unionpay(merchNo, UnionpayMethod.AC041, acctNo, content, pfmpubkey, prikey);
+        return unionpay(merchNo, UnionpayMethod.AC021, acctNo, content, pfmpubkey, prikey);
     }
 
     /**

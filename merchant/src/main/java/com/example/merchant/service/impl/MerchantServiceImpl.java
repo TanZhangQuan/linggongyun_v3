@@ -844,28 +844,88 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
                         //查询商户是否开通子账号
                         CompanyUnionpay companyUnionpay = companyUnionpayService.queryMerchantUnionpay(companyInfo.getId(), taxUnionpay.getId());
                         if (companyUnionpay != null) {
-                            //检查盛京银行来款银行账号是否变动
-                            if (UnionpayBankType.SJBK.equals(unionpayBankType) && (!(titleOfAccount.equals(updateCompanyDto.getUpdateCompanyInfoDto().getTitleOfAccount())) || !(bankCode.equals(updateCompanyDto.getUpdateCompanyInfoDto().getBankCode())))) {
-                                //修改盛京来款银行账号
-                                JSONObject jsonObject = UnionpayUtil.AC021(taxUnionpay.getMerchno(), taxUnionpay.getAcctno(), taxUnionpay.getPfmpubkey(), taxUnionpay.getPrikey(), companyUnionpay.getUid(), companyInfo.getBankCode());
 
-                                if (jsonObject == null) {
-                                    throw new CommonException(300, tax.getTaxName() + "服务商" + unionpayBankType.getDesc() + "银联支付子账户更换绑卡失败");
+                            if (UnionpayBankType.SJBK.equals(unionpayBankType)) {
+
+                                //检查盛京银行来款银行账号名称是否变动
+                                if (!(titleOfAccount.equals(updateCompanyDto.getUpdateCompanyInfoDto().getTitleOfAccount()))) {
+                                    //检查原子账号是否存在余额
+                                    JSONObject jsonObject = UnionpayUtil.AC081(taxUnionpay.getMerchno(), taxUnionpay.getAcctno(), taxUnionpay.getPfmpubkey(), taxUnionpay.getPrikey(), companyUnionpay.getUid());
+                                    if (jsonObject == null) {
+                                        throw new CommonException(300, "查询子帐号" + taxUnionpay.getUnionpayBankType().getDesc() + "银联余额失败");
+                                    }
+
+                                    Boolean boolSuccess = jsonObject.getBoolean("success");
+                                    if (boolSuccess == null || !boolSuccess) {
+                                        String errMsg = jsonObject.getString("err_msg");
+                                        throw new CommonException(300, "查询子帐号" + taxUnionpay.getUnionpayBankType().getDesc() + "银联余额失败: " + errMsg);
+                                    }
+
+                                    JSONObject returnValue = jsonObject.getJSONObject("return_value");
+                                    String rtnCode = returnValue.getString("rtn_code");
+                                    if (!("S00000".equals(rtnCode))) {
+                                        String errMsg = returnValue.getString("err_msg");
+                                        throw new CommonException(300, "查询子帐号" + taxUnionpay.getUnionpayBankType().getDesc() + "银联余额失败: " + errMsg);
+                                    }
+
+                                    //账面余额，单位元
+                                    BigDecimal actBal = returnValue.getBigDecimal("act_bal");
+                                    if (BigDecimal.ZERO.compareTo(actBal) < 0) {
+                                        throw new CommonException(300, "子帐号" + taxUnionpay.getUnionpayBankType().getDesc() + "银联账面余额不为0");
+                                    }
+                                    
+                                    //开通子账号
+                                    String uuid = SnowflakeIdWorker.getSerialNumber();
+                                    jsonObject = UnionpayUtil.MB010(taxUnionpay.getMerchno(), taxUnionpay.getAcctno(), taxUnionpay.getPfmpubkey(), taxUnionpay.getPrikey(), uuid, companyInfo.getTitleOfAccount(), companyInfo.getCreditCode(), companyInfo.getBankCode());
+                                    if (jsonObject == null) {
+                                        throw new CommonException(300, tax.getTaxName() + "服务商开通" + unionpayBankType.getDesc() + "银联支付注册子账号失败");
+                                    }
+
+                                    boolSuccess = jsonObject.getBoolean("success");
+                                    if (boolSuccess == null || !boolSuccess) {
+                                        String errMsg = jsonObject.getString("err_msg");
+                                        throw new CommonException(300, tax.getTaxName() + "服务商开通" + unionpayBankType.getDesc() + "银联支付注册子账号失败: " + errMsg);
+                                    }
+
+                                    returnValue = jsonObject.getJSONObject("return_value");
+                                    rtnCode = returnValue.getString("rtn_code");
+                                    if (!("S00000".equals(rtnCode))) {
+                                        String errMsg = returnValue.getString("err_msg");
+                                        throw new CommonException(300, tax.getTaxName() + "服务商开通" + unionpayBankType.getDesc() + "银联支付注册子账号失败: " + errMsg);
+                                    }
+
+                                    //更改商户银联信息表
+                                    companyUnionpay.setUid(uuid);
+                                    companyUnionpay.setSubAccountName(returnValue.getString("sub_account_name"));
+                                    companyUnionpay.setSubAccountCode(returnValue.getString("sub_account_code"));
+                                    companyUnionpayService.updateById(companyUnionpay);
+
                                 }
 
-                                Boolean boolSuccess = jsonObject.getBoolean("success");
-                                if (boolSuccess == null || !boolSuccess) {
-                                    String errMsg = jsonObject.getString("err_msg");
-                                    throw new CommonException(300, tax.getTaxName() + "服务商" + unionpayBankType.getDesc() + "银联支付子账户更换绑卡失败: " + errMsg);
-                                }
+                                //检查盛京银行来款银行账号是否变动
+                                if (!(bankCode.equals(updateCompanyDto.getUpdateCompanyInfoDto().getBankCode()))) {
+                                    //修改盛京来款银行账号
+                                    JSONObject jsonObject = UnionpayUtil.AC021(taxUnionpay.getMerchno(), taxUnionpay.getAcctno(), taxUnionpay.getPfmpubkey(), taxUnionpay.getPrikey(), companyUnionpay.getUid(), companyInfo.getBankCode());
 
-                                JSONObject returnValue = jsonObject.getJSONObject("return_value");
-                                String rtnCode = returnValue.getString("rtn_code");
-                                if (!("S00000".equals(rtnCode))) {
-                                    String errMsg = returnValue.getString("err_msg");
-                                    throw new CommonException(300, tax.getTaxName() + "服务商" + unionpayBankType.getDesc() + "银联支付子账户更换绑卡失败: " + errMsg);
+                                    if (jsonObject == null) {
+                                        throw new CommonException(300, tax.getTaxName() + "服务商" + unionpayBankType.getDesc() + "银联支付子账户更换绑卡失败");
+                                    }
+
+                                    Boolean boolSuccess = jsonObject.getBoolean("success");
+                                    if (boolSuccess == null || !boolSuccess) {
+                                        String errMsg = jsonObject.getString("err_msg");
+                                        throw new CommonException(300, tax.getTaxName() + "服务商" + unionpayBankType.getDesc() + "银联支付子账户更换绑卡失败: " + errMsg);
+                                    }
+
+                                    JSONObject returnValue = jsonObject.getJSONObject("return_value");
+                                    String rtnCode = returnValue.getString("rtn_code");
+                                    if (!("S00000".equals(rtnCode))) {
+                                        String errMsg = returnValue.getString("err_msg");
+                                        throw new CommonException(300, tax.getTaxName() + "服务商" + unionpayBankType.getDesc() + "银联支付子账户更换绑卡失败: " + errMsg);
+                                    }
                                 }
                             }
+
                             continue;
                         }
 
