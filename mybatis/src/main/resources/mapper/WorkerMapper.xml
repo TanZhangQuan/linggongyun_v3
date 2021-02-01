@@ -101,13 +101,13 @@
 
     <sql id="ByIdAndAccountNameAndMobile">
         <if test="workerId != null and workerId != ''">
-            and id = #{workerId}
+            and w.id = #{workerId}
         </if>
         <if test="accountName != null and accountName != ''">
-            and account_name like CONCAT('%',#{accountName},'%')
+            and w.account_name like CONCAT('%',#{accountName},'%')
         </if>
         <if test="mobileCode != null and mobileCode != ''">
-            and mobile_code = #{mobileCode}
+            and w.mobile_code = #{mobileCode}
         </if>
     </sql>
 
@@ -128,42 +128,92 @@
 
     <select id="selectWorkerQueryNot" resultMap="BaseResultMap" parameterType="list">
        SELECT
-            id,
-            account_name,
-            mobile_code,
-            idcard_code,
-            bank_code,
-            attestation,
-            agreement_url,
-            create_date
+            w.id,
+            w.account_name,
+            w.mobile_code,
+            w.idcard_code,
+            w.bank_code,
+            w.attestation,
+            w.agreement_url,
+            w.create_date
         FROM
-            tb_worker
+            tb_worker w
+        <if test="param6 != null">
+            INNER JOIN tb_company_worker cw ON cw.worker_id=w.id AND cw.company_id in
+            <foreach collection="companyIds" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+             </foreach>
+        </if>
         WHERE 1=1
         <include refid="ByIdAndAccountNameAndMobile"></include>
         AND (
-            attestation = 0
-            OR agreement_sign != 2
+            w.attestation = 0
+            OR w.agreement_sign != 2
         )
         ORDER BY create_date desc
     </select>
 
     <select id="selectWorkerQuery" resultMap="BaseResultMap" parameterType="list">
         SELECT
-            id,
-            account_name,
-            mobile_code,
-            idcard_code,
-            bank_code,
-            attestation,
-            agreement_url,
-            create_date
+            w.id,
+            w.account_name,
+            w.mobile_code,
+            w.idcard_code,
+            w.bank_code,
+            w.attestation,
+            w.agreement_url,
+            w.create_date
         FROM
-            tb_worker
+            tb_worker w
         WHERE
             attestation = 1
         AND agreement_sign = 2
         <include refid="ByIdAndAccountNameAndMobile"></include>
         ORDER BY create_date desc
+    </select>
+
+    <select id="selectAgentWorkerQuery" resultMap="BaseResultMap">
+        SELECT DISTINCT
+            w.id,
+            w.account_name,
+            w.mobile_code,
+            w.idcard_code,
+            w.bank_code,
+            w.attestation,
+            w.agreement_url,
+            w.create_date
+        FROM
+            tb_worker w
+        INNER JOIN tb_company_worker cw ON cw.worker_id=w.id AND cw.company_id in
+        <foreach collection="companyIds" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        INNER JOIN tb_payment_inventory pi ON pi.worker_id = w.id
+        LEFT JOIN (
+            SELECT
+                id AS payment_order_id
+            FROM
+                tb_payment_order
+        WHERE company_id in 
+       <foreach collection="companyIds" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        UNION 
+         SELECT
+                id AS payment_order_id
+            FROM
+                tb_payment_order_many
+        WHERE company_id in
+        <foreach collection="companyIds" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        ) po ON po.payment_order_id = pi.payment_order_id
+        WHERE
+            w.attestation = 1
+        AND w.agreement_sign = 2
+        <include refid="ByIdAndAccountNameAndMobile"></include>
+        ORDER BY
+            w.create_date DESC
     </select>
 
     <select id="getWorkerByTaskId" resultMap="WorkerPo">
