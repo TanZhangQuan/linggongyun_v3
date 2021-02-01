@@ -31,8 +31,6 @@ import com.example.mybatis.vo.*;
 import com.example.redis.dao.RedisDao;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.AuthenticationException;
-import org.apache.shiro.authc.LockedAccountException;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -871,7 +869,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
                                     //账面余额，单位元
                                     BigDecimal actBal = returnValue.getBigDecimal("act_bal");
                                     if (BigDecimal.ZERO.compareTo(actBal) < 0) {
-                                        throw new CommonException(300, "子帐号" + taxUnionpay.getUnionpayBankType().getDesc() + "银联账面余额不为0");
+                                        throw new CommonException(300, "子帐号" + taxUnionpay.getUnionpayBankType().getDesc() + "银联账面尚有余额，不可新建子账号");
                                     }
 
                                     //开通子账号
