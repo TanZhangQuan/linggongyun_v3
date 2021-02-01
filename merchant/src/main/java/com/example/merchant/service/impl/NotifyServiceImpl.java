@@ -66,6 +66,15 @@ public class NotifyServiceImpl implements NotifyService {
             log.error("银联入金回调接收不到参数");
         }
 
+        //入金交易类型（01:绑卡帐户来/款,02:白名单帐户来款,03:第三方来款）bizType=03 时，入金转入清分子账户
+        String bizType = jsonObject.getString("bizType");
+        //来款备注
+        String remarks = jsonObject.getString("remarks");
+        if ("03".equals(bizType)) {
+            log.info(remarks);
+            return "success";
+        }
+
         //获取商户号, 查询相应的服务商银联
         String merchNo = jsonObject.getString("merchNo");
         TaxUnionpay taxUnionpay = taxUnionpayService.queryTaxUnionpayByMerchNo(merchNo);
@@ -123,12 +132,8 @@ public class NotifyServiceImpl implements NotifyService {
         String rcvAcctName = jsonObject.getString("rcvAcctName");
         //来款联行号
         String rcvBankCode = jsonObject.getString("rcvBankCode");
-        //入金交易类型（01:绑卡帐户来/款,02:白名单帐户来款,03:第三方来款）bizType=03 时，入金转入清分子账户
-        String bizType = jsonObject.getString("bizType");
         //到账时间
         String rcvTime = jsonObject.getString("rcvTime");
-        //来款备注
-        String remarks = jsonObject.getString("remarks");
         //参数的签名串
         String sign = jsonObject.getString("sign");
         //加签方式（本字段不参与加签）

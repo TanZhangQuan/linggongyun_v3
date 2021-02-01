@@ -412,10 +412,10 @@ public class TaxUnionpayServiceImpl extends ServiceImpl<TaxUnionpayDao, TaxUnion
             PaymentHistory rechargePaymentHistory = new PaymentHistory();
             rechargePaymentHistory.setTradeNo(SnowflakeIdWorker.getSerialNumber());
             rechargePaymentHistory.setOrderType(OrderType.RECHARGE);
-            rechargePaymentHistory.setPaymentMethod(paymentHistory.getPaymentMethod());
+            rechargePaymentHistory.setPaymentMethod(paymentMethod);
             rechargePaymentHistory.setTradeObject(TradeObject.COMPANY);
             rechargePaymentHistory.setTradeObjectId(companyUnionpay.getCompanyId());
-            rechargePaymentHistory.setAmount(paymentHistory.getAmount());
+            rechargePaymentHistory.setAmount(amount);
             rechargePaymentHistory.setTradeStatus(TradeStatus.SUCCESS);
             paymentHistoryService.save(rechargePaymentHistory);
 
