@@ -22,19 +22,19 @@ public class NotifyController {
 
     @PostMapping("/unionpay/depositNotice")
     @ApiOperation(value = "银联入金回调接收", notes = "银联入金回调接收")
-    public String depositNotice(HttpServletRequest request) {
+    public String depositNotice(HttpServletRequest request) throws Exception {
         return notifyService.depositNotice(request);
     }
 
     @PostMapping("/unionpay/txResult")
     @ApiOperation(value = "银联提现到卡回调接收", notes = "银联提现到卡回调接收")
-    public String txResult(HttpServletRequest request) {
+    public String txResult(HttpServletRequest request) throws Exception {
         return notifyService.txResult(request);
     }
 
     @PostMapping("/unionpay/transferResult")
     @ApiOperation(value = "银联内部转账回调接收(清分接口，会员间交易)", notes = "银联内部转账回调接收(清分接口，会员间交易)")
-    public String transferResult(HttpServletRequest request) {
+    public String transferResult(HttpServletRequest request) throws Exception {
         return notifyService.transferResult(request);
     }
 

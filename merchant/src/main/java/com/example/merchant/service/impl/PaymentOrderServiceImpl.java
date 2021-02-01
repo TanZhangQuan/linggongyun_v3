@@ -154,7 +154,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ReturnJson saveOrUpdataPaymentOrder(AddPaymentOrderDTO addPaymentOrderDto, String merchantId) throws CommonException {
+    public ReturnJson saveOrUpdataPaymentOrder(AddPaymentOrderDTO addPaymentOrderDto, String merchantId) throws Exception {
         if (addPaymentOrderDto.getPaymentInventories() == null) {
             throw new CommonException(300, "支付清单不能为空！");
         }

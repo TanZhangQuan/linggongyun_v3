@@ -66,7 +66,7 @@ public class PaymentOrderManyPaasController {
 
     @PostMapping("/saveOrUpdata")
     @ApiOperation(value = "创建或修改众包支付订单", notes = "创建或修改众包支付订单")
-    public ReturnJson saveOrUpdataPaymentOrderMany(@Valid @RequestBody AddPaymentOrderManyDTO addPaymentOrderManyDto, @RequestParam String merchantId) throws CommonException {
+    public ReturnJson saveOrUpdataPaymentOrderMany(@Valid @RequestBody AddPaymentOrderManyDTO addPaymentOrderManyDto, @RequestParam String merchantId) throws Exception {
         return paymentOrderManyService.saveOrUpdataPaymentOrderMany(addPaymentOrderManyDto, merchantId);
     }
 

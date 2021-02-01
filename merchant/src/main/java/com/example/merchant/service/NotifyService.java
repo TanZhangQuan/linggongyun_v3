@@ -17,7 +17,7 @@ public interface NotifyService {
      *
      * @param request
      */
-    String depositNotice(HttpServletRequest request);
+    String depositNotice(HttpServletRequest request) throws Exception;
 
     /**
      * 银联提现到卡回调接收
@@ -25,7 +25,7 @@ public interface NotifyService {
      * @param request
      * @return
      */
-    String txResult(HttpServletRequest request);
+    String txResult(HttpServletRequest request) throws Exception;
 
     /**
      * 银联内部转账(清分接口，会员间交易)回调接收
@@ -33,5 +33,5 @@ public interface NotifyService {
      * @param request
      * @return
      */
-    String transferResult(HttpServletRequest request);
+    String transferResult(HttpServletRequest request) throws Exception;
 }

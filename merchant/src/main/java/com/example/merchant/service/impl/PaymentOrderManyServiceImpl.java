@@ -246,7 +246,7 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ReturnJson saveOrUpdataPaymentOrderMany(AddPaymentOrderManyDTO addPaymentOrderManyDto, String merchantId) throws CommonException {
+    public ReturnJson saveOrUpdataPaymentOrderMany(AddPaymentOrderManyDTO addPaymentOrderManyDto, String merchantId) throws Exception {
         PaymentOrderMany paymentOrderMany = new PaymentOrderMany();
         PaymentOrderManyDTO paymentOrderManyDto = addPaymentOrderManyDto.getPaymentOrderManyDto();
         BeanUtils.copyProperties(paymentOrderManyDto, paymentOrderMany);

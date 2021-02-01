@@ -226,7 +226,7 @@ public class UnionpayUtil {
         String encrypt;
         JSONObject jsonObject;
         try {
-             encrypt = AlipaySignature.rsaEncrypt(JSON.toJSONString(content), pfmpubkey, "utf-8");
+            encrypt = AlipaySignature.rsaEncrypt(JSON.toJSONString(content), pfmpubkey, "utf-8");
         } catch (Exception e) {
             log.error("加密业务参数异常", e);
             jsonObject = new JSONObject();
