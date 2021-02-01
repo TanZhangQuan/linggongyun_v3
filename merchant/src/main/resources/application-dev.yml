@@ -113,3 +113,22 @@ salary:
     selectRemainingSum: https://traderapi.lianlianpay.com/traderAcctQuery.htm
     #付款结果查询
     queryPayment: https://test.lianlianpay-inc.com/paymentapi/queryPayment.htm
+
+#微信Appid
+APPID: "wx3870ff35a721932e"
+#微信secret
+SECRET: "cf6f1bcea8c984dc699d2e554f9b2bf6"
+
+#容联短信设置
+SMS:
+  AccountSid: "8a216da873b27ace0173b30bff5d0079"
+  #主帐号TOKEN
+  AccountToken: "b12a28072550438486f44fce85ad3fe6"
+  #初始化应用ID
+  AppId: "8a216da873b27ace0173b30c00620081"
+  #模板ID
+  TemplateId: "624431"
+  #初始化服务器地址,服务器地址不需要写https://
+  serverIP: "app.cloopen.com"
+  #初始化服务器端口
+  serverPort: "8883"

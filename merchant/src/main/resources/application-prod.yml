@@ -148,3 +148,22 @@ myBank:
   key-json: "@activatedProperties@"
   #渠道编码
   channel-code: MYBANK00307
+
+#微信Appid
+APPID: "wx129052aa326f19b5"
+#微信secret
+SECRET: "794ae300c24efcc92261c2aa719c3c87"
+
+#容联短信设置
+SMS:
+  AccountSid: "8a216da86efdfee1016efe18bcf40022"
+  #主帐号TOKEN
+  AccountToken: "9f96cf25bba547f683c4e8f7566815ab"
+  #初始化应用ID
+  AppId: "8a216da86efdfee1016efe18bd670029"
+  #模板ID
+  TemplateId: "491739"
+  #初始化服务器地址,服务器地址不需要写https://
+  serverIP: "app.cloopen.com"
+  #初始化服务器端口
+  serverPort: "8883"
