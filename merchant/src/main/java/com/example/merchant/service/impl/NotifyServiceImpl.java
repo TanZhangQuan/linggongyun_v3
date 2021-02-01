@@ -326,7 +326,6 @@ public class NotifyServiceImpl implements NotifyService {
                     return "fail";
             }
 
-            paymentHistory.setOuterTradeNo(dchBillId);
             paymentHistoryService.updateById(paymentHistory);
 
             return "success";
@@ -528,7 +527,6 @@ public class NotifyServiceImpl implements NotifyService {
                     return "fail";
             }
 
-            paymentHistory.setOuterTradeNo(itfBillId);
             paymentHistoryService.updateById(paymentHistory);
 
             return "success";

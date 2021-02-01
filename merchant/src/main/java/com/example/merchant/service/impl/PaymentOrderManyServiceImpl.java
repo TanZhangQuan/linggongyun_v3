@@ -681,6 +681,8 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
                 Boolean boolSuccess;
                 JSONObject returnValue;
                 String rtnCode;
+                String status;
+                String batchItfId;
                 switch (paymentOrderMany.getPaymentMode()) {
 
                     case 0:
@@ -735,10 +737,23 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
                             return ReturnJson.error("支付众包手续费失败：" + errMsg);
                         }
 
+                        //设置第三方订单号
+                        batchItfId = returnValue.getString("batch_itf_id");
+                        paymentHistory.setOuterTradeNo(batchItfId);
+
+                        //设置交易记录状态
+                        status = returnValue.getString("status");
+                        if ("91".equals(status)) {
+                            //设置交易状态为成功
+                            paymentHistory.setTradeStatus(TradeStatus.SUCCESS);
+                            //修改总包支付状态为成功
+                            paymentOrderMany.setPaymentOrderStatus(3);
+                        } else {
+                            paymentHistory.setTradeStatus(TradeStatus.TRADING);
+                        }
+
                         //设置交易记录交易方式
                         paymentHistory.setPaymentMethod(PaymentMethod.UNIONSJBK);
-                        //设置交易记录状态
-                        paymentHistory.setTradeStatus(TradeStatus.TRADING);
 
                         break;
 
@@ -775,10 +790,23 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
                             return ReturnJson.error("支付众包手续费失败：" + errMsg);
                         }
 
+                        //设置第三方订单号
+                        batchItfId = returnValue.getString("batch_itf_id");
+                        paymentHistory.setOuterTradeNo(batchItfId);
+
+                        //设置交易记录状态
+                        status = returnValue.getString("status");
+                        if ("91".equals(status)) {
+                            //设置交易状态为成功
+                            paymentHistory.setTradeStatus(TradeStatus.SUCCESS);
+                            //修改总包支付状态为成功
+                            paymentOrderMany.setPaymentOrderStatus(3);
+                        } else {
+                            paymentHistory.setTradeStatus(TradeStatus.TRADING);
+                        }
+
                         //设置交易记录交易方式
                         paymentHistory.setPaymentMethod(PaymentMethod.UNIONPABK);
-                        //设置交易记录状态
-                        paymentHistory.setTradeStatus(TradeStatus.TRADING);
 
                         break;
 
@@ -815,10 +843,23 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
                             return ReturnJson.error("支付众包手续费失败：" + errMsg);
                         }
 
+                        //设置第三方订单号
+                        batchItfId = returnValue.getString("batch_itf_id");
+                        paymentHistory.setOuterTradeNo(batchItfId);
+
+                        //设置交易记录状态
+                        status = returnValue.getString("status");
+                        if ("91".equals(status)) {
+                            //设置交易状态为成功
+                            paymentHistory.setTradeStatus(TradeStatus.SUCCESS);
+                            //修改总包支付状态为成功
+                            paymentOrderMany.setPaymentOrderStatus(3);
+                        } else {
+                            paymentHistory.setTradeStatus(TradeStatus.TRADING);
+                        }
+
                         //设置交易记录交易方式
                         paymentHistory.setPaymentMethod(PaymentMethod.UNIONWSBK);
-                        //设置交易记录状态
-                        paymentHistory.setTradeStatus(TradeStatus.TRADING);
 
                         break;
 
@@ -855,10 +896,23 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
                             return ReturnJson.error("支付众包手续费失败：" + errMsg);
                         }
 
+                        //设置第三方订单号
+                        batchItfId = returnValue.getString("batch_itf_id");
+                        paymentHistory.setOuterTradeNo(batchItfId);
+
+                        //设置交易记录状态
+                        status = returnValue.getString("status");
+                        if ("91".equals(status)) {
+                            //设置交易状态为成功
+                            paymentHistory.setTradeStatus(TradeStatus.SUCCESS);
+                            //修改总包支付状态为成功
+                            paymentOrderMany.setPaymentOrderStatus(3);
+                        } else {
+                            paymentHistory.setTradeStatus(TradeStatus.TRADING);
+                        }
+
                         //设置交易记录交易方式
                         paymentHistory.setPaymentMethod(PaymentMethod.UNIONZSBK);
-                        //设置交易记录状态
-                        paymentHistory.setTradeStatus(TradeStatus.TRADING);
 
                         break;
 

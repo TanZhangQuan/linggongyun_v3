@@ -873,7 +873,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
                                     if (BigDecimal.ZERO.compareTo(actBal) < 0) {
                                         throw new CommonException(300, "子帐号" + taxUnionpay.getUnionpayBankType().getDesc() + "银联账面余额不为0");
                                     }
-                                    
+
                                     //开通子账号
                                     String uuid = SnowflakeIdWorker.getSerialNumber();
                                     jsonObject = UnionpayUtil.MB010(taxUnionpay.getMerchno(), taxUnionpay.getAcctno(), taxUnionpay.getPfmpubkey(), taxUnionpay.getPrikey(), uuid, companyInfo.getTitleOfAccount(), companyInfo.getCreditCode(), companyInfo.getBankCode());
