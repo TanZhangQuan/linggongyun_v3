@@ -291,6 +291,17 @@
         AND payment_order_status=3
         GROUP BY company_id) pom
         ON ci.id = pom.company_id
+        INNER JOIN (
+        SELECT
+            DISTINCT company_id
+        FROM
+            tb_company_tax
+        WHERE
+            tax_id IN
+        <foreach collection="taxIds" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        ) ct ON ct.company_id = ci.id
     </sql>
 
     <!--查询所监管的商户-->

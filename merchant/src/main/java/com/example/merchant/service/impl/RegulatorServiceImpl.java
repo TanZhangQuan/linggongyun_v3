@@ -745,10 +745,10 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
                 .eq(Regulator::getPassWord, encryptPWD);
         Regulator re = regulatorDao.selectOne(merchantQueryWrapper);
         if (re == null) {
-            throw new AuthenticationException("账号或密码错误！");
+            return ReturnJson.error("账号或密码错误！");
         }
         if (re.getStatus() == 1) {
-            throw new LockedAccountException("账号已被禁用！");
+            return ReturnJson.error("账号已被禁用！");
         }
         String token = jwtUtils.generateToken(re.getId());
         response.setHeader(TOKEN, token);
