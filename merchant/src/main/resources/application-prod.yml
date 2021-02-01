@@ -88,7 +88,7 @@ yyqAES: "csqd0b38i463jbq7"
 #易云签的回调地址
 yyqCallBack: "https://lgy-v3.lgyun.com.cn/makerend/authentication/callBackYYQSignAContract"
 #签约类型 0 e签宝，1：易云签
-signType: "1"
+signType: "0"
 
 #模板文件
 TemplateFile:
