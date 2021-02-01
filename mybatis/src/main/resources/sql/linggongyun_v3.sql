@@ -933,7 +933,7 @@ CREATE TABLE `tb_tax_package` (
   `tax_id` varchar(50) NOT NULL DEFAULT '' COMMENT '服务商',
   `tax_price` decimal(12,2) NOT NULL DEFAULT '0.00' COMMENT '一口价综合服务税率',
   `package_status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '0总包，1众包',
-  `support_category` varchar(200) NOT NULL DEFAULT '' COMMENT '支持的类目ID 逗号分隔 全量更新',
+  `support_category` varchar(2000) NOT NULL DEFAULT '' COMMENT '支持的类目ID 逗号分隔 全量更新',
   `create_date` datetime NOT NULL COMMENT '创建时间',
   `update_date` datetime NOT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`),
