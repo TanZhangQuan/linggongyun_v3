@@ -79,7 +79,7 @@ public interface PaymentOrderManyService extends IService<PaymentOrderMany> {
      * @param addPaymentOrderManyDto
      * @return
      */
-    ReturnJson saveOrUpdataPaymentOrderMany(AddPaymentOrderManyDTO addPaymentOrderManyDto, String merchantId) throws CommonException;
+    ReturnJson saveOrUpdataPaymentOrderMany(AddPaymentOrderManyDTO addPaymentOrderManyDto, String merchantId) throws Exception;
 
     /**
      * 商户众包支付

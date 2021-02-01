@@ -7,7 +7,6 @@ import com.example.merchant.dto.AssociatedTasksDTO;
 import com.example.merchant.dto.merchant.AddPaymentOrderDTO;
 import com.example.merchant.dto.merchant.PaymentOrderMerchantDTO;
 import com.example.merchant.dto.merchant.PaymentOrderPayDTO;
-import com.example.merchant.exception.CommonException;
 import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.CompanyUnionpayService;
 import com.example.merchant.service.MerchantService;
@@ -73,7 +72,7 @@ public class PaymentOrderMerchantController {
     })
     @LoginRequired
     public ReturnJson saveOrUpdataPaymentOrder(@Valid @RequestBody AddPaymentOrderDTO addPaymentOrderDto,
-                                               @RequestAttribute(value = "userId") @ApiParam(hidden = true) String merchantId) throws CommonException {
+                                               @RequestAttribute(value = "userId") @ApiParam(hidden = true) String merchantId) throws Exception {
         return paymentOrderService.saveOrUpdataPaymentOrder(addPaymentOrderDto, merchantId);
     }
 

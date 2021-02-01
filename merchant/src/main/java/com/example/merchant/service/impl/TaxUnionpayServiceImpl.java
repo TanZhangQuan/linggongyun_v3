@@ -398,12 +398,36 @@ public class TaxUnionpayServiceImpl extends ServiceImpl<TaxUnionpayDao, TaxUnion
             return ReturnJson.error("服务商" + taxUnionpay.getUnionpayBankType().getDesc() + "银联清分子账户清分失败: " + errMsg);
         }
 
+        //设置第三方订单号
+        String batchItfId = returnValue.getString("batch_itf_id");
+        paymentHistory.setOuterTradeNo(batchItfId);
+
+        //设置交易记录状态
+        String status = returnValue.getString("status");
+        if ("91".equals(status)) {
+            //设置交易状态为成功
+            paymentHistory.setTradeStatus(TradeStatus.SUCCESS);
+
+            //新建交易记录
+            PaymentHistory rechargePaymentHistory = new PaymentHistory();
+            rechargePaymentHistory.setTradeNo(SnowflakeIdWorker.getSerialNumber());
+            rechargePaymentHistory.setOrderType(OrderType.RECHARGE);
+            rechargePaymentHistory.setPaymentMethod(paymentMethod);
+            rechargePaymentHistory.setTradeObject(TradeObject.COMPANY);
+            rechargePaymentHistory.setTradeObjectId(companyUnionpay.getCompanyId());
+            rechargePaymentHistory.setAmount(amount);
+            rechargePaymentHistory.setTradeStatus(TradeStatus.SUCCESS);
+            paymentHistoryService.save(rechargePaymentHistory);
+
+        } else {
+            paymentHistory.setTradeStatus(TradeStatus.TRADING);
+        }
+
         paymentHistory.setOrderType(OrderType.CLEAR);
         paymentHistory.setPaymentMethod(paymentMethod);
         paymentHistory.setTradeObject(TradeObject.TAX);
         paymentHistory.setTradeObjectId(taxUnionpay.getTaxId());
         paymentHistory.setAmount(amount);
-        paymentHistory.setTradeStatus(TradeStatus.TRADING);
         paymentHistoryService.save(paymentHistory);
 
         return ReturnJson.success("操作成功");

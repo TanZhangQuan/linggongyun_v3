@@ -56,7 +56,7 @@ public class NotifyServiceImpl implements NotifyService {
     private RedisDao redisDao;
 
     @Override
-    public String depositNotice(HttpServletRequest request) {
+    public String depositNotice(HttpServletRequest request) throws Exception {
 
         Map<String, Object> parameters = WebUtils.getParametersStartingWith(request, "");
         log.info("银联入金回调接收:" + JSON.toJSONString(parameters));
@@ -64,6 +64,15 @@ public class NotifyServiceImpl implements NotifyService {
         JSONObject jsonObject = JSON.parseObject(JSON.toJSONString(parameters));
         if (jsonObject == null) {
             log.error("银联入金回调接收不到参数");
+        }
+
+        //入金交易类型（01:绑卡帐户来/款,02:白名单帐户来款,03:第三方来款）bizType=03 时，入金转入清分子账户
+        String bizType = jsonObject.getString("bizType");
+        //来款备注
+        String remarks = jsonObject.getString("remarks");
+        if ("03".equals(bizType)) {
+            log.info(remarks);
+            return "success";
         }
 
         //获取商户号, 查询相应的服务商银联
@@ -123,12 +132,8 @@ public class NotifyServiceImpl implements NotifyService {
         String rcvAcctName = jsonObject.getString("rcvAcctName");
         //来款联行号
         String rcvBankCode = jsonObject.getString("rcvBankCode");
-        //入金交易类型（01:绑卡帐户来/款,02:白名单帐户来款,03:第三方来款）bizType=03 时，入金转入清分子账户
-        String bizType = jsonObject.getString("bizType");
         //到账时间
         String rcvTime = jsonObject.getString("rcvTime");
-        //来款备注
-        String remarks = jsonObject.getString("remarks");
         //参数的签名串
         String sign = jsonObject.getString("sign");
         //加签方式（本字段不参与加签）
@@ -200,7 +205,7 @@ public class NotifyServiceImpl implements NotifyService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public String txResult(HttpServletRequest request) {
+    public String txResult(HttpServletRequest request) throws Exception {
 
         Map<String, Object> parameters = WebUtils.getParametersStartingWith(request, "");
         log.info("银联提现到卡回调接收:" + JSON.toJSONString(parameters));
@@ -297,12 +302,31 @@ public class NotifyServiceImpl implements NotifyService {
                         paymentInventory.setTradeFailReason("");
                         paymentInventoryService.updateById(paymentInventory);
 
-                        //查看是否所有分包已经支付完成
-                        boolean isAllSuccess = paymentInventoryService.checkAllPaymentInventoryPaySuccess(paymentInventory.getPaymentOrderId());
-                        if (isAllSuccess) {
-                            PaymentOrder paymentOrder = paymentOrderService.getById(paymentInventory.getPaymentOrderId());
-                            paymentOrder.setPaymentOrderStatus(6);
-                            paymentOrderService.updateById(paymentOrder);
+                        long isAllSuccessTime = System.currentTimeMillis() + 5 * 1000 + 1000;
+                        while (!redisDao.lock(paymentInventory.getPaymentOrderId().intern(), isAllSuccessTime)) {
+                            Thread.sleep(1000);
+                        }
+                        log.info("查看是否所有分包已经支付完成，获得锁的时间戳：{}", isAllSuccessTime);
+
+                        try {
+
+                            //查看是否所有分包已经支付完成
+                            boolean isAllSuccess = paymentInventoryService.checkAllPaymentInventoryPaySuccess(paymentInventory.getPaymentOrderId());
+                            if (isAllSuccess) {
+                                log.info("ID为{}的总包的全部分包支付完成", paymentInventory.getPaymentOrderId());
+                                PaymentOrder paymentOrder = paymentOrderService.getById(paymentInventory.getPaymentOrderId());
+                                paymentOrder.setPaymentOrderStatus(6);
+                                paymentOrderService.updateById(paymentOrder);
+                            }
+
+                        } finally {
+                            try {
+                                //释放锁
+                                redisDao.release(paymentInventory.getPaymentOrderId().intern(), isAllSuccessTime);
+                                log.info("查看是否所有分包已经支付完成，释放锁的时间戳：{}", isAllSuccessTime);
+                            } catch (Exception e) {
+                                log.info("查看是否所有分包已经支付完成，释放锁的时间戳异常", e);
+                            }
                         }
 
                         //修改交易记录为支付成功
@@ -326,7 +350,6 @@ public class NotifyServiceImpl implements NotifyService {
                     return "fail";
             }
 
-            paymentHistory.setOuterTradeNo(dchBillId);
             paymentHistoryService.updateById(paymentHistory);
 
             return "success";
@@ -345,7 +368,7 @@ public class NotifyServiceImpl implements NotifyService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public String transferResult(HttpServletRequest request) {
+    public String transferResult(HttpServletRequest request) throws Exception {
 
         Map<String, Object> parameters = WebUtils.getParametersStartingWith(request, "");
         log.info("银联内部转账(清分接口，会员间交易)回调接收:" + JSON.toJSONString(parameters));
@@ -528,7 +551,6 @@ public class NotifyServiceImpl implements NotifyService {
                     return "fail";
             }
 
-            paymentHistory.setOuterTradeNo(itfBillId);
             paymentHistoryService.updateById(paymentHistory);
 
             return "success";

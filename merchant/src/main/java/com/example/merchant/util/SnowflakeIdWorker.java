@@ -115,12 +115,12 @@ public class SnowflakeIdWorker {
      *
      * @return SnowflakeId
      */
-    public Long nextId() {
+    public Long nextId() throws Exception {
 
         //redis上锁
         long time = System.currentTimeMillis() + 5 * 1000 + 1000;
-        if (!redisUtil.lock(lock, time)) {
-            return null;
+        while (!redisUtil.lock(lock, time)) {
+            Thread.sleep(1000);
         }
         log.info("获得锁的时间戳：{}", time);
 
@@ -187,14 +187,10 @@ public class SnowflakeIdWorker {
     /**
      * 获取流水号
      */
-    public static String getSerialNumber() {
+    public static String getSerialNumber() throws Exception {
         SnowflakeIdWorker idWorker = new SnowflakeIdWorker(0, 0);
         long serialNumber = idWorker.nextId();
         return String.valueOf(serialNumber);
-    }
-
-    public static void main(String[] args) {
-        log.info("FFFFFF:" + getSerialNumber());
     }
 
 }
