@@ -237,8 +237,6 @@ public class UnionpayUtil {
 
         params.put("content", encrypt);
         params.put("sign", createSign(params, prikey));
-        log.info("平台公钥：{}", pfmpubkey);
-        log.info("合作方私钥：{}", prikey);
         log.info("请求业务参数：{}", JSON.toJSONString(content));
         log.info("请求基本参数：{}", JSON.toJSONString(params));
 
