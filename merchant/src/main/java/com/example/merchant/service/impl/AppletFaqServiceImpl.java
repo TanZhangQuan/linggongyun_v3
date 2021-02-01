@@ -52,11 +52,11 @@ public class AppletFaqServiceImpl extends ServiceImpl<AppletFaqDao, AppletFaq> i
             appletFaq = new AppletFaq();
             BeanUtils.copyProperties(saveOrUpdateAppletFaqDto, appletFaq);
             appletFaqDao.insert(appletFaq);
-            return ReturnJson.error("添加成功！");
+            return ReturnJson.success("添加成功！");
         } else {
             BeanUtils.copyProperties(saveOrUpdateAppletFaqDto, appletFaq);
             appletFaqDao.updateById(appletFaq);
-            return ReturnJson.error("修改成功！");
+            return ReturnJson.success("修改成功！");
         }
     }
 
@@ -95,11 +95,11 @@ public class AppletFaqServiceImpl extends ServiceImpl<AppletFaqDao, AppletFaq> i
             appletBanner = new AppletBanner();
             BeanUtils.copyProperties(saveOrUpdateAppletBannerDto, appletBanner);
             appletBannerDao.insert(appletBanner);
-            return ReturnJson.error("添加成功！");
+            return ReturnJson.success("添加成功！");
         } else {
             BeanUtils.copyProperties(saveOrUpdateAppletBannerDto, appletBanner);
             appletBannerDao.updateById(appletBanner);
-            return ReturnJson.error("修改成功！");
+            return ReturnJson.success("修改成功！");
         }
     }
 
@@ -138,11 +138,11 @@ public class AppletFaqServiceImpl extends ServiceImpl<AppletFaqDao, AppletFaq> i
             appletOtherInfo = new AppletOtherInfo();
             BeanUtils.copyProperties(saveOrUpdateAppletOtherInfoDto, appletOtherInfo);
             appletOtherInfoDao.insert(appletOtherInfo);
-            return ReturnJson.error("添加成功！");
+            return ReturnJson.success("添加成功！");
         } else {
             BeanUtils.copyProperties(saveOrUpdateAppletOtherInfoDto, appletOtherInfo);
             appletOtherInfoDao.updateById(appletOtherInfo);
-            return ReturnJson.error("修改成功！");
+            return ReturnJson.success("修改成功！");
         }
     }
 
