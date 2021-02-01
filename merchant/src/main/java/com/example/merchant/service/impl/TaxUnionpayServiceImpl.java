@@ -3,10 +3,7 @@ package com.example.merchant.service.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.example.common.enums.OrderType;
-import com.example.common.enums.PaymentMethod;
-import com.example.common.enums.TradeObject;
-import com.example.common.enums.UnionpayBankType;
+import com.example.common.enums.*;
 import com.example.common.util.ReturnJson;
 import com.example.common.util.UnionpayUtil;
 import com.example.merchant.dto.platform.AddOrUpdateTaxUnionpayDTO;
@@ -406,6 +403,7 @@ public class TaxUnionpayServiceImpl extends ServiceImpl<TaxUnionpayDao, TaxUnion
         paymentHistory.setTradeObject(TradeObject.TAX);
         paymentHistory.setTradeObjectId(taxUnionpay.getTaxId());
         paymentHistory.setAmount(amount);
+        paymentHistory.setTradeStatus(TradeStatus.TRADING);
         paymentHistoryService.save(paymentHistory);
 
         return ReturnJson.success("操作成功");
