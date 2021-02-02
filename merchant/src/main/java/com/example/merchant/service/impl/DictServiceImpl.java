@@ -32,8 +32,8 @@ public class DictServiceImpl extends ServiceImpl<DictDao, Dict> implements DictS
     }
 
     @Override
-    public ReturnJson queryDictValueAndKey() {
-        List<DictVO> list = dictDao.getDictValueAndKey();
+    public ReturnJson queryDictValueAndKey(String code) {
+        List<DictVO> list = dictDao.getDictValueAndKey(code);
         return ReturnJson.success(list);
     }
 }
