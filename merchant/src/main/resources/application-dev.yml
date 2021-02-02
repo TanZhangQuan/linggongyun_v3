@@ -1,9 +1,68 @@
+server:
+  port: 8081
+
 spring:
+  # 配置数据源
   datasource:
-    url: jdbc:mysql://localhost:3306/linggongyun_v3?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=GMT%2B8
+    # 填写你数据库的url、登录名、密码和数据库名
+    url: jdbc:mysql://localhost:3306/linggongyun_v3/linggongyun_v3?useSSL=false&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&tinyInt1isBit=false&allowMultiQueries=true&autoReconnect=true&failOverReadOnly=false&serverTimezone=GMT%2B8
     username: root
     password: 123456
+    # mysql驱动
     driver-class-name: com.mysql.cj.jdbc.Driver
+    # 使用阿里的Druid连接池（连接池指定 springboot2.02版本默认使用HikariCP 此处要替换成Druid）
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      # 连接池的配置信息
+      # 初始连接数
+      initialSize: 5
+      # 最小连接池数量
+      minIdle: 5
+      # 最大连接池数量
+      maxActive: 20
+      # 配置获取连接等待超时的时间
+      maxWait: 60000
+      # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+      timeBetweenEvictionRunsMillis: 60000
+      # 配置一个连接在池中最小生存的时间，单位是毫秒
+      minEvictableIdleTimeMillis: 300000
+      # 配置一个连接在池中最大生存的时间，单位是毫秒
+      maxEvictableIdleTimeMillis: 900000
+      # 配置检测连接是否有效
+      validationQuery: SELECT 1 FROM DUAL
+      testWhileIdle: true
+      testOnBorrow: false
+      testOnReturn: false
+      # 是否缓存preparedStatement，也就是PSCache  官方建议MySQL下建议关闭   个人建议如果想用SQL防火墙 建议打开
+      poolPreparedStatements: true
+      maxPoolPreparedStatementPerConnectionSize: 20
+      # 配置监控统计拦截的filters，去掉后监控界面sql无法统计，'wall'用于防火墙(Druid中使用log4j2进行日志输出，这个配置时使用log4j2输出，其实用logback也可以)
+      filters: stat,slf4j
+      # 通过connectProperties属性来打开mergeSql功能；慢SQL记录
+      connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+      # ！！！请勿配置timeBetweenLogStatsMillis 会定时输出日志 并导致统计的sql清零
+      #spring.datasource.druid.timeBetweenLogStatsMillis=20000
+      # WebStatFilter配置，说明请参考Druid Wiki
+      webStatFilter:
+        # 是否启用StatFilter默认值true
+        enabled: true
+        url-pattern: "/*"
+        exclusions: "*.js,*.gif,*.jpg,*.bmp,*.png,*.css,*.ico,/druid/*"
+      # StatViewServlet配置，说明请参考Druid Wiki
+      statViewServlet:
+        #是否启用StatViewServlet默认值true
+        enabled: true
+        url-pattern: "/druid/*"
+        #  禁用HTML页面上的“Reset All”功能
+        reset-enable: false
+        # IP白名单(没有配置或者为空，则允许所有访问)
+        allow: 127.0.0.1
+        # IP黑名单 (存在共同时，deny优先于allow)
+        deny:
+        # 登录名(登陆地址例如：http://localhost:8080/druid/login.html)
+        login-username: admin
+        # 登录密码
+        login-password: 123456
   redis:
     host: 127.0.0.1  # Redis服务器地址
     port: 6379 # Redis服务器连接端口
@@ -20,14 +79,24 @@ spring:
       repositories:
         enabled: false
 
-  servlet:
-    multipart:
-      # 单个文件的最大值
-      max-file-size: 40MB
-      # 上传文件总的最大值
-      max-request-size: 100MB
+#微信Appid
+APPID: "wx3870ff35a721932e"
+#微信secret
+SECRET: "cf6f1bcea8c984dc699d2e554f9b2bf6"
 
-
+#容联短信设置
+SMS:
+  AccountSid: "8a216da873b27ace0173b30bff5d0079"
+  #主帐号TOKEN
+  AccountToken: "b12a28072550438486f44fce85ad3fe6"
+  #初始化应用ID
+  AppId: "8a216da873b27ace0173b30c00620081"
+  #模板ID
+  TemplateId: "624431"
+  #初始化服务器地址,服务器地址不需要写https://
+  serverIP: "app.cloopen.com"
+  #初始化服务器端口
+  serverPort: "8883"
 
 #本地图片存储路径
 PathImage_KEY: "D:/upload/image/"
@@ -94,7 +163,6 @@ TemplateFile:
 #发送签署合同应用的密钥
 appSecret: "86d20a7f49bc3c4c20bae23d369d8853"
 
-
 salary:
   #连连银通公钥（不需替换，这是连连公钥，用于报文加密和连连返回响应报文时验签，不是商户生成的公钥.)
   PUBLIC_KEY_ONLINE: MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCSS/DiwdCf/aZsxxcacDnooGph3d2JOj5GXWi+q3gznZauZjkNP8SKl3J2liP0O6rU/Y/29+IUe+GTMhMOFJuZm1htAtKiu5ekW0GlBMWxf4FPkYlQkPE0FtaoMP3gYfh+OwI+fIRrpW3ySn3mScnc6Z700nU/VYrRkfcSCbSnRwIDAQAB
@@ -114,21 +182,17 @@ salary:
     #付款结果查询
     queryPayment: https://test.lianlianpay-inc.com/paymentapi/queryPayment.htm
 
-#微信Appid
-APPID: "wx3870ff35a721932e"
-#微信secret
-SECRET: "cf6f1bcea8c984dc699d2e554f9b2bf6"
-
-#容联短信设置
-SMS:
-  AccountSid: "8a216da873b27ace0173b30bff5d0079"
-  #主帐号TOKEN
-  AccountToken: "b12a28072550438486f44fce85ad3fe6"
-  #初始化应用ID
-  AppId: "8a216da873b27ace0173b30c00620081"
-  #模板ID
-  TemplateId: "624431"
-  #初始化服务器地址,服务器地址不需要写https://
-  serverIP: "app.cloopen.com"
-  #初始化服务器端口
-  serverPort: "8883"
+myBank:
+  merchant-private-key: MIICdwIBADANBgkqhkiG9w0BAQEFAASCAmEwggJdAgEAAoGBAO/6rPCvyCC+IMalLzTy3cVBz/+wamCFNiq9qKEilEBDTttP7Rd/GAS51lsfCrsISbg5td/w25+wulDfuMbjjlW9Afh0p7Jscmbo1skqIOIUPYfVQEL687B0EmJufMlljfu52b2efVAyWZF9QBG1vx/AJz1EVyfskMaYVqPiTesZAgMBAAECgYEAtVnkk0bjoArOTg/KquLWQRlJDFrPKP3CP25wHsU4749t6kJuU5FSH1Ao81d0Dn9m5neGQCOOdRFi23cV9gdFKYMhwPE6+nTAloxI3vb8K9NNMe0zcFksva9c9bUaMGH2p40szMoOpO6TrSHO9Hx4GJ6UfsUUqkFFlN76XprwE+ECQQD9rXwfbr9GKh9QMNvnwo9xxyVl4kI88iq0X6G4qVXo1Tv6/DBDJNkX1mbXKFYL5NOW1waZzR+Z/XcKWAmUT8J9AkEA8i0WT/ieNsF3IuFvrIYG4WUadbUqObcYP4Y7Vt836zggRbu0qvYiqAv92Leruaq3ZN1khxp6gZKl/OJHXc5xzQJACqr1AU1i9cxnrLOhS8m+xoYdaH9vUajNavBqmJ1mY3g0IYXhcbFm/72gbYPgundQ/pLkUCt0HMGv89tn67i+8QJBALV6UgkVnsIbkkKCOyRGv2syT3S7kOv1J+eamGcOGSJcSdrXwZiHoArcCZrYcIhOxOWB/m47ymfE1Dw/+QjzxlUCQCmnGFUO9zN862mKYjEkjDN65n1IUB9Fmc1msHkIZAQaQknmxmCIOHC75u4W0PGRyVzq8KkxpNBq62ICl7xmsPM=
+  md5-key: lewistest
+  wallet-public-key: MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCOHbhWR6xlk16O+fxtMemnJ0uKxUIfstNnS8nVYg6NwAnHhZlpGI0suERovvX9WsWCZ9lG9OD6ieakAaU4PW1BS31TMckr5u1ed+aZIQ7qHE/LqXwF7gE0fDcWNh5OWn/6rETbOwGRVTe5xgufgnEc7YAKuMPChLxChmYuZGGX2QIDAQAB
+  partner-id: 200030853255
+  gop-tpu-url: https://tc.mybank.cn/gop/gateway.do
+  gop-mag-url: https://tc.mybank.cn/gop/gateway.do
+  notify-url: http://zhenghuang.vipgz4.idcfengye.com/gop/mag/syncNotify.htm
+  # \u5f02\u6b65\u901a\u77e5\u5730\u5740
+  async-notify-url: https://hdtzdz.lgyun.com.cn/huidiaojieshou/apis/MyBank/AsyncNotify
+  settlement-account: 8888888194111389
+  key-json: "@activatedProperties@"
+  #渠道编码
+  channel-code: MYBANK00307
