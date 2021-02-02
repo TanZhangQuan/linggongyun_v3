@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.example.common.enums.PackageType;
+import com.example.common.enums.PaymentMethod;
 import com.example.common.enums.UnionpayBankType;
 import com.example.common.sms.SenSMS;
 import com.example.common.util.MD5;
@@ -119,6 +121,8 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
     private TaxPackageService taxPackageService;
     @Resource
     private InvoiceLadderPriceService invoiceLadderPriceService;
+    @Resource
+    private CompanyTaxPayMethodService companyTaxPayMethodService;
 
     @Override
     public ReturnJson merchantLogin(String username, String password, HttpServletResponse response) {
@@ -571,6 +575,44 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
                         throw new CommonException(300, tax.getTaxName() + "服务商" + unionpayBankType.getDesc() + "银联支付未开启");
                     }
 
+                    //保存商户-服务商支付方式
+                    PaymentMethod paymentMethod;
+                    switch (unionpayBankType) {
+
+                        case SJBK:
+
+                            paymentMethod = PaymentMethod.UNIONSJBK;
+                            break;
+
+                        case PABK:
+
+                            paymentMethod = PaymentMethod.UNIONPABK;
+                            break;
+
+                        case WSBK:
+
+                            paymentMethod = PaymentMethod.UNIONWSBK;
+                            break;
+
+                        case ZSBK:
+
+                            paymentMethod = PaymentMethod.UNIONZSBK;
+                            break;
+
+                        default:
+                            throw new CommonException(300, "银联支付方式不存在");
+                    }
+
+                    PackageType packageType = companyTaxDto.getPackageStatus() == 0 ? PackageType.TOTALPACKAGE : PackageType.CROWDPACKAGE;
+
+                    CompanyTaxPayMethod companyTaxPayMethod = new CompanyTaxPayMethod();
+                    companyTaxPayMethod.setCompanyId(companyInfo.getId());
+                    companyTaxPayMethod.setTaxId(tax.getId());
+                    companyTaxPayMethod.setPackageType(packageType);
+                    companyTaxPayMethod.setPaymentMethod(paymentMethod);
+                    companyTaxPayMethod.setBoolEnable(true);
+                    companyTaxPayMethodService.save(companyTaxPayMethod);
+
                     //查询商户是否开通子账号
                     CompanyUnionpay companyUnionpay = companyUnionpayService.queryMerchantUnionpay(companyInfo.getId(), taxUnionpay.getId());
                     if (companyUnionpay != null) {
@@ -615,6 +657,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
                 }
             }
         }
+
 
         return ReturnJson.success("添加商户成功！");
     }
@@ -833,6 +876,9 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
                 }
 //                }
 
+                //设置商户-服务商支付方式全部不启用
+                companyTaxPayMethodService.closeCompanyTaxPayMethod(companyInfo.getId(), tax.getId());
+
                 //注册商户对应服务商银联的子账号
                 if (updateCompanyTaxDTO.getUnionpayBankTypeList() != null && updateCompanyTaxDTO.getUnionpayBankTypeList().size() > 0) {
                     for (UnionpayBankType unionpayBankType : updateCompanyTaxDTO.getUnionpayBankTypeList()) {
@@ -844,6 +890,50 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
                         }
                         if (taxUnionpay.getBoolEnable() == null || !taxUnionpay.getBoolEnable()) {
                             throw new CommonException(300, tax.getTaxName() + "服务商" + unionpayBankType.getDesc() + "银联支付未开启");
+                        }
+
+                        //保存商户-服务商支付方式
+                        PaymentMethod paymentMethod;
+                        switch (unionpayBankType) {
+
+                            case SJBK:
+
+                                paymentMethod = PaymentMethod.UNIONSJBK;
+                                break;
+
+                            case PABK:
+
+                                paymentMethod = PaymentMethod.UNIONPABK;
+                                break;
+
+                            case WSBK:
+
+                                paymentMethod = PaymentMethod.UNIONWSBK;
+                                break;
+
+                            case ZSBK:
+
+                                paymentMethod = PaymentMethod.UNIONZSBK;
+                                break;
+
+                            default:
+                                throw new CommonException(300, "银联支付方式不存在");
+                        }
+
+                        PackageType packageType = updateCompanyTaxDTO.getPackageStatus() == 0 ? PackageType.TOTALPACKAGE : PackageType.CROWDPACKAGE;
+
+                        CompanyTaxPayMethod companyTaxPayMethod = companyTaxPayMethodService.queryCompanyTaxPayMethod(companyInfo.getId(), tax.getId(), packageType, paymentMethod);
+                        if (companyTaxPayMethod != null) {
+                            companyTaxPayMethod.setBoolEnable(true);
+                            companyTaxPayMethodService.updateById(companyTaxPayMethod);
+                        } else {
+                            companyTaxPayMethod = new CompanyTaxPayMethod();
+                            companyTaxPayMethod.setCompanyId(companyInfo.getId());
+                            companyTaxPayMethod.setTaxId(tax.getId());
+                            companyTaxPayMethod.setPackageType(packageType);
+                            companyTaxPayMethod.setPaymentMethod(paymentMethod);
+                            companyTaxPayMethod.setBoolEnable(true);
+                            companyTaxPayMethodService.save(companyTaxPayMethod);
                         }
 
                         //查询商户是否开通子账号

@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50717
 File Encoding         : 65001
 
-Date: 2021-01-28 15:36:35
+Date: 2021-02-02 20:07:26
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -58,6 +58,59 @@ CREATE TABLE `tb_agent` (
 
 -- ----------------------------
 -- Records of tb_agent
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for `tb_applet_banner`
+-- ----------------------------
+DROP TABLE IF EXISTS `tb_applet_banner`;
+CREATE TABLE `tb_applet_banner` (
+  `id` varchar(50) NOT NULL COMMENT '主键',
+  `serial_number` int(6) DEFAULT NULL COMMENT '序号',
+  `picture` varchar(255) DEFAULT '' COMMENT '图片',
+  `create_date` datetime NOT NULL COMMENT '创建时间',
+  `update_date` datetime NOT NULL COMMENT '更新时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='小程序轮播图';
+
+-- ----------------------------
+-- Records of tb_applet_banner
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for `tb_applet_faq`
+-- ----------------------------
+DROP TABLE IF EXISTS `tb_applet_faq`;
+CREATE TABLE `tb_applet_faq` (
+  `id` varchar(50) NOT NULL COMMENT '主键',
+  `serial_number` int(6) DEFAULT NULL COMMENT '序号',
+  `title` varchar(255) DEFAULT '' COMMENT '标题',
+  `content` varchar(1000) DEFAULT '' COMMENT '内容',
+  `create_date` datetime NOT NULL COMMENT '创建时间',
+  `update_date` datetime NOT NULL COMMENT '更新时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `serial_number` (`serial_number`) USING BTREE COMMENT '序号唯一'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='小程序常见问题';
+
+-- ----------------------------
+-- Records of tb_applet_faq
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for `tb_applet_other_info`
+-- ----------------------------
+DROP TABLE IF EXISTS `tb_applet_other_info`;
+CREATE TABLE `tb_applet_other_info` (
+  `id` varchar(50) NOT NULL COMMENT '主键',
+  `entry_name` varchar(255) DEFAULT '' COMMENT '项目名称',
+  `content` varchar(1000) DEFAULT '' COMMENT '内容',
+  `create_date` datetime NOT NULL COMMENT '创建时间',
+  `update_date` datetime NOT NULL COMMENT '更新时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='小程序其他问题';
+
+-- ----------------------------
+-- Records of tb_applet_other_info
 -- ----------------------------
 
 -- ----------------------------
@@ -112,7 +165,7 @@ CREATE TABLE `tb_company_info` (
   `company_size` varchar(50) NOT NULL DEFAULT '' COMMENT '公司规模',
   `company_provice` varchar(50) NOT NULL DEFAULT '' COMMENT '公司所属省份',
   `company_city` varchar(50) NOT NULL DEFAULT '' COMMENT '公司所属城市',
-  `company_man` varchar(20) NOT NULL  COMMENT '公司的法定人',
+  `company_man` varchar(20) NOT NULL COMMENT '公司的法定人',
   `company_man_id_card` varchar(100) NOT NULL DEFAULT '' COMMENT '公司的法定人的身份证',
   `business_license` varchar(250) NOT NULL COMMENT '公司的营业执照',
   `company_desc` varchar(500) NOT NULL DEFAULT '' COMMENT '公司的简介',
@@ -207,6 +260,27 @@ CREATE TABLE `tb_company_tax` (
 
 -- ----------------------------
 -- Records of tb_company_tax
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for `tb_company_tax_pay_method`
+-- ----------------------------
+DROP TABLE IF EXISTS `tb_company_tax_pay_method`;
+CREATE TABLE `tb_company_tax_pay_method` (
+  `id` varchar(50) NOT NULL COMMENT '主键',
+  `company_id` varchar(50) NOT NULL COMMENT '商户ID',
+  `tax_id` varchar(50) NOT NULL COMMENT '服务商ID',
+  `package_type` varchar(50) NOT NULL COMMENT '合作类型',
+  `payment_method` varchar(50) NOT NULL COMMENT '交易方式',
+  `boolEnable` bit(1) NOT NULL COMMENT '是否启用',
+  `create_date` datetime NOT NULL COMMENT '创建时间',
+  `update_date` datetime NOT NULL COMMENT '修改时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `UK_icr1qhlwx3lsd0terqn7w65k1` (`company_id`,`tax_id`,`package_type`,`payment_method`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='商户服务商支付方式';
+
+-- ----------------------------
+-- Records of tb_company_tax_pay_method
 -- ----------------------------
 
 -- ----------------------------
@@ -418,7 +492,7 @@ CREATE TABLE `tb_invoice_ladder_price` (
   `create_date` datetime NOT NULL COMMENT '创建时间',
   `update_date` datetime NOT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `UK_icr1qhlwx3lsd0terqn7w65k1` (`tax_id`,`start_money`,`end_money`,`packaeg_status`, `status`)
+  UNIQUE KEY `UK_icr1qhlwx3lsd0terqn7w65k1` (`tax_id`,`start_money`,`end_money`,`packaeg_status`,`status`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='服务商发票税率梯度价';
 
 -- ----------------------------
@@ -1083,59 +1157,6 @@ CREATE TABLE `tb_worker_task` (
 
 -- ----------------------------
 -- Records of tb_worker_task
--- ----------------------------
-
--- ----------------------------
--- Table structure for tb_applet_banner
--- ----------------------------
-DROP TABLE IF EXISTS `tb_applet_banner`;
-CREATE TABLE `tb_applet_banner` (
-  `id` varchar(50) NOT NULL COMMENT '主键',
-  `serial_number` int(6) DEFAULT NULL COMMENT '序号',
-  `picture` varchar(255) DEFAULT '' COMMENT '图片',
-  `create_date` datetime NOT NULL COMMENT '创建时间',
-  `update_date` datetime NOT NULL COMMENT '更新时间',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='小程序轮播图';
-
--- ----------------------------
--- Records of tb_applet_banner
--- ----------------------------
-
--- ----------------------------
--- Table structure for tb_applet_other_info
--- ----------------------------
-DROP TABLE IF EXISTS `tb_applet_other_info`;
-CREATE TABLE `tb_applet_other_info` (
-  `id` varchar(50) NOT NULL COMMENT '主键',
-  `entry_name` varchar(255) DEFAULT '' COMMENT '项目名称',
-  `content` varchar(1000) DEFAULT '' COMMENT '内容',
-  `create_date` datetime NOT NULL COMMENT '创建时间',
-  `update_date` datetime NOT NULL COMMENT '更新时间',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='小程序其他问题';
-
--- ----------------------------
--- Records of tb_applet_other_info
--- ----------------------------
-
--- ----------------------------
--- Table structure for tb_applet_faq
--- ----------------------------
-DROP TABLE IF EXISTS `tb_applet_faq`;
-CREATE TABLE `tb_applet_faq` (
-  `id` varchar(50) NOT NULL COMMENT '主键',
-  `serial_number` int(6) DEFAULT NULL COMMENT '序号',
-  `title` varchar(255) DEFAULT '' COMMENT '标题',
-  `content` varchar(1000) DEFAULT '' COMMENT '内容',
-  `create_date` datetime NOT NULL COMMENT '创建时间',
-  `update_date` datetime NOT NULL COMMENT '更新时间',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `serial_number` (`serial_number`) USING BTREE COMMENT '序号唯一'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='小程序常见问题';
-
--- ----------------------------
--- Records of tb_applet_faq
 -- ----------------------------
 
 -- ----------------------------
