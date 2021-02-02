@@ -141,11 +141,13 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
             int i = taskDao.insert(task);
             if (i > 0) {
                 if (addTaskDto.getTaskMode() != 1) {
-                    Map<String, String> map = new HashMap<>();
-                    map.put("workerId", addTaskDto.getMakerIds());
-                    map.put("taskId", task.getId());
-                    map.put("arrangePerson", merchantDao.getNameById(merchant.getId()));
-                    workerTaskService.seavWorkerTask(map);
+                    if (!addTaskDto.getMakerIds().equals("")) {
+                        Map<String, String> map = new HashMap<>();
+                        map.put("workerId", addTaskDto.getMakerIds());
+                        map.put("taskId", task.getId());
+                        map.put("arrangePerson", merchantDao.getNameById(merchant.getId()));
+                        workerTaskService.seavWorkerTask(map);
+                    }
                 }
             }
             return ReturnJson.success("添加成功！");
@@ -195,11 +197,11 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
         Page page = new Page(platformTaskDto.getPageNo(), platformTaskDto.getPageSize());
         IPage<Task> taskList;
         if (managers.getUserSign() == 3) {
-            taskList = taskDao.getPlatformTaskList(page, platformTaskDto, null,null);
-        }else if (managers.getUserSign() == 2){
-            taskList = taskDao.getPlatformTaskList(page, platformTaskDto, userId,1);
-        }else {
-            taskList = taskDao.getPlatformTaskList(page, platformTaskDto, userId,null);
+            taskList = taskDao.getPlatformTaskList(page, platformTaskDto, null, null);
+        } else if (managers.getUserSign() == 2) {
+            taskList = taskDao.getPlatformTaskList(page, platformTaskDto, userId, 1);
+        } else {
+            taskList = taskDao.getPlatformTaskList(page, platformTaskDto, userId, null);
         }
         return ReturnJson.success(taskList);
     }
