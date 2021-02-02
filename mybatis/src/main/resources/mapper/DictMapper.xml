@@ -16,7 +16,6 @@
         <result column="remark" property="remark"/>
         <result column="create_date" property="createDate"/>
         <result column="update_date" property="updateDate"/>
-        <result column="bool_deleted" property="boolDeleted"/>
     </resultMap>
 
     <select id="getDictValues" resultType="java.lang.String">
@@ -30,9 +29,10 @@
         ORDER BY
             sort ASC
     </select>
+
     <select id="getDictValueAndKey" resultMap="dict">
         SELECT
-            dict_value,dict_key
+            dict_value, dict_key
         FROM
             tb_dict
         WHERE

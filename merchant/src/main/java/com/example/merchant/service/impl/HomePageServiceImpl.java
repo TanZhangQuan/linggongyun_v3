@@ -210,6 +210,20 @@ public class HomePageServiceImpl implements HomePageService {
         return ReturnJson.success((merchantDao.getYearTradeById(merchant.getCompanyId())));
     }
 
+    @Override
+    public ReturnJson queryAccountInformation(String merchantId) {
+
+        Merchant merchant = merchantDao.selectById(merchantId);
+        if (merchant == null) {
+            return ReturnJson.error("商户账号不存在");
+        }
+
+        //查询商户所有银联支付方式
+        //TODO
+
+
+        return null;
+    }
 
     private HomePageVO getHomePageOV(List<String> ids) {
         HomePageVO homePageVO = new HomePageVO();

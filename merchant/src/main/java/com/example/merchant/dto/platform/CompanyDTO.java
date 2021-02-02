@@ -53,6 +53,10 @@ public class CompanyDTO implements Serializable {
     @NotBlank(message = "开户行不能为空")
     private String bankName;
 
+    @ApiModelProperty(value = "银行编码")
+    @NotBlank(message = "请输入银行编码")
+    private String inBankCode;
+
     @ApiModelProperty(value = "银行卡号")
     @NotBlank(message = "银行卡号不能为空")
     private String bankCode;

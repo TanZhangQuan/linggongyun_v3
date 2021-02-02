@@ -8,10 +8,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
@@ -88,6 +85,13 @@ public class HomePageMerchantController {
     @ApiOperation(value = "获取众包全年的支付额", notes = "获取众包全年的支付额")
     public ReturnJson manyYearInfo(@RequestAttribute("userId") @ApiParam(hidden = true) String merchantId) {
         return paymentOrderManyService.getYear(merchantId);
+    }
+
+    @GetMapping("/queryAccountInformation")
+    @LoginRequired
+    @ApiOperation(value = "获取商户账户信息", notes = "获取商户账户信息")
+    public ReturnJson accountInformation(@RequestAttribute("userId") @ApiParam(hidden = true) String merchantId) {
+        return homePageService.queryAccountInformation(merchantId);
     }
 
 }
