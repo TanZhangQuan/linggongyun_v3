@@ -46,13 +46,13 @@ public class SignAContractUtils {
         JSONObject personAcctJson = AccountHelper.createPersonAcct(userId, realName, null, IdCardCode, mobile, null);
         String acctId = personAcctJson.getString("accountId");
 
-//        log.info("---------------------创建机构账号start----------------------------------");
-//        JSONObject orgAcctJson = AccountHelper.createOrgAcct("SLC", acctId, "零工云（上海）科技发展有限公司", "CRED_ORG_USCC", null);
-//        String orgId = orgAcctJson.getString("orgId");
-//
-//        log.info("---------------------创建机构印章start----------------------------------");
-//        JSONObject orgSealJson = SealHelper.createOrgTemplateSeal(orgId, "顺利创印章", "RED", 159, 159, null, null, "TEMPLATE_ROUND", "STAR");
-//        String orgSealId = orgSealJson.getString("");
+        log.info("---------------------创建机构账号start----------------------------------");
+        JSONObject orgAcctJson = AccountHelper.createOrgAcct("SLC", acctId, "零工云（上海）科技发展有限公司", "CRED_ORG_USCC", null);
+        String orgId = orgAcctJson.getString("orgId");
+
+        log.info("---------------------创建机构印章start----------------------------------");
+        JSONObject orgSealJson = SealHelper.createOrgTemplateSeal(orgId, "顺利创印章", "RED", 159, 159, null, null, "TEMPLATE_ROUND", "STAR");
+        String orgSealId = orgSealJson.getString("");
 
 //        String orgSealId = ConfigConstant.ORGSEAL_ID;
 
@@ -72,8 +72,8 @@ public class SignAContractUtils {
         log.info("---------------------流程文档添加 start---------------------------------");
         SignHelper.addFlowDoc(flowId, fileId);
 
-//        log.info("---------------------添加平台自动盖章签署区 start---------------------------");
-//        SignHelper.addPlatformAutoSignArea(flowId, Lists.newArrayList(fileId), Lists.newArrayList(orgSealId));
+        log.info("---------------------添加平台自动盖章签署区 start---------------------------");
+        SignHelper.addPlatformAutoSignArea(flowId, Lists.newArrayList(fileId), Lists.newArrayList(orgSealId));
 
         log.info("---------------------添加手动盖章签署区 start-----------------------------");
         SignHelper.addSignerHandSignArea(flowId, Lists.newArrayList(fileId), Lists.newArrayList(acctId), null);
