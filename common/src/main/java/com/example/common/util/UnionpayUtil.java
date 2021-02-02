@@ -31,37 +31,18 @@ public class UnionpayUtil {
      *
      * @throws Exception
      */
-    public static JSONObject MB010(String merchNo, String acctNo, String pfmpubkey, String prikey, String uid, String acctName, String companyTaxUum, String inBankNo) throws Exception {
+    public static JSONObject MB010(String merchNo, String acctNo, String pfmpubkey, String prikey, String uid, String acctName, String companyTaxUum, String inBankCode, String inBankNo) throws Exception {
         Map<String, Object> content = Maps.newHashMap();
         content.put("uid", uid); //外部会员标识
         content.put("acct_type", "01");  //账户性质（01:企业子账户, 02:功能子账户）
         content.put("acct_name", acctName);  //子账户户名
         content.put("company_tax_num", companyTaxUum);   //企业税号
         //盛京平台户必填
+        if (StringUtils.isNotBlank(inBankCode)) {
+            content.put("in_bank_code", inBankCode);  //来款银行编码，网商平台户无需填写，盛京平台户必填
+        }
+        //盛京平台户必填
         if (StringUtils.isNotBlank(inBankNo)) {
-            //获取银行bin
-            JSONObject jsonObject = COM02(merchNo, acctNo, pfmpubkey, prikey, inBankNo);
-            if (jsonObject == null) {
-                log.error("请求获取银行bin失败");
-                return null;
-            }
-
-            Boolean boolSuccess = jsonObject.getBoolean("success");
-            if (boolSuccess == null || !boolSuccess) {
-                String errMsg = jsonObject.getString("err_msg");
-                log.error("{}卡BIN查询失败：{}", acctNo, errMsg);
-                return jsonObject;
-            }
-
-            JSONObject returnValue = jsonObject.getJSONObject("return_value");
-            String rtnCode = returnValue.getString("rtn_code");
-            if (!("S00000".equals(rtnCode))) {
-                String errMsg = returnValue.getString("err_msg");
-                log.error("{}卡BIN查询失败：{}", acctNo, errMsg);
-                return returnValue;
-            }
-
-            content.put("in_bank_code", returnValue.getString("bank_code"));  //来款银行编码，网商平台户无需填写，盛京平台户必填
             content.put("in_bank_no", inBankNo);    //来款银行账号，网商平台户无需填写，盛京平台户必填
         }
         content.put("desc", "子账户申请开户");  //摘要信息
@@ -86,28 +67,10 @@ public class UnionpayUtil {
      *
      * @throws Exception
      */
-    public static JSONObject AC021(String merchNo, String acctNo, String pfmpubkey, String prikey, String uid, String inBankNo) throws Exception {
+    public static JSONObject AC021(String merchNo, String acctNo, String pfmpubkey, String prikey, String uid, String inBankCode, String inBankNo) throws Exception {
         Map<String, Object> content = Maps.newHashMap();
         content.put("uid", uid);  //外部会员标识
-
-        //获取银行bin
-        JSONObject jsonObject = COM02(merchNo, acctNo, pfmpubkey, prikey, inBankNo);
-        String rtnCode = jsonObject.getString("rtn_code");
-        if (StringUtils.isNotBlank(rtnCode) && !("S00000".equals(rtnCode))) {
-            String errMsg = jsonObject.getString("err_msg");
-            log.error("{}卡BIN查询失败：{}", acctNo, errMsg);
-            return jsonObject;
-        }
-
-        JSONObject returnValue = jsonObject.getJSONObject("return_value");
-        rtnCode = returnValue.getString("rtn_code");
-        if (!("S00000".equals(rtnCode))) {
-            String errMsg = returnValue.getString("err_msg");
-            log.error("{}卡BIN查询失败：{}", acctNo, errMsg);
-            return returnValue;
-        }
-
-        content.put("in_bank_code", returnValue.getString("bank_code"));  //来款银行编码，网商平台户无需填写，盛京平台户必填
+        content.put("in_bank_code", inBankCode);  //来款银行编码，网商平台户无需填写，盛京平台户必填
         content.put("in_bank_no", inBankNo);    //来款银行账号，网商平台户无需填写，盛京平台户必填
         //银联请求
         return unionpay(merchNo, UnionpayMethod.AC021, acctNo, content, pfmpubkey, prikey);

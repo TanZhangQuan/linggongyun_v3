@@ -1,6 +1,5 @@
 package com.example.merchant.dto.platform;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -10,7 +9,6 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Data
 @ApiModel(description = "修改公司基本信息")
@@ -47,6 +45,10 @@ public class UpdateCompanyInfoDTO implements Serializable {
     @ApiModelProperty(value = "开户行")
     @NotBlank(message = "开户行不能为空")
     private String bankName;
+
+    @ApiModelProperty(value = "银行编码")
+    @NotBlank(message = "请输入银行编码")
+    private String inBankCode;
 
     @ApiModelProperty(value = "银行卡号")
     @NotBlank(message = "银行卡号不能为空")

@@ -215,14 +215,15 @@ public class HomePageServiceImpl implements HomePageService {
 
         Merchant merchant = merchantDao.selectById(merchantId);
         if (merchant == null) {
-            return ReturnJson.error("您输入的信息有误！");
+            return ReturnJson.error("商户账号不存在");
         }
 
+        //查询商户所有银联支付方式
+        //TODO
 
 
         return null;
     }
-
 
     private HomePageVO getHomePageOV(List<String> ids) {
         HomePageVO homePageVO = new HomePageVO();
