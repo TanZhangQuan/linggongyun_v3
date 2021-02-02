@@ -20,7 +20,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, serial_number, picture, create_date, update_date, bool_deleted
+        id, serial_number, picture, create_date, update_date
     </sql>
 
     <select id="selectAppletBanner" resultMap="appletBannerVo">
