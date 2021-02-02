@@ -33,7 +33,5 @@ TOKEN: token
 
 JWT:
   secret: "yixi"
-
   expire: "7"
-
   header: "linggongyun_v3"

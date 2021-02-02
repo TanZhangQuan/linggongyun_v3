@@ -3,7 +3,6 @@ package com.example.merchant.dto.platform;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import org.hibernate.validator.constraints.CreditCardNumber;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.Valid;
@@ -80,7 +79,6 @@ public class TaxDTO implements Serializable {
 
     @ApiModelProperty(value = "收款单位账号")
     @NotBlank(message = "请输入收款单位账号")
-    @CreditCardNumber(message = "请输入正确银行卡号")
     private String bankCode;
 
     @ApiModelProperty(value = "开户行名称")

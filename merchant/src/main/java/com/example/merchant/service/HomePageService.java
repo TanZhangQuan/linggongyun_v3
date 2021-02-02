@@ -3,8 +3,6 @@ package com.example.merchant.service;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.exception.CommonException;
 
-import javax.servlet.http.HttpServletRequest;
-
 /**
  * @author Jwei
  */
@@ -12,6 +10,7 @@ public interface HomePageService {
 
     /**
      * 获取首页内容
+     *
      * @param merchantId
      * @return
      */
@@ -19,14 +18,16 @@ public interface HomePageService {
 
     /**
      * 平台端获取首页内容
+     *
      * @param userId
      * @return
      * @throws CommonException
      */
-    ReturnJson getHomePageInofpaas(String userId)throws CommonException;
+    ReturnJson getHomePageInofpaas(String userId) throws CommonException;
 
     /**
      * 获取今天的交易流水
+     *
      * @param merchantId
      * @return
      */
@@ -34,6 +35,7 @@ public interface HomePageService {
 
     /**
      * 获取本周的交易流水
+     *
      * @param merchantId
      * @return
      */
@@ -41,6 +43,7 @@ public interface HomePageService {
 
     /**
      * 获取本月的交易流水
+     *
      * @param merchantId
      * @return
      */
@@ -48,8 +51,17 @@ public interface HomePageService {
 
     /**
      * 获取今年的交易流水
+     *
      * @param merchantId
      * @return
      */
     ReturnJson getYearTradeById(String merchantId);
+
+    /**
+     * 获取商户账户信息
+     *
+     * @param merchantId
+     * @return
+     */
+    ReturnJson queryAccountInformation(String merchantId);
 }

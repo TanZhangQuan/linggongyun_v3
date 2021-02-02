@@ -210,6 +210,19 @@ public class HomePageServiceImpl implements HomePageService {
         return ReturnJson.success((merchantDao.getYearTradeById(merchant.getCompanyId())));
     }
 
+    @Override
+    public ReturnJson queryAccountInformation(String merchantId) {
+
+        Merchant merchant = merchantDao.selectById(merchantId);
+        if (merchant == null) {
+            return ReturnJson.error("您输入的信息有误！");
+        }
+
+
+
+        return null;
+    }
+
 
     private HomePageVO getHomePageOV(List<String> ids) {
         HomePageVO homePageVO = new HomePageVO();
