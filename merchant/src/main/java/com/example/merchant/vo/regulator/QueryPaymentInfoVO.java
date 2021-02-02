@@ -36,4 +36,7 @@ public class QueryPaymentInfoVO implements Serializable {
 
     @ApiModelProperty(value = "分包支付信息")
     private RegulatorSubpackageInfoVO regulatorSubpackageInfoVO;
+
+    @ApiModelProperty(value = "发票信息")
+    private InvoiceVO invoiceVO;
 }

@@ -73,7 +73,7 @@ public interface TaskDao extends BaseMapper<Task> {
      * @param platformTaskDto
      * @return
      */
-    IPage<Task> getPlatformTaskList(Page page, @Param("platformTaskDto") PlatformTaskDTO platformTaskDto);
+    IPage<Task> getPlatformTaskList(Page page, @Param("platformTaskDto") PlatformTaskDTO platformTaskDto,String userId,Integer isNot);
 
     IPage<TaskInfoVO> setTask(Page page, @Param("industryType") String s);
 

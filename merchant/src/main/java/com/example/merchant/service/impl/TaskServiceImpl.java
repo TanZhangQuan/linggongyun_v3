@@ -8,6 +8,7 @@ import com.example.common.util.*;
 import com.example.merchant.dto.makerend.QueryMissionHall;
 import com.example.merchant.dto.merchant.AddTaskDTO;
 import com.example.merchant.exception.CommonException;
+import com.example.merchant.service.ManagersService;
 import com.example.merchant.service.WorkerTaskService;
 import com.example.mybatis.dto.PlatformTaskDTO;
 import com.example.mybatis.dto.TaskDTO;
@@ -57,6 +58,8 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
     private CompanyTaxDao companyTaxDao;
     @Resource
     private CompanyWorkerDao companyWorkerDao;
+    @Resource
+    private ManagersService managersService;
 
     @Override
     public ReturnJson selectList(TaskListDTO taskListDto, String userId) {
@@ -187,9 +190,17 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
     }
 
     @Override
-    public ReturnJson getPlatformTaskList(PlatformTaskDTO platformTaskDto) {
+    public ReturnJson getPlatformTaskList(PlatformTaskDTO platformTaskDto, String userId) {
+        Managers managers = managersService.getById(userId);
         Page page = new Page(platformTaskDto.getPageNo(), platformTaskDto.getPageSize());
-        IPage<Task> taskList = taskDao.getPlatformTaskList(page, platformTaskDto);
+        IPage<Task> taskList;
+        if (managers.getUserSign() == 3) {
+            taskList = taskDao.getPlatformTaskList(page, platformTaskDto, null,null);
+        }else if (managers.getUserSign() == 2){
+            taskList = taskDao.getPlatformTaskList(page, platformTaskDto, userId,1);
+        }else {
+            taskList = taskDao.getPlatformTaskList(page, platformTaskDto, userId,null);
+        }
         return ReturnJson.success(taskList);
     }
 

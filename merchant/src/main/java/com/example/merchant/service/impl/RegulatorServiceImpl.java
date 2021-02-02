@@ -22,6 +22,7 @@ import com.example.merchant.vo.ExpressInfoVO;
 import com.example.merchant.vo.platform.HomePageVO;
 import com.example.merchant.vo.platform.RegulatorTaxVO;
 import com.example.merchant.vo.regulator.*;
+import com.example.merchant.vo.regulator.InvoiceVO;
 import com.example.mybatis.entity.*;
 import com.example.mybatis.mapper.*;
 import com.example.mybatis.po.*;
@@ -800,8 +801,25 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
         //总包+分包 或 众包信息
         RegulatorPaymentVO regulatorPaymentVO = regulatorDao.getRegulatorPay(paymentId, packageStatus);
 
+        //发票信息
+        InvoiceVO invoiceVO = new InvoiceVO();
+        //发票地址
+        String invoiceUrl = invoiceDao.getInvoiceUrlByPaymentId(paymentId, packageStatus);
+        invoiceVO.setInvoiceUrl(invoiceUrl);
+        //分包发票
+        String subInvoiceUrl = invoiceDao.getSubInvoiceUrl(paymentId);
+        invoiceVO.setSubInvoiceUrl(subInvoiceUrl);
+        //物流信息
+        SendAndReceiveVO sendAndReceiveVo = invoiceDao.getSendAndReceiveVo(paymentId, packageStatus);
+        invoiceVO.setSendAndReceiveVo(sendAndReceiveVo);
+        if (sendAndReceiveVo != null) {
+            //快递信息
+            List<ExpressLogisticsInfo> expressLogisticsInfoList = KdniaoTrackQueryAPI.getExpressInfo(
+                    sendAndReceiveVo.getLogisticsCompany(), sendAndReceiveVo.getLogisticsOrderNo());
+            invoiceVO.setExpressLogisticsInfoList(expressLogisticsInfoList);
+        }
         QueryPaymentInfoVO queryPaymentInfoVO = new QueryPaymentInfoVO(payInfoVO
-                , regulatorPayInfoVO, regulatorPaymentVO, regulatorSubpackageInfoVO);
+                , regulatorPayInfoVO, regulatorPaymentVO, regulatorSubpackageInfoVO, invoiceVO);
         return ReturnJson.success(queryPaymentInfoVO);
     }
 

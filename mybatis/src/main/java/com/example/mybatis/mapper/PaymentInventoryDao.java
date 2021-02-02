@@ -5,6 +5,7 @@ import com.example.mybatis.entity.PaymentInventory;
 import com.example.mybatis.vo.PaymentInventoryVO;
 import org.apache.ibatis.annotations.Param;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -43,4 +44,12 @@ public interface PaymentInventoryDao extends BaseMapper<PaymentInventory> {
      * @return
      */
     List<PaymentInventoryVO> selectPaymentOrderManyInfo(@Param("paymentOrderId") String paymentOrderId, @Param("workerId") String workerId);
+
+    /**
+     * 查询创客本年发放金额
+     *
+     * @param workerId
+     * @return
+     */
+    BigDecimal getRealMoneyByWorker(String workerId);
 }

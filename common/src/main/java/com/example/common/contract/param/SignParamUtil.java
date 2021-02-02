@@ -380,7 +380,7 @@ public class SignParamUtil {
 		String authorizedAccountId1 = CollectionUtils.isNotEmpty(authorizedAccountIds) ? authorizedAccountIds.get(0) : null;
 
 		List<Signfield> list = Lists.newArrayList();
-		PosBean posBean1 = new PosBean("10", 500f, 100f, null, null);
+		PosBean posBean1 = new PosBean("8", 100f, 180f, null, null);
 		Signfield signfield1 = new Signfield(fileId1, signerAccountId1, null, authorizedAccountId1, null, 1, posBean1,
 				null, null, null);
 
