@@ -441,57 +441,39 @@
 
     <select id="queryWorkerPayInfo" resultMap="workerPayInfo">
         SELECT
-            payment_order_id,
-        IF (
-            package_status = 0,
-            (
-                SELECT
-                    company_s_name
-                FROM
-                    tb_payment_order
-                WHERE
-                    pi.payment_order_id = id
-                    <if test="param3 != null and param3 !=''">
-                     and company_id = #{param3}
-                    </if>
-            ),
-            (
-                SELECT
-                    company_s_name
-                FROM
-                    tb_payment_order_many
-                WHERE
-                    pi.payment_order_id = id
-                    <if test="param3 != null and param3 !=''">
-                     and company_id = #{param3}
-                    </if>
-            )
-        ) AS company_s_name,
-        IF (
-            package_status = 0,
-            (
-                SELECT
-                    platform_service_provider
-                FROM
-                    tb_payment_order
-                WHERE
-                    pi.payment_order_id = id
-            ),
-            (
-                SELECT
-                    platform_service_provider
-                FROM
-                    tb_payment_order_many
-                WHERE
-                    pi.payment_order_id = id
-            )
-        ) AS platform_service_provider,
-        pi.worker_name,pi.package_status,pi.real_money as task_money,pi.payment_status,pi.create_date
+            pi.payment_order_id,
+            po.company_s_name,
+            po.platform_service_provider,
+            pi.worker_name,
+            pi.package_status,
+            pi.real_money AS task_money,
+            pi.payment_status,
+            pi.create_date
         FROM
             tb_payment_inventory pi
+            LEFT JOIN (
+            SELECT
+                id AS payment_order_id,
+                company_id as company_id,
+                company_s_name AS company_s_name,
+                platform_service_provider AS platform_service_provider
+            FROM
+                tb_payment_order
+            UNION
+            SELECT
+                id AS payment_order_id,
+                company_id as company_id,
+                company_s_name AS company_s_name,
+                platform_service_provider AS platform_service_provider
+            FROM
+                tb_payment_order_many
+            ) po ON po.payment_order_id = pi.payment_order_id
         WHERE
             pi.worker_id =#{param2}
         AND pi.payment_status = 1
+        <if test="param3 != null and param3 != ''">
+            AND company_id= #{param3}
+        </if>
         order by pi.create_date desc
     </select>
 
