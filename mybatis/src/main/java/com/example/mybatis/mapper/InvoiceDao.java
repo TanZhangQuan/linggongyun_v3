@@ -58,4 +58,10 @@ public interface InvoiceDao extends BaseMapper<Invoice> {
     InvoiceInfoPO selectInvoiceInfoPO(String paymentOrderId);
 
     List<String> selectInvoiceListPayId(String applicationId);
+
+    String getInvoiceUrlByPaymentId(String paymentId,Integer packageStatus);
+
+    SendAndReceiveVO getSendAndReceiveVo(String paymentId,Integer packageStatus);
+
+    String getSubInvoiceUrl(String paymentId);
 }

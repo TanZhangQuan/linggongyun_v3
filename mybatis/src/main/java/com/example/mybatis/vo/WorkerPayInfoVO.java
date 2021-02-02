@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
@@ -29,7 +30,7 @@ public class WorkerPayInfoVO implements Serializable {
     private Integer packageStatus;
 
     @ApiModelProperty(value = "流水金额")
-    private Integer taskMoney;
+    private BigDecimal taskMoney;
 
     @ApiModelProperty(value = "支付状态")
     private Integer paymentStatus;

@@ -84,4 +84,15 @@
         LIMIT 0,10
     </select>
 
+    <select id="getRealMoneyByWorker" resultType="java.math.BigDecimal">
+        SELECT
+            IFNULL(SUM(real_money),0)
+        FROM
+            tb_payment_inventory
+        WHERE
+            YEAR (create_date) = YEAR (NOW())
+        AND payment_status= 1
+        AND worker_id = #{workerId}
+    </select>
+
 </mapper>

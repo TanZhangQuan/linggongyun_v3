@@ -14,6 +14,7 @@ import com.example.mybatis.entity.MakerInvoice;
 import com.example.mybatis.entity.PaymentInventory;
 import com.example.mybatis.entity.Worker;
 import com.example.mybatis.mapper.MakerInvoiceDao;
+import com.example.mybatis.mapper.PaymentInventoryDao;
 import com.example.mybatis.mapper.WorkerDao;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -29,9 +30,7 @@ import java.io.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Pattern;
 
 @Slf4j
@@ -43,6 +42,9 @@ public class FileOperationServiceImpl implements FileOperationService {
 
     @Resource
     private MakerInvoiceDao makerInvoiceDao;
+
+    @Resource
+    private PaymentInventoryDao paymentInventoryDao;
 
     @Value("${PWD_KEY}")
     private String PWD_KEY;
@@ -213,6 +215,8 @@ public class FileOperationServiceImpl implements FileOperationService {
         String fileName = uploadInvoice.getOriginalFilename();
         String suffixName = fileName.substring(fileName.lastIndexOf(".") + 1);
         if (Arrays.asList(files).contains(suffixName)) {
+            List<String> workerList = new ArrayList<>();
+            Map<String, Object> listMap = new HashMap<>(0);
             //MultipartFile转InputStream
             InputStream inputStream = uploadInvoice.getInputStream();
 
@@ -252,6 +256,16 @@ public class FileOperationServiceImpl implements FileOperationService {
                         return ReturnJson.error(workerName + "银行卡错误请确认表格内数据！");
                     }
                 }
+
+                BigDecimal realMoneySum = paymentInventoryDao.getRealMoneyByWorker(worker.getId());
+                if (realMoneySum.compareTo(new BigDecimal("3000000")) >= 0) {
+                    workerList.add("自然人（\" + workerName + idCardCode + \"）在系统代开发票公历年度内已经超三百万，在此不能进行发放！");
+                }
+                realMoneySum = realMoneySum.add(realMoney);
+                if (realMoneySum.compareTo(new BigDecimal("5000000")) >= 0) {
+                    return ReturnJson.success("自然人（" + workerName + idCardCode + "）在系统代开发票公历年度内已等于或超过五百万，在此不能进行发放！");
+                }
+
                 if (worker != null) {
                     PaymentInventory paymentInventory = new PaymentInventory();
                     paymentInventory.setWorkerId(worker.getId());
@@ -284,7 +298,10 @@ public class FileOperationServiceImpl implements FileOperationService {
             String accessPath = request.getScheme() + "://" + request.getServerName() + ":" +
                     request.getServerPort() + request.getContextPath() + fileStaticAccesspathExcel + newFileName;
             log.info(fileStaticAccesspathExcel);
-            return ReturnJson.success("Excel上传成功！", accessPath, paymentInventorys);
+            listMap.put("paymentInventorys", paymentInventorys);
+            listMap.put("workerList", workerList);
+            listMap.put("accessPath", accessPath);
+            return ReturnJson.success("Excel上传成功！", listMap);
         } else {
             return ReturnJson.error("你上传的文件格式不正确！");
         }

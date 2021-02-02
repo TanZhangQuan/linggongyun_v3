@@ -124,6 +124,22 @@
         task_name,cooperate_mode,task_mode,state,create_date
         FROM tb_task
         WHERE 1=1
+        <if test="param3 != null and param3 != ''">
+            AND merchant_id IN ( SELECT id
+	        FROM tb_merchant
+	        WHERE company_id IN ( SELECT id
+			FROM tb_company_info
+			WHERE agent_id IN (
+			<if test="param4 != null">
+                SELECT managers_id
+                FROM tb_agent
+                WHERE sales_man_id = #{param3}
+            </if>
+            <if test="param4 == null">
+                #{param3}
+            </if>
+			) ) )
+        </if>
         <if test="platformTaskDto.merchantName != null and platformTaskDto.merchantName != ''">
            and (SELECT id FROM tb_merchant WHERE company_name like CONCAT('%',#{platformTaskDto.merchantName},'%'))
         </if>
