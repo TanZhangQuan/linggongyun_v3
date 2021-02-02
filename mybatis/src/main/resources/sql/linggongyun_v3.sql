@@ -272,7 +272,7 @@ CREATE TABLE `tb_company_tax_pay_method` (
   `tax_id` varchar(50) NOT NULL COMMENT '服务商ID',
   `package_type` varchar(50) NOT NULL COMMENT '合作类型',
   `payment_method` varchar(50) NOT NULL COMMENT '交易方式',
-  `boolEnable` bit(1) NOT NULL COMMENT '是否启用',
+  `bool_enable` bit(1) NOT NULL COMMENT '是否启用',
   `create_date` datetime NOT NULL COMMENT '创建时间',
   `update_date` datetime NOT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`),
