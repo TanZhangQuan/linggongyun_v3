@@ -2,6 +2,7 @@ package com.example.merchant.controller.platform;
 
 
 import com.example.common.util.ReturnJson;
+import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.TaskService;
 import com.example.mybatis.dto.PlatformTaskDTO;
 import com.example.mybatis.dto.TaskDTO;
@@ -61,8 +62,10 @@ public class TaskPaasController {
 
     @ApiOperation("平台端任务列表")
     @PostMapping(value = "/getplatformTasks")
-    public ReturnJson<Task> platformTaskList(@Valid @RequestBody PlatformTaskDTO platformTaskDto) {
-        return taskService.getPlatformTaskList(platformTaskDto);
+    @LoginRequired
+    public ReturnJson<Task> platformTaskList(@Valid @RequestBody PlatformTaskDTO platformTaskDto,
+                                             @RequestAttribute("userId")@ApiParam(hidden = true)String userId) {
+        return taskService.getPlatformTaskList(platformTaskDto,userId);
     }
 
     @ApiOperation("平台端任务新增")

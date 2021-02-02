@@ -93,7 +93,7 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
             if (workerType == 0) {
                 workerPage = workerDao.selectPage(pageData,
                         new QueryWrapper<Worker>().lambda().in(Worker::getId, ids)
-                                .eq(Worker::getAttestation, 1)
+                                .eq(Worker::getAttestation,1)
                                 .eq(Worker::getAgreementSign, 2));
             }
             if (workerType == 1) {
@@ -459,10 +459,14 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
         Managers managers = managersService.getById(managersId);
         List<String> companyIds = acquireID.getCompanyIds(managersId);
         if (managers.getUserSign() == 3) {
-            IPage<Worker> workerIPage = workerDao.selectWorkerQuery(new Page(workerQueryDto.getPageNo(), workerQueryDto.getPageSize()), companyIds, workerQueryDto.getWorkerId(), workerQueryDto.getAccountName(), workerQueryDto.getMobileCode());
+            IPage<Worker> workerIPage = workerDao.selectWorkerQuery(new Page(workerQueryDto.getPageNo(),
+                            workerQueryDto.getPageSize()), companyIds, workerQueryDto.getWorkerId(),
+                    workerQueryDto.getAccountName(), workerQueryDto.getMobileCode());
             return ReturnJson.success(workerIPage);
         } else {
-            IPage<Worker> workerIPage = workerDao.selectAgentWorkerQuery(new Page(workerQueryDto.getPageNo(), workerQueryDto.getPageSize()), companyIds, workerQueryDto.getWorkerId(), workerQueryDto.getAccountName(), workerQueryDto.getMobileCode());
+            IPage<Worker> workerIPage = workerDao.selectAgentWorkerQuery(new Page(workerQueryDto.getPageNo(),
+                            workerQueryDto.getPageSize()), companyIds, workerQueryDto.getWorkerId(),
+                    workerQueryDto.getAccountName(), workerQueryDto.getMobileCode());
             return ReturnJson.success(workerIPage);
         }
 
@@ -473,10 +477,14 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
         Managers managers = managersService.getById(managersId);
         List<String> companyIds = acquireID.getCompanyIds(managersId);
         if (managers.getUserSign() == 3) {
-            IPage<Worker> workerIPage = workerDao.selectWorkerQueryNot(new Page(workerQueryDto.getPageNo(), workerQueryDto.getPageSize()), companyIds, workerQueryDto.getWorkerId(), workerQueryDto.getAccountName(), workerQueryDto.getMobileCode(),null);
+            IPage<Worker> workerIPage = workerDao.selectWorkerQueryNot(new Page(workerQueryDto.getPageNo(),
+                            workerQueryDto.getPageSize()), companyIds, workerQueryDto.getWorkerId(),
+                    workerQueryDto.getAccountName(), workerQueryDto.getMobileCode(), null);
             return ReturnJson.success(workerIPage);
         } else {
-            IPage<Worker> workerIPage = workerDao.selectWorkerQueryNot(new Page(workerQueryDto.getPageNo(), workerQueryDto.getPageSize()), companyIds, workerQueryDto.getWorkerId(), workerQueryDto.getAccountName(), workerQueryDto.getMobileCode(),100);
+            IPage<Worker> workerIPage = workerDao.selectWorkerQueryNot(new Page(workerQueryDto.getPageNo(),
+                            workerQueryDto.getPageSize()), companyIds, workerQueryDto.getWorkerId(),
+                    workerQueryDto.getAccountName(), workerQueryDto.getMobileCode(), 100);
             return ReturnJson.success(workerIPage);
         }
     }

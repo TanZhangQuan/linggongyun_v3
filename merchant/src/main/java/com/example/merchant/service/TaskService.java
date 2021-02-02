@@ -81,9 +81,10 @@ public interface TaskService extends IService<Task> {
      * 平台任务列表
      *
      * @param platformTaskDto
+     * @param userId
      * @return
      */
-    ReturnJson getPlatformTaskList(PlatformTaskDTO platformTaskDto);
+    ReturnJson getPlatformTaskList(PlatformTaskDTO platformTaskDto,String userId);
 
     /**
      * 平台任务添加

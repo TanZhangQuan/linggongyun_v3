@@ -91,6 +91,17 @@
         <result column="recevice_tax" property="receviceTax"/>
     </resultMap>
 
+    <resultMap id="sendAndReceiveVo" type="com.example.mybatis.vo.SendAndReceiveVO">
+        <result column="express_sheet_no" property="logisticsOrderNo"/>
+        <result column="express_company_name" property="logisticsCompany"/>
+        <result column="link_name" property="addressee"/>
+        <result column="link_mobile" property="addresseeTelephone"/>
+        <result column="address_name" property="toAddress"/>
+        <result column="receipt_address" property="sendingAddress"/>
+        <result column="receipt_name" property="from"/>
+        <result column="receipt_phone" property="fromTelephone"/>
+    </resultMap>
+
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id, application_id, invoice_code, invoice_print_date, invoice_number, invoice_code_no, invoice_print_person, application_invoice_person, invoice_numbers, invoice_money, invoice_catalog_id, invoice_url, tax_receipt_url, express_sheet_no, express_company_name, express_update_datetime, express_update_person, express_update_person_tel, invoice_desc, create_date, update_date
@@ -408,5 +419,70 @@
             tb_application_payment
         WHERE invoice_application_id=#{applicationId}
     </select>
+
+    <select id="getInvoiceUrlByPaymentId" resultType="java.lang.String">
+        SELECT invoice_url
+        FROM
+        <if test="param2 == 0">
+        tb_invoice i
+        INNER JOIN tb_invoice_application ia ON ia.id = i.application_id
+        INNER JOIN tb_application_payment ap ON ap.invoice_application_id = ia.id
+        INNER JOIN tb_payment_order po ON po.id = ap.payment_order_id
+        </if>
+        <if test="param2 == 1">
+        tb_crowd_sourcing_invoice csi
+        INNER JOIN tb_payment_order_many po ON po.id = csi.payment_order_many_id
+        </if>
+        WHERE
+	    po.id = #{param1}
+    </select>
+
+    <select id="getSendAndReceiveVo" resultMap="sendAndReceiveVo">
+        SELECT
+            i.express_company_name,
+            i.express_sheet_no,
+            a.address_name,
+            a.link_mobile,
+            a.link_name,
+            t.receipt_name,
+            t.receipt_phone,
+            t.receipt_address
+        FROM
+        <if test="param2 == 0">
+            tb_invoice i
+            INNER JOIN tb_invoice_application ia ON ia.id = i.application_id
+            INNER JOIN tb_application_payment ap ON ap.invoice_application_id = ia.id
+            INNER JOIN tb_payment_order po ON po.id = ap.payment_order_id
+        </if>
+        <if test="param2 == 1">
+        	tb_crowd_sourcing_invoice i
+            INNER JOIN tb_payment_order_many po ON po.id = i.payment_order_many_id
+        </if>
+            INNER JOIN tb_company_info ci ON ci.id = po.company_id
+            INNER JOIN tb_address a ON a.company_id = ci.id
+            AND a.is_not = 0
+            INNER JOIN tb_tax t ON t.id = po.tax_id
+        WHERE
+	        po.id = #{param1}
+    </select>
+
+    <select id="getSubInvoiceUrl" resultType="java.lang.String">
+        SELECT
+            mti.maker_invoice_url
+        FROM
+            tb_maker_total_invoice mti
+        INNER JOIN tb_invoice_list il ON il.maker_total_invoice_id = mti.id
+        INNER JOIN tb_invoice i ON i.id = il.invoice_id
+        INNER JOIN tb_invoice_application ia ON ia.id = i.application_id
+        INNER JOIN tb_application_payment ap ON ap.invoice_application_id = ia.id
+        INNER JOIN tb_payment_order po ON po.id = ap.payment_order_id
+        INNER JOIN tb_company_info ci ON ci.id = po.company_id
+        INNER JOIN tb_address a ON a.company_id = ci.id
+        AND a.is_not = 0
+        INNER JOIN tb_tax t ON t.id = po.tax_id
+        WHERE
+            po.id = #{paymentId}
+    </select>
+
 
 </mapper>

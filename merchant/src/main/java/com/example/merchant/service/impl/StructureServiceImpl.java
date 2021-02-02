@@ -224,7 +224,7 @@ public class StructureServiceImpl implements StructureService {
             agentService.save(agent);
 
             //添加完之后自动为主账号赋予权限
-            List<MenuListVO> listVos = menuDao.getMenuList();
+            List<MenuListVO> listVos = menuDao.getAgentMenuList();
             List<ObjectMenu> objectMenuList = new ArrayList<>();
             for (int i = 0; i < listVos.size(); i++) {
                 ObjectMenu objectMenu = new ObjectMenu();

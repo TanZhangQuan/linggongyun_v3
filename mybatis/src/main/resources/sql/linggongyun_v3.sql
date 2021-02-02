@@ -1102,6 +1102,7 @@ CREATE TABLE `tb_worker` (
   `agreement_url` varchar(500) NOT NULL DEFAULT '' COMMENT '合同地址',
   `head_portraits` varchar(500) NOT NULL DEFAULT '' COMMENT '头像',
   `picture` varchar(500) NOT NULL DEFAULT '' COMMENT '照片',
+  `contract_num` varchar(500) NOT NULL DEFAULT '' COMMENT '合同编号',
   `create_date` datetime NOT NULL COMMENT '创建时间',
   `update_date` datetime NOT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`),
