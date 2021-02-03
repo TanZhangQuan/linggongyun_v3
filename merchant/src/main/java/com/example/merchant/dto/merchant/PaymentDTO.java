@@ -37,14 +37,14 @@ public class PaymentDTO implements Serializable {
     private String companyContract;
 
     @ApiModelProperty(value = "支付清单")
-    @NotBlank(message = "平台服务商不能为空")
+    @NotBlank(message = "支付清单不能为空")
     private String paymentInventory;
 
     @ApiModelProperty(value = "关联的任务(可以不关联)")
     private String taskId;
 
     @ApiModelProperty(value = "支付验收单")
-    @NotBlank(message = "平台服务商不能为空")
+    @NotBlank(message = "支付验收单不能为空")
     private String acceptanceCertificate;
 
     @ApiModelProperty(value = "0商户承担，1创客承担，2商户创客共同承担")
