@@ -83,7 +83,7 @@ public class RegulatorTaxServiceImpl extends ServiceImpl<RegulatorTaxDao, Regula
                         new QueryWrapper<PaymentOrder>().lambda()
                                 .in(PaymentOrder::getTaxId, taxList.get(i).getId())
                                 .eq(PaymentOrder::getPaymentOrderStatus, 6));
-                paymentOrderCount = paymentOrders.size();
+                paymentOrderCount += paymentOrders.size();
                 for (PaymentOrder paymentOrder : paymentOrders) {
                     paymentOrderNum = paymentOrderNum.add(paymentOrder.getRealMoney());
                     paymentOrderIds.add(paymentOrder.getId());
@@ -93,7 +93,7 @@ public class RegulatorTaxServiceImpl extends ServiceImpl<RegulatorTaxDao, Regula
                         new QueryWrapper<PaymentOrderMany>().lambda()
                                 .in(PaymentOrderMany::getTaxId, taxList.get(i).getId())
                                 .eq(PaymentOrderMany::getPaymentOrderStatus, 3));
-                paymentOrderManyCount = paymentOrderManies.size();
+                paymentOrderManyCount += paymentOrderManies.size();
                 for (PaymentOrderMany paymentOrderMany : paymentOrderManies) {
                     paymentOrderManyNum = paymentOrderManyNum.add(paymentOrderMany.getRealMoney());
                     paymentOrderIds.add(paymentOrderMany.getId());
@@ -152,8 +152,8 @@ public class RegulatorTaxServiceImpl extends ServiceImpl<RegulatorTaxDao, Regula
         List<String> paymentOrderIds = new ArrayList<>();
         List<PaymentOrder> paymentOrders = paymentOrderDao.selectList(
                 new QueryWrapper<PaymentOrder>().lambda()
-                .in(PaymentOrder::getTaxId, tax.getId())
-                .eq(PaymentOrder::getPaymentOrderStatus, 6));
+                        .in(PaymentOrder::getTaxId, tax.getId())
+                        .eq(PaymentOrder::getPaymentOrderStatus, 6));
         paymentOrderCount = paymentOrders.size();
         for (PaymentOrder paymentOrder : paymentOrders) {
             paymentOrderNum = paymentOrderNum.add(paymentOrder.getRealMoney());
@@ -162,8 +162,8 @@ public class RegulatorTaxServiceImpl extends ServiceImpl<RegulatorTaxDao, Regula
 
         List<PaymentOrderMany> paymentOrderManies = paymentOrderManyDao.selectList(
                 new QueryWrapper<PaymentOrderMany>().lambda()
-                .in(PaymentOrderMany::getTaxId, tax.getId())
-                .eq(PaymentOrderMany::getPaymentOrderStatus, 3));
+                        .in(PaymentOrderMany::getTaxId, tax.getId())
+                        .eq(PaymentOrderMany::getPaymentOrderStatus, 3));
         paymentOrderManyCount = paymentOrderManies.size();
         for (PaymentOrderMany paymentOrderMany : paymentOrderManies) {
             paymentOrderManyNum = paymentOrderManyNum.add(paymentOrderMany.getRealMoney());
@@ -173,7 +173,7 @@ public class RegulatorTaxServiceImpl extends ServiceImpl<RegulatorTaxDao, Regula
         if (!VerificationCheck.listIsNull(paymentOrderIds)) {
             List<PaymentInventory> paymentInventories = paymentInventoryDao.selectList(
                     new QueryWrapper<PaymentInventory>().lambda()
-                    .in(PaymentInventory::getPaymentOrderId, paymentOrderIds));
+                            .in(PaymentInventory::getPaymentOrderId, paymentOrderIds));
             if (!VerificationCheck.listIsNull(paymentInventories)) {
                 for (PaymentInventory paymentInventory : paymentInventories) {
                     if (paymentInventory.getPackageStatus() == 0) {

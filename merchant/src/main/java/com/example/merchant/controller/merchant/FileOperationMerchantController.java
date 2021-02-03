@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.NotNull;
 
 @Api(value = "商户端文件操作", tags = "商户端文件上传下载的操作")
 @RestController
@@ -32,8 +33,10 @@ public class FileOperationMerchantController {
 
     @PostMapping("/uploadInvoice")
     @ApiOperation(value = "上传支付清单", notes = "上传支付清单")
-    public ReturnJson uploadInvoice(@ApiParam(value = "上传支付清单", required = true) @RequestParam("uploadInvoice") MultipartFile uploadInvoice, HttpServletRequest request) throws Exception {
-        return fileOperationService.uploadInvoice(uploadInvoice, request);
+    public ReturnJson uploadInvoice(@ApiParam(value = "上传支付清单", required = true) @RequestParam("uploadInvoice") MultipartFile uploadInvoice,
+                                    @ApiParam(value = "区分：0总包或者1众包") @NotNull(message = "请区分总包或众包") @RequestParam("isNot") Integer isNot,
+                                    HttpServletRequest request) throws Exception {
+        return fileOperationService.uploadInvoice(uploadInvoice, isNot, request);
     }
 
 
