@@ -313,6 +313,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 return ReturnJson.success("签署加盟合同失败！");
             }
             worker.setAgreementSign(2);
+            worker.setAttestation(1);
             worker.setAgreementUrl(url);
             workerDao.updateById(worker);
             this.senMsg("签署加盟合同成功!", "", "0", UserType.ADMIN, worker.getId(), UserType.WORKER);
