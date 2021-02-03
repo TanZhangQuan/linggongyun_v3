@@ -26,7 +26,13 @@ public enum Identification {
     YHKXXXY("YHKXXXY","银行卡信息协议"),
 
     @ApiModelProperty(value = "小程序操作指南")
-    XCXCZZN("XCXCZZN","小程序操作指南");
+    XCXCZZN("XCXCZZN","小程序操作指南"),
+
+    @ApiModelProperty(value = "海报")
+    HB("HB","海报"),
+
+    @ApiModelProperty(value = "小程序分享")
+    XCXFX("XCXFX","小程序分享");
 
     private final String value;
     private final String desc;

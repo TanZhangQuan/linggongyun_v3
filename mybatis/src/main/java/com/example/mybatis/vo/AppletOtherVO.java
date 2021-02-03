@@ -1,5 +1,6 @@
 package com.example.mybatis.vo;
 
+import com.example.common.enums.AppletOtherType;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -26,6 +27,9 @@ public class AppletOtherVO implements Serializable {
 
     @ApiModelProperty(value = "内容")
     private String content;
+
+    @ApiModelProperty(value = "上传类型")
+    private AppletOtherType type;
 
     @ApiModelProperty(value = "创建时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
