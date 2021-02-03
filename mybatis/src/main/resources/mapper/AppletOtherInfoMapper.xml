@@ -16,6 +16,7 @@
         <result column="entry_name" property="entryName"/>
         <result column="content" property="content"/>
         <result column="create_date" property="createDate"/>
+        <result column="type" property="type"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
@@ -28,6 +29,7 @@
             id,
             entry_name,
             content,
+            type,
             create_date
         FROM
             tb_applet_other_info

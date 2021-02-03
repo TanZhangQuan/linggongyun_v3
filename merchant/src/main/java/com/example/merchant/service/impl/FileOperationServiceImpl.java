@@ -207,7 +207,7 @@ public class FileOperationServiceImpl implements FileOperationService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ReturnJson uploadInvoice(MultipartFile uploadInvoice, HttpServletRequest request) throws Exception {
+    public ReturnJson uploadInvoice(MultipartFile uploadInvoice, Integer isNot, HttpServletRequest request) throws Exception {
         if (uploadInvoice.getSize() == 0) {
             return ReturnJson.error("上传文件内容不能为空！");
         }
@@ -251,16 +251,28 @@ public class FileOperationServiceImpl implements FileOperationService {
                 if (!worker.getAccountName().equals(workerName)) {
                     return ReturnJson.error(workerName + "表格名称与系统创客不一致！");
                 }
-                if (bankCode != null) {
-                    if (!isInteger(bankCode)) {
-                        return ReturnJson.error(workerName + "银行卡错误请确认表格内数据！");
+                if (isNot == 0) {
+                    //总包开户行银行卡不能为空
+                    if (bankCode == null) {
+                        return ReturnJson.error("总包表格有误，请认真筛选是否有银行卡未填");
+                    }
+                    if (bankName == null) {
+                        return ReturnJson.error("总包表格有误，请认真筛选是否有开户行未填");
+                    }
+                    //判断银行卡是否为纯数字
+                    if (bankCode != null) {
+                        if (!isInteger(bankCode)) {
+                            return ReturnJson.error(workerName + "银行卡错误请确认表格内数据！");
+                        }
                     }
                 }
 
+                //当某一个人当年发放超过三百万时进行警示
                 BigDecimal realMoneySum = paymentInventoryDao.getRealMoneyByWorker(worker.getId());
                 if (realMoneySum.compareTo(new BigDecimal("3000000")) >= 0) {
-                    workerList.add("自然人（\" + workerName + idCardCode + \"）在系统代开发票公历年度内已经超三百万，在此不能进行发放！");
+                    workerList.add("自然人（" + workerName + idCardCode + "）在系统代开发票公历年度内已经超三百万，特此警告！");
                 }
+                //当某一个人当年发放超过伍百万时不能进行发放
                 realMoneySum = realMoneySum.add(realMoney);
                 if (realMoneySum.compareTo(new BigDecimal("5000000")) >= 0) {
                     return ReturnJson.error("自然人（" + workerName + idCardCode + "）在系统代开发票公历年度内已等于或超过五百万，在此不能进行发放！");

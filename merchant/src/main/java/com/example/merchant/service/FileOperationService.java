@@ -38,10 +38,12 @@ public interface FileOperationService {
      * 上传支付清单
      *
      * @param uploadInvoice
+     * @param isNot
+     * @param request
      * @return
-     * @throws IOException
+     * @throws Exception
      */
-    ReturnJson uploadInvoice(MultipartFile uploadInvoice, HttpServletRequest request) throws Exception;
+    ReturnJson uploadInvoice(MultipartFile uploadInvoice, Integer isNot, HttpServletRequest request) throws Exception;
 
     /**
      * 上传门征单开发票或税票

@@ -2,6 +2,7 @@ package com.example.merchant.dto.platform;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.ApiParam;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
@@ -38,7 +39,12 @@ public class PaymentOrderManyDTO implements Serializable {
     @NotBlank(message = "支付验收单（存储位置）")
     private String acceptanceCertificate;
 
-    @ApiModelProperty(value = "XXXXX")
+    @ApiModelProperty(value = "支付回单")
+    @NotBlank(message = "支付回单不能为空")
+    private String manyPayment;
+
+    @ApiModelProperty(value = "服务非承担方,0商户承担，1创客承担，2共同承担")
+    @ApiParam(hidden = true)
     private Integer taxStatus = 0;
 
 }

@@ -1,5 +1,6 @@
 package com.example.merchant.vo.platform;
 
+import com.example.common.enums.AppletOtherType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -19,10 +20,10 @@ public class AppletOtherInfoVO implements Serializable {
     @ApiModelProperty(value = "其他问题ID")
     private String id;
 
-    @ApiModelProperty(value = "项目名称")
-    private Integer entryName;
-
     @ApiModelProperty(value = "内容")
     private String content;
+
+    @ApiModelProperty(value = "上传类型")
+    private AppletOtherType type;
 
 }

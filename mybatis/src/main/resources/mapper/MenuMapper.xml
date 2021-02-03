@@ -79,32 +79,33 @@
     </select>
 
     <select id="getAgentMenuList" resultMap="MenuList">
-        SELECT
+       SELECT
             me.id,
             me.menu_name,
             me.menu_zhname,
             mes.id AS ids,
             mes.menu_name AS NAME,
             mes.menu_zhname AS zhname,
-            ms.id as msid,
-            ms.menu_name as me_name,
-            ms.menu_zhname as me_zhname
+            ms.id AS msid,
+            ms.menu_name AS me_name,
+            ms.menu_zhname AS me_zhname
         FROM
             tb_menu me
         LEFT JOIN tb_menu mes ON me.id = mes.menu_parent
-        LEFT JOIN tb_menu ms ON ms.menu_parent=mes.id
+        LEFT JOIN tb_menu ms ON ms.menu_parent = mes.id
         WHERE
             me.menu_parent = 0
         AND me.is_merchant != 2
         AND me.id IN (
-            1351450113924846661,
-            1351450113924846662,
-            1351450113924846663,
-            1351450113924846664,
-            1351450113924846612,
-            1351450113924846665,
-            1351450113924846667
-        )ORDER BY
+            '1351450113924846661',
+            '1351450113924846662',
+            '1351450113924846663',
+            '1351450113924846664',
+            '1351450113924846612',
+            '1351450113924846665',
+            '1351450113924846667'
+        )
+        ORDER BY
             me.id ASC
     </select>
 </mapper>
