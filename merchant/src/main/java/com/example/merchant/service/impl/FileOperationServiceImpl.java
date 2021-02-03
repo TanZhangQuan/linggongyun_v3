@@ -263,7 +263,7 @@ public class FileOperationServiceImpl implements FileOperationService {
                 }
                 realMoneySum = realMoneySum.add(realMoney);
                 if (realMoneySum.compareTo(new BigDecimal("5000000")) >= 0) {
-                    return ReturnJson.success("自然人（" + workerName + idCardCode + "）在系统代开发票公历年度内已等于或超过五百万，在此不能进行发放！");
+                    return ReturnJson.error("自然人（" + workerName + idCardCode + "）在系统代开发票公历年度内已等于或超过五百万，在此不能进行发放！");
                 }
 
                 if (worker != null) {
