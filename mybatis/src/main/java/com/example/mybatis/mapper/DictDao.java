@@ -28,7 +28,7 @@ public interface DictDao extends BaseMapper<Dict> {
      *
      * @return
      */
-    List<DictVO> getDictValueAndKey();
+    List<DictVO> getDictValueAndKey(String code);
 
     /**
      * 根据key 获取value

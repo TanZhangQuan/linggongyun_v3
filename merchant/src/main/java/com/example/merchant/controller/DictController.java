@@ -40,8 +40,8 @@ public class DictController {
 
     @GetMapping("/queryDictValueAndKey")
     @ApiOperation(value = "查询字典所有code", notes = "查询字典所有code")
-    public ReturnJson queryDictValueAndKey() {
-        return dictService.queryDictValueAndKey();
+    public ReturnJson queryDictValueAndKey(String code) {
+        return dictService.queryDictValueAndKey(code);
     }
 
 }

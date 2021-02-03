@@ -36,7 +36,8 @@
         FROM
             tb_dict
         WHERE
-            parent_id = 0
+            `CODE` = #{code}
+        AND parent_id != 0
         ORDER BY
             sort ASC
     </select>

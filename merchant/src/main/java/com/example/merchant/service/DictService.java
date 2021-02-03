@@ -27,6 +27,6 @@ public interface DictService extends IService<Dict> {
      *
      * @return
      */
-    ReturnJson queryDictValueAndKey();
+    ReturnJson queryDictValueAndKey(String code);
 
 }
