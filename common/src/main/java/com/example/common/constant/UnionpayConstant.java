@@ -17,7 +17,7 @@ public interface UnionpayConstant {
     /**
      * 提现到卡异步回调地址
      */
-//    String TXCALLBACKADDR = "https://lgy-v3.lgyun.com.cn/notice/unionpay/txResult"; //沙箱提现交易回调地址
-    String TXCALLBACKADDR = "https://xmapi.tianbanggroup.com/notice/unionpay/txResult"; //正式环境提现交易回调地址
+    String TXCALLBACKADDR = "https://lgy-v3.lgyun.com.cn/notice/unionpay/txResult"; //沙箱提现交易回调地址
+//    String TXCALLBACKADDR = "https://xmapi.tianbanggroup.com/notice/unionpay/txResult"; //正式环境提现交易回调地址
 
 }
