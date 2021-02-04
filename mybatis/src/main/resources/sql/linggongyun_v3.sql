@@ -104,6 +104,7 @@ CREATE TABLE `tb_applet_other_info` (
   `id` varchar(50) NOT NULL COMMENT '主键',
   `entry_name` varchar(255) DEFAULT '' COMMENT '项目名称',
   `content` varchar(1000) DEFAULT '' COMMENT '内容',
+  `type` varchar(255) NOT NULL DEFAULT '' COMMENT '类型',
   `create_date` datetime NOT NULL COMMENT '创建时间',
   `update_date` datetime NOT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`)
