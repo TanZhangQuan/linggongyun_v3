@@ -10,6 +10,7 @@ import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.merchant.AddApplicationCrowdSourcingDTO;
 import com.example.merchant.dto.platform.AddCrowdSourcingInvoiceDTO;
 import com.example.merchant.exception.CommonException;
+import com.example.merchant.service.ManagersService;
 import com.example.merchant.vo.platform.CrowdSourcingInvoiceVO;
 import com.example.merchant.vo.platform.QueryInvoicedVO;
 import com.example.merchant.service.CrowdSourcingInvoiceService;
@@ -60,6 +61,8 @@ public class CrowdSourcingInvoiceServiceImpl extends ServiceImpl<CrowdSourcingIn
     private InvoiceCatalogDao invoiceCatalogDao;
     @Resource
     private PaymentInventoryDao paymentInventoryDao;
+    @Resource
+    private ManagersService managersService;
 
 
     @Override
@@ -108,10 +111,17 @@ public class CrowdSourcingInvoiceServiceImpl extends ServiceImpl<CrowdSourcingIn
     }
 
     @Override
-    public ReturnJson getTobeCrowdSourcingInvoice(TobeInvoicedDTO tobeinvoicedDto) {
+    public ReturnJson getTobeCrowdSourcingInvoice(TobeInvoicedDTO tobeinvoicedDto, String userId) {
+        Managers managers = managersService.getById(userId);
         Page page = new Page(tobeinvoicedDto.getPageNo(), tobeinvoicedDto.getPageSize());
-        IPage<CrowdSourcingInvoiceInfoVO> list = crowdSourcingInvoiceDao.
-                getCrowdSourcingInvoicePass(page, tobeinvoicedDto);
+        IPage<CrowdSourcingInvoiceInfoVO> list ;
+        if (managers.getUserSign() == 3) {
+            list = crowdSourcingInvoiceDao.getCrowdSourcingInvoicePass(page, tobeinvoicedDto, null, userId);
+        } else if (managers.getUserSign() == 2) {
+            list = crowdSourcingInvoiceDao.getCrowdSourcingInvoicePass(page, tobeinvoicedDto, 2, userId);
+        } else {
+            list = crowdSourcingInvoiceDao.getCrowdSourcingInvoicePass(page, tobeinvoicedDto,  1, userId);
+        }
         return ReturnJson.success(list);
     }
 
@@ -233,9 +243,17 @@ public class CrowdSourcingInvoiceServiceImpl extends ServiceImpl<CrowdSourcingIn
     }
 
     @Override
-    public ReturnJson getCrowdSourcingInfoPass(TobeInvoicedDTO tobeinvoicedDto) {
+    public ReturnJson getCrowdSourcingInfoPass(TobeInvoicedDTO tobeinvoicedDto,String userId) {
+        Managers managers = managersService.getById(userId);
         Page page = new Page(tobeinvoicedDto.getPageNo(), tobeinvoicedDto.getPageSize());
-        IPage<CrowdSourcingInfoVO> vos = crowdSourcingInvoiceDao.getCrowdSourcingInfoPass(page, tobeinvoicedDto);
+        IPage<CrowdSourcingInfoVO> vos ;
+        if (managers.getUserSign() == 3) {
+            vos = crowdSourcingInvoiceDao.getCrowdSourcingInfoPass(page, tobeinvoicedDto,null, userId);
+        } else if (managers.getUserSign() == 2) {
+            vos = crowdSourcingInvoiceDao.getCrowdSourcingInfoPass(page, tobeinvoicedDto,2, userId);
+        } else {
+            vos = crowdSourcingInvoiceDao.getCrowdSourcingInfoPass(page, tobeinvoicedDto,1, userId);
+        }
         return ReturnJson.success(vos);
     }
 

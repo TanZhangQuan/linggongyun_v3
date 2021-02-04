@@ -2,11 +2,13 @@ package com.example.merchant.controller.platform;
 
 import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.platform.AddCrowdSourcingInvoiceDTO;
+import com.example.merchant.interceptor.LoginRequired;
 import com.example.merchant.service.CrowdSourcingInvoiceService;
 import com.example.merchant.service.MakerTotalInvoiceService;
 import com.example.mybatis.dto.TobeInvoicedDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,8 +30,10 @@ public class CrowdSourcingPassController {
 
     @PostMapping("/getTobeCrowdSourcingInvoice")
     @ApiOperation(value = "众包待开票")
-    public ReturnJson getTobeCrowdSourcingInvoice(TobeInvoicedDTO tobeinvoicedDto) {
-        return crowdSourcingInvoiceService.getTobeCrowdSourcingInvoice(tobeinvoicedDto);
+    @LoginRequired
+    public ReturnJson getTobeCrowdSourcingInvoice(TobeInvoicedDTO tobeinvoicedDto,
+                                                  @RequestAttribute("userId") @ApiParam(hidden = true) String userId) {
+        return crowdSourcingInvoiceService.getTobeCrowdSourcingInvoice(tobeinvoicedDto,userId);
     }
 
     @PostMapping("/getPaymentOrderMany")
@@ -64,8 +68,10 @@ public class CrowdSourcingPassController {
 
     @PostMapping("/getCrowdSourcingInfo")
     @ApiOperation(value = "众包开票详情页，以开票")
-    public ReturnJson getCrowdSourcingInfo(TobeInvoicedDTO tobeinvoicedDto) {
-        return crowdSourcingInvoiceService.getCrowdSourcingInfoPass(tobeinvoicedDto);
+    @LoginRequired
+    public ReturnJson getCrowdSourcingInfo(TobeInvoicedDTO tobeinvoicedDto,
+                                           @RequestAttribute("userId") @ApiParam(hidden = true) String userId) {
+        return crowdSourcingInvoiceService.getCrowdSourcingInfoPass(tobeinvoicedDto,userId);
     }
 
     @PostMapping("/getPaymentInventoryInfo")
@@ -91,7 +97,7 @@ public class CrowdSourcingPassController {
     @ApiOperation("总包+分包支付明细,id可以传多个用逗号隔开")
     @PostMapping("/getTotalBranchList")
     public ReturnJson getTotalBranchList(@RequestParam @NotBlank(message = "发票ID不能为空") String paymentOrderIds) {
-        return makerTotalInvoiceService.getTotalBranchList(paymentOrderIds,1);
+        return makerTotalInvoiceService.getTotalBranchList(paymentOrderIds, 1);
     }
 
 }

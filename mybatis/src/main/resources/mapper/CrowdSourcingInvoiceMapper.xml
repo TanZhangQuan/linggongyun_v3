@@ -173,12 +173,35 @@
     </select>
 
     <select id="getCrowdSourcingInfoPass" resultMap="CrowdSourcingInfo">
-        SELECT csi.id,pom.company_id,csi.invoice_code,pom.company_s_name,pom.platform_service_provider,pom.id as pom_id,pom.payment_inventory,pom.many_payment,
-        pom.is_application,csi.invoice_url,csi.tax_receipt_url,csi.invoice_print_date,pom.is_not_invoice invoice_stute
-        FROM tb_crowd_sourcing_invoice csi
-        LEFT JOIN tb_crowd_sourcing_application csa ON csa.id=csi.application_id
-        LEFT JOIN tb_payment_order_many pom ON csa.payment_order_many_id=pom.id and csi.payment_order_many_id=pom.id
-        WHERE csi.payment_order_many_id is NOT null OR csi.application_id is NOT null
+        SELECT
+            csi.id,
+            pom.company_id,
+            csi.invoice_code,
+            pom.company_s_name,
+            pom.platform_service_provider,
+            pom.id AS pom_id,
+            pom.payment_inventory,
+            pom.many_payment,
+            pom.is_application,
+            csi.invoice_url,
+            csi.tax_receipt_url,
+            csi.invoice_print_date,
+            pom.is_not_invoice invoice_stute
+        FROM
+            tb_crowd_sourcing_invoice csi
+        LEFT JOIN tb_crowd_sourcing_application csa ON csa.id = csi.application_id
+        LEFT JOIN tb_payment_order_many pom ON csa.payment_order_many_id = pom.id
+        AND csi.payment_order_many_id = pom.id
+        INNER JOIN tb_company_info ci ON ci.id = pom.company_id
+        WHERE
+            csi.payment_order_many_id IS NOT NULL
+        OR csi.application_id IS NOT NULL
+        <if test="param3 == 2">
+            AND ci.sales_man_id = #{param4}
+        </if>
+        <if test="param3 == 1">
+            AND ci.agent_id = #{param4}
+        </if>
         <if test="tobeinvoicedDto.merchantId != null and tobeinvoicedDto.merchantId != ''">
             AND pom.company_s_name=#{tobeinvoicedDto.companySName}
         </if>
@@ -241,11 +264,18 @@
         FROM
             tb_payment_order_many pom
         LEFT JOIN tb_crowd_sourcing_application csa ON csa.payment_order_many_id = pom.id
+        INNER JOIN tb_company_info ci ON ci.id = pom.company_id
         WHERE
             csa.application_state = 1
         OR csa.application_state IS NULL
         AND pom.payment_order_status = 3
         AND pom.is_application = 1
+        <if test="param3 == 2">
+            AND ci.sales_man_id = #{param4}
+        </if>
+        <if test="param3 == 1">
+            AND ci.agent_id = #{param4}
+        </if>
         <if test="tobeinvoicedDto.companySName != null and tobeinvoicedDto.companySName != ''">
             AND po.company_s_name like CONCAT('%',#{tobeinvoicedDto.companySName},'%')
         </if>

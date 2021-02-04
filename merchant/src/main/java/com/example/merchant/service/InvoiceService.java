@@ -58,9 +58,10 @@ public interface InvoiceService extends IService<Invoice> {
      * 平台查询待开票总包数据
      *
      * @param tobeinvoicedDto
+     * @param userId
      * @return
      */
-    ReturnJson getPlaInvoiceList(TobeInvoicedDTO tobeinvoicedDto);
+    ReturnJson getPlaInvoiceList(TobeInvoicedDTO tobeinvoicedDto, String userId);
 
     /**
      * 平台查询发票信息
@@ -89,17 +90,19 @@ public interface InvoiceService extends IService<Invoice> {
      * 总包开票，以开票
      *
      * @param tobeinvoicedDto
+     * @param userId
      * @return
      */
-    ReturnJson getListInvoicequery(TobeInvoicedDTO tobeinvoicedDto);
+    ReturnJson getListInvoicequery(TobeInvoicedDTO tobeinvoicedDto, String userId);
 
     /**
      * 分包开票，待开票
      *
      * @param tobeinvoicedDto
+     * @param userId
      * @return
      */
-    ReturnJson getListSubQuery(TobeInvoicedDTO tobeinvoicedDto);
+    ReturnJson getListSubQuery(TobeInvoicedDTO tobeinvoicedDto, String userId);
 
     /**
      * 汇总开票详情数据

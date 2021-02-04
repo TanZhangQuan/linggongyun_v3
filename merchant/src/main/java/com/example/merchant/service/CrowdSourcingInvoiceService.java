@@ -37,12 +37,14 @@ public interface CrowdSourcingInvoiceService {
      * 平台端查询众包待开票
      *
      * @param tobeinvoicedDto
+     * @param userId
      * @return
      */
-    ReturnJson getTobeCrowdSourcingInvoice(TobeInvoicedDTO tobeinvoicedDto);
+    ReturnJson getTobeCrowdSourcingInvoice(TobeInvoicedDTO tobeinvoicedDto, String userId);
 
     /**
      * 查询众包支付信息
+     *
      * @param payId
      * @return
      */
@@ -50,15 +52,17 @@ public interface CrowdSourcingInvoiceService {
 
     /**
      * 查询众包支付明细
+     *
      * @param invoiceId
      * @param pageNo
      * @param pageSize
      * @return
      */
-    ReturnJson getPaymentInventoryPass(String invoiceId,Integer pageNo,Integer pageSize);
+    ReturnJson getPaymentInventoryPass(String invoiceId, Integer pageNo, Integer pageSize);
 
     /**
      * 购买方
+     *
      * @param id
      * @return
      */
@@ -84,18 +88,20 @@ public interface CrowdSourcingInvoiceService {
      * 平台端查询众包已开票
      *
      * @param tobeinvoicedDto
+     * @param userId
      * @return
      */
-    ReturnJson getCrowdSourcingInfoPass(TobeInvoicedDTO tobeinvoicedDto);
+    ReturnJson getCrowdSourcingInfoPass(TobeInvoicedDTO tobeinvoicedDto,String userId);
 
     /**
      * 平台端众包支付明细列表
+     *
      * @param invoiceId
      * @param pageNo
      * @param pageSize
      * @return
      */
-    ReturnJson getPaymentInventoryInfoPass(String invoiceId,Integer pageNo,Integer pageSize);
+    ReturnJson getPaymentInventoryInfoPass(String invoiceId, Integer pageNo, Integer pageSize);
 
     /**
      * 查看申请开票详情信息

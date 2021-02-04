@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.common.util.*;
+import com.example.merchant.service.ManagersService;
 import com.example.merchant.vo.merchant.*;
 import com.example.merchant.vo.platform.AddressVO;
 import com.example.merchant.vo.platform.PlaInvoiceInfoVO;
@@ -61,6 +62,8 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
     private AddressDao addressDao;
     @Resource
     private InvoiceCatalogDao invoiceCatalogDao;
+    @Resource
+    private ManagersService managersService;
 
 
     @Override
@@ -140,9 +143,17 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
 
 
     @Override
-    public ReturnJson getPlaInvoiceList(TobeInvoicedDTO tobeinvoicedDto) {
+    public ReturnJson getPlaInvoiceList(TobeInvoicedDTO tobeinvoicedDto, String userId) {
+        Managers managers = managersService.getById(userId);
         Page page = new Page(tobeinvoicedDto.getPageNo(), tobeinvoicedDto.getPageSize());
-        IPage<PlaInvoiceListVO> list = invoiceDao.getPlaInvoiceList(page, tobeinvoicedDto);
+        IPage<PlaInvoiceListVO> list;
+        if (managers.getUserSign() == 3) {
+            list = invoiceDao.getPlaInvoiceList(page, tobeinvoicedDto, null, userId);
+        } else if (managers.getUserSign() == 2) {
+            list = invoiceDao.getPlaInvoiceList(page, tobeinvoicedDto, 2, userId);
+        } else {
+            list = invoiceDao.getPlaInvoiceList(page, tobeinvoicedDto, 1, userId);
+        }
         return ReturnJson.success(list);
     }
 
@@ -244,9 +255,17 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
     }
 
     @Override
-    public ReturnJson getListInvoicequery(TobeInvoicedDTO tobeinvoicedDto) {
+    public ReturnJson getListInvoicequery(TobeInvoicedDTO tobeinvoicedDto, String userId) {
+        Managers managers = managersService.getById(userId);
         Page page = new Page(tobeinvoicedDto.getPageNo(), tobeinvoicedDto.getPageSize());
-        IPage<InvoiceVO> list = invoiceDao.getListInvoicequery(page, tobeinvoicedDto);
+        IPage<InvoiceVO> list;
+        if (managers.getUserSign() == 3) {
+            list = invoiceDao.getListInvoicequery(page, tobeinvoicedDto, null, userId);
+        } else if (managers.getUserSign() == 2) {
+            list = invoiceDao.getListInvoicequery(page, tobeinvoicedDto, 2, userId);
+        } else {
+            list = invoiceDao.getListInvoicequery(page, tobeinvoicedDto, 1, userId);
+        }
         return ReturnJson.success(list);
     }
 
@@ -257,9 +276,17 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
      * @return
      */
     @Override
-    public ReturnJson getListSubQuery(TobeInvoicedDTO tobeinvoicedDto) {
+    public ReturnJson getListSubQuery(TobeInvoicedDTO tobeinvoicedDto, String userId) {
+        Managers managers = managersService.getById(userId);
         Page page = new Page(tobeinvoicedDto.getPageNo(), tobeinvoicedDto.getPageSize());
-        IPage<ToSubcontractInvoiceVO> list = invoiceDao.getListSubQuery(page, tobeinvoicedDto);
+        IPage<ToSubcontractInvoiceVO> list;
+        if (managers.getUserSign() == 3) {
+            list = invoiceDao.getListSubQuery(page, tobeinvoicedDto, null, userId);
+        } else if (managers.getUserSign() == 2) {
+            list = invoiceDao.getListSubQuery(page, tobeinvoicedDto, 2, userId);
+        } else {
+            list = invoiceDao.getListSubQuery(page, tobeinvoicedDto, 1, userId);
+        }
         return ReturnJson.success(list);
     }
 
