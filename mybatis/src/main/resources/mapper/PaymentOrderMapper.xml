@@ -1152,7 +1152,7 @@
 
     <select id="getInvoiceTotalMoney" resultType="java.math.BigDecimal">
         SELECT
-            IFNULL(SUM(po.real_money + po.service_money),0)
+            IFNULL(SUM(po.real_money),0)
         FROM
             tb_payment_order po
         WHERE
