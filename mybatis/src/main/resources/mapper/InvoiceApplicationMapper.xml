@@ -23,7 +23,7 @@
 
     <insert id="addApplicationPay" parameterType="com.example.mybatis.dto.ApplicationPaymentDTO">
         INSERT INTO tb_application_payment
-        (id,invoice_application_id,payment_order_id)
-        VALUES (#{id},#{invoiceApplicationId},#{paymentOrderId});
+        (id,invoice_application_id,payment_order_id, create_date, update_date)
+        VALUES (#{id},#{invoiceApplicationId},#{paymentOrderId}, NOW(), NOW());
     </insert>
 </mapper>
