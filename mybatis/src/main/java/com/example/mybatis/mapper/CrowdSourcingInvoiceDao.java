@@ -40,7 +40,7 @@ public interface CrowdSourcingInvoiceDao extends BaseMapper<CrowdSourcingInvoice
     BuyerVO getBuyer(String id);
 
     /** ----平台端---- **/
-    IPage<CrowdSourcingInvoiceInfoVO> getCrowdSourcingInvoicePass(Page page, @Param("tobeinvoicedDto") TobeInvoicedDTO tobeinvoicedDto);
+    IPage<CrowdSourcingInvoiceInfoVO> getCrowdSourcingInvoicePass(Page page, @Param("tobeinvoicedDto") TobeInvoicedDTO tobeinvoicedDto,Integer userType,String userId);
 
     PaymentOrderManyVO getPaymentOrderManyPass(String appcationId);
 
@@ -48,7 +48,7 @@ public interface CrowdSourcingInvoiceDao extends BaseMapper<CrowdSourcingInvoice
 
     String getCrowdInvoiceCode();
 
-    IPage<CrowdSourcingInfoVO> getCrowdSourcingInfoPass(Page page, @Param("tobeinvoicedDto") TobeInvoicedDTO tobeinvoicedDto);
+    IPage<CrowdSourcingInfoVO> getCrowdSourcingInfoPass(Page page, @Param("tobeinvoicedDto") TobeInvoicedDTO tobeinvoicedDto,Integer userType,String userId);
 
     IPage<InvoiceDetailsVO> getPaymentInventoryInfoPass(Page page, String invoiceId);
 

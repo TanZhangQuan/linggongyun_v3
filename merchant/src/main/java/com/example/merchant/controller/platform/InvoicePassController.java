@@ -47,8 +47,10 @@ public class InvoicePassController {
 
     @ApiOperation("总包开票，待开票")
     @PostMapping("/getPlaInvoiceList")
-    public ReturnJson getPlaInvoiceList(@Valid @RequestBody TobeInvoicedDTO tobeinvoicedDto) {
-        return invoiceService.getPlaInvoiceList(tobeinvoicedDto);
+    @LoginRequired
+    public ReturnJson getPlaInvoiceList(@Valid @RequestBody TobeInvoicedDTO tobeinvoicedDto,
+                                        @RequestAttribute("userId") @ApiParam(hidden = true) String userId) {
+        return invoiceService.getPlaInvoiceList(tobeinvoicedDto, userId);
     }
 
     @ApiOperation("总包开票，详情数据")
@@ -71,14 +73,18 @@ public class InvoicePassController {
 
     @ApiOperation("总包开票，以开票")
     @PostMapping("/listInvoiceQuery")
-    public ReturnJson listInvoiceQuery(@Valid @RequestBody TobeInvoicedDTO tobeinvoicedDto) {
-        return invoiceService.getListInvoicequery(tobeinvoicedDto);
+    @LoginRequired
+    public ReturnJson listInvoiceQuery(@Valid @RequestBody TobeInvoicedDTO tobeinvoicedDto,
+                                       @RequestAttribute("userId") @ApiParam(hidden = true) String userId) {
+        return invoiceService.getListInvoicequery(tobeinvoicedDto, userId);
     }
 
     @ApiOperation("分包开票，待开票")
     @PostMapping("/listSubQuery")
-    public ReturnJson listSubQuery(@Valid @RequestBody TobeInvoicedDTO tobeinvoicedDto) {
-        return invoiceService.getListSubQuery(tobeinvoicedDto);
+    @LoginRequired
+    public ReturnJson listSubQuery(@Valid @RequestBody TobeInvoicedDTO tobeinvoicedDto,
+                                   @RequestAttribute("userId") @ApiParam(hidden = true) String userId) {
+        return invoiceService.getListSubQuery(tobeinvoicedDto, userId);
     }
 
     @ApiOperation("分包开票，开票清单明细信息")
@@ -115,8 +121,10 @@ public class InvoicePassController {
 
     @ApiOperation("分包已开票，汇总代开列表")
     @PostMapping("/queryMakerTotalInvoice")
-    public ReturnJson queryMakerTotalInvoice(@Valid @RequestBody QueryMakerTotalInvoiceDTO queryMakerTotalInvoiceDto) {
-        return makerTotalInvoiceService.queryMakerTotalInvoice(queryMakerTotalInvoiceDto);
+    @LoginRequired
+    public ReturnJson queryMakerTotalInvoice(@Valid @RequestBody QueryMakerTotalInvoiceDTO queryMakerTotalInvoiceDto,
+                                             @RequestAttribute("userId") @ApiParam(hidden = true) String userId) {
+        return makerTotalInvoiceService.queryMakerTotalInvoice(queryMakerTotalInvoiceDto,userId);
     }
 
     @ApiOperation("分包已开票，汇总代开详情")
@@ -138,7 +146,7 @@ public class InvoicePassController {
     @PostMapping("/getTotalBranchList")
     public ReturnJson getTotalBranchList(@RequestParam @NotBlank(message = "支付ID不能为空") String paymentOrderIds,
                                          @RequestParam @NotNull(message = "支付类型不能为空") Integer type) {
-        return makerTotalInvoiceService.getTotalBranchList(paymentOrderIds,type);
+        return makerTotalInvoiceService.getTotalBranchList(paymentOrderIds, type);
     }
 
 }

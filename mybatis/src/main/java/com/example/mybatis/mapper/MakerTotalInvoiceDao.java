@@ -9,5 +9,5 @@ import com.example.mybatis.vo.MakerTotalInvoiceVO;
 
 public interface MakerTotalInvoiceDao extends BaseMapper<MakerTotalInvoice> {
 
-    IPage<MakerTotalInvoiceVO> queryMakerTotalInvoice(Page page, QueryMakerTotalInvoiceDTO queryMakerTotalInvoiceDto);
+    IPage<MakerTotalInvoiceVO> queryMakerTotalInvoice(Page page, QueryMakerTotalInvoiceDTO queryMakerTotalInvoiceDto,Integer userType,String userId);
 }

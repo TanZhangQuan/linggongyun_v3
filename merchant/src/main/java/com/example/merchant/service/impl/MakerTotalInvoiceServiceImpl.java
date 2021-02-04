@@ -7,6 +7,7 @@ import com.example.common.util.DateUtil;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.MakerTotalInvoiceDTO;
 import com.example.merchant.service.MakerTotalInvoiceService;
+import com.example.merchant.service.ManagersService;
 import com.example.merchant.vo.merchant.InvoiceCatalogVO;
 import com.example.merchant.vo.platform.MakerTotalInvoiceDetailsVO;
 import com.example.merchant.vo.platform.MakerTotalInvoiceInfoVO;
@@ -45,9 +46,10 @@ public class MakerTotalInvoiceServiceImpl extends ServiceImpl<MakerTotalInvoiceD
     private InvoiceCatalogDao invoiceCatalogDao;
     @Resource
     private ManagersDao managersDao;
-
     @Resource
     private PaymentInventoryDao paymentInventoryDao;
+    @Resource
+    private ManagersService managersService;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -143,9 +145,17 @@ public class MakerTotalInvoiceServiceImpl extends ServiceImpl<MakerTotalInvoiceD
     }
 
     @Override
-    public ReturnJson queryMakerTotalInvoice(QueryMakerTotalInvoiceDTO queryMakerTotalInvoiceDto) {
+    public ReturnJson queryMakerTotalInvoice(QueryMakerTotalInvoiceDTO queryMakerTotalInvoiceDto, String userId) {
+        Managers managers = managersService.getById(userId);
         Page page = new Page(queryMakerTotalInvoiceDto.getPageNo(), queryMakerTotalInvoiceDto.getPageSize());
-        IPage<MakerTotalInvoiceVO> makerTotalInvoiceVoIPage = makerTotalInvoiceDao.queryMakerTotalInvoice(page, queryMakerTotalInvoiceDto);
+        IPage<MakerTotalInvoiceVO> makerTotalInvoiceVoIPage;
+        if (managers.getUserSign() == 3) {
+            makerTotalInvoiceVoIPage = makerTotalInvoiceDao.queryMakerTotalInvoice(page, queryMakerTotalInvoiceDto, null, userId);
+        } else if (managers.getUserSign() == 2) {
+            makerTotalInvoiceVoIPage = makerTotalInvoiceDao.queryMakerTotalInvoice(page, queryMakerTotalInvoiceDto, 2, userId);
+        } else {
+            makerTotalInvoiceVoIPage = makerTotalInvoiceDao.queryMakerTotalInvoice(page, queryMakerTotalInvoiceDto, 1, userId);
+        }
         return ReturnJson.success(makerTotalInvoiceVoIPage);
     }
 
@@ -182,12 +192,12 @@ public class MakerTotalInvoiceServiceImpl extends ServiceImpl<MakerTotalInvoiceD
     }
 
     @Override
-    public ReturnJson getTotalBranchList(String paymentOrderIds,Integer type) {
+    public ReturnJson getTotalBranchList(String paymentOrderIds, Integer type) {
         List<String> paymentOrderId = Arrays.asList(paymentOrderIds.split(","));
-        if(paymentOrderId.size() <= 0){
+        if (paymentOrderId.size() <= 0) {
             return ReturnJson.error("总包id不能为空");
         }
-        List<PaymentInventoryVO> paymentInventories = paymentInventoryDao.getTotalBranchList(paymentOrderId,type);
+        List<PaymentInventoryVO> paymentInventories = paymentInventoryDao.getTotalBranchList(paymentOrderId, type);
         return ReturnJson.success(paymentInventories);
     }
 
