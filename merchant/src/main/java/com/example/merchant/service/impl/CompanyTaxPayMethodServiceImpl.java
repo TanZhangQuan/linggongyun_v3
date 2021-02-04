@@ -28,7 +28,7 @@ public class CompanyTaxPayMethodServiceImpl extends ServiceImpl<CompanyTaxPayMet
         queryWrapper.lambda().eq(CompanyTaxPayMethod::getCompanyId, companyId)
                 .eq(CompanyTaxPayMethod::getTaxId, taxId)
                 .eq(CompanyTaxPayMethod::getPackageType, packageType)
-                .eq(CompanyTaxPayMethod::getPaymentMethod, packageType);
+                .eq(CompanyTaxPayMethod::getPaymentMethod, paymentMethod);
 
         return baseMapper.selectOne(queryWrapper);
     }
