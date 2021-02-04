@@ -21,9 +21,6 @@ public class SaveOrUpdateAppletOtherInfoDTO implements Serializable {
     @ApiModelProperty(value = "常见问题ID")
     private String id;
 
-    @ApiModelProperty(value = "项目名称")
-    private String entryName;
-
     @ApiModelProperty(value = "内容")
     @NotBlank(message = "内容不能为空")
     private String content;
