@@ -122,7 +122,7 @@
     <select id="selectInvoiceMoney" parameterType="string" resultMap="InvoiceMoney">
         SELECT
             count(po.id) 'count',
-            SUM(po.real_money+po.service_money) 'total_money'
+            SUM(po.real_money) 'total_money'
         FROM
             tb_company_info a
         INNER JOIN tb_payment_order po ON po.company_id=a.id
@@ -134,7 +134,7 @@
     <select id="selectInvoiceMoneyPaas" parameterType="string" resultMap="InvoiceMoney">
         SELECT
             count(po.id) 'count',
-            SUM(po.real_money+po.service_money) 'total_money'
+            SUM(po.real_money) 'total_money'
         FROM
             tb_company_info a
         INNER JOIN tb_payment_order po ON po.company_id=a.id
@@ -364,13 +364,13 @@
 
     <!--查询总包的发票数量和发票金额-->
     <select id="selectInvoiceMoneyPaasTax" parameterType="string" resultMap="InvoiceMoney">
-        select count(d.id) 'count', SUM(d.invoice_money) 'total_money' from tb_payment_order b
-        RIGHT join
-        (select * from tb_application_payment
-        GROUP BY invoice_application_id)
-        c on b.id = c.payment_order_id
-        join tb_invoice d on c.invoice_application_id = d.application_id
-        where b.tax_id = #{taxId}
+        SELECT
+            COUNT(1) as count ,SUM(real_money) as total_money
+        FROM
+            tb_payment_order
+        WHERE
+            is_not_invoice = 1
+        AND tax_id= #{taxId}
     </select>
 
     <!--查询总包的发票数量和发票金额-->
