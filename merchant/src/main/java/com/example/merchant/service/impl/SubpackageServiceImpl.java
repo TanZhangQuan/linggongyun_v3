@@ -37,7 +37,7 @@ public class SubpackageServiceImpl implements SubpackageService {
         QuerySubInfoVO querySubInfoVo = new QuerySubInfoVO();
         List<PaymentOrderVO> paymentOrderVOList = subpackageDao.queryPaymentOrderInfo(id);
         querySubInfoVo.setPaymentOrderVos(paymentOrderVOList);
-        BuyerVO buyerVo = merchantDao.getBuyerById(merchantId);
+        BuyerVO buyerVo = merchantDao.getBuyerById(merchantDao.selectById(merchantId).getCompanyId());
         querySubInfoVo.setBuyerVo(buyerVo);
         MakerTotalInvoice makerTotalInvoice = makerTotalInvoiceDao.selectById(id);
         InvoiceInfoVO invoiceInfoVo = new InvoiceInfoVO();

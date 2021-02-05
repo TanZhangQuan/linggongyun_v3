@@ -11,21 +11,16 @@ import java.io.Serializable;
 public class SellerVO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @ApiModelProperty(value = "税源地名称")
-    private String taxName;
+    @ApiModelProperty(value = "公司名称")
+    private String invoiceEnterpriseName;
 
-    @ApiModelProperty(value = "纳税人识别号")
-    private String creditCode;
+    @ApiModelProperty(value = "纳税识别号")
+    private String invoiceTaxNo;
 
-    @ApiModelProperty(value = "地址")
-    private String taxAddress;
+    @ApiModelProperty(value = "地址电话")
+    private String invoiceAddressPhone;
 
-    @ApiModelProperty(value = "电话")
-    private String phone;
+    @ApiModelProperty(value = "开户银行及账号")
+    private String invoiceBankNameAccount;
 
-    @ApiModelProperty(value = "开户行")
-    private String bankName;
-
-    @ApiModelProperty(value = "银行号码")
-    private String bankCode;
 }

@@ -49,4 +49,5 @@ public interface TaxDao extends BaseMapper<Tax> {
 
     IPage<TaxCompanyPaymentVO> getTaxCompanyFlow(Page page,String companyId,String taxId);
 
+    ReceiptVO getReceipt(String taxId);
 }
