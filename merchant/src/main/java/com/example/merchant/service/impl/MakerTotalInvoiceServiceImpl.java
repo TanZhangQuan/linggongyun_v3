@@ -148,14 +148,7 @@ public class MakerTotalInvoiceServiceImpl extends ServiceImpl<MakerTotalInvoiceD
     public ReturnJson queryMakerTotalInvoice(QueryMakerTotalInvoiceDTO queryMakerTotalInvoiceDto, String userId) {
         Managers managers = managersService.getById(userId);
         Page page = new Page(queryMakerTotalInvoiceDto.getPageNo(), queryMakerTotalInvoiceDto.getPageSize());
-        IPage<MakerTotalInvoiceVO> makerTotalInvoiceVoIPage;
-        if (managers.getUserSign() == 3) {
-            makerTotalInvoiceVoIPage = makerTotalInvoiceDao.queryMakerTotalInvoice(page, queryMakerTotalInvoiceDto, null, userId);
-        } else if (managers.getUserSign() == 2) {
-            makerTotalInvoiceVoIPage = makerTotalInvoiceDao.queryMakerTotalInvoice(page, queryMakerTotalInvoiceDto, 2, userId);
-        } else {
-            makerTotalInvoiceVoIPage = makerTotalInvoiceDao.queryMakerTotalInvoice(page, queryMakerTotalInvoiceDto, 1, userId);
-        }
+        IPage<MakerTotalInvoiceVO> makerTotalInvoiceVoIPage = makerTotalInvoiceDao.queryMakerTotalInvoice(page, queryMakerTotalInvoiceDto, managers.getUserSign(), userId);
         return ReturnJson.success(makerTotalInvoiceVoIPage);
     }
 

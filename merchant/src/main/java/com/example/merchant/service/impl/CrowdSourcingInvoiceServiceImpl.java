@@ -114,14 +114,7 @@ public class CrowdSourcingInvoiceServiceImpl extends ServiceImpl<CrowdSourcingIn
     public ReturnJson getTobeCrowdSourcingInvoice(TobeInvoicedDTO tobeinvoicedDto, String userId) {
         Managers managers = managersService.getById(userId);
         Page page = new Page(tobeinvoicedDto.getPageNo(), tobeinvoicedDto.getPageSize());
-        IPage<CrowdSourcingInvoiceInfoVO> list;
-        if (managers.getUserSign() == 3) {
-            list = crowdSourcingInvoiceDao.getCrowdSourcingInvoicePass(page, tobeinvoicedDto, null, userId);
-        } else if (managers.getUserSign() == 2) {
-            list = crowdSourcingInvoiceDao.getCrowdSourcingInvoicePass(page, tobeinvoicedDto, 2, userId);
-        } else {
-            list = crowdSourcingInvoiceDao.getCrowdSourcingInvoicePass(page, tobeinvoicedDto, 1, userId);
-        }
+        IPage<CrowdSourcingInvoiceInfoVO> list = crowdSourcingInvoiceDao.getCrowdSourcingInvoicePass(page, tobeinvoicedDto, managers.getUserSign(), userId);
         return ReturnJson.success(list);
     }
 
@@ -246,14 +239,7 @@ public class CrowdSourcingInvoiceServiceImpl extends ServiceImpl<CrowdSourcingIn
     public ReturnJson getCrowdSourcingInfoPass(TobeInvoicedDTO tobeinvoicedDto, String userId) {
         Managers managers = managersService.getById(userId);
         Page page = new Page(tobeinvoicedDto.getPageNo(), tobeinvoicedDto.getPageSize());
-        IPage<CrowdSourcingInfoVO> vos;
-        if (managers.getUserSign() == 3) {
-            vos = crowdSourcingInvoiceDao.getCrowdSourcingInfoPass(page, tobeinvoicedDto, null, userId);
-        } else if (managers.getUserSign() == 2) {
-            vos = crowdSourcingInvoiceDao.getCrowdSourcingInfoPass(page, tobeinvoicedDto, 2, userId);
-        } else {
-            vos = crowdSourcingInvoiceDao.getCrowdSourcingInfoPass(page, tobeinvoicedDto, 1, userId);
-        }
+        IPage<CrowdSourcingInfoVO> vos = crowdSourcingInvoiceDao.getCrowdSourcingInfoPass(page, tobeinvoicedDto, managers.getUserSign(), userId);
         return ReturnJson.success(vos);
     }
 

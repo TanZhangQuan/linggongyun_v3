@@ -147,14 +147,7 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
     public ReturnJson getPlaInvoiceList(TobeInvoicedDTO tobeinvoicedDto, String userId) {
         Managers managers = managersService.getById(userId);
         Page page = new Page(tobeinvoicedDto.getPageNo(), tobeinvoicedDto.getPageSize());
-        IPage<PlaInvoiceListVO> list;
-        if (managers.getUserSign() == 3) {
-            list = invoiceDao.getPlaInvoiceList(page, tobeinvoicedDto, null, userId);
-        } else if (managers.getUserSign() == 2) {
-            list = invoiceDao.getPlaInvoiceList(page, tobeinvoicedDto, 2, userId);
-        } else {
-            list = invoiceDao.getPlaInvoiceList(page, tobeinvoicedDto, 1, userId);
-        }
+        IPage<PlaInvoiceListVO> list = invoiceDao.getPlaInvoiceList(page, tobeinvoicedDto, managers.getUserSign(), userId);
         return ReturnJson.success(list);
     }
 
@@ -259,14 +252,7 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
     public ReturnJson getListInvoicequery(TobeInvoicedDTO tobeinvoicedDto, String userId) {
         Managers managers = managersService.getById(userId);
         Page page = new Page(tobeinvoicedDto.getPageNo(), tobeinvoicedDto.getPageSize());
-        IPage<InvoiceVO> list;
-        if (managers.getUserSign() == 3) {
-            list = invoiceDao.getListInvoicequery(page, tobeinvoicedDto, null, userId);
-        } else if (managers.getUserSign() == 2) {
-            list = invoiceDao.getListInvoicequery(page, tobeinvoicedDto, 2, userId);
-        } else {
-            list = invoiceDao.getListInvoicequery(page, tobeinvoicedDto, 1, userId);
-        }
+        IPage<InvoiceVO> list = invoiceDao.getListInvoicequery(page, tobeinvoicedDto, managers.getUserSign(), userId);
         return ReturnJson.success(list);
     }
 
@@ -280,14 +266,7 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
     public ReturnJson getListSubQuery(TobeInvoicedDTO tobeinvoicedDto, String userId) {
         Managers managers = managersService.getById(userId);
         Page page = new Page(tobeinvoicedDto.getPageNo(), tobeinvoicedDto.getPageSize());
-        IPage<ToSubcontractInvoiceVO> list;
-        if (managers.getUserSign() == 3) {
-            list = invoiceDao.getListSubQuery(page, tobeinvoicedDto, null, userId);
-        } else if (managers.getUserSign() == 2) {
-            list = invoiceDao.getListSubQuery(page, tobeinvoicedDto, 2, userId);
-        } else {
-            list = invoiceDao.getListSubQuery(page, tobeinvoicedDto, 1, userId);
-        }
+        IPage<ToSubcontractInvoiceVO> list = invoiceDao.getListSubQuery(page, tobeinvoicedDto, managers.getUserSign(), userId);
         return ReturnJson.success(list);
     }
 
