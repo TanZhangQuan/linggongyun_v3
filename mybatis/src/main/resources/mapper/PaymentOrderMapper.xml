@@ -603,10 +603,10 @@
 
     <select id="queryBuyer" resultMap="BuyerById">
         SELECT
-            t.tax_name,
-            t.credit_code,
-           	CONCAT(t.tax_address,',',t.link_mobile)AS address_and_telephone,
-	        CONCAT(t.bank_name,',',t.bank_code)AS bank_and_account
+            t.invoice_enterprise_name as tax_name,
+            t.invoice_tax_no as credit_code,
+           	t.invoice_address_phone as address_and_telephone,
+	        t.invoice_bank_name_account as bank_and_account
         FROM
             tb_maker_total_invoice mti
         INNER JOIN tb_invoice_list il ON il.maker_total_invoice_id = mti.id

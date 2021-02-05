@@ -94,8 +94,8 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
             billingInfoVOList.add(billingInfo);
         }
         queryInvoiceVo.setBillingInfoVoList(billingInfoVOList);
-        queryInvoiceVo.setBuyerVo(merchantDao.getBuyerById(merchantId));
         PaymentOrder paymentOrderOne = paymentOrderDao.selectById(paymentOrderVOList.get(0).getId());
+        queryInvoiceVo.setBuyerVo(merchantDao.getBuyerById(paymentOrderOne.getCompanyId()));
         queryInvoiceVo.setSellerVo(taxDao.getSellerById(paymentOrderOne.getTaxId()));
         InvoiceApplication invoiceApplication = invoiceApplicationDao.selectById(vo.getInvAppId());
         InvoiceApplicationVO invoiceApplicationVo = new InvoiceApplicationVO();
@@ -111,9 +111,10 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
         sendAndReceiveVo.setLogisticsCompany(vo.getExpressCompanyName());
         sendAndReceiveVo.setLogisticsOrderNo(vo.getExpressSheetNo());
         Address address = addressDao.selectById(invoiceApplicationVo.getApplicationAddress());
-        sendAndReceiveVo.setFrom(queryInvoiceVo.getSellerVo().getTaxName());
-        sendAndReceiveVo.setFromTelephone(queryInvoiceVo.getSellerVo().getPhone());
-        sendAndReceiveVo.setSendingAddress(queryInvoiceVo.getSellerVo().getTaxAddress());
+        ReceiptVO receiptVO = taxDao.getReceipt(paymentOrderOne.getTaxId());
+        sendAndReceiveVo.setFrom(receiptVO.getReceiptName());
+        sendAndReceiveVo.setFromTelephone(receiptVO.getReceiptPhone());
+        sendAndReceiveVo.setSendingAddress(receiptVO.getReceiptAddress());
         sendAndReceiveVo.setToAddress(address.getAddressName());
         sendAndReceiveVo.setAddressee(address.getLinkName());
         sendAndReceiveVo.setAddresseeTelephone(address.getLinkMobile());
@@ -169,7 +170,7 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
         }
         queryApplicationInvoiceVo.setBillingInfoVoList(billingInfoVOList);
         PaymentOrder paymentOrderOne = paymentOrderDao.selectById(paymentOrderVOList.get(0).getId());
-        queryApplicationInvoiceVo.setBuyerVo(merchantDao.getBuyerById(paymentOrderOne.getMerchantId()));
+        queryApplicationInvoiceVo.setBuyerVo(merchantDao.getBuyerById(paymentOrderOne.getCompanyId()));
         queryApplicationInvoiceVo.setSellerVo(taxDao.getSellerById(paymentOrderOne.getTaxId()));
         InvoiceApplication invoiceApplication = invoiceApplicationDao.selectById(applicationId);
         InvoiceApplicationVO invoiceApplicationVo = new InvoiceApplicationVO();
@@ -338,7 +339,7 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
         }
         queryApplicationInvoiceVo.setBillingInfoVoList(billingInfoVOList);
         PaymentOrder paymentOrderOne = paymentOrderDao.selectById(paymentOrderVOList.get(0).getId());
-        queryApplicationInvoiceVo.setBuyerVo(merchantDao.getBuyerById(paymentOrderOne.getMerchantId()));
+        queryApplicationInvoiceVo.setBuyerVo(merchantDao.getBuyerById(paymentOrderOne.getCompanyId()));
         queryApplicationInvoiceVo.setSellerVo(taxDao.getSellerById(paymentOrderOne.getTaxId()));
         InvoiceApplication invoiceApplication = invoiceApplicationDao.selectById(invoice.getApplicationId());
 
@@ -355,9 +356,10 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
         SendAndReceiveVO sendAndReceiveVo = new SendAndReceiveVO();
         sendAndReceiveVo.setLogisticsCompany(vo.getExpressCompanyName());
         sendAndReceiveVo.setLogisticsOrderNo(vo.getExpressSheetNo());
-        sendAndReceiveVo.setFrom(queryApplicationInvoiceVo.getSellerVo().getTaxName());
-        sendAndReceiveVo.setFromTelephone(queryApplicationInvoiceVo.getSellerVo().getPhone());
-        sendAndReceiveVo.setSendingAddress(queryApplicationInvoiceVo.getSellerVo().getTaxAddress());
+        ReceiptVO receiptVO = taxDao.getReceipt(paymentOrderOne.getTaxId());
+        sendAndReceiveVo.setFrom(receiptVO.getReceiptName());
+        sendAndReceiveVo.setFromTelephone(receiptVO.getReceiptPhone());
+        sendAndReceiveVo.setSendingAddress(receiptVO.getReceiptAddress());
         sendAndReceiveVo.setToAddress(address.getAddressName());
         sendAndReceiveVo.setAddressee(address.getLinkName());
         sendAndReceiveVo.setAddresseeTelephone(address.getLinkMobile());
