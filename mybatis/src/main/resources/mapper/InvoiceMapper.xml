@@ -274,7 +274,14 @@
 	    tb_invoice_application invapp
         INNER JOIN tb_application_payment app ON app.invoice_application_id = invapp.id
         INNER JOIN tb_payment_order po ON po.id = app.payment_order_id
+        INNER JOIN tb_company_info ci ON ci.id = po.company_id
         WHERE invapp.application_state != 3
+        <if test="param3 == 2">
+            AND ci.sales_man_id = #{param4}
+        </if>
+        <if test="param3 == 1">
+            AND ci.agent_id = #{param4}
+        </if>
         <if test="tobeinvoicedDto.companySName != null and tobeinvoicedDto.companySName != ''">
             AND po.company_s_name like CONCAT('%',#{tobeinvoicedDto.companySName},'%')
         </if>
@@ -311,7 +318,14 @@
         INNER JOIN tb_invoice_application as ia ON i.application_id=ia.id
         INNER JOIN tb_application_payment as ap ON ia.id = ap.invoice_application_id
         INNER JOIN tb_payment_order as po ON ap.payment_order_id=po.id
-        WHERE ia.application_state=3
+        INNER JOIN tb_company_info ci ON ci.id = po.company_id
+        WHERE ia.application_state = 3
+        <if test="param3 == 2">
+            AND ci.sales_man_id = #{param4}
+        </if>
+        <if test="param3 == 1">
+            AND ci.agent_id = #{param4}
+        </if>
         <if test="tobeinvoicedDto.companySName != null and tobeinvoicedDto.companySName != ''">
             AND po.company_s_name like CONCAT('%',#{tobeinvoicedDto.companySName},'%')
         </if>
@@ -328,12 +342,32 @@
     </select>
 
     <select id="getListSubQuery" resultMap="SubList">
-        SELECT i.id,po.company_s_name,po.platform_service_provider,i.invoice_url,i.tax_receipt_url,po.is_subpackage,po.payment_date,po.id as pid,po.payment_inventory,po.turnkey_project_payment
-        FROM tb_invoice as i
-        INNER JOIN tb_invoice_application as ia ON i.application_id=ia.id
-        INNER JOIN tb_application_payment as ap ON ap.invoice_application_id=ia.id
-        INNER JOIN tb_payment_order as po ON po.id=ap.payment_order_id
-        WHERE ia.application_state = 3 AND po.is_subpackage=0
+        SELECT
+            i.id,
+            po.company_s_name,
+            po.platform_service_provider,
+            i.invoice_url,
+            i.tax_receipt_url,
+            po.is_subpackage,
+            po.payment_date,
+            po.id AS pid,
+            po.payment_inventory,
+            po.turnkey_project_payment
+        FROM
+            tb_invoice AS i
+        INNER JOIN tb_invoice_application AS ia ON i.application_id = ia.id
+        INNER JOIN tb_application_payment AS ap ON ap.invoice_application_id = ia.id
+        INNER JOIN tb_payment_order AS po ON po.id = ap.payment_order_id
+        INNER JOIN tb_company_info ci ON ci.id = po.company_id
+        WHERE
+            ia.application_state = 3
+        AND po.is_subpackage = 0
+        <if test="param3 == 2">
+            AND ci.sales_man_id = #{param4}
+        </if>
+        <if test="param3 == 1">
+            AND ci.agent_id = #{param4}
+        </if>
         <if test="tobeinvoicedDto.companySName != null and tobeinvoicedDto.companySName != ''">
             AND po.company_s_name like CONCAT('%',#{tobeinvoicedDto.companySName},'%')
         </if>

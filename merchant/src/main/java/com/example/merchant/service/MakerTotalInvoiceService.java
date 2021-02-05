@@ -29,9 +29,10 @@ public interface MakerTotalInvoiceService extends IService<MakerTotalInvoice> {
      * 汇总代开已开票
      *
      * @param queryMakerTotalInvoiceDto
+     * @param userId
      * @return
      */
-    ReturnJson queryMakerTotalInvoice(QueryMakerTotalInvoiceDTO queryMakerTotalInvoiceDto);
+    ReturnJson queryMakerTotalInvoice(QueryMakerTotalInvoiceDTO queryMakerTotalInvoiceDto, String userId);
 
     /**
      * 汇总代开已开票详情
@@ -55,8 +56,8 @@ public interface MakerTotalInvoiceService extends IService<MakerTotalInvoice> {
      * 总包+分包支付明细
      *
      * @param paymentOrderIds
-     * @param type 0 总包+分包  1众包
+     * @param type            0 总包+分包  1众包
      * @return
      */
-    ReturnJson getTotalBranchList(String paymentOrderIds,Integer type);
+    ReturnJson getTotalBranchList(String paymentOrderIds, Integer type);
 }

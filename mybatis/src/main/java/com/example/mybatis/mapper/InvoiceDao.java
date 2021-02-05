@@ -42,17 +42,17 @@ public interface InvoiceDao extends BaseMapper<Invoice> {
      */
     InvoiceInformationVO getInvInfoById(String invId);
 
-    IPage<PlaInvoiceListVO> getPlaInvoiceList(Page page, @Param("tobeinvoicedDto") TobeInvoicedDTO tobeinvoicedDto);
+    IPage<PlaInvoiceListVO> getPlaInvoiceList(Page page, @Param("tobeinvoicedDto") TobeInvoicedDTO tobeinvoicedDto,Integer userType,String userId);
 
     //更具申请id查询信息
     PlaInvoiceInfoVO getPlaInvoiceInfo(String applicationId);
 
     String getInvoiceCode();
 
-    IPage<InvoiceVO> getListInvoicequery(Page page, @Param("tobeinvoicedDto") TobeInvoicedDTO tobeinvoicedDto);
+    IPage<InvoiceVO> getListInvoicequery(Page page, @Param("tobeinvoicedDto") TobeInvoicedDTO tobeinvoicedDto,Integer userType,String userId);
 
     //分包待开票数据
-    IPage<ToSubcontractInvoiceVO> getListSubQuery(Page page, @Param("tobeinvoicedDto") TobeInvoicedDTO tobeinvoicedDto);
+    IPage<ToSubcontractInvoiceVO> getListSubQuery(Page page, @Param("tobeinvoicedDto") TobeInvoicedDTO tobeinvoicedDto,Integer userType,String userId);
 
     //根据支付订单ID查找发票信息
     InvoiceInfoPO selectInvoiceInfoPO(String paymentOrderId);

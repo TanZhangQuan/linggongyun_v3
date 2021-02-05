@@ -211,6 +211,12 @@ public class StructureServiceImpl implements StructureService {
             if (managersOne != null) {
                 return ReturnJson.error("此手机号码已近注册过！");
             }
+            managersOne = managersDao.selectOne(
+                    new QueryWrapper<Managers>().lambda()
+                            .eq(Managers::getUserName, agentInfoDto.getUserName()));
+            if (managersOne != null) {
+                return ReturnJson.error("此用户名已近注册过！");
+            }
             managers.setPassWord(MD5.md5(PWD_KEY + agentInfoDto.getInitPassWord()));
             managers.setRealName(agentInfoDto.getAgentName());
             managers.setUserName(agentInfoDto.getUserName());
@@ -253,6 +259,12 @@ public class StructureServiceImpl implements StructureService {
             managers = managersDao.selectById(agentInfoDto.getAgentId());
             if (!managersOne.getId().equals(managers.getId())) {
                 return ReturnJson.error("此手机号码已近注册过！");
+            }
+            managersOne = managersDao.selectOne(
+                    new QueryWrapper<Managers>().lambda()
+                            .eq(Managers::getUserName, agentInfoDto.getUserName()));
+            if (!managersOne.getUserName().equals(managers.getUserName())) {
+                return ReturnJson.error("此用户名已近注册过！");
             }
             //编辑
             managers.setPassWord(MD5.md5(PWD_KEY + agentInfoDto.getInitPassWord()));
