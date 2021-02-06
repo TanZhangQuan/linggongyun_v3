@@ -1,5 +1,6 @@
 package com.example.merchant.service;
 
+import com.baomidou.mybatisplus.extension.api.R;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.platform.AgentInfoDTO;
 import com.example.merchant.dto.platform.ManagersDTO;
@@ -81,7 +82,7 @@ public interface StructureService {
      * @param agentInfoDto
      * @return
      */
-    ReturnJson addAgent(AgentInfoDTO agentInfoDto);
+    ReturnJson addAgent(AgentInfoDTO agentInfoDto) throws Exception;
 
 
     /**
@@ -115,4 +116,34 @@ public interface StructureService {
      * @return
      */
     ReturnJson querySalesman(String userId);
+
+    /**
+     * 平台业务员和代理商佣金保存
+     */
+    void timerStatistics();
+
+    /**
+     * 平台业务和代理商佣金统计
+     * @param userId
+     * @param time
+     * @param pageNo
+     * @param pageSize
+     * @return
+     */
+    ReturnJson salesmanAndAgentStatistics(String userId,Integer objectType,String time,Integer pageNo,Integer pageSize);
+
+    /**
+     * 平台业务员和代理商总佣金记录
+     */
+    ReturnJson totalSalesmanAndAgentStatistics(String userId,Integer objectType);
+
+    /**
+     * 平台业务员或代理商佣金记录详情
+     */
+    ReturnJson salesmanSAndAgentStatisticsDetail(String managersId,String achievementStatisticsId);
+
+    /**
+     *平台业务员或代理商总包众包订单详情
+     */
+    ReturnJson salesmanSAndAgentDetail(String managersId,Integer customerType,Integer pageNo,Integer pageSize);
 }

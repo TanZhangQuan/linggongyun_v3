@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mybatis.mapper.CommissionProportionDao">
+
+<!-- 通用查询映射结果 -->
+    <resultMap id="commissionProportionMap" type="com.example.mybatis.vo.CommissionProportionVO">
+        <id column="id" property="id" />
+        <result column="object_id" property="objectId" />
+        <result column="object_type" property="objectType" />
+        <result column="customer_type" property="customerType" />
+        <result column="start_money" property="startMoney" />
+        <result column="end_money" property="endMoney" />
+        <result column="commission_rate" property="commissionRate" />
+        <result column="create_date" property="createDate" />
+        <result column="update_date" property="updateDate" />
+    </resultMap>
+
+    <select id="getObjectIdAndObjectTypeAndCustomerType" resultMap="commissionProportionMap">
+        SELECT id,object_id,object_type,customer_type,start_money,end_money,commission_rate,create_date,update_date from tb_commission_proportion where object_id =#{objectId} and object_type =#{objectType} and customer_type=#{customerType}
+    </select>
+
+    <delete id="deleteObjectIdAndObjectTypeAndCustomerType">
+        delete FROM tb_commission_proportion where object_id =#{objectId} and object_type =#{objectType} and customer_type=#{customerType}
+    </delete>
+</mapper>

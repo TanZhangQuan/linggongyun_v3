@@ -7,6 +7,7 @@ import com.example.merchant.service.TaxPackageService;
 import com.example.mybatis.entity.InvoiceLadderPrice;
 import com.example.mybatis.entity.TaxPackage;
 import com.example.mybatis.mapper.TaxPackageDao;
+import com.example.mybatis.vo.TaxPackageVO;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -57,6 +58,12 @@ public class TaxPackageServiceImpl extends ServiceImpl<TaxPackageDao, TaxPackage
         queryWrapper.lambda().eq(TaxPackage::getTaxId, taxId).eq(TaxPackage::getPackageStatus, packageStatus);
 
         return baseMapper.selectOne(queryWrapper);
+    }
+
+    @Override
+    public List<TaxPackage> queryTaxPackageAll() {
+        QueryWrapper<TaxPackage> queryWrapper = new QueryWrapper<>();
+        return baseMapper.selectList(queryWrapper);
     }
 
 }

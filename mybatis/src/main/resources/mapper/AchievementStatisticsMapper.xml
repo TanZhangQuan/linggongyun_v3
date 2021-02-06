@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mybatis.mapper.AchievementStatisticsDao">
+
+
+    <resultMap id="achievementStatisticsVO" type="com.example.mybatis.vo.AchievementStatisticsVO">
+        <id column="achievementStatistics_id" property="achievementStatisticsId" />
+        <id column="object_id" property="objectId" />
+        <result column="object_type" property="objectType" />
+        <result column="user_name" property="objectName"></result>
+        <result column="merchant_count" property="merchantCount" />
+        <result column="merchant_business" property="merchantBusiness" />
+        <result column="agent_count" property="agentCount" />
+        <result column="agent_business" property="agentBusiness" />
+        <result column="merchant_commission" property="merchantCommission" />
+        <result column="agent_commission" property="agentCommission" />
+        <result column="merchant_difference" property="merchantDifference" />
+        <result column="agent_difference" property="agentDifference" />
+        <result column="total_commission" property="totalCommission" />
+        <result column="settlement_state" property="settlementState" />
+        <result column="merchant_difference" property="merchantDifference" />
+        <result column="create_date" property="createDate" />
+    </resultMap>
+
+    <select id="salesmanAndAgentStatistics" resultMap="achievementStatisticsVO">
+        SELECT t1.id AS achievementStatistics_id, t2.user_name, t1.object_id, t1.object_type, t1.merchant_count, t1.merchant_business, t1.agent_count, t1.agent_business, t1.merchant_commission, t1.agent_commission, t1.merchant_difference, t1.agent_difference, t1.total_commission, t1.settlement_state, t1.create_date FROM tb_achievement_statistics t1 INNER JOIN tb_managers t2 ON t2.id = t1.object_id
+        WHERE t1.create_date LIKE #{time}
+        <if test="objectType != null and objectType == 2">
+         and t2.user_sign = 2
+        </if>
+         <if test="objectType != null and objectType == 1">
+         and t2.user_sign = 1
+        </if>
+        <if test="userId != null and userId !=''">
+            AND t1.object_id in (#{userId})
+        </if>
+    </select>
+
+    <resultMap id="totalAchievementStatisticsVO" type="com.example.mybatis.vo.TotalAchievementStatisticsVO">
+        <id column="total_merchant_commission" property="totalMerchantCommission" />
+        <id column="total_agent_commission" property="totalAgentCommission" />
+        <result column="total_merchant_difference" property="totalMerchantDifference" />
+        <result column="total_agent_difference" property="totalAgentDifference" />
+        <result column="total_commission" property="totalCommission" />
+        <result column="num" property="num" />
+    </resultMap>
+
+    <select id="totalSalesmanAndAgentStatistics" resultMap="totalAchievementStatisticsVO">
+      SELECT sum(merchant_commission) AS total_merchant_commission, sum(agent_commission) AS total_agent_commission, sum(merchant_difference) AS total_merchant_difference, sum(agent_difference) AS total_agent_difference, sum(total_commission) AS total_commission, (SELECT COUNT(*) from tb_managers where 1= 1 <if test="objectType != null and objectType == 2"> and user_sign = 2</if> <if test="objectType != null and objectType == 1"> and user_sign = 1</if>) AS num FROM tb_achievement_statistics WHERE 1=1
+        <if test="objectType != null and objectType == 2">
+         and object_type = 0
+        </if>
+         <if test="objectType != null and objectType == 1">
+         and object_type = 1
+        </if>
+        <if test=" userId != null and userId !=''">
+            AND object_id in (#{param1})
+        </if>
+    </select>
+
+    <resultMap id="salesmanSAndAgentDetailVO" type="com.example.mybatis.vo.SalesmanSAndAgentDetailVO">
+        <id column="id" property="id" />
+        <id column="trade_no" property="tradeNo" />
+        <id column="agent_id" property="agentId" />
+        <id column="sales_man_id" property="salesManId" />
+        <id column="sales_man_name" property="salesManName" />
+        <id column="company_name" property="companyName" />
+        <id column="tax_name" property="taxName" />
+        <id column="agent_name" property="agentName" />
+        <id column="payment_order_type" property="paymentOrderType" />
+        <id column="people_num" property="peopleNum" />
+        <id column="worker_money" property="workerMoney" />
+        <id column="merchant_service_charge" property="merchantServiceCharge" />
+        <id column="worker_service_charge" property="workerServiceCharge" />
+        <id column="real_money" property="realMoney" />
+        <id column="total_difference" property="totalDifference" />
+    </resultMap>
+
+    <select id="salesmanDetail" resultMap="salesmanSAndAgentDetailVO">
+      SELECT * FROM ( SELECT t1.id, t1.trade_no, t2.agent_id, t2.sales_man_id, ( SELECT user_name FROM tb_managers WHERE id = t2.sales_man_id ) AS sales_man_name, t2.company_name, t3.tax_name, ( SELECT user_name FROM tb_managers WHERE id = t2.agent_id ) AS agent_name, 0 AS payment_order_type, ( SELECT count(*) FROM tb_payment_inventory WHERE t1.id = payment_order_id ) AS people_num, t1.worker_money, ( t1.real_money - t1.worker_money ) AS merchant_service_charge, ( t1.service_money - ( t1.real_money - t1.worker_money )) AS worker_service_charge, t1.real_money, ( t1.total_agent_difference + t1.total_salesman_difference ) AS total_difference FROM tb_payment_order t1 INNER JOIN tb_company_info t2 ON t2.id = t1.company_id INNER JOIN tb_tax t3 ON t3.id = t1.tax_id UNION ALL SELECT t1.id, t1.trade_no, t2.company_name, t2.agent_id, t2.sales_man_id, ( SELECT user_name FROM tb_managers WHERE id = t2.sales_man_id ) AS sales_man_name, t3.tax_name, ( SELECT user_name FROM tb_managers WHERE id = t2.agent_id ) AS agent_name, 1 AS payment_order_type, ( SELECT count(*) FROM tb_payment_inventory WHERE t1.id = payment_order_id ) AS people_num, ( SELECT IF ( SUM(task_money) IS NULL, 0, SUM(task_money)) FROM tb_payment_inventory WHERE t1.id = payment_order_id ) AS worker_money, (t1.real_money) AS merchant_service_charge, ( t1.service_money - t1.real_money ) AS worker_service_charge, t1.real_money, ( t1.total_agent_difference + t1.total_salesman_difference ) AS total_difference FROM tb_payment_order_many t1 INNER JOIN tb_company_info t2 ON t2.id = t1.company_id INNER JOIN tb_tax t3 ON t3.id = t1.tax_id ) AS tmp
+       WHERE sales_man_id = #{managersId}
+        <if test="customerType == 0">
+            and agent_id is null
+        </if>
+        <if test="customerType == 1">
+            and agent_id is not null
+        </if>
+    </select>
+
+    <select id="agentDetail" resultMap="salesmanSAndAgentDetailVO">
+      SELECT * FROM ( SELECT t1.id, t1.trade_no, t2.agent_id, t2.sales_man_id, ( SELECT user_name FROM tb_managers WHERE id = t2.sales_man_id ) AS sales_man_name, t2.company_name, t3.tax_name, ( SELECT user_name FROM tb_managers WHERE id = t2.agent_id ) AS agent_name, 0 AS payment_order_type, ( SELECT count(*) FROM tb_payment_inventory WHERE t1.id = payment_order_id ) AS people_num, t1.worker_money, ( t1.real_money - t1.worker_money ) AS merchant_service_charge, ( t1.service_money - ( t1.real_money - t1.worker_money )) AS worker_service_charge, t1.real_money, ( t1.total_agent_difference + t1.total_salesman_difference ) AS total_difference FROM tb_payment_order t1 INNER JOIN tb_company_info t2 ON t2.id = t1.company_id INNER JOIN tb_tax t3 ON t3.id = t1.tax_id UNION ALL SELECT t1.id, t1.trade_no, t2.company_name, t2.agent_id, t2.sales_man_id, ( SELECT user_name FROM tb_managers WHERE id = t2.sales_man_id ) AS sales_man_name, t3.tax_name, ( SELECT user_name FROM tb_managers WHERE id = t2.agent_id ) AS agent_name, 1 AS payment_order_type, ( SELECT count(*) FROM tb_payment_inventory WHERE t1.id = payment_order_id ) AS people_num, ( SELECT IF ( SUM(task_money) IS NULL, 0, SUM(task_money)) FROM tb_payment_inventory WHERE t1.id = payment_order_id ) AS worker_money, (t1.real_money) AS merchant_service_charge, ( t1.service_money - t1.real_money ) AS worker_service_charge, t1.real_money, ( t1.total_agent_difference + t1.total_salesman_difference ) AS total_difference FROM tb_payment_order_many t1 INNER JOIN tb_company_info t2 ON t2.id = t1.company_id INNER JOIN tb_tax t3 ON t3.id = t1.tax_id ) AS tmp
+       WHERE agent_id = #{managersId}
+    </select>
+</mapper>

@@ -15,4 +15,7 @@ public interface InvoiceLadderPriceService extends IService<InvoiceLadderPrice> 
      * @return
      */
     List<InvoiceLadderPriceDetailVO> queryInvoiceLadderPriceDetailVOList(String taxPackageId);
+
+
+
 }
