@@ -6,9 +6,11 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 @ApiModel(description = "添加代理商的参数")
@@ -53,5 +55,12 @@ public class AgentInfoDTO implements Serializable {
     @ApiModelProperty(value = "1代理商", hidden = true)
     @JsonIgnore
     private Integer userSign = 1;
+
+    @ApiModelProperty(value = "直客的流水结算梯度", required = true)
+    private List<CommissionProportionDTO> directCommissionProportion;
+
+    @ApiModelProperty(value = "服务商合作信息")
+    @Valid
+    List<AgentTaxDTO> agentTaxDtos;
 
 }

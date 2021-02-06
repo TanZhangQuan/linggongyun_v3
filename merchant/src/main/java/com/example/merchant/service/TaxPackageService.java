@@ -3,6 +3,8 @@ package com.example.merchant.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.mybatis.entity.TaxPackage;
 
+import java.util.List;
+
 /**
  * <p>
  * 服务类
@@ -28,4 +30,13 @@ public interface TaxPackageService extends IService<TaxPackage> {
      * @return
      */
     TaxPackage queryTaxPackage(String taxId, Integer packageStatus);
+
+
+    /**
+     * 查询服务商总包或众包合作信息
+     *
+     * @return
+     */
+    List<TaxPackage> queryTaxPackageAll();
+
 }

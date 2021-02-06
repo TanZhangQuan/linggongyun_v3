@@ -168,4 +168,14 @@ public class PaymentOrderMany extends BaseEntity {
      */
     private String tradeNo;
 
+    /**
+     *代理商差额佣金
+     */
+    private BigDecimal totalAgentDifference;
+
+    /**
+     *业务员差额佣金
+     */
+    private BigDecimal totalSalesmanDifference;
+
 }

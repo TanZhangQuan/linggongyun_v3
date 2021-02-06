@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mybatis.mapper.AgentTaxDao">
+    <resultMap id="agentTaxMap" type="com.example.mybatis.entity.AgentTax">
+        <id column="id" property="id"/>
+        <result column="tax_id" property="taxId"/>
+        <result column="agent_id" property="agentId"/>
+        <result column="charge_status" property="chargeStatus"/>
+        <result column="service_sharge" property="serviceCharge"/>
+        <result column="package_status" property="packageStatus"/>
+        <result column="contract" property="contract"/>
+        <result column="create_date" property="createDate"/>
+        <result column="update_date" property="updateDate"/>
+    </resultMap>
+    <select id="getAgentTax" resultMap="agentTaxMap">
+        SELECT * from tb_agent_tax where tax_id =#{param1} and agent_id = #{param2} and charge_status = #{param3}
+    </select>
+
+
+</mapper>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mybatis.mapper.AgentLadderServiceDao">
+
+     <resultMap id="BaseResultMap" type="com.example.mybatis.entity.AgentLadderService">
+        <id column="id" property="id"/>
+        <result column="agent_tax_id" property="agentTaxId"/>
+        <result column="start_money" property="startMoney"/>
+        <result column="end_money" property="endMoney"/>
+        <result column="service_charge" property="serviceCharge"/>
+        <result column="create_date" property="createDate"/>
+        <result column="update_date" property="updateDate"/>
+    </resultMap>
+
+    <select id="queryServiceCharge" resultType="java.math.BigDecimal">
+        SELECT t1.service_charge FROM tb_company_ladder_service t1 WHERE t1.company_tax_id = #{agentTaxId} AND t1.start_money = #{startMoney} AND t1.end_money = #{endMoney}
+    </select>
+
+    <select id="queryAgentLadderService" resultMap="BaseResultMap">
+        SELECT id,agent_tax_id,start_money,end_money,service_charge,create_date,update_date FROM tb_agent_ladder_service t1 WHERE t1.agent_tax_id = #{agentTaxId} AND t1.start_money = #{startMoney} AND t1.end_money = #{endMoney}
+    </select>
+</mapper>
