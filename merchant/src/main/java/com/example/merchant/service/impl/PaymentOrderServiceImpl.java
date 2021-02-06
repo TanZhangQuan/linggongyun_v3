@@ -52,9 +52,6 @@ import java.util.List;
 @Service
 public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, PaymentOrder> implements PaymentOrderService {
 
-    @Value("${TOKEN}")
-    private String TOKEN;
-
     @Resource
     private RedisDao redisDao;
 

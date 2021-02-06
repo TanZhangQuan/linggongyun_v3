@@ -5,9 +5,9 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.example.common.constant.SftpConstant;
 import com.example.common.enums.*;
 import com.example.common.util.*;
+import com.example.common.config.UnionpayConfig;
 import com.example.merchant.dto.merchant.AddPaymentOrderManyDTO;
 import com.example.merchant.dto.merchant.PaymentOrderManyPayDTO;
 import com.example.merchant.dto.merchant.PaymentOrderMerchantDTO;
@@ -29,7 +29,6 @@ import com.example.redis.dao.RedisDao;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,7 +38,10 @@ import java.io.*;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 /**
  * <p>
@@ -53,9 +55,6 @@ import java.util.*;
 @Slf4j
 @Service
 public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao, PaymentOrderMany> implements PaymentOrderManyService {
-
-    @Value("${TOKEN}")
-    private String TOKEN;
 
     @Resource
     private RedisDao redisDao;
@@ -1163,7 +1162,7 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
 
             SftpUtil sftpUtil = null;
             try {
-                sftpUtil = new SftpUtil(SftpConstant.UNIONPAYSFTPHOST, SftpConstant.UNIONPAYSFTPPORT, SftpConstant.UNIONPAYSFTPUSERNAME, SftpConstant.UNIONPAYSFTPPASSWORD);
+                sftpUtil = new SftpUtil(UnionpayConfig.getSftpHost(), UnionpayConfig.getSftpPort(), UnionpayConfig.getSftpUserName(), UnionpayConfig.getSftpPassword());
                 sftpUtil.connect();
                 // 下载
                 //获取文件名称和后缀
@@ -1171,7 +1170,7 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
                 //获取去掉文件名称和后缀后的路径
                 String subUrl = fileUrl.replace(fileName, "");
 
-                sftpUtil.downloadFile(subUrl, fileName, SftpConstant.SAVELOCALPATH + "/", fileName);
+                sftpUtil.downloadFile(subUrl, fileName, UnionpayConfig.getSftpSavePath() + "/", fileName);
 
             } finally {
                 if (sftpUtil != null) {
@@ -1182,8 +1181,8 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
         }
 
         //压缩文件
-        FileOutputStream fileOutputStream = new FileOutputStream(new File(SftpConstant.COMPRESSLOCALPATH + "/reconciliation.zip"));
-        ZipUtil.toZip(SftpConstant.SAVELOCALPATH, fileOutputStream, true);
+        FileOutputStream fileOutputStream = new FileOutputStream(new File(UnionpayConfig.getSftpCompressPath() + "/reconciliation.zip"));
+        ZipUtil.toZip(UnionpayConfig.getSftpSavePath(), fileOutputStream, true);
 
         OutputStream outputStream = response.getOutputStream();
         // 清空response
@@ -1192,7 +1191,7 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
         response.setHeader("Content-Disposition", "attachment; filename=" + java.net.URLEncoder.encode("reconciliation.zip", "UTF-8"));
 
         //下载文件
-        File zipFile = new File(SftpConstant.COMPRESSLOCALPATH + "/reconciliation.zip");
+        File zipFile = new File(UnionpayConfig.getSftpCompressPath() + "/reconciliation.zip");
         InputStream inputStream = new FileInputStream(zipFile);
         try {
             int len;
@@ -1205,7 +1204,7 @@ public class PaymentOrderManyServiceImpl extends ServiceImpl<PaymentOrderManyDao
             outputStream.flush();
             outputStream.close();
             //删除文件
-            File deleteFile = new File(SftpConstant.COMPRESSLOCALPATH);
+            File deleteFile = new File(UnionpayConfig.getSftpCompressPath());
             FileUtil.deleteFile(deleteFile);
         }
 

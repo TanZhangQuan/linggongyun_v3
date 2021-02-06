@@ -1,3 +1,4 @@
+# 服务端口
 server:
   port: 8081
 
@@ -41,19 +42,19 @@ spring:
       # 通过connectProperties属性来打开mergeSql功能；慢SQL记录
       connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
       # ！！！请勿配置timeBetweenLogStatsMillis 会定时输出日志 并导致统计的sql清零
-      #spring.datasource.druid.timeBetweenLogStatsMillis=20000
+      # spring.datasource.druid.timeBetweenLogStatsMillis=20000
       # WebStatFilter配置，说明请参考Druid Wiki
       webStatFilter:
         # 是否启用StatFilter默认值true
         enabled: true
-        url-pattern: "/*"
+        url-pattern: /*
         exclusions: "*.js,*.gif,*.jpg,*.bmp,*.png,*.css,*.ico,/druid/*"
       # StatViewServlet配置，说明请参考Druid Wiki
       statViewServlet:
-        #是否启用StatViewServlet默认值true
+        # 是否启用StatViewServlet默认值true
         enabled: true
-        url-pattern: "/druid/*"
-        #  禁用HTML页面上的“Reset All”功能
+        url-pattern: /druid/*
+        # 禁用HTML页面上的“Reset All”功能
         reset-enable: false
         # IP白名单(没有配置或者为空，则允许所有访问)
         allow: 127.0.0.1
@@ -63,136 +64,241 @@ spring:
         login-username: admin
         # 登录密码
         login-password: 123456
+
+  # redis配置
   redis:
-    host: 127.0.0.1  # Redis服务器地址
-    port: 6379 # Redis服务器连接端口
-    password: #linggongyun_v3 # Redis服务器连接密码（默认为空）
+    # Redis服务器地址
+    host: 127.0.0.1
+    # Redis服务器连接端口
+    port: 6379
+    # Redis服务器连接密码（默认为空）
+    password: 123456
     jedis:
       pool:
-        max-active: 8 # 连接池最大连接数（使用负值表示没有限制）
-        max-wait: -1 # 连接池最大阻塞等待时间（使用负值表示没有限制）
-        max-idle: 8 # 连接池中的最大空闲连接数
-        min-idle: 0 # 连接池中的最小空闲连接
-    timeout: 3000 # 连接超时时间（毫秒）
+        # 连接池最大连接数（使用负值表示没有限制）
+        max-active: 8
+        # 连接池最大阻塞等待时间（使用负值表示没有限制）
+        max-wait: -1
+        # 连接池中的最大空闲连接数
+        max-idle: 8
+        # 连接池中的最小空闲连接
+        min-idle: 0
+    # 连接超时时间（毫秒）
+    timeout: 3000
+
+  # Redis多数据源关闭，默认使用主数据源(去掉不会报错，主要是处理烦人的日志打印)
   data:
     redis:
       repositories:
         enabled: false
 
-#微信Appid
-APPID: "wx3870ff35a721932e"
-#微信secret
-SECRET: "cf6f1bcea8c984dc699d2e554f9b2bf6"
+  # 微信配置
+  wechat:
+    # APPID
+    app-id: wx3870ff35a721932e
+    # 密钥
+    secret-key: cf6f1bcea8c984dc699d2e554f9b2bf6
 
-#容联短信设置
-SMS:
-  AccountSid: "8a216da873b27ace0173b30bff5d0079"
-  #主帐号TOKEN
-  AccountToken: "b12a28072550438486f44fce85ad3fe6"
-  #初始化应用ID
-  AppId: "8a216da873b27ace0173b30c00620081"
-  #模板ID
-  TemplateId: "624431"
-  #初始化服务器地址,服务器地址不需要写https://
-  serverIP: "app.cloopen.com"
-  #初始化服务器端口
-  serverPort: "8883"
+  # 云通讯短信配置
+  yuntongxun:
+    # 初始化服务器地址,服务器地址不需要写https://
+    server-ip: app.cloopen.com
+    # 初始化服务器端口
+    server-port: 8883
+    # 主账户ID
+    account-sid: 8a216da873b27ace0173b30bff5d0079
+    # 账户授权令牌
+    auth-token: b12a28072550438486f44fce85ad3fe6
+    # 应用APPID
+    app-id: 8a216da873b27ace0173b30c00620081
+    # 短信模板ID
+    template-id: 624431
 
-#本地图片存储路径
-PathImage_KEY: "D:/upload/image/"
+  # 签约配置
+  sign:
+    # 第三方：eqianbao E签宝，yiyunzhang 易云章
+    party-type: eqianbao
 
-#本地excel存储路径
-PathExcel_KEY: "D:/upload/excel/"
+  # E签宝配置
+  eqianbao:
+    # 请求URL
+    host: https://smlopenapi.esign.cn
+    # 应用ID
+    application-id: 4438766163
+    # 应用密钥
+    application-secret-key: 86d20a7f49bc3c4c20bae23d369d8853
+    # 印章ID
+    seal-id:
 
-#本地视频存储路径
-PathVideo_KEY: "D:/upload/video/"
+    # 平台自动盖章签署区参数设置
+    platform-sign:
+      # 页码信息
+      pos-page: 1
+      # x坐标
+      posX: 10f
+      # y坐标
+      posY: 100f
 
-#图片的访问路径
-fileStaticAccesspathImage: "/static/image/"
+    # 签署方自动盖章签署区参数设置
+    signer-auto-sign:
+      # 页码信息
+      pos-page: 1
+      # x坐标
+      posX: 10f
+      # y坐标
+      posY: 100f
 
-#excel的访问路径
-fileStaticAccesspathExcel: "/static/excel/"
+    # 签署方手动盖章签署区参数设置
+    signer-hand-sign:
+      # 页码信息
+      pos-page: 8
+      # x坐标
+      posX: 100f
+      # y坐标
+      posY: 180f
 
-#视频的访问路径
-fileStaticAccesspathVideo: "/static/Video/"
+    # 异步回调URL
+    async-notify-url: https://246953jp33.qicp.vip/makerend/authentication/callBackSignAContract
 
-#平台全称
-platformName: '顺利创（广州）企业服务有限公司'
-#平台法人
-platformLegalPerson: '郑磊'
-#平台联系电话
-platformContactNumber: '18666009970'
-#平台社会信用代码
-platformCreditCode: '914401063045811741'
+  # 易云章配置
+  yiyunzhang:
+    # 请求URL
+    host: https://testapi.ecloudsign.com/
+    # 秘钥
+    secret-key: 7b95c6068a2d34c02b3a1ef251dc282f
+    # APPID
+    app-id: yyz9a9ek64096uk799
+    # AES密钥
+    aes-secret-key: YF}+efcaj{+oESb9
 
-#易云签的appkey
-yyqAppKey: "yyz9a9ek64096uk799"
-#易云签的secrept
-yyqSecrept: "7b95c6068a2d34c02b3a1ef251dc282f"
-#易云签的url
-yyqUrl: "https://testapi.ecloudsign.com/"
-#易云签的AES密钥
-yyqAES: "YF}+efcaj{+oESb9"
-#易云签的回调地址
-yyqCallBack: "http://246953jp33.qicp.vip:34780/makerend/authentication/callBackYYQSignAContract"
-#签约类型 0 e签宝，1：易云签
-signType: "1"
+    # 印章配置
+    seal:
+      # 平台全称（组成印章）
+      platform-name: 顺利创（广州）企业服务有限公司
+      # 平台法人（组成印章）
+      platform-legal-person: 郑磊
+      # 平台联系电话（组成印章）
+      platform-contact-phone: 18666009970
+      # 平台社会信用代码（组成印章）
+      platform-credit-code: 914401063045811741
 
+    # 平台自动盖章签署区参数设置
+    platform-sign:
+      # 页码信息
+      pos-page: 1
+      # x坐标
+      posX: 200
+      # y坐标
+      posY: 200
 
-#模板文件
-TemplateFile:
-  #  合同模板
-  Contract: "D:/TemplateFile/个人创客加盟协议.pdf"
-  #  合同模板
-  yyqContract: "D:/TemplateFile/个人创客加盟协议.html"
-  #  总包+分包支付明细模板
-  TotalPayInventory: "D:/TemplateFile/支付清单模板.xlsx"
-  #  众包支付明细模板
-  ManyPayInventory: "D:/TemplateFile/支付清单模板.xlsx"
-  #  总包+分包交付支付验收单
-  TotalAcceptanceCertificate: "D:/TemplateFile/交付支付验收单模板.xlsx"
-  #  众包交付支付验收单
-  ManyAcceptanceCertificate: "D:/TemplateFile/交付支付验收单模板.xlsx"
-  #  导入创客的模板
-  ImportWorker: "D:/TemplateFile/创客模板.xlsx"
-  #  模板文件夹路径
-  Path: "D:/TemplateFile/"
-  #  模板访问路径
-  StaticAccesspath: "/static/TemplateFile/"
+    # 签署方盖章签署区参数设置
+    signer-sign:
+      # 页码信息
+      pos-page: 1
+      # x坐标
+      posX: 150
+      # y坐标
+      posY: 200
 
-#发送签署合同应用的密钥
-appSecret: "86d20a7f49bc3c4c20bae23d369d8853"
+    # 异步回调URL
+    async-notify-url: http://246953jp33.qicp.vip/makerend/authentication/callBackYYQSignAContract
 
-salary:
-  #连连银通公钥（不需替换，这是连连公钥，用于报文加密和连连返回响应报文时验签，不是商户生成的公钥.)
-  PUBLIC_KEY_ONLINE: MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCSS/DiwdCf/aZsxxcacDnooGph3d2JOj5GXWi+q3gznZauZjkNP8SKl3J2liP0O6rU/Y/29+IUe+GTMhMOFJuZm1htAtKiu5ekW0GlBMWxf4FPkYlQkPE0FtaoMP3gYfh+OwI+fIRrpW3ySn3mScnc6Z700nU/VYrRkfcSCbSnRwIDAQAB
-  #接收商户总包付款的连薪回调通知地址
-  merchantNotifyUrl: http://2181s627z8.qicp.vip/merchant/lianlianpay/merchantNotifyUrl
-  #接收商户众包付款的连薪回调通知地址
-  merchantManyNotifyUrl: http://2181s627z8.qicp.vip/merchant/lianlianpay/merchantManyNotifyUrl
-  #接收付款给创客的连薪回调通知地址
-  workerNotifyUrl: http://2181s627z8.qicp.vip/platform/lianlianpay/workerNotifyUrl
-  url:
-    #实时付款
-    paymentapi: https://test.lianlianpay-inc.com/paymentapi/payment.htm
-    #付款确认接口
-    confirmPayment: https://test.lianlianpay-inc.com/paymentapi/confirmPayment.htm
-    #查询商户余额接口
-    selectRemainingSum: https://traderapi.lianlianpay.com/traderAcctQuery.htm
-    #付款结果查询
-    queryPayment: https://test.lianlianpay-inc.com/paymentapi/queryPayment.htm
+  # 文件本地存储配置
+  file-storage:
+    # 图片配置
+    # 图片存储路径
+    image-path: D:/upload/image/
+    # 图片访问路径
+    image-access-path: /static/image/
 
-myBank:
-  merchant-private-key: MIICdwIBADANBgkqhkiG9w0BAQEFAASCAmEwggJdAgEAAoGBAO/6rPCvyCC+IMalLzTy3cVBz/+wamCFNiq9qKEilEBDTttP7Rd/GAS51lsfCrsISbg5td/w25+wulDfuMbjjlW9Afh0p7Jscmbo1skqIOIUPYfVQEL687B0EmJufMlljfu52b2efVAyWZF9QBG1vx/AJz1EVyfskMaYVqPiTesZAgMBAAECgYEAtVnkk0bjoArOTg/KquLWQRlJDFrPKP3CP25wHsU4749t6kJuU5FSH1Ao81d0Dn9m5neGQCOOdRFi23cV9gdFKYMhwPE6+nTAloxI3vb8K9NNMe0zcFksva9c9bUaMGH2p40szMoOpO6TrSHO9Hx4GJ6UfsUUqkFFlN76XprwE+ECQQD9rXwfbr9GKh9QMNvnwo9xxyVl4kI88iq0X6G4qVXo1Tv6/DBDJNkX1mbXKFYL5NOW1waZzR+Z/XcKWAmUT8J9AkEA8i0WT/ieNsF3IuFvrIYG4WUadbUqObcYP4Y7Vt836zggRbu0qvYiqAv92Leruaq3ZN1khxp6gZKl/OJHXc5xzQJACqr1AU1i9cxnrLOhS8m+xoYdaH9vUajNavBqmJ1mY3g0IYXhcbFm/72gbYPgundQ/pLkUCt0HMGv89tn67i+8QJBALV6UgkVnsIbkkKCOyRGv2syT3S7kOv1J+eamGcOGSJcSdrXwZiHoArcCZrYcIhOxOWB/m47ymfE1Dw/+QjzxlUCQCmnGFUO9zN862mKYjEkjDN65n1IUB9Fmc1msHkIZAQaQknmxmCIOHC75u4W0PGRyVzq8KkxpNBq62ICl7xmsPM=
-  md5-key: lewistest
-  wallet-public-key: MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCOHbhWR6xlk16O+fxtMemnJ0uKxUIfstNnS8nVYg6NwAnHhZlpGI0suERovvX9WsWCZ9lG9OD6ieakAaU4PW1BS31TMckr5u1ed+aZIQ7qHE/LqXwF7gE0fDcWNh5OWn/6rETbOwGRVTe5xgufgnEc7YAKuMPChLxChmYuZGGX2QIDAQAB
-  partner-id: 200030853255
-  gop-tpu-url: https://tc.mybank.cn/gop/gateway.do
-  gop-mag-url: https://tc.mybank.cn/gop/gateway.do
-  notify-url: http://zhenghuang.vipgz4.idcfengye.com/gop/mag/syncNotify.htm
-  # \u5f02\u6b65\u901a\u77e5\u5730\u5740
-  async-notify-url: https://hdtzdz.lgyun.com.cn/huidiaojieshou/apis/MyBank/AsyncNotify
-  settlement-account: 8888888194111389
-  key-json: "@activatedProperties@"
-  #渠道编码
-  channel-code: MYBANK00307
+    # Excel配置
+    # Excel存储路径
+    excel-path: D:/upload/excel/
+    # Excel访问路径
+    excel-access-path: /static/excel/
+
+    # video配置
+    # video存储路径
+    video-path: D:/upload/video/
+    # video访问路径
+    video-access-path: /static/video/
+
+  # 模板文件配置
+  template:
+    # 模板存储路径
+    path: D:/TemplateFile/
+    # 模板访问路径
+    access-path: /static/TemplateFile/
+    # 合同模板路径
+    contract-pdf-path: D:/TemplateFile/个人创客加盟协议.pdf
+    # 合同模板路径
+    contract-html-path: D:/TemplateFile/个人创客加盟协议.html
+    # 总包+分包支付明细模板路径
+    total-pay-inventory-path: D:/TemplateFile/支付清单模板.xlsx
+    # 众包支付明细模板路径
+    many-pay-inventory-path: D:/TemplateFile/支付清单模板.xlsx
+    # 总包+分包交付支付验收单路径
+    total-acceptance-certificate-path: D:/TemplateFile/交付支付验收单模板.xlsx
+    # 众包交付支付验收单路径
+    many-acceptance-certificate-path: D:/TemplateFile/交付支付验收单模板.xlsx
+    # 导入创客的模板路径
+    import-worker-path: D:/TemplateFile/创客模板.xlsx
+
+  # 银联支付配置
+  unionpay:
+    # 请求URL
+    gateway-url: http://47.99.58.100:10830/gateway
+    # 提现到卡异步回调URL
+    tx-async-notify-url: https://246953jp33.qicp.vip/notice/unionpay/txResult
+    # SFTP host
+    sftp-host: 47.99.58.100
+    # SFTP端口号
+    sftp-port: 22
+    # SFTP用户名
+    sftp-user-name: tax_read
+    # SFTP密码
+    sftp-password: DWFwPe4DgXWxaBPX
+    # SFTP文件下载保存地址
+    sftp-save-path: D:/unionpay/sftp
+    # SFTP文件压缩保存地址（SFTP文件下载保存地址的上一个文件夹）
+    sftp-compress-path: D:/unionpay
+
+  # 连连支付配置
+  lianlianpay:
+    # 公钥（不需替换，这是连连公钥，用于报文加密和连连返回响应报文时验签，不是商户生成的公钥）
+    public-key: MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCSS/DiwdCf/aZsxxcacDnooGph3d2JOj5GXWi+q3gznZauZjkNP8SKl3J2liP0O6rU/Y/29+IUe+GTMhMOFJuZm1htAtKiu5ekW0GlBMWxf4FPkYlQkPE0FtaoMP3gYfh+OwI+fIRrpW3ySn3mScnc6Z700nU/VYrRkfcSCbSnRwIDAQAB
+    # 总包付款异步回调URL
+    total-payment-async-notify-url: http://246953jp33.qicp.vip/merchant/lianlianpay/merchantNotifyUrl
+    # 众包付款异步回调URL
+    many-payment-async-notify-url: http://246953jp33.qicp.vip/merchant/lianlianpay/merchantManyNotifyUrl
+    # 付款创客异步回调通知URL
+    payment-worker-async-notify-url: http://246953jp33.qicp.vip/platform/lianlianpay/workerNotifyUrl
+    # 实时付款URL
+    payment-url: https://test.lianlianpay-inc.com/paymentapi/payment.htm
+    # 付款确认URL
+    confirm-payment-url: https://test.lianlianpay-inc.com/paymentapi/confirmPayment.htm
+    # 查询商户余额URL
+    balance-url: https://traderapi.lianlianpay.com/traderAcctQuery.htm
+    # 付款结果查询URL
+    payment-result-url: https://test.lianlianpay-inc.com/paymentapi/queryPayment.htm
+
+  # 网商支付配置
+  mybank:
+    # 网商公钥
+    public-key: MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCOHbhWR6xlk16O+fxtMemnJ0uKxUIfstNnS8nVYg6NwAnHhZlpGI0suERovvX9WsWCZ9lG9OD6ieakAaU4PW1BS31TMckr5u1ed+aZIQ7qHE/LqXwF7gE0fDcWNh5OWn/6rETbOwGRVTe5xgufgnEc7YAKuMPChLxChmYuZGGX2QIDAQAB
+    # 平台私钥
+    platform-private-key: MIICdwIBADANBgkqhkiG9w0BAQEFAASCAmEwggJdAgEAAoGBAO/6rPCvyCC+IMalLzTy3cVBz/+wamCFNiq9qKEilEBDTttP7Rd/GAS51lsfCrsISbg5td/w25+wulDfuMbjjlW9Afh0p7Jscmbo1skqIOIUPYfVQEL687B0EmJufMlljfu52b2efVAyWZF9QBG1vx/AJz1EVyfskMaYVqPiTesZAgMBAAECgYEAtVnkk0bjoArOTg/KquLWQRlJDFrPKP3CP25wHsU4749t6kJuU5FSH1Ao81d0Dn9m5neGQCOOdRFi23cV9gdFKYMhwPE6+nTAloxI3vb8K9NNMe0zcFksva9c9bUaMGH2p40szMoOpO6TrSHO9Hx4GJ6UfsUUqkFFlN76XprwE+ECQQD9rXwfbr9GKh9QMNvnwo9xxyVl4kI88iq0X6G4qVXo1Tv6/DBDJNkX1mbXKFYL5NOW1waZzR+Z/XcKWAmUT8J9AkEA8i0WT/ieNsF3IuFvrIYG4WUadbUqObcYP4Y7Vt836zggRbu0qvYiqAv92Leruaq3ZN1khxp6gZKl/OJHXc5xzQJACqr1AU1i9cxnrLOhS8m+xoYdaH9vUajNavBqmJ1mY3g0IYXhcbFm/72gbYPgundQ/pLkUCt0HMGv89tn67i+8QJBALV6UgkVnsIbkkKCOyRGv2syT3S7kOv1J+eamGcOGSJcSdrXwZiHoArcCZrYcIhOxOWB/m47ymfE1Dw/+QjzxlUCQCmnGFUO9zN862mKYjEkjDN65n1IUB9Fmc1msHkIZAQaQknmxmCIOHC75u4W0PGRyVzq8KkxpNBq62ICl7xmsPM=
+    # MD5加密密钥
+    md5-secret-key: lewistest
+    # 合作ID
+    partner-id: 200030853255
+    # tpu URL
+    gop-tpu-url: https://tc.mybank.cn/gop/gateway.do
+    # mag URL
+    gop-mag-url: https://tc.mybank.cn/gop/gateway.do
+    # 同步回调URL
+    notify-url: http://zhenghuang.vipgz4.idcfengye.com/gop/mag/syncNotify.htm
+    # 异步回调URL
+    async-notify-url: https://hdtzdz.lgyun.com.cn/huidiaojieshou/apis/MyBank/AsyncNotify
+    # 结算账号
+    settlement-account: 8888888194111389

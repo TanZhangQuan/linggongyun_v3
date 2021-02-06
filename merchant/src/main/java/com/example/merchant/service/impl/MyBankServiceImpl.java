@@ -1,11 +1,11 @@
 package com.example.merchant.service.impl;
 
+import com.example.common.config.MyBankConfig;
 import com.example.common.mybank.entity.*;
 import com.example.common.mybank.util.BankService;
 import com.example.common.mybank.util.BaseField;
 import com.example.common.mybank.util.MapRemoveNullUtil;
 import com.example.common.mybank.util.SignData;
-import com.example.merchant.config.MyBankConfig;
 import com.example.merchant.service.MyBankService;
 import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,12 +14,9 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.Map;
 
-
 @Service
 public class MyBankServiceImpl implements MyBankService {
 
-    @Autowired
-    private MyBankConfig myBankConfig;
     @Autowired
     private SecurityService securityService;
     @Resource
@@ -134,7 +131,7 @@ public class MyBankServiceImpl implements MyBankService {
     @Override
     public Map<String, Object> tradePayToCard(TradePayToCard params) throws Exception {
         params = (TradePayToCard) baseRequest(params);
-        params.setNotify_url(myBankConfig.getAsyncNotifyUrl());
+        params.setNotify_url(MyBankConfig.getAsyncNotifyUrl());
         params.setService("mybank.tc.trade.paytocard");
         return buildCjmsgAndSend(BeanUtils.describe(params));
     }
@@ -143,8 +140,8 @@ public class MyBankServiceImpl implements MyBankService {
     @Override
     public Map<String, Object> withDrawToCard(WithDrawToCard params) throws Exception {
         params = (WithDrawToCard) baseRequest(params);
-        params.setReturn_url(myBankConfig.getNotifyUrl());
-        params.setNotify_url(myBankConfig.getAsyncNotifyUrl());
+        params.setReturn_url(MyBankConfig.getNotifyUrl());
+        params.setNotify_url(MyBankConfig.getAsyncNotifyUrl());
         params.setService("mybank.tc.trade.withdrawtocard");
         return buildCjmsgAndSend(BeanUtils.describe(params));
     }
@@ -185,7 +182,7 @@ public class MyBankServiceImpl implements MyBankService {
     @Override
     public Map<String, Object> tradePayInstant(TradePayInstant params) throws Exception {
         params = (TradePayInstant) baseRequest(params);
-        params.setReturn_url(myBankConfig.getNotifyUrl());
+        params.setReturn_url(MyBankConfig.getNotifyUrl());
         params.setService("mybank.tc.trade.pay.instant");
         return buildCjmsgAndSend(BeanUtils.describe(params));
     }
@@ -195,11 +192,11 @@ public class MyBankServiceImpl implements MyBankService {
     public Map<String, Object> mockNotify(MockNotify params) throws Exception {
         params = (MockNotify) baseRequest(params);
         StringBuilder ac = new StringBuilder("5");
-        ac.append(myBankConfig.getSettlementAccount().substring(6));
+        ac.append(MyBankConfig.getSettlementAccount().substring(6));
         ac.append(params.getPayee_card_no());
         System.out.println(ac);
         params.setPayee_card_no(ac.toString());
-        params.setNotify_url(myBankConfig.getAsyncNotifyUrl());
+        params.setNotify_url(MyBankConfig.getAsyncNotifyUrl());
         params.setService("mybank.tc.trade.remit.subaccount");
         return buildCjmsgAndSend(BeanUtils.describe(params));
     }
@@ -208,7 +205,7 @@ public class MyBankServiceImpl implements MyBankService {
     @Override
     public Map<String, Object> tradeTransfer(TradeTransfer params) throws Exception {
         params = (TradeTransfer) baseRequest(params);
-        params.setNotify_url(myBankConfig.getAsyncNotifyUrl());
+        params.setNotify_url(MyBankConfig.getAsyncNotifyUrl());
         params.setService("mybank.tc.trade.transfer");
         return buildCjmsgAndSend(BeanUtils.describe(params));
     }
@@ -216,7 +213,7 @@ public class MyBankServiceImpl implements MyBankService {
     /**
      * 组织报文，并发送
      */
-    private Map<String, Object> buildCjmsgAndSend(Map<String, String> data) throws Exception {
+    private Map<String, Object> buildCjmsgAndSend(Map<String, String> data) {
         MapRemoveNullUtil.removeNullValue(data);
         try {
             String sign = sign(data);
@@ -228,10 +225,10 @@ public class MyBankServiceImpl implements MyBankService {
             if (byServiceName != null) {
                 if ("tpu".equals(byServiceName.getServiceUrl())) {
                     //调用gop
-                    url = myBankConfig.getGopTpuUrl();
+                    url = MyBankConfig.getGopTpuUrl();
                 } else {
                     //调用mag
-                    url = myBankConfig.getGopMagUrl();
+                    url = MyBankConfig.getGopMagUrl();
                 }
             } else {
                 throw new RuntimeException("接口名称不存在");
@@ -263,7 +260,7 @@ public class MyBankServiceImpl implements MyBankService {
     private BaseRequest baseRequest(BaseRequest request) {
         request.setCharset("UTF-8");
         request.setMemo("");
-        request.setPartner_id(myBankConfig.getPartnerId());
+        request.setPartner_id(MyBankConfig.getPartnerId());
         request.setVersion("2.1");
         request.setSign_type("TWSIGN");
         return request;

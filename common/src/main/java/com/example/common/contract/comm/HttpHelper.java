@@ -2,8 +2,8 @@ package com.example.common.contract.comm;
 
 
 import com.alibaba.fastjson.JSONObject;
+import com.example.common.config.EqianbaoConfig;
 import com.example.common.contract.constant.CacheKeyConstant;
-import com.example.common.contract.constant.ConfigConstant;
 import com.example.common.contract.enums.RequestType;
 import com.example.common.contract.exception.DefineException;
 import com.google.common.collect.Maps;
@@ -72,7 +72,7 @@ public class HttpHelper {
      */
     private static Map<String, String> buildCommHeader() {
         Map<String, String> header = Maps.newHashMap();
-        header.put("X-Tsign-Open-App-Id", ConfigConstant.PROJECT_ID);
+        header.put("X-Tsign-Open-App-Id", EqianbaoConfig.getApplicationId());
         header.put("X-Tsign-Open-Token", String.valueOf(LocalCacheHelper.get(CacheKeyConstant.TOKEN)));
         header.put("Content-Type", "application/json");
         return header;

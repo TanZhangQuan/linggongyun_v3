@@ -2,6 +2,7 @@ package com.example.merchant.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.example.common.config.JwtConfig;
 import com.example.common.sms.SenSMS;
 import com.example.common.util.JsonUtils;
 import com.example.common.util.MD5;
@@ -16,7 +17,6 @@ import io.jsonwebtoken.Claims;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -39,10 +39,6 @@ public class ManagersServiceImpl extends ServiceImpl<ManagersDao, Managers> impl
     private static final String MANAGERS = "manager";
     @Resource
     private JwtUtils jwtUtils;
-    @Value("${TOKEN}")
-    private String TOKEN;
-    @Value("${PWD_KEY}")
-    private String PWD_KEY;
     @Resource
     private SenSMS senSMS;
     @Resource
@@ -52,13 +48,13 @@ public class ManagersServiceImpl extends ServiceImpl<ManagersDao, Managers> impl
     public ReturnJson managersLogin(String userName, String passWord, HttpServletResponse response) {
         Managers managers = this.getOne(new QueryWrapper<Managers>().lambda()
                 .eq(Managers::getUserName, userName)
-                .eq(Managers::getPassWord, MD5.md5(PWD_KEY + passWord)));
+                .eq(Managers::getPassWord, MD5.md5(JwtConfig.getSecretKey() + passWord)));
         Subject currentUser = SecurityUtils.getSubject();
         if (managers != null) {
-            CustomizedToken customizedToken = new CustomizedToken(userName, MD5.md5(PWD_KEY + passWord), MANAGERS);
+            CustomizedToken customizedToken = new CustomizedToken(userName, MD5.md5(JwtConfig.getSecretKey() + passWord), MANAGERS);
             String token = jwtUtils.generateToken(managers.getId());
             redisDao.set(managers.getId(), token);
-            response.setHeader(TOKEN, token);
+            response.setHeader(JwtConfig.getHeader(), token);
             redisDao.setExpire(managers.getId(), 1, TimeUnit.DAYS);
             currentUser.login(customizedToken);//shiro验证身份
             return ReturnJson.success("登录成功", token);
@@ -105,7 +101,7 @@ public class ManagersServiceImpl extends ServiceImpl<ManagersDao, Managers> impl
                     .eq(Managers::getMobileCode, loginMobile));
             managers.setPassWord("");
             String token = jwtUtils.generateToken(managers.getId());
-            resource.setHeader(TOKEN, token);
+            resource.setHeader(JwtConfig.getHeader(), token);
             redisDao.set(managers.getId(), JsonUtils.objectToJson(managers));
             redisDao.setExpire(managers.getId(), 60 * 60 * 24);
             return ReturnJson.success(managers);
@@ -140,7 +136,7 @@ public class ManagersServiceImpl extends ServiceImpl<ManagersDao, Managers> impl
         }
         if (redisCode.equals(checkCode)) {
             Managers managers = new Managers();
-            managers.setPassWord(MD5.md5(PWD_KEY + newPassWord));
+            managers.setPassWord(MD5.md5(JwtConfig.getSecretKey() + newPassWord));
             boolean flag = this.update(managers, new QueryWrapper<Managers>().lambda()
                     .eq(Managers::getMobileCode, loginMobile));
             if (flag) {

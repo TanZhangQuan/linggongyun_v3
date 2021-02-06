@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.example.common.config.JwtConfig;
 import com.example.common.enums.PackageType;
 import com.example.common.enums.PaymentMethod;
 import com.example.common.enums.UnionpayBankType;
@@ -35,7 +36,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -60,10 +60,6 @@ import java.util.concurrent.TimeUnit;
 public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> implements MerchantService {
 
     private static final String MERCHANT = "merchant";
-    @Value("${PWD_KEY}")
-    String PWD_KEY;
-    @Value("${TOKEN}")
-    private String TOKEN;
 
     @Resource
     private MerchantDao merchantDao;
@@ -126,7 +122,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
 
     @Override
     public ReturnJson merchantLogin(String username, String password, HttpServletResponse response) {
-        String encryptPWD = MD5.md5(PWD_KEY + password);
+        String encryptPWD = MD5.md5(JwtConfig.getSecretKey() + password);
         Subject currentUser = SecurityUtils.getSubject();
         QueryWrapper<Merchant> merchantQueryWrapper = new QueryWrapper<>();
         merchantQueryWrapper.lambda()
@@ -143,7 +139,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         //shiro验证身份
         currentUser.login(customizedToken);
         String token = jwtUtils.generateToken(me.getId());
-        response.setHeader(TOKEN, token);
+        response.setHeader(JwtConfig.getHeader(), token);
         redisDao.set(me.getId(), token);
         redisDao.setExpire(me.getId(), 1, TimeUnit.DAYS);
         return ReturnJson.success("登录成功", token);
@@ -189,7 +185,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
                     .eq(Merchant::getLoginMobile, loginMobile)
                     .eq(Merchant::getStatus, 0));
             String token = jwtUtils.generateToken(merchant.getId());
-            resource.setHeader(TOKEN, token);
+            resource.setHeader(JwtConfig.getHeader(), token);
             redisDao.set(merchant.getId(), token);
             redisDao.setExpire(merchant.getId(), 1, TimeUnit.DAYS);
             CustomizedToken customizedToken = new CustomizedToken(merchant.getUserName(), merchant.getPassWord(), MERCHANT);
@@ -270,7 +266,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         }
         if (redisCode.equals(checkCode)) {
             Merchant merchant = new Merchant();
-            merchant.setPassWord(MD5.md5(PWD_KEY + newPassWord));
+            merchant.setPassWord(MD5.md5(JwtConfig.getSecretKey() + newPassWord));
             boolean flag = this.update(merchant, new QueryWrapper<Merchant>().lambda()
                     .eq(Merchant::getLoginMobile, loginMobile));
             if (flag) {
@@ -458,7 +454,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         CompanyInvoiceInfo companyInvoiceInfo = new CompanyInvoiceInfo();
         BeanUtils.copyProperties(companyDto.getAddCompanyInvoiceInfoDto(), companyInvoiceInfo);
 
-        companyInfo.setPayPwd(MD5.md5(PWD_KEY + companyDto.getAddMerchantDto().getPayPwd()));
+        companyInfo.setPayPwd(MD5.md5(JwtConfig.getSecretKey() + companyDto.getAddMerchantDto().getPayPwd()));
         companyInfo.setAddressAndTelephone(companyInvoiceInfo.getAddressAndTelephone());
         companyInfo.setBankAndAccount(companyInvoiceInfo.getBankAndAccount());
 
@@ -498,7 +494,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
 
         merchant = new Merchant();
         BeanUtils.copyProperties(companyDto.getAddMerchantDto(), merchant);
-        merchant.setPassWord(MD5.md5(PWD_KEY + companyDto.getAddMerchantDto().getPassWord()));
+        merchant.setPassWord(MD5.md5(JwtConfig.getSecretKey() + companyDto.getAddMerchantDto().getPassWord()));
         merchant.setCompanyId(companyInfo.getId());
         if (managers.getUserSign() != 3) {
             merchant.setStatus(1);
@@ -772,7 +768,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
 
         BeanUtils.copyProperties(updateCompanyDto.getUpdateCompanyInfoDto(), companyInfo);
         if (StringUtils.isNotBlank(updateCompanyDto.getUpdateMerchantInfDto().getPayPwd())) {
-            companyInfo.setPayPwd(MD5.md5(PWD_KEY + updateCompanyDto.getUpdateMerchantInfDto().getPayPwd()));
+            companyInfo.setPayPwd(MD5.md5(JwtConfig.getSecretKey() + updateCompanyDto.getUpdateMerchantInfDto().getPayPwd()));
         }
         companyInfo.setAgentId(updateCompanyDto.getUpdateCooperationDto().getAgentId());
         companyInfo.setSalesManId(updateCompanyDto.getUpdateCooperationDto().getSalesManId());
@@ -797,7 +793,7 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
         }
 
         if (StringUtils.isNotBlank(updateCompanyDto.getUpdateMerchantInfDto().getPassWord())) {
-            merchant.setPassWord(MD5.md5(PWD_KEY + updateCompanyDto.getUpdateMerchantInfDto().getPassWord()));
+            merchant.setPassWord(MD5.md5(JwtConfig.getSecretKey() + updateCompanyDto.getUpdateMerchantInfDto().getPassWord()));
         }
         merchantDao.updateById(merchant);
 

@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.example.common.config.JwtConfig;
+import com.example.common.config.WeChatConfig;
 import com.example.common.sms.SenSMS;
 import com.example.common.util.*;
 import com.example.merchant.dto.makerend.AddWorkerDTO;
@@ -24,7 +26,6 @@ import com.example.mybatis.vo.WorkerPassVO;
 import com.example.mybatis.vo.WorkerVO;
 import com.example.redis.dao.RedisDao;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,8 +48,6 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements WorkerService {
 
-    @Value("${PWD_KEY}")
-    String PWD_KEY;
     @Resource
     private WorkerDao workerDao;
     @Resource
@@ -59,8 +58,6 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
     private CompanyWorkerService companyWorkerService;
     @Resource
     private MerchantDao merchantDao;
-    @Value("${TOKEN}")
-    private String TOKEN;
     @Resource
     private AcquireID acquireID;
     @Resource
@@ -69,13 +66,8 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
     private SenSMS senSMS;
     @Resource
     private RedisDao redisDao;
-    @Value("${APPID}")
-    private String APPID;
-    @Value("${SECRET}")
-    private String SECRET;
     @Resource
     private ManagersService managersService;
-
 
     @Override
     public ReturnJson getWorkerAll(String merchantId, Integer page, Integer pageSize, Integer workerType) {
@@ -93,7 +85,7 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
             if (workerType == 0) {
                 workerPage = workerDao.selectPage(pageData,
                         new QueryWrapper<Worker>().lambda().in(Worker::getId, ids)
-                                .eq(Worker::getAttestation,1)
+                                .eq(Worker::getAttestation, 1)
                                 .eq(Worker::getAgreementSign, 2));
             }
             if (workerType == 1) {
@@ -203,7 +195,7 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
 
     @Override
     public ReturnJson loginWorker(String username, String password, HttpServletResponse response) {
-        String encryptPWD = MD5.md5(PWD_KEY + password);
+        String encryptPWD = MD5.md5(JwtConfig.getSecretKey() + password);
         QueryWrapper<Worker> workerQueryWrapper = new QueryWrapper<>();
         workerQueryWrapper.lambda().eq(Worker::getUserName, username)
                 .eq(Worker::getUserPwd, encryptPWD);
@@ -211,7 +203,7 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
         if (worker != null) {
             String token = jwtUtils.generateToken(worker.getId());
             redisDao.set(worker.getId(), token);
-            response.setHeader(TOKEN, token);
+            response.setHeader(JwtConfig.getHeader(), token);
             redisDao.setExpire(worker.getId(), 1, TimeUnit.DAYS);
             return ReturnJson.success("登录成功", token);
         }
@@ -275,7 +267,7 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
             Worker worker = this.getOne(new QueryWrapper<Worker>().lambda()
                     .eq(Worker::getMobileCode, loginMobile));
             String token = jwtUtils.generateToken(worker.getId());
-            resource.setHeader(TOKEN, token);
+            resource.setHeader(JwtConfig.getHeader(), token);
             redisDao.set(worker.getId(), token);
             redisDao.setExpire(worker.getId(), 1, TimeUnit.DAYS);
             return ReturnJson.success("登录成功", token);
@@ -289,10 +281,10 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
             Worker worker = workerDao.selectOne(new QueryWrapper<Worker>().lambda()
                     .eq(Worker::getMobileCode, loginMobile));
             if (worker != null) {
-                if (worker.getUserPwd().equals(MD5.md5(PWD_KEY + newPassWord))) {
+                if (worker.getUserPwd().equals(MD5.md5(JwtConfig.getSecretKey() + newPassWord))) {
                     return ReturnJson.error("旧密码与新密码一致！");
                 }
-                worker.setUserPwd(MD5.md5(PWD_KEY + newPassWord));
+                worker.setUserPwd(MD5.md5(JwtConfig.getSecretKey() + newPassWord));
                 int flag = workerDao.updateById(worker);
                 if (flag > 0) {
                     redisDao.remove(loginMobile);
@@ -315,8 +307,8 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
         }
         //通过code换取网页授权access_token
         String url = "https://api.weixin.qq.com/sns/jscode2session?" +
-                "appid=" + APPID +         //开发者设置中的appId
-                "&secret=" + SECRET +      //开发者设置中的appSecret
+                "appid=" + WeChatConfig.getAppId() +         //开发者设置中的appId
+                "&secret=" + WeChatConfig.getSecretKey() +      //开发者设置中的appSecret
                 "&js_code=" + code +       //小程序调用wx.login返回的code
                 "&grant_type=authorization_code";    //默认参数
 
@@ -445,7 +437,7 @@ public class WorkerServiceImpl extends ServiceImpl<WorkerDao, Worker> implements
             }
             worker = new Worker();
             worker.setUserName(addWorkerDto.getUserName());
-            worker.setUserPwd(MD5.md5(PWD_KEY + addWorkerDto.getUserPwd()));
+            worker.setUserPwd(MD5.md5(JwtConfig.getSecretKey() + addWorkerDto.getUserPwd()));
             worker.setMobileCode(addWorkerDto.getMobileCode());
             workerDao.insert(worker);
             return ReturnJson.success("注册成功");

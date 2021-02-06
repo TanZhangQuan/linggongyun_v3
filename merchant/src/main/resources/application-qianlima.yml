@@ -1,12 +1,12 @@
 # 服务端口
 server:
-  port: 8081
+  port: 8085
 
 spring:
   # 配置数据源
   datasource:
     # 填写你数据库的url、登录名、密码和数据库名
-    url: jdbc:mysql://rm-uf6w14g8ziqg8se61uo.mysql.rds.aliyuncs.com:3306/linggongyun_v3?useSSL=false&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&tinyInt1isBit=false&allowMultiQueries=true&autoReconnect=true&failOverReadOnly=false&serverTimezone=GMT%2B8
+    url: jdbc:mysql://rm-uf6w14g8ziqg8se61uo.mysql.rds.aliyuncs.com:3306/qianlima_prod?useSSL=false&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&tinyInt1isBit=false&allowMultiQueries=true&autoReconnect=true&failOverReadOnly=false&serverTimezone=GMT%2B8
     username: root
     password: Slc_mysql@19
     # mysql驱动
@@ -95,9 +95,9 @@ spring:
   # 微信配置
   wechat:
     # APPID
-    app-id: wx3870ff35a721932e
+    app-id: wx129052aa326f19b5
     # 密钥
-    secret-key: cf6f1bcea8c984dc699d2e554f9b2bf6
+    secret-key: 794ae300c24efcc92261c2aa719c3c87
 
   # 云通讯短信配置
   yuntongxun:
@@ -106,13 +106,13 @@ spring:
     # 初始化服务器端口
     server-port: 8883
     # 主账户ID
-    account-sid: 8a216da873b27ace0173b30bff5d0079
+    account-sid: 8a216da86efdfee1016efe18bcf40022
     # 账户授权令牌
-    auth-token: b12a28072550438486f44fce85ad3fe6
+    auth-token: 9f96cf25bba547f683c4e8f7566815ab
     # 应用APPID
-    app-id: 8a216da873b27ace0173b30c00620081
+    app-id: 8aaf07086efded7c016efe28ebf30090
     # 短信模板ID
-    template-id: 624431
+    template-id: 491739
 
   # 签约配置
   sign:
@@ -122,13 +122,13 @@ spring:
   # E签宝配置
   eqianbao:
     # 请求URL
-    host: https://smlopenapi.esign.cn
+    host: https://openapi.esign.cn
     # 应用ID
-    application-id: 4438766163
+    application-id: 5111640625
     # 应用密钥
-    application-secret-key: 86d20a7f49bc3c4c20bae23d369d8853
+    application-secret-key: 2cb035c1497a8a32d2e68addc00dba97
     # 印章ID
-    seal-id:
+    seal-id: 77ec11bb-b78c-4077-966b-4fe58a5e6b54
 
     # 平台自动盖章签署区参数设置
     platform-sign:
@@ -158,7 +158,7 @@ spring:
       posY: 180f
 
     # 异步回调URL
-    async-notify-url: https://lgy-v3.lgyun.com.cn/makerend/authentication/callBackSignAContract
+    async-notify-url: https://qlm.api.linggongyun.net/makerend/authentication/callBackSignAContract
 
   # 易云章配置
   yiyunzhang:
@@ -201,78 +201,78 @@ spring:
       posY: 200
 
     # 异步回调URL
-    async-notify-url: https://lgy-v3.lgyun.com.cn/makerend/authentication/callBackYYQSignAContract
+    async-notify-url: https://qlm.api.linggongyun.net/makerend/authentication/callBackYYQSignAContract
 
   # 文件本地存储配置
   file-storage:
     # 图片配置
     # 图片存储路径
-    image-path: /root/linggongyun_v3/image/
+    image-path: /root/qianlima/image/
     # 图片访问路径
     image-access-path: /static/image/
 
     # Excel配置
     # Excel存储路径
-    excel-path: /root/linggongyun_v3/excel/
+    excel-path: /root/qianlima/excel/
     # Excel访问路径
     excel-access-path: /static/excel/
 
     # video配置
     # video存储路径
-    video-path: /root/linggongyun_v3/video/
+    video-path: /root/qianlima/video/
     # video访问路径
     video-access-path: /static/video/
 
   # 模板文件配置
   template:
     # 模板存储路径
-    path: /root/linggongyun_v3/TemplateFile/
+    path: /root/qianlima/TemplateFile/
     # 模板访问路径
     access-path: /static/TemplateFile/
     # 合同模板路径
-    contract-pdf-path: /root/linggongyun_v3/TemplateFile/【个人创客加盟协议】互联网众包合作协议（个人创客-平台）V1.0-2020-06-03.pdf
+    contract-pdf-path: /root/qianlima/TemplateFile/【个人创客加盟协议】互联网众包合作协议（个人创客-平台）V1.0-2020-06-03.pdf
     # 合同模板路径
-    contract-html-path: /root/linggongyun_v3/TemplateFile/【个人创客加盟协议】互联网众包合作协议（个人创客-平台）V1.0-2020-06-03.html
+    contract-html-path: /root/qianlima/TemplateFile/【个人创客加盟协议】互联网众包合作协议（个人创客-平台）V1.0-2020-06-03.html
     # 总包+分包支付明细模板路径
-    total-pay-inventory-path: /root/linggongyun_v3/TemplateFile/【总包+分包】支付清单模板.xlsx
+    total-pay-inventory-path: /root/qianlima/TemplateFile/【总包+分包】支付清单模板.xlsx
     # 众包支付明细模板路径
-    many-pay-inventory-path: /root/linggongyun_v3/TemplateFile/【众包】支付清单模板.xlsx
+    many-pay-inventory-path: /root/qianlima/TemplateFile/【众包】支付清单模板.xlsx
     # 总包+分包交付支付验收单路径
-    total-acceptance-certificate-path: /root/linggongyun_v3/TemplateFile/【总包+分包】交付支付验收单-自然人创客V3.0.docx
+    total-acceptance-certificate-path: /root/qianlima/TemplateFile/【总包+分包】交付支付验收单-自然人创客V3.0.docx
     # 众包交付支付验收单路径
-    many-acceptance-certificate-path: /root/linggongyun_v3/TemplateFile/【众包】交付支付验收单-自然人创客V3.0.docx
+    many-acceptance-certificate-path: /root/qianlima/TemplateFile/【众包】交付支付验收单-自然人创客V3.0.docx
     # 导入创客的模板路径
-    import-worker-path: /root/linggongyun_v3/TemplateFile/创客模板.xlsx
+    import-worker-path: /root/qianlima/TemplateFile/创客模板.xlsx
 
   # 银联支付配置
   unionpay:
     # 请求URL
-    gateway-url: http://47.99.58.100:10830/gateway
+    gateway-url: https://tax.zxszkj.com:1443/gateway
     # 提现到卡异步回调URL
-    tx-async-notify-url: https://lgy-v3.lgyun.com.cn/notice/unionpay/txResult
+    tx-async-notify-url: https://qlm.api.linggongyun.net/notice/unionpay/txResult
     # SFTP host
-    sftp-host: 47.99.58.100
+    sftp-host: 47.111.242.120
     # SFTP端口号
-    sftp-port: 22
+    sftp-port: 65522
     # SFTP用户名
-    sftp-user-name: tax_read
+    sftp-user-name: tax_sftp_hbxm
     # SFTP密码
-    sftp-password: DWFwPe4DgXWxaBPX
+    sftp-password: pLe4Jz6gRcdeebgD
     # SFTP文件下载保存地址
-    sftp-save-path: /root/linggongyun_v3/unionpay/sftp
+    sftp-save-path: /root/qianlima/unionpay/sftp
     # SFTP文件压缩保存地址（SFTP文件下载保存地址的上一个文件夹）
-    sftp-compress-path: /root/linggongyun_v3/unionpay
+    sftp-compress-path: /root/qianlima/unionpay
 
   # 连连支付配置
   lianlianpay:
     # 公钥（不需替换，这是连连公钥，用于报文加密和连连返回响应报文时验签，不是商户生成的公钥）
     public-key: MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCSS/DiwdCf/aZsxxcacDnooGph3d2JOj5GXWi+q3gznZauZjkNP8SKl3J2liP0O6rU/Y/29+IUe+GTMhMOFJuZm1htAtKiu5ekW0GlBMWxf4FPkYlQkPE0FtaoMP3gYfh+OwI+fIRrpW3ySn3mScnc6Z700nU/VYrRkfcSCbSnRwIDAQAB
     # 总包付款异步回调URL
-    total-payment-async-notify-url: http://lgy-v3.lgyun.com.cn/merchant/lianlianpay/merchantNotifyUrl
+    total-payment-async-notify-url: http://qlm.api.linggongyun.net/merchant/lianlianpay/merchantNotifyUrl
     # 众包付款异步回调URL
-    many-payment-async-notify-url: http://lgy-v3.lgyun.com.cn/merchant/lianlianpay/merchantManyNotifyUrl
+    many-payment-async-notify-url: http://qlm.api.linggongyun.net/merchant/lianlianpay/merchantManyNotifyUrl
     # 付款创客异步回调通知URL
-    payment-worker-async-notify-url: http://lgy-v3.lgyun.com.cn/platform/lianlianpay/workerNotifyUrl
+    payment-worker-async-notify-url: http://qlm.api.linggongyun.net/platform/lianlianpay/workerNotifyUrl
     # 实时付款URL
     payment-url: https://test.lianlianpay-inc.com/paymentapi/payment.htm
     # 付款确认URL

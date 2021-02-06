@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.example.common.config.JwtConfig;
 import com.example.common.util.*;
 import com.example.merchant.dto.platform.AddRegulatorTaxDTO;
 import com.example.merchant.dto.platform.RegulatorDTO;
@@ -21,8 +22,8 @@ import com.example.merchant.util.JwtUtils;
 import com.example.merchant.vo.ExpressInfoVO;
 import com.example.merchant.vo.platform.HomePageVO;
 import com.example.merchant.vo.platform.RegulatorTaxVO;
-import com.example.merchant.vo.regulator.*;
 import com.example.merchant.vo.regulator.InvoiceVO;
+import com.example.merchant.vo.regulator.*;
 import com.example.mybatis.entity.*;
 import com.example.mybatis.mapper.*;
 import com.example.mybatis.po.*;
@@ -30,10 +31,7 @@ import com.example.mybatis.vo.*;
 import com.example.redis.dao.RedisDao;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authc.AuthenticationException;
-import org.apache.shiro.authc.LockedAccountException;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -56,45 +54,28 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
 
     @Resource
     private TaxDao taxDao;
-
     @Resource
     private TaxService taxService;
-
     @Resource
     private RegulatorTaxService regulatorTaxService;
-
     @Resource
     private PaymentOrderDao paymentOrderDao;
-
     @Resource
     private PaymentOrderManyDao paymentOrderManyDao;
-
     @Resource
     private RegulatorDao regulatorDao;
-
     @Resource
     private MerchantService merchantService;
-
     @Resource
     private InvoiceDao invoiceDao;
-
     @Resource
     private CrowdSourcingInvoiceDao crowdSourcingInvoiceDao;
-
     @Resource
     private PaymentInventoryDao paymentInventoryDao;
-
     @Resource
     private RedisDao redisDao;
-
     @Resource
     private JwtUtils jwtUtils;
-
-    @Value("${PWD_KEY}")
-    private String PWD_KEY;
-
-    @Value("${TOKEN}")
-    private String TOKEN;
     @Resource
     private WorkerDao workerDao;
     @Resource
@@ -112,7 +93,7 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
         }
         Regulator regulator = new Regulator();
         BeanUtils.copyProperties(regulatorDto, regulator);
-        regulator.setPassWord(MD5.md5(PWD_KEY + regulatorDto.getPassWord()));
+        regulator.setPassWord(MD5.md5(JwtConfig.getSecretKey() + regulatorDto.getPassWord()));
         this.save(regulator);
         return ReturnJson.success("添加监管部门成功！");
     }
@@ -125,7 +106,7 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
         }
         BeanUtils.copyProperties(regulatorDto, regulator);
         if (regulatorDto.getPassWord() != null) {
-            regulator.setPassWord(MD5.md5(PWD_KEY + regulatorDto.getPassWord()));
+            regulator.setPassWord(MD5.md5(JwtConfig.getSecretKey() + regulatorDto.getPassWord()));
         }
         boolean flag = this.updateById(regulator);
         if (flag) {
@@ -740,7 +721,7 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
 
     @Override
     public ReturnJson regulatorLogin(String username, String password, HttpServletResponse response) {
-        String encryptPWD = MD5.md5(PWD_KEY + password);
+        String encryptPWD = MD5.md5(JwtConfig.getSecretKey() + password);
         QueryWrapper<Regulator> merchantQueryWrapper = new QueryWrapper<>();
         merchantQueryWrapper.lambda().eq(Regulator::getUserName, username)
                 .eq(Regulator::getPassWord, encryptPWD);
@@ -752,7 +733,7 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
             return ReturnJson.error("账号已被禁用！");
         }
         String token = jwtUtils.generateToken(re.getId());
-        response.setHeader(TOKEN, token);
+        response.setHeader(JwtConfig.getHeader(), token);
         redisDao.set(re.getId(), token);
         redisDao.setExpire(re.getId(), 60 * 60 * 24);
         return ReturnJson.success("登录成功！", token);

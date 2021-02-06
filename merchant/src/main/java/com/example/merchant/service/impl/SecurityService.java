@@ -1,23 +1,18 @@
 package com.example.merchant.service.impl;
 
+import com.example.common.config.MyBankConfig;
 import com.example.common.mybank.util.*;
 import com.example.common.util.MD5;
-import com.example.merchant.config.MyBankConfig;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.Map;
 
+@Slf4j
 @Service
 public class SecurityService {
-    private static Logger logger = LoggerFactory.getLogger(SecurityService.class);
-
-    @Autowired
-    private MyBankConfig myBankConfig;
 
     /**
      * 签名
@@ -32,17 +27,17 @@ public class SecurityService {
         signData.setSignType(signType);
 
         Map<String, String> src = MagCore.paraFilter(data);
-        if (logger.isInfoEnabled()) {
-            logger.info("签名原字符串：{}", MagCore.createLinkString(src, false));
+        if (log.isInfoEnabled()) {
+            log.info("签名原字符串：{}", MagCore.createLinkString(src, false));
         }
         try {
             if (SignType.RSA.getCode().equals(signType)) {
                 signData.setSign(MagCore.buildRequestByRSA(src,
-                        (String) myBankConfig.getMerchantPrivateKey(), charset));
+                        MyBankConfig.getPlatformPrivateKey(), charset));
                 signData.setSuccess(true);
             } else if (SignType.MD5.getCode().equals(signType)) {
                 signData.setSign(MagCore.buildRequestByMD5(src,
-                        (String) myBankConfig.getMd5Key(), charset));
+                        MyBankConfig.getMd5SecretKey(), charset));
                 signData.setSuccess(true);
             } else if (SignType.TWSIGN.getCode().equals(signType)) {
                 signData.setSign(MagCore.buildRequestByTWSIGN(src, charset, GatewayConstant.KEY_STORE_NAME));
@@ -56,7 +51,7 @@ public class SecurityService {
         }
 
         try {
-            Map<String, String> result = MagCore.buildRequestPara(src, signType, myBankConfig.getMerchantPrivateKey(), data.get("service"), charset);
+            Map<String, String> result = MagCore.buildRequestPara(src, signType, MyBankConfig.getPlatformPrivateKey(), data.get("service"), charset);
             String linkString = MagCore.createLinkString(result, true);
             signData.setSignLinkStr(linkString);
         } catch (Exception e) {
@@ -88,28 +83,28 @@ public class SecurityService {
 
     private boolean verifyMd5(String src, String sign, String charset) {
         boolean result = false;
-        if (logger.isInfoEnabled()) {
-            logger.info("verify sign with MD5:src ={},sign={}", new Object[]{src, sign});
+        if (log.isInfoEnabled()) {
+            log.info("verify sign with MD5:src ={},sign={}", new Object[]{src, sign});
         }
         try {
-            result = MD5.verify(src, sign, myBankConfig.getMd5Key(), charset);
+            result = MD5.verify(src, sign, MyBankConfig.getMd5SecretKey(), charset);
         } catch (Exception e) {
-            logger.error("MD5 verify failure:src ={},sign={}", new Object[]{src, sign});
-            logger.error("MD5 verify failure", e);
+            log.error("MD5 verify failure:src ={},sign={}", new Object[]{src, sign});
+            log.error("MD5 verify failure", e);
         }
         return result;
     }
 
     private boolean verifyRSA(String src, String sign, String charset) {
         boolean result = false;
-        if (logger.isInfoEnabled()) {
-            logger.info("verify sign with RSA:src ={},sign={}", new Object[]{src, sign});
+        if (log.isInfoEnabled()) {
+            log.info("verify sign with RSA:src ={},sign={}", new Object[]{src, sign});
         }
         try {
-            result = RSA.verify(src, sign, myBankConfig.getWalletPublicKey(), charset);
+            result = RSA.verify(src, sign, MyBankConfig.getPublicKey(), charset);
         } catch (Exception e) {
-            logger.error("RSA verify failure:src ={},sign={}", new Object[]{src, sign});
-            logger.error("RSA verify failure", e);
+            log.error("RSA verify failure:src ={},sign={}", new Object[]{src, sign});
+            log.error("RSA verify failure", e);
         }
         return result;
     }
@@ -122,16 +117,16 @@ public class SecurityService {
      * @return
      */
     public String encrypt(String src, String charset) {
-        if (logger.isDebugEnabled()) {
-            logger.debug("encrypt src:{} ,charset:{} with:RSA", src, charset);
+        if (log.isDebugEnabled()) {
+            log.debug("encrypt src:{} ,charset:{} with:RSA", src, charset);
         }
 
         try {
-            byte[] bytes = RSA.encryptByPublicKey(src.getBytes(charset), myBankConfig.getWalletPublicKey());
+            byte[] bytes = RSA.encryptByPublicKey(src.getBytes(charset), MyBankConfig.getPublicKey());
             return Base64.encodeBase64String(bytes);
         } catch (Exception e) {
-            logger.error("RSA encrypt failure:src={},charset={}", src, charset);
-            logger.error("RSA encrypt failure", e);
+            log.error("RSA encrypt failure:src={},charset={}", src, charset);
+            log.error("RSA encrypt failure", e);
         }
         return null;
     }

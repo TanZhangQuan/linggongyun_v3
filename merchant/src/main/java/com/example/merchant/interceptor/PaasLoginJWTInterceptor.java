@@ -1,11 +1,11 @@
 package com.example.merchant.interceptor;
 
+import com.example.common.config.JwtConfig;
 import com.example.merchant.exception.CommonException;
 import com.example.merchant.util.JwtUtils;
 import com.example.redis.dao.RedisDao;
 import io.jsonwebtoken.Claims;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -16,9 +16,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 
 public class PaasLoginJWTInterceptor implements HandlerInterceptor {
-
-    @Value("${TOKEN}")
-    private String TOKEN;
 
     @Resource
     private JwtUtils jwtUtils;
@@ -40,7 +37,7 @@ public class PaasLoginJWTInterceptor implements HandlerInterceptor {
             //获取token
             String token = null;
             try {
-                token = request.getHeader(TOKEN);
+                token = request.getHeader(JwtConfig.getHeader());
             } catch (Exception e) {
 
             }

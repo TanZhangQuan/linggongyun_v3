@@ -12,7 +12,6 @@ import com.example.mybatis.entity.*;
 import com.example.mybatis.mapper.*;
 import com.example.mybatis.po.InvoicePO;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -24,9 +23,6 @@ import java.util.Set;
 @Slf4j
 @Service
 public class HomePageServiceImpl implements HomePageService {
-
-    @Value("${TOKEN}")
-    private String TOKEN;
 
     @Resource
     private PaymentOrderDao paymentOrderDao;

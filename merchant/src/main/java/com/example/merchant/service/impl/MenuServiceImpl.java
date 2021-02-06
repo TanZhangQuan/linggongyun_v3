@@ -1,15 +1,22 @@
 package com.example.merchant.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.example.common.config.JwtConfig;
 import com.example.common.util.MD5;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.merchant.MerchantDTO;
 import com.example.merchant.dto.platform.SaveManagersRoleDTO;
 import com.example.merchant.exception.CommonException;
-import com.example.mybatis.entity.*;
-import com.example.mybatis.mapper.*;
 import com.example.merchant.service.MenuService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.example.mybatis.entity.Managers;
+import com.example.mybatis.entity.Menu;
+import com.example.mybatis.entity.Merchant;
+import com.example.mybatis.entity.ObjectMenu;
+import com.example.mybatis.mapper.ManagersDao;
+import com.example.mybatis.mapper.MenuDao;
+import com.example.mybatis.mapper.MerchantDao;
+import com.example.mybatis.mapper.ObjectMenuDao;
 import com.example.mybatis.vo.MenuListVO;
 import com.example.mybatis.vo.QueryPassRolemenuVO;
 import com.example.mybatis.vo.RoleMenuPassVO;
@@ -17,7 +24,6 @@ import com.example.mybatis.vo.RoleMenuVO;
 import com.example.redis.dao.RedisDao;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,9 +40,6 @@ import java.util.List;
  */
 @Service
 public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuService {
-
-    @Value("${PWD_KEY}")
-    private String PWD_KEY;
 
     @Resource
     private RedisDao redisDao;
@@ -106,7 +109,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
             merchant.setParentId(merchantId);
             merchant.setCompanyId(merchant1.getCompanyId());
             merchant.setCompanyName(merchant1.getCompanyName());
-            merchant.setPassWord(MD5.md5(PWD_KEY + merchantDto.getPassWord()));
+            merchant.setPassWord(MD5.md5(JwtConfig.getSecretKey() + merchantDto.getPassWord()));
             int m = merchantDao.insert(merchant);
             if (m > 0) {
                 String[] menuId = merchantDto.getMenuIds().split(",");
@@ -121,7 +124,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
         } else {
             BeanUtils.copyProperties(merchantDto, merchant);
             merchant.setParentId(merchantId);
-            merchant.setPassWord(MD5.md5(PWD_KEY + merchantDto.getPassWord()));
+            merchant.setPassWord(MD5.md5(JwtConfig.getSecretKey() + merchantDto.getPassWord()));
             merchantDao.updateById(merchant);
             objectMenuDao.delete(new QueryWrapper<ObjectMenu>().lambda()
                     .eq(ObjectMenu::getObjectUserId, merchant.getId()));
@@ -192,7 +195,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
             managers = managersDao.selectById(saveManagersRoleDto.getId());
             BeanUtils.copyProperties(saveManagersRoleDto, managers);
             if (StringUtils.isNotEmpty(saveManagersRoleDto.getPassWord())) {
-                managers.setPassWord(MD5.md5(PWD_KEY + saveManagersRoleDto.getPassWord()));
+                managers.setPassWord(MD5.md5(JwtConfig.getSecretKey() + saveManagersRoleDto.getPassWord()));
             }
             if (managersOne != null) {
                 if (!managersOne.getId().equals(managers.getId())) {

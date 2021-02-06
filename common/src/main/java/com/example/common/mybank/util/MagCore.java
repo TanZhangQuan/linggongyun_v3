@@ -1,6 +1,5 @@
 package com.example.common.mybank.util;
 
-
 import com.example.common.util.MD5;
 
 import java.io.UnsupportedEncodingException;
@@ -11,14 +10,12 @@ import java.util.*;
  * 工具类
  *
  */
-
 public class MagCore {
-    
+
     /**
      * 除去数组中的空值和签名参数
      *
-     * @param sArray
-     *            签名参数组
+     * @param sArray 签名参数组
      * @return 去掉空值与签名参数后的新签名参数组
      */
     public static Map<String, String> paraFilter(Map<String, String> sArray) {
@@ -32,7 +29,7 @@ public class MagCore {
         for (String key : sArray.keySet()) {
             String value = sArray.get(key);
             if (value == null || value.equals("") || key.equalsIgnoreCase("sign")
-                || key.equalsIgnoreCase("sign_type")) {
+                    || key.equalsIgnoreCase("sign_type")) {
                 continue;
             }
             result.put(key, value);
@@ -50,10 +47,10 @@ public class MagCore {
         }
 
         for (Map.Entry<String, String> mapEntry : sArray.entrySet()) {
-        	String value = mapEntry.getValue();
-        	String key = mapEntry.getKey();
-            if (value == null || value.equals("")  || key.equalsIgnoreCase("sign")
-                || key.equalsIgnoreCase("sign_type")) {
+            String value = mapEntry.getValue();
+            String key = mapEntry.getKey();
+            if (value == null || value.equals("") || key.equalsIgnoreCase("sign")
+                    || key.equalsIgnoreCase("sign_type")) {
                 continue;
             }
             result.put(key, value);
@@ -61,12 +58,11 @@ public class MagCore {
 
         return result;
     }
-    
+
     /**
      * 把数组所有元素排序，并按照“参数=参数值”的模式用“&”字符拼接成字符串
      *
-     * @param params
-     *            需要排序并参与字符拼接的参数组
+     * @param params 需要排序并参与字符拼接的参数组
      * @param encode 是否需要urlEncode
      * @return 拼接后字符串
      */
@@ -103,26 +99,23 @@ public class MagCore {
     /**
      * 生成MD5签名结果
      *
-     * @param sPara
-     *            要签名的数组
+     * @param sPara 要签名的数组
      * @return 签名结果字符串
      */
-    public static String buildRequestByMD5(Map<String, String> sPara, String key,
-                                           String inputCharset) throws Exception {
+    public static String buildRequestByMD5(Map<String, String> sPara, String key, String inputCharset) throws Exception {
         String prestr = createLinkString(sPara, false); // 把数组所有元素，按照“参数=参数值”的模式用“&”字符拼接成字符串
         String mysign = "";
         mysign = MD5.sign(prestr, key, inputCharset);
         return mysign;
     }
+
     /**
      * 生成TWSIGN签名结果
      *
-     * @param sPara
-     *            要签名的数组
+     * @param sPara 要签名的数组
      * @return 签名结果字符串
      */
-    public static String buildRequestByTWSIGN(Map<String, String> sPara,
-                                           String inputCharset,String keyStoreName) throws Exception {
+    public static String buildRequestByTWSIGN(Map<String, String> sPara, String inputCharset, String keyStoreName) throws Exception {
         String prestr = createLinkString(sPara, false); // 把数组所有元素，按照“参数=参数值”的模式用“&”字符拼接成字符串
         return TWSIGN.sign(prestr, keyStoreName, inputCharset);
     }
@@ -130,35 +123,30 @@ public class MagCore {
     /**
      * 生成RSA签名结果
      *
-     * @param sPara
-     *            要签名的数组
+     * @param sPara 要签名的数组
      * @return 签名结果字符串
      */
-    public static String buildRequestByRSA(Map<String, String> sPara, String privateKey,
-                                           String inputCharset) throws Exception {
+    public static String buildRequestByRSA(Map<String, String> sPara, String privateKey, String inputCharset) throws Exception {
         String prestr = createLinkString(sPara, false); // 把数组所有元素，按照“参数=参数值”的模式用“&”字符拼接成字符串
-        String mysign = "";
-        mysign = RSA.sign(prestr, privateKey, inputCharset);
-        return mysign;
+        return RSA.sign(prestr, privateKey, inputCharset);
     }
+
     /**
      * 生成要请求给钱包的参数数组
      *
-     * @param sParaTemp         请求前的参数数组
-     * @return                  要请求的参数数组
+     * @param sParaTemp 请求前的参数数组
+     * @return 要请求的参数数组
      */
-    public static Map<String, String> buildRequestPara(Map<String, String> sParaTemp,
-                                                        String signType, String key,String service,
-                                                        String inputCharset) throws Exception {
+    public static Map<String, String> buildRequestPara(Map<String, String> sParaTemp, String signType, String key, String service, String inputCharset) throws Exception {
         // 除去数组中的空值和签名参数
         Map<String, String> sPara = paraFilter(sParaTemp);
         // 生成签名结果
         String mysign = "";
         if ("MD5".equalsIgnoreCase(signType)) {
             mysign = buildRequestByMD5(sPara, key, inputCharset);
-        } else if("RSA".equalsIgnoreCase(signType)){
+        } else if ("RSA".equalsIgnoreCase(signType)) {
             mysign = buildRequestByRSA(sPara, key, inputCharset);
-        } 
+        }
 //        else if("TWSIGN".equalsIgnoreCase(signType)) {
 //        	mysign = buildRequestByTWSIGN(sPara, inputCharset);
 //        }
@@ -169,8 +157,6 @@ public class MagCore {
         sPara.put("service", service);
         return sPara;
     }
-
-    
 
 
 }
