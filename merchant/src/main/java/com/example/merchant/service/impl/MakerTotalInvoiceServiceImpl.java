@@ -136,10 +136,10 @@ public class MakerTotalInvoiceServiceImpl extends ServiceImpl<MakerTotalInvoiceD
         PaymentOrder paymentOrder = paymentOrderDao.selectById(paymentOrderVOList.get(0).getId());
         BuyerVO buyerVo = new BuyerVO();
         Tax tax = taxDao.selectById(paymentOrder.getTaxId());
-        buyerVo.setAddressAndTelephone(tax.getTaxAddress() + "," + tax.getLinkMobile());
-        buyerVo.setCompanyName(tax.getTaxName());
-        buyerVo.setCreditCode(tax.getCreditCode());
-        buyerVo.setBankAndAccount(tax.getBankName() + "," + tax.getBankCode());
+        buyerVo.setAddressAndTelephone(tax.getInvoiceAddressPhone());
+        buyerVo.setCompanyName(tax.getInvoiceEnterpriseName());
+        buyerVo.setCreditCode(tax.getInvoiceTaxNo());
+        buyerVo.setBankAndAccount(tax.getInvoiceBankNameAccount());
         makerTotalInvoiceInfoVo.setBuyerVo(buyerVo);
         return ReturnJson.success(makerTotalInvoiceInfoVo);
     }
@@ -148,14 +148,7 @@ public class MakerTotalInvoiceServiceImpl extends ServiceImpl<MakerTotalInvoiceD
     public ReturnJson queryMakerTotalInvoice(QueryMakerTotalInvoiceDTO queryMakerTotalInvoiceDto, String userId) {
         Managers managers = managersService.getById(userId);
         Page page = new Page(queryMakerTotalInvoiceDto.getPageNo(), queryMakerTotalInvoiceDto.getPageSize());
-        IPage<MakerTotalInvoiceVO> makerTotalInvoiceVoIPage;
-        if (managers.getUserSign() == 3) {
-            makerTotalInvoiceVoIPage = makerTotalInvoiceDao.queryMakerTotalInvoice(page, queryMakerTotalInvoiceDto, null, userId);
-        } else if (managers.getUserSign() == 2) {
-            makerTotalInvoiceVoIPage = makerTotalInvoiceDao.queryMakerTotalInvoice(page, queryMakerTotalInvoiceDto, 2, userId);
-        } else {
-            makerTotalInvoiceVoIPage = makerTotalInvoiceDao.queryMakerTotalInvoice(page, queryMakerTotalInvoiceDto, 1, userId);
-        }
+        IPage<MakerTotalInvoiceVO> makerTotalInvoiceVoIPage = makerTotalInvoiceDao.queryMakerTotalInvoice(page, queryMakerTotalInvoiceDto, managers.getUserSign(), userId);
         return ReturnJson.success(makerTotalInvoiceVoIPage);
     }
 

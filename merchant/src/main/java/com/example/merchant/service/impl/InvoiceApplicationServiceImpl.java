@@ -110,7 +110,7 @@ public class InvoiceApplicationServiceImpl extends ServiceImpl<InvoiceApplicatio
             billingInfoVOList.add(billingInfo);
         }
         goApplicationInvoiceVo.setBillingInfoVoList(billingInfoVOList);
-        goApplicationInvoiceVo.setBuyerVo(merchantDao.getBuyerById(merchantId));
+        goApplicationInvoiceVo.setBuyerVo(merchantDao.getBuyerById(paymentOrderOne.getCompanyId()));
         goApplicationInvoiceVo.setSellerVo(taxDao.getSellerById(paymentOrderOne.getTaxId()));
         return ReturnJson.success(goApplicationInvoiceVo);
     }
@@ -138,8 +138,8 @@ public class InvoiceApplicationServiceImpl extends ServiceImpl<InvoiceApplicatio
             billingInfoVOList.add(billingInfo);
         }
         queryApplicationInvoiceVo.setBillingInfoVoList(billingInfoVOList);
-        queryApplicationInvoiceVo.setBuyerVo(merchantDao.getBuyerById(userId));
         PaymentOrder paymentOrderOne = paymentOrderDao.selectById(paymentOrderVOList.get(0).getId());
+        queryApplicationInvoiceVo.setBuyerVo(merchantDao.getBuyerById(paymentOrderOne.getCompanyId()));
         queryApplicationInvoiceVo.setSellerVo(taxDao.getSellerById(paymentOrderOne.getTaxId()));
         InvoiceApplication invoiceApplication=invoiceApplicationDao.selectById(applicationId);
         InvoiceApplicationVO invoiceApplicationVo=new InvoiceApplicationVO();

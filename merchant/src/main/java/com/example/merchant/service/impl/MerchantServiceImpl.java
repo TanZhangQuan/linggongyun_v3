@@ -294,7 +294,8 @@ public class MerchantServiceImpl extends ServiceImpl<MerchantDao, Merchant> impl
     @Override
     public ReturnJson getBuyerById(String id) {
         ReturnJson returnJson = new ReturnJson("查询失败", 300);
-        BuyerVO buyerVo = merchantDao.getBuyerById(id);
+        String companyId = merchantDao.selectById(id).getCompanyId();
+        BuyerVO buyerVo = merchantDao.getBuyerById(companyId);
         if (buyerVo != null) {
             returnJson = new ReturnJson("查询成功", buyerVo, 200);
         }

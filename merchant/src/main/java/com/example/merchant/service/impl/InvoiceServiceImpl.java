@@ -94,8 +94,8 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
             billingInfoVOList.add(billingInfo);
         }
         queryInvoiceVo.setBillingInfoVoList(billingInfoVOList);
-        queryInvoiceVo.setBuyerVo(merchantDao.getBuyerById(merchantId));
         PaymentOrder paymentOrderOne = paymentOrderDao.selectById(paymentOrderVOList.get(0).getId());
+        queryInvoiceVo.setBuyerVo(merchantDao.getBuyerById(paymentOrderOne.getCompanyId()));
         queryInvoiceVo.setSellerVo(taxDao.getSellerById(paymentOrderOne.getTaxId()));
         InvoiceApplication invoiceApplication = invoiceApplicationDao.selectById(vo.getInvAppId());
         InvoiceApplicationVO invoiceApplicationVo = new InvoiceApplicationVO();
@@ -111,9 +111,10 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
         sendAndReceiveVo.setLogisticsCompany(vo.getExpressCompanyName());
         sendAndReceiveVo.setLogisticsOrderNo(vo.getExpressSheetNo());
         Address address = addressDao.selectById(invoiceApplicationVo.getApplicationAddress());
-        sendAndReceiveVo.setFrom(queryInvoiceVo.getSellerVo().getTaxName());
-        sendAndReceiveVo.setFromTelephone(queryInvoiceVo.getSellerVo().getPhone());
-        sendAndReceiveVo.setSendingAddress(queryInvoiceVo.getSellerVo().getTaxAddress());
+        ReceiptVO receiptVO = taxDao.getReceipt(paymentOrderOne.getTaxId());
+        sendAndReceiveVo.setFrom(receiptVO.getReceiptName());
+        sendAndReceiveVo.setFromTelephone(receiptVO.getReceiptPhone());
+        sendAndReceiveVo.setSendingAddress(receiptVO.getReceiptAddress());
         sendAndReceiveVo.setToAddress(address.getAddressName());
         sendAndReceiveVo.setAddressee(address.getLinkName());
         sendAndReceiveVo.setAddresseeTelephone(address.getLinkMobile());
@@ -146,14 +147,7 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
     public ReturnJson getPlaInvoiceList(TobeInvoicedDTO tobeinvoicedDto, String userId) {
         Managers managers = managersService.getById(userId);
         Page page = new Page(tobeinvoicedDto.getPageNo(), tobeinvoicedDto.getPageSize());
-        IPage<PlaInvoiceListVO> list;
-        if (managers.getUserSign() == 3) {
-            list = invoiceDao.getPlaInvoiceList(page, tobeinvoicedDto, null, userId);
-        } else if (managers.getUserSign() == 2) {
-            list = invoiceDao.getPlaInvoiceList(page, tobeinvoicedDto, 2, userId);
-        } else {
-            list = invoiceDao.getPlaInvoiceList(page, tobeinvoicedDto, 1, userId);
-        }
+        IPage<PlaInvoiceListVO> list = invoiceDao.getPlaInvoiceList(page, tobeinvoicedDto, managers.getUserSign(), userId);
         return ReturnJson.success(list);
     }
 
@@ -169,7 +163,7 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
         }
         queryApplicationInvoiceVo.setBillingInfoVoList(billingInfoVOList);
         PaymentOrder paymentOrderOne = paymentOrderDao.selectById(paymentOrderVOList.get(0).getId());
-        queryApplicationInvoiceVo.setBuyerVo(merchantDao.getBuyerById(paymentOrderOne.getMerchantId()));
+        queryApplicationInvoiceVo.setBuyerVo(merchantDao.getBuyerById(paymentOrderOne.getCompanyId()));
         queryApplicationInvoiceVo.setSellerVo(taxDao.getSellerById(paymentOrderOne.getTaxId()));
         InvoiceApplication invoiceApplication = invoiceApplicationDao.selectById(applicationId);
         InvoiceApplicationVO invoiceApplicationVo = new InvoiceApplicationVO();
@@ -258,14 +252,7 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
     public ReturnJson getListInvoicequery(TobeInvoicedDTO tobeinvoicedDto, String userId) {
         Managers managers = managersService.getById(userId);
         Page page = new Page(tobeinvoicedDto.getPageNo(), tobeinvoicedDto.getPageSize());
-        IPage<InvoiceVO> list;
-        if (managers.getUserSign() == 3) {
-            list = invoiceDao.getListInvoicequery(page, tobeinvoicedDto, null, userId);
-        } else if (managers.getUserSign() == 2) {
-            list = invoiceDao.getListInvoicequery(page, tobeinvoicedDto, 2, userId);
-        } else {
-            list = invoiceDao.getListInvoicequery(page, tobeinvoicedDto, 1, userId);
-        }
+        IPage<InvoiceVO> list = invoiceDao.getListInvoicequery(page, tobeinvoicedDto, managers.getUserSign(), userId);
         return ReturnJson.success(list);
     }
 
@@ -279,14 +266,7 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
     public ReturnJson getListSubQuery(TobeInvoicedDTO tobeinvoicedDto, String userId) {
         Managers managers = managersService.getById(userId);
         Page page = new Page(tobeinvoicedDto.getPageNo(), tobeinvoicedDto.getPageSize());
-        IPage<ToSubcontractInvoiceVO> list;
-        if (managers.getUserSign() == 3) {
-            list = invoiceDao.getListSubQuery(page, tobeinvoicedDto, null, userId);
-        } else if (managers.getUserSign() == 2) {
-            list = invoiceDao.getListSubQuery(page, tobeinvoicedDto, 2, userId);
-        } else {
-            list = invoiceDao.getListSubQuery(page, tobeinvoicedDto, 1, userId);
-        }
+        IPage<ToSubcontractInvoiceVO> list = invoiceDao.getListSubQuery(page, tobeinvoicedDto, managers.getUserSign(), userId);
         return ReturnJson.success(list);
     }
 
@@ -338,7 +318,7 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
         }
         queryApplicationInvoiceVo.setBillingInfoVoList(billingInfoVOList);
         PaymentOrder paymentOrderOne = paymentOrderDao.selectById(paymentOrderVOList.get(0).getId());
-        queryApplicationInvoiceVo.setBuyerVo(merchantDao.getBuyerById(paymentOrderOne.getMerchantId()));
+        queryApplicationInvoiceVo.setBuyerVo(merchantDao.getBuyerById(paymentOrderOne.getCompanyId()));
         queryApplicationInvoiceVo.setSellerVo(taxDao.getSellerById(paymentOrderOne.getTaxId()));
         InvoiceApplication invoiceApplication = invoiceApplicationDao.selectById(invoice.getApplicationId());
 
@@ -355,9 +335,10 @@ public class InvoiceServiceImpl extends ServiceImpl<InvoiceDao, Invoice> impleme
         SendAndReceiveVO sendAndReceiveVo = new SendAndReceiveVO();
         sendAndReceiveVo.setLogisticsCompany(vo.getExpressCompanyName());
         sendAndReceiveVo.setLogisticsOrderNo(vo.getExpressSheetNo());
-        sendAndReceiveVo.setFrom(queryApplicationInvoiceVo.getSellerVo().getTaxName());
-        sendAndReceiveVo.setFromTelephone(queryApplicationInvoiceVo.getSellerVo().getPhone());
-        sendAndReceiveVo.setSendingAddress(queryApplicationInvoiceVo.getSellerVo().getTaxAddress());
+        ReceiptVO receiptVO = taxDao.getReceipt(paymentOrderOne.getTaxId());
+        sendAndReceiveVo.setFrom(receiptVO.getReceiptName());
+        sendAndReceiveVo.setFromTelephone(receiptVO.getReceiptPhone());
+        sendAndReceiveVo.setSendingAddress(receiptVO.getReceiptAddress());
         sendAndReceiveVo.setToAddress(address.getAddressName());
         sendAndReceiveVo.setAddressee(address.getLinkName());
         sendAndReceiveVo.setAddresseeTelephone(address.getLinkMobile());

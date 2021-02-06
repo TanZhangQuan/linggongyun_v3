@@ -71,18 +71,24 @@
     </sql>
 
     <resultMap id="SellerById" type="com.example.mybatis.vo.SellerVO">
-        <result column="tax_name" property="taxName"/>
-        <result column="tax_address" property="taxAddress"/>
-        <result column="link_mobile" property="phone"/>
-        <result column="bank_name" property="bankName"/>
-        <result column="bank_code" property="bankCode"/>
-        <result column="credit_code" property="creditCode"/>
+        <result column="invoice_enterprise_name" property="invoiceEnterpriseName"/>
+        <result column="invoice_tax_no" property="invoiceTaxNo"/>
+        <result column="invoice_address_phone" property="invoiceAddressPhone"/>
+        <result column="invoice_bank_name_account" property="invoiceBankNameAccount"/>
+    </resultMap>
+
+    <resultMap id="receiptVO" type="com.example.mybatis.vo.ReceiptVO">
+
     </resultMap>
 
     <select id="getSellerById" resultMap="SellerById">
-        SELECT t.tax_name,t.credit_code,t.tax_address,t.link_mobile,t.bank_code,t.bank_name
-        FROM tb_tax t
-        LEFT JOIN tb_tax_package tp ON tp.tax_id=t.id AND tp.package_status=0
+        SELECT
+            t.invoice_enterprise_name,
+            t.invoice_tax_no,
+            t.invoice_address_phone,
+            t.invoice_bank_name_account
+        FROM
+            tb_tax t
         WHERE t.id=#{id}
     </select>
 
@@ -357,5 +363,16 @@
         AND tax_id=#{param3}
         ORDER BY
             update_date DESC
+    </select>
+
+    <select id="getReceipt" resultMap="receiptVO">
+        SELECT
+            receipt_name,
+            receipt_phone,
+            receipt_address
+        FROM
+            tb_tax t
+        WHERE
+            t.id = #{taxId}
     </select>
 </mapper>
