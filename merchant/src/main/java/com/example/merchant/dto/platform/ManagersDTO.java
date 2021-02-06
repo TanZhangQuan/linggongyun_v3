@@ -8,6 +8,7 @@ import org.hibernate.validator.constraints.Length;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 @ApiModel(description = "添加业务员参数")
@@ -40,4 +41,9 @@ public class ManagersDTO implements Serializable {
     @ApiModelProperty(value = "状态: 0正常，1停用", required = true)
     private Integer status = 0;
 
+    @ApiModelProperty(value = "代理商的流水结算梯度", required = true)
+    private List<CommissionProportionDTO> agentCommissionProportion;
+
+    @ApiModelProperty(value = "直客的流水结算梯度", required = true)
+    private List<CommissionProportionDTO> directCommissionProportion;
 }

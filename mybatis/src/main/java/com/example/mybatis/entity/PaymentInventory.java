@@ -137,4 +137,14 @@ public class PaymentInventory extends BaseEntity {
      */
     private String tradeFailReason;
 
+    /**
+     *代理商差额佣金
+     */
+    private BigDecimal agentDifference;
+
+    /**
+     *业务员差额佣金
+     */
+    private BigDecimal salesmanDifference;
+
 }
