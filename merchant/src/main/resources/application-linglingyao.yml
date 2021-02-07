@@ -72,7 +72,7 @@ spring:
     # Redis服务器连接端口
     port: 6379
     # Redis服务器连接密码（默认为空）
-    password: linggongyun_v3
+    password:
     jedis:
       pool:
         # 连接池最大连接数（使用负值表示没有限制）
@@ -106,13 +106,13 @@ spring:
     # 初始化服务器端口
     server-port: 8883
     # 主账户ID
-    account-sid: 8a216da86efdfee1016efe18bcf40022
+    account-sid: 8a216da877373e59017765e859c912c9
     # 账户授权令牌
-    auth-token: 9f96cf25bba547f683c4e8f7566815ab
+    auth-token: 19d13448ce89419c94a14fd74b72ae9e
     # 应用APPID
-    app-id: 8aaf07086efded7c016efe28ebf30090
+    app-id: 8a216da877373e59017765e85ab412d0
     # 短信模板ID
-    template-id: 491739
+    template-id: 890571
 
   # 快递鸟配置
   kuaidiniao:
@@ -126,18 +126,18 @@ spring:
   # 签约配置
   sign:
     # 第三方：eqianbao E签宝，yiyunzhang 易云章
-    party-type: eqianbao
+    party-type: yiyunzhang
 
   # E签宝配置
   eqianbao:
     # 请求URL
-    host: https://openapi.esign.cn
+    host: https://smlopenapi.esign.cn
     # 应用ID
-    application-id: 5111640625
+    application-id: 4438766163
     # 应用密钥
-    application-secret-key: 2cb035c1497a8a32d2e68addc00dba97
+    application-secret-key: 86d20a7f49bc3c4c20bae23d369d8853
     # 印章ID
-    seal-id: 77ec11bb-b78c-4077-966b-4fe58a5e6b54
+    seal-id:
 
     # 平台自动盖章签署区参数设置
     platform-sign:
@@ -172,13 +172,13 @@ spring:
   # 易云章配置
   yiyunzhang:
     # 请求URL
-    host: https://testapi.ecloudsign.com/
+    host: https://api.ecloudsign.cn/
     # 秘钥
-    secret-key: 7b95c6068a2d34c02b3a1ef251dc282f
+    secret-key: 7466f4cba9193f676049cf7cf4f47fd3
     # APPID
-    app-id: yyz9a9ek64096uk799
+    app-id: yyz63kqf1meab7n240
     # AES密钥
-    aes-secret-key: YF}+efcaj{+oESb9
+    aes-secret-key: pk45r35887j848ma
 
     # 印章配置
     seal:
