@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 @Data
 @ApiModel(description = "创客详情中的商户支付列表明细")
 public class WorekerPaymentListPo {
+
     @ApiModelProperty(value = "总包或众包的支付订单ID")
     private String paymentOrderId;
 

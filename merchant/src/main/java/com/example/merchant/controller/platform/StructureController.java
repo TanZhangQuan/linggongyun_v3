@@ -134,8 +134,8 @@ public class StructureController {
     @ApiOperation(value = "查询代理商总包或众包合作信息(代理商编辑时使用)", notes = "查询代理商总包或众包合作信息(代理商编辑时使用)")
     @LoginRequired
     public ReturnJson queryAgentPackage(@ApiParam(value = "服务商ID") @NotBlank(message = "请选择服务商") @RequestParam(required = false) String taxId,
-                                          @ApiParam(value = "代理商ID") @NotBlank(message = "请选择代理商") @RequestParam(required = false) String agentId,
-                                          @ApiParam(value = "总包或众包") @NotNull(message = "请选择总包或众包") @Range(min = 0, max = 1, message = "请选择正确的合作类型") @RequestParam(required = false) Integer packageStatus) {
+                                        @ApiParam(value = "代理商ID") @NotBlank(message = "请选择代理商") @RequestParam(required = false) String agentId,
+                                        @ApiParam(value = "总包或众包") @NotNull(message = "请选择总包或众包") @Range(min = 0, max = 1, message = "请选择正确的合作类型") @RequestParam(required = false) Integer packageStatus) {
         return agentTaxService.queryAgentPackage(taxId, agentId, packageStatus);
     }
 
@@ -145,7 +145,7 @@ public class StructureController {
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "agentInfoDto", value = "代理商的信息", required = true, dataType = "AgentInfoDTO")
     })
-    public ReturnJson addAgent(@Valid @RequestBody AgentInfoDTO agentInfoDto) throws Exception{
+    public ReturnJson addAgent(@Valid @RequestBody AgentInfoDTO agentInfoDto) throws Exception {
         return structureService.addAgent(agentInfoDto);
     }
 
@@ -216,15 +216,15 @@ public class StructureController {
                                                    @RequestParam(defaultValue = "10") Integer pageSize,
                                                    @ApiParam(value = "业务员佣金统计传2，代理商佣金统计传1") @RequestParam Integer objectType,
                                                    @RequestParam String time) {
-        return structureService.salesmanAndAgentStatistics(userId,objectType,time,pageNo,pageSize);
+        return structureService.salesmanAndAgentStatistics(userId, objectType, time, pageNo, pageSize);
     }
 
     @GetMapping("totalSalesmanSAndAgentStatistics")
     @ApiOperation(value = "平台业务员或代理商总佣金记录", notes = "平台业务员或代理商总佣金记录")
     @LoginRequired
     public ReturnJson totalSalesmanStatistics(@RequestAttribute("userId") @ApiParam(hidden = true) String userId,
-                                              @ApiParam(value = "业务员佣金统计传2，代理商佣金统计传1") @RequestParam Integer objectType){
-        return structureService.totalSalesmanAndAgentStatistics(userId,objectType);
+                                              @ApiParam(value = "业务员佣金统计传2，代理商佣金统计传1") @RequestParam Integer objectType) {
+        return structureService.totalSalesmanAndAgentStatistics(userId, objectType);
     }
 
 
@@ -232,8 +232,8 @@ public class StructureController {
     @ApiOperation(value = "平台业务员或代理商佣金记录详情", notes = "平台业务员或代理商佣金记录详情")
     @LoginRequired
     public ReturnJson salesmanAndAgentStatisticsDetail(@RequestParam String managersId,
-                                                        @RequestParam String achievementStatisticsId){
-        return structureService.salesmanSAndAgentStatisticsDetail(managersId,achievementStatisticsId);
+                                                       @RequestParam String achievementStatisticsId) {
+        return structureService.salesmanSAndAgentStatisticsDetail(managersId, achievementStatisticsId);
     }
 
 
@@ -241,10 +241,10 @@ public class StructureController {
     @ApiOperation(value = "平台业务员或代理商总包众包订单详情", notes = "平台业务员或代理商总包众包订单详情")
     @LoginRequired
     public ReturnJson salesmanSAndAgentDetail(@RequestParam String managersId,
-                                            @RequestParam(defaultValue = "1") Integer pageNo,
-                                            @RequestParam(defaultValue = "10") Integer pageSize,
-                                              @ApiParam(value = "0代表直客，1代表代理商的")@RequestParam Integer customerType){
-        return structureService.salesmanSAndAgentDetail(managersId,customerType,pageNo,pageSize);
+                                              @RequestParam(defaultValue = "1") Integer pageNo,
+                                              @RequestParam(defaultValue = "10") Integer pageSize,
+                                              @ApiParam(value = "0代表直客，1代表代理商的") @RequestParam Integer customerType) {
+        return structureService.salesmanSAndAgentDetail(managersId, customerType, pageNo, pageSize);
     }
 
     @PostMapping("/commissionSettlement")

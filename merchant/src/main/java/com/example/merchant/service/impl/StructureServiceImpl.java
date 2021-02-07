@@ -83,7 +83,7 @@ public class StructureServiceImpl implements StructureService {
     public ReturnJson addSalesMan(ManagersDTO managersDto) {
         List<CommissionProportionDTO> agentCommissionProportion = managersDto.getAgentCommissionProportion();
         Collections.sort(agentCommissionProportion);
-        for (int i = 0 ;  i < agentCommissionProportion.size() ; i++) {
+        for (int i = 0; i < agentCommissionProportion.size(); i++) {
             if (agentCommissionProportion.get(i).getEndMoney().compareTo(agentCommissionProportion.get(i).getStartMoney()) < 0) {
                 return new ReturnJson("您输入的阶梯有问题！", 300);
             }
@@ -95,7 +95,7 @@ public class StructureServiceImpl implements StructureService {
         }
         List<CommissionProportionDTO> directCommissionProportion = managersDto.getDirectCommissionProportion();
         Collections.sort(directCommissionProportion);
-        for (int i = 0 ;  i < directCommissionProportion.size() ; i++) {
+        for (int i = 0; i < directCommissionProportion.size(); i++) {
             if (directCommissionProportion.get(i).getEndMoney().compareTo(directCommissionProportion.get(i).getStartMoney()) < 0) {
                 return new ReturnJson("您输入的阶梯有问题！", 300);
             }
@@ -151,16 +151,16 @@ public class StructureServiceImpl implements StructureService {
             }
             managersService.updateById(managers);
         }
-        commissionProportionDao.deleteObjectIdAndObjectTypeAndCustomerType(managers.getId(),0,1);
-        for (int i = 0 ;  i < agentCommissionProportion.size() ; i++){
+        commissionProportionDao.deleteObjectIdAndObjectTypeAndCustomerType(managers.getId(), 0, 1);
+        for (int i = 0; i < agentCommissionProportion.size(); i++) {
 
             CommissionProportion commissionProportion = new CommissionProportion();
             BeanUtils.copyProperties(agentCommissionProportion.get(i), commissionProportion);
             commissionProportion.setObjectId(managers.getId());
             commissionProportionDao.insert(commissionProportion);
         }
-        commissionProportionDao.deleteObjectIdAndObjectTypeAndCustomerType(managers.getId(),0,0);
-        for (int i = 0 ;  i < directCommissionProportion.size() ; i++){
+        commissionProportionDao.deleteObjectIdAndObjectTypeAndCustomerType(managers.getId(), 0, 0);
+        for (int i = 0; i < directCommissionProportion.size(); i++) {
             CommissionProportion commissionProportion = new CommissionProportion();
             BeanUtils.copyProperties(directCommissionProportion.get(i), commissionProportion);
             commissionProportion.setObjectId(managers.getId());
@@ -178,11 +178,11 @@ public class StructureServiceImpl implements StructureService {
     @Override
     public ReturnJson findBySalesManId(String managersId) {
         Managers managersEntity = managersService.getById(managersId);
-        if(null == managersEntity){
+        if (null == managersEntity) {
             return ReturnJson.error("没有此业务员");
         }
         managersEntity.setPassWord("");
-        ManagersVO managers =new ManagersVO();
+        ManagersVO managers = new ManagersVO();
         BeanUtils.copyProperties(managersEntity, managers);
         List<CommissionProportionVO> directCustomer = commissionProportionDao.getObjectIdAndObjectTypeAndCustomerType(managersId, 0, 0);
         List<CommissionProportionVO> agent = commissionProportionDao.getObjectIdAndObjectTypeAndCustomerType(managersId, 0, 1);
@@ -259,10 +259,10 @@ public class StructureServiceImpl implements StructureService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ReturnJson addAgent(AgentInfoDTO agentInfoDto) throws Exception{
+    public ReturnJson addAgent(AgentInfoDTO agentInfoDto) throws Exception {
         List<CommissionProportionDTO> directCommissionProportion = agentInfoDto.getDirectCommissionProportion();
         Collections.sort(directCommissionProportion);
-        for (int i = 0 ;  i < directCommissionProportion.size() ; i++) {
+        for (int i = 0; i < directCommissionProportion.size(); i++) {
             if (directCommissionProportion.get(i).getEndMoney().compareTo(directCommissionProportion.get(i).getStartMoney()) < 0) {
                 return new ReturnJson("您输入的阶梯有问题！", 300);
             }
@@ -349,18 +349,18 @@ public class StructureServiceImpl implements StructureService {
             agent.setId(agentOne.getId());
             agentService.updateById(agent);
         }
-        commissionProportionDao.deleteObjectIdAndObjectTypeAndCustomerType(managers.getId(),1,0);
-        for (int i = 0 ;  i < directCommissionProportion.size() ; i++){
+        commissionProportionDao.deleteObjectIdAndObjectTypeAndCustomerType(managers.getId(), 1, 0);
+        for (int i = 0; i < directCommissionProportion.size(); i++) {
             CommissionProportion commissionProportion = new CommissionProportion();
             BeanUtils.copyProperties(directCommissionProportion.get(i), commissionProportion);
             commissionProportion.setObjectId(agent.getManagersId());
             commissionProportionDao.insert(commissionProportion);
         }
         QueryWrapper<AgentTax> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda().eq(AgentTax::getAgentId,managers.getId());
+        queryWrapper.lambda().eq(AgentTax::getAgentId, managers.getId());
         List<AgentTax> agentTaxes = agentTaxDao.selectList(queryWrapper);
         for (AgentTax agentTax : agentTaxes) {
-            if(1 == agentTax.getChargeStatus()){
+            if (1 == agentTax.getChargeStatus()) {
                 QueryWrapper<AgentLadderService> queryAgentLadderService = new QueryWrapper<>();
                 queryAgentLadderService.lambda().eq(AgentLadderService::getAgentTaxId, agentTax.getId());
                 List<AgentLadderService> agentLadderServices = agentLadderServiceDao.selectList(queryAgentLadderService);
@@ -376,10 +376,10 @@ public class StructureServiceImpl implements StructureService {
             BeanUtils.copyProperties(agentTaxDTO, agentTax);
             agentTax.setAgentId(agent.getManagersId());
             QueryWrapper<TaxPackage> queryWrapperTaxPackage = new QueryWrapper<>();
-            queryWrapperTaxPackage.lambda().eq(TaxPackage::getTaxId,agentTax.getTaxId())
-                                            .eq(TaxPackage::getPackageStatus,agentTax.getPackageStatus());
+            queryWrapperTaxPackage.lambda().eq(TaxPackage::getTaxId, agentTax.getTaxId())
+                    .eq(TaxPackage::getPackageStatus, agentTax.getPackageStatus());
             TaxPackage taxPackage = taxPackageDao.selectOne(queryWrapperTaxPackage);
-            if(agentTaxDTO.getChargeStatus() == 1){
+            if (agentTaxDTO.getChargeStatus() == 1) {
                 List<AddAgentLadderServiceDTO> addCompanyLadderServiceDtoList = agentTaxDTO.getAddCompanyLadderServiceDtoList();
                 for (AddAgentLadderServiceDTO addAgentLadderServiceDTO : addCompanyLadderServiceDtoList) {
                     AgentLadderService agentLadderService = new AgentLadderService();
@@ -388,22 +388,22 @@ public class StructureServiceImpl implements StructureService {
                     QueryWrapper<InvoiceLadderPrice> queryWrapperInvoiceLadderPrice = new QueryWrapper<>();
 
 
-                    queryWrapperInvoiceLadderPrice.lambda().eq(InvoiceLadderPrice::getTaxPackageId,taxPackage.getId())
-                                                            .eq(InvoiceLadderPrice::getStartMoney,agentLadderService.getStartMoney())
-                                                            .eq(InvoiceLadderPrice::getEndMoney,agentLadderService.getEndMoney())
-                                                                .eq(InvoiceLadderPrice::getPackaegStatus,taxPackage.getPackageStatus() == 0 ? 4 : 5);
+                    queryWrapperInvoiceLadderPrice.lambda().eq(InvoiceLadderPrice::getTaxPackageId, taxPackage.getId())
+                            .eq(InvoiceLadderPrice::getStartMoney, agentLadderService.getStartMoney())
+                            .eq(InvoiceLadderPrice::getEndMoney, agentLadderService.getEndMoney())
+                            .eq(InvoiceLadderPrice::getPackaegStatus, taxPackage.getPackageStatus() == 0 ? 4 : 5);
 
 
                     InvoiceLadderPrice invoiceLadderPrice = invoiceLadderPriceDao.selectOne(queryWrapperInvoiceLadderPrice);
-                    if(agentLadderService.getServiceCharge().compareTo(invoiceLadderPrice.getRate()) < 0){
-                        throw new CommonException(300,invoiceLadderPrice.getStartMoney()+"-"+invoiceLadderPrice.getEndMoney()+"输入数据需不低于"+taxPackage.getTaxPrice());
+                    if (agentLadderService.getServiceCharge().compareTo(invoiceLadderPrice.getRate()) < 0) {
+                        throw new CommonException(300, invoiceLadderPrice.getStartMoney() + "-" + invoiceLadderPrice.getEndMoney() + "输入数据需不低于" + taxPackage.getTaxPrice());
                     }
 
                     agentLadderServiceDao.insert(agentLadderService);
                 }
-            }else{
-                if(agentTax.getServiceCharge().compareTo(taxPackage.getTaxPrice()) < 0){
-                    throw new CommonException(300,"输入数据需不低于"+taxPackage.getTaxPrice());
+            } else {
+                if (agentTax.getServiceCharge().compareTo(taxPackage.getTaxPrice()) < 0) {
+                    throw new CommonException(300, "输入数据需不低于" + taxPackage.getTaxPrice());
                 }
             }
             agentTaxDao.insert(agentTax);
@@ -422,7 +422,7 @@ public class StructureServiceImpl implements StructureService {
     public ReturnJson findByAgentId(String agentId) {
         Agent agent = agentDao.selectOne(new QueryWrapper<Agent>().lambda()
                 .eq(Agent::getManagersId, agentId));
-        if(null == agent){
+        if (null == agent) {
             return ReturnJson.error("没有此代理商");
         }
         AgentInfoVO agentInfoDto = new AgentInfoVO();
@@ -435,17 +435,17 @@ public class StructureServiceImpl implements StructureService {
         agentInfoDto.setDirectCommissionProportion(directCommissionProportion);
 
         QueryWrapper<AgentTax> queryWrapper = new QueryWrapper<>();
-        List<AgentTax> agentTaxes = agentTaxDao.selectList(queryWrapper.lambda().eq(AgentTax::getAgentId,agentId));
+        List<AgentTax> agentTaxes = agentTaxDao.selectList(queryWrapper.lambda().eq(AgentTax::getAgentId, agentId));
         List<AgentTaxVO> agentTaxVOS = new ArrayList<>();
         for (AgentTax agentTax : agentTaxes) {
             AgentTaxVO agentTaxVO = new AgentTaxVO();
-            if(agentTax.getChargeStatus() == 0){
+            if (agentTax.getChargeStatus() == 0) {
                 BeanUtils.copyProperties(agentTax, agentTaxVO);
                 agentTaxVOS.add(agentTaxVO);
-            }else{
+            } else {
                 BeanUtils.copyProperties(agentTax, agentTaxVO);
                 QueryWrapper<AgentLadderService> queryWrapper1 = new QueryWrapper<>();
-                queryWrapper1.lambda().eq(AgentLadderService::getAgentTaxId,agentTax.getId());
+                queryWrapper1.lambda().eq(AgentLadderService::getAgentTaxId, agentTax.getId());
                 List<AgentLadderService> agentLadderServices = agentLadderServiceDao.selectList(queryWrapper1);
                 agentTaxVO.setAgentLadderServices(agentLadderServices);
                 agentTaxVOS.add(agentTaxVO);
@@ -563,26 +563,26 @@ public class StructureServiceImpl implements StructureService {
     }
 
     @Override
-    public ReturnJson salesmanAndAgentStatistics(String userId,Integer objectType, String time, Integer pageNo, Integer pageSize) {
+    public ReturnJson salesmanAndAgentStatistics(String userId, Integer objectType, String time, Integer pageNo, Integer pageSize) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
         Managers managers = managersDao.selectById(userId);
-        if(null == managers){
+        if (null == managers) {
             ReturnJson.error("没有此管理员");
         }
-        if(managers.getUserSign() == 3){
+        if (managers.getUserSign() == 3) {
             userId = null;
         }
-        if(objectType == 1){
-            if(managers.getUserSign() == 2){
+        if (objectType == 1) {
+            if (managers.getUserSign() == 2) {
                 QueryWrapper<Managers> queryWrapper = new QueryWrapper<>();
                 List<Managers> managersList = managersDao.selectList(queryWrapper.lambda().eq(Managers::getParentId, managers.getId()));
-                for (Managers manager : managersList){
-                    userId += manager.getId()+",";
+                for (Managers manager : managersList) {
+                    userId += manager.getId() + ",";
                 }
                 userId = userId.substring(0, userId.length() - 1);
             }
         }
-        if(StringUtils.isBlank(time)){
+        if (StringUtils.isBlank(time)) {
             Date date = new Date();
             Calendar rightNow = Calendar.getInstance();
             rightNow.setTime(date);
@@ -591,58 +591,58 @@ public class StructureServiceImpl implements StructureService {
             time = sdf.format(dt1);
         }
         Page<AchievementStatisticsVO> achievementStatisticsVOPage = new Page<>(pageNo, pageSize);
-        IPage<AchievementStatisticsVO> achievementStatisticsVOIPage = achievementStatisticsDao.salesmanAndAgentStatistics(userId,objectType, time+"%", achievementStatisticsVOPage);
+        IPage<AchievementStatisticsVO> achievementStatisticsVOIPage = achievementStatisticsDao.salesmanAndAgentStatistics(userId, objectType, time + "%", achievementStatisticsVOPage);
         return ReturnJson.success(achievementStatisticsVOIPage);
     }
 
     @Override
-    public ReturnJson totalSalesmanAndAgentStatistics(String userId,Integer objectType) {
+    public ReturnJson totalSalesmanAndAgentStatistics(String userId, Integer objectType) {
         Managers managers = managersDao.selectById(userId);
-        if(null == managers){
+        if (null == managers) {
             ReturnJson.error("没有此管理员");
         }
-        if(managers.getUserSign() == 3){
+        if (managers.getUserSign() == 3) {
             userId = null;
         }
-        if(objectType == 1){
-            if(managers.getUserSign() == 2){
+        if (objectType == 1) {
+            if (managers.getUserSign() == 2) {
                 QueryWrapper<Managers> queryWrapper = new QueryWrapper<>();
                 List<Managers> managersList = managersDao.selectList(queryWrapper.lambda().eq(Managers::getParentId, managers.getId()));
-                for (Managers manager : managersList){
-                    userId += manager.getId()+",";
+                for (Managers manager : managersList) {
+                    userId += manager.getId() + ",";
                 }
                 userId = userId.substring(0, userId.length() - 1);
             }
         }
-        TotalAchievementStatisticsVO totalAchievementStatisticsVO = achievementStatisticsDao.totalSalesmanAndAgentStatistics(userId,objectType);
+        TotalAchievementStatisticsVO totalAchievementStatisticsVO = achievementStatisticsDao.totalSalesmanAndAgentStatistics(userId, objectType);
         return ReturnJson.success(totalAchievementStatisticsVO);
     }
 
     @Override
     public ReturnJson salesmanSAndAgentStatisticsDetail(String managersId, String achievementStatisticsId) {
         Managers managers = managersDao.selectById(managersId);
-        if(null == managers){
+        if (null == managers) {
             ReturnJson.error("没有此管理员");
         }
-        if(managers.getUserSign() == 3){
+        if (managers.getUserSign() == 3) {
             ReturnJson.error("参数错误");
         }
         Integer objectType = null;
 
-        Map<String,Object> map = new HashMap<>();
-        TotalAchievementStatisticsVO totalAchievementStatisticsVO = achievementStatisticsDao.totalSalesmanAndAgentStatistics(managersId,objectType);
+        Map<String, Object> map = new HashMap<>();
+        TotalAchievementStatisticsVO totalAchievementStatisticsVO = achievementStatisticsDao.totalSalesmanAndAgentStatistics(managersId, objectType);
         AchievementStatistics achievementStatistics = achievementStatisticsDao.selectById(achievementStatisticsId);
-        map.put("totalAchievementStatisticsVO",totalAchievementStatisticsVO);
-        map.put("achievementStatistics",achievementStatistics);
-        if(managers.getUserSign() == 2){
+        map.put("totalAchievementStatisticsVO", totalAchievementStatisticsVO);
+        map.put("achievementStatistics", achievementStatistics);
+        if (managers.getUserSign() == 2) {
             List<CommissionProportionVO> merchantCommissionProportion = commissionProportionDao.getObjectIdAndObjectTypeAndCustomerType(managersId, 0, 0);
             List<CommissionProportionVO> agentCommissionProportion = commissionProportionDao.getObjectIdAndObjectTypeAndCustomerType(managersId, 0, 1);
-            map.put("merchantCommissionProportion",merchantCommissionProportion);
-            map.put("agentCommissionProportion",agentCommissionProportion);
+            map.put("merchantCommissionProportion", merchantCommissionProportion);
+            map.put("agentCommissionProportion", agentCommissionProportion);
         }
-        if(managers.getUserSign() == 1){
+        if (managers.getUserSign() == 1) {
             List<CommissionProportionVO> merchantCommissionProportion = commissionProportionDao.getObjectIdAndObjectTypeAndCustomerType(managersId, 1, 0);
-            map.put("merchantCommissionProportion",merchantCommissionProportion);
+            map.put("merchantCommissionProportion", merchantCommissionProportion);
         }
         return ReturnJson.success(map);
     }
@@ -650,17 +650,17 @@ public class StructureServiceImpl implements StructureService {
     @Override
     public ReturnJson salesmanSAndAgentDetail(String managersId, Integer customerType, Integer pageNo, Integer pageSize) {
         Managers managers = managersDao.selectById(managersId);
-        if(null == managers){
+        if (null == managers) {
             ReturnJson.error("没有此管理员");
         }
-        if(managers.getUserSign() == 3){
+        if (managers.getUserSign() == 3) {
             ReturnJson.error("参数错误");
         }
         Page<SalesmanSAndAgentDetailVO> salesmanStatisticsVOPage = new Page<>(pageNo, pageSize);
         IPage<SalesmanSAndAgentDetailVO> salesmanStatisticsVOIPage = null;
-        if(managers.getUserSign() == 2){
-            salesmanStatisticsVOIPage = achievementStatisticsDao.salesmanDetail(managersId,customerType, salesmanStatisticsVOPage);
-        }else{
+        if (managers.getUserSign() == 2) {
+            salesmanStatisticsVOIPage = achievementStatisticsDao.salesmanDetail(managersId, customerType, salesmanStatisticsVOPage);
+        } else {
             salesmanStatisticsVOIPage = achievementStatisticsDao.agentDetail(managersId, salesmanStatisticsVOPage);
         }
 
