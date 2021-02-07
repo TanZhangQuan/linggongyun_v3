@@ -183,13 +183,13 @@ spring:
     # 印章配置
     seal:
       # 平台全称（组成印章）
-      platform-name: 顺利创（广州）企业服务有限公司
+      platform-name: 易企算企业管理集团有限公司
       # 平台法人（组成印章）
-      platform-legal-person: 郑磊
+      platform-legal-person: 沈兰燕
       # 平台联系电话（组成印章）
-      platform-contact-phone: 18666009970
+      platform-contact-phone: 18518192250
       # 平台社会信用代码（组成印章）
-      platform-credit-code: 914401063045811741
+      platform-credit-code: 911101060741915161
 
     # 平台自动盖章签署区参数设置
     platform-sign:
