@@ -194,8 +194,7 @@
         AND csi.payment_order_many_id = pom.id
         INNER JOIN tb_company_info ci ON ci.id = pom.company_id
         WHERE
-            csi.payment_order_many_id IS NOT NULL
-        OR csi.application_id IS NOT NULL
+            pom.is_not_invoice = 1
         <if test="param3 == 2">
             AND ci.sales_man_id = #{param4}
         </if>
