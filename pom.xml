@@ -205,12 +205,57 @@
             </build>
         </profile>
         <profile>
-            <id>生产环境</id>
+            <id>线上环境</id>
             <properties>
                 <activatedProperties>prod</activatedProperties>
             </properties>
             <build>
                 <finalName>linggongyun_v3</finalName>
+            </build>
+        </profile>
+        <profile>
+            <id>薪米环境</id>
+            <properties>
+                <activatedProperties>xinmi</activatedProperties>
+            </properties>
+            <build>
+                <finalName>xinmi</finalName>
+            </build>
+        </profile>
+        <profile>
+            <id>税服云环境</id>
+            <properties>
+                <activatedProperties>shuifuyun</activatedProperties>
+            </properties>
+            <build>
+                <finalName>shuifuyun</finalName>
+            </build>
+        </profile>
+        <profile>
+            <id>易工派环境</id>
+            <properties>
+                <activatedProperties>yigongpai</activatedProperties>
+            </properties>
+            <build>
+                <finalName>yigongpai</finalName>
+            </build>
+        </profile>
+        <profile>
+            <id>千里马环境</id>
+            <properties>
+                <activatedProperties>qianlima</activatedProperties>
+            </properties>
+            <build>
+                <finalName>qianlima</finalName>
+            </build>
+        </profile>
+        <profile>
+            <id>零灵邀环境</id>
+            <properties>
+                <activatedProperties>linglingyao</activatedProperties>
+            </properties>
+            <build>
+                <finalName>linglingyao</finalName>
             </build>
         </profile>
     </profiles>

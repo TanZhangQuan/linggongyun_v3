@@ -3,6 +3,8 @@ package com.example.merchant.service.impl;
 import com.alibaba.excel.EasyExcelFactory;
 import com.alibaba.excel.ExcelReader;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.example.common.config.FileStorageConfig;
+import com.example.common.config.JwtConfig;
 import com.example.common.util.*;
 import com.example.merchant.excel.MakerExcel;
 import com.example.merchant.excel.MakerPanymentExcel;
@@ -19,7 +21,6 @@ import com.example.mybatis.mapper.WorkerDao;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -45,27 +46,6 @@ public class FileOperationServiceImpl implements FileOperationService {
 
     @Resource
     private PaymentInventoryDao paymentInventoryDao;
-
-    @Value("${PWD_KEY}")
-    private String PWD_KEY;
-
-    @Value("${PathImage_KEY}")
-    private String PathImage_KEY;
-
-    @Value("${PathExcel_KEY}")
-    private String PathExcel_KEY;
-
-    @Value("${PathVideo_KEY}")
-    private String PathVideo_KEY;
-
-    @Value("${fileStaticAccesspathImage}")
-    private String fileStaticAccesspathImage;
-
-    @Value("${fileStaticAccesspathExcel}")
-    private String fileStaticAccesspathExcel;
-
-    @Value("${fileStaticAccesspathVideo}")
-    private String fileStaticAccesspathVideo;
 
     public static boolean isInteger(String str) {
         Pattern pattern = Pattern.compile("^[-\\+]?[\\d]*$");
@@ -115,7 +95,7 @@ public class FileOperationServiceImpl implements FileOperationService {
                 worker.setBankCode(makerExcel.getBankCardNo());
                 worker.setUserName(makerExcel.getPhoneNumber());
                 worker.setWorkerStatus(1);
-                worker.setUserPwd(MD5.md5(PWD_KEY + idCardCode.substring(12)));
+                worker.setUserPwd(MD5.md5(JwtConfig.getSecretKey() + idCardCode.substring(12)));
                 workers.add(worker);
             }
         }
@@ -132,15 +112,15 @@ public class FileOperationServiceImpl implements FileOperationService {
         String suffixName = fileName.substring(fileName.lastIndexOf(".") + 1);
         if (Arrays.asList(files).contains(suffixName.toLowerCase())) {
             String newFileName = UuidUtil.get32UUID() + "." + suffixName;
-            File fileMkdir = new File(PathImage_KEY);
+            File fileMkdir = new File(FileStorageConfig.getImagePath());
             // 判断目录是否存在
             if (!fileMkdir.exists()) {
                 fileMkdir.mkdirs();
             }
-            String filePath = PathImage_KEY + newFileName;
+            String filePath = FileStorageConfig.getImagePath() + newFileName;
             File file = new File(filePath);
             String accessPath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() +
-                    request.getContextPath() + fileStaticAccesspathImage + newFileName;
+                    request.getContextPath() + FileStorageConfig.getImageAccessPath() + newFileName;
             uploadJpgOrPdf.transferTo(file);
             return ReturnJson.success("图片上传成功", accessPath);
         } else {
@@ -165,13 +145,13 @@ public class FileOperationServiceImpl implements FileOperationService {
         }
         BufferedInputStream in = null;
         BufferedOutputStream out = null;
-        File fileMkdir = new File(PathImage_KEY);
+        File fileMkdir = new File(FileStorageConfig.getImagePath());
         String newFileName = UuidUtil.get32UUID() + ".pdf";
         // 判断目录是否存在
         if (!fileMkdir.exists()) {
             fileMkdir.mkdirs();
         }
-        String fileName = PathImage_KEY + newFileName;
+        String fileName = FileStorageConfig.getImagePath() + newFileName;
         in = new BufferedInputStream(inputStream);
         try {
             out = new BufferedOutputStream(new FileOutputStream(fileName));
@@ -181,7 +161,7 @@ public class FileOperationServiceImpl implements FileOperationService {
                 out.write(b, 0, len);
             }
             String accessPath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() +
-                    request.getContextPath() + fileStaticAccesspathImage + newFileName;
+                    request.getContextPath() + FileStorageConfig.getImageAccessPath() + newFileName;
             return accessPath;
         } catch (IOException e) {
             e.printStackTrace();
@@ -299,17 +279,17 @@ public class FileOperationServiceImpl implements FileOperationService {
                 }
             }
             String newFileName = UuidUtil.get32UUID() + "." + suffixName;
-            File fileMkdir = new File(PathExcel_KEY);
+            File fileMkdir = new File(FileStorageConfig.getExcelPath());
             // 判断目录是否存在
             if (!fileMkdir.exists()) {
                 fileMkdir.mkdirs();
             }
-            String filePath = PathExcel_KEY + newFileName;
+            String filePath = FileStorageConfig.getExcelPath() + newFileName;
             File file = new File(filePath);
             uploadInvoice.transferTo(file);
             String accessPath = request.getScheme() + "://" + request.getServerName() + ":" +
-                    request.getServerPort() + request.getContextPath() + fileStaticAccesspathExcel + newFileName;
-            log.info(fileStaticAccesspathExcel);
+                    request.getServerPort() + request.getContextPath() + FileStorageConfig.getExcelAccessPath() + newFileName;
+            log.info(FileStorageConfig.getExcelAccessPath());
             listMap.put("paymentInventorys", paymentInventorys);
             listMap.put("workerList", workerList);
             listMap.put("accessPath", accessPath);
@@ -331,15 +311,15 @@ public class FileOperationServiceImpl implements FileOperationService {
         String suffixName = fileName.substring(fileName.lastIndexOf(".") + 1);
         if (Arrays.asList(files).contains(suffixName.toLowerCase())) {
             String newFileName = UuidUtil.get32UUID() + "." + suffixName;
-            File fileMkdir = new File(PathImage_KEY);
+            File fileMkdir = new File(FileStorageConfig.getImagePath());
             // 判断目录是否存在
             if (!fileMkdir.exists()) {
                 fileMkdir.mkdirs();
             }
-            String filePath = PathImage_KEY + newFileName;
+            String filePath = FileStorageConfig.getImagePath() + newFileName;
             File file = new File(filePath);
             String accessPath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() +
-                    request.getContextPath() + fileStaticAccesspathImage + newFileName;
+                    request.getContextPath() + FileStorageConfig.getImageAccessPath() + newFileName;
             uploadTaxReceipt.transferTo(file);
             MakerInvoice makerInvoice = new MakerInvoice();
             if ("0".equals(state)) {
@@ -370,17 +350,17 @@ public class FileOperationServiceImpl implements FileOperationService {
         String suffixName = fileName.substring(fileName.lastIndexOf(".") + 1);
         if (Arrays.asList(files).contains(suffixName.toLowerCase())) {
             String newFileName = UuidUtil.get32UUID() + "." + suffixName;
-            File fileMkdir = new File(PathVideo_KEY);
+            File fileMkdir = new File(FileStorageConfig.getVideoPath());
             String accessPath = null;
             try {
                 // 判断目录是否存在
                 if (!fileMkdir.exists()) {
                     fileMkdir.mkdirs();
                 }
-                String filePath = PathVideo_KEY + newFileName;
+                String filePath = FileStorageConfig.getVideoPath() + newFileName;
                 File file = new File(filePath);
                 accessPath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() +
-                        request.getContextPath() + fileStaticAccesspathVideo + newFileName;
+                        request.getContextPath() + FileStorageConfig.getVideoAccessPath() + newFileName;
                 uploadVideo.transferTo(file);
             } catch (IOException e) {
                 log.error(e.toString() + ":" + e.getMessage());

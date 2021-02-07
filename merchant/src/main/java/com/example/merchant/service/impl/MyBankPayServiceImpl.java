@@ -2,10 +2,10 @@ package com.example.merchant.service.impl;
 
 
 import com.alibaba.druid.support.json.JSONUtils;
-import com.example.common.util.JsonUtils;
-import com.example.common.util.ReturnJson;
 import com.example.common.mybank.entity.Enterprise;
 import com.example.common.mybank.entity.TradeTransfer;
+import com.example.common.util.JsonUtils;
+import com.example.common.util.ReturnJson;
 import com.example.merchant.service.MyBankPayService;
 import com.example.merchant.service.MyBankService;
 import com.example.merchant.util.RealnameVerifyUtil;
@@ -49,7 +49,6 @@ public class MyBankPayServiceImpl implements MyBankPayService {
 
     @Autowired
     private TaxDao taxDao;
-
 
     @Override
     public ReturnJson myBankPayByPayId(String paymentOrderId) throws Exception {

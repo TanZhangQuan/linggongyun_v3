@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alipay.api.AlipayApiException;
 import com.alipay.api.internal.util.AlipaySignature;
-import com.example.common.constant.UnionpayConstant;
+import com.example.common.config.UnionpayConfig;
 import com.example.common.enums.UnionpayMethod;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
@@ -91,7 +91,7 @@ public class UnionpayUtil {
         content.put("dest_acct_kind", "01");   //目标账户类型 01 银行卡 11 支付宝
         content.put("dest_acct_name", destAcctName);  //目标账户户名
         content.put("dest_acct_no", destAcctNo);    //目标账户账号
-        content.put("tx_call_back_addr", UnionpayConstant.TXCALLBACKADDR);   //交易回调地址
+        content.put("tx_call_back_addr", UnionpayConfig.getTxAsyncNotifyUrl());   //交易回调地址
         content.put("remark", "提现出款");   //摘要信息
         //银联请求
         return unionpay(merchNo, UnionpayMethod.AC041, acctNo, content, pfmpubkey, prikey);
@@ -204,7 +204,7 @@ public class UnionpayUtil {
         log.info("请求基本参数：{}", JSON.toJSONString(params));
 
         //请求银联接口
-        jsonObject = JSON.parseObject(HttpUtil.post(UnionpayConstant.GATEWAYURL, params));
+        jsonObject = JSON.parseObject(HttpUtil.post(UnionpayConfig.getGatewayUrl(), params));
         log.info("请求结果：{}", jsonObject);
 
         return jsonObject;

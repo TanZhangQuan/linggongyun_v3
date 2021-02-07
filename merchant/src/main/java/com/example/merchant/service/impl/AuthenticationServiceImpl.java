@@ -2,6 +2,7 @@ package com.example.merchant.service.impl;
 
 import com.agile.ecloud.sdk.http.EcloudClient;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.example.common.config.*;
 import com.example.common.contract.SignAContractUtils;
 import com.example.common.contract.exception.DefineException;
 import com.example.common.contract.helper.SignHelper;
@@ -13,6 +14,7 @@ import com.example.common.util.JsonUtils;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.makerend.IdCardInfoDTO;
 import com.example.merchant.dto.makerend.WorkerBankDTO;
+import com.example.merchant.exception.CommonException;
 import com.example.merchant.service.AuthenticationService;
 import com.example.merchant.service.FileOperationService;
 import com.example.merchant.util.RealnameVerifyUtil;
@@ -27,7 +29,6 @@ import com.example.mybatis.mapper.WorkerDao;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,51 +45,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Resource
     private WorkerBankDao workerBankDao;
-
-    @Value("${PathImage_KEY}")
-    private String PathImage_KEY;
-
-    @Value("${TemplateFile.Contract}")
-    private String contract;
-
-    @Value("${TemplateFile.yyqContract}")
-    private String yyqContract;
-
-    @Value("${yyqCallBack}")
-    private String yyqCallBack;
-
-    @Value("${appSecret}")
-    private String appSecret;
-
-    @Value("${fileStaticAccesspathImage}")
-    private String fileStaticAccesspathImage;
-
-    @Value("${platformName}")
-    private String platformName;
-
-    @Value("${platformLegalPerson}")
-    private String platformLegalPerson;
-
-    @Value("${platformContactNumber}")
-    private String platformContactNumber;
-
-    @Value("${platformCreditCode}")
-    private String platformCreditCode;
-
-    @Value("${yyqAppKey}")
-    private String yyqAppKey;
-
-    @Value("${yyqSecrept}")
-    private String yyqSecrept;
-
-    @Value("${yyqAES}")
-    private String yyqAES;
-
-    @Value("${yyqUrl}")
-    private String yyqUrl;
-
-    @Value("${signType}")
-    private String signType;
 
     @Resource
     private FileOperationService fileOperationService;
@@ -192,7 +148,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public ReturnJson senSignAContract(String workerId) throws DefineException {
+    @Transactional(rollbackFor = Exception.class)
+    public ReturnJson senSignAContract(String workerId) throws Exception {
         Worker worker = workerDao.selectById(workerId);
         if (worker == null) {
             return ReturnJson.error("该用户不存在！");
@@ -218,9 +175,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
         if (worker.getAgreementSign() == 0 || worker.getAgreementSign() == -1 || worker.getAgreementSign() == 1) {
             ReturnJson returnJson;
-            if (signType.equals("1")) {
-                returnJson = SignAContractUtils.signH5YiYunAContract(workerId, yyqContract, yyqAppKey, yyqSecrept, yyqAES, yyqUrl, yyqCallBack, worker.getAccountName(), worker.getIdcardCode(),
-                        worker.getMobileCode(), platformName, platformContactNumber, platformCreditCode, platformLegalPerson, worker.getAttestation()
+            if (SignConfig.getPartyType().equals("yiyunzhang")) {
+                returnJson = SignAContractUtils.signH5YiYunAContract(workerId, TemplateConfig.getContractHtmlPath(), YiyunzhangConfig.getAppId(), YiyunzhangConfig.getSecretKey(), YiyunzhangConfig.getAesSecretKey(), YiyunzhangConfig.getHost(), YiyunzhangConfig.getAsyncNotifyUrl(), worker.getAccountName(), worker.getIdcardCode(),
+                        worker.getMobileCode(), YiyunzhangConfig.getSealPlatformName(), YiyunzhangConfig.getSealPlatformContactPhone(), YiyunzhangConfig.getSealPlatformCreditCode(), YiyunzhangConfig.getSealPlatformLegalPerson(), worker.getAttestation()
                         , platformCertificationState);
                 if (returnJson.getCode() == 200) {
                     String contractNum = returnJson.getObj().toString();
@@ -230,14 +187,16 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     dict.setDictValue("true");
                     dictDao.updateById(dict);
                     workerDao.updateById(worker);
-                    returnJson = ReturnJson.success(returnJson.getMessage(),1);
+                    returnJson = ReturnJson.success(returnJson.getMessage(), 1);
                 }
 
-            } else {
-                returnJson = SignAContractUtils.signAContract(contract, worker.getId(), worker.getAccountName(), worker.getIdcardCode(),
+            } else if (SignConfig.getPartyType().equals("eqianbao")) {
+                returnJson = SignAContractUtils.signAContract(TemplateConfig.getContractPdfPath(), worker.getId(), worker.getAccountName(), worker.getIdcardCode(),
                         worker.getMobileCode());
                 worker.setAgreementSign(1);
                 workerDao.updateById(worker);
+            } else {
+                throw new CommonException(300, "签约平台不存在");
             }
             return returnJson;
         }
@@ -247,13 +206,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public synchronized ReturnJson callBackSignAContract(HttpServletRequest request) {
         //查询body的数据进行验签
-        Map map = null;
-        Worker worker = null;
-        boolean res = false;
+        Map map;
+        Worker worker;
+        boolean res;
         try {
             String rbody = RealnameVerifyUtil.getRequestBody(request, "UTF-8");
             map = JsonUtils.jsonToPojo(rbody, Map.class);
-            res = RealnameVerifyUtil.checkPass(request, rbody, appSecret);
+            res = RealnameVerifyUtil.checkPass(request, rbody, EqianbaoConfig.getApplicationSecretKey());
         } catch (Exception e) {
             log.error(e.toString() + ":" + e.getMessage());
             return null;
@@ -330,20 +289,20 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public ReturnJson findSignAContract(String workerId,HttpServletRequest request) {
+    public ReturnJson findSignAContract(String workerId, HttpServletRequest request) {
         Worker worker = workerDao.selectById(workerId);
         if (worker == null) {
             return ReturnJson.error("该用户不存在！");
         }
         Map<String, Integer> map = new HashMap<>();
         map.put("status", worker.getAgreementSign());
-        if(worker.getAgreementSign() == 1 && null != worker.getContractNum()){
+        if (worker.getAgreementSign() == 1 && null != worker.getContractNum()) {
             worker.setAgreementSign(2);
             String uuid = UUID.randomUUID().toString() + ".pdf";
             //下载合同
-            EcloudClient.downloadContract(worker.getContractNum(), PathImage_KEY + uuid);
+            EcloudClient.downloadContract(worker.getContractNum(), FileStorageConfig.getImagePath() + uuid);
             String accessPath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() +
-                    request.getContextPath() + fileStaticAccesspathImage + uuid;
+                    request.getContextPath() + FileStorageConfig.getImageAccessPath() + uuid;
             worker.setAgreementUrl(accessPath);
             workerDao.updateById(worker);
             return ReturnJson.success("成功");
@@ -355,13 +314,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public ReturnJson callBackYYQSignAContract(String workerId, String contractNum, HttpServletRequest request) {
         Worker worker = workerDao.selectById(workerId);
-        if(worker.getAgreementSign() == 1 && null != worker.getContractNum()){
+        if (worker.getAgreementSign() == 1 && null != worker.getContractNum()) {
             worker.setAgreementSign(2);
             String uuid = UUID.randomUUID().toString() + ".pdf";
             //下载合同
-            EcloudClient.downloadContract(contractNum, PathImage_KEY + uuid);
+            EcloudClient.downloadContract(contractNum, FileStorageConfig.getImagePath() + uuid);
             String accessPath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() +
-                    request.getContextPath() + fileStaticAccesspathImage + uuid;
+                    request.getContextPath() + FileStorageConfig.getImageAccessPath() + uuid;
             worker.setAgreementUrl(accessPath);
             workerDao.updateById(worker);
             return ReturnJson.success("成功");

@@ -2,6 +2,7 @@ package com.example.common.contract.helper;
 
 
 import com.alibaba.fastjson.JSONObject;
+import com.example.common.config.EqianbaoConfig;
 import com.example.common.contract.comm.HttpHelper;
 import com.example.common.contract.comm.JSONHelper;
 import com.example.common.contract.comm.LocalCacheHelper;
@@ -38,7 +39,7 @@ public class TokenHelper {
      */
     public static JSONObject getTokenData() throws DefineException {
         JSONObject json = HttpHelper.doCommHttp(RequestType.GET,
-                ConfigConstant.getToken_URL(ConfigConstant.PROJECT_ID, ConfigConstant.PROJECT_SECRET), null);
+                ConfigConstant.getToken_URL(EqianbaoConfig.getApplicationId(), EqianbaoConfig.getApplicationSecretKey()), null);
         json = JSONHelper.castDataJson(json, JSONObject.class);
 
         // 模拟存放本地缓存
@@ -59,7 +60,7 @@ public class TokenHelper {
      */
     public static JSONObject refreshToken(String refreshToken) throws DefineException {
         JSONObject json = HttpHelper.doCommHttp(RequestType.GET,
-                ConfigConstant.refreshToken_URL(ConfigConstant.PROJECT_ID, refreshToken), null);
+                ConfigConstant.refreshToken_URL(EqianbaoConfig.getApplicationId(), refreshToken), null);
         json = JSONHelper.castDataJson(json, JSONObject.class);
 
         // 模拟存放本地缓存

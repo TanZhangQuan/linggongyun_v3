@@ -1,17 +1,13 @@
 package com.example.merchant.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.example.common.config.JwtConfig;
 import com.example.common.util.MD5;
 import com.example.common.util.ReturnJson;
 import com.example.common.util.VerificationCheck;
-import com.example.merchant.dto.platform.AddAgentLadderServiceDTO;
-import com.example.merchant.dto.platform.AgentInfoDTO;
-import com.example.merchant.dto.platform.AgentTaxDTO;
-import com.example.merchant.dto.platform.CommissionProportionDTO;
-import com.example.merchant.dto.platform.ManagersDTO;
+import com.example.merchant.dto.platform.*;
 import com.example.merchant.exception.CommonException;
 import com.example.merchant.service.*;
 import com.example.merchant.util.AcquireID;
@@ -23,7 +19,6 @@ import com.example.mybatis.po.SalesManPaymentListPO;
 import com.example.mybatis.vo.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -83,9 +78,6 @@ public class StructureServiceImpl implements StructureService {
     @Resource
     private InvoiceLadderPriceDao invoiceLadderPriceDao;
 
-    @Value("${PWD_KEY}")
-    private String PWD_KEY;
-
     @Override
     @Transactional
     public ReturnJson addSalesMan(ManagersDTO managersDto) {
@@ -123,7 +115,7 @@ public class StructureServiceImpl implements StructureService {
             managers = new Managers();
             BeanUtils.copyProperties(managersDto, managers);
             managers.setRoleName("业务员");
-            managers.setPassWord(MD5.md5(PWD_KEY + managersDto.getInitPassWord()));
+            managers.setPassWord(MD5.md5(JwtConfig.getSecretKey() + managersDto.getInitPassWord()));
             managersService.save(managers);
             //赋予主账号权限
             List<MenuListVO> listVos = menuDao.getAgentMenuList();
@@ -155,7 +147,7 @@ public class StructureServiceImpl implements StructureService {
             }
             BeanUtils.copyProperties(managersDto, managers);
             if (managers.getPassWord() != null) {
-                managers.setPassWord(MD5.md5(PWD_KEY + managersDto.getInitPassWord()));
+                managers.setPassWord(MD5.md5(JwtConfig.getSecretKey() + managersDto.getInitPassWord()));
             }
             managersService.updateById(managers);
         }
@@ -296,7 +288,7 @@ public class StructureServiceImpl implements StructureService {
             if (managersOne != null) {
                 return ReturnJson.error("此用户名已近注册过！");
             }
-            managers.setPassWord(MD5.md5(PWD_KEY + agentInfoDto.getInitPassWord()));
+            managers.setPassWord(MD5.md5(JwtConfig.getSecretKey() + agentInfoDto.getInitPassWord()));
             managers.setRealName(agentInfoDto.getAgentName());
             managers.setUserName(agentInfoDto.getUserName());
             managers.setUserSign(agentInfoDto.getUserSign());
@@ -343,7 +335,7 @@ public class StructureServiceImpl implements StructureService {
                 return ReturnJson.error("此用户名已近注册过！");
             }
             //编辑
-            managers.setPassWord(MD5.md5(PWD_KEY + agentInfoDto.getInitPassWord()));
+            managers.setPassWord(MD5.md5(JwtConfig.getSecretKey() + agentInfoDto.getInitPassWord()));
             managers.setRealName(agentInfoDto.getAgentName());
             managers.setUserName(agentInfoDto.getUserName());
             managers.setUserSign(agentInfoDto.getUserSign());

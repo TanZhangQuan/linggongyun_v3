@@ -7,6 +7,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.example.common.config.LianLianPayConfig;
 import com.example.common.enums.UserType;
 import com.example.common.lianlianpay.entity.PaymentRequestBean;
 import com.example.common.lianlianpay.entity.ServicePayApplyRequest;
@@ -21,13 +22,11 @@ import com.example.common.util.Tools;
 import com.example.common.util.VerificationCheck;
 import com.example.merchant.dto.merchant.AddLianLianPay;
 import com.example.merchant.service.LianLianPayTaxService;
-import com.example.merchant.service.PaymentHistoryService;
 import com.example.merchant.util.RealnameVerifyUtil;
 import com.example.merchant.websocket.SenMessage;
 import com.example.mybatis.entity.*;
 import com.example.mybatis.mapper.*;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -61,32 +60,7 @@ public class LianLianPayTaxServiceImpl extends ServiceImpl<LianlianpayTaxDao, Li
     private WorkerBankDao workerBankDao;
 
     @Resource
-    private PaymentHistoryService paymentHistoryService;
-
-    @Resource
     private SenMessage senMessage;
-
-
-    /**
-     * 连连公钥
-     */
-    @Value("${salary.PUBLIC_KEY_ONLINE}")
-    private String PUBLIC_KEY_ONLINE;
-
-    /**
-     * 接收商户付款异步通知地址
-     */
-    @Value("${salary.workerNotifyUrl}")
-    private String workerNotifyUrl;
-
-    /**
-     * 实时付款接口
-     */
-    @Value("${salary.url.paymentapi}")
-    private String paymentapi;
-
-    @Value("${salary.url.selectRemainingSum}")
-    private String selectRemainingSum;
 
     @Override
     public ReturnJson addLianlianPay(String taxId, AddLianLianPay addLianLianPay) {
@@ -119,7 +93,7 @@ public class LianLianPayTaxServiceImpl extends ServiceImpl<LianlianpayTaxDao, Li
             log.info(requestBody);
             HashMap<String, String> result = JsonUtils.jsonToPojo(requestBody, new HashMap<String, String>().getClass());
 
-            boolean signCheck = TraderRSAUtil.checksign(PUBLIC_KEY_ONLINE,
+            boolean signCheck = TraderRSAUtil.checksign(LianLianPayConfig.getPublicKey(),
                     SignUtil.genSignData(JSONObject.parseObject(requestBody)), result.get("sign"));
             if (!signCheck) {
                 // 传送数据被篡改，可抛出异常，再人为介入检查原因
@@ -156,7 +130,7 @@ public class LianLianPayTaxServiceImpl extends ServiceImpl<LianlianpayTaxDao, Li
                 paymentInventory.setPaymentStatus(1);
                 paymentInventoryDao.updateById(paymentInventory);
                 senMessage.senMsg("您有一笔" + paymentInventory.getRealMoney() +
-                        "元的收益", result.get("no_order"), "0", UserType.ADMIN,
+                                "元的收益", result.get("no_order"), "0", UserType.ADMIN,
                         paymentInventory.getWorkerId(), UserType.WORKER);
                 return;
             } else {
@@ -219,7 +193,7 @@ public class LianLianPayTaxServiceImpl extends ServiceImpl<LianlianpayTaxDao, Li
                 map.put("msg", "创客未认证");
                 errorList.add(map);
                 senMessage.senMsg("您有一笔" + paymentInventory.getRealMoney() +
-                        "元的薪资未领取成功！,请实名认证和签署加盟合同后在领取！", paymentInventory.getId(),
+                                "元的薪资未领取成功！,请实名认证和签署加盟合同后在领取！", paymentInventory.getId(),
                         "0", UserType.ADMIN, paymentInventory.getWorkerId(), UserType.WORKER);
                 continue;
             }
@@ -237,7 +211,7 @@ public class LianLianPayTaxServiceImpl extends ServiceImpl<LianlianpayTaxDao, Li
                 map.put("msg", "创客未绑定银行卡");
                 errorList.add(map);
                 senMessage.senMsg("您有一笔" + paymentInventory.getRealMoney() +
-                        "元的薪资未领取成功！,请绑定银行卡后在领取！", paymentInventory.getId(),
+                                "元的薪资未领取成功！,请绑定银行卡后在领取！", paymentInventory.getId(),
                         "0", UserType.ADMIN, paymentInventory.getWorkerId(), UserType.WORKER);
                 continue;
             }
@@ -266,7 +240,7 @@ public class LianLianPayTaxServiceImpl extends ServiceImpl<LianlianpayTaxDao, Li
             paymentRequestBean.setInfo_order("付款");
             paymentRequestBean.setFlag_card("0");
             paymentRequestBean.setMemo("付款");
-            paymentRequestBean.setNotify_url(workerNotifyUrl);
+            paymentRequestBean.setNotify_url(LianLianPayConfig.getPaymentWorkerAsyncNotifyUrl());
             paymentRequestBean.setSign_type(SignTypeEnum.RSA.getCode());
             String signData = SignUtil.genSignData(JSON.parseObject((JSON.toJSONString(paymentRequestBean))));
             paymentRequestBean.setSign(RSAUtil.sign(lianlianpayTax.getPrivateKey(), signData));
@@ -277,7 +251,7 @@ public class LianLianPayTaxServiceImpl extends ServiceImpl<LianlianpayTaxDao, Li
             // size异常时，可参考这个网页解决问题http://www.wxdl.cn/java/security-invalidkey-exception.html
             String encryptStr = null;
             try {
-                encryptStr = LianLianPaySecurity.encrypt(jsonStr, PUBLIC_KEY_ONLINE);
+                encryptStr = LianLianPaySecurity.encrypt(jsonStr, LianLianPayConfig.getPublicKey());
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -297,10 +271,10 @@ public class LianLianPayTaxServiceImpl extends ServiceImpl<LianlianpayTaxDao, Li
             json.put("oid_partner", lianlianpayTax.getOidPartner());
             json.put("pay_load", encryptStr);
             log.info("实时付款接口请求报文：" + json);
-            String res = HttpUtil.post(paymentapi, JSON.toJSONString(json));
+            String res = HttpUtil.post(LianLianPayConfig.getPaymentUrl(), JSON.toJSONString(json));
             log.info("实时付款接口返回报文：" + res);
             Map<String, String> paymentapiResult = JsonUtils.jsonToPojo(res, new HashMap<String, String>().getClass());
-            boolean signCheck = TraderRSAUtil.checksign(PUBLIC_KEY_ONLINE,
+            boolean signCheck = TraderRSAUtil.checksign(LianLianPayConfig.getPublicKey(),
                     SignUtil.genSignData(JSONObject.parseObject(res)), paymentapiResult.get("sign"));
             if (!signCheck) {
                 // 传送数据被篡改，可抛出异常，再人为介入检查原因
@@ -338,7 +312,7 @@ public class LianLianPayTaxServiceImpl extends ServiceImpl<LianlianpayTaxDao, Li
         applyRequest.setSign_type(SignTypeEnum.RSA.getCode());
         String signData = SignUtil.genSignData(JSON.parseObject((JSON.toJSONString(applyRequest))));
         applyRequest.setSign(RSAUtil.sign(privateKey, signData));
-        String res = HttpUtil.post(selectRemainingSum, JSON.toJSONString(applyRequest));
+        String res = HttpUtil.post(LianLianPayConfig.getBalanceUrl(), JSON.toJSONString(applyRequest));
         log.info("商户号余额查询返回：" + res);
         return JsonUtils.jsonToPojo(res, new HashMap<String, Object>().getClass());
     }

@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.example.common.config.JwtConfig;
 import com.example.common.util.MD5;
 import com.example.common.util.ReturnJson;
 import com.example.common.util.VerificationCheck;
@@ -22,7 +23,6 @@ import com.example.mybatis.po.TaxListPO;
 import com.example.mybatis.vo.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,9 +42,6 @@ import java.util.List;
  */
 @Service
 public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxService {
-
-    @Value("${PWD_KEY}")
-    private String PWD_KEY;
 
     @Resource
     private TaxDao taxDao;
@@ -219,7 +216,7 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
             if (StringUtils.isBlank(taxDto.getPassWord())) {
                 taxDto.setPassWord(taxWorker.getPassWord());
             } else {
-                taxDto.setPassWord(MD5.md5(PWD_KEY + taxDto.getPassWord()));
+                taxDto.setPassWord(MD5.md5(JwtConfig.getSecretKey() + taxDto.getPassWord()));
             }
             BeanUtils.copyProperties(taxDto, taxWorker);
             taxWorkerService.updateById(taxWorker);
@@ -274,7 +271,7 @@ public class TaxServiceImpl extends ServiceImpl<TaxDao, Tax> implements TaxServi
             save(tax);
             //新建主账号
             taxWorker = new TaxWorker();
-            taxDto.setPassWord(MD5.md5(PWD_KEY + taxDto.getPassWord()));
+            taxDto.setPassWord(MD5.md5(JwtConfig.getSecretKey() + taxDto.getPassWord()));
             BeanUtils.copyProperties(taxDto, taxWorker);
             taxWorker.setTaxId(tax.getId());
             taxWorkerService.save(taxWorker);

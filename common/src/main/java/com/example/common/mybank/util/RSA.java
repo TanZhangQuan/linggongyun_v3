@@ -17,8 +17,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- *
  * <p>RSA签名,加解密处理核心文件，注意：密钥长度1024</p>
+ *
  * @author leelun
  * @version $Id: RSA.java, v 0.1 2013-11-15 下午2:33:53 lilun Exp $
  */
@@ -27,32 +27,32 @@ public class RSA {
     /**
      * 签名算法
      */
-    public static final String  SIGNATURE_ALGORITHM = "SHA1withRSA";
+    public static final String SIGNATURE_ALGORITHM = "SHA1withRSA";
     /**
      * 加密算法RSA
      */
-    public static final String  KEY_ALGORITHM       = "RSA";
+    public static final String KEY_ALGORITHM = "RSA";
     /**
      * RSA最大加密明文大小
      */
-    private static final int    MAX_ENCRYPT_BLOCK   = 117;
+    private static final int MAX_ENCRYPT_BLOCK = 117;
 
     /**
      * RSA最大解密密文大小
      */
-    private static final int    MAX_DECRYPT_BLOCK   = 128;
+    private static final int MAX_DECRYPT_BLOCK = 128;
 
     /**
      * 获取公钥的key
      */
-    private static final String PUBLIC_KEY          = "RSAPublicKey";
+    private static final String PUBLIC_KEY = "RSAPublicKey";
 
     /**
      * 获取私钥的key
      */
-    private static final String PRIVATE_KEY         = "RSAPrivateKey";
+    private static final String PRIVATE_KEY = "RSAPrivateKey";
 
-    private static Logger logger              = LoggerFactory.getLogger(RSA.class);
+    private static Logger logger = LoggerFactory.getLogger(RSA.class);
 
     /**
      * <p>
@@ -78,12 +78,9 @@ public class RSA {
     /**
      * 签名字符串
      *
-     * @param text
-     *            需要签名的字符串
-     * @param privateKey 私钥(BASE64编码)
-     *
-     * @param input_charset
-     *            编码格式
+     * @param text          需要签名的字符串
+     * @param privateKey    私钥(BASE64编码)
+     * @param input_charset 编码格式
      * @return 签名结果(BASE64编码)
      */
     public static String sign(String text, String privateKey, String charset) throws Exception {
@@ -103,18 +100,13 @@ public class RSA {
     /**
      * 签名字符串
      *
-     * @param text
-     *            需要签名的字符串
-     * @param sign
-     *            客户签名结果
-     * @param publicKey
-     *            公钥(BASE64编码)
-     * @param input_charset
-     *            编码格式
+     * @param text          需要签名的字符串
+     * @param sign          客户签名结果
+     * @param publicKey     公钥(BASE64编码)
      * @return 验签结果
      */
     public static boolean verify(String text, String sign, String publicKey, String charset)
-                                                                                            throws Exception {
+            throws Exception {
         byte[] keyBytes = Base64.decodeBase64(publicKey);
         X509EncodedKeySpec keySpec = new X509EncodedKeySpec(keyBytes);
         KeyFactory keyFactory = KeyFactory.getInstance(KEY_ALGORITHM);
@@ -134,12 +126,12 @@ public class RSA {
      * </p>
      *
      * @param encryptedData 已加密数据
-     * @param privateKey 私钥(BASE64编码)
+     * @param privateKey    私钥(BASE64编码)
      * @return
      * @throws Exception
      */
     public static byte[] decryptByPrivateKey(byte[] encryptedData, String privateKey)
-                                                                                     throws Exception {
+            throws Exception {
         byte[] keyBytes = Base64.decodeBase64(privateKey);
         PKCS8EncodedKeySpec pkcs8KeySpec = new PKCS8EncodedKeySpec(keyBytes);
         KeyFactory keyFactory = KeyFactory.getInstance(KEY_ALGORITHM);
@@ -174,12 +166,12 @@ public class RSA {
      * </p>
      *
      * @param encryptedData 已加密数据
-     * @param publicKey 公钥(BASE64编码)
+     * @param publicKey     公钥(BASE64编码)
      * @return
      * @throws Exception
      */
     public static byte[] decryptByPublicKey(byte[] encryptedData, String publicKey)
-                                                                                   throws Exception {
+            throws Exception {
         byte[] keyBytes = Base64.decodeBase64(publicKey);
         X509EncodedKeySpec x509KeySpec = new X509EncodedKeySpec(keyBytes);
         KeyFactory keyFactory = KeyFactory.getInstance(KEY_ALGORITHM);
@@ -213,7 +205,7 @@ public class RSA {
      * 公钥加密
      * </p>
      *
-     * @param data 源数据
+     * @param data      源数据
      * @param publicKey 公钥(BASE64编码)
      * @return
      * @throws Exception
@@ -253,7 +245,7 @@ public class RSA {
      * 私钥加密
      * </p>
      *
-     * @param data 源数据
+     * @param data       源数据
      * @param privateKey 私钥(BASE64编码)
      * @return
      * @throws Exception

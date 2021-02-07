@@ -1,6 +1,5 @@
 package com.example.merchant.service;
 
-import com.example.common.contract.exception.DefineException;
 import com.example.common.enums.IdCardSide;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.makerend.IdCardInfoDTO;
@@ -54,7 +53,7 @@ public interface AuthenticationService {
      * @param workerId
      * @return
      */
-    ReturnJson senSignAContract(String workerId) throws DefineException;
+    ReturnJson senSignAContract(String workerId) throws Exception;
 
     /**
      * 合同签署成功后的回调

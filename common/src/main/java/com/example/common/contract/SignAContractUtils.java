@@ -5,7 +5,8 @@ import com.agile.ecloud.sdk.bean.EcloudPublicKey;
 import com.agile.ecloud.sdk.http.EcloudClient;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.example.common.contract.constant.ConfigConstant;
+import com.example.common.config.EqianbaoConfig;
+import com.example.common.config.YiyunzhangConfig;
 import com.example.common.contract.exception.DefineException;
 import com.example.common.contract.helper.*;
 import com.example.common.util.HttpUtil;
@@ -13,8 +14,12 @@ import com.example.common.util.ReturnJson;
 import com.example.common.util.UuidUtil;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -46,15 +51,18 @@ public class SignAContractUtils {
         JSONObject personAcctJson = AccountHelper.createPersonAcct(userId, realName, null, IdCardCode, mobile, null);
         String acctId = personAcctJson.getString("accountId");
 
-        log.info("---------------------创建机构账号start----------------------------------");
-        JSONObject orgAcctJson = AccountHelper.createOrgAcct("SLC", acctId, "零工云（上海）科技发展有限公司", "CRED_ORG_USCC", null);
-        String orgId = orgAcctJson.getString("orgId");
+        String orgSealId;
+        if (StringUtils.isNotBlank(EqianbaoConfig.getSealId())) {
+            orgSealId = EqianbaoConfig.getSealId();
+        } else {
+            log.info("---------------------创建机构账号start----------------------------------");
+            JSONObject orgAcctJson = AccountHelper.createOrgAcct("SLC", acctId, "零工云（上海）科技发展有限公司", "CRED_ORG_USCC", null);
+            String orgId = orgAcctJson.getString("orgId");
 
-        log.info("---------------------创建机构印章start----------------------------------");
-        JSONObject orgSealJson = SealHelper.createOrgTemplateSeal(orgId, "顺利创印章", "RED", 159, 159, null, null, "TEMPLATE_ROUND", "STAR");
-        String orgSealId = orgSealJson.getString("");
-
-//        String orgSealId = ConfigConstant.ORGSEAL_ID;
+            log.info("---------------------创建机构印章start----------------------------------");
+            JSONObject orgSealJson = SealHelper.createOrgTemplateSeal(orgId, "顺利创印章", "RED", 159, 159, null, null, "TEMPLATE_ROUND", "STAR");
+            orgSealId = orgSealJson.getString("");
+        }
 
         log.info("---------------------通过上传方式创建文件start-----------------------------");
         JSONObject uploadJson = FileTemplateHelper.createFileByUpload(filePath, UuidUtil.get32UUID() + ".pdf", null);
@@ -198,7 +206,7 @@ public class SignAContractUtils {
             if (!workerCloudDomain.getCode().equals("0")) {
                 return ReturnJson.error("创客实名不通过");
             }
-            if(!workerCloudDomain.getMessage().equals("一致")){
+            if (!workerCloudDomain.getMessage().equals("一致")) {
                 return ReturnJson.error("创客实名不通过");
             }
         }
@@ -209,7 +217,7 @@ public class SignAContractUtils {
             if (!serviceProviderCloudDomain.getCode().equals("0")) {
                 return ReturnJson.error("企业实名不通过");
             }
-            if(!serviceProviderCloudDomain.getMessage().equals("一致")){
+            if (!serviceProviderCloudDomain.getMessage().equals("一致")) {
                 return ReturnJson.error("企业实名不通过");
             }
         }
@@ -236,17 +244,17 @@ public class SignAContractUtils {
         List<Map<String, String>> signPositionlistMap = new ArrayList<>();
         Map<String, String> signPositionMap = new HashMap<>();
         signPositionMap.put("positionName", "用户");
-        signPositionMap.put("x", "200");
-        signPositionMap.put("y", "200");
-        signPositionMap.put("page", "1");
+        signPositionMap.put("page", YiyunzhangConfig.getSignerSignPosPage());
+        signPositionMap.put("x", YiyunzhangConfig.getSignerSignPosX());
+        signPositionMap.put("y", YiyunzhangConfig.getSignerSignPosY());
         signPositionlistMap.add(signPositionMap);
         String signPositionMapStr = JSON.toJSONString(signPositionlistMap);
 
-        StringBuffer sb = new StringBuffer("");
+        StringBuffer sb = new StringBuffer();
         try {
             File file = new File(filePath);
             BufferedReader reader = new BufferedReader(new FileReader(file));
-            String tempString = null;
+            String tempString;
             while ((tempString = reader.readLine()) != null) {
                 sb.append(tempString);
             }
@@ -263,9 +271,9 @@ public class SignAContractUtils {
         Map<String, Object> contractMap = (Map) contract.getData();
         List<Map<String, String>> listMap = new ArrayList<>();
         Map<String, String> positionMap = new HashMap();
-        positionMap.put("x", "200");
-        positionMap.put("y", "200");
         positionMap.put("positionName", "用户");
+        positionMap.put("x", YiyunzhangConfig.getSignerSignPosX());
+        positionMap.put("y", YiyunzhangConfig.getSignerSignPosY());
         listMap.add(positionMap);
         String listMapStr = JSON.toJSONString(listMap);
 
@@ -280,9 +288,9 @@ public class SignAContractUtils {
         String serviceProviderParam = JSON.toJSONString(serviceProviderMap);
         List<Map<String, String>> serviceProviderListMap = new ArrayList<>();
         Map<String, String> serviceProviderPositionMap = new HashMap();
-        serviceProviderPositionMap.put("page", "1");
-        serviceProviderPositionMap.put("x", "200");
-        serviceProviderPositionMap.put("y", "200");
+        serviceProviderPositionMap.put("page", YiyunzhangConfig.getPlatformSignPosPage());
+        serviceProviderPositionMap.put("x", YiyunzhangConfig.getPlatformSignPosX());
+        serviceProviderPositionMap.put("y", YiyunzhangConfig.getPlatformSignPosY());
         serviceProviderPositionMap.put("signId", serviceProviderSealObject.get("signId").toString());
         serviceProviderListMap.add(serviceProviderPositionMap);
         String serviceProviderListMapStr = JSON.toJSONString(serviceProviderListMap);

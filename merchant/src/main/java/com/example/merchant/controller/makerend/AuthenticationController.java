@@ -1,6 +1,5 @@
 package com.example.merchant.controller.makerend;
 
-import com.example.common.contract.exception.DefineException;
 import com.example.common.enums.IdCardSide;
 import com.example.common.util.ReturnJson;
 import com.example.merchant.dto.makerend.IdCardInfoDTO;
@@ -68,7 +67,7 @@ public class AuthenticationController {
     @PostMapping("/senSignAContract")
     @ApiOperation(value = "发送签署加盟合同", notes = "发送签署加盟合同")
     @LoginRequired
-    public ReturnJson senSignAContract(@RequestAttribute(value = "userId") @ApiParam(hidden = true) String workerId) throws DefineException {
+    public ReturnJson senSignAContract(@RequestAttribute(value = "userId") @ApiParam(hidden = true) String workerId) throws Exception {
         return authenticationService.senSignAContract(workerId);
     }
 

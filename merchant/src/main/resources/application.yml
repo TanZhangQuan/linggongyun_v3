@@ -1,23 +1,31 @@
 spring:
   profiles:
-      active: '@activatedProperties@'
-
+    active: '@activatedProperties@'
   servlet:
     multipart:
       # 单个文件的最大值
-      max-file-size: 40MB
+      max-file-size: 50MB
       # 上传文件总的最大值
       max-request-size: 100MB
+  # JWT配置
+  jwt:
+    # 加密密钥(jwt和密码MD5加密共用)
+    secret-key: cf6f1bcea8c984dc699d2e554f9b2ba4
+    # 过期时间（单位：天）
+    expire: 7
+    # 请求头部
+    header: token
 
+# mybatis-plus配置
 mybatis-plus:
   configuration:
     map-underscore-to-camel-case: true
     auto-mapping-behavior: full
-    # sql 打印
-    #log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  # sql打印
+  # log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
   mapper-locations: classpath*:mapper/*Mapper.xml
   type-aliases-package: classpath*:com.example.mybatis.entity
-
+  # 全局配置
   global-config:
     # 逻辑删除配置
     db-config:
@@ -25,13 +33,3 @@ mybatis-plus:
       logic-not-delete-value: 1
       # 删除后
       logic-delete-value: 0
-
-#加密密钥
-PWD_KEY: "cf6f1bcea8c984dc699d2e554f9b2ba4"
-
-TOKEN: token
-
-JWT:
-  secret: "yixi"
-  expire: "7"
-  header: "linggongyun_v3"

@@ -1,7 +1,8 @@
 package com.example.merchant.config;
 
+import com.example.common.config.FileStorageConfig;
+import com.example.common.config.TemplateConfig;
 import com.example.merchant.interceptor.PaasLoginJWTInterceptor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -10,29 +11,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 
 @Configuration
 public class InterceptorConfig extends WebMvcConfigurerAdapter {
-    @Value("${PathImage_KEY}")
-    private String PathImage_KEY;
 
-    @Value("${PathExcel_KEY}")
-    private String PathExcel_KEY;
-
-    @Value("${PathVideo_KEY}")
-    private String PathVideo_KEY;
-
-    @Value("${TemplateFile.Path}")
-    private String templateFilePath;
-
-    @Value("${fileStaticAccesspathImage}")
-    private String fileStaticAccesspathImage;
-
-    @Value("${fileStaticAccesspathExcel}")
-    private String fileStaticAccesspathExcel;
-
-    @Value("${fileStaticAccesspathVideo}")
-    private String fileStaticAccesspathVideo;
-
-    @Value("${TemplateFile.StaticAccesspath}")
-    private String templateFileStaticAccesspath;
     @Bean
     public PaasLoginJWTInterceptor paasLoginJWTInterceptor() {
         return new PaasLoginJWTInterceptor();
@@ -63,22 +42,32 @@ public class InterceptorConfig extends WebMvcConfigurerAdapter {
     //添加此方法解决上述问题
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/**").addResourceLocations(
-                "classpath:/static/");
-        registry.addResourceHandler("swagger-ui.html").addResourceLocations(
-                "classpath:/META-INF/resources/");
-        registry.addResourceHandler("doc.html").addResourceLocations(
-                "classpath:/META-INF/resources/");
-        registry.addResourceHandler("/webjars/**").addResourceLocations(
-                "classpath:/META-INF/resources/webjars/");
-        registry.addResourceHandler(fileStaticAccesspathImage+"/**")
-                .addResourceLocations("file:" + PathImage_KEY);
-        registry.addResourceHandler(fileStaticAccesspathExcel+"/**")
-                .addResourceLocations("file:" + PathExcel_KEY);
-        registry.addResourceHandler(fileStaticAccesspathVideo+"/**")
-                .addResourceLocations("file:" + PathVideo_KEY);
-        registry.addResourceHandler(templateFileStaticAccesspath+"/**")
-                .addResourceLocations("file:" + templateFilePath);
+
+        registry.addResourceHandler("/**")
+                .addResourceLocations("classpath:/static/");
+
+        registry.addResourceHandler("swagger-ui.html")
+                .addResourceLocations("classpath:/META-INF/resources/");
+
+        registry.addResourceHandler("doc.html")
+                .addResourceLocations("classpath:/META-INF/resources/");
+
+        registry.addResourceHandler("/webjars/**")
+                .addResourceLocations("classpath:/META-INF/resources/webjars/");
+
+        registry.addResourceHandler(FileStorageConfig.getImageAccessPath() + "/**")
+                .addResourceLocations("file:" + FileStorageConfig.getImagePath());
+
+        registry.addResourceHandler(FileStorageConfig.getExcelAccessPath() + "/**")
+                .addResourceLocations("file:" + FileStorageConfig.getExcelPath());
+
+        registry.addResourceHandler(FileStorageConfig.getVideoAccessPath() + "/**")
+                .addResourceLocations("file:" + FileStorageConfig.getVideoPath());
+
+        registry.addResourceHandler(TemplateConfig.getAccessPath() + "/**")
+                .addResourceLocations("file:" + TemplateConfig.getPath());
+
         super.addResourceHandlers(registry);
+
     }
 }
