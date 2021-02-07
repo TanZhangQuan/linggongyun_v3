@@ -1,5 +1,6 @@
 package com.example.common.util;
 
+import com.example.common.config.KuaidiniaoConfig;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -41,12 +42,6 @@ public class KdniaoTrackQueryAPI {
             'o', 'p', 'q', 'r', 's', 't', 'u', 'v',
             'w', 'x', 'y', 'z', '0', '1', '2', '3',
             '4', '5', '6', '7', '8', '9', '+', '/'};
-    //电商ID
-    private String EBusinessID = "1613650";
-    //电商加密私钥，快递鸟提供，注意保管，不要泄漏
-    private String AppKey = "a24f5b98-9d7a-4ef9-8672-8cdc3587fed1";
-    //请求url
-    private String ReqURL = "http://api.kdniao.com/Ebusiness/EbusinessOrderHandle.aspx";
 
     //DEMO
     public static void main(String[] args) {
@@ -201,13 +196,13 @@ public class KdniaoTrackQueryAPI {
 
         Map<String, String> params = new HashMap<String, String>();
         params.put("RequestData", urlEncoder(requestData, "UTF-8"));
-        params.put("EBusinessID", EBusinessID);
+        params.put("EBusinessID", KuaidiniaoConfig.getBusinessId());
         params.put("RequestType", "1002");
-        String dataSign = encrypt(requestData, AppKey, "UTF-8");
+        String dataSign = encrypt(requestData, KuaidiniaoConfig.getAppKey(), "UTF-8");
         params.put("DataSign", urlEncoder(dataSign, "UTF-8"));
         params.put("DataType", "2");
 
-        String result = sendPost(ReqURL, params);
+        String result = sendPost(KuaidiniaoConfig.getReqUrl(), params);
 
         //根据公司业务处理返回的信息......
 

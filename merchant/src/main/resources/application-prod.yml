@@ -114,6 +114,15 @@ spring:
     # 短信模板ID
     template-id: 624431
 
+  # 快递鸟配置
+  kuaidiniao:
+    # 请求url
+    req-url: http://api.kdniao.com/Ebusiness/EbusinessOrderHandle.aspx
+    # 电商ID
+    business-id: 1613650
+    # 电商加密私钥，快递鸟提供，注意保管，不要泄漏
+    app-key: a24f5b98-9d7a-4ef9-8672-8cdc3587fed1
+
   # 签约配置
   sign:
     # 第三方：eqianbao E签宝，yiyunzhang 易云章
