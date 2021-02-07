@@ -793,6 +793,8 @@ CREATE TABLE `tb_payment_inventory` (
   `package_status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '0总包，1众包',
   `trade_no` varchar(50) NOT NULL COMMENT '订单号',
   `trade_fail_reason` varchar(100) NOT NULL DEFAULT '' COMMENT '交易失败原因',
+    `agent_difference` decimal(15,2) DEFAULT '0.00' COMMENT '代理商差额佣金',
+  `salesman_difference` decimal(15,2) DEFAULT '0.00' COMMENT '业务员差额佣金'
   `create_date` datetime NOT NULL COMMENT '创建时间',
   `update_date` datetime NOT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`),
@@ -837,6 +839,8 @@ CREATE TABLE `tb_payment_order` (
   `trade_no` varchar(50) NOT NULL COMMENT '订单号',
   `reasons_for_rejection` varchar(100) NOT NULL DEFAULT '' COMMENT '驳回理由',
   `trade_fail_reason` varchar(100) NOT NULL DEFAULT '' COMMENT '交易失败原因',
+    `total_agent_difference` decimal(15,2) DEFAULT '0.00' COMMENT '代理商差额佣金',
+  `total_salesman_difference` decimal(15,2) DEFAULT '0.00' COMMENT '业务员差额佣金',
   `create_date` datetime NOT NULL COMMENT '创建时间',
   `update_date` datetime NOT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`),
@@ -878,6 +882,8 @@ CREATE TABLE `tb_payment_order_many` (
   `trade_no` varchar(50) NOT NULL COMMENT '订单号',
   `reasons_for_rejection` varchar(100) NOT NULL DEFAULT '' COMMENT '驳回理由',
   `trade_fail_reason` varchar(100) NOT NULL DEFAULT '' COMMENT '交易失败原因',
+    `total_agent_difference` decimal(15,2) DEFAULT '0.00' COMMENT '代理商差额佣金',
+  `total_salesman_difference` decimal(15,2) DEFAULT '0.00' COMMENT '业务员差额佣金',
   `create_date` datetime NOT NULL COMMENT '创建时间',
   `update_date` datetime NOT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`),
@@ -1155,6 +1161,71 @@ CREATE TABLE `tb_worker_task` (
   `arrange_person` varchar(100) NOT NULL DEFAULT '' COMMENT '派单人员',
   `create_date` datetime NOT NULL COMMENT '创建时间',
   `update_date` datetime NOT NULL COMMENT '修改时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+//新加的表
+DROP TABLE IF EXISTS `tb_achievement_statistics`;
+CREATE TABLE `tb_achievement_statistics` (
+  `id` varchar(36) NOT NULL,
+  `object_id` varchar(36) NOT NULL COMMENT '对象id,区分代理商和业务员',
+  `object_type` int(11) NOT NULL DEFAULT '0' COMMENT '0代表业务，1代表代理商',
+  `merchant_count` int(11) NOT NULL DEFAULT '0' COMMENT '直属商户数',
+  `merchant_business` decimal(15,2) NOT NULL DEFAULT '0.00' COMMENT '直属商户流水',
+  `agent_count` decimal(15,2) NOT NULL DEFAULT '0.00' COMMENT '下级代理数',
+  `agent_business` decimal(15,2) NOT NULL DEFAULT '0.00' COMMENT '下级代理流水',
+  `merchant_commission` decimal(15,2) DEFAULT '0.00' COMMENT '直属商户流水提成',
+  `agent_commission` decimal(15,2) DEFAULT '0.00' COMMENT '代理商流水提成',
+  `merchant_difference` decimal(15,2) DEFAULT '0.00' COMMENT '商户差价提成',
+  `agent_difference` decimal(15,2) DEFAULT '0.00' COMMENT '代理商差价提成',
+  `total_commission` decimal(15,2) DEFAULT '0.00' COMMENT '总提成',
+  `agent_rate` decimal(15,2) DEFAULT '0.00' COMMENT '代理商流水提成汇率',
+  `merchant_rate` decimal(15,2) DEFAULT '0.00' COMMENT '直属商户流水提成汇率',
+  `settlement_state` int(1) NOT NULL DEFAULT '0' COMMENT '结算状态 0 未结算，1已结算',
+  `create_date` datetime DEFAULT NULL COMMENT '创建时间',
+  `update_date` datetime DEFAULT NULL COMMENT '修改时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `tb_agent_ladder_service`;
+CREATE TABLE `tb_agent_ladder_service` (
+  `id` varchar(50) NOT NULL COMMENT '主键',
+  `agent_tax_id` varchar(36) DEFAULT NULL COMMENT '给代理商的服务商ID',
+  `start_money` decimal(18,2) DEFAULT NULL COMMENT '开始的金额',
+  `end_money` decimal(18,2) DEFAULT NULL COMMENT '结束的金额',
+  `service_charge` decimal(18,2) DEFAULT NULL COMMENT '服务费（如7.5，不需把百分数换算成小数）',
+  `create_date` datetime DEFAULT NULL,
+  `update_date` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='服务商给代理商的梯度价';
+
+DROP TABLE IF EXISTS `tb_agent_tax`;
+CREATE TABLE `tb_agent_tax` (
+  `id` varchar(50) NOT NULL COMMENT '主键',
+  `tax_id` varchar(36) NOT NULL,
+  `agent_id` varchar(36) NOT NULL,
+  `charge_status` int(2) DEFAULT '0' COMMENT '费用类型0为一口价，1为梯度价',
+  `service_charge` decimal(18,2) DEFAULT NULL COMMENT '一口价的服务费(如果为梯度价这为空)',
+  `package_status` int(2) NOT NULL DEFAULT '0' COMMENT '合作类型',
+  `contract` varchar(250) DEFAULT NULL COMMENT '合作合同地址',
+  `create_date` datetime DEFAULT NULL,
+  `update_date` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `UK_icr1qhlwx3lsd0terqn7w65k1` (`tax_id`,`agent_id`,`package_status`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='代理商和服务商的合作信息表';
+
+DROP TABLE IF EXISTS `tb_commission_proportion`;
+CREATE TABLE `tb_commission_proportion` (
+  `id` varchar(36) NOT NULL,
+  `object_id` varchar(36) NOT NULL COMMENT '对象id,区分代理商和业务员',
+  `object_type` int(11) NOT NULL DEFAULT '0' COMMENT '0代表业务，1代表代理商',
+  `customer_type` int(11) NOT NULL DEFAULT '0' COMMENT '0代表直客，1代表代理商的',
+  `start_money` decimal(15,2) NOT NULL COMMENT '区间开始金额',
+  `end_money` decimal(15,2) NOT NULL COMMENT '区间结束金额',
+  `commission_rate` decimal(15,2) NOT NULL COMMENT '纳税率',
+  `create_date` datetime DEFAULT NULL COMMENT '创建时间',
+  `update_date` datetime DEFAULT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
