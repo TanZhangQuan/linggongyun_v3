@@ -133,11 +133,11 @@ spring:
     # 平台自动盖章签署区参数设置
     platform-sign:
       # 页码信息
-      pos-page: 1
+      pos-page: 3
       # x坐标
-      posX: 10f
+      posX: 200f
       # y坐标
-      posY: 100f
+      posY: 700f
 
     # 签署方自动盖章签署区参数设置
     signer-auto-sign:
@@ -151,11 +151,11 @@ spring:
     # 签署方手动盖章签署区参数设置
     signer-hand-sign:
       # 页码信息
-      pos-page: 8
+      pos-page: 3
       # x坐标
-      posX: 100f
+      posX: 480f
       # y坐标
-      posY: 180f
+      posY: 700f
 
     # 异步回调URL
     async-notify-url: https://xmapi.tianbanggroup.com/makerend/authentication/callBackSignAContract
@@ -196,7 +196,7 @@ spring:
       # 页码信息
       pos-page: 1
       # x坐标
-      posX: 150
+      posX: 200
       # y坐标
       posY: 200
 

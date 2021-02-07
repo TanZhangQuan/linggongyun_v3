@@ -13,7 +13,7 @@ spring:
     secret-key: cf6f1bcea8c984dc699d2e554f9b2ba4
     # 过期时间（单位：天）
     expire: 7
-    # 请求头部（暂没用到）
+    # 请求头部
     header: token
 
 # mybatis-plus配置
