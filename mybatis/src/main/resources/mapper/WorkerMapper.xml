@@ -302,44 +302,116 @@
         from tb_payment_inventory a
         INNER JOIN tb_worker w ON w.id=a.worker_id
         left join tb_invoice_payment_inventory b on a.id = b.payment_inventory_id
-        left join tb_payment_order c on a.payment_order_id = c.id and c.payment_order_status &gt;= 6
-        left join tb_payment_order_many d on a.payment_order_id = d.id and d.payment_order_status &gt;= 3
+        left join tb_payment_order c on a.payment_order_id = c.id and c.payment_order_status = 6
+        left join tb_payment_order_many d on a.payment_order_id = d.id and d.payment_order_status = 3
     </sql>
 
     <!--查询监管部门所监管的创客支付明细-->
     <select id="regulatorWorkerPaymentList" parameterType="list" resultMap="worekerPaymentListPo">
-        <include refid="WorkerPaymentSql"/>
-        where a.worker_id = #{workerId}
-        and a.payment_order_id in
-        <foreach collection="paymentOrderIds" index="index" item="item" open="(" separator="," close=")">
-            #{item}
-        </foreach>
-        ORDER BY payment_date DESC
+        SELECT
+            po.payment_order_id,
+            po.tax_id,
+            po.company_id,
+            po.tax_name,
+            po.company_s_name as merchant_name,
+            pi.worker_name,
+            pi.real_money,
+            ifnull(po.is_not_invoice, 0) as invoice_status,
+            pi.package_status,
+            pi.update_date as payment_date
+        FROM
+            (
+                SELECT
+                    id AS payment_order_id,
+                    company_id AS company_id,
+                    tax_id AS tax_id,
+                    platform_service_provider AS tax_name,
+                    company_s_name AS company_s_name,
+                    is_not_invoice AS is_not_invoice
+                FROM
+                    tb_payment_order
+                WHERE
+                    payment_order_status = 6
+                UNION
+                SELECT
+                    id AS payment_order_id,
+                    company_id AS company_id,
+                    tax_id AS tax_id,
+                    platform_service_provider AS tax_name,
+                    company_s_name AS company_s_name,
+                    is_not_invoice AS is_not_invoice
+                FROM
+                    tb_payment_order_many
+                WHERE
+                    payment_order_status = 3
+            ) AS po
+        INNER JOIN tb_payment_inventory pi ON pi.payment_order_id = po.payment_order_id
+        INNER JOIN tb_regulator_tax rt ON po.tax_id=rt.tax_id
+        INNER JOIN tb_regulator r ON r.id = rt.regulator_id
+        WHERE
+            pi.worker_id = #{param2}
+        AND r.id= #{param3}
+        ORDER BY pi.update_date DESC
     </select>
 
     <!--查询监管部门所监管的创客支付明细-->
     <select id="selectRegulatorWorkerPaymentInfo" parameterType="list" resultMap="worekerPaymentListPo">
-        <include refid="WorkerPaymentSql"/>
-        <where>
-            a.worker_id = #{workerId}
-            and a.payment_order_id in
-            <foreach collection="paymentOrderIds" index="index" item="item" open="(" separator="," close=")">
-                #{item}
-            </foreach>
-            <if test="taxName != null and taxName != ''">
-                AND if(a.package_status=0,c.platform_service_provider like CONCAT('%',#{taxName},'%'),d.platform_service_provider like CONCAT('%',#{taxName},'%'))
-            </if>
-            <if test="companyName != null and companyName != ''">
-                AND if(a.package_status=0,c.company_s_name like CONCAT('%',#{companyName},'%'),d.company_s_name like CONCAT('%',#{companyName},'%'))
-            </if>
-            <if test="startDate != null and startDate != ''">
-                AND if(a.package_status=0,date(c.payment_date) &gt;= #{startDate},date(d.payment_date) &gt;= #{startDate})
-            </if>
-            <if test="endDate != null and endDate != ''">
-                AND if(a.package_status=0,date(c.payment_date) &lt;= #{endDate},date(d.payment_date) &lt;= #{startDate})
-            </if>
-        </where>
-        ORDER BY payment_date DESC
+        SELECT
+            po.payment_order_id,
+            po.tax_id,
+            po.company_id,
+            po.tax_name,
+            po.company_s_name as merchant_name,
+            pi.worker_name,
+            pi.real_money,
+            ifnull(po.is_not_invoice, 0) as invoice_status,
+            pi.package_status,
+            pi.update_date as payment_date
+        FROM
+            (
+                SELECT
+                    id AS payment_order_id,
+                    company_id AS company_id,
+                    tax_id AS tax_id,
+                    platform_service_provider AS tax_name,
+                    company_s_name AS company_s_name,
+                    is_not_invoice AS is_not_invoice
+                FROM
+                    tb_payment_order
+                WHERE
+                    payment_order_status = 6
+                UNION
+                SELECT
+                    id AS payment_order_id,
+                    company_id AS company_id,
+                    tax_id AS tax_id,
+                    platform_service_provider AS tax_name,
+                    company_s_name AS company_s_name,
+                    is_not_invoice AS is_not_invoice
+                FROM
+                    tb_payment_order_many
+                WHERE
+                    payment_order_status = 3
+            ) AS po
+        INNER JOIN tb_payment_inventory pi ON pi.payment_order_id = po.payment_order_id
+        INNER JOIN tb_regulator_tax rt ON po.tax_id=rt.tax_id
+        INNER JOIN tb_regulator r ON r.id = rt.regulator_id
+        WHERE
+            pi.worker_id = #{param3}
+        AND r.id= #{param2}
+        <if test="taxName != null and taxName != ''">
+            AND po.tax_name like CONCAT('%',#{taxName},'%')
+        </if>
+        <if test="companyName != null and companyName != ''">
+            AND po.company_s_name like CONCAT('%',#{companyName},'%')
+        </if>
+        <if test="startDate != null and startDate != ''">
+            AND pi.update_date &gt;= #{startDate}
+        </if>
+        <if test="endDate != null and endDate != ''">
+            AND pi.update_date &lt;= #{endDate}
+        </if>
+        ORDER BY pi.update_date DESC
     </select>
 
     <!--导出监管部门所监管的创客支付明细-->

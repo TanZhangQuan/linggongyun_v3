@@ -41,9 +41,9 @@ public interface WorkerDao extends BaseMapper<Worker> {
 
     IPage<WorekerPaymentListPo> workerPaymentList(Page page, @Param("workerId") String workerId);
 
-    IPage<WorekerPaymentListPo> regulatorWorkerPaymentList(Page page, @Param("workerId") String workerId, @Param("paymentOrderIds") List<String> paymentOrderIds);
+    IPage<WorekerPaymentListPo> regulatorWorkerPaymentList(Page page, @Param("workerId") String workerId, String regulatorId);
 
-    IPage<WorekerPaymentListPo> selectRegulatorWorkerPaymentInfo(Page page, @Param("paymentOrderIds") List<String> paymentOrderIds, @Param("workerId") String workerId,
+    IPage<WorekerPaymentListPo> selectRegulatorWorkerPaymentInfo(Page page, String regulatorId, @Param("workerId") String workerId,
                                                                  @Param("companyName") String companyName, @Param("taxName") String taxName,
                                                                  @Param("startDate") String startDate, @Param("endDate") String endDate);
 
