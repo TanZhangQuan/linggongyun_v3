@@ -172,13 +172,13 @@ spring:
   # 易云章配置
   yiyunzhang:
     # 请求URL
-    host: https://api.ecloudsign.cn/
+    host: https://testapi.ecloudsign.com/
     # 秘钥
-    secret-key: 1a00ff1ef81f5eddf0ede508fdc9183e
+    secret-key: 7b95c6068a2d34c02b3a1ef251dc282f
     # APPID
-    app-id: yyzzs1bc12j8j06w7nf0
+    app-id: yyz9a9ek64096uk799
     # AES密钥
-    aes-secret-key: csqd0b38i463jbq7
+    aes-secret-key: YF}+efcaj{+oESb9
 
     # 印章配置
     seal:

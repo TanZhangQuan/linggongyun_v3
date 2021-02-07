@@ -119,9 +119,9 @@ spring:
     # 请求url
     req-url: http://api.kdniao.com/Ebusiness/EbusinessOrderHandle.aspx
     # 电商ID
-    business-id: 1613650
+    business-id: 1692356
     # 电商加密私钥，快递鸟提供，注意保管，不要泄漏
-    app-key: a24f5b98-9d7a-4ef9-8672-8cdc3587fed1
+    app-key: 44b6934b-9e4f-4f08-89ea-235c829b81b7
 
   # 签约配置
   sign:
@@ -133,20 +133,20 @@ spring:
     # 请求URL
     host: https://openapi.esign.cn
     # 应用ID
-    application-id: 5111640625
+    application-id: 5111640229
     # 应用密钥
-    application-secret-key: 2cb035c1497a8a32d2e68addc00dba97
+    application-secret-key: 56d17c45b57dd43c957bc26a26d765fe
     # 印章ID
-    seal-id: 77ec11bb-b78c-4077-966b-4fe58a5e6b54
+    seal-id: 15cf4935-f720-4400-b22c-a633f35029e0
 
     # 平台自动盖章签署区参数设置
     platform-sign:
       # 页码信息
-      pos-page: 1
+      pos-page: 3
       # x坐标
-      posX: 10f
+      posX: 200f
       # y坐标
-      posY: 100f
+      posY: 700f
 
     # 签署方自动盖章签署区参数设置
     signer-auto-sign:
@@ -160,11 +160,11 @@ spring:
     # 签署方手动盖章签署区参数设置
     signer-hand-sign:
       # 页码信息
-      pos-page: 8
+      pos-page: 3
       # x坐标
-      posX: 100f
+      posX: 480f
       # y坐标
-      posY: 180f
+      posY: 700f
 
     # 异步回调URL
     async-notify-url: https://api.1gpai.com/makerend/authentication/callBackSignAContract
@@ -172,13 +172,13 @@ spring:
   # 易云章配置
   yiyunzhang:
     # 请求URL
-    host: https://api.ecloudsign.cn/
+    host: https://testapi.ecloudsign.com/
     # 秘钥
-    secret-key: 1a00ff1ef81f5eddf0ede508fdc9183e
+    secret-key: 7b95c6068a2d34c02b3a1ef251dc282f
     # APPID
-    app-id: yyzzs1bc12j8j06w7nf0
+    app-id: yyz9a9ek64096uk799
     # AES密钥
-    aes-secret-key: csqd0b38i463jbq7
+    aes-secret-key: YF}+efcaj{+oESb9
 
     # 印章配置
     seal:
