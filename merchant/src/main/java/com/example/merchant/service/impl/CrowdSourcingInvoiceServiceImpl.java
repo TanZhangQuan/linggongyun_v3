@@ -102,12 +102,8 @@ public class CrowdSourcingInvoiceServiceImpl extends ServiceImpl<CrowdSourcingIn
 
     @Override
     public ReturnJson getInvoiceById(String csiId) {
-        ReturnJson returnJson = new ReturnJson("操作失败", 300);
         InvoiceInformationVO vo = crowdSourcingInvoiceDao.getInvoiceById(csiId);
-        if (vo != null) {
-            returnJson = new ReturnJson("操作成功", vo, 200);
-        }
-        return returnJson;
+        return new ReturnJson("操作成功", vo, 200);
     }
 
     @Override
@@ -120,12 +116,8 @@ public class CrowdSourcingInvoiceServiceImpl extends ServiceImpl<CrowdSourcingIn
 
     @Override
     public ReturnJson getPaymentOrderMany(String payId) {
-        ReturnJson returnJson = new ReturnJson("操作失败", 300);
         PaymentOrderManyVO vo = crowdSourcingInvoiceDao.getPaymentOrderManyPass(payId);
-        if (vo != null) {
-            returnJson = new ReturnJson("操作成功", vo, 200);
-        }
-        return returnJson;
+        return new ReturnJson("操作成功", vo, 200);
     }
 
     @Override
@@ -168,18 +160,13 @@ public class CrowdSourcingInvoiceServiceImpl extends ServiceImpl<CrowdSourcingIn
      */
     @Override
     public ReturnJson getBuyer(String id) {
-        ReturnJson returnJson = new ReturnJson("操作失败", 300);
         BuyerVO buyerVo = crowdSourcingInvoiceDao.getBuyer(id);
-        if (buyerVo != null) {
-            returnJson = new ReturnJson("操作成功", buyerVo, 200);
-        }
-        return returnJson;
+        return new ReturnJson("操作成功", buyerVo, 200);
     }
 
     @Override
     public ReturnJson getApplicationInfo(String applicationId) {
         CrowdSourcingApplication crowdSourcingApplication = crowdSourcingApplicationDao.selectById(applicationId);
-
         return ReturnJson.success("操作成功", crowdSourcingApplication);
     }
 
