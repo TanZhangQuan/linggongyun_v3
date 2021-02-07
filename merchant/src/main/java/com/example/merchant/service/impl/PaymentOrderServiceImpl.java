@@ -29,7 +29,6 @@ import com.example.redis.dao.RedisDao;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -101,17 +100,17 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
     private PaymentHistoryService paymentHistoryService;
 
 
-    @Resource
-    private TaxPackageService taxPackageService;
+//    @Resource
+//    private TaxPackageService taxPackageService;
 
-    @Resource
-    private AgentTaxService agentTaxService;
+//    @Resource
+//    private AgentTaxService agentTaxService;
 
-    @Resource
-    private InvoiceLadderPriceDao invoiceLadderPriceDao;
+//    @Resource
+//    private InvoiceLadderPriceDao invoiceLadderPriceDao;
 
-    @Resource
-    private AgentLadderServiceDao agentLadderServiceDao;
+//    @Resource
+//    private AgentLadderServiceDao agentLadderServiceDao;
 
     @Resource
     private CompanyWorkerService companyWorkerService;
@@ -182,7 +181,7 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
             Merchant merchant = merchantDao.selectById(merchantId);
             paymentOrder.setCompanyId(merchant.getCompanyId());
             paymentOrder.setCompanySName(merchant.getCompanyName());
-            companyInfo = companyInfoService.getById(merchant.getCompanyId());
+//            companyInfo = companyInfoService.getById(merchant.getCompanyId());
         }
         if (companyInfo != null) {
             paymentOrder.setCompanyId(companyInfo.getId());
@@ -221,15 +220,15 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
                 .eq("package_status", 0));
         Integer taxStatus = paymentOrder.getTaxStatus();
 
-        TaxPackage taxPackage = taxPackageService.queryTaxPackage(tax.getId(), 0);
+//        TaxPackage taxPackage = taxPackageService.queryTaxPackage(tax.getId(), 0);
 
-        BigDecimal totalAgentDifference = BigDecimal.ZERO;
+//        BigDecimal totalAgentDifference = BigDecimal.ZERO;
 
-        BigDecimal totalSalesmanDifference = BigDecimal.ZERO;
+//        BigDecimal totalSalesmanDifference = BigDecimal.ZERO;
 
         //判断服务费是一口价还是梯度价
         if (companyTax.getChargeStatus() == 0) {
-            compositeTax = companyTax.getServiceCharge().divide(BigDecimal.valueOf(100),4);
+            compositeTax = companyTax.getServiceCharge().divide(BigDecimal.valueOf(100), 4);
             paymentOrder.setCompositeTax(compositeTax.multiply(BigDecimal.valueOf(100)));
             for (PaymentInventory paymentInventory : paymentInventories) {
                 BigDecimal realMoney = paymentInventory.getRealMoney();
@@ -250,26 +249,26 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
                 countMoney = countMoney.add(paymentInventory.getMerchantPaymentMoney());
                 countWorkerMoney = countWorkerMoney.add(paymentInventory.getRealMoney());
                 countServiceMoney = countServiceMoney.add(paymentInventory.getServiceMoney());
-                if(StringUtils.isBlank(companyInfo.getAgentId())){
-                    BigDecimal salesmanDifferenceTax = compositeTax.subtract(taxPackage.getTaxPrice().divide(new BigDecimal("100"),4));
-                    BigDecimal salesmanDifference = salesmanDifferenceTax.multiply(paymentInventory.getTaskMoney());
-                    paymentInventory.setSalesmanDifference(salesmanDifference);
-                    totalSalesmanDifference = totalSalesmanDifference.add(salesmanDifference);
-                }else{
-                    AgentTax agentTax = agentTaxService.queryAgentTax(tax.getId(), companyInfo.getAgentId());
-                    //代理商的低价
-                    BigDecimal agentServiceCharge = agentTax.getServiceCharge().divide(new BigDecimal("100"),4);
-                    //业务员的低价
-                    BigDecimal salesmanDifferenceTax = taxPackage.getTaxPrice().divide(new BigDecimal("100"), 4);
-                    //代理商的差价提成
-                    BigDecimal agentDifference = (compositeTax.subtract(agentServiceCharge)).multiply(paymentInventory.getTaskMoney());
-                    //业务员的差额提成
-                    BigDecimal salesmanDifference = (agentServiceCharge.subtract(salesmanDifferenceTax)).multiply(paymentInventory.getTaskMoney());
-                    paymentInventory.setSalesmanDifference(salesmanDifference);
-                    paymentInventory.setAgentDifference(agentDifference);
-                    totalSalesmanDifference = totalSalesmanDifference.add(salesmanDifference);
-                    totalAgentDifference = totalAgentDifference.add(agentDifference);
-                }
+//                if (StringUtils.isBlank(companyInfo.getAgentId())) {
+//                    BigDecimal salesmanDifferenceTax = compositeTax.subtract(taxPackage.getTaxPrice().divide(new BigDecimal("100"), 4));
+//                    BigDecimal salesmanDifference = salesmanDifferenceTax.multiply(paymentInventory.getTaskMoney());
+//                    paymentInventory.setSalesmanDifference(salesmanDifference);
+//                    totalSalesmanDifference = totalSalesmanDifference.add(salesmanDifference);
+//                } else {
+//                    AgentTax agentTax = agentTaxService.queryAgentTax(tax.getId(), companyInfo.getAgentId());
+//                    //代理商的低价
+//                    BigDecimal agentServiceCharge = agentTax.getServiceCharge().divide(new BigDecimal("100"), 4);
+//                    //业务员的低价
+//                    BigDecimal salesmanDifferenceTax = taxPackage.getTaxPrice().divide(new BigDecimal("100"), 4);
+//                    //代理商的差价提成
+//                    BigDecimal agentDifference = (compositeTax.subtract(agentServiceCharge)).multiply(paymentInventory.getTaskMoney());
+//                    //业务员的差额提成
+//                    BigDecimal salesmanDifference = (agentServiceCharge.subtract(salesmanDifferenceTax)).multiply(paymentInventory.getTaskMoney());
+//                    paymentInventory.setSalesmanDifference(salesmanDifference);
+//                    paymentInventory.setAgentDifference(agentDifference);
+//                    totalSalesmanDifference = totalSalesmanDifference.add(salesmanDifference);
+//                    totalAgentDifference = totalAgentDifference.add(agentDifference);
+//                }
             }
 
         } else {
@@ -300,45 +299,45 @@ public class PaymentOrderServiceImpl extends ServiceImpl<PaymentOrderDao, Paymen
                 countWorkerMoney = countWorkerMoney.add(paymentInventory.getRealMoney());
                 countServiceMoney = countServiceMoney.add(paymentInventory.getServiceMoney());
 
-                if(StringUtils.isBlank(companyInfo.getAgentId())){
-                    List<InvoiceLadderPrice> invoiceLadderPrices = invoiceLadderPriceDao.selectList(
-                            new QueryWrapper<InvoiceLadderPrice>().lambda()
-                                    .eq(InvoiceLadderPrice::getTaxPackageId, taxPackage.getId())
-                                    .orderByAsc(InvoiceLadderPrice::getStartMoney));
-                    BigDecimal invoiceLadderPrice = this.getInvoiceLadderPrice(invoiceLadderPrices, realMoney);
-                    BigDecimal salesmanDifferenceTax = compositeTax.subtract(invoiceLadderPrice);
-                    BigDecimal salesmanDifference = salesmanDifferenceTax.multiply(paymentInventory.getTaskMoney());
-                    paymentInventory.setSalesmanDifference(salesmanDifference);
-                    totalSalesmanDifference = totalSalesmanDifference.add(salesmanDifference);
-                }else{
-                    List<InvoiceLadderPrice> invoiceLadderPrices = invoiceLadderPriceDao.selectList(
-                            new QueryWrapper<InvoiceLadderPrice>().lambda()
-                                    .eq(InvoiceLadderPrice::getTaxPackageId, taxPackage.getId())
-                                    .orderByAsc(InvoiceLadderPrice::getStartMoney));
-                    BigDecimal invoiceLadderPrice = this.getInvoiceLadderPrice(invoiceLadderPrices, realMoney);
-                    AgentTax agentTax = agentTaxService.queryAgentTax(tax.getId(), companyInfo.getAgentId());
-
-                    List<AgentLadderService> agentLadderServices = agentLadderServiceDao.selectList(
-                            new QueryWrapper<AgentLadderService>().lambda()
-                                    .eq(AgentLadderService::getAgentTaxId, agentTax.getId())
-                                    .orderByAsc(AgentLadderService::getStartMoney));
-                    BigDecimal agentLadderPrice = this.getAgentLadderService(agentLadderServices, realMoney);
-                    BigDecimal salesmanDifference = agentLadderPrice.subtract(invoiceLadderPrice).multiply(realMoney);
-                    BigDecimal agentDifference = compositeTax.subtract(agentLadderPrice).multiply(realMoney);
-                    paymentInventory.setSalesmanDifference(salesmanDifference);
-                    paymentInventory.setAgentDifference(agentDifference);
-                    totalSalesmanDifference = totalSalesmanDifference.add(salesmanDifference);
-                    totalAgentDifference = totalAgentDifference.add(agentDifference);
-                }
+//                if (StringUtils.isBlank(companyInfo.getAgentId())) {
+//                    List<InvoiceLadderPrice> invoiceLadderPrices = invoiceLadderPriceDao.selectList(
+//                            new QueryWrapper<InvoiceLadderPrice>().lambda()
+//                                    .eq(InvoiceLadderPrice::getTaxPackageId, taxPackage.getId())
+//                                    .orderByAsc(InvoiceLadderPrice::getStartMoney));
+//                    BigDecimal invoiceLadderPrice = this.getInvoiceLadderPrice(invoiceLadderPrices, realMoney);
+//                    BigDecimal salesmanDifferenceTax = compositeTax.subtract(invoiceLadderPrice);
+//                    BigDecimal salesmanDifference = salesmanDifferenceTax.multiply(paymentInventory.getTaskMoney());
+//                    paymentInventory.setSalesmanDifference(salesmanDifference);
+//                    totalSalesmanDifference = totalSalesmanDifference.add(salesmanDifference);
+//                } else {
+//                    List<InvoiceLadderPrice> invoiceLadderPrices = invoiceLadderPriceDao.selectList(
+//                            new QueryWrapper<InvoiceLadderPrice>().lambda()
+//                                    .eq(InvoiceLadderPrice::getTaxPackageId, taxPackage.getId())
+//                                    .orderByAsc(InvoiceLadderPrice::getStartMoney));
+//                    BigDecimal invoiceLadderPrice = this.getInvoiceLadderPrice(invoiceLadderPrices, realMoney);
+//                    AgentTax agentTax = agentTaxService.queryAgentTax(tax.getId(), companyInfo.getAgentId());
+//
+//                    List<AgentLadderService> agentLadderServices = agentLadderServiceDao.selectList(
+//                            new QueryWrapper<AgentLadderService>().lambda()
+//                                    .eq(AgentLadderService::getAgentTaxId, agentTax.getId())
+//                                    .orderByAsc(AgentLadderService::getStartMoney));
+//                    BigDecimal agentLadderPrice = this.getAgentLadderService(agentLadderServices, realMoney);
+//                    BigDecimal salesmanDifference = agentLadderPrice.subtract(invoiceLadderPrice).multiply(realMoney);
+//                    BigDecimal agentDifference = compositeTax.subtract(agentLadderPrice).multiply(realMoney);
+//                    paymentInventory.setSalesmanDifference(salesmanDifference);
+//                    paymentInventory.setAgentDifference(agentDifference);
+//                    totalSalesmanDifference = totalSalesmanDifference.add(salesmanDifference);
+//                    totalAgentDifference = totalAgentDifference.add(agentDifference);
+//                }
             }
             //算平均税率
-            paymentOrder.setCompositeTax(compositeTaxCount.multiply(new BigDecimal(100).divide(new BigDecimal(paymentInventories.size()),2)));
+            paymentOrder.setCompositeTax(compositeTaxCount.multiply(new BigDecimal(100).divide(new BigDecimal(paymentInventories.size()), 2)));
         }
         paymentOrder.setRealMoney(countMoney);
         paymentOrder.setServiceMoney(countServiceMoney);
         paymentOrder.setWorkerMoney(countWorkerMoney);
-        paymentOrder.setTotalAgentDifference(totalAgentDifference);
-        paymentOrder.setTotalSalesmanDifference(totalSalesmanDifference);
+//        paymentOrder.setTotalAgentDifference(totalAgentDifference);
+//        paymentOrder.setTotalSalesmanDifference(totalSalesmanDifference);
         //生成总包支付订单
         if (paymentOrder.getPaymentOrderStatus() == 5) {
             paymentOrder.setPaymentOrderStatus(0);
