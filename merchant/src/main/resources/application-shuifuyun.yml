@@ -95,9 +95,9 @@ spring:
   # 微信配置
   wechat:
     # APPID
-    app-id: wx129052aa326f19b5
+    app-id: wx560733fbb99f9ddb
     # 密钥
-    secret-key: 794ae300c24efcc92261c2aa719c3c87
+    secret-key: 8b25afe9ca20773511066594f4acc27f
 
   # 云通讯短信配置
   yuntongxun:
@@ -106,29 +106,29 @@ spring:
     # 初始化服务器端口
     server-port: 8883
     # 主账户ID
-    account-sid: 8a216da86efdfee1016efe18bcf40022
+    account-sid: 8aaf0708773733a801774c13ba400a9b
     # 账户授权令牌
-    auth-token: 9f96cf25bba547f683c4e8f7566815ab
+    auth-token: e8b3c22323dd41e79fcfed628e6a0c20
     # 应用APPID
-    app-id: 8aaf07086efded7c016efe28ebf30090
+    app-id: 8aaf0708773733a801774c13bb170aa2
     # 短信模板ID
     template-id: 491739
 
   # 签约配置
   sign:
     # 第三方：eqianbao E签宝，yiyunzhang 易云章
-    party-type: eqianbao
+    party-type: yiyunzhang
 
   # E签宝配置
   eqianbao:
     # 请求URL
-    host: https://openapi.esign.cn
+    host: https://smlopenapi.esign.cn
     # 应用ID
-    application-id: 5111640625
+    application-id: 4438766163
     # 应用密钥
-    application-secret-key: 2cb035c1497a8a32d2e68addc00dba97
+    application-secret-key: 86d20a7f49bc3c4c20bae23d369d8853
     # 印章ID
-    seal-id: 77ec11bb-b78c-4077-966b-4fe58a5e6b54
+    seal-id:
 
     # 平台自动盖章签署区参数设置
     platform-sign:
