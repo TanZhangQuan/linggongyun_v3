@@ -364,7 +364,7 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
         CountSingleRegulatorWorkerVO countSingleRegulatorWorkerVO = new CountSingleRegulatorWorkerVO();
         BeanUtils.copyProperties(regulatorWorkerPO, countSingleRegulatorWorkerVO);
         Page<WorekerPaymentListPo> workerPaymentListPoPage = new Page<>(1, 10);
-        IPage<WorekerPaymentListPo> workerPaymentListPoIPage = workerDao.regulatorWorkerPaymentList(workerPaymentListPoPage, workerId, paymentOrderIds);
+        IPage<WorekerPaymentListPo> workerPaymentListPoIPage = workerDao.regulatorWorkerPaymentList(workerPaymentListPoPage, workerId, regulatorId);
         CountRegulatorWorkerInfoVO countRegulatorWorkerInfoVO = new CountRegulatorWorkerInfoVO();
         countRegulatorWorkerInfoVO.setCountSingleRegulatorWorkerVO(countSingleRegulatorWorkerVO);
         countRegulatorWorkerInfoVO.setWorekerPaymentListPos(workerPaymentListPoIPage.getRecords());
@@ -384,7 +384,7 @@ public class RegulatorServiceImpl extends ServiceImpl<RegulatorDao, Regulator> i
         }
         Page<WorekerPaymentListPo> paymentListPoPage = new Page<>(regulatorWorkerPaymentDto.getPageNo(), regulatorWorkerPaymentDto.getPageSize());
         IPage<WorekerPaymentListPo> workerPaymentListPoIPage = workerDao.selectRegulatorWorkerPaymentInfo(paymentListPoPage,
-                paymentOrderIds, regulatorWorkerPaymentDto.getWorkerId(), regulatorWorkerPaymentDto.getCompanyName(),
+                regulatorId, regulatorWorkerPaymentDto.getWorkerId(), regulatorWorkerPaymentDto.getCompanyName(),
                 regulatorWorkerPaymentDto.getTaxName(), regulatorWorkerPaymentDto.getStartDate(), regulatorWorkerPaymentDto.getEndDate());
         List<RegulatorWorkerPaymentInfoVO> regulatorWorkerPaymentInfoVOS = new ArrayList<>();
         List<WorekerPaymentListPo> records = workerPaymentListPoIPage.getRecords();
