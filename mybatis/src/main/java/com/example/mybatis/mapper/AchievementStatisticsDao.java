@@ -16,12 +16,12 @@ import org.apache.ibatis.annotations.Param;
  */
 public interface AchievementStatisticsDao extends BaseMapper<AchievementStatistics> {
 
-    IPage<AchievementStatisticsVO> salesmanAndAgentStatistics(@Param("userId")String userId,@Param("objectType")Integer objectType,@Param("time") String time,Page page);
+    IPage<AchievementStatisticsVO> salesmanAndAgentStatistics(@Param("userId") String userId, @Param("objectType") Integer objectType, @Param("time") String time, Page page);
 
-    TotalAchievementStatisticsVO totalSalesmanAndAgentStatistics(@Param("userId") String userId,@Param("objectType") Integer objectType);
+    TotalAchievementStatisticsVO totalSalesmanAndAgentStatistics(@Param("userId") String userId, @Param("objectType") Integer objectType);
 
-    IPage<SalesmanSAndAgentDetailVO> salesmanDetail(@Param("managersId")String managersId,@Param("customerType")Integer customerType, Page page);
+    IPage<SalesmanSAndAgentDetailVO> salesmanDetail(@Param("managersId") String managersId, @Param("customerType") Integer customerType, Page page);
 
-    IPage<SalesmanSAndAgentDetailVO> agentDetail(@Param("managersId")String managersId, Page page);
+    IPage<SalesmanSAndAgentDetailVO> agentDetail(@Param("managersId") String managersId, Page page);
 
 }

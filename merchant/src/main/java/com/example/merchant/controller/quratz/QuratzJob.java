@@ -26,9 +26,9 @@ public class QuratzJob {
     /**
      * 每个月底处理上个产生的佣金
      */
-    public void calculationSalesman() throws Exception{
-        log.info("Y----------------start"+new Date()+"---------------");
+    public void calculationSalesman() throws Exception {
+        log.info("Y----------------start" + new Date() + "---------------");
         structureService.timerStatistics();
-        log.info("Y----------------end"+new Date()+"---------------");
+        log.info("Y----------------end" + new Date() + "---------------");
     }
 }
