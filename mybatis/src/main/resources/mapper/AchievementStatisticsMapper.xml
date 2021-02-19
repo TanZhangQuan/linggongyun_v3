@@ -77,8 +77,49 @@
     </resultMap>
 
     <select id="salesmanDetail" resultMap="salesmanSAndAgentDetailVO">
-      SELECT * FROM ( SELECT t1.id, t1.trade_no, t2.agent_id, t2.sales_man_id, ( SELECT user_name FROM tb_managers WHERE id = t2.sales_man_id ) AS sales_man_name, t2.company_name, t3.tax_name, ( SELECT user_name FROM tb_managers WHERE id = t2.agent_id ) AS agent_name, 0 AS payment_order_type, ( SELECT count(*) FROM tb_payment_inventory WHERE t1.id = payment_order_id ) AS people_num, t1.worker_money, ( t1.real_money - t1.worker_money ) AS merchant_service_charge, ( t1.service_money - ( t1.real_money - t1.worker_money )) AS worker_service_charge, t1.real_money, ( t1.total_agent_difference + t1.total_salesman_difference ) AS total_difference FROM tb_payment_order t1 INNER JOIN tb_company_info t2 ON t2.id = t1.company_id INNER JOIN tb_tax t3 ON t3.id = t1.tax_id UNION ALL SELECT t1.id, t1.trade_no, t2.company_name, t2.agent_id, t2.sales_man_id, ( SELECT user_name FROM tb_managers WHERE id = t2.sales_man_id ) AS sales_man_name, t3.tax_name, ( SELECT user_name FROM tb_managers WHERE id = t2.agent_id ) AS agent_name, 1 AS payment_order_type, ( SELECT count(*) FROM tb_payment_inventory WHERE t1.id = payment_order_id ) AS people_num, ( SELECT IF ( SUM(task_money) IS NULL, 0, SUM(task_money)) FROM tb_payment_inventory WHERE t1.id = payment_order_id ) AS worker_money, (t1.real_money) AS merchant_service_charge, ( t1.service_money - t1.real_money ) AS worker_service_charge, t1.real_money, ( t1.total_agent_difference + t1.total_salesman_difference ) AS total_difference FROM tb_payment_order_many t1 INNER JOIN tb_company_info t2 ON t2.id = t1.company_id INNER JOIN tb_tax t3 ON t3.id = t1.tax_id ) AS tmp
-       WHERE sales_man_id = #{managersId}
+        SELECT
+            id,
+            trade_no,
+            agent_id,
+            sales_man_id,
+            sales_man_name,
+            company_name,
+            tax_name,
+            agent_name,
+            payment_order_type,
+            people_num,
+            worker_money,
+            merchant_service_charge,
+            worker_service_charge,
+            real_money,
+            total_difference
+        FROM ( SELECT t1.id, t1.trade_no, t2.agent_id, t2.sales_man_id,
+        ( SELECT user_name FROM tb_managers WHERE id = t2.sales_man_id ) AS sales_man_name,
+        t2.company_name, t3.tax_name,
+        ( SELECT user_name FROM tb_managers WHERE id = t2.agent_id ) AS agent_name
+        , 0 AS payment_order_type,
+        ( SELECT count(*) FROM tb_payment_inventory WHERE t1.id = payment_order_id ) AS people_num,
+        t1.worker_money, ( t1.real_money - t1.worker_money ) AS merchant_service_charge,
+        ( t1.service_money - ( t1.real_money - t1.worker_money )) AS worker_service_charge,
+        t1.real_money, ( t1.total_agent_difference + t1.total_salesman_difference ) AS total_difference
+        FROM tb_payment_order t1
+        INNER JOIN tb_company_info t2 ON t2.id = t1.company_id
+        INNER JOIN tb_tax t3 ON t3.id = t1.tax_id
+        UNION ALL
+        SELECT t1.id, t1.trade_no, t2.company_name, t2.agent_id, t2.sales_man_id,
+        ( SELECT user_name FROM tb_managers WHERE id = t2.sales_man_id ) AS sales_man_name,
+        t3.tax_name, ( SELECT user_name FROM tb_managers WHERE id = t2.agent_id ) AS agent_name,
+        1 AS payment_order_type,
+        ( SELECT count(*) FROM tb_payment_inventory WHERE t1.id = payment_order_id ) AS people_num,
+        ( SELECT IF ( SUM(task_money) IS NULL, 0, SUM(task_money))
+        FROM tb_payment_inventory WHERE t1.id = payment_order_id ) AS worker_money,
+        (t1.real_money) AS merchant_service_charge,
+        ( t1.service_money - t1.real_money ) AS worker_service_charge,
+        t1.real_money, ( t1.total_agent_difference + t1.total_salesman_difference ) AS total_difference
+        FROM tb_payment_order_many t1
+        INNER JOIN tb_company_info t2 ON t2.id = t1.company_id
+        INNER JOIN tb_tax t3 ON t3.id = t1.tax_id ) AS tmp
+        WHERE sales_man_id = #{managersId}
         <if test="customerType == 0">
             and agent_id is null
         </if>
@@ -88,7 +129,50 @@
     </select>
 
     <select id="agentDetail" resultMap="salesmanSAndAgentDetailVO">
-      SELECT * FROM ( SELECT t1.id, t1.trade_no, t2.agent_id, t2.sales_man_id, ( SELECT user_name FROM tb_managers WHERE id = t2.sales_man_id ) AS sales_man_name, t2.company_name, t3.tax_name, ( SELECT user_name FROM tb_managers WHERE id = t2.agent_id ) AS agent_name, 0 AS payment_order_type, ( SELECT count(*) FROM tb_payment_inventory WHERE t1.id = payment_order_id ) AS people_num, t1.worker_money, ( t1.real_money - t1.worker_money ) AS merchant_service_charge, ( t1.service_money - ( t1.real_money - t1.worker_money )) AS worker_service_charge, t1.real_money, ( t1.total_agent_difference + t1.total_salesman_difference ) AS total_difference FROM tb_payment_order t1 INNER JOIN tb_company_info t2 ON t2.id = t1.company_id INNER JOIN tb_tax t3 ON t3.id = t1.tax_id UNION ALL SELECT t1.id, t1.trade_no, t2.company_name, t2.agent_id, t2.sales_man_id, ( SELECT user_name FROM tb_managers WHERE id = t2.sales_man_id ) AS sales_man_name, t3.tax_name, ( SELECT user_name FROM tb_managers WHERE id = t2.agent_id ) AS agent_name, 1 AS payment_order_type, ( SELECT count(*) FROM tb_payment_inventory WHERE t1.id = payment_order_id ) AS people_num, ( SELECT IF ( SUM(task_money) IS NULL, 0, SUM(task_money)) FROM tb_payment_inventory WHERE t1.id = payment_order_id ) AS worker_money, (t1.real_money) AS merchant_service_charge, ( t1.service_money - t1.real_money ) AS worker_service_charge, t1.real_money, ( t1.total_agent_difference + t1.total_salesman_difference ) AS total_difference FROM tb_payment_order_many t1 INNER JOIN tb_company_info t2 ON t2.id = t1.company_id INNER JOIN tb_tax t3 ON t3.id = t1.tax_id ) AS tmp
-       WHERE agent_id = #{managersId}
+        SELECT
+            id,
+            trade_no,
+            agent_id,
+            sales_man_id,
+            sales_man_name,
+            company_name,
+            tax_name,
+            agent_name,
+            payment_order_type,
+            people_num,
+            worker_money,
+            merchant_service_charge,
+            worker_service_charge,
+            real_money,
+            total_difference
+        FROM
+        ( SELECT t1.id, t1.trade_no, t2.agent_id, t2.sales_man_id,
+        ( SELECT user_name FROM tb_managers WHERE id = t2.sales_man_id ) AS sales_man_name,
+        t2.company_name, t3.tax_name,
+        ( SELECT user_name FROM tb_managers WHERE id = t2.agent_id ) AS agent_name,
+        0 AS payment_order_type,
+        ( SELECT count(*) FROM tb_payment_inventory WHERE t1.id = payment_order_id ) AS people_num,
+        t1.worker_money, ( t1.real_money - t1.worker_money ) AS merchant_service_charge,
+        ( t1.service_money - ( t1.real_money - t1.worker_money )) AS worker_service_charge,
+        t1.real_money, ( t1.total_agent_difference + t1.total_salesman_difference ) AS total_difference
+        FROM tb_payment_order t1
+        INNER JOIN tb_company_info t2 ON t2.id = t1.company_id
+        INNER JOIN tb_tax t3 ON t3.id = t1.tax_id
+        UNION ALL
+        SELECT t1.id, t1.trade_no, t2.company_name, t2.agent_id, t2.sales_man_id,
+        ( SELECT user_name FROM tb_managers WHERE id = t2.sales_man_id ) AS sales_man_name,
+        t3.tax_name, ( SELECT user_name FROM tb_managers WHERE id = t2.agent_id ) AS agent_name,
+        1 AS payment_order_type,
+        ( SELECT count(*) FROM tb_payment_inventory WHERE t1.id = payment_order_id ) AS people_num,
+        ( SELECT IF ( SUM(task_money) IS NULL, 0, SUM(task_money))
+        FROM tb_payment_inventory WHERE t1.id = payment_order_id ) AS worker_money,
+        (t1.real_money) AS merchant_service_charge,
+        ( t1.service_money - t1.real_money ) AS worker_service_charge,
+        t1.real_money,
+        ( t1.total_agent_difference + t1.total_salesman_difference ) AS total_difference
+        FROM tb_payment_order_many t1
+        INNER JOIN tb_company_info t2 ON t2.id = t1.company_id
+        INNER JOIN tb_tax t3 ON t3.id = t1.tax_id ) AS tmp
+        WHERE agent_id = #{managersId}
     </select>
 </mapper>
