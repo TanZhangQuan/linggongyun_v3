@@ -330,6 +330,7 @@ public class StructureServiceImpl implements StructureService {
                     }
                 }
             }
+            objectMenuService.saveBatch(objectMenuList);
         } else {
             managers = managersDao.selectById(agentInfoDto.getAgentId());
             if (!managersOne.getId().equals(managers.getId())) {
