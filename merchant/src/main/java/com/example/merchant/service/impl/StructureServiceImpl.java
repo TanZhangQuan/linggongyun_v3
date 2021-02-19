@@ -81,30 +81,37 @@ public class StructureServiceImpl implements StructureService {
     @Override
     @Transactional
     public ReturnJson addSalesMan(ManagersDTO managersDto) {
-        List<CommissionProportionDTO> agentCommissionProportion = managersDto.getAgentCommissionProportion();
-        Collections.sort(agentCommissionProportion);
-        for (int i = 0; i < agentCommissionProportion.size(); i++) {
-            if (agentCommissionProportion.get(i).getEndMoney().compareTo(agentCommissionProportion.get(i).getStartMoney()) < 0) {
-                return new ReturnJson("您输入的阶梯有问题！", 300);
-            }
-            if (i < agentCommissionProportion.size() - 1) {
-                if (agentCommissionProportion.get(i).getEndMoney().compareTo(agentCommissionProportion.get(i + 1).getStartMoney()) > 0) {
-                    return new ReturnJson("您输入的阶梯有问题！", 300);
-                }
-            }
-        }
-        List<CommissionProportionDTO> directCommissionProportion = managersDto.getDirectCommissionProportion();
-        Collections.sort(directCommissionProportion);
-        for (int i = 0; i < directCommissionProportion.size(); i++) {
-            if (directCommissionProportion.get(i).getEndMoney().compareTo(directCommissionProportion.get(i).getStartMoney()) < 0) {
-                return new ReturnJson("您输入的阶梯有问题！", 300);
-            }
-            if (i < directCommissionProportion.size() - 1) {
-                if (directCommissionProportion.get(i).getEndMoney().compareTo(directCommissionProportion.get(i + 1).getStartMoney()) > 0) {
-                    return new ReturnJson("您输入的阶梯有问题！", 300);
-                }
-            }
-        }
+
+//        List<CommissionProportionDTO> agentCommissionProportion = managersDto.getAgentCommissionProportion();
+//        if (agentCommissionProportion != null && agentCommissionProportion.size() > 0) {
+//            Collections.sort(agentCommissionProportion);
+//            for (int i = 0; i < agentCommissionProportion.size(); i++) {
+//                if (agentCommissionProportion.get(i).getEndMoney().compareTo(agentCommissionProportion.get(i).getStartMoney()) < 0) {
+//                    return new ReturnJson("您输入的阶梯有问题！", 300);
+//                }
+//                if (i < agentCommissionProportion.size() - 1) {
+//                    if (agentCommissionProportion.get(i).getEndMoney().compareTo(agentCommissionProportion.get(i + 1).getStartMoney()) > 0) {
+//                        return new ReturnJson("您输入的阶梯有问题！", 300);
+//                    }
+//                }
+//            }
+//        }
+//
+//        List<CommissionProportionDTO> directCommissionProportion = managersDto.getDirectCommissionProportion();
+//        if (directCommissionProportion != null && directCommissionProportion.size() > 0) {
+//            Collections.sort(directCommissionProportion);
+//            for (int i = 0; i < directCommissionProportion.size(); i++) {
+//                if (directCommissionProportion.get(i).getEndMoney().compareTo(directCommissionProportion.get(i).getStartMoney()) < 0) {
+//                    return new ReturnJson("您输入的阶梯有问题！", 300);
+//                }
+//                if (i < directCommissionProportion.size() - 1) {
+//                    if (directCommissionProportion.get(i).getEndMoney().compareTo(directCommissionProportion.get(i + 1).getStartMoney()) > 0) {
+//                        return new ReturnJson("您输入的阶梯有问题！", 300);
+//                    }
+//                }
+//            }
+//        }
+
         Managers managersOne = managersDao.selectOne(new QueryWrapper<Managers>().lambda()
                 .eq(Managers::getMobileCode, managersDto.getMobileCode()));
         Managers managers = managersDao.selectById(managersDto.getId());
@@ -151,21 +158,21 @@ public class StructureServiceImpl implements StructureService {
             }
             managersService.updateById(managers);
         }
-        commissionProportionDao.deleteObjectIdAndObjectTypeAndCustomerType(managers.getId(), 0, 1);
-        for (int i = 0; i < agentCommissionProportion.size(); i++) {
-
-            CommissionProportion commissionProportion = new CommissionProportion();
-            BeanUtils.copyProperties(agentCommissionProportion.get(i), commissionProportion);
-            commissionProportion.setObjectId(managers.getId());
-            commissionProportionDao.insert(commissionProportion);
-        }
-        commissionProportionDao.deleteObjectIdAndObjectTypeAndCustomerType(managers.getId(), 0, 0);
-        for (int i = 0; i < directCommissionProportion.size(); i++) {
-            CommissionProportion commissionProportion = new CommissionProportion();
-            BeanUtils.copyProperties(directCommissionProportion.get(i), commissionProportion);
-            commissionProportion.setObjectId(managers.getId());
-            commissionProportionDao.insert(commissionProportion);
-        }
+//        commissionProportionDao.deleteObjectIdAndObjectTypeAndCustomerType(managers.getId(), 0, 1);
+//        for (int i = 0; i < agentCommissionProportion.size(); i++) {
+//
+//            CommissionProportion commissionProportion = new CommissionProportion();
+//            BeanUtils.copyProperties(agentCommissionProportion.get(i), commissionProportion);
+//            commissionProportion.setObjectId(managers.getId());
+//            commissionProportionDao.insert(commissionProportion);
+//        }
+//        commissionProportionDao.deleteObjectIdAndObjectTypeAndCustomerType(managers.getId(), 0, 0);
+//        for (int i = 0; i < directCommissionProportion.size(); i++) {
+//            CommissionProportion commissionProportion = new CommissionProportion();
+//            BeanUtils.copyProperties(directCommissionProportion.get(i), commissionProportion);
+//            commissionProportion.setObjectId(managers.getId());
+//            commissionProportionDao.insert(commissionProportion);
+//        }
         return ReturnJson.success("成功！");
     }
 
@@ -184,10 +191,10 @@ public class StructureServiceImpl implements StructureService {
         managersEntity.setPassWord("");
         ManagersVO managers = new ManagersVO();
         BeanUtils.copyProperties(managersEntity, managers);
-        List<CommissionProportionVO> directCustomer = commissionProportionDao.getObjectIdAndObjectTypeAndCustomerType(managersId, 0, 0);
-        List<CommissionProportionVO> agent = commissionProportionDao.getObjectIdAndObjectTypeAndCustomerType(managersId, 0, 1);
-        managers.setAgent(agent);
-        managers.setDirectCustomer(directCustomer);
+//        List<CommissionProportionVO> directCustomer = commissionProportionDao.getObjectIdAndObjectTypeAndCustomerType(managersId, 0, 0);
+//        List<CommissionProportionVO> agent = commissionProportionDao.getObjectIdAndObjectTypeAndCustomerType(managersId, 0, 1);
+//        managers.setAgent(agent);
+//        managers.setDirectCustomer(directCustomer);
 
         return ReturnJson.success(managers);
     }
@@ -260,18 +267,18 @@ public class StructureServiceImpl implements StructureService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ReturnJson addAgent(AgentInfoDTO agentInfoDto) throws Exception {
-        List<CommissionProportionDTO> directCommissionProportion = agentInfoDto.getDirectCommissionProportion();
-        Collections.sort(directCommissionProportion);
-        for (int i = 0; i < directCommissionProportion.size(); i++) {
-            if (directCommissionProportion.get(i).getEndMoney().compareTo(directCommissionProportion.get(i).getStartMoney()) < 0) {
-                return new ReturnJson("您输入的阶梯有问题！", 300);
-            }
-            if (i < directCommissionProportion.size() - 1) {
-                if (directCommissionProportion.get(i).getEndMoney().compareTo(directCommissionProportion.get(i + 1).getStartMoney()) > 0) {
-                    return new ReturnJson("您输入的阶梯有问题！", 300);
-                }
-            }
-        }
+//        List<CommissionProportionDTO> directCommissionProportion = agentInfoDto.getDirectCommissionProportion();
+//        Collections.sort(directCommissionProportion);
+//        for (int i = 0; i < directCommissionProportion.size(); i++) {
+//            if (directCommissionProportion.get(i).getEndMoney().compareTo(directCommissionProportion.get(i).getStartMoney()) < 0) {
+//                return new ReturnJson("您输入的阶梯有问题！", 300);
+//            }
+//            if (i < directCommissionProportion.size() - 1) {
+//                if (directCommissionProportion.get(i).getEndMoney().compareTo(directCommissionProportion.get(i + 1).getStartMoney()) > 0) {
+//                    return new ReturnJson("您输入的阶梯有问题！", 300);
+//                }
+//            }
+//        }
         Managers managersOne = managersDao.selectOne(
                 new QueryWrapper<Managers>().lambda()
                         .eq(Managers::getMobileCode, agentInfoDto.getLinkMobile()));
@@ -349,65 +356,65 @@ public class StructureServiceImpl implements StructureService {
             agent.setId(agentOne.getId());
             agentService.updateById(agent);
         }
-        commissionProportionDao.deleteObjectIdAndObjectTypeAndCustomerType(managers.getId(), 1, 0);
-        for (int i = 0; i < directCommissionProportion.size(); i++) {
-            CommissionProportion commissionProportion = new CommissionProportion();
-            BeanUtils.copyProperties(directCommissionProportion.get(i), commissionProportion);
-            commissionProportion.setObjectId(agent.getManagersId());
-            commissionProportionDao.insert(commissionProportion);
-        }
-        QueryWrapper<AgentTax> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda().eq(AgentTax::getAgentId, managers.getId());
-        List<AgentTax> agentTaxes = agentTaxDao.selectList(queryWrapper);
-        for (AgentTax agentTax : agentTaxes) {
-            if (1 == agentTax.getChargeStatus()) {
-                QueryWrapper<AgentLadderService> queryAgentLadderService = new QueryWrapper<>();
-                queryAgentLadderService.lambda().eq(AgentLadderService::getAgentTaxId, agentTax.getId());
-                List<AgentLadderService> agentLadderServices = agentLadderServiceDao.selectList(queryAgentLadderService);
-                for (AgentLadderService agentLadderService : agentLadderServices) {
-                    agentLadderServiceDao.deleteById(agentLadderService.getId());
-                }
-            }
-            agentTaxDao.deleteById(agentTax.getId());
-        }
-        List<AgentTaxDTO> agentTaxDtos = agentInfoDto.getAgentTaxDtos();
-        for (AgentTaxDTO agentTaxDTO : agentTaxDtos) {
-            AgentTax agentTax = new AgentTax();
-            BeanUtils.copyProperties(agentTaxDTO, agentTax);
-            agentTax.setAgentId(agent.getManagersId());
-            QueryWrapper<TaxPackage> queryWrapperTaxPackage = new QueryWrapper<>();
-            queryWrapperTaxPackage.lambda().eq(TaxPackage::getTaxId, agentTax.getTaxId())
-                    .eq(TaxPackage::getPackageStatus, agentTax.getPackageStatus());
-            TaxPackage taxPackage = taxPackageDao.selectOne(queryWrapperTaxPackage);
-            if (agentTaxDTO.getChargeStatus() == 1) {
-                List<AddAgentLadderServiceDTO> addCompanyLadderServiceDtoList = agentTaxDTO.getAddCompanyLadderServiceDtoList();
-                for (AddAgentLadderServiceDTO addAgentLadderServiceDTO : addCompanyLadderServiceDtoList) {
-                    AgentLadderService agentLadderService = new AgentLadderService();
-                    BeanUtils.copyProperties(addAgentLadderServiceDTO, agentLadderService);
-                    agentLadderService.setAgentTaxId(agentTax.getId());
-                    QueryWrapper<InvoiceLadderPrice> queryWrapperInvoiceLadderPrice = new QueryWrapper<>();
-
-
-                    queryWrapperInvoiceLadderPrice.lambda().eq(InvoiceLadderPrice::getTaxPackageId, taxPackage.getId())
-                            .eq(InvoiceLadderPrice::getStartMoney, agentLadderService.getStartMoney())
-                            .eq(InvoiceLadderPrice::getEndMoney, agentLadderService.getEndMoney())
-                            .eq(InvoiceLadderPrice::getPackaegStatus, taxPackage.getPackageStatus() == 0 ? 4 : 5);
-
-
-                    InvoiceLadderPrice invoiceLadderPrice = invoiceLadderPriceDao.selectOne(queryWrapperInvoiceLadderPrice);
-                    if (agentLadderService.getServiceCharge().compareTo(invoiceLadderPrice.getRate()) < 0) {
-                        throw new CommonException(300, invoiceLadderPrice.getStartMoney() + "-" + invoiceLadderPrice.getEndMoney() + "输入数据需不低于" + taxPackage.getTaxPrice());
-                    }
-
-                    agentLadderServiceDao.insert(agentLadderService);
-                }
-            } else {
-                if (agentTax.getServiceCharge().compareTo(taxPackage.getTaxPrice()) < 0) {
-                    throw new CommonException(300, "输入数据需不低于" + taxPackage.getTaxPrice());
-                }
-            }
-            agentTaxDao.insert(agentTax);
-        }
+//        commissionProportionDao.deleteObjectIdAndObjectTypeAndCustomerType(managers.getId(), 1, 0);
+//        for (int i = 0; i < directCommissionProportion.size(); i++) {
+//            CommissionProportion commissionProportion = new CommissionProportion();
+//            BeanUtils.copyProperties(directCommissionProportion.get(i), commissionProportion);
+//            commissionProportion.setObjectId(agent.getManagersId());
+//            commissionProportionDao.insert(commissionProportion);
+//        }
+//        QueryWrapper<AgentTax> queryWrapper = new QueryWrapper<>();
+//        queryWrapper.lambda().eq(AgentTax::getAgentId, managers.getId());
+//        List<AgentTax> agentTaxes = agentTaxDao.selectList(queryWrapper);
+//        for (AgentTax agentTax : agentTaxes) {
+//            if (1 == agentTax.getChargeStatus()) {
+//                QueryWrapper<AgentLadderService> queryAgentLadderService = new QueryWrapper<>();
+//                queryAgentLadderService.lambda().eq(AgentLadderService::getAgentTaxId, agentTax.getId());
+//                List<AgentLadderService> agentLadderServices = agentLadderServiceDao.selectList(queryAgentLadderService);
+//                for (AgentLadderService agentLadderService : agentLadderServices) {
+//                    agentLadderServiceDao.deleteById(agentLadderService.getId());
+//                }
+//            }
+//            agentTaxDao.deleteById(agentTax.getId());
+//        }
+//        List<AgentTaxDTO> agentTaxDtos = agentInfoDto.getAgentTaxDtos();
+//        for (AgentTaxDTO agentTaxDTO : agentTaxDtos) {
+//            AgentTax agentTax = new AgentTax();
+//            BeanUtils.copyProperties(agentTaxDTO, agentTax);
+//            agentTax.setAgentId(agent.getManagersId());
+//            QueryWrapper<TaxPackage> queryWrapperTaxPackage = new QueryWrapper<>();
+//            queryWrapperTaxPackage.lambda().eq(TaxPackage::getTaxId, agentTax.getTaxId())
+//                    .eq(TaxPackage::getPackageStatus, agentTax.getPackageStatus());
+//            TaxPackage taxPackage = taxPackageDao.selectOne(queryWrapperTaxPackage);
+//            if (agentTaxDTO.getChargeStatus() == 1) {
+//                List<AddAgentLadderServiceDTO> addCompanyLadderServiceDtoList = agentTaxDTO.getAddCompanyLadderServiceDtoList();
+//                for (AddAgentLadderServiceDTO addAgentLadderServiceDTO : addCompanyLadderServiceDtoList) {
+//                    AgentLadderService agentLadderService = new AgentLadderService();
+//                    BeanUtils.copyProperties(addAgentLadderServiceDTO, agentLadderService);
+//                    agentLadderService.setAgentTaxId(agentTax.getId());
+//                    QueryWrapper<InvoiceLadderPrice> queryWrapperInvoiceLadderPrice = new QueryWrapper<>();
+//
+//
+//                    queryWrapperInvoiceLadderPrice.lambda().eq(InvoiceLadderPrice::getTaxPackageId, taxPackage.getId())
+//                            .eq(InvoiceLadderPrice::getStartMoney, agentLadderService.getStartMoney())
+//                            .eq(InvoiceLadderPrice::getEndMoney, agentLadderService.getEndMoney())
+//                            .eq(InvoiceLadderPrice::getPackaegStatus, taxPackage.getPackageStatus() == 0 ? 4 : 5);
+//
+//
+//                    InvoiceLadderPrice invoiceLadderPrice = invoiceLadderPriceDao.selectOne(queryWrapperInvoiceLadderPrice);
+//                    if (agentLadderService.getServiceCharge().compareTo(invoiceLadderPrice.getRate()) < 0) {
+//                        throw new CommonException(300, invoiceLadderPrice.getStartMoney() + "-" + invoiceLadderPrice.getEndMoney() + "输入数据需不低于" + taxPackage.getTaxPrice());
+//                    }
+//
+//                    agentLadderServiceDao.insert(agentLadderService);
+//                }
+//            } else {
+//                if (agentTax.getServiceCharge().compareTo(taxPackage.getTaxPrice()) < 0) {
+//                    throw new CommonException(300, "输入数据需不低于" + taxPackage.getTaxPrice());
+//                }
+//            }
+//            agentTaxDao.insert(agentTax);
+//        }
         return ReturnJson.success("成功!");
     }
 
@@ -434,24 +441,24 @@ public class StructureServiceImpl implements StructureService {
         agentInfoDto.setUserName(managers.getUserName());
         agentInfoDto.setDirectCommissionProportion(directCommissionProportion);
 
-        QueryWrapper<AgentTax> queryWrapper = new QueryWrapper<>();
-        List<AgentTax> agentTaxes = agentTaxDao.selectList(queryWrapper.lambda().eq(AgentTax::getAgentId, agentId));
-        List<AgentTaxVO> agentTaxVOS = new ArrayList<>();
-        for (AgentTax agentTax : agentTaxes) {
-            AgentTaxVO agentTaxVO = new AgentTaxVO();
-            if (agentTax.getChargeStatus() == 0) {
-                BeanUtils.copyProperties(agentTax, agentTaxVO);
-                agentTaxVOS.add(agentTaxVO);
-            } else {
-                BeanUtils.copyProperties(agentTax, agentTaxVO);
-                QueryWrapper<AgentLadderService> queryWrapper1 = new QueryWrapper<>();
-                queryWrapper1.lambda().eq(AgentLadderService::getAgentTaxId, agentTax.getId());
-                List<AgentLadderService> agentLadderServices = agentLadderServiceDao.selectList(queryWrapper1);
-                agentTaxVO.setAgentLadderServices(agentLadderServices);
-                agentTaxVOS.add(agentTaxVO);
-            }
-        }
-        agentInfoDto.setAgentTaxVo(agentTaxVOS);
+//        QueryWrapper<AgentTax> queryWrapper = new QueryWrapper<>();
+//        List<AgentTax> agentTaxes = agentTaxDao.selectList(queryWrapper.lambda().eq(AgentTax::getAgentId, agentId));
+//        List<AgentTaxVO> agentTaxVOS = new ArrayList<>();
+//        for (AgentTax agentTax : agentTaxes) {
+//            AgentTaxVO agentTaxVO = new AgentTaxVO();
+//            if (agentTax.getChargeStatus() == 0) {
+//                BeanUtils.copyProperties(agentTax, agentTaxVO);
+//                agentTaxVOS.add(agentTaxVO);
+//            } else {
+//                BeanUtils.copyProperties(agentTax, agentTaxVO);
+//                QueryWrapper<AgentLadderService> queryWrapper1 = new QueryWrapper<>();
+//                queryWrapper1.lambda().eq(AgentLadderService::getAgentTaxId, agentTax.getId());
+//                List<AgentLadderService> agentLadderServices = agentLadderServiceDao.selectList(queryWrapper1);
+//                agentTaxVO.setAgentLadderServices(agentLadderServices);
+//                agentTaxVOS.add(agentTaxVO);
+//            }
+//        }
+//        agentInfoDto.setAgentTaxVo(agentTaxVOS);
 
         return ReturnJson.success(agentInfoDto);
     }
