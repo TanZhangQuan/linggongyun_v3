@@ -85,18 +85,21 @@ public class FileOperationServiceImpl implements FileOperationService {
             mobileCodes.add(worker.getMobileCode());
         }
         for (MakerExcel makerExcel : makerExcelList) {
-            if (!mobileCodes.contains(makerExcel.getPhoneNumber())) {
-                Worker worker = new Worker();
-                String idCardCode = makerExcel.getIdcardNo();
-                worker.setAccountName(makerExcel.getName());
-                worker.setMobileCode(makerExcel.getPhoneNumber());
-                worker.setIdcardCode(idCardCode);
-                worker.setBankName(makerExcel.getBankName());
-                worker.setBankCode(makerExcel.getBankCardNo());
-                worker.setUserName(makerExcel.getPhoneNumber());
-                worker.setWorkerStatus(1);
-                worker.setUserPwd(MD5.md5(JwtConfig.getSecretKey() + idCardCode.substring(12)));
-                workers.add(worker);
+            System.out.println(makerExcel.toString());
+            if (makerExcel.getName() != null || makerExcel.getPhoneNumber() != null) {
+                if (!mobileCodes.contains(makerExcel.getPhoneNumber())) {
+                    Worker worker = new Worker();
+                    String idCardCode = makerExcel.getIdcardNo();
+                    worker.setAccountName(makerExcel.getName());
+                    worker.setMobileCode(makerExcel.getPhoneNumber());
+                    worker.setIdcardCode(idCardCode);
+                    worker.setBankName(makerExcel.getBankName());
+                    worker.setBankCode(makerExcel.getBankCardNo());
+                    worker.setUserName(makerExcel.getPhoneNumber());
+                    worker.setWorkerStatus(1);
+                    worker.setUserPwd(MD5.md5(JwtConfig.getSecretKey() + idCardCode.substring(12)));
+                    workers.add(worker);
+                }
             }
         }
         return ReturnJson.success(workers);
