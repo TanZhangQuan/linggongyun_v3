@@ -4,6 +4,7 @@ import com.alibaba.excel.EasyExcelFactory;
 import com.alibaba.excel.ExcelReader;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.example.common.config.FileStorageConfig;
+import com.example.common.config.GlobalConfig;
 import com.example.common.config.JwtConfig;
 import com.example.common.util.*;
 import com.example.merchant.excel.MakerExcel;
@@ -226,14 +227,15 @@ public class FileOperationServiceImpl implements FileOperationService {
                 Worker worker = workerDao.selectOne(new QueryWrapper<Worker>().lambda()
                         .eq(Worker::getMobileCode, mobileCode));
                 if (worker == null) {
-                    return ReturnJson.error(workerName + "不存在此创客，或者此创客手机号码不对");
+                    return ReturnJson.error(workerName + ":" + idCardCode + "不存在此创客，或者此创客手机号码不对");
                 }
                 if (!worker.getIdcardCode().equals(idCardCode)) {
-                    return ReturnJson.error(workerName + "表格身份证与系统内不一致！");
+                    return ReturnJson.error(workerName + ":" + idCardCode + "表格身份证与系统内不一致！");
                 }
                 if (!worker.getAccountName().equals(workerName)) {
-                    return ReturnJson.error(workerName + "表格名称与系统创客不一致！");
+                    return ReturnJson.error(workerName + ":" + idCardCode + "表格名称与系统创客不一致！");
                 }
+
                 if (isNot == 0) {
                     //总包开户行银行卡不能为空
                     if (bankCode == null) {
@@ -274,11 +276,15 @@ public class FileOperationServiceImpl implements FileOperationService {
                     paymentInventorys.add(paymentInventory);
                 }
 
-                if (worker.getAttestation() == 0 || worker.getAttestation() == -1) {
-                    throw new CommonException(300, workerName + "创客需要认证才能进行发放！");
-                }
-                if (worker.getAgreementSign() != 2) {
-                    throw new CommonException(300, workerName + "创客需要签约才能进行发放！");
+                System.out.println(GlobalConfig.getIsNot());
+
+                if (GlobalConfig.getIsNot()) {
+                    if (worker.getAttestation() == 0 || worker.getAttestation() == -1) {
+                        throw new CommonException(300, workerName + "创客需要认证才能进行发放！");
+                    }
+                    if (worker.getAgreementSign() != 2) {
+                        throw new CommonException(300, workerName + "创客需要签约才能进行发放！");
+                    }
                 }
             }
             String newFileName = UuidUtil.get32UUID() + "." + suffixName;

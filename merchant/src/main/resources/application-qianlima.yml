@@ -311,3 +311,7 @@ spring:
     async-notify-url: https://hdtzdz.lgyun.com.cn/huidiaojieshou/apis/MyBank/AsyncNotify
     # 结算账号
     settlement-account: 8888888194111389
+
+  #全局配置
+  global:
+    is-not: 'false'
