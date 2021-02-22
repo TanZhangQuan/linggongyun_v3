@@ -214,6 +214,6 @@ public interface PaymentOrderService extends IService<PaymentOrder> {
      * @param bankCode
      * @return
      */
-    ReturnJson updatePaymentInventory(String paymentInventoryId ,String bankCode);
+    ReturnJson updatePaymentInventory(String paymentInventoryId ,String bankCode,String workerName);
 
 }
