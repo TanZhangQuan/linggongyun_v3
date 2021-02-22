@@ -17,7 +17,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,22 +57,22 @@ public class AgentTaxServiceImpl extends ServiceImpl<AgentTaxDao, AgentTax> impl
                     companyInvoiceLadderPriceDetailVOList.add(companyInvoiceLadderPriceDetailVO);
                 }
             }
-            QueryWrapper<AgentTax> queryWrapper = new QueryWrapper<>();
-            queryWrapper.lambda().eq(AgentTax::getTaxId, taxId).eq(AgentTax::getAgentId, agentId).eq(AgentTax::getPackageStatus, packageStatus);
-            AgentTax agentTax = baseMapper.selectOne(queryWrapper);
-            if (agentTax != null) {
-                //商户一口价综合税费率
-                companyPackageDetailVO.setCompanyPrice(agentTax.getServiceCharge());
-
-                //获取商户梯度价税率
-                if (companyInvoiceLadderPriceDetailVOList.size() > 0) {
-                    for (CompanyInvoiceLadderPriceDetailVO companyInvoiceLadderPriceDetailVO : companyInvoiceLadderPriceDetailVOList) {
-                        BigDecimal serviceCharge = agentLadderServiceService.queryServiceCharge(agentTax.getId(), companyInvoiceLadderPriceDetailVO.getStartMoney(), companyInvoiceLadderPriceDetailVO.getEndMoney());
-                        companyInvoiceLadderPriceDetailVO.setCompanyRate(serviceCharge);
-                    }
-                }
-
-            }
+//            QueryWrapper<AgentTax> queryWrapper = new QueryWrapper<>();
+//            queryWrapper.lambda().eq(AgentTax::getTaxId, taxId).eq(AgentTax::getAgentId, agentId).eq(AgentTax::getPackageStatus, packageStatus);
+//            AgentTax agentTax = baseMapper.selectOne(queryWrapper);
+//            if (agentTax != null) {
+//                //商户一口价综合税费率
+//                companyPackageDetailVO.setCompanyPrice(agentTax.getServiceCharge());
+//
+//                //获取商户梯度价税率
+//                if (companyInvoiceLadderPriceDetailVOList.size() > 0) {
+//                    for (CompanyInvoiceLadderPriceDetailVO companyInvoiceLadderPriceDetailVO : companyInvoiceLadderPriceDetailVOList) {
+//                        BigDecimal serviceCharge = agentLadderServiceService.queryServiceCharge(agentTax.getId(), companyInvoiceLadderPriceDetailVO.getStartMoney(), companyInvoiceLadderPriceDetailVO.getEndMoney());
+//                        companyInvoiceLadderPriceDetailVO.setCompanyRate(serviceCharge);
+//                    }
+//                }
+//
+//            }
 
         }
 
