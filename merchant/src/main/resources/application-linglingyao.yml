@@ -264,9 +264,9 @@ spring:
     # SFTP端口号
     sftp-port: 65522
     # SFTP用户名
-    sftp-user-name: tax_sftp_hbxm
+    sftp-user-name: tax_sftp_zjlly
     # SFTP密码
-    sftp-password: pLe4Jz6gRcdeebgD
+    sftp-password: 32X1pchQ4VKjNJ01
     # SFTP文件下载保存地址
     sftp-save-path: /root/linglingyao/unionpay/sftp
     # SFTP文件压缩保存地址（SFTP文件下载保存地址的上一个文件夹）
