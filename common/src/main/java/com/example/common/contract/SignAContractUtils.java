@@ -232,7 +232,7 @@ public class SignAContractUtils {
         ECloudDomain serviceProviderSeal = EcloudClient.createSeal(linkMobile, taxName, null, null);
         //获取服务商签名对象
         Map<String, Object> serviceProviderSealObject = (Map) serviceProviderSeal.getData();
-        log.info("---------------------获取服务商的印章-----------------------------");
+        log.info("---------------------获取服务商的印章-----------------------------"+serviceProviderSealObject.toString());
         ECloudDomain serviceProviderSignImg = EcloudClient.getSignImg(linkMobile, serviceProviderSealObject.get("signId").toString());
         //获取用户签名照片签名对象
         Map<String, Object> serviceProviderSignImgObject = (Map) serviceProviderSignImg.getData();
@@ -240,7 +240,7 @@ public class SignAContractUtils {
         log.info("---------------------添加服务商的印章---------------------------------");
         ECloudDomain serviceProviderSign = EcloudClient.addSign(linkMobile, "2", serviceProviderSignImgObject.get("signImg").toString());
 
-        log.info("---------------------添加模板---------------------------------");
+        log.info("---------------------添加模板---------------------------------"+YiyunzhangConfig.getSignerSignPosX());
         List<Map<String, String>> signPositionlistMap = new ArrayList<>();
         Map<String, String> signPositionMap = new HashMap<>();
         signPositionMap.put("positionName", "用户");
@@ -266,7 +266,7 @@ public class SignAContractUtils {
         ECloudDomain template = EcloudClient.addHtmlTemplate("加盟合同", sb.toString(), null, signPositionMapStr);
         //添加模板对象
         Map<String, Object> templateMap = (Map) template.getData();
-
+        log.info("---------------------添加模板--------"+template.getMessage()+"------"+YiyunzhangConfig.getSignerSignPosX()+"-------------------------"+templateMap.toString());
         ECloudDomain contract = EcloudClient.createContractByTemplate(templateMap.get("templateNumber").toString(), "{a:1312}", null);
         Map<String, Object> contractMap = (Map) contract.getData();
         List<Map<String, String>> listMap = new ArrayList<>();

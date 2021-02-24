@@ -140,31 +140,28 @@ spring:
     seal-id: 15cf4935-f720-4400-b22c-a633f35029e0
 
     # 平台自动盖章签署区参数设置
-    platform-sign:
-      # 页码信息
-      pos-page: 3
-      # x坐标
-      posX: 200f
-      # y坐标
-      posY: 700f
+    # 页码信息
+    platform-sign-pos-page: 3
+    # x坐标
+    platform-sign-posX: 200f
+    # y坐标
+    platform-sign-posY: 700f
 
     # 签署方自动盖章签署区参数设置
-    signer-auto-sign:
-      # 页码信息
-      pos-page: 1
-      # x坐标
-      posX: 10f
-      # y坐标
-      posY: 100f
+    # 页码信息
+    signer-auto-sign-pos-page: 1
+    # x坐标
+    signer-auto-sign-posX: 10f
+    # y坐标
+    signer-auto-sign-posY: 100f
 
     # 签署方手动盖章签署区参数设置
-    signer-hand-sign:
-      # 页码信息
-      pos-page: 3
-      # x坐标
-      posX: 480f
-      # y坐标
-      posY: 700f
+    # 页码信息
+    signer-hand-sign-pos-page: 3
+    # x坐标
+    signer-hand-sign-posX: 480f
+    # y坐标
+    signer-hand-sign-posY: 700f
 
     # 异步回调URL
     async-notify-url: https://api.1gpai.com/makerend/authentication/callBackSignAContract
@@ -181,33 +178,30 @@ spring:
     aes-secret-key: YF}+efcaj{+oESb9
 
     # 印章配置
-    seal:
-      # 平台全称（组成印章）
-      platform-name: 顺利创（广州）企业服务有限公司
-      # 平台法人（组成印章）
-      platform-legal-person: 郑磊
-      # 平台联系电话（组成印章）
-      platform-contact-phone: 18666009970
-      # 平台社会信用代码（组成印章）
-      platform-credit-code: 914401063045811741
+    # 平台全称（组成印章）
+    seal-platform-name: 顺利创（广州）企业服务有限公司
+    # 平台法人（组成印章）
+    seal-platform-legal-person: 郑磊
+    # 平台联系电话（组成印章）
+    seal-platform-contact-phone: 18666009970
+    # 平台社会信用代码（组成印章）
+    seal-platform-credit-code: 914401063045811741
 
     # 平台自动盖章签署区参数设置
-    platform-sign:
-      # 页码信息
-      pos-page: 1
-      # x坐标
-      posX: 200
-      # y坐标
-      posY: 200
+    # 页码信息
+    platform-sign-pos-page: 1
+    # x坐标
+    platform-sign-posX: 200
+    # y坐标
+    platform-sign-posY: 200
 
     # 签署方盖章签署区参数设置
-    signer-sign:
-      # 页码信息
-      pos-page: 1
-      # x坐标
-      posX: 150
-      # y坐标
-      posY: 200
+    # 页码信息
+    signer-sign-pos-page: 1
+    # x坐标
+    signer-sign-posX: 150
+    # y坐标
+    signer-sign-posY: 200
 
     # 异步回调URL
     async-notify-url: https://api.1gpai.com/makerend/authentication/callBackYYQSignAContract
