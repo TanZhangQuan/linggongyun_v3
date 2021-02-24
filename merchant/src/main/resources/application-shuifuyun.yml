@@ -171,11 +171,11 @@ spring:
     # 请求URL
     host: https://api.ecloudsign.cn/
     # 秘钥
-    secret-key: 1a00ff1ef81f5eddf0ede508fdc9183e
+    secret-key: 5ddda948b237de044124f82e4975a4fc
     # APPID
-    app-id: yyzzs1bc12j8j06w7nf0
+    app-id: yyzzs5ewlgu16u0y0jq3
     # AES密钥
-    aes-secret-key: csqd0b38i463jbq7
+    aes-secret-key: 8681e68u9a7718u0
 
     # 印章配置
     # 平台全称（组成印章）
@@ -189,17 +189,17 @@ spring:
 
     # 平台自动盖章签署区参数设置
     # 页码信息
-    platform-sign-pos-page: 1
+    platform-sign-pos-page: 2
     # x坐标
-    platform-sign-posX: 200
+    platform-sign-posX: 60
     # y坐标
-    platform-sign-posY: 200
+    platform-sign-posY: 520
 
     # 签署方盖章签署区参数设置
     # 页码信息
-    signer-sign-pos-page: 1
+    signer-sign-pos-page: 2
     # x坐标
-    signer-sign-posX: 150
+    signer-sign-posX: 200
     # y坐标
     signer-sign-posY: 200
 
